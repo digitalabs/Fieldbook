@@ -3,7 +3,7 @@
         <!-- title -->
         <section-container collapsible="true" th:attr="heading=#{trial.managesettings.treatment.factors.title}">
 
-            <section-container th:attr="heading=#{trial.managesettings.treatment.factors},help-tooltip=#{trial.managesettings.treatment.factors.notes}" add-variable="true" model-data="data.managementDetails" variable-type="1">
+            <section-container th:attr="heading=#{trial.managesettings.treatment.factors},help-tooltip=#{trial.managesettings.treatment.factors.notes}" add-variable="true" model-data="settings" variable-type="1">
 
                 <table class='factor-opts-tbl table table-curved table-condensed'>
                     <thead>
@@ -19,7 +19,7 @@
                     <tr ng-repeat="(key,item) in data.managementDetails track by key">
                         <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex(key)"></span>
                         </td>
-                        <td ng-class="{even : $even, odd : $odd}"><a ng-click='showDetailsModal(key)' >{{item.variable.name}}</a>
+                        <td ng-class="{even : $even, odd : $odd}"><a showBaselineTraitDetailsModalLink="{{key}}" >{{item.variable.name}}</a>
                         </td>
                         <td ng-class="{even : $even, odd : $odd}">{{item.variable.description}}</td>
                         <td ng-class="{even : $even, odd : $odd}">

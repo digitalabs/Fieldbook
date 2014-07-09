@@ -9,7 +9,8 @@
     angular.module('manageTrialApp').controller('MeasurementsCtrl',
         ['$scope', 'TrialManagerDataService', function($scope, TrialManagerDataService) {
 
-            $scope.data = TrialManagerDataService.currentData.measurements;
+            $scope.settings = TrialManagerDataService.settings.measurements;
+            $scope.currentData = TrialManagerDataService.currentData.measurements;
 
             $scope.updateOccurred = false;
 

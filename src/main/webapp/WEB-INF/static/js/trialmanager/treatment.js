@@ -9,22 +9,10 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl',['$scope','TreatmentFactorsService',function($scope,TreatmentFactorsService) {
-        $scope.data = TreatmentFactorsService.data;
+    manageTrialApp.controller('TreatmentCtrl',['$scope','TrialManagerDataService',function($scope,TrialManagerDataService) {
 
-        $scope.showDetailsModal = function(cvTermId) {
-            // this function is currently defined in the fieldbook-common.js, loaded globally for the page
-            // TODO : move away from global function definitions
-            showBaselineTraitDetailsModal(cvTermId);
-        };
-
-        $scope.managementDetailsSize = function() {
-            var size = 0, key;
-            for (key in $scope.data.managementDetails) {
-                if ($scope.data.managementDetails.hasOwnProperty(key)) { size++; }
-            }
-            return size;
-        };
+        $scope.settings = TrialManagerDataService.settings.treatmentFactors;
+        $scope.currentData = TrialManagerDataService.currentData.treatmentFactors;
 
         $scope.onLevelChange = function(variableName,levelCount) {
             levelCount = parseInt(levelCount);
@@ -56,7 +44,9 @@
 
         }; // end $scope.onLevelChange
 
-        $scope.removeTreatmentFactorByIndex = TreatmentFactorsService.removeManagementDetailVarByIndex;
+        $scope.removeTreatmentFactorByIndex = function(cvTermId) {
+            // remove an item from the service
+        };
 
     }]);
 

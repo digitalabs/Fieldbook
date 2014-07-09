@@ -354,6 +354,20 @@
 
             };
         }])
+        .directive('showBaselineTraitDetailsModalLink',function(){
+            return {
+                 scope: {
+                     showBaselineTraitDetailsModalLink : '@'
+                 },
+                link: function (scope,elem,attrs) {
+                    elem.click(function(e) {
+                        showBaselineTraitDetailsModal(scope.cvTermId);
+                    });
+                }
+            };
+        })
+
+
         // filters
         .filter('range', function() {
             return function(input, total) {

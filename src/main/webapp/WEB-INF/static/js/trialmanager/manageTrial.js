@@ -132,6 +132,7 @@
             };
 
             var service = {
+                // user input data and default values of standard variables
                 currentData: {
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
@@ -141,7 +142,7 @@
                     measurements: extractData(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractData(BASIC_DETAILS_DATA)
                 },
-
+                // standard variable [meta-data] information or a particular tab settings information
                 settings: {
                     trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),

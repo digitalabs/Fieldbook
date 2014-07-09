@@ -1,10 +1,10 @@
 <div class="row" ng-controller="MeasurementsCtrl">
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <section-container th:attr="heading=#{trial.managesettings.measurement.title}"
-                           collapsible="true" add-variable="true" model-data="data.measurements" variable-type="3">
+                           collapsible="true" add-variable="true" model-data="settings" variable-type="3">
 
             <section-container th:attr="heading=#{trial.managesettings.baseline.traits},help-tooltip=#{trial.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}">
-                <display-settings settings="data.measurements" variable-type="2"></display-settings>
+                <display-settings settings="settings" variable-type="2"></display-settings>
             </section-container>
         </section-container>
     </div>

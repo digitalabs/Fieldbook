@@ -136,15 +136,17 @@
                     } else {
                         var dataMap = {};
 
-                        angular.each(initialData.settingsMap,function(val,key) {
-                            dataMap[key] = new angular.OrderedHash();
-                            dataMap[key].addList(val,function(item) {
-                                return item.variable.cvTermId;
+                        if (Object.keys(initialData).length > 0 ) {
+
+                            angular.each(initialData.settingMap,function(val,key) {
+                                dataMap[key] = new angular.OrderedHash();
+                                dataMap[key].addList(val,function(item) {
+                                    return item.variable.cvTermId;
+                                });
+
                             });
+                        }
 
-                        });
-
-                        return dataMap;
                     }
 
                 }

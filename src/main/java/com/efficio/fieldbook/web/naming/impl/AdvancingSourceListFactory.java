@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -69,8 +70,22 @@ public class AdvancingSourceListFactory {
                     MeasurementRow trialRow = getTrialObservation(workbook, row.getLocationId());
                     season = getSeason(trialRow);
                     
-                    String check = row.getMeasurementDataValue(TermId.CHECK.getId());
-                    boolean isCheck = check != null && !"".equals(check);
+                    MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
+                    String check = checkData.getcValueId();
+                    if (checkData != null && checkData.getMeasurementVariable() != null 
+                    		&& checkData.getMeasurementVariable().getPossibleValues() != null
+                    		&& !checkData.getMeasurementVariable().getPossibleValues().isEmpty()
+                    		&& check != null 
+                    		&& NumberUtils.isNumber(check)) {
+                    	
+                    	for (ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
+                    		if (valref.getId().equals(Double.valueOf(check).intValue())) {
+                    			check = valref.getName();
+                    			break;
+                    		}
+                    	}
+                    }
+                    boolean isCheck = check != null && !"T".equalsIgnoreCase(check);
 
                     Integer methodId = null;
                     if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {

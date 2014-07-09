@@ -1721,6 +1721,8 @@ function displayEditFactorsAndGermplasmSection() {
 				$(row).find('.delete-icon').show();
 			});
 		}
+	} else {
+		displayCorrespondingGermplasmSections();
 	}
 }
 

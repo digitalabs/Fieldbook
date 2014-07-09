@@ -2,18 +2,18 @@
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <!-- management details title -->
 
-        <section-container th:attr="heading=#{fb.study.managementdetails},reminder=#{section.reminder.to.add.records}" show-reminder="managementDetailsSize() &lt;= 0" add-variable="true" model-data="managementDetails" variable-type="1">
+        <section-container th:attr="heading=#{fb.study.managementdetails},reminder=#{section.reminder.to.add.records}" show-reminder="settings.keys().length &lt;= 0" add-variable="true" model-data="settings" variable-type="1">
 
-            <div class="row form-group nurseryLevelSettings" ng-repeat="(key, value) in data.managementDetails">
+            <div class="row form-group nurseryLevelSettings" ng-repeat="key in settings.keys() track by key">
                 <div class="col-xs-5 1st">
                     <span class="delete-icon" style="font-size: 16px;" ng-click="removeVariable(key)"></span>
                     &nbsp;&nbsp;&nbsp;
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
-                            label-bold var-names">{{data.managementDetails[key].variable.name}}</span>:
+                            label-bold var-names">{{settings.val(key).variable.name}}</span>:
                 </div>
                 <div class="col-xs-7 2nd" style="padding-right: 0">
-                    <show-setting-form-element settings="data.managementDetails" targetkey="{{key}}"
-                                               valuecontainer="data.userInput"></show-setting-form-element>
+                    <show-setting-form-element settings="settings" targetkey="{{key}}"
+                                               valuecontainer="currentData"></show-setting-form-element>
                 </div>
 
             </div>

@@ -39,10 +39,10 @@
         </div>
         <div class="row">
             <div class="col-xs-6 col-md-6">
-                <div class="row form-group" ng-repeat="(key, value) in environment.managementDetailValues">
+                <div class="row form-group" ng-repeat="key in settings.managementDetails.keys()">
                     <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
-                        label-bold var-names">{{settings.managementDetails[key].variable.name}}</span>
+                        label-bold var-names">{{settings.managementDetails.val(key).variable.name}}</span>
                     </div>
                     <div class="col-xs-7 2nd">
                         <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
@@ -51,10 +51,10 @@
                 </div>
             </div>
             <div class="col-xs-6 col-md-6">
-                <div class="row form-group" ng-repeat="(key, value) in environment.trialDetailValues">
+                <div class="row form-group" ng-repeat="key in settings.trialConditionDetails.keys()">
                     <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
-                        label-bold var-names">{{settings.trialConditionDetails[key].variable.name}}</span>
+                        label-bold var-names">{{settings.trialConditionDetails.val(key).variable.name}}</span>
                     </div>
                     <div class="col-xs-7 2nd">
                         <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"

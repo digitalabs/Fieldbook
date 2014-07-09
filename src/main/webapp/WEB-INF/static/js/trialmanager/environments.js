@@ -98,21 +98,14 @@
                     var subList = value[targetKey];
 
                     if (entriesIncreased) {
-                        $.each(settingDetailSource, function (key, value) {
-                            if (subList[value.variable.cvTermId] === undefined) {
-                                subList[value.variable.cvTermId] = null;
+                        $.each(settingDetailSource.keys(), function (key, value) {
+                            if (subList[value] === undefined) {
+                                subList[value] = null;
                             }
                         });
                     } else {
                         $.each(subList, function (idKey) {
-                            var index = -1;
-                            $.each(settingDetailSource, function (key, value) {
-                                if (value.variable.cvTermId === idKey) {
-                                    index = key;
-                                }
-                            });
-
-                            if (index === -1) {
+                            if (!settingDetailSource.vals().hasOwnProperty(idKey)) {
                                 delete subList[idKey];
                             }
                         });
@@ -122,7 +115,7 @@
 
             $scope.constructDataStructureFromDetails = function (details) {
                 var returnVal = {};
-                $.each(details, function (key, value) {
+                $.each(details.vals(), function (key, value) {
                     returnVal[value.variable.cvTermId] = null;
                 });
 

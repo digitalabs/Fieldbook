@@ -485,6 +485,9 @@ public class CreateTrialController extends SettingsController {
     }
 
     protected TabInfo prepareTrialSettingsTabInfo() {
-        return new TabInfo();
+        TabInfo info = new TabInfo();
+        info.setSettings(new ArrayList<SettingDetail>());
+
+        return info;
     }
 }

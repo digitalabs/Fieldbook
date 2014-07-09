@@ -19,8 +19,6 @@ public class TabInfo {
     private Map<String, List<SettingDetail>> settingMap;
 
     public TabInfo() {
-        settings = new ArrayList<SettingDetail>();
-        settingMap = new HashMap<String, List<SettingDetail>>();
     }
 
     public TabInfoBean getData() {

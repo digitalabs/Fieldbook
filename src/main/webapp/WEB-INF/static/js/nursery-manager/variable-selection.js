@@ -163,7 +163,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		// Clear out any existing related properties, and update the related property class name
 		relatedPropertyList.empty();
-		$('.nrm-var-select-related-prop-class').text(selectedProperty.traitClass.traitClassName);
 
 		// Key identifies whether we have retrieved the related properties for this group / class before (so we don't retrieve them again)
 		relatedPropertiesKey = this._group + ':' + classId;
@@ -192,8 +191,9 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	VariableSelection.prototype._selectVariableButton = function(e) {
 		e.preventDefault();
 
-		var selectButton = $(e.target),
-			variableName = $(selectButton.parent('.nrm-var-select-var').find('.nrm-var-name')[0]).text(),
+		var selectButton = $(e.currentTarget),
+			iconContainer = selectButton.children('.glyphicon'),
+			variableName = $(selectButton.parent('p').children('.nrm-var-name')[0]).text(),
 			selectedVariable;
 
 		// Find the variable from the name of the variable that was clicked on
@@ -207,6 +207,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		// Disable the select button to prevent clicking twice
 		selectButton.attr('disabled', 'disabled');
+		iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
 
 		$.ajax({
 			url: '/Fieldbook/manageSettings/addSettings/' + this._group,
@@ -231,6 +232,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			}, this),
 			failure: function() {
 				selectButton.removeAttr('disabled');
+				iconContainer.removeClass('glyphicon-ok').addClass('glyphicon-plus');
 			}
 		});
 	};

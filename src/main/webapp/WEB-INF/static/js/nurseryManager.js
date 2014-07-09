@@ -791,7 +791,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						} else {
 							jsonVal = {
 								'id' : value.mid,
-								'text' : value.mname,
+								'text' : value.mname + (value.mcode !== undefined ? ' - ' + value.mcode : ''),
 								'description': value.mdesc
 							};
 						}

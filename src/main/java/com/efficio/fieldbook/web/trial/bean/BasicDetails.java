@@ -12,7 +12,7 @@ import java.util.Map;
 public class BasicDetails implements TabInfoBean{
     private Map<Integer, String> basicDetails;
 
-    private int folderId;
+    private Integer folderId;
     private String folderName;
     private String folderNameLabel;
 
@@ -28,11 +28,11 @@ public class BasicDetails implements TabInfoBean{
         this.basicDetails = basicDetails;
     }
 
-    public int getFolderId() {
+    public Integer getFolderId() {
         return folderId;
     }
 
-    public void setFolderId(int folderId) {
+    public void setFolderId(Integer folderId) {
         this.folderId = folderId;
     }
 

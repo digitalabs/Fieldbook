@@ -9,13 +9,18 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TrialSettingsCtrl',['$scope','TrialSettingsService',function($scope,TrialSettingsService) {
+    manageTrialApp.controller('TrialSettingsCtrl',['$scope','TrialManagerDataService',function($scope,TrialManagerDataService) {
 
-        $scope.data = TrialSettingsService.data;
+        $scope.settings = TrialManagerDataService.settings.trialSettings;
+        $scope.currentData = TrialManagerDataService.currentData.trialSettings;
 
         $scope.removeVariable = function(cvTermId) {
-            //TrialSettingsService.removeUserInputByIndex(cvTermId);
-            TrialSettingsService.removeManagementDetailVarByIndex(cvTermId);
+            // remove the equivalent setting
+            $scope.settings.remove(cvTermId);
+
+            // remove the equivalent current data
+
+
         };
 
         $scope.managementDetailsSize = function() {

@@ -64,20 +64,19 @@
                 templateUrl : '/Fieldbook/static/angular-templates/displaySettings.html',
                 controller : function($scope, $element, $attrs) {
                     $scope.removeSetting = function(key) {
-                        if (index !== -1){
-                            $scope.settings.remove(key);
-                            $.ajax({
-                                url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + key,
-                                type: 'POST',
-                                cache: false,
-                                data: '',
-                                contentType: 'application/json',
-                                success: function () {
-                                }
-                            });
+                        $scope.settings.remove(key);
+                        $.ajax({
+                            url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + key,
+                            type: 'POST',
+                            cache: false,
+                            data: '',
+                            contentType: 'application/json',
+                            success: function () {
+                            }
+                        });
 
-                            $scope.$emit('deleteOccurred');
-                        }
+                        $scope.$emit('deleteOccurred');
+
                     };
 
                     $scope.showDetailsModal = function(setting) {

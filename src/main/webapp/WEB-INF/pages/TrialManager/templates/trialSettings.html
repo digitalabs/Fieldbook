@@ -2,7 +2,7 @@
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <!-- management details title -->
 
-        <section-container th:attr="heading=#{fb.study.managementdetails},reminder=#{section.reminder.to.add.records}" show-reminder="managementDetailsSize() &lt;= 0" add-variable="true" model-data="data.managementDetails" variable-type="1">
+        <section-container th:attr="heading=#{fb.study.managementdetails},reminder=#{section.reminder.to.add.records}" show-reminder="managementDetailsSize() &lt;= 0" add-variable="true" model-data="managementDetails" variable-type="1">
 
             <div class="row form-group nurseryLevelSettings" ng-repeat="(key, value) in data.managementDetails">
                 <div class="col-xs-5 1st">

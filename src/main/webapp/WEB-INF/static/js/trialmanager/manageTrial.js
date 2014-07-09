@@ -126,7 +126,7 @@
             var extractSettings = function (initialData) {
 
                 if (initialData) {
-                    if (Object.keys(initialData.settingMap).length === 0) {
+                    if (!initialData.settingMap) {
                         var data = new angular.OrderedHash();
                         data.addList(initialData.settings,function(item) {
                             return item.variable.cvTermId;

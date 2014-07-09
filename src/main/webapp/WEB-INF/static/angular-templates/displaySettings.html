@@ -2,21 +2,21 @@
     <thead>
         <tr>
             <th class="fbk-delete-link"></th>
-            <th width="45%" th:utext="#{nursery.managesettings.plot.name}">Name</th>
-            <th width="50%" th:utext="#{nursery.managesettings.plot.description}">Description</th>
+            <th width="45%">Name</th>
+            <th width="50%">Description</th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="(key, setting) in settings track by key">
+        <tr ng-repeat="key in settings.keys() track by key">
             <td ng-class="{even : $even, odd : $odd}" class="fbk-delete-link">
-                <span class="delete-icon" ng-click="removeSetting(setting)" ng-show="setting.deletable"></span>
+                <span class="delete-icon" ng-click="removeSetting(settings.val(key))" ng-show="settings.val(key).deletable"></span>
             </td>
             <td width="45%" ng-class="{even : $even, odd : $odd}">
                 <a href="javascript: void(0);">
-                    <span class="var-names" ng-click="showDetailsModal(setting)">{{setting.variable.name}}</span>
+                    <span class="var-names" ng-click="showDetailsModal(settings.val(key))">{{settings.val(key).variable.name}}</span>
                 </a>
             </td>
-            <td width="50%" ng-class="{even : $even, odd : $odd}">{{setting.variable.description}}</td>
+            <td width="50%" ng-class="{even : $even, odd : $odd}">{{settings.val(key).variable.description}}</td>
         </tr>
         <tr ng-hide="size() &gt; 0">
            <td class="odd">&nbsp;</td>

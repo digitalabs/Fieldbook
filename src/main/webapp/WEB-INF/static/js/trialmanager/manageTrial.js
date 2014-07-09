@@ -126,7 +126,7 @@
             var extractSettings = function (initialData) {
 
                 if (initialData) {
-                    if (initialData.settings.length > 0) {
+                    if (Object.keys(initialData.settingMap).length === 0) {
                         var data = new angular.OrderedHash();
                         data.addList(initialData.settings,function(item) {
                             return item.variable.cvTermId;
@@ -136,17 +136,12 @@
                     } else {
                         var dataMap = {};
 
-                        if (Object.keys(initialData).length > 0 ) {
+                        $.each(initialData.settingMap,function(key,value) {
+                            dataMap[key] = new angular.OrderedHash();
+                            dataMap[key].addList(value,function(item) { return item.variable.cvTermId; });
+                        });
 
-                            angular.each(initialData.settingMap,function(val,key) {
-                                dataMap[key] = new angular.OrderedHash();
-                                dataMap[key].addList(val,function(item) {
-                                    return item.variable.cvTermId;
-                                });
-
-                            });
-                        }
-
+                         return dataMap;
                     }
 
                 }

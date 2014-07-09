@@ -12,8 +12,8 @@
 
         OrderedHash.prototype.addList = function (list, keyExtract) {
             for (var i = 0; i < list.length; i++) {
-                OrderedHash.this.m_keys.push(keyExtract(list[i]));
-                OrderedHash.this.m_vals[keyExtract(list[i])] = list[i];
+                this.m_keys.push(keyExtract(list[i]));
+                this.m_vals[keyExtract(list[i])] = list[i];
             }
         }
 
@@ -42,6 +42,12 @@
             return this.m_vals;
         };
 
+        OrderedHash.prototype.remove = function(key) {
+            this.m_keys.splice(this.m_keys.indexOf(key),1);
+            delete this.m_vals[key];
+
+        };
+
         return OrderedHash;
 
     })();
@@ -57,13 +63,11 @@
                 },
                 templateUrl : '/Fieldbook/static/angular-templates/displaySettings.html',
                 controller : function($scope, $element, $attrs) {
-                    $scope.removeSetting = function(setting) {
-                        var index = $scope.settings.indexOf(setting);
+                    $scope.removeSetting = function(key) {
                         if (index !== -1){
-                            $scope.settings.splice(index, 1);
-
+                            $scope.settings.remove(key);
                             $.ajax({
-                                url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + setting.variable.cvTermId,
+                                url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + key,
                                 type: 'POST',
                                 cache: false,
                                 data: '',
@@ -83,11 +87,7 @@
                     };
 
                     $scope.size = function() {
-                        if ($scope.settings instanceof Array) {
-                            return $scope.settings.length;
-                        } else if ($scope.settings instanceof Object) {
-                            return Object.keys($scope.settings).length;
-                        }
+                        return $scope.settings.keys().length;
                     };
                 }
             };
@@ -157,7 +157,7 @@
                             retrieveSelectedVariableFunction: function () {
                                 var selected = [];
 
-                                $.each($scope.modeldata, function(key, value) {
+                                $.each($scope.modeldata.vals(), function(key, value) {
                                     selected.push(value.variable.cvTermId);
                                 });
 
@@ -194,7 +194,7 @@
                 controller : function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
                     $scope.findSetting = function(targetKey) {
                         var foundSetting = null;
-                        $.each($scope.settings, function(key, value) {
+                        $.each($scope.settings.vals(), function(key, value) {
                             if (value.variable.cvTermId == targetKey) {
                                 foundSetting = value;
                                 return false;

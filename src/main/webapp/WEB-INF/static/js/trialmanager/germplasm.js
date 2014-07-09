@@ -11,9 +11,10 @@
     angular.module('manageTrialApp').controller('GermplasmCtrl',
         ['$scope', 'TrialManagerDataService', function($scope, TrialManagerDataService) {
 
-        $scope.data = TrialManagerDataService.currentData.germplasm;
+        $scope.settings = TrialManagerDataService.settings.germplasm;
+        $scope.currentData = TrialManagerDataService.currentData.germplasm;
 
-        $scope.labels = {};
+            $scope.labels = {};
         $scope.labels.germplasmFactors = {
             label: 'Temp label here',
             placeholderLabel: 'Temp placeholder here'

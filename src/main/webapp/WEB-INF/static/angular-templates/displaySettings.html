@@ -9,7 +9,7 @@
     <tbody>
         <tr ng-repeat="key in settings.keys() track by key">
             <td ng-class="{even : $even, odd : $odd}" class="fbk-delete-link">
-                <span class="delete-icon" ng-click="removeSetting(settings.val(key))" ng-show="settings.val(key).deletable"></span>
+                <span class="delete-icon" ng-click="removeSetting(key)" ng-show="settings.val(key).deletable"></span>
             </td>
             <td width="45%" ng-class="{even : $even, odd : $odd}">
                 <a href="javascript: void(0);">

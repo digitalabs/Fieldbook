@@ -355,7 +355,6 @@
                     };
 
                     $scope.doClick = function() {
-                        console.log('clicked');
                         $scope.onUpdate({});
                     };
                 }]

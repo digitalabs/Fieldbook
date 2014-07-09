@@ -73,19 +73,22 @@ public class AdvancingSourceListFactory {
                     season = getSeason(trialRow);
                     
                     MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
-                    String check = checkData.getcValueId();
-                    if (checkData != null && checkData.getMeasurementVariable() != null 
-                    		&& checkData.getMeasurementVariable().getPossibleValues() != null
-                    		&& !checkData.getMeasurementVariable().getPossibleValues().isEmpty()
-                    		&& check != null 
-                    		&& NumberUtils.isNumber(check)) {
-                    	
-                    	for (ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
-                    		if (valref.getId().equals(Double.valueOf(check).intValue())) {
-                    			check = valref.getName();
-                    			break;
-                    		}
-                    	}
+                    String check = null;
+                    if (checkData != null) {
+	                    check = checkData.getcValueId();
+	                    if (checkData != null && checkData.getMeasurementVariable() != null 
+	                    		&& checkData.getMeasurementVariable().getPossibleValues() != null
+	                    		&& !checkData.getMeasurementVariable().getPossibleValues().isEmpty()
+	                    		&& check != null 
+	                    		&& NumberUtils.isNumber(check)) {
+	                    	
+	                    	for (ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
+	                    		if (valref.getId().equals(Double.valueOf(check).intValue())) {
+	                    			check = valref.getName();
+	                    			break;
+	                    		}
+	                    	}
+	                    }
                     }
                     boolean isCheck = check != null && !DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
 

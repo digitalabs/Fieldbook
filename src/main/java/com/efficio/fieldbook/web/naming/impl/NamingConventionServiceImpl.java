@@ -101,7 +101,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     private void assignGermplasmAttributes(ImportedGermplasm germplasm, int sourceGid, int sourceGnpgs, 
             int sourceGpid1, int sourceGpid2, Method sourceMethod, Method breedingMethod) {
         
-        if (sourceMethod != null && sourceMethod.getMtype() != null && AppConstants.METHOD_TYPE_GEN.equals(sourceMethod.getMtype()) 
+        if (sourceMethod != null && sourceMethod.getMtype() != null && AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype()) 
                 || sourceGnpgs < 0 && sourceGpid1 == 0 && sourceGpid2 == 0) {
             
             germplasm.setGpid1(sourceGid);

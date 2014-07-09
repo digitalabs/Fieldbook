@@ -124,11 +124,32 @@
             };
 
             var extractSettings = function (initialData) {
-                if (!initialData) {
-                    return null;
-                } else {
-                    return initialData.settings.length > 0 ? initialData.settings : initialData.settingMap;
+
+                if (initialData) {
+                    if (initialData.settings.length > 0) {
+                        var data = new angular.OrderedHash();
+                        data.addList(initialData.settings,function(item) {
+                            return item.variable.cvTermId;
+                        });
+
+                        return data;
+                    } else {
+                        var dataMap = {};
+
+                        angular.each(initialData.settingsMap,function(val,key) {
+                            dataMap[key] = new angular.OrderedHash();
+                            dataMap[key].addList(val,function(item) {
+                                return item.variable.cvTermId;
+                            });
+
+                        });
+
+                        return dataMap;
+                    }
+
                 }
+
+                return new angular.OrderedHash();
             };
 
             var service = {
@@ -143,6 +164,7 @@
                     basicDetails: extractData(BASIC_DETAILS_DATA)
                 },
                 // standard variable [meta-data] information or a particular tab settings information
+                // what I get is an instance of OrderedHash containing an array of keys with the map
                 settings: {
                     trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),

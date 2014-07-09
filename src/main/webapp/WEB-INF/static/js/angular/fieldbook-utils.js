@@ -127,7 +127,7 @@
                     modeldata : '='
                 },
 
-                controller : function($scope, $element, $attrs, VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE) {
+                controller : function($scope, $element, $attrs, VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, TrialSettingsManager) {
                     $scope.processModalData = function (data) {
                         if (data.responseData) {
                             data = data.responseData;
@@ -169,13 +169,23 @@
                         $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
                         $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
 
-                        var TrialSettingsManager = window.TrialSettingsManager;
-                        var settingsManager = new TrialSettingsManager({});
-                        settingsManager._openVariableSelectionDialog(params);
+                        TrialSettingsManager.openVariableSelectionDialog(params);
                     });
                 }
             };
         })
+        .service('TrialSettingsManager', ['TRIAL_VARIABLE_SELECTION_LABELS', function(TRIAL_VARIABLE_SELECTION_LABELS) {
+            var TrialSettingsManager = window.TrialSettingsManager;
+            var settingsManager = new TrialSettingsManager(TRIAL_VARIABLE_SELECTION_LABELS);
+
+            var service = {
+                openVariableSelectionDialog : function(params) {
+                    settingsManager._openVariableSelectionDialog(params);
+                }
+            };
+
+            return service;
+        }])
         .directive('showSettingFormElement', function() {
             return {
                 require: '?uiSelect2',

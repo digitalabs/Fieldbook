@@ -42,14 +42,14 @@
             })
 
             .state('measurements', {
-                url: "/measurements",
+                url: '/measurements',
                 templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
             })
 
             .state('germplasm', {
-                url: "/germplasm",
+                url: '/germplasm',
                 views: {
-                    "germplasm" : {
+                    'germplasm' : {
                         controller: 'GermplasmCtrl',
                         templateUrl: "/Fieldbook/TrialManager/createTrial/germplasm"
                     }
@@ -173,7 +173,15 @@
                 },
 
                 saveCurrentData: function () {
-                    $http.post('/Fieldbook/TrialManager/createTrial', service.currentData);
+                    var returnVal = {};
+                    // remove 'tab data' that does not have any information
+                    angular.forEach(service.currentData, function(value, key) {
+                        if (! (value === null || value === undefined) ) {
+                            returnVal[key] = value;
+                        }
+                    });
+
+                    $http.post('/Fieldbook/TrialManager/createTrial', returnVal);
                 }
             };
 

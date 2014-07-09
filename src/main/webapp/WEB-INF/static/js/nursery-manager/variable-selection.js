@@ -19,7 +19,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	var VARIABLE_SELECT_EVENT = 'nrm-variable-select',
 
 		modalHeaderSelector = '.modal-header',
+		variableNameContainerSelector = '.nrm-var-select-var-name-container',
 		addVariableButtonSelector = '.nrm-var-select-add',
+		aliasVariableButtonSelector = '.nrm-var-select-name-alias',
+		aliasVariableInputSelector = '.nrm-var-select-alias-input',
 		relatedPropertyLinkSelector = '.nrm-var-property-name',
 		variableListSelector = '.nrm-var-select-vars',
 		relatedPropertyListSelector = '.nrm-var-select-related-props',
@@ -27,20 +30,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		// Only compile our templates once, rather than every time we need them
 		generateVariable = Handlebars.compile($('#variable-template').html()),
+		generateVariableName = Handlebars.compile($('#nrm-var-select-name-template').html()),
+		generateVariableAlias = Handlebars.compile($('#nrm-var-select-name-alias-template').html()),
 		generateRelatedProperty = Handlebars.compile($('#related-prop-template').html()),
 
 		VariableSelection;
 
-	/* Provides a conditional check as to whether a provided variable is one of a list of already selected variables. Used to ensure already
-	 * selected variables cannot be selected again.
-	 */
-	Handlebars.registerHelper('ifSelectedVariable', function(variableId, selectedVariables, options) {
-		if (selectedVariables.indexOf(variableId) !== -1)  {
-			return options.fn(this);
-		} else {
-			return options.inverse(this);
-		}
-	});
+	Handlebars.registerPartial('variable-name', $('#nrm-var-select-name-partial').html());
 
 	/* Attaches the specified list of related properties to the provided container, after ensuring the currently selected property is
 	 * removed from the list.
@@ -71,6 +67,32 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			placeholder, properties, onSelectingFn);
 
 		return propertyDropdown;
+	}
+
+	/*
+	 * Finds a variable with a specified name from a list of variables.
+	 *
+	 * @param {string} variableName the name fo the variable to find
+	 * @param {object[]} variableList the array of variables to search through
+	 */
+	function _findVariableByName(variableName, variableList) {
+
+		var index = -1,
+			selectedVariable;
+
+		$.each(variableList, function(i, variableObj) {
+
+			if (variableObj.name === variableName) {
+				selectedVariable = variableObj;
+			}
+			index = i;
+			return !selectedVariable;
+		});
+
+		return {
+			index: index,
+			variable: selectedVariable
+		};
 	}
 
 	/**
@@ -121,8 +143,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// TODO Awaiting Rebecca's JSONified variable usage service
 		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: groupData.variables}));
 
-		// Listen for variable selection
+		// Listen for variable selection and name aliasing
 		$(variableListSelector).on('click', addVariableButtonSelector, {}, $.proxy(this._selectVariableButton, this));
+
+		$(variableListSelector).on('click', aliasVariableButtonSelector, {}, $.proxy(this._aliasVariableButton, this));
 
 		// Listen for the user clicking on a related property
 		$(relatedPropertyListSelector).on('click', relatedPropertyLinkSelector, {}, $.proxy(this._loadRelatedProperty, this));
@@ -148,17 +172,41 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	VariableSelection.prototype._loadVariablesAndRelatedProperties = function() {
 
 		var selectedProperty = this._selectedProperty,
-			variableList = $(variableListSelector),
+			variables = this._selectedProperty.standardVariables,
+			variableListElement = $(variableListSelector),
 			relatedPropertyList = $(relatedPropertyListSelector),
 			classId = selectedProperty.traitClass.traitClassId,
+			selectedVariables = this._currentlySelectedVariables,
 
+			i,
+			selectedVariableName,
+			variableId,
 			relatedPropertiesKey;
 
+		// If we know of aliases for any of the variables we're loading, set them now
+		for (i = 0; i < variables.length; i++) {
+			variableId = variables[i].id;
+			selectedVariableName = selectedVariables[variableId];
+
+			if (typeof(selectedVariableName) !== 'undefined') {
+
+				// Only set the alias if it is different from the name we know for the variable
+				if (selectedVariableName && selectedVariableName !== variables[i].name) {
+					variables[i].alias = selectedVariableName;
+				}
+				// Whether or not the selected variable name has been provided, if the key is present the variable has
+				// been selected
+				variables[i].selected = true;
+			}
+		}
+
+		// Update our saved property list to reflect our new knowledge of aliases and which variables are selected
+		this._selectedProperty.standardVariables = variables;
+
 		// Clear out any existing variables and append the variables of the selectedProperty
-		variableList.empty();
-		variableList.append(generateVariable({
-			variables: selectedProperty.standardVariables,
-			selectedVariables: this._currentlySelectedVariables
+		variableListElement.empty();
+		variableListElement.append(generateVariable({
+			variables: variables
 		}));
 
 		// Clear out any existing related properties, and update the related property class name
@@ -193,17 +241,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		var selectButton = $(e.currentTarget),
 			iconContainer = selectButton.children('.glyphicon'),
-			variableName = $(selectButton.parent('p').children('.nrm-var-name')[0]).text(),
+			variableName = $(selectButton.parent('p').find('.nrm-var-name')[0]).text(),
 			selectedVariable;
 
-		// Find the variable from the name of the variable that was clicked on
-		$.each(this._selectedProperty.standardVariables, function(index, variableObj) {
-
-			if (variableObj.name === variableName) {
-				selectedVariable = variableObj;
-			}
-			return !selectedVariable;
-		});
+		selectedVariable = _findVariableByName(variableName, this._selectedProperty.standardVariables).variable;
 
 		// Disable the select button to prevent clicking twice
 		selectButton.attr('disabled', 'disabled');
@@ -212,7 +253,9 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		$.ajax({
 			url: '/Fieldbook/manageSettings/addSettings/' + this._group,
 			type: 'POST',
-			data: JSON.stringify({selectedVariables: [{cvTermId: selectedVariable.id, name: selectedVariable.name}]}),
+			data: JSON.stringify({
+				selectedVariables: [{cvTermId: selectedVariable.id, name: selectedVariable.alias || selectedVariable.name}]
+			}),
 			dataType: 'json',
 			headers: {
 				Accept: 'application/json',
@@ -220,7 +263,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			},
 			success: $.proxy(function(data) {
 				// Prevent this variable from being selected again
-				this._currentlySelectedVariables.push(selectedVariable.id);
+				this._currentlySelectedVariables[selectedVariable.id] = selectedVariable.alias;
+
+				// Remove the edit button
+				selectButton.parent('p').find(aliasVariableButtonSelector).remove();
 
 				// Throw a variable select event, so interested parties can do something with the user's intention to add this variable.
 				// FIXME Should pass this selector through
@@ -235,6 +281,97 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				iconContainer.removeClass('glyphicon-ok').addClass('glyphicon-plus');
 			}
 		});
+	};
+
+	/*
+	 * Handles a variable alias event. Allows the user to provide an alias for a variable name.
+	 *
+	 * @param {object} event the JQuery click event
+	 */
+	VariableSelection.prototype._aliasVariableButton = function(e) {
+		e.preventDefault();
+
+		var aliasButton = $(e.currentTarget),
+			container = aliasButton.parent(variableNameContainerSelector),
+			variableName = $(container.children('.nrm-var-name')[0]).text(),
+			variableInfo;
+
+		variableInfo = _findVariableByName(variableName, this._selectedProperty.standardVariables);
+
+		// Remove the display of the name and edit button, and render the input and save/ cancel buttons
+		container.empty();
+		container.append(generateVariableAlias({
+			index: variableInfo.index,
+			// FIXME I18n placeholder
+			placeholder: 'Enter an alias',
+			alias: variableInfo.variable.alias || ''
+		}));
+
+		container.on('click', '.nrm-var-select-name-save', {}, $.proxy(this._saveAlias, this));
+		container.on('click', '.nrm-var-select-name-cancel', {}, $.proxy(this._cancelAlias, this));
+		container.on('keyup ', aliasVariableInputSelector, {}, $.proxy(function(e) {
+
+			switch (e.keyCode) {
+				case 13:
+					// Save on enter
+					this._saveAlias(e);
+					break;
+				case 27:
+					// Cancel on escape - this is actually being trapped by the escape to escape from
+					// the modal, so won't work at the moment :(
+					this._cancelAlias(e);
+					break;
+				default:
+					// Don't do anything for any other keys
+					break;
+			}
+		}, this));
+
+		container.find(aliasVariableInputSelector).focus();
+	};
+
+	function _renderVariableName(variable, variableContainer) {
+
+		variableContainer.off('click');
+		variableContainer.empty();
+
+		variableContainer.append(generateVariableName(variable));
+	}
+
+	/*
+	 * Handles a variable alias save event.
+	 *
+	 * @param {object} event the JQuery click event
+	 */
+	VariableSelection.prototype._saveAlias = function(e) {
+		e.preventDefault();
+
+		var container = $(e.currentTarget).parent(variableNameContainerSelector),
+			input = container.find(aliasVariableInputSelector),
+			alias = input.val(),
+			index = input.data('index');
+
+		if (alias) {
+			// Store the alias
+			this._selectedProperty.standardVariables[index].alias = alias;
+		}
+
+		_renderVariableName(this._selectedProperty.standardVariables[index], container);
+	};
+
+	/*
+	 * Handles a variable alias cancel event.
+	 *
+	 * @param {object} event the JQuery click event
+	 */
+	VariableSelection.prototype._cancelAlias = function(e) {
+		e.preventDefault();
+
+		var container = $(e.currentTarget).parent(variableNameContainerSelector),
+			input = container.find(aliasVariableInputSelector),
+			index = input.data('index');
+
+		_renderVariableName(this._selectedProperty.standardVariables[index], container);
 	};
 
 	/*

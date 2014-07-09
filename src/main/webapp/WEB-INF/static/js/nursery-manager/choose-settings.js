@@ -21,9 +21,13 @@ window.ChooseSettings = (function() {
 	function findVariables(startingSelector) {
 
 		var allMatches = $('[id^=' + startingSelector + ']'),
-			variables = [],
+			variableNameSelector = '.var-names',
+			variables = {},
 			findElement,
-			variableElement;
+			variableElement,
+			variableId,
+			nameElement,
+			parent;
 
 		findElement = function() {
 			return $(this).attr('id') === startingSelector + i + '.variable.cvTermId';
@@ -33,7 +37,19 @@ window.ChooseSettings = (function() {
 			variableElement = allMatches.filter(findElement);
 
 			if (variableElement.length > 0) {
-				variables.push(parseInt($(variableElement[0]).attr('value')));
+
+				// Find the name of the variable
+				parent = variableElement.parent();
+
+				// If we're inside a td, go up to the row level element
+				if (parent.is('td')) {
+					parent = parent.parent('tr');
+				}
+
+				nameElement = parent.find(variableNameSelector)[0];
+				variableId = parseInt($(variableElement[0]).attr('value'));
+
+				variables[variableId] = nameElement ? $(nameElement).text() : null;
 			}
 			// TODO Error handling
 		}

@@ -25,8 +25,9 @@
 	{{#each variables}}
 	<li class="nrm-var-select-var">
 	<p>
-		<span class="nrm-var-name">{{name}}</span>
-		{{#ifSelectedVariable id ../selectedVariables}}
+		<span class="nrm-var-select-var-name-container">{{> variable-name}}</span>
+
+		{{#if selected}}
 			<button type="button" class="btn btn-default btn-s nrm-var-select-add icon-btn" disabled="disabled">
 				<span class="glyphicon glyphicon-ok"></span>
 			</button>
@@ -34,7 +35,7 @@
 			<button type="button" class="btn btn-default btn-s nrm-var-select-add icon-btn">
 				<span class="glyphicon glyphicon-plus"></span>
 			</button>
-		{{/ifSelectedVariable}}
+		{{/if}}
 	</p>
 	<p>{{description}}</p>
 	</li>
@@ -58,3 +59,34 @@
 <script id="nrm-var-select-dropdown-template" type="text/x-handlebars-template">
 	<input class="nrm-var-select-dropdown" type="hidden"></input>
 </script>
+
+<!-- Renders a variable name. Expects a variable object with a name and optional alias property. -->
+<script id="nrm-var-select-name-partial" type="text/x-handlebars-template">
+	<span class="nrm-var-name">{{name}}</span>
+	{{#if alias}}
+		<span> ({{alias}})</span>
+	{{/if}}
+
+	{{#unless selected}}
+		<button type="button" class="btn btn-default btn-s nrm-var-select-name-alias icon-btn">
+			<span class="glyphicon glyphicon-pencil"></span>
+		</button>
+	{{/unless}}
+</script>
+
+<!-- Renders an input that allows a user to provide an alias for a variable. Expects an object with a placeholder and optional alias.-->
+<script id="nrm-var-select-name-alias-template" type="text/x-handlebars-template">
+	<input class="nrm-var-select-alias-input" placeholder="{{placeholder}}" type="text" data-index="{{index}}" value="{{alias}}"></input>
+	<button type="button" class="btn btn-default btn-xs nrm-var-select-name-save icon-btn">
+		<span class="glyphicon glyphicon-ok"></span>
+	</button>
+	<button type="button" class="btn btn-default btn-xs nrm-var-select-name-cancel icon-btn">
+		<span class="glyphicon glyphicon-remove"></span>
+	</button>
+</script>
+
+<!-- Also expose the variable name partial as a template for standalone use.-->
+<script id="nrm-var-select-name-template" type="text/x-handlebars-template">
+	{{> variable-name}}
+</script>
+

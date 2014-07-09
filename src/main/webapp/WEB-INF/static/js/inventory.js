@@ -173,7 +173,7 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 		    }
 	    }).on('change', function (){
 	    	if($('#'+getJquerySafeId('inventoryLocationId')).length !== 0){
-	    		$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryMethodIdFavorite')).select2('data').id);
+	    		$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
 	    	}
 	    });
 	}
@@ -189,8 +189,16 @@ function saveLots() {
 	'use strict';
 	var gids = getSelectedInventoryGids();
 	$('#gidList').val(gids);
-	
-	if ($('#inventoryLocationId').val() === '0') {
+	if($('#showFavoriteLocationInventory').is(':checked')){
+		if($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data') !== null){
+			$('#inventoryLocationId').val($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
+		}
+	}else{
+		if($('#'+getJquerySafeId('inventoryLocationIdAll')).select2('data') !== null){
+			$('#inventoryLocationId').val($('#'+getJquerySafeId('inventoryLocationIdAll')).select2('data').id);
+		}
+	}
+	if ($('#inventoryLocationId').val() === '0' || $('#inventoryLocationId').val() === '') {
 		showInvalidInputMessage(locationRequired);
 		moveToTopScreen();
 	} else if (!$('#inventoryScaleId').select2('data')) {

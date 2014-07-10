@@ -34,6 +34,21 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		generateVariableAlias = Handlebars.compile($('#nrm-var-select-name-alias-template').html()),
 		generateRelatedProperty = Handlebars.compile($('#related-prop-template').html()),
 
+		// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
+		breedingMethodPropertyId = 2670,
+
+		// These three variables need special handling - their IDs must be translated before sending to the server
+		idTranslations = {
+			// Collaborator
+			8373: 8372,
+
+			// PI Name
+			8100: 8110,
+
+			// Location
+			8180: 8190
+		},
+
 		VariableSelection;
 
 	Handlebars.registerPartial('variable-name', $('#nrm-var-select-name-partial').html());
@@ -129,6 +144,23 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._currentlySelectedVariables = groupData.selectedVariables;
 		this._group = group;
 		this._properties = properties;
+
+		// We must filter out the Breeding Method property from the list of Management Details. We should probably do this
+		// on the server side.
+		if (group === 1) {
+
+			// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
+			$.each(properties, function(index, propertyObj) {
+
+				var found = false;
+
+				if (propertyObj.propertyId === breedingMethodPropertyId) {
+					found = true;
+					properties.splice(index, 1);
+				}
+				return !found;
+			});
+		}
 
 		// Append title
 		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');
@@ -242,7 +274,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		var selectButton = $(e.currentTarget),
 			iconContainer = selectButton.children('.glyphicon'),
 			variableName = $(selectButton.parent('p').find('.nrm-var-name')[0]).text(),
-			selectedVariable;
+			selectedVariable,
+			variableId;
 
 		selectedVariable = _findVariableByName(variableName, this._selectedProperty.standardVariables).variable;
 
@@ -250,11 +283,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		selectButton.attr('disabled', 'disabled');
 		iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
 
+		variableId = idTranslations[selectedVariable.id] ? idTranslations[selectedVariable.id] : selectedVariable.id;
+
 		$.ajax({
 			url: '/Fieldbook/manageSettings/addSettings/' + this._group,
 			type: 'POST',
 			data: JSON.stringify({
-				selectedVariables: [{cvTermId: selectedVariable.id, name: selectedVariable.alias || selectedVariable.name}]
+				selectedVariables: [{cvTermId: variableId, name: selectedVariable.alias || selectedVariable.name}]
 			}),
 			dataType: 'json',
 			headers: {

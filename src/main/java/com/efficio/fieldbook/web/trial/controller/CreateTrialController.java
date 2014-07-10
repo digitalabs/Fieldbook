@@ -559,13 +559,23 @@ public class CreateTrialController extends SettingsController {
 
     protected TabInfo prepareEnvironmentsTabInfo() throws MiddlewareQueryException{
         TabInfo info = new TabInfo();
-        info.setData(new EnvironmentData());
+        EnvironmentData data = new EnvironmentData();
+        data.setNoOfEnvironments(Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString()));
+        info.setData(data);
 
         Map<String, List<SettingDetail>> settingMap = new HashMap<String, List<SettingDetail>>();
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
+        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
 
         for (Integer id : buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
-            managementDetailList.add(createSettingDetail(id, null));
+            SettingDetail detail = createSettingDetail(id, null);
+            for (Integer hiddenField : hiddenFields) {
+                if (id.equals(hiddenField)) {
+                    detail.setHidden(true);
+                }
+            }
+
+            managementDetailList.add(detail);
         }
 
         settingMap.put("managementDetails", managementDetailList);

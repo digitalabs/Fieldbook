@@ -34,26 +34,69 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		generateVariableAlias = Handlebars.compile($('#nrm-var-select-name-alias-template').html()),
 		generateRelatedProperty = Handlebars.compile($('#related-prop-template').html()),
 
-		// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
-		breedingMethodPropertyId = 2670,
-
-		// These three variables need special handling - their IDs must be translated before sending to the server
-		idTranslations = {
-			// Collaborator
-			8373: 8372,
-
-			// PI Name
-			8100: 8110,
-
-			// Location
-			8180: 8190
-		},
-
 		VariableSelection;
 
 	Handlebars.registerPartial('variable-name', $('#nrm-var-select-name-partial').html());
 
-	/* Attaches the specified list of related properties to the provided container, after ensuring the currently selected property is
+	/* FIXME - this logic should be in the back end
+	 *
+	 * Ensures that variables are converted to their necessary equivalents if required.
+	 *
+	 * @param {string} variableId the id of the variable to convert
+	 * @returns {string} the variable id that has been converted if necessary
+	 */
+	function _convertVariableId(variableId) {
+
+		// These three variables need special handling - their IDs must be translated before sending to the server
+		var idTranslations = {
+			// Collaborator
+			8373: 8372,
+			// PI Name
+			8100: 8110,
+			// Location
+			8180: 8190
+		};
+
+		// Check to see if the id is in our list of necessary translations. If it is, return the translation, otherwise return itself.
+		return idTranslations[variableId] ? idTranslations[variableId] : variableId;
+	}
+
+	/* FIXME - this logic should be in the back end
+	 *
+	 * Filters a list of properties according to some hard coded rules (see comments for details).
+	 *
+	 * @param {object[]} properties the list of properties to filter
+	 * @param {number} group properties and variables will be filtered to be specific to the group represented by this number
+	 * @returns {object[]} the filtered list of properties
+	 */
+	function _filterProperties(properties, group) {
+
+		var filteredProperties = properties,
+
+			// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
+			breedingMethodPropertyId = 2670;
+
+		// We must filter out the Breeding Method property from the list of Management Details. We should probably do this
+		// on the server side.
+		if (group === 1) {
+
+			// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
+			$.each(filteredProperties, function(index, propertyObj) {
+
+				var found = false;
+
+				if (propertyObj.propertyId === breedingMethodPropertyId) {
+					found = true;
+					filteredProperties.splice(index, 1);
+				}
+				return !found;
+			});
+		}
+		return filteredProperties;
+	}
+
+	/*
+	 * Attaches the specified list of related properties to the provided container, after ensuring the currently selected property is
 	 * removed from the list.
 	 *
 	 * @param {JQuery} container the container to which the properties should be appended
@@ -143,24 +186,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// Store these properties for later use
 		this._currentlySelectedVariables = groupData.selectedVariables;
 		this._group = group;
-		this._properties = properties;
-
-		// We must filter out the Breeding Method property from the list of Management Details. We should probably do this
-		// on the server side.
-		if (group === 1) {
-
-			// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
-			$.each(properties, function(index, propertyObj) {
-
-				var found = false;
-
-				if (propertyObj.propertyId === breedingMethodPropertyId) {
-					found = true;
-					properties.splice(index, 1);
-				}
-				return !found;
-			});
-		}
+		this._properties = _filterProperties(properties, group);
 
 		// Append title
 		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');
@@ -283,7 +309,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		selectButton.attr('disabled', 'disabled');
 		iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
 
-		variableId = idTranslations[selectedVariable.id] ? idTranslations[selectedVariable.id] : selectedVariable.id;
+		variableId = _convertVariableId(selectedVariable.id);
 
 		$.ajax({
 			url: '/Fieldbook/manageSettings/addSettings/' + this._group,

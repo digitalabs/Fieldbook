@@ -14,27 +14,33 @@ public class SequenceExpression implements Expression {
 
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
-		List<StringBuilder> newNames = new ArrayList<StringBuilder>();
-		for (StringBuilder value : values) {
-			int startIndex = value.toString().toUpperCase().indexOf(KEY);
-			int endIndex = startIndex + KEY.length();
-			
-			if (source.getPlantsSelected() != null &&
-	                source.getPlantsSelected() > 0) {
+		if (!source.isBulk()) {
+			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
+			for (StringBuilder value : values) {
+				int startIndex = value.toString().toUpperCase().indexOf(KEY);
+				int endIndex = startIndex + KEY.length();
 				
-				for (int i = 1; i <= source.getPlantsSelected(); i++) {
-					StringBuilder newName = new StringBuilder(value);
-					newName.replace(startIndex, endIndex, String.valueOf(i));
-					newNames.add(newName);
+				if (source.getPlantsSelected() != null &&
+		                source.getPlantsSelected() > 0) {
+					
+					for (int i = 1; i <= source.getPlantsSelected(); i++) {
+						StringBuilder newName = new StringBuilder(value);
+						newName.replace(startIndex, endIndex, String.valueOf(i));
+						newNames.add(newName);
+					}
+				}
+				else {
+					newNames.add(value.replace(startIndex, endIndex, ""));
 				}
 			}
-			else {
-				newNames.add(value.replace(startIndex, endIndex, ""));
-			}
+	
+			values.clear();
+			values.addAll(newNames);
 		}
-
-		values.clear();
-		values.addAll(newNames);
+		else {
+			NumberExpression numberExpression = new NumberExpression();
+			numberExpression.apply(values, source);
+		}
 	}
 
     @Override

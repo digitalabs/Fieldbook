@@ -390,11 +390,14 @@ public class CreateTrialController extends SettingsController {
         List<SettingDetail> basicDetails = userSelection.getBasicDetails();
         // transfer over data from user input into the list of setting details stored in the session
         populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
-        populateSettingData(studyLevelConditions, data.getTrialSettings().getUserInput());
 
         List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
         combinedList.addAll(basicDetails);
-        combinedList.addAll(studyLevelConditions);
+
+        if (studyLevelConditions != null) {
+            populateSettingData(studyLevelConditions, data.getTrialSettings().getUserInput());
+            combinedList.addAll(studyLevelConditions);
+        }
 
         String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
 
@@ -453,6 +456,8 @@ public class CreateTrialController extends SettingsController {
         for (int i = 0; i < data.getEnvironments().size(); i++) {
             Map<Integer, String> values = data.getEnvironments().get(i).getManagementDetailValues();
             if (! values.containsKey(TermId.TRIAL_INSTANCE_FACTOR.getId())) {
+                values.put(TermId.TRIAL_INSTANCE_FACTOR.getId(), Integer.toString(i + 1));
+            } else if (values.get(TermId.TRIAL_INSTANCE_FACTOR.getId()) == null || values.get(TermId.TRIAL_INSTANCE_FACTOR).isEmpty()) {
                 values.put(TermId.TRIAL_INSTANCE_FACTOR.getId(), Integer.toString(i + 1));
             }
         }
@@ -565,6 +570,10 @@ public class CreateTrialController extends SettingsController {
 
         settingMap.put("managementDetails", managementDetailList);
         settingMap.put("trialConditionDetails", new ArrayList<SettingDetail>());
+
+        if (userSelection.getTrialLevelVariableList() == null || userSelection.getBasicDetails().isEmpty()) {
+            userSelection.setTrialLevelVariableList(managementDetailList);
+        }
 
         info.setSettingMap(settingMap);
         return info;

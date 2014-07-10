@@ -11,11 +11,11 @@ import java.util.Map;
  */
 public class Environment{
     private Map<Integer, String> managementDetailValues;
-    private Map<Integer, String> trialConditionValues;
+    private Map<Integer, String> trialDetailValues;
 
     public Environment() {
         managementDetailValues = new HashMap<Integer, String>();
-        trialConditionValues = new HashMap<Integer, String>();
+        trialDetailValues = new HashMap<Integer, String>();
     }
 
     public Map<Integer, String> getManagementDetailValues() {
@@ -26,11 +26,11 @@ public class Environment{
         this.managementDetailValues = managementDetailValues;
     }
 
-    public Map<Integer, String> getTrialConditionValues() {
-        return trialConditionValues;
+    public Map<Integer, String> getTrialDetailValues() {
+        return trialDetailValues;
     }
 
-    public void setTrialConditionValues(Map<Integer, String> trialConditionValues) {
-        this.trialConditionValues = trialConditionValues;
+    public void setTrialDetailValues(Map<Integer, String> trialDetailValues) {
+        this.trialDetailValues = trialDetailValues;
     }
 }

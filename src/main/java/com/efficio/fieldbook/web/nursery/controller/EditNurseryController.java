@@ -417,7 +417,7 @@ public class EditNurseryController extends SettingsController {
 
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
-    	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
+    	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
     	workbook.setOriginalObservations(userSelection.getWorkbook().getOriginalObservations());
     	workbook.setTrialDatasetId(trialDatasetId);
     	workbook.setMeasurementDatesetId(measurementDatasetId);

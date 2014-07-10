@@ -405,7 +405,7 @@ public class CreateTrialController extends SettingsController {
                 userSelection.getTreatmentFactors(), null, null, false);
 
         // TODO : integrate trial level conditions in either dataset or workbook generation
-        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
+        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
 
         // TODO : optimize observation row generation by leveraging map instead of list of list array structure
         List<List<ValueReference>> trialEnvironmentValues = convertToValueReference(data.getEnvironments().getEnvironments());

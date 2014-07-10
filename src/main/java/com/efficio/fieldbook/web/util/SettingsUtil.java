@@ -927,10 +927,10 @@ public class SettingsUtil {
 	 * @param dataset the dataset
 	 * @return the workbook
 	 */
-	public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset) {
+	public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset, boolean isNursery) {
 		Workbook workbook = new Workbook();
 		
-		if (dataset instanceof Dataset) {
+		if (isNursery) {
 			Dataset nurseryDataset = (Dataset) dataset;
 			workbook.setConditions(convertConditionsToMeasurementVariables(nurseryDataset.getConditions()));
 			workbook.setFactors(convertFactorsToMeasurementVariables(nurseryDataset.getFactors()));

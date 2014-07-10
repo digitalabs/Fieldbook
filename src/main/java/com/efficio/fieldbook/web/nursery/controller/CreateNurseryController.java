@@ -262,7 +262,7 @@ public class CreateNurseryController extends SettingsController {
     	
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
-    	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
+    	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
     	userSelection.setWorkbook(workbook);
 
     	this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null);

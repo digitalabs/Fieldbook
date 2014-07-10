@@ -318,11 +318,7 @@
 
 			$('input[type=checkbox][name=lineChoice]').on('change', lineMethod);
 
-			$('input[type=checkbox][name=allPlotsChoice]').on('change', plotMethod);
-
-			$('.ps-variate-selection').on('change', function() {
-				validatePlantsSelected($(this));
-			});
+			$('input[type=checkbox][name=allPlotsChoice]').on('change', plotMethod);		
 
 			oldMethodSelected = $('#defaultMethodId').val();
 			oldLineSelected = $('#lineSelected').val();

@@ -1447,6 +1447,9 @@ function validatePlantsSelected() {
 		showErrorMessage('page-advance-modal-message', msgMethodError);
 		valid = false;
 	}
+	if(valid){
+		valid = validateBreedingMethod();
+	}
 	if (valid && ids !== '')	{
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/advance/nursery/countPlots/' + ids,
@@ -1459,7 +1462,7 @@ function validatePlantsSelected() {
 
 				if (isMixed) {
 					if (data == 0) {
-						var param = $('lineVariateId').text() + ' and/or ' + $('#plotVariateId').text();
+						var param = $('lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
 						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
 						showErrorMessage('page-advance-modal-message', newMessage);
 						valid = false;
@@ -1467,7 +1470,7 @@ function validatePlantsSelected() {
 				} else if (isBulk) {
 					choice = !$('#plot-variates-section').is(':visible');
 					if (choice == false && data == '0') {
-						var param = $('#plotVariateId').text();
+						var param = $('#plotVariateId').select2('data').text;
 						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
 						showErrorMessage('page-advance-modal-message', newMessage);
 						valid = false;
@@ -1476,7 +1479,7 @@ function validatePlantsSelected() {
 					choice = !$('#line-variates-section').is(':visible');
 					lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
 					if (lineSameForAll == false && choice == false && data == '0') {
-						var param = $('#lineVariateId').text();
+						var param = $('#lineVariateId').select2('data').text;
 						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
 						showErrorMessage('page-advance-modal-message', newMessage);
 						valid = false;
@@ -1491,7 +1494,7 @@ function validatePlantsSelected() {
 		});
 	}
 	if (valid && isMixed) {
-		return validateBreedingMethod();
+		return valid;
 	}
 	return valid;
 }
@@ -1591,7 +1594,7 @@ function validateBreedingMethod() {
 			async: false,
 			success: function(data) {
 				if (data == 0) {
-					var newMessage = noMethodValueError.replace(new RegExp(/\{0\}/g), $('#methodVariateId').text());
+					var newMessage = noMethodValueError.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
 					showErrorMessage('page-advance-modal-message', newMessage);
 					valid = false;
 				}

@@ -60,9 +60,6 @@ function displaySectionsPerMethodVariateValues() {
 					$('.lines-section').css('display', 'block');
 					$('.bulk-section').css('display', 'block');
 				}
-				else {
-					showErrorMessage("page-advance-modal-message", data);
-				}
 			}
 		});
 	}

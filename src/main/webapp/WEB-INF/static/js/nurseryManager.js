@@ -1340,13 +1340,6 @@ function initializeDateAndSliderInputs() {
 	}
 }
 
-function checkPlantsSelected() {
-	if (parseInt($("#plotsWithPlantsSelected").val()) === 0) {
-		showInvalidInputMessage(msgEmptyListError);
-		$("#lineChoice1").prop("checked", true);
-	}
-}
-
 function loadNurserySettingsForCreate(templateSettingsId) {
 	var $form = $("#createNurseryForm");
 

@@ -1459,20 +1459,26 @@ function validatePlantsSelected() {
 
 				if (isMixed) {
 					if (data == 0) {
-						showErrorMessage('page-advance-modal-message', msgEmptyListError);
+						var param = $('lineVariateId').text() + ' and/or ' + $('#plotVariateId').text();
+						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+						showErrorMessage('page-advance-modal-message', newMessage);
 						valid = false;
 					}
 				} else if (isBulk) {
 					choice = !$('#plot-variates-section').is(':visible');
 					if (choice == false && data == '0') {
-						showErrorMessage('page-advance-modal-message', msgEmptyListError);
+						var param = $('#plotVariateId').text();
+						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+						showErrorMessage('page-advance-modal-message', newMessage);
 						valid = false;
 					}
 				} else {
 					choice = !$('#line-variates-section').is(':visible');
 					lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
 					if (lineSameForAll == false && choice == false && data == '0') {
-						showErrorMessage('page-advance-modal-message', msgEmptyListError);
+						var param = $('#lineVariateId').text();
+						var newMessage = msgEmptyListError.replace(new RegExp(/\{0\}/g), param);
+						showErrorMessage('page-advance-modal-message', newMessage);
 						valid = false;
 					}
 				}

@@ -2,7 +2,7 @@
  * Created by cyrus on 7/1/14.
  */
 
-/*global angular, changeBuildOption, getJquerySafeId*/
+/*global angular, changeBuildOption, getJquerySafeId, alert, showSuccessfulMessage*/
 
 (function() {
     'use strict';
@@ -163,12 +163,13 @@
                     type: 'POST',
                     data: serializedData,
                     cache: false,
-                    success: function () {
-                        $('#successMessageModal').modal({ backdrop: 'static', keyboard: true })
-                        $('#successMessageModal').modal('show');
+                    success: function (data) {
+                        if (data) {
+                            showSuccessfulMessage('', 'Success');
+                        }
                     },
                     complete: function () {
-                        Spinner.toggle();
+
                     }
                 });
             };

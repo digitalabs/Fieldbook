@@ -194,15 +194,18 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             , BindingResult result, Model model, HttpServletRequest req) throws MiddlewareQueryException {
     		//start: section for taking note of the check germplasm
 		 String selectedCheck[] = form.getSelectedCheck();
-         if(selectedCheck != null && selectedCheck.length != 0){
- 	        for(int i = 0 ; i < selectedCheck.length ; i++){
- 	            int realIndex = i;
- 	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
- 	            if (NumberUtils.isNumber(selectedCheck[i])) {
- 	            	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));
- 	            }
- 	        }
-         }
+        if (getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
+            if (selectedCheck != null && selectedCheck.length != 0) {
+                for (int i = 0; i < selectedCheck.length; i++) {
+                    int realIndex = i;
+                    getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
+                    if (NumberUtils.isNumber(selectedCheck[i])) {
+                        getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));
+                    }
+                }
+            }
+        }
+
          //end: section for taking note of the check germplasm
         if (getUserSelection().getImportedGermplasmMainInfo() != null) {
         	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());

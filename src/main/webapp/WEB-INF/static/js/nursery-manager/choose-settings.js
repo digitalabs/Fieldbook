@@ -15,7 +15,10 @@ window.ChooseSettings = (function() {
 
 		modalSelector = '.nrm-var-selection-modal',
 		dialogOpenSelector = '.nrm-var-select-open',
+
 		variableSelectionGroups = {},
+		variableMarkupSelectors = [],
+
 		ChooseSettings;
 
 	/*
@@ -227,41 +230,47 @@ window.ChooseSettings = (function() {
 		return filteredProperties;
 	}
 
-	function _findVariables(startingSelector) {
+	function _findVariables(selectors) {
 
-		var allMatches = $('[id^=' + startingSelector + ']'),
-			variableNameSelector = '.var-names',
+		var variableNameSelector = '.var-names',
 			variables = {},
 			findElement,
+			allMatches,
+			i,
 			variableElement,
 			variableId,
 			nameElement,
 			parent;
 
-		findElement = function() {
-			return $(this).attr('id') === startingSelector + i + '.variable.cvTermId';
-		};
+		$.each(selectors, function(index, startingSelector) {
+			findElement = function() {
+				return $(this).attr('id') === startingSelector + i + '.variable.cvTermId';
+			};
 
-		for (var i = allMatches.length - 1; i >= 0; i--) {
-			variableElement = allMatches.filter(findElement);
+			allMatches = $('[id^=' + startingSelector + ']');
 
-			if (variableElement.length > 0) {
+			for (i = allMatches.length - 1; i >= 0; i--) {
+				variableElement = allMatches.filter(findElement);
 
-				// Find the name of the variable
-				parent = variableElement.parent();
+				if (variableElement.length > 0) {
 
-				// If we're inside a td, go up to the row level element
-				if (parent.is('td')) {
-					parent = parent.parent('tr');
+					// Find the name of the variable
+					parent = variableElement.parent();
+
+					// If we're inside a td, go up to the row level element
+					if (parent.is('td')) {
+						parent = parent.parent('tr');
+					}
+
+					nameElement = parent.find(variableNameSelector)[0];
+					variableId = parseInt($(variableElement[0]).attr('value'));
+
+					variables[variableId] = nameElement ? $(nameElement).text() : null;
 				}
-
-				nameElement = parent.find(variableNameSelector)[0];
-				variableId = parseInt($(variableElement[0]).attr('value'));
-
-				variables[variableId] = nameElement ? $(nameElement).text() : null;
+				// TODO Error handling
 			}
-			// TODO Error handling
-		}
+		});
+
 		return variables;
 	}
 
@@ -304,6 +313,8 @@ window.ChooseSettings = (function() {
 
 	ChooseSettings = function(modalContainerSelector, translations) {
 
+		var group;
+
 		// Look for any existing variables and instaniate our list of them
 
 		variableSelectionGroups[MODES.MANAGEMENT_DETAILS] = {
@@ -341,6 +352,15 @@ window.ChooseSettings = (function() {
 			variableMarkupSelector: 'nurseryConditions'
 		};
 
+		// Populate selectors required to find selected variables from each group
+		variableMarkupSelectors = [];
+
+		for (group in variableSelectionGroups) {
+			if (variableSelectionGroups.hasOwnProperty(group)) {
+				variableMarkupSelectors.push(variableSelectionGroups[group].variableMarkupSelector);
+			}
+		}
+
 		$(modalContainerSelector).on('nrm-variable-select', addSelectedVariables);
 	};
 
@@ -361,13 +381,13 @@ window.ChooseSettings = (function() {
 			modal = this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector);
 		}
 
+		selectedVariables = _findVariables(variableMarkupSelectors);
+
 		// If we haven't loaded data for this group before, then load it
 		if (!group.data) {
 
 			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId, function(data) {
 				variableSelectionGroups[groupId].data = data;
-
-				selectedVariables = _findVariables(group.variableMarkupSelector);
 
 				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
 				// TODO get variable usage
@@ -382,9 +402,6 @@ window.ChooseSettings = (function() {
 			// TODO Error handling
 
 		} else {
-
-			selectedVariables = _findVariables(group.variableMarkupSelector);
-
 			// We've shown this before, and have the data. Just show the dialog. Note - we have to filter the properties again in case
 			// they removed a variable that had caused a variable or property to previously be excluded from the list
 			modal.show(groupId, groupTranslations, {

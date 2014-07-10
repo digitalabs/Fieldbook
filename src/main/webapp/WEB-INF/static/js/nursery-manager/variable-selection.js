@@ -1,4 +1,4 @@
-/* global Handlebars */
+/* global Handlebars, showErrorMessage */
 
 /**
  * @module variable-selection
@@ -376,9 +376,27 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		var container = $(e.currentTarget).parent(variableNameContainerSelector),
 			input = container.find(aliasVariableInputSelector),
 			alias = input.val(),
-			index = input.data('index');
+			index = input.data('index'),
+			unique = true,
+			id;
 
 		if (alias) {
+
+			// Validate alias is unique among selected variables
+
+			for (id in this._currentlySelectedVariables) {
+				if (this._currentlySelectedVariables.hasOwnProperty(id)) {
+					unique = unique && (alias !== this._currentlySelectedVariables[id]);
+				}
+			}
+
+			if (!unique) {
+				showErrorMessage(null, 'This name has been used before - please enter a different name');
+
+				// Don't close the input
+				return;
+			}
+
 			// Store the alias
 			this._selectedProperty.standardVariables[index].alias = alias;
 		}

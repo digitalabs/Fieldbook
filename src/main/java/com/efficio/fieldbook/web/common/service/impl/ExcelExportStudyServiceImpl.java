@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -186,19 +188,30 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
 	private int writeConditions(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> conditions,
 			MeasurementRow trialObservation) {
-		
+		List<MeasurementVariable> arrangedConditions = new ArrayList();
 		List<MeasurementVariable> filteredConditions = new ArrayList<MeasurementVariable>();
-		for (MeasurementVariable variable : conditions) {
-			if (!STUDY_DETAILS_IDS.contains(variable.getTermId())) {
-				filteredConditions.add(variable);
-				if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(variable.getLabel())) {
-					variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
+		if(conditions != null){
+			arrangedConditions.addAll(conditions);
+			Collections.sort(arrangedConditions, new Comparator<MeasurementVariable>(){
+				   @Override
+				   public int compare(MeasurementVariable var1, MeasurementVariable  var2) {
+					   return var1.getName().compareToIgnoreCase(var2.getName());
+				     }
+				 });
+			
+			for (MeasurementVariable variable : arrangedConditions) {
+				if (!STUDY_DETAILS_IDS.contains(variable.getTermId())) {
+					filteredConditions.add(variable);
+					if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(variable.getLabel())) {
+						variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
+					}
 				}
 			}
 		}
 		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredConditions, "export.study.description.column.condition", 51, 153, 102);
 	}
 	
+
 	private int writeFactors(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> factors) {
 		List<MeasurementVariable> filteredFactors = new ArrayList<MeasurementVariable>();
 		for (MeasurementVariable factor : factors) {

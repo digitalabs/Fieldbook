@@ -338,7 +338,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
-                    list.add(new ValueReference(method.getMid(), method.getMname() + " - " + method.getMcode(), method.getMdesc()));
+                    list.add(new ValueReference(method.getMid(), method.getMdesc(), method.getMname() + " - " + method.getMcode()));
                 }
             }
         }

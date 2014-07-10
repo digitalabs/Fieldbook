@@ -194,17 +194,22 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             , BindingResult result, Model model, HttpServletRequest req) throws MiddlewareQueryException {
     		//start: section for taking note of the check germplasm
 		 String selectedCheck[] = form.getSelectedCheck();
-        if (getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
-            if (selectedCheck != null && selectedCheck.length != 0) {
-                for (int i = 0; i < selectedCheck.length; i++) {
-                    int realIndex = i;
-                    getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
-                    if (NumberUtils.isNumber(selectedCheck[i])) {
-                        getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));
-                    }
-                }
-            }
-        }
+	        if (selectedCheck != null && selectedCheck.length != 0) {
+	        	ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = getUserSelection().getImportedCheckGermplasmMainInfo();
+            	if(importedGermplasmMainInfoToUse == null){
+            		//since for trial, we are using only the original info
+            		importedGermplasmMainInfoToUse = getUserSelection().getImportedGermplasmMainInfo();
+            	}
+            	if(importedGermplasmMainInfoToUse != null){
+		            for (int i = 0; i < selectedCheck.length; i++) {
+		                int realIndex = i;		                
+		                if (NumberUtils.isNumber(selectedCheck[i])) {		                	
+		                	importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
+		                	importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));		                	
+		                }
+		            }
+            	}
+	        }
 
          //end: section for taking note of the check germplasm
         if (getUserSelection().getImportedGermplasmMainInfo() != null) {

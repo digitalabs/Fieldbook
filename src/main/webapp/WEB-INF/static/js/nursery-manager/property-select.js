@@ -108,10 +108,6 @@ BMS.NurseryManager.PropertySelect = (function($) {
 		return $(propertyDropdownSelector).select2({
 			placeholder: placeholder,
 			minimumResultsForSearch: 20,
-			data: {
-				results: properties,
-				text: 'name'
-			},
 			formatSelection: formatSelection,
 			formatResult: formatResult,
 			id: function(item) {

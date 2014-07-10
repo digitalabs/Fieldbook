@@ -106,18 +106,20 @@ public class AdvancingSourceListFactory {
                     	Method breedingMethod = breedingMethodMap.get(methodId);
 		                Integer plantsSelected = null; 
 		                Boolean isBulk = breedingMethod.isBulkingMethod();
-	                	if (isBulk != null && isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
-	                    	if (plotVariateId != null) {
-		                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(plotVariateId));
-	                    	}
-	                	}
-	                    else {
-	                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
-	                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(lineVariateId));
-	                    	}
-	                    }
-		                rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, 
-		                					isCheck, nurseryName, season, locationAbbreviation));
+		                if (isBulk != null) {
+		                	if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
+		                    	if (plotVariateId != null) {
+			                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(plotVariateId));
+		                    	}
+		                	}
+		                    else {
+		                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
+		                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(lineVariateId));
+		                    	}
+		                    }
+			                rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, 
+			                					isCheck, nurseryName, season, locationAbbreviation));
+		                }
                     }
                 }
             }

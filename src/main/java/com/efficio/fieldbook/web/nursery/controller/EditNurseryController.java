@@ -821,7 +821,7 @@ public class EditNurseryController extends SettingsController {
                     
                     Method method = null;
                     if (studyConditionMap.get(idTermId) != null) {
-                        method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Integer.parseInt(studyConditionMap.get(idTermId).getValue()));
+                        method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
                     } else if (studyConditionMap.get(codeTermId) != null) {
                         method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodByCode(studyConditionMap.get(codeTermId).getValue());
                     }

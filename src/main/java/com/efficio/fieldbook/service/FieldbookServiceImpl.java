@@ -566,7 +566,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                     if (studyConditionMap.get(codeTermId) == null) {
                         //case when nursery comes from old fieldbook and has id variable saved
                         if (studyConditionMap.get(idTermId) != null) {
-                            Method method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Integer.parseInt(studyConditionMap.get(idTermId).getValue()));
+                            Method method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
                             
                             //add code if it is not yet in the list
                             workbook.getConditions().add(
@@ -592,7 +592,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                     } else {
                         Method method = null;
                         if (studyConditionMap.get(idTermId) != null) {
-                            method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Integer.parseInt(studyConditionMap.get(idTermId).getValue()));
+                            method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
                         } else {
                             method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Integer.parseInt(studyConditionMap.get(codeTermId).getValue()));
                         }

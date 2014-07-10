@@ -21,7 +21,11 @@
                         $(el).datepicker('update', ngModel.$viewValue);
                     };
 
+                    if (attr.setCurrentDateAsDefault === 'true') {
+                        $(el).datepicker('setDate', new Date());
+                        ngModel.$setViewValue(el.val());
 
+                    }
                 }
             };
         })

@@ -1,1 +1,82 @@
-<div>Experimental Design page</div>
+<div ng-controller="ExperimentalDesignCtrl">
+    <section-container heading="Experimental Design">
+        <section-container name="content" heading="CHOOSE A DESIGN TYPE">
+            <div class="row" name="content">
+                <div class="col-lg-7 col-md-9 col-sm-10 col-xs-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label">Select the design type you would like to use for this trial:</label>
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <select class="form-control" ng-model="currentDesignType" ng-change="onSwitchDesignTypes(currentDesignType)" ng-options="item.name for item in designTypes">
+                                        </select>
+                                    </div>
+                                    <!--
+                                    <div class="col-xs-2">
+                                        <span class="btn btn-info">Change</span>
+                                    </div>
+                                    -->
+
+                                </div>
+                                <div class="row" ng-show="currentDesignType.withResolvable">
+                                    <div class="col-md-12">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" ng-model="currentDesignType.data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section-container>
+    </section-container>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <section-container heading="SPECIFY DESIGN PARAMETERS">
+                <div name="content">
+                    <div ng-include="currentParams"></div>
+                </div>
+            </section-container>
+        </div>
+        <div class="col-sm-6">
+            <section-container heading="SUMMARY OF DESIGN DETAILS">
+                <div name="content">
+                    <div ng-show="currentDesignType.settings.trialEnvironments"><b>Number of trial environments:</b> <span>{{currentDesignType.settings.trialEnvironments}}</span></div>
+                    <div ng-show="currentDesignType.settings.treatments"><b>Number of Treatments:</b> <span>{{currentDesignType.settings.treatments}}</span></div>
+                    <div ng-show="currentDesignType.settings.blocks"><b>Number of Blocks:</b> <span>{{currentDesignType.settings.blocks}}</span></div>
+                    <div ng-repeat="factor in currentDesignType.settings.factors">
+                        <b>{{factor.type}}</b><a>{{factor.name}}</a>
+                    </div>
+                    <div ng-show="currentDesignType.settings.treatmentFactors">
+                        <table class="table table-curved">
+                            <thead>
+                                <tr>
+                                    <th>NAME</th>
+                                    <th>DESCRIPTION</th>
+                                    <th># LEVELS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="treatment in currentDesignType.settings.treatmentFactors">
+                                    <td>{{treatment.name}}</td>
+                                    <td>{{treatment.description}}</td>
+                                    <td>{{treatment.levels}}</td>
+                                </tr>
+                                <tr ng-hide="currentDesignType.settings.treatmentFactors">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section-container>
+        </div>
+    </div>
+</div>

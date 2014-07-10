@@ -139,10 +139,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
     	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
-    	String defaultId = getBreedingMethodIdFromStudy(varList);
-    	if (defaultId != null) {
-    		form.setDefaultMethodId(defaultId);
-    	}
+    	
     	advancingNursery.setStudy(study);
     	/*form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());*/
     	form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());

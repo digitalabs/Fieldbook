@@ -183,7 +183,7 @@
 					<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 
 					<input style="width: 70%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
-						   type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="select2 form-control" />
+						   type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="select2 form-control study-level-method" />
 
 					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
@@ -202,7 +202,7 @@
 			</div>
 
 			<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
-				<input
+				<input class="study-level-method-checkbox"
 						type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 						th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 				&nbsp;&nbsp;

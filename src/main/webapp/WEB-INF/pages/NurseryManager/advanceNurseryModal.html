@@ -61,7 +61,7 @@
 
                                 <div class="col-sm-offset-6 col-xs-6 method-selection-div">
                                     <label class="non-maize-control">
-                                        <input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
+                                        <input class="advance-fav-method-checkbox" id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
                                         &nbsp;&nbsp;&nbsp;
                                         <a href="javascript: openManageMethods()" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>
                                     </label>
@@ -326,9 +326,15 @@
 
 			oldMethodSelected = $('#defaultMethodId').val();
 			oldLineSelected = $('#lineSelected').val();
-
+						
 			initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
 			initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
+			
+			if($('input.study-level-method') !== null && $('input.study-level-method').val() !== '' && $('input.study-level-method').val() !== '0'){
+				oldMethodSelected = $('input.study-level-method').val()
+				$('input.advance-fav-method-checkbox').prop( "checked", $('input.study-level-method-checkbox').is(':checked'));
+			}
+			
 			showCorrectMethodCombo();
 
 			checkMethod();

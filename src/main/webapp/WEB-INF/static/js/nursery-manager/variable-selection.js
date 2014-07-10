@@ -49,50 +49,16 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		// These three variables need special handling - their IDs must be translated before sending to the server
 		var idTranslations = {
-			// Collaborator
-			8373: 8372,
-			// PI Name
-			8100: 8110,
-			// Location
-			8180: 8190
-		};
+				// Collaborator
+				8373: 8372,
+				// PI Name
+				8100: 8110,
+				// Location
+				8180: 8190
+			};
 
 		// Check to see if the id is in our list of necessary translations. If it is, return the translation, otherwise return itself.
 		return idTranslations[variableId] ? idTranslations[variableId] : variableId;
-	}
-
-	/* FIXME - this logic should be in the back end
-	 *
-	 * Filters a list of properties according to some hard coded rules (see comments for details).
-	 *
-	 * @param {object[]} properties the list of properties to filter
-	 * @param {number} group properties and variables will be filtered to be specific to the group represented by this number
-	 * @returns {object[]} the filtered list of properties
-	 */
-	function _filterProperties(properties, group) {
-
-		var filteredProperties = properties,
-
-			// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
-			breedingMethodPropertyId = 2670;
-
-		// We must filter out the Breeding Method property from the list of Management Details. We should probably do this
-		// on the server side.
-		if (group === 1) {
-
-			// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
-			$.each(filteredProperties, function(index, propertyObj) {
-
-				var found = false;
-
-				if (propertyObj.propertyId === breedingMethodPropertyId) {
-					found = true;
-					filteredProperties.splice(index, 1);
-				}
-				return !found;
-			});
-		}
-		return filteredProperties;
 	}
 
 	/*
@@ -186,7 +152,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// Store these properties for later use
 		this._currentlySelectedVariables = groupData.selectedVariables;
 		this._group = group;
-		this._properties = _filterProperties(properties, group);
+		this._properties = properties;
 
 		// Append title
 		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');

@@ -18,6 +18,153 @@ window.ChooseSettings = (function() {
 		variableSelectionGroups = {},
 		ChooseSettings;
 
+	/*
+	 * Finds a property in a list by id.
+	 *
+	 * @param {string} propertyId the id of the property to look for
+	 * @param {object[]} propertyList the list of properties to search
+	 * @returns {number} the index of the found property, or -1 if it was not found
+	 */
+	function _findPropertyById(propertyId, propertyList) {
+
+		var index = -1;
+
+		// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
+		$.each(propertyList, function(i, propertyObj) {
+
+			var found = false;
+
+			if (propertyObj.propertyId === propertyId) {
+				found = true;
+				index = i;
+			}
+			return !found;
+		});
+		return index;
+	}
+
+	/*
+	 * Removes an item by item from a given list.
+	 *
+	 * @param {string} id the id of the item to remove
+	 * @param {object[]} list the list of objects to search
+	 * @param {string} idSelector the key with which the id property should be accessed on each item of the list (e.g. `id` or `propertyId`)
+	 */
+	function _removeById(id, list, idSelector) {
+
+		// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
+		$.each(list, function(index, obj) {
+
+			var found = false;
+
+			if (obj[idSelector] === id) {
+				found = true;
+				list.splice(index, 1);
+			}
+			return !found;
+		});
+	}
+
+	/*
+	 * For a list of given exclusions, ensure that if any of the variables are in a specified list of selected variables, their exclusions
+	 * are removed from the given list of properties.
+	 *
+	 * @param {object} exclusions an exclusion object. Each key in the object represents a variable id that, if found, should have a matched
+	 * variable removed. Each object in the exclusion should have two properties, `variableId` - the variable to remove, and `propertyId` -
+	 * the id of the property of the variable to be removed.
+	 * @param {object} selectedVariables an object representing all currently selected variables. Each key represents a variable id that is
+	 * selected, and it's value the name of that variable.
+	 * @param {object[]} properties a list of properties from which to remove variables / properties as appropriate.
+	 */
+	function _performVariableExclusions(exclusions, selectedVariables, properties) {
+
+		var key,
+			exclusion,
+			id,
+			index;
+
+		for (key in exclusions) {
+			if (exclusions.hasOwnProperty(key)) {
+
+				id = parseInt(key, 10);
+				exclusion = exclusions[id];
+
+				// If any of the variables that need translating are selected, we must remove it's counterpart
+				if (typeof selectedVariables[id] !== 'undefined') {
+					index = _findPropertyById(exclusion.propertyId, properties);
+
+					// Remove the excluded variable from the property
+					_removeById(exclusion.variableId, properties[index].standardVariables, 'id');
+
+					// If the property has no more variables, remove it too
+					if (properties[index].standardVariables.length === 0) {
+						properties.splice(index, 1);
+					}
+				}
+			}
+		}
+	}
+
+	/* FIXME - this logic should be in the back end
+	 *
+	 * Filters a list of properties according to some hard coded rules (see comments for details).
+	 *
+	 * @param {object[]} properties the list of properties to filter
+	 * @param {number} group properties and variables will be filtered to be specific to the group represented by this number
+	 * @returns {object[]} the list of filtered properties
+	 */
+	function _filterProperties(properties, selectedVariables, group) {
+
+		// Don't modify the original list
+		var filteredProperties = JSON.parse(JSON.stringify(properties)),
+
+			studyLevelBreedingMethodPropertyId = 2670,
+
+			managementDetailExclusions = {
+
+				// Don't allow user to select PI_NAME from the Person property if PI_ID is present
+				8110: {
+					variableId: 8100,
+					propertyId: 2080
+				},
+
+				// Don't allow user to select COOPERATOR from the PERSON property if COOPERATOR_ID is present
+				8372: {
+					variableId: 8373,
+					propertyId: 2080
+				},
+
+				// Don't allow user to select LOCATION_NAME from the Location property if LOCATION_ID is present
+				8190: {
+					variableId: 8180,
+					propertyId: 2110
+				}
+			},
+
+			selectionExclusions = {
+				// Don't allow user to select BM_CODE_VTE from the Breeding method property if BM_ID_VTE is present
+				8262: {
+					variableId: 8252,
+					propertyId: 2670
+				}
+			};
+
+		// Currently we only have special handling for management details (1) and selection strategy (6)
+		switch (group) {
+			case 1:
+				// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
+				_removeById(studyLevelBreedingMethodPropertyId, filteredProperties, 'propertyId');
+				_performVariableExclusions(managementDetailExclusions, selectedVariables, filteredProperties);
+				break;
+			case 6:
+				_performVariableExclusions(selectionExclusions, selectedVariables, filteredProperties);
+				break;
+			default:
+				break;
+		}
+		return filteredProperties;
+	}
+
 	function findVariables(startingSelector) {
 
 		var allMatches = $('[id^=' + startingSelector + ']'),
@@ -144,7 +291,8 @@ window.ChooseSettings = (function() {
 				label: group.label,
 				placeholderLabel: group.placeholder
 			},
-			modal = this._variableSelection;
+			modal = this._variableSelection,
+			selectedVariables;
 
 		// Initialise a variable selection modal if we haven't done so before
 		if (!modal) {
@@ -152,28 +300,35 @@ window.ChooseSettings = (function() {
 		}
 
 		// If we haven't loaded data for this group before, then load it
-		if (!group.data || !group.usageData) {
+		if (!group.data) {
 
 			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId, function(data) {
 				variableSelectionGroups[groupId].data = data;
 
+				selectedVariables = findVariables(group.variableMarkupSelector);
+
 				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
 				// TODO get variable usage
 				modal.show(groupId, groupTranslations, {
-					propertyData: data,
+					propertyData: _filterProperties(variableSelectionGroups[groupId].data, selectedVariables, groupId),
 					variableUsageData: [],
-					selectedVariables: findVariables(group.variableMarkupSelector)
+					selectedVariables: selectedVariables
 				});
+
 			});
 
 			// TODO Error handling
 
 		} else {
-			// We've shown this before, and have the data. Just show the dialog.
+
+			selectedVariables = findVariables(group.variableMarkupSelector);
+
+			// We've shown this before, and have the data. Just show the dialog. Note - we have to filter the properties again in case
+			// they removed a variable that had caused a variable or property to previously be excluded from the list
 			modal.show(groupId, groupTranslations, {
-				propertyData: group.data,
-				variableUsageData: group.usageData,
-				selectedVariables: findVariables(group.variableMarkupSelector)
+				propertyData: _filterProperties(group.data, selectedVariables, groupId),
+				variableUsageData: [],
+				selectedVariables: selectedVariables
 			});
 		}
 	};

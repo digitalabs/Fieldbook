@@ -74,7 +74,7 @@ window.ChooseSettings = (function() {
 	 * the id of the property of the variable to be removed.
 	 * @param {object} selectedVariables an object representing all currently selected variables. Each key represents a variable id that is
 	 * selected, and it's value the name of that variable.
-	 * @param {object[]} properties a list of properties from which to remove variables / properties as appropriate.
+	 * @param {object[]} properties a list of properties from which to remove variables / properties as appropriate
 	 */
 	function _performVariableExclusions(exclusions, selectedVariables, properties) {
 
@@ -103,6 +103,30 @@ window.ChooseSettings = (function() {
 				}
 			}
 		}
+	}
+
+	/*
+	 * Remove the specified variables from the given list.
+	 *
+	 * @param {object[]} variableList a list of variables, each with a variableId and propertyId property
+	 * @param {object[]} properties a list of properties from which to remove variables / properties as appropriate.
+	 */
+	function _removeVariables(variableList, properties) {
+
+		var index;
+
+		$.each(variableList, function(i, variable) {
+
+			index = _findPropertyById(variable.propertyId, properties);
+
+			// Remove the variable from the property
+			_removeById(variable.variableId, properties[index].standardVariables, 'id');
+
+			// If the property has no more variables, remove it too
+			if (properties[index].standardVariables.length === 0) {
+				properties.splice(index, 1);
+			}
+		});
 	}
 
 	/* FIXME - this logic should be in the back end
@@ -141,6 +165,43 @@ window.ChooseSettings = (function() {
 				}
 			},
 
+			// There are a basic set of details hard coded into the page that should not be presented as variables
+			basicDetails = [
+				{
+					variableId: 8005, // STUDY_NAME
+					propertyId: 2010  // Study
+				},
+				{
+					variableId: 8007, // STUDY_TITLE
+					propertyId: 2012  // Study title
+				},
+
+				{
+					variableId: 8009, // STUDY_UPDATE
+					propertyId: 2045  // Update date
+				},
+
+				{
+					variableId: 8020, // Study_UID
+					propertyId: 2002  // User
+				},
+
+				{
+					variableId: 8030, // STUDY_OBJECTIVE
+					propertyId: 2014  // Study objective
+				},
+
+				{
+					variableId: 8050, // START_DATE
+					propertyId: 2050  // Start date
+				},
+
+				{
+					variableId: 8060, // END_DATE
+					propertyId: 2052  // End date
+				}
+			],
+
 			selectionExclusions = {
 				// Don't allow user to select BM_CODE_VTE from the Breeding method property if BM_ID_VTE is present
 				8262: {
@@ -155,6 +216,7 @@ window.ChooseSettings = (function() {
 				// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
 				_removeById(studyLevelBreedingMethodPropertyId, filteredProperties, 'propertyId');
 				_performVariableExclusions(managementDetailExclusions, selectedVariables, filteredProperties);
+				_removeVariables(basicDetails, filteredProperties);
 				break;
 			case 6:
 				_performVariableExclusions(selectionExclusions, selectedVariables, filteredProperties);
@@ -165,7 +227,7 @@ window.ChooseSettings = (function() {
 		return filteredProperties;
 	}
 
-	function findVariables(startingSelector) {
+	function _findVariables(startingSelector) {
 
 		var allMatches = $('[id^=' + startingSelector + ']'),
 			variableNameSelector = '.var-names',
@@ -305,7 +367,7 @@ window.ChooseSettings = (function() {
 			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId, function(data) {
 				variableSelectionGroups[groupId].data = data;
 
-				selectedVariables = findVariables(group.variableMarkupSelector);
+				selectedVariables = _findVariables(group.variableMarkupSelector);
 
 				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
 				// TODO get variable usage
@@ -321,7 +383,7 @@ window.ChooseSettings = (function() {
 
 		} else {
 
-			selectedVariables = findVariables(group.variableMarkupSelector);
+			selectedVariables = _findVariables(group.variableMarkupSelector);
 
 			// We've shown this before, and have the data. Just show the dialog. Note - we have to filter the properties again in case
 			// they removed a variable that had caused a variable or property to previously be excluded from the list

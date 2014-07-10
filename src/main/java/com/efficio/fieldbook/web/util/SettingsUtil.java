@@ -227,11 +227,12 @@ public class SettingsUtil {
 
     protected static void setNameAndOperationFromSession(List<SettingDetail> listWithValue, List<SettingDetail> listFromSession) {
         int index = 0;
-
-        for (SettingDetail detailWithValue : listWithValue) {
-            SettingVariable variable = detailWithValue.getVariable();
-            variable.setName(listFromSession.get(index).getVariable().getName());
-            variable.setOperation(listFromSession.get(index++).getVariable().getOperation());
+        if (listWithValue != null && listFromSession != null) {
+            for (SettingDetail detailWithValue : listWithValue) {
+                SettingVariable variable = detailWithValue.getVariable();
+                variable.setName(listFromSession.get(index).getVariable().getName());
+                variable.setOperation(listFromSession.get(index++).getVariable().getOperation());
+            }
         }
     }
 

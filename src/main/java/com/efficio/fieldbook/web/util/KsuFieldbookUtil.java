@@ -13,6 +13,10 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 
 import com.csvreader.CsvWriter;
 
@@ -126,13 +130,13 @@ public class KsuFieldbookUtil {
 		return labels;
 	}
 	
-	public static void writeTraits(List<MeasurementVariable> traits, String filenamePath)
+	public static void writeTraits(List<MeasurementVariable> traits, String filenamePath, FieldbookService fieldbookMiddlewareService, OntologyService ontologyService)
 	throws IOException {
 		
         new File(filenamePath).exists();
         CsvWriter csvWriter = null;
         try {
-        	List<List<String>> dataTable = convertTraitsData(traits);
+        	List<List<String>> dataTable = convertTraitsData(traits, fieldbookMiddlewareService, ontologyService);
         	
             csvWriter = new CsvWriter(new FileWriter(filenamePath, false), ',');
             for (List<String> row : dataTable) {
@@ -149,10 +153,20 @@ public class KsuFieldbookUtil {
         }		
 	}
 	
-	private static List<List<String>> convertTraitsData(List<MeasurementVariable> traits) {
+	private static List<List<String>> convertTraitsData(List<MeasurementVariable> traits, FieldbookService fieldbookMiddlewareService, OntologyService ontologyService) {
 		List<List<String>> data = new ArrayList<List<String>>();
 		
 		data.add(TRAIT_FILE_HEADERS);
+		
+		//get name of breeding method property and get all methods 
+        String propertyName = "";
+        List<Method> methods = new ArrayList<Method>();
+        try {
+            methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+            propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName(); 
+        } catch(MiddlewareQueryException e) {
+            e.printStackTrace();
+        }
 		
 		int index = 1;
 		for (MeasurementVariable trait : traits) {
@@ -178,7 +192,8 @@ public class KsuFieldbookUtil {
 				traitData.add("");
 			}
 			traitData.add(""); //details
-			if (trait.getPossibleValues() != null && !trait.getPossibleValues().isEmpty()) {
+			if (trait.getPossibleValues() != null && !trait.getPossibleValues().isEmpty() 
+                    && !trait.getProperty().equals(propertyName)) {
 				StringBuilder possibleValuesString = new StringBuilder();
 				for (ValueReference value : trait.getPossibleValues()) {
 					if (possibleValuesString.length() > 0) {
@@ -186,9 +201,19 @@ public class KsuFieldbookUtil {
 					}
 					possibleValuesString.append(value.getName());
 				}
+
 				traitData.add(possibleValuesString.toString());
-			}
-			else {
+			} else if (trait.getProperty().equals(propertyName)) {
+			    StringBuilder possibleValuesString = new StringBuilder();
+			    //add code for breeding method properties
+                for (Method method : methods) {
+                    if (possibleValuesString.length() > 0) {
+                        possibleValuesString.append("/");
+                    }
+                    possibleValuesString.append(method.getMcode());
+                }
+                traitData.add(possibleValuesString.toString());
+			} else {
 				traitData.add(""); //categories
 			}
 			traitData.add("TRUE");

@@ -13,6 +13,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.service.KsuExceIExportStudyService;
@@ -28,6 +30,12 @@ public class KsuExcelExportStudyServiceImpl implements
 
 	@Resource
     private FieldbookProperties fieldbookProperties;
+	
+	@Resource
+    private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private OntologyService ontologyService;
 
 	@Override
 	public String export(Workbook workbook, String filename,  List<Integer> instances) {
@@ -73,7 +81,7 @@ public class KsuExcelExportStudyServiceImpl implements
 			String traitFilenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
 					+ studyName + "-Traits"
 					+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
-			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath);
+			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, fieldbookMiddlewareService, ontologyService);
 			filenameList.add(traitFilenamePath);
 
 			outputFilename = fieldbookProperties.getUploadDirectory() 

@@ -43,6 +43,14 @@ public class WorkbookUtil {
     	}
     	return null;
     }
+    
+    public static String getCodeValueByIdInRow(List<MeasurementVariable> variables, int termId, MeasurementRow row) {
+        String label = getMeasurementVariableName(variables, termId);
+        if (label != null) {
+            return row.getMeasurementData(label).getValue();
+        }
+        return null;
+    }
 
     public static List<MeasurementRow> filterObservationsByTrialInstance(List<MeasurementRow> observations, String trialInstance) {
     	List<MeasurementRow> list = new ArrayList<MeasurementRow>();

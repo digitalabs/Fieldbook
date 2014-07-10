@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,12 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 	
     @Resource
     private FieldbookProperties fieldbookProperties;
+    
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private OntologyService ontologyService;
 
 	@Override
 	public String export(Workbook workbook, String filename,  List<Integer> instances) {
@@ -64,7 +72,7 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 			String traitFilenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
 					+ studyName + "-Traits"
 					+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
-			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath);
+			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, fieldbookMiddlewareService, ontologyService);
 			filenameList.add(traitFilenamePath);
 
         } catch (IOException e) {

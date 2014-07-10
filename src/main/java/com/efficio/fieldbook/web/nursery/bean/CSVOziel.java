@@ -169,10 +169,10 @@ public class CSVOziel {
                    if (!valor.equals(stringTraitToEvaluate)) {
                         try {
                         	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty() 
-                        	        && variate.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
-                                    && variate.getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
                                     && !variate.getProperty().equals(propertyName)) {
                         		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementDataValue(valor), variate.getPossibleValues()));
+                        	} else if (variate.getProperty().equals(propertyName)) {
+                        	    csvOutput.write(row.getMeasurementData(valor).getValue());
                         	}
                         	else {
                         		csvOutput.write(row.getMeasurementDataValue(valor));
@@ -202,6 +202,13 @@ public class CSVOziel {
    				map.put(row.getLocationId(), WorkbookUtil.getValueByIdInRow(row.getMeasurementVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId(), row));
     		}
     		
+    		String propertyName = "";
+            try {
+                propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
+            } catch (MiddlewareQueryException e) {
+                e.printStackTrace();
+            }
+    		
             for (MeasurementRow mRow : this.observations) {
                 csvOutput.write(getDisplayValue(map.get(mRow.getLocationId())));
                 if (workbook.isNursery()) {
@@ -216,25 +223,23 @@ public class CSVOziel {
                 csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.ENTRY_NO.getId(), mRow));
                 try {
                 	if (this.selectedTrait != null) {
-	                	String value = WorkbookUtil.getValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
-	                	if (this.selectedTrait != null && selectedTrait.getPossibleValues() != null && !selectedTrait.getPossibleValues().isEmpty()) {
-	                		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(value, selectedTrait.getPossibleValues()));
-	                	}
-	                	else {
-	                		csvOutput.write(value);
-	                	}
+                	    if (selectedTrait.getProperty().equals(propertyName)) {
+                	        String value = WorkbookUtil.getCodeValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
+                	        csvOutput.write(value);
+                	    } else {
+    	                	String value = WorkbookUtil.getValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
+    	                	if (this.selectedTrait != null && selectedTrait.getPossibleValues() != null && !selectedTrait.getPossibleValues().isEmpty()) {
+    	                		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(value, selectedTrait.getPossibleValues()));
+    	                	}
+    	                	else {
+    	                		csvOutput.write(value);
+    	                	}
+                	    }
                 	}
                 } catch (NullPointerException ex) {
                     String cad = ".";
                     
                     csvOutput.write(cad);
-                }
-
-                String propertyName = "";
-                try {
-                    propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
-                } catch (MiddlewareQueryException e) {
-                    e.printStackTrace();
                 }
 
                 for (MeasurementVariable variate : this.variateHeaders) {
@@ -243,10 +248,10 @@ public class CSVOziel {
                      if (!valor.equals(stringTraitToEvaluate)) {
                         try {
                         	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()
-                        	        && variate.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
-                                    && variate.getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
                                     && !variate.getProperty().equals(propertyName)) {
                         		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(mRow.getMeasurementDataValue(variate.getName()), variate.getPossibleValues()));
+                        	} else if (variate.getProperty().equals(propertyName)) {
+                        	    csvOutput.write(mRow.getMeasurementData(variate.getName()).getValue());
                         	}
                         	else {
                         		csvOutput.write(mRow.getMeasurementDataValue(variate.getName()));
@@ -459,9 +464,7 @@ public class CSVOziel {
 	    			        data.setValue(ExportImportStudyUtil.getCategoricalIdCellValue(value, data.getMeasurementVariable().getPossibleValues()));
 	    			    }
 	    			    
-	    			    if ((data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE.getId() ||
-	    			            data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId() ||
-                                data.getMeasurementVariable().getProperty().equals(propertyName)) && 
+	    			    if ((data.getMeasurementVariable().getProperty().equals(propertyName)) && 
                                 !data.getValue().isEmpty() && !NumberUtils.isNumber(data.getValue())) {
 	    			        data.setValue("");
 	    			    }

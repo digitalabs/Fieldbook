@@ -149,15 +149,39 @@
                 return new angular.OrderedHash();
             };
 
+            // TODO : change function such that it does not require jQuery style element / id based access for value retrieval
+            var submitGermplasmList = function() {
+                var $form = $('#germplasm-list-form');
+                $('#startIndex').val($('#startIndex2').val());
+                $('#interval').val($('#interval2').val());
+                $('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
+
+                var serializedData = $form.serialize();
+
+                $.ajax({
+                    url: '/Fieldbook/NurseryManager/importGermplasmList/next',
+                    type: 'POST',
+                    data: serializedData,
+                    cache: false,
+                    success: function () {
+                        $('#successMessageModal').modal({ backdrop: 'static', keyboard: true })
+                        $('#successMessageModal').modal('show');
+                    },
+                    complete: function () {
+                        Spinner.toggle();
+                    }
+                });
+            };
+
             var service = {
                 // user input data and default values of standard variables
                 currentData: {
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
-                    germplasm: extractData(GERMPLASM_INITIAL_DATA),
-                    treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA),
-                    experimentalDesign: extractData(ENVIRONMENTS_INITIAL_DATA),
-                    measurements: extractData(MEASUREMENTS_INITIAL_DATA),
+                    /*germplasm: extractData(GERMPLASM_INITIAL_DATA),*/
+                    /*treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA),
+                    experimentalDesign: extractData(EXPERIMENTAL_DESIGN_INITIAL_DATA),
+                    measurements: extractData(MEASUREMENTS_INITIAL_DATA),*/
                     basicDetails: extractData(BASIC_DETAILS_DATA)
                 },
                 // standard variable [meta-data] information or a particular tab settings information
@@ -167,7 +191,7 @@
                     environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
                     germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
                     treatmentFactors: extractSettings(TREATMENT_FACTORS_INITIAL_DATA),
-                    experimentalDesign: extractSettings(ENVIRONMENTS_INITIAL_DATA),
+                    experimentalDesign: extractSettings(EXPERIMENTAL_DESIGN_INITIAL_DATA),
                     measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
                 },
@@ -181,7 +205,7 @@
                         }
                     });
 
-                    $http.post('/Fieldbook/TrialManager/createTrial', returnVal);
+                    $http.post('/Fieldbook/TrialManager/createTrial', returnVal).success(submitGermplasmList);
                 }
             };
 
@@ -199,4 +223,3 @@
     };
 
 })();
-

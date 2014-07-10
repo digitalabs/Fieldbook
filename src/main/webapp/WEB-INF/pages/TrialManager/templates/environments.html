@@ -38,7 +38,7 @@
         </div>
         <div class="row">
             <div class="col-xs-6 col-md-6">
-                <div class="row form-group" ng-repeat="key in settings.managementDetails.keys()">
+                <div class="row form-group" ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">
                     <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
                         label-bold var-names">{{settings.managementDetails.val(key).variable.name}}</span>

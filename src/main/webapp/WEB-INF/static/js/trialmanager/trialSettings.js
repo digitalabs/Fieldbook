@@ -12,23 +12,29 @@
     manageTrialApp.controller('TrialSettingsCtrl',['$scope','TrialManagerDataService',function($scope,TrialManagerDataService) {
 
         $scope.settings = TrialManagerDataService.settings.trialSettings;
-        $scope.currentData = TrialManagerDataService.currentData.trialSettings;
+        $scope.data = TrialManagerDataService.currentData.trialSettings;
 
         $scope.removeVariable = function(cvTermId) {
             // remove the equivalent setting
             $scope.settings.remove(cvTermId);
+            $.ajax({
+                url: '/Fieldbook/manageSettings/deleteVariable/1/' + cvTermId,
+                type: 'POST',
+                cache: false,
+                data: '',
+                contentType: 'application/json',
+                success: function () {
+                }
+            });
 
             // remove the equivalent current data
-
-
+            delete $scope.data.userInput[cvTermId];
         };
 
+
+
         $scope.managementDetailsSize = function() {
-            var size = 0, key;
-            for (key in $scope.data.managementDetails) {
-                if ($scope.data.managementDetails.hasOwnProperty(key)) { size++; }
-            }
-            return size;
+            return $scope.settings.length();
         };
 
     }]);

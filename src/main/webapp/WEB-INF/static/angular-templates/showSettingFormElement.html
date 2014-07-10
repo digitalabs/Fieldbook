@@ -1,6 +1,6 @@
 <div ng-switch="variableDefinition.variable.widgetType">
     <div ng-switch-when="DROPDOWN">
-        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]"/>
+        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]" value-as-object="false"/>
         <div ng-if="isLocation">
             <div class="possibleValuesDiv">
                 <input type="checkbox" ng-model="localData.useFavorites" ng-change="updateDropdownValues()"> &nbsp; &nbsp;

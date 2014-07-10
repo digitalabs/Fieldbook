@@ -17,7 +17,14 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
         repeatOption,
         repeatAttr,
         isSelect = tElm.is('select'),
-        isMultiple = (tAttrs.multiple !== undefined);
+        isMultiple = (tAttrs.multiple !== undefined),
+        isValueAsObject;
+
+      if (tAttrs.valueAsObject === undefined) {
+          isValueAsObject = true;
+      } else {
+          isValueAsObject = tAttrs.valueAsObject === 'true';
+      }
 
       // Enable watching of the options dataset if in use
       if (tElm.is('select')) {
@@ -47,23 +54,23 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
             if (isSelect) {
               elm.select2('val', controller.$viewValue);
             } else {
-              if (isMultiple) {
-                if (!controller.$viewValue) {
-                  elm.select2('data', []);
-                } else if (angular.isArray(controller.$viewValue)) {
-                  elm.select2('data', controller.$viewValue);
+                if (isMultiple) {
+                    if (!controller.$viewValue) {
+                        elm.select2('data', []);
+                    } else if (angular.isArray(controller.$viewValue)) {
+                        elm.select2('data', controller.$viewValue);
+                    } else {
+                        elm.select2('val', controller.$viewValue);
+                    }
                 } else {
-                  elm.select2('val', controller.$viewValue);
+                    if (angular.isObject(controller.$viewValue) && isValueAsObject) {
+                        elm.select2('data', controller.$viewValue);
+                    } else if (!controller.$viewValue) {
+                        elm.select2('data', null);
+                    } else {
+                        elm.select2('val', controller.$viewValue);
+                    }
                 }
-              } else {
-                if (angular.isObject(controller.$viewValue)) {
-                  elm.select2('data', controller.$viewValue);
-                } else if (!controller.$viewValue) {
-                  elm.select2('data', null);
-                } else {
-                  elm.select2('val', controller.$viewValue);
-                }
-              }
             }
           };
 
@@ -98,7 +105,12 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
             elm.bind("change", function () {
               if (scope.$$phase) return;
               scope.$apply(function () {
-                controller.$setViewValue(elm.select2('data'));
+                  if (isValueAsObject) {
+                      controller.$setViewValue(elm.select2('data'));
+                  } else {
+                      controller.$setViewValue(elm.select2('val'));
+                  }
+
               });
             });
 
@@ -138,8 +150,14 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
           controller.$render();
 
           // Not sure if I should just check for !isSelect OR if I should check for 'tags' key
-          if (!opts.initSelection && !isSelect)
-            controller.$setViewValue(elm.select2('data'));
+          if (!opts.initSelection && !isSelect) {
+              if (isValueAsObject) {
+                  controller.$setViewValue(elm.select2('data'));
+              } else {
+                  controller.$setViewValue(elm.select2('val'));
+              }
+
+          }
         });
       };
     }

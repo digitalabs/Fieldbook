@@ -29,6 +29,7 @@ public class SettingDetail implements Serializable {
 	private String value;
 	private boolean isDeletable;
 	private boolean isFavorite;
+    private boolean isHidden;
 	private int order;
 	private Integer group;
 	private PairedVariable pairedVariable;
@@ -142,4 +143,12 @@ public class SettingDetail implements Serializable {
 	public void setPairedVariable(PairedVariable pairedVariable) {
 		this.pairedVariable = pairedVariable;
 	}
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
+    }
 }

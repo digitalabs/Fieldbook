@@ -125,6 +125,11 @@ public class CreateTrialController extends SettingsController {
         return getCurrentProjectId();
     }
 
+    @ModelAttribute("trialEnvironmentHiddenFields")
+    public List<Integer> getTrialEnvironmentHiddenFields() {
+        return buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+    }
+
     @RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
     public String showCreateTrial(Model model) {
         return showAjaxPage(model, URL_SETTINGS);
@@ -185,19 +190,19 @@ public class CreateTrialController extends SettingsController {
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true, true);
 
             //study-level
-            List<SettingDetail> trialLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()),
+            List<SettingDetail> trialLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()),
                     buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), true),
                     buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()),
                     userSelection.getStudyLevelConditions(), true, "");
 
             //plot-level
-            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()),
+            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()),
                     buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false),
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()),
                     userSelection.getPlotsLevelList(), false, "");
 
             //trial or study level variables
-            List<SettingDetail> trialLevelVariableList = sortDefaultTrialVariables(updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()),
+            List<SettingDetail> trialLevelVariableList = sortDefaultTrialVariables(updateRequiredFields(buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()),
                     buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), true),
                     buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()),
                     userSelection.getTrialLevelVariableList(), true, ""));
@@ -331,7 +336,6 @@ public class CreateTrialController extends SettingsController {
     /**
      * Submit.
      *
-     * @param form the form
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
@@ -383,18 +387,22 @@ public class CreateTrialController extends SettingsController {
     public String submit(@RequestBody TrialData data) throws MiddlewareQueryException {
         processEnvironmentData(data.getEnvironments());
         List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
-
+        List<SettingDetail> basicDetails = userSelection.getBasicDetails();
         // transfer over data from user input into the list of setting details stored in the session
-        populateSettingData(studyLevelConditions, data.getBasicDetails().getBasicDetails());
+        populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
         populateSettingData(studyLevelConditions, data.getTrialSettings().getUserInput());
+
+        List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+        combinedList.addAll(basicDetails);
+        combinedList.addAll(studyLevelConditions);
 
         String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
 
         // TODO : integrate treatment factor detail once it's finalized
 
-        Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelConditions,
+        Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
-                userSelection.getTreatmentFactors(), null, null);
+                userSelection.getTreatmentFactors(), null, null, false);
 
         // TODO : integrate trial level conditions in either dataset or workbook generation
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
@@ -430,6 +438,10 @@ public class CreateTrialController extends SettingsController {
     }
 
     protected void populateSettingData(List<SettingDetail> details, Map<Integer, String> values) {
+        if (details == null || details.isEmpty()) {
+            return;
+        }
+
         for (SettingDetail detail : details) {
             if (values.containsKey(detail.getVariable().getCvTermId())) {
                 detail.setValue(values.get(detail.getVariable().getCvTermId()));
@@ -518,7 +530,7 @@ public class CreateTrialController extends SettingsController {
 
     protected TabInfo prepareGermplasmTabInfo() {
         List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
-        List<Integer> initialSettingIDs = buildRequiredVariables(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
+        List<Integer> initialSettingIDs = buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
         for (Integer initialSettingID : initialSettingIDs) {
             try {
@@ -545,17 +557,23 @@ public class CreateTrialController extends SettingsController {
         info.setData(new EnvironmentData());
 
         Map<String, List<SettingDetail>> settingMap = new HashMap<String, List<SettingDetail>>();
-        settingMap.put("managementDetails", new ArrayList<SettingDetail>());
+        List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
+
+        for (Integer id : buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
+            managementDetailList.add(createSettingDetail(id, null));
+        }
+
+        settingMap.put("managementDetails", managementDetailList);
         settingMap.put("trialConditionDetails", new ArrayList<SettingDetail>());
 
         info.setSettingMap(settingMap);
         return info;
     }
 
-    protected TabInfo prepareBasicDetailsTabInfo() {
+    protected TabInfo prepareBasicDetailsTabInfo() throws MiddlewareQueryException{
         Map<Integer, String> basicDetails = new HashMap<Integer, String>();
         List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
-        List<Integer> initialSettingIDs = buildRequiredVariables(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+        List<Integer> initialSettingIDs = buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
 
         for (Integer initialSettingID : initialSettingIDs) {
             try {
@@ -565,17 +583,23 @@ public class CreateTrialController extends SettingsController {
             } catch (MiddlewareQueryException e) {
                 e.printStackTrace();
             }
-
         }
+
         BasicDetails basic = new BasicDetails();
         basic.setBasicDetails(basicDetails);
 
         basic.setFolderId(1);
         basic.setFolderName(AppConstants.PROGRAM_TRIALS.getString());
         basic.setFolderNameLabel(AppConstants.PROGRAM_TRIALS.getString());
+        basic.setUserID(getCurrentIbdbUserId());
+        basic.setUserName(fieldbookService.getPersonById(basic.getUserID()));
 
         TabInfo tab = new TabInfo();
         tab.setData(basic);
+
+        if (userSelection.getBasicDetails() == null || userSelection.getBasicDetails().isEmpty()) {
+            userSelection.setBasicDetails(initialDetailList);
+        }
 
         return tab;
     }
@@ -583,7 +607,7 @@ public class CreateTrialController extends SettingsController {
     protected TabInfo prepareTrialSettingsTabInfo() {
         TabInfo info = new TabInfo();
         info.setSettings(new ArrayList<SettingDetail>());
-
+        info.setData(new TrialSettingsBean());
         return info;
     }
 }

@@ -173,7 +173,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @param requiredFields the required fields
      * @return the list
      */
-    protected List<Integer> buildRequiredVariables(String requiredFields) {
+    protected List<Integer> buildVariableIDList(String requiredFields) {
         List<Integer> requiredVariables = new ArrayList<Integer>();
         StringTokenizer token = new StringTokenizer(requiredFields, ",");
         while(token.hasMoreTokens()){

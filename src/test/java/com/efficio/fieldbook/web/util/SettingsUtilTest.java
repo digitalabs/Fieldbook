@@ -29,7 +29,7 @@ public class SettingsUtilTest {
 		dataset.getFactors().add(new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N", 0));
 		dataset.getVariates().add(new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N", TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
 		
-		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
+		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
 		Debug.println(0, workbook);
 		
 		Dataset newDataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);

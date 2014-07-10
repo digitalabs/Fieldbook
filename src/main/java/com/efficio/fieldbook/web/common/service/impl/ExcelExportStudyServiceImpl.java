@@ -71,15 +71,17 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			TermId.STUDY_TYPE.getId(), TermId.STUDY_UID.getId(), TermId.STUDY_STATUS.getId());
 	
 	@Override
-	public String export(Workbook workbook, String filename, int start, int end) {
+	public String export(Workbook workbook, String filename,  List<Integer> instances) {
 		FileOutputStream fos = null;
 		List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
 		
-        	for (int i = start; i <= end; i++) {
+			for (Integer index : instances) {
+	    		List<Integer> indexes = new ArrayList();
+	    		indexes.add(index);
         		
-	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), i, i);
-	            List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), i, i);
+	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
+	            List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), indexes);
 				try {
 					MeasurementRow trialObservation = trialObservations.get(0);
 					
@@ -89,9 +91,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 					writeObservationSheet(xlsBook, workbook, observations);
 					
 					String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator + filename;
-					if (end - start > 0) {
+					if (instances != null && instances.size() > 1) {
 						int fileExtensionIndex = filenamePath.lastIndexOf(".");
-						filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + i + filenamePath.substring(fileExtensionIndex);
+						filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + index + filenamePath.substring(fileExtensionIndex);
 					}
 					fos = new FileOutputStream(new File(filenamePath));
 					xlsBook.write(fos);
@@ -111,7 +113,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				}
 			}
 
-			if (end - start > 0) {
+			if (instances != null && instances.size() > 1) {
 				outputFilename = fieldbookProperties.getUploadDirectory() 
 						+ File.separator 
 						+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 

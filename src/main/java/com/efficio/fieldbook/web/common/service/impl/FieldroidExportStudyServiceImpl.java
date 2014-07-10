@@ -47,12 +47,12 @@ public class FieldroidExportStudyServiceImpl implements
 	 * @see com.efficio.fieldbook.web.nursery.service.ExportStudyService#export(org.generationcp.middleware.domain.etl.Workbook, java.lang.String)
 	 */
 	@Override
-	public String export(Workbook workbook, String filename, int start, int end) {
+	public String export(Workbook workbook, String filename,  List<Integer> instances) {
         String outputFile = fieldbookProperties.getUploadDirectory() + File.separator + filename;
         boolean alreadyExists = new File(outputFile).exists();
         CsvWriter csvOutput = null;
-        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), start, end);
-        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), start, end);
+        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
+        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(),instances);
         try {
         	CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
             csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');

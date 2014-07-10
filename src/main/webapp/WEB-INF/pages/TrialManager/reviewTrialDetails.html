@@ -11,7 +11,8 @@
 				<img style="display:none; margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{trial.trialdetails.header}">BASIC DETAILS</strong>				
 			</label>
-			<a class="btn btn-info fbk-open-button-left-margin" th:if="*{id lt 0}" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>
+			<!-- <a class="btn btn-info fbk-open-button-left-margin" th:if="*{id lt 0}" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a> -->
+			<a onclick="javascript: openStudyOldFb()" href="javascript: void(0)" th:if="*{id lt 0}" class="btn btn-info fbk-open-button-left-margin" th:text="#{common.form.open}">Open</a>
 			<div style="float:right;" th:if="*{id lt 0}" >
 				<div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
@@ -26,7 +27,7 @@
 						<li>
 							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
 						</li>
-						<li th:if="${false}">
+						<li>
 							<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
 						</li>
 						<li>

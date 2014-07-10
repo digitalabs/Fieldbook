@@ -29,7 +29,10 @@ public class ExportOrderingSerpentineOverColImpl extends ExportDataCollectionOrd
 			for(int trialInstanceNum = 1 ; trialInstanceNum <= numberOfTrialInstance ; trialInstanceNum++){
 				
 				String blockId = fieldbookMiddlewareService.getBlockId(workbook.getTrialDatasetId(), Integer.toString(trialInstanceNum));
-				List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), trialInstanceNum, trialInstanceNum);
+				List<Integer> indexes = new ArrayList();
+	    		indexes.add(trialInstanceNum);
+	    		
+				List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), indexes);
 				List<MeasurementRow> observationsPerInstance = new ArrayList<MeasurementRow>();
 				if(blockId == null){
 					//meaning no fieldmap

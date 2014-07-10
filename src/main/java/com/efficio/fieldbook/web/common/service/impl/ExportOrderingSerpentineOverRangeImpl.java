@@ -31,7 +31,10 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 				String blockId = fieldbookMiddlewareService.getBlockId(workbook.getTrialDatasetId(), Integer.toString(trialInstanceNum));
 								
 				List<MeasurementRow> observationsPerInstance = new ArrayList<MeasurementRow>();
-				List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), trialInstanceNum, trialInstanceNum);
+				List<Integer> indexes = new ArrayList();
+	    		indexes.add(trialInstanceNum);
+	    		
+				List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), indexes);
 				if(blockId == null){
 					//meaning no fieldmap
 					//we just set the normal observations

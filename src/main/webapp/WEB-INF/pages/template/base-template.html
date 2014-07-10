@@ -45,19 +45,7 @@
 		
 
 		<script type="text/javascript" th:src="@{/static/js/base.js}"></script>
-        <script type="text/javascript" th:src="@{/static/js/spinner-manager.js}"></script>
-
-        <script type='text/javascript' th:inline="javascript">
-            /* global SpinnerManager */
-            $(document).ajaxStart(function() {
-                SpinnerManager.addActive();
-            }).ajaxStop(function() {
-                SpinnerManager.resolveActive();
-            }).ajaxError(function(){
-            	showErrorMessage('', ajaxGenericErrorMsg);
-            	SpinnerManager.resolveActive();
-            });
-        </script>
+        <script type="text/javascript" th:src="@{/static/js/spinner-manager.js}"></script>      
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

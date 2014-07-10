@@ -1,0 +1,20 @@
+
+	 <table th:if="${not #lists.isEmpty(trialInstances)}" class="my-class table table-curved table-condensed">
+	      <thead>
+	        <tr>
+	          <th>&nbsp;</th>
+	          <th th:utext="#{trial.export.instance.number}">Trial Instance #</th>
+	          <th th:utext="#{trial.export.has.fieldmap}">Has Fieldmap</th>                        
+	        </tr>
+	      </thead>
+	      <tbody>
+	        <tr th:each="instance, row : ${trialInstances}">
+	       	<td th:class="${row.even}? 'even fbk-export-select-instance-check-box' : 'odd fbk-export-select-instance-check-box'">
+	      		 <input type="checkbox" class="trial-instance-export" th:attr="data-instance-number=${instance.instanceNum}" th:attrappend="data-has-fieldmap=${instance.hasFieldmapDisplay}"/> 
+	    	</td>
+	        <td th:class="${row.even}? 'even' : 'odd'" th:text="${instance.instanceNum}">.1</td>           
+	        <td th:class="${row.even}? 'even' : 'odd'" th:text="${instance.hasFieldmapDisplay}">.2</td>           
+	    </tr>             
+	  </tbody>
+	</table>
+ 

@@ -40,16 +40,16 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	private OntologyService ontologyService;
 
 	@Override
-	public String export(Workbook workbook, String outputFile, int start, int end) {
-		return exportToR(workbook, outputFile, null, start, end);
+	public String export(Workbook workbook, String outputFile, List<Integer> instances) {
+		return exportToR(workbook, outputFile, null, instances);
 	}
 	
 	@Override
-	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, int start, int end) {
+	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, List<Integer> instances) {
 		String outFile = fieldbookProperties.getUploadDirectory() + File.separator + outputFile;
         boolean alreadyExists = new File(outFile).exists();
-        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), start, end);
-        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), start, end);
+        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
+        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), instances);
         CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
         CsvWriter csvOutput = null;
         try {

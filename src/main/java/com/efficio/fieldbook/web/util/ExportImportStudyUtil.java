@@ -45,13 +45,13 @@ public class ExportImportStudyUtil {
     	return isReturnOriginalValue ? description : "";
     }
 
-    public static List<Integer> getLocationIdsFromTrialInstances(Workbook workbook, int start, int end) {
+    public static List<Integer> getLocationIdsFromTrialInstances(Workbook workbook, List<Integer> instances) {
 		List<Integer> locationIds = new ArrayList<Integer>();
 		
 		List<MeasurementVariable> trialVariables = workbook.getTrialVariables();
 		String label = null;
 		List<MeasurementRow> trialObservations = workbook.getTrialObservations();
-		if (trialVariables != null && start > 0 && end > 0) {
+		if (trialVariables != null && instances != null && !instances.isEmpty()) {
 			for (MeasurementVariable trialVariable : trialVariables) {
 				if (trialVariable.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 					label = trialVariable.getName();
@@ -62,8 +62,8 @@ public class ExportImportStudyUtil {
 				for (MeasurementRow trialObservation : trialObservations) {
 					String trialInstanceString = trialObservation.getMeasurementDataValue(label);
 					if (trialInstanceString != null && NumberUtils.isNumber(trialInstanceString)) {
-						int trialInstanceNumber = Double.valueOf(trialInstanceString).intValue();
-						if (trialInstanceNumber >= start && trialInstanceNumber <= end) {
+						int trialInstanceNumber = Double.valueOf(trialInstanceString).intValue();						
+						if(instances != null && instances.indexOf(Integer.valueOf(trialInstanceNumber)) != -1){
 							locationIds.add((int) trialObservation.getLocationId());
 						}
 					}
@@ -82,11 +82,11 @@ public class ExportImportStudyUtil {
 		return locationIds;
 	}
 	
-    public static List<MeasurementRow> getApplicableObservations(Workbook workbook, List<MeasurementRow> observations, int start, int end) {
+    public static List<MeasurementRow> getApplicableObservations(Workbook workbook, List<MeasurementRow> observations,  List<Integer> instances) {
     	List<MeasurementRow> rows = null;
-    	if (start > 0 && end > 0) {
+    	if (instances != null && instances.size() != 0) {
 	    	rows = new ArrayList<MeasurementRow>();
-	    	List<Integer> locationIds = getLocationIdsFromTrialInstances(workbook, start, end);
+	    	List<Integer> locationIds = getLocationIdsFromTrialInstances(workbook, instances);
 	    	for (MeasurementRow row : observations) {
 	    		if (locationIds.contains((int) row.getLocationId())) {
 	    			rows.add(row);

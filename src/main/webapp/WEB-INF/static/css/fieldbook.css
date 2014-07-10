@@ -1143,7 +1143,7 @@ a.fbk-edit-experiment{
     vertical-align: middle
 }
 .advance-nursery-list-table table td.fbk-advance-check-box,
-.advance-nursery-list-table table th.fbk-advance-check-box, .fbk-advance-check-box{
+.advance-nursery-list-table table th.fbk-advance-check-box, .fbk-advance-check-box, .fbk-export-select-instance-check-box{
     text-align: center;
 }
 

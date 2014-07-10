@@ -20,7 +20,9 @@ import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.ToolUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -37,6 +39,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -73,6 +77,20 @@ public class CreateTrialController extends SettingsController {
     @Override
     public String getContentName() {
         return "TrialManager/createTrial";
+    }
+    
+    @RequestMapping(value="/open", method = RequestMethod.GET)
+    public String show(Model model, HttpServletRequest req, HttpSession session) {
+        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME});
+        
+        try {
+            ToolUtil toolUtil = new ToolUtil();
+            toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=IBFieldbookTools");
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        return super.show(model);
     }
 
     /**

@@ -48,8 +48,7 @@ public class OpenTrialController extends
 	protected FieldbookService fieldbookService;
 	
 	@Resource
-    protected UserSelection userSelection; 
-	
+    protected UserSelection userSelection; 	
 	
 	@Override
 	public String getContentName() {

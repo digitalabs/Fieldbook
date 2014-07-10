@@ -24,7 +24,9 @@
 				<div style="float: right; padding-right: 10px;">
 					<a th:if="${type == 'N'}" th:href="@{/NurseryManager/createNursery}" class="btn btn-info"
 					th:utext="#{browse.nursery.start.new.nursery}">Start a New Nursery</a>
-					<a th:if="${type == 'T'}" th:href="@{/TrialManager/createTrial}" class="btn btn-info"
+					<a th:if="${type == 'T' and false}" th:href="@{/TrialManager/createTrial}" class="btn btn-info"
+					th:utext="#{browse.trial.start.new.trial}">Start a New Nursery</a>
+					<a th:if="${type == 'T'}" onclick="javascript: openStudyOldFb()" href="javascript: void(0)" class="btn btn-info"
 					th:utext="#{browse.trial.start.new.trial}">Start a New Nursery</a>
 				</div>
 			</div>

@@ -32,9 +32,9 @@ public class DataKaptureExportStudyServiceImpl implements
     private FieldbookProperties fieldbookProperties;
 
     @Override
-	public String export(Workbook workbook, String filename, int start, int end) {
-        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), start, end);
-        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), start, end);
+	public String export(Workbook workbook, String filename,  List<Integer> instances) {
+        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
+        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), instances);
     	CSVOziel csv = new CSVOziel(workbook, observations, trialObservations, true);
 
     	List<String> filenameList = new ArrayList<String>();

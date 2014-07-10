@@ -92,6 +92,19 @@
 							</select>
 						</div>
 					</div>
+					
+					<div class="row form-group exportTrialInstanceSection fbk-hide">
+						<div class="col-xs-12 col-md-12">&nbsp;</div>
+						<div class="col-xs-12 col-md-12">
+							<label class="control-label h4" th:text="#{trial.export.choose.instance}"></label>
+						</div>
+						
+						<div class="col-xs-12 col-md-12">&nbsp;</div>
+						<div class="col-xs-12 col-md-12 trial-instance">
+							
+						</div>
+						
+					</div>
 				</div>
 				<div class="modal-footer addVariable-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
@@ -103,15 +116,16 @@
 
 	<div class="modal fade" id="exportStudyConfirmationModal" role="dialog" aria-labelledby="exportStudyConfirmationModal" aria-hidden="true">
 		<div class="modal-dialog modal-medium">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button id="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="heading-modal">
-						Confirmation
-					</h4>
-				</div>
+			<div class="modal-content">				
 				<div class="modal-body" id="exportStudyConfirmationModalBody">
-
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">					
+							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}">Confirmation</label>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
+						</div>										
+					</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							<label class="control-label" th:text="#{nursery.export.field.plan.confirmation}"></label>
@@ -164,37 +178,59 @@
 			});
 
 		});
-
+		
 		function checkBeforeExport() {
 			'use strict';
-			var studyId = '0';
+			var studyId = '0',
+			checkedInstance = getExportCheckedInstances(),
+			counter = 0 ,
+			hasNoFieldmap = false;
 
 			if ($('#browser-nurseries').length !== 0) {
 				// We are on the landing page
 				studyId = getCurrentStudyIdInTab();
+			}			
+			
+			if(!isNursery()){				
+				if(checkedInstance !== null && checkedInstance.length === 0){
+					showErrorMessage('', 'Please select at least 1 instance');
+					return false;
+				}
 			}
 			
 			if($('#exportWayType').val() === '1') {
-				exportNursery();
+				exportStudy();				
 			}else {
-
-
+				if(isNursery()){
+					$.ajax({
+						url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
+						type: 'GET',
+						cache: false,
+						success: function (data) {
+							if (data === "0") {
+								// Disable the export order of serpentine
+								$('#exportStudyModal').modal('hide');
+								$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });
+							} else {
+								exportStudy();
+							}
 	
-				$.ajax({
-					url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
-					type: 'GET',
-					cache: false,
-					success: function (data) {
-						if (data === "0") {
-							// Disable the export order of serpentine
-							$('#exportStudyModal').modal('hide');
-							$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });
-						} else {
-							exportNursery();
 						}
-
+					});
+				}else{						
+					for(counter = 0 ; counter < checkedInstance.length ; counter++){
+						if(checkedInstance[counter].hasFieldmap === 'No'){
+							hasNoFieldmap = true;
+							break;
+						}
 					}
-				});
+					if(hasNoFieldmap){
+						$('#exportStudyModal').modal('hide');
+						$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });
+					}else{
+						exportStudy();
+					}						
+				}
 			}
 		}
 
@@ -206,7 +242,7 @@
 
 		function doConfirmExport() {
 			'use strict';
-			exportNursery();
+			exportStudy();
 			$('#exportStudyConfirmationModal').modal('hide');
 		}
 
@@ -232,6 +268,18 @@
 			$('#selectedRTrait').empty();
 			$('#selectedRTrait').select2('destroy');
 
+			if(!isNursery()){
+				//we call an ajax to display the table of instances
+				$.ajax({
+					url: '/Fieldbook/ExportManager/trial/instances/'+studyId,
+					type: 'GET',
+					cache: false,
+					success: function (data) {
+						$('.exportTrialInstanceSection .trial-instance').html(data);
+						$('.exportTrialInstanceSection').removeClass('fbk-hide');
+					}
+				});
+			}
 
 
 			$.ajax({

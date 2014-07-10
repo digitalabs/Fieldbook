@@ -31,7 +31,7 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
     private FieldbookProperties fieldbookProperties;
 
 	@Override
-	public String export(Workbook workbook, String filename, int start, int end) {
+	public String export(Workbook workbook, String filename,  List<Integer> instances) {
 		
 		List<String> filenameList = new ArrayList<String>();
 
@@ -40,13 +40,15 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 
         CsvWriter csvWriter = null;
         try {
-        	int fileCount = end - start + 1;
-			for (int i = start; i <= end; i++) {
+        	int fileCount = instances.size();
+			for (Integer index : instances) {
 				String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
 						+ studyName 
-						+ (fileCount > 1 ? "-" + String.valueOf(i) : "") + filename.substring(fileExtensionIndex);
+						+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
 		        boolean alreadyExists = new File(filenamePath).exists();
-	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), i, i);
+		        List<Integer> indexes = new ArrayList();
+        		indexes.add(index);
+	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 	            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
 	
 	            csvWriter = new CsvWriter(new FileWriter(filenamePath, false), ',');

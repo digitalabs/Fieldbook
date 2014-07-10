@@ -827,23 +827,9 @@ function styleDynamicTree(treeName) {
 }
 
 function openStudyOldFb() {
-	var count = 0,
-		index,
-		tempVal;
-	for (index in selectedTableIds) {
-		tempVal = selectedTableIds[index];
-		if (tempVal != null) {
-			idVal = tempVal;
-			count++;
-		}
-	}
-
-	if (count != 1) {
-		showMessage(openStudyError);
-		return;
-	}
-
-	var openStudyHref = $('#open-study-url').attr('href');
+	'use strict';
+	//for opening old fb
+	var openStudyHref = '/Fieldbook/TrialManager/createTrial/open';
 	$.ajax({
 		url: openStudyHref,
 		type: 'GET',
@@ -1171,70 +1157,50 @@ function initTrialModalSelection() {
 	$('#selectedRTrait').prop('selectedIndex', 0);
 }
 
-function doExportTrial() {
-	var exportTrialType = $('#exportTrialType').val();
-	doExportContinue(exportTrialType, false);
-}
-
-function exportNursery() {
+function exportStudy() {
+	'use strict';
 	var type = $('#exportType').val();
 	if (type === '0') {
 		showMessage('Please choose export type');
 		return false;
 	}
-
+		
 	if (type === '2') {
-		exportNurseryToR(type);
+		exportStudyToR(type);
 	} else {
-		doExportContinue(type, true);
+		doExportContinue(type, isNursery());
 	}
 }
 
-function exportNurseryToR(type) {
-	var isNursery = true,
-		additionalParams;
-
-	if ($('#study-type').val() == 'Trial') {
-		isNursery = false;
-	}
-
-	additionalParams = '';
-	if (!isNursery) {
-		additionalParams = validateTrialInstance();
-		if (additionalParams == 'false') {
-			return false;
-		}
-	}
-	doExportContinue(type + '/' + $('#selectedRTrait').val(), isNursery);
+function exportStudyToR(type) {
+	'use strict';
+	doExportContinue(type + '/' + $('#selectedRTrait').val(), isNursery());
 }
-
-function validateTrialInstance() {
-	var exportInstanceType = $('input:radio[name=exportInstanceType]:checked').val(),
-		additionalParams = '',
-		start,
-		end,
-		exportTrial,
-		errorDiv;
-
-	if (exportInstanceType == 1) {
-		additionalParams = '0/0';
-	} else if (exportInstanceType == 2) {
-		additionalParams = $('#exportTrialInstanceNumber').val() + '/' + $('#exportTrialInstanceNumber').val();
-	} else {
-		start =  $('#exportTrialInstanceStart').val();
-		end = $('#exportTrialInstanceEnd').val();
-		additionalParams = start + '/' + end;
-		exportTrialType = $('#exportTrialType').val();
-		if (parseInt(start) >= parseInt(end)) {
-			errorDiv = 'page-modal-choose-instance-message';
-			if (exportTrialType == 2) {
-				errorDiv = 'page-modal-choose-instance-message-r';
+function getExportCheckedInstances(){
+	'use strict';
+	var checkedInstances = [];	
+	$('.trial-instance-export').each(function(){
+			if($(this).is(':checked')){
+		  		checkedInstances.push({'instance': $(this).data('instance-number'), 'hasFieldmap' :  $(this).data('has-fieldmap')});
 			}
-			showErrorMessage(errorDiv, 'To trial instance # should be greater than the From Trial Instance #');
-			additionalParams = 'false';
+		});
+	return checkedInstances;
+}
+function validateTrialInstance() {
+	'use strict';
+	var checkedInstances = getExportCheckedInstances(),
+		counter = 0,
+		additionalParam = '';
+	if(checkedInstances !== null && checkedInstances.length !== 0){
+		
+		for(counter = 0 ; counter < checkedInstances.length ; counter++){
+			if(additionalParam !== ''){
+				additionalParam += '|';
+			}
+			additionalParam += checkedInstances[counter].instance;
 		}
 	}
-	return additionalParams;
+	return additionalParam;
 }
 
 function doExportContinue(paramUrl, isNursery) {
@@ -1256,17 +1222,11 @@ function doExportContinue(paramUrl, isNursery) {
 		additionalParams = validateTrialInstance();
 		if (additionalParams == 'false') {
 			return false;
-		} else {
-			$('#trialModalSelection').modal('hide');
 		}
 	}
 	exportWayType = '/' + $('#exportWayType').val();
-	if ($('#browser-nurseries').length !== 0) {
-		studyId = getCurrentStudyIdInTab();
-		doFinalExport(paramUrl, additionalParams, exportWayType, isNursery);
-	} else {
-		doFinalExport(paramUrl, additionalParams, exportWayType, isNursery);
-	}
+
+	doFinalExport(paramUrl, additionalParams, exportWayType, isNursery);
 }
 
 function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {

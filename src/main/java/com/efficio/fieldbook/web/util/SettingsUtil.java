@@ -110,7 +110,130 @@ public class SettingsUtil {
 	 */
     public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, 
             List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection, List<SettingDetail> nurseryConditions){
-    	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, null, null, null, nurseryConditions);
+    	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, null, null, null, nurseryConditions, true);
+    }
+
+    protected static List<Condition> convertStudyLevelDetailsToConditions(List<SettingDetail> studyLevelConditions, UserSelection userSelection,
+                                                                   org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService){
+        List<Condition> conditions = new ArrayList<Condition>();
+
+        for (SettingDetail settingDetail : studyLevelConditions) {
+            SettingVariable variable = settingDetail.getVariable();
+            if (userSelection != null) {
+                StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+
+                //if the standard variable exists in the database
+                if (standardVariable.getName() != null) {
+                    variable.setPSMRFromStandardVariable(standardVariable);
+
+                    if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) ||
+                            variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
+                            && settingDetail.getValue().equals("0")) {
+                        settingDetail.setValue("");
+                    }
+
+                    Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
+                            variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+                            DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())),
+                            variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+                    condition.setOperation(variable.getOperation());
+                    condition.setStoredIn(standardVariable.getStoredIn().getId());
+                    condition.setId(variable.getCvTermId());
+                    conditions.add(condition);
+                }
+            }
+        }
+
+        return conditions;
+    }
+
+    protected static List<Variate> convertBaselineTraitsToVariates(List<SettingDetail> baselineTraits, UserSelection userSelection,
+                                                                          org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+        List<Variate> variateList = new ArrayList<Variate>();
+
+        if (baselineTraits != null && !baselineTraits.isEmpty()) {
+            for (SettingDetail settingDetail : baselineTraits) {
+                SettingVariable variable = settingDetail.getVariable();
+                if (userSelection != null) {
+                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+                    variable.setPSMRFromStandardVariable(standardVariable);
+
+                    Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
+                            variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
+                            settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
+                    variate.setOperation(variable.getOperation());
+                    variate.setStoredIn(standardVariable.getStoredIn().getId());
+                    variate.setId(variable.getCvTermId());
+                    variateList.add(variate);
+                }
+            }
+        }
+
+        return variateList;
+    }
+
+    protected static List<Factor> convertDetailsToFactors(List<SettingDetail> plotLevelDetails, UserSelection userSelection,
+                                                          org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+        List<Factor> factors = new ArrayList<Factor>();
+        if (plotLevelDetails != null && !plotLevelDetails.isEmpty()) {
+            for (SettingDetail settingDetail : plotLevelDetails) {
+                SettingVariable variable = settingDetail.getVariable();
+                if (userSelection != null) {
+                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+                    variable.setPSMRFromStandardVariable(standardVariable);
+
+                    Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
+                            variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
+                    factor.setOperation(variable.getOperation());
+                    factor.setStoredIn(standardVariable.getStoredIn().getId());
+                    factor.setId(standardVariable.getId());
+                    factor.setDataTypeId(variable.getDataTypeId());
+                    factor.setPossibleValues(settingDetail.getPossibleValues());
+                    factor.setMinRange(variable.getMinRange());
+                    factor.setMaxRange(variable.getMaxRange());
+                    factors.add(factor);
+                }
+            }
+        }
+
+        return factors;
+    }
+
+    protected static List<Constant> convertConditionsToConstants(List<SettingDetail> nurseryConditions, UserSelection userSelection,
+                                                                       org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+        List<Constant> constants = new ArrayList<Constant>();
+        if (nurseryConditions != null && !nurseryConditions.isEmpty()) {
+            for (SettingDetail settingDetail : nurseryConditions) {
+                SettingVariable variable = settingDetail.getVariable();
+                if (userSelection != null) {
+                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+
+                    variable.setPSMRFromStandardVariable(standardVariable);
+                    //need to get the name from the session
+
+                    Constant constant = new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
+                            variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+                            DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+                    constant.setOperation(variable.getOperation());
+                    constant.setStoredIn(standardVariable.getStoredIn().getId());
+                    constant.setId(variable.getCvTermId());
+                    constants.add(constant);
+                }
+            }
+        }
+
+        return constants;
+    }
+
+    protected static void setNameAndOperationFromSession(List<SettingDetail> listWithValue, List<SettingDetail> listFromSession) {
+        int index = 0;
+        if (listWithValue != null && listFromSession != null) {
+            for (SettingDetail detailWithValue : listWithValue) {
+                SettingVariable variable = detailWithValue.getVariable();
+                variable.setName(listFromSession.get(index).getVariable().getName());
+                variable.setOperation(listFromSession.get(index++).getVariable().getOperation());
+            }
+        }
     }
 
 	/**
@@ -128,173 +251,29 @@ public class SettingsUtil {
 	public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
 			String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, 
 			UserSelection userSelection, List<SettingDetail> trialLevelVariablesList, List<SettingDetail> treatmentFactorList, 
-			List<TreatmentFactorDetail> treatmentDetailList, List<SettingDetail> nurseryConditions){
-		
-		List<Condition> conditions = new ArrayList<Condition>();
-		List<Factor> factors = new ArrayList<Factor>();
-		List<Variate> variates = new ArrayList<Variate>();
-		List<Factor> trialLevelVariables = new ArrayList<Factor>();
-		List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
-		List<Constant> constants = new ArrayList<Constant>();
-		//iterate for the nursery level
-		int index = 0;
-		for(SettingDetail settingDetail : nurseryLevelConditions){
-			SettingVariable variable = settingDetail.getVariable();
-			if(userSelection != null){
-				StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-				
-				//if the standard variable exists in the database 
-				if (standardVariable.getName() != null) {
-    				variable.setPSMRFromStandardVariable(standardVariable);
-    				//need to get the name from the session
-    				variable.setName(userSelection.getStudyLevelConditions().get(index).getVariable().getName());
-    				if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) || variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId()))) && settingDetail.getValue().equals("0")) {
-    				    settingDetail.setValue("");
-    				} 			
-            			
-            			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
-            					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-            					DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-            			condition.setOperation(userSelection.getStudyLevelConditions().get(index++).getVariable().getOperation());
-            			condition.setStoredIn(standardVariable.getStoredIn().getId());
-            			condition.setId(variable.getCvTermId());
-            			conditions.add(condition);
-				} else {
-				    //do not include it in saving if variable does not exist in the database
-				    index++;
-				}
-			}
-		}
-		//iterate for the plot level
-		index = 0;
-		if(plotsLevelList != null && !plotsLevelList.isEmpty()){
-			for(SettingDetail settingDetail : plotsLevelList){
-				SettingVariable variable = settingDetail.getVariable();
-				if(userSelection != null){
-					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-					variable.setPSMRFromStandardVariable(standardVariable);
-					//need to get the name from the session
-					variable.setName(userSelection.getPlotsLevelList().get(index).getVariable().getName());
-				
-        				Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
-        						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
-        				factor.setOperation(userSelection.getPlotsLevelList().get(index++).getVariable().getOperation());
-        				factor.setStoredIn(standardVariable.getStoredIn().getId());
-        				factor.setId(standardVariable.getId());
-        				factor.setDataTypeId(variable.getDataTypeId());
-        				factor.setPossibleValues(settingDetail.getPossibleValues());
-        				factor.setMinRange(variable.getMinRange());
-        				factor.setMaxRange(variable.getMaxRange());
-        				factors.add(factor);
-				}
-			}
-		}
-		//iterate for the baseline traits level
-		index = 0;
-		if(baselineTraitsList != null && !baselineTraitsList.isEmpty()){
-			for(SettingDetail settingDetail : baselineTraitsList){
-				SettingVariable variable = settingDetail.getVariable();
-				if(userSelection != null){
-					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-					variable.setPSMRFromStandardVariable(standardVariable);
-					//need to get the name from the session
-					variable.setName(userSelection.getBaselineTraitsList().get(index).getVariable().getName());
-					
-				
-        				Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
-        						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
-        						settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
-        				variate.setOperation(userSelection.getBaselineTraitsList().get(index++).getVariable().getOperation());
-        				variate.setStoredIn(standardVariable.getStoredIn().getId());
-        				variate.setId(variable.getCvTermId());
-        				variates.add(variate);
-				}
-			}
-		}
-		
-		//iterate for the nursery conditions/constants
-		if (nurseryConditions != null && !nurseryConditions.isEmpty()) {
-                index = 0;
-                for(SettingDetail settingDetail : nurseryConditions){
-                        SettingVariable variable = settingDetail.getVariable();
-                        if(userSelection != null){
-                                StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-                                
-                                variable.setPSMRFromStandardVariable(standardVariable);
-                                //need to get the name from the session
-                                variable.setName(userSelection.getNurseryConditions().get(index).getVariable().getName()); 
-                        
-                        
-                                Constant constant= new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
-                                                variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-                                                DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-                                constant.setOperation(userSelection.getNurseryConditions().get(index++).getVariable().getOperation());
-                                constant.setStoredIn(standardVariable.getStoredIn().getId());
-                                constant.setId(variable.getCvTermId());
-                                constants.add(constant);
-                        }
-                }
-		}
-		
-		//iterate for treatment factor details
-		if (treatmentDetailList != null && !treatmentDetailList.isEmpty()) {
-			List<Integer> addedTreatmentFactors = new ArrayList<Integer>();
-			for (TreatmentFactorDetail detail : treatmentDetailList) {
-				TreatmentFactor treatmentFactor = convertTreatmentFactorDetailToTreatmentFactor(detail, userSelection, fieldbookMiddlewareService);
-				treatmentFactors.add(treatmentFactor);
-				if (!addedTreatmentFactors.contains(treatmentFactor.getLevelFactor().getTermId())) {
-					factors.add(treatmentFactor.getLevelFactor());
-					factors.add(treatmentFactor.getValueFactor());
-					addedTreatmentFactors.add(treatmentFactor.getLevelFactor().getTermId());
-				}
-			}
-		}
-		else if (treatmentFactorList != null && !treatmentFactorList.isEmpty()) {
-			int currentGroup = -1;
-			TreatmentFactor treatmentFactor;
-			Factor levelFactor = null, valueFactor = null;
-			
-			for (int i = 0; i < treatmentFactorList.size(); i++) {
-				currentGroup = getTreatmentGroup(userSelection, treatmentFactorList, i);
-				levelFactor = createFactor(treatmentFactorList.get(i), userSelection, fieldbookMiddlewareService, i);
-				levelFactor.setTreatmentLabel(treatmentFactorList.get(i).getVariable().getName());
+			List<TreatmentFactorDetail> treatmentDetailList, List<SettingDetail> nurseryConditions, boolean fromNursery){
 
-				int j;
-				for (j = i + 1; j < treatmentFactorList.size(); j++) {
-					int groupNumber = getTreatmentGroup(userSelection, treatmentFactorList, j);
-					if (groupNumber != currentGroup) {
-						j--;
-						break;
-					}
-					valueFactor = createFactor(treatmentFactorList.get(j), userSelection, fieldbookMiddlewareService, j);
-					valueFactor.setTreatmentLabel(treatmentFactorList.get(i).getVariable().getName());
-				}
-				i = j;
-				treatmentFactor = new TreatmentFactor(levelFactor, valueFactor);
-				treatmentFactors.add(treatmentFactor);
-			}
-		}
+        // this block is necessary for the previous nursery code because the setting details passed in from nursery are mostly empty except for properties
+        // also stored in the HTML form; e.g., value
+        if (fromNursery) {
+            setNameAndOperationFromSession(nurseryLevelConditions, userSelection.getStudyLevelConditions());
+            setNameAndOperationFromSession(plotsLevelList, userSelection.getPlotsLevelList());
+            setNameAndOperationFromSession(baselineTraitsList, userSelection.getBaselineTraitsList());
+            setNameAndOperationFromSession(nurseryConditions, userSelection.getNurseryConditions());
+
+            // name and operation setting are no longer performed on the other setting lists provided as params in this method
+            // because those are only defined for trials
+            // assumption is that params provided from trial management do not need this operation
+        }
 		
-		ParentDataset realDataset = null;
+		List<Condition> conditions = convertStudyLevelDetailsToConditions(nurseryLevelConditions, userSelection, fieldbookMiddlewareService);
+		List<Factor> factors = convertDetailsToFactors(plotsLevelList, userSelection, fieldbookMiddlewareService);
+		List<Variate> variates = convertBaselineTraitsToVariates(baselineTraitsList, userSelection, fieldbookMiddlewareService);
+        List<Constant> constants = convertConditionsToConstants(nurseryConditions, userSelection, fieldbookMiddlewareService);
+		List<Factor> trialLevelVariables = convertDetailsToFactors(trialLevelVariablesList, userSelection, fieldbookMiddlewareService);
+
+        ParentDataset realDataset = null;
 		if(trialLevelVariablesList != null){
-			
-			index = 0;
-			if(trialLevelVariablesList != null && !trialLevelVariablesList.isEmpty()){
-				for(SettingDetail settingDetail : trialLevelVariablesList){
-					SettingVariable variable = settingDetail.getVariable();
-					if(userSelection != null){
-						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-						variable.setPSMRFromStandardVariable(standardVariable);
-						//need to get the name from the session
-						variable.setName(userSelection.getTrialLevelVariableList().get(index++).getVariable().getName());
-						
-					}
-					Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
-							variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
-					trialLevelVariables.add(factor);
-				}
-			}
-			
 			
 			//this is a trial dataset
 			Dataset dataset = new Dataset(trialLevelVariables);
@@ -303,7 +282,7 @@ public class SettingsUtil {
 			dataset.setVariates(variates);
 			dataset.setName(name);
 			dataset.setTrialLevelFactor(trialLevelVariables);
-			dataset.setTreatmentFactors(treatmentFactors);
+			dataset.setTreatmentFactors(new ArrayList<TreatmentFactor>());
 			realDataset = dataset;
 		}else{
 			Dataset dataset = new Dataset();
@@ -314,10 +293,51 @@ public class SettingsUtil {
 			dataset.setName(name);
 			realDataset = dataset;
 		}
+
+        return realDataset;
+
+        // TODO : integrate treatment factor in conversion to DataSet
+        // please do not remove so as to have point of comparison when implementing treatment factor integration
+
+                /*//iterate for treatment factor details
+                List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
+                if (treatmentDetailList != null && !treatmentDetailList.isEmpty()) {
+                    List<Integer> addedTreatmentFactors = new ArrayList<Integer>();
+                    for (TreatmentFactorDetail detail : treatmentDetailList) {
+                        TreatmentFactor treatmentFactor = convertTreatmentFactorDetailToTreatmentFactor(detail, userSelection, fieldbookMiddlewareService);
+                        treatmentFactors.add(treatmentFactor);
+                        if (!addedTreatmentFactors.contains(treatmentFactor.getLevelFactor().getTermId())) {
+                            factors.add(treatmentFactor.getLevelFactor());
+                            factors.add(treatmentFactor.getValueFactor());
+                            addedTreatmentFactors.add(treatmentFactor.getLevelFactor().getTermId());
+                        }
+                    }
+                } else if (treatmentFactorList != null && !treatmentFactorList.isEmpty()) {
+                    int currentGroup = -1;
+                    TreatmentFactor treatmentFactor;
+                    Factor levelFactor = null, valueFactor = null;
+
+                    for (int i = 0; i < treatmentFactorList.size(); i++) {
+                        currentGroup = getTreatmentGroup(userSelection, treatmentFactorList, i);
+                        levelFactor = createFactor(treatmentFactorList.get(i), userSelection, fieldbookMiddlewareService, i);
+                        levelFactor.setTreatmentLabel(treatmentFactorList.get(i).getVariable().getName());
+
+                        int j;
+                        for (j = i + 1; j < treatmentFactorList.size(); j++) {
+                            int groupNumber = getTreatmentGroup(userSelection, treatmentFactorList, j);
+                            if (groupNumber != currentGroup) {
+                                j--;
+                                break;
+                            }
+                            valueFactor = createFactor(treatmentFactorList.get(j), userSelection, fieldbookMiddlewareService, j);
+                            valueFactor.setTreatmentLabel(treatmentFactorList.get(i).getVariable().getName());
+                        }
+                        i = j;
+                        treatmentFactor = new TreatmentFactor(levelFactor, valueFactor);
+                        treatmentFactors.add(treatmentFactor);
+                    }
+                }*/
 		
-	
-		
-		return realDataset;
 	}
 	
 	

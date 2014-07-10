@@ -12,6 +12,8 @@
 package com.efficio.fieldbook.web.util;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -297,4 +299,18 @@ public enum AppConstants {
         return value;
     }
     
+    public Map<String, String> getMapOfValues() {
+    	String constantValue = getString();
+    	Map<String, String> map = new HashMap<String, String>();
+    	String[] pairs = constantValue.split(",");
+    	if (pairs != null) {
+    		for (String pair : pairs) {
+    			String[] separated = pair.split("\\|");
+    			if (separated != null && separated.length == 2) {
+    				map.put(separated[0], separated[1]);
+    			}
+    		}
+    	}
+    	return map;
+    }
 }

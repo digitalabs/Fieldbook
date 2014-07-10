@@ -888,7 +888,7 @@ public class EditNurseryController extends SettingsController {
     	removeDeletedSetUpdate(userSelection.getBaselineTraitsList(), workbook.getVariates());
     	removeDeletedSetUpdate(userSelection.getNurseryConditions(), workbook.getConstants());
     	removeDeletedSetUpdate(userSelection.getSelectionVariates(), null);
-    	workbook.setMeasurementDatasetVariables(null);
+    	workbook.reset();
     	
     	//reorder variates based on measurementrow order
     	int index = 0;

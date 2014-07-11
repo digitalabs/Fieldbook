@@ -842,10 +842,9 @@ function openStudyOldFb() {
 
 function openStudy(tableName) {
 	'use strict';
-	var count = 0;
-
-	idVal = getCurrentStudyIdInTab();
-	count++;
+	var count = 0,
+		idVal = getCurrentStudyIdInTab();
+		count++;
 
 	if (count !== 1) {
 		showMessage(openStudyError);

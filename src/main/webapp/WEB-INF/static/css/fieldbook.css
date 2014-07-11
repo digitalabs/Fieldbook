@@ -1391,10 +1391,6 @@ label[data-toggle="collapse"],
 	border: none;
 }
 
-.nrm-var-selection-modal .nrm-var-select-dropdown-container {
-	padding-bottom: 10px;
-}
-
 .nrm-var-selection-modal .nrm-var-select-var {
 	padding-bottom: 15px;
 }
@@ -1418,4 +1414,18 @@ label[data-toggle="collapse"],
 
 .nrm-var-select-add {
 	float: right;
+}
+
+.nrm-var-selection-modal .modal-body {
+	height: 300px;
+	max-height: 300px;
+}
+
+.nrm-var-selection-modal .nrm-var-select-dropdown-container {
+	height: 45px;
+}
+
+.nrm-var-selection-modal .nrm-var-select-results {
+	height: 240px;
+	overflow-y: auto;
 }

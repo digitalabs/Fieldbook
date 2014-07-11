@@ -46,15 +46,31 @@
 </script>
 
 <script id="related-prop-template" type="text/x-handlebars-template">
-{{#if properties}}
+
+{{#if column1}}
+
 <h3>Related Properties</h3>
-<ul>
-	{{#each properties}}
-	<li>
-		<a href="#" class="nrm-var-property-name" data-id="{{propertyId}}">{{name}}</a>
-	</li>
-	{{/each}}
-</ul>
+<div class="nrm-var-select-related-props">
+    <div class="nrm-var-select-prop-col nrm-var-select-prop-col-left">
+        <ul>
+            {{#each column1}}
+			<li>
+				<a href="#" class="nrm-var-property-name" data-id="{{propertyId}}">{{name}}</a>
+			</li>
+			{{/each}}
+        </ul>
+    </div>
+    <div class="nrm-var-select-prop-cols">
+        <ul>
+            {{#each column2}}
+			<li>
+				<a href="#" class="nrm-var-property-name" data-id="{{propertyId}}">{{name}}</a>
+			</li>
+			{{/each}}
+        </ul>
+    </div>
+</div>
+
 {{/if}}
 </script>
 

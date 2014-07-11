@@ -1429,3 +1429,17 @@ label[data-toggle="collapse"],
 	height: 240px;
 	overflow-y: auto;
 }
+
+.nrm-var-select-related-props {
+    display: table;
+    table-layout: fixed;
+    width: 100%
+}
+
+.nrm-var-select-prop-col {
+    display: table-cell
+}
+
+.nrm-var-select-prop-col-left {
+    width: 50%;
+}

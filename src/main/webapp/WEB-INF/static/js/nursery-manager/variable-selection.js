@@ -25,7 +25,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		aliasVariableInputSelector = '.nrm-var-select-alias-input',
 		relatedPropertyLinkSelector = '.nrm-var-property-name',
 		variableListSelector = '.nrm-var-select-vars',
-		relatedPropertyListSelector = '.nrm-var-select-related-props',
+		relatedPropertyListSelector = '.nrm-var-select-related-props-wrapper',
 		propertySelectSelector = '.nrm-var-select-dropdown-container',
 
 		// Only compile our templates once, rather than every time we need them
@@ -73,10 +73,21 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		// Filter out the currently selected property
 		var filteredProperties = $.grep(properties, function(element) {
-			return element.propertyId !== selectedProperty.propertyId;
-		});
+				return element.propertyId !== selectedProperty.propertyId;
+			}),
 
-		container.append(generateRelatedProperty({properties: filteredProperties}));
+			splitColumns = {
+				column1: filteredProperties,
+				column2: []
+			};
+
+		// Split the list of filtered properties in two if there are more than 4
+		if (splitColumns.column1.length > 4) {
+			splitColumns.column1 = filteredProperties.splice(0, Math.ceil(filteredProperties.length / 2));
+			splitColumns.column2 = filteredProperties;
+		}
+
+		container.append(generateRelatedProperty(splitColumns));
 	}
 
 	/* Constructs a new property dropdown.

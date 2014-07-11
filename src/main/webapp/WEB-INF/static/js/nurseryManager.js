@@ -1036,12 +1036,15 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 }
 
 function resetIdsOfTables(name, tableId) {
-	var reg = new RegExp(name + "[0-9]+", "g");
-	var reg2 = new RegExp(name + "\[[0-9]+\]", "g");
-	$.each($("#" + tableId + " tbody tr"), function(index, row) {
-		row.innerHTML = row.innerHTML.replace(reg, name + index);
-		row.innerHTML = row.innerHTML.replace(reg2, name + "[" + index + "]");
+	var reg = new RegExp(name + '[0-9]+', 'g');
+	var reg2 = new RegExp(name + '\[[0-9]+\]', 'g');
+	var bodyContent = '', rowContent = '';
+	$.each($('#' + tableId + ' tbody tr'), function(index, row) {
+		rowContent = row.innerHTML.replace(reg, name + index);
+		rowContent = rowContent.replace(reg2, name + '[' + index + ']');		
+		bodyContent = bodyContent + ' <tr> ' + rowContent + '</tr>'; 
 	});
+	$('#' + tableId + ' tbody').html(bodyContent);
 }
 
 function sortVariableIdsAndNames(variableType) {

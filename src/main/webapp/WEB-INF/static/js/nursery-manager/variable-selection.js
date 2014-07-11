@@ -182,6 +182,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
 			title;
 
+		properties.sort(function(propertyA, propertyB) {
+			return propertyA.name.localeCompare(propertyB.name);
+		});
+
 		// Store these properties for later use
 		this._currentlySelectedVariables = groupData.selectedVariables;
 		this._group = group;
@@ -281,6 +285,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 			// TODO Deal with the situation where they have moved on before it returns
 			$.getJSON(url, $.proxy(function(data) {
+
+				data.sort(function(propertyA, propertyB) {
+					return propertyA.name.localeCompare(propertyB.name);
+				});
 
 				// Store for later to prevent multiple calls to the same service with the same data
 				this._relatedProperties[relatedPropertiesKey] = data;

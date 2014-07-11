@@ -340,8 +340,8 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam) {
             $('#newFolderName').val(node.data.title);
             var currentFolderName = node.data.title;
         },
-        onDblClick: function (node, event) {
-            chooseStudy();
+        onDblClick: function (node, event) {            
+            openStudyNode();
         },
         dnd: {
             onDragStart: function (node) {

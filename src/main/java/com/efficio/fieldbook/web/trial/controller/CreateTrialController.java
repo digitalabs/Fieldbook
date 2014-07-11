@@ -25,6 +25,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -405,21 +406,26 @@ public class CreateTrialController extends SettingsController {
 
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
-                userSelection.getTreatmentFactors(), null, null, false);
+                userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
 
         // TODO : integrate trial level conditions in either dataset or workbook generation
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
 
-        // TODO : optimize observation row generation by leveraging map instead of list of list array structure
-        List<List<ValueReference>> trialEnvironmentValues = convertToValueReference(data.getEnvironments().getEnvironments());
-        workbook.setTrialObservations(WorkbookUtil.createMeasurementRows(trialEnvironmentValues, workbook.getTrialVariables()));
+        List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
+        variablesForEnvironment.addAll(workbook.getTrialVariables());
+        variablesForEnvironment.addAll(workbook.getTrialConditions());
+
+        List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment) ;
+        workbook.setTrialObservations(trialEnvironmentValues);
 
         createStudyDetails(workbook, data.getBasicDetails());
 
         // TODO : integration with experimental design here
 
         userSelection.setWorkbook(workbook);
-        userSelection.setTrialEnvironmentValues(trialEnvironmentValues);
+
+        // TODO : clarify if the environment values placed in session also need to be updated to include the values for the trial level conditions
+        userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
         return "success";
     }
 

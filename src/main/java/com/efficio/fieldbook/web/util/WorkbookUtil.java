@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.efficio.fieldbook.web.trial.bean.Environment;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -97,6 +98,33 @@ public class WorkbookUtil {
 		
 		return observations;
 	}
+
+    public static List<MeasurementRow> createMeasurementRowsFromEnvironments(List<Environment> environments, List<MeasurementVariable> variables) {
+        List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+
+        if (environments != null) {
+            for (Environment environment : environments) {
+                List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+                for (MeasurementVariable var : variables) {
+                    String value = environment.getManagementDetailValues().get(var.getTermId());
+
+                    if (value == null) {
+                        value = environment.getTrialDetailValues().get(var.getTermId());
+                    }
+
+                    if (value != null && !value.isEmpty()) {
+                        boolean isEditable = ! (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());
+                        MeasurementData data = new MeasurementData(var.getName(), value, isEditable, var.getDataType(), var);
+                        dataList.add(data);
+                    }
+                }
+
+                observations.add(new MeasurementRow(dataList));
+            }
+        }
+
+        return observations;
+    }
 
 	public static void addVariateToObservations(MeasurementVariable mvar, List<MeasurementRow> observations) {
 		if (observations != null) {

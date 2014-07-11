@@ -62,6 +62,49 @@ $(function() {
 
 });
 
+function isStudyNameUnique(studyName, studyId) {
+
+    if (!studyId) {
+        studyId = 0;
+    }
+
+    var isUnique = true;
+    $.ajax({
+        url: '/Fieldbook/StudyTreeManager/isNameUnique',
+        type: 'POST',
+        data: 'studyId=' + studyId + '&name=' + studyName,
+        cache: false,
+        async: false,
+        success: function (data) {
+            if (data.isSuccess == 1) {
+                isUnique = true;
+            } else {
+                isUnique = false;
+            }
+        }
+    });
+    return isUnique;
+}
+
+function validateStartEndDateBasic(startDate, endDate) {
+
+    startDate = startDate == null ? '' : startDate.replace(/-/g, '');
+    endDate = endDate == null ? '' : endDate.replace(/-/g, '');
+
+    if (startDate === '' && endDate === '') {
+        return true;
+    } else if (startDate !== '' && endDate === '') {
+        return true;
+    } else if (startDate === '' && endDate !== '') {
+        return startDateRequiredError;
+    } else if (parseInt(startDate) > parseInt(endDate)) {
+        return startDateRequiredEarlierError;
+    }
+
+    return true;
+
+}
+
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {
     'use strict';
 

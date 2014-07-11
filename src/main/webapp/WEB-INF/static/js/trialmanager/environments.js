@@ -11,14 +11,6 @@
         function ($scope, TrialManagerDataService) {
             $scope.data = {};
 
-            // storage of number of environments uses a temp variable to account for user temporarily deleting contents of field to enter new value
-            $scope.temp = {
-                noOfEnvironments: 0
-            };
-
-            $scope.temp.settingMap = {};
-
-
             $scope.data = TrialManagerDataService.currentData.environments;
 
             $scope.settings = TrialManagerDataService.settings.environments;
@@ -27,6 +19,13 @@
                 $scope.settings.managementDetails = [];
                 $scope.settings.trialConditionDetails = [];
             }
+
+            // storage of number of environments uses a temp variable to account for user temporarily deleting contents of field to enter new value
+            $scope.temp = {
+                noOfEnvironments: $scope.data.noOfEnvironments
+            };
+
+            $scope.temp.settingMap = {};
 
             $scope.findSetting = function(targetKey, type) {
                 if (! $scope.temp.settingMap[targetKey]) {

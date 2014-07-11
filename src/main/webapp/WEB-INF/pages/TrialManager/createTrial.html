@@ -177,13 +177,16 @@
     <script type="text/javascript" th:src="@{/static/js/trial-settings-manager.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/fieldbook-common.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
+
 
 
     <!-- constants here -->
     <script type="text/javascript" th:inline="javascript">
         //<![CDATA[
         // TODO: move the ff later as constant in the angular app module
+        var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '';
         var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '';
         var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/ '';
         var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '';

@@ -235,6 +235,7 @@
                     };
 
                     if ($scope.hasDropdownOptions) {
+                        // TODO : add code that will recognize categorical variable dropdowns and change the displayed text accordingly
                         $scope.dropdownValues = $scope.variableDefinition.possibleValues;
 
                         $scope.computeMinimumSearchResults = function() {

@@ -2,7 +2,8 @@
  * Created by cyrus on 7/1/14.
  */
 
-/*global angular, changeBuildOption, getJquerySafeId, alert, showSuccessfulMessage*/
+/*global angular, changeBuildOption, getJquerySafeId, isStudyNameUnique, showSuccessfulMessage,
+showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
 
 (function() {
     'use strict';
@@ -15,29 +16,29 @@
 
         $stickyStateProvider.enableDebug(false);
 
-        $urlRouterProvider.otherwise("/trialSettings");
+        $urlRouterProvider.otherwise('/trialSettings');
         $stateProvider
 
             .state('trialSettings', {
-                url: "/trialSettings",
+                url: '/trialSettings',
                 templateUrl: '/Fieldbook/TrialManager/createTrial/trialSettings',
                 controller: 'TrialSettingsCtrl'
             })
 
             .state('treatment', {
-                url: "/treatment",
+                url: '/treatment',
                 templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
                 controller: 'TreatmentCtrl'
             })
 
             .state('environment', {
-                url: "/environment",
+                url: '/environment',
                 templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
                 controller: 'EnvironmentCtrl'
             })
 
             .state('experimentalDesign', {
-                url: "/experimentalDesign",
+                url: '/experimentalDesign',
                 templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
             })
 
@@ -51,7 +52,7 @@
                 views: {
                     'germplasm' : {
                         controller: 'GermplasmCtrl',
-                        templateUrl: "/Fieldbook/TrialManager/createTrial/germplasm"
+                        templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm'
                     }
                 },
                 deepStateRedirect: true, sticky: true
@@ -84,7 +85,8 @@
 
 
     // THE parent controller for the manageTrial (create/edit) page
-    manageTrialApp.controller('manageTrialCtrl',['$scope','$rootScope','TrialManagerDataService', function($scope,$rootScope, TrialManagerDataService){
+    manageTrialApp.controller('manageTrialCtrl',['$scope','$rootScope','TrialManagerDataService',
+        function($scope,$rootScope, TrialManagerDataService){
         $scope.trialTabs = [
             {   'name' : 'Trial Settings',
                 'state' : 'trialSettings'
@@ -181,10 +183,6 @@
                 currentData: {
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
-                    /*germplasm: extractData(GERMPLASM_INITIAL_DATA),*/
-                    /*treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA),
-                    experimentalDesign: extractData(EXPERIMENTAL_DESIGN_INITIAL_DATA),
-                    measurements: extractData(MEASUREMENTS_INITIAL_DATA),*/
                     basicDetails: extractData(BASIC_DETAILS_DATA)
                 },
                 // standard variable [meta-data] information or a particular tab settings information
@@ -201,14 +199,56 @@
 
                 saveCurrentData: function () {
                     var returnVal = {};
-                    // remove 'tab data' that does not have any information
-                    angular.forEach(service.currentData, function(value, key) {
-                        if (! (value === null || value === undefined) ) {
-                            returnVal[key] = value;
-                        }
-                    });
 
-                    $http.post('/Fieldbook/TrialManager/createTrial', returnVal).success(submitGermplasmList);
+                    if (service.isCurrentTrialDataValid()) {
+                        // TODO : double check
+                        $http.post('/Fieldbook/TrialManager/createTrial', returnVal).success(submitGermplasmList);
+                    }
+                },
+
+                isCurrentTrialDataValid : function() {
+                    var hasError = false, name = '', customMessage = '';
+
+                    if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
+                        hasError = true;
+                        name = 'Name';
+                    } else if ($.trim(service.currentData.basicDetails.basicDetails[8007]) === '') {
+                        hasError = true;
+                        name = 'Description';
+                    } else if (isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {
+                        hasError = true;
+                        customMessage = 'Name should be unique';
+                    } else if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
+                        hasError = true;
+                        name = $('#folderLabel').text();
+                    } else if (service.currentData.basicDetails.basicDetails[8050] === '') {
+                        // validate creation date
+                        hasError = true;
+                        name = 'Creation Date';
+                    }
+
+                    if (hasError) {
+                        var errMsg = '';
+                        if (name !== '') {
+                            errMsg = name.replace('*', '').replace(':', '') + ' ' + nurseryFieldsIsRequired;
+                        }
+
+                        if (customMessage !== '') {
+                            errMsg = customMessage;
+                        }
+
+                        showInvalidInputMessage(errMsg);
+                        return false;
+                    }
+
+                    var valid = validateStartEndDateBasic();
+
+                    if (!valid) {
+                        return false;
+                    }
+
+
+                    return true;
                 }
             };
 

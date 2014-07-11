@@ -1,4 +1,5 @@
 /*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, noMethodVariatesError, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, noLineVariatesError, setCorrectMethodValues, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
+/*global isStudyNameUnique, validateStartDateEndDateBasic*/
 function checkMethod() {
 	'use strict';
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() == 1) {
@@ -1394,7 +1395,7 @@ function choosePreviousNursery(studyId) {
 		}
 	});
 }
-function isStudyNameUnique() {
+function isNurseryNameUnique() {
 	'use strict';
 	var studyId = '0';
 	if ($('#createNurseryMainForm #studyId').length !== 0){
@@ -1406,25 +1407,9 @@ function isStudyNameUnique() {
 
 	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
 
-	$('#' + getJquerySafeId('basicDetails0.value')).val(studyName);
-
-	var isUnique = true;
-	$.ajax({
-		url : "/Fieldbook/StudyTreeManager/isNameUnique",
-		type : "POST",
-		data : "studyId=" + studyId + "&name=" + studyName,
-		cache : false,
-		async : false,
-		success : function(data) {
-			if (data.isSuccess == 1) {
-				isUnique = true;
-			} else {
-				isUnique = false;
-			}
-		}
-	});
-	return isUnique;
+	return isStudyNameUnique(studyId, studyName);
 }
+
 function validateCreateNursery() {
 	var hasError = false
 		,name = ''
@@ -1444,7 +1429,7 @@ function validateCreateNursery() {
 	}else if($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === ''){
 		hasError = true;
 		name = 'Description';
-	}else if (isStudyNameUnique() === false) {
+	}else if (isNurseryNameUnique() === false) {
 		hasError = true;
 		customMessage = "Name should be unique";
 	} else if ($('#folderId').val() === '') {
@@ -1474,7 +1459,7 @@ function validateCreateNursery() {
 		return false;
 	}
 
-	var valid = validateStartEndDateBasic();
+	var valid = nurseryValidateStartEndDateBasic();
 
 	if (!valid) {
 		return false;
@@ -1566,25 +1551,17 @@ function validateCreateNursery() {
 }
 
 
-function validateStartEndDateBasic() {
+function nurseryValidateStartEndDateBasic() {
 	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
 	var endDate = $("#" + getJquerySafeId("basicDetails.value4")).val();
 
-	startDate = startDate == null ? '' : startDate.replace(/-/g, "");
-	endDate = endDate == null ? '' : endDate.replace(/-/g, "");
-
-	if (startDate === '' && endDate === '')
-		return true;
-	else if (startDate !== '' && endDate === '') {
-		return true;
-	} else if (startDate === '' && endDate !== '') {
-		showInvalidInputMessage(startDateRequiredError);
-		return false;
-	} else if (parseInt(startDate) > parseInt(endDate)) {
-		showInvalidInputMessage(startDateRequiredEarlierError);
-		return false;
-	}
-	return true;
+	var returnVal =  (validateStartDateEndDateBasic(startDate, endDate));
+	if (returnVal === true) {
+        return true;
+    } else {
+        showInvalidInputMessage(returnVal);
+        return false;
+    }
 
 }
 

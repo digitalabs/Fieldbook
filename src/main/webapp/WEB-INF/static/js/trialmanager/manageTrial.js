@@ -98,7 +98,9 @@
             {   'name' : 'Treatment Factors',
                 'state' : 'treatment'
             },
-
+            {   'name' : 'Experimental Design',
+                'state' : 'experimentalDesign'
+            },
             {   'name' : 'Measurements',
                 'state' : 'measurements'
             }

@@ -116,37 +116,38 @@ public class SettingsUtil {
         return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, baselineTraitsList, userSelection, null, null, null, nurseryConditions, null, true);
     }
 
-    protected static List<Condition> convertDetailsToConditions(List<SettingDetail> studyLevelConditions, UserSelection userSelection,
+    protected static List<Condition> convertDetailsToConditions(List<SettingDetail> details, UserSelection userSelection,
                                                                 org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
         List<Condition> conditions = new ArrayList<Condition>();
 
-        for (SettingDetail settingDetail : studyLevelConditions) {
-            SettingVariable variable = settingDetail.getVariable();
-            if (userSelection != null) {
-                StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+        if (details != null) {
+            for (SettingDetail settingDetail : details) {
+                SettingVariable variable = settingDetail.getVariable();
+                if (userSelection != null) {
+                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 
-                //if the standard variable exists in the database
-                if (standardVariable.getName() != null) {
-                    variable.setPSMRFromStandardVariable(standardVariable);
+                    //if the standard variable exists in the database
+                    if (standardVariable.getName() != null) {
+                        variable.setPSMRFromStandardVariable(standardVariable);
 
-                    if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) ||
-                            variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
-                            && settingDetail.getValue().equals("0")) {
-                        settingDetail.setValue("");
+                        if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) ||
+                                variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
+                                && settingDetail.getValue().equals("0")) {
+                            settingDetail.setValue("");
+                        }
+
+                        Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
+                                variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+                                DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())),
+                                variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+                        condition.setOperation(variable.getOperation());
+                        condition.setStoredIn(standardVariable.getStoredIn().getId());
+                        condition.setId(variable.getCvTermId());
+                        conditions.add(condition);
                     }
-
-                    Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
-                            variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-                            DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())),
-                            variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-                    condition.setOperation(variable.getOperation());
-                    condition.setStoredIn(standardVariable.getStoredIn().getId());
-                    condition.setId(variable.getCvTermId());
-                    conditions.add(condition);
                 }
             }
         }
-
         return conditions;
     }
 

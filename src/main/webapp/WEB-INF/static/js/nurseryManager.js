@@ -1696,6 +1696,7 @@ function recreateSessionVariables() {
 }
 
 function displayEditFactorsAndGermplasmSection() {
+	'use strict';
 	if ($('#measurementDataExisting').length !== 0) {
 		displayCorrespondingGermplasmSections();
 		
@@ -1713,6 +1714,11 @@ function displayEditFactorsAndGermplasmSection() {
 		}
 	} else {
 		displayCorrespondingGermplasmSections();
+		if ($('#measurementDataExisting').val() === 'true') {
+			$('.nrm-var-select-open').hide();		
+		} else {
+			$('.nrm-var-select-open').show();			
+		}
 	}
 }
 

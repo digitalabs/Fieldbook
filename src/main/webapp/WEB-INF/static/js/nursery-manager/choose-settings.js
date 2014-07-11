@@ -52,8 +52,11 @@ window.ChooseSettings = (function() {
 	 * @param {string} id the id of the item to remove
 	 * @param {object[]} list the list of objects to search
 	 * @param {string} idSelector the key with which the id property should be accessed on each item of the list (e.g. `id` or `propertyId`)
+	 * @returns {object} the object that was removed
 	 */
 	function _removeById(id, list, idSelector) {
+
+		var property;
 
 		// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
 		$.each(list, function(index, obj) {
@@ -62,10 +65,11 @@ window.ChooseSettings = (function() {
 
 			if (obj[idSelector] === id) {
 				found = true;
-				list.splice(index, 1);
+				property = list.splice(index, 1)[0];
 			}
 			return !found;
 		});
+		return property;
 	}
 
 	/*
@@ -78,10 +82,12 @@ window.ChooseSettings = (function() {
 	 * @param {object} selectedVariables an object representing all currently selected variables. Each key represents a variable id that is
 	 * selected, and it's value the name of that variable.
 	 * @param {object[]} properties a list of properties from which to remove variables / properties as appropriate
+	 * @returns {object[]} a list of properties that were removed
 	 */
-	function _performVariableExclusions(exclusions, selectedVariables, properties) {
+	function _performExclusions(exclusions, selectedVariables, properties) {
 
-		var key,
+		var removedProperties = [],
+			key,
 			exclusion,
 			id,
 			index;
@@ -101,11 +107,12 @@ window.ChooseSettings = (function() {
 
 					// If the property has no more variables, remove it too
 					if (properties[index].standardVariables.length === 0) {
-						properties.splice(index, 1);
+						removedProperties.push(properties.splice(index, 1)[0]);
 					}
 				}
 			}
 		}
+		return removedProperties;
 	}
 
 	/*
@@ -113,10 +120,12 @@ window.ChooseSettings = (function() {
 	 *
 	 * @param {object[]} variableList a list of variables, each with a variableId and propertyId property
 	 * @param {object[]} properties a list of properties from which to remove variables / properties as appropriate.
+	 * @returns {object[]} a list of properties that were removed
 	 */
 	function _removeVariables(variableList, properties) {
 
-		var index;
+		var removedProperties = [],
+			index;
 
 		$.each(variableList, function(i, variable) {
 
@@ -127,9 +136,10 @@ window.ChooseSettings = (function() {
 
 			// If the property has no more variables, remove it too
 			if (properties[index].standardVariables.length === 0) {
-				properties.splice(index, 1);
+				removedProperties.push(properties.splice(index, 1)[0]);
 			}
 		});
+		return removedProperties;
 	}
 
 	/* FIXME - this logic should be in the back end
@@ -138,7 +148,7 @@ window.ChooseSettings = (function() {
 	 *
 	 * @param {object[]} properties the list of properties to filter
 	 * @param {number} group properties and variables will be filtered to be specific to the group represented by this number
-	 * @returns {object[]} the list of filtered properties
+	 * @returns {object} an object with two properties, excluded and included - the list of properties that were removed and left
 	 */
 	function _filterProperties(properties, selectedVariables, group) {
 
@@ -211,23 +221,31 @@ window.ChooseSettings = (function() {
 					variableId: 8252,
 					propertyId: 2670
 				}
-			};
+			},
+
+			exclusions = [];
 
 		// Currently we only have special handling for management details (1) and selection strategy (6)
 		switch (group) {
 			case 1:
 				// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
-				_removeById(studyLevelBreedingMethodPropertyId, filteredProperties, 'propertyId');
-				_performVariableExclusions(managementDetailExclusions, selectedVariables, filteredProperties);
-				_removeVariables(basicDetails, filteredProperties);
+				exclusions.push(_removeById(studyLevelBreedingMethodPropertyId, filteredProperties, 'propertyId'));
+
+				// Remove variables and properties as necessary
+				exclusions = exclusions.concat(_performExclusions(managementDetailExclusions, selectedVariables, filteredProperties));
+				exclusions = exclusions.concat(_removeVariables(basicDetails, filteredProperties));
 				break;
 			case 6:
-				_performVariableExclusions(selectionExclusions, selectedVariables, filteredProperties);
+				// Remove variables and properties as necessary
+				exclusions = exclusions.concat(_performExclusions(selectionExclusions, selectedVariables, filteredProperties));
 				break;
 			default:
 				break;
 		}
-		return filteredProperties;
+		return {
+			exclusions: exclusions,
+			inclusions: filteredProperties
+		};
 	}
 
 	function _findVariables(selectors) {
@@ -374,7 +392,8 @@ window.ChooseSettings = (function() {
 				placeholderLabel: group.placeholder
 			},
 			modal = this._variableSelection,
-			selectedVariables;
+			selectedVariables,
+			properties;
 
 		// Initialise a variable selection modal if we haven't done so before
 		if (!modal) {
@@ -389,10 +408,13 @@ window.ChooseSettings = (function() {
 			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId, function(data) {
 				variableSelectionGroups[groupId].data = data;
 
+				properties = _filterProperties(variableSelectionGroups[groupId].data, selectedVariables, groupId);
+
 				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
 				// TODO get variable usage
 				modal.show(groupId, groupTranslations, {
-					propertyData: _filterProperties(variableSelectionGroups[groupId].data, selectedVariables, groupId),
+					propertyData: properties.inclusions,
+					excludedProperties: properties.exclusions,
 					variableUsageData: [],
 					selectedVariables: selectedVariables
 				});
@@ -404,8 +426,12 @@ window.ChooseSettings = (function() {
 		} else {
 			// We've shown this before, and have the data. Just show the dialog. Note - we have to filter the properties again in case
 			// they removed a variable that had caused a variable or property to previously be excluded from the list
+
+			properties = _filterProperties(group.data, selectedVariables, groupId);
+
 			modal.show(groupId, groupTranslations, {
-				propertyData: _filterProperties(group.data, selectedVariables, groupId),
+				propertyData: properties.inclusions,
+				excludedProperties: properties.exclusions,
 				variableUsageData: [],
 				selectedVariables: selectedVariables
 			});

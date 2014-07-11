@@ -119,6 +119,39 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		};
 	}
 
+	/*
+	 * Removes an item by item from a given list.
+	 *
+	 * @param {string} id the id of the item to remove
+	 * @param {object[]} list the list of objects to search
+	 */
+	function _removePropertyById(id, list) {
+
+		// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
+		$.each(list, function(index, obj) {
+
+			var found = false;
+
+			if (obj.propertyId === id) {
+				found = true;
+				list.splice(index, 1);
+			}
+			return !found;
+		});
+	}
+
+	/*
+	 * Removes properties that should be excluded from a specified list.
+	 *
+	 * @param {object[]} relatedPropertyList the list of properties to remove excluded items from
+	 * @param {object[]} toExclude the list of properties to remove
+	 */
+	function _removeExclusions(relatedPropertyList, toExclude) {
+		$.each(toExclude, function(i, property) {
+			_removePropertyById(property.propertyId, relatedPropertyList);
+		});
+	}
+
 	/**
 	 * Creates a new Variable Selection dialog.
 	 *
@@ -153,6 +186,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._currentlySelectedVariables = groupData.selectedVariables;
 		this._group = group;
 		this._properties = properties;
+		this._excludedProperties = groupData.excludedProperties || [];
 
 		// Append title
 		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');
@@ -197,6 +231,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		var selectedProperty = this._selectedProperty,
 			variables = this._selectedProperty.standardVariables,
+			toExclude = this._excludedProperties,
 			variableListElement = $(variableListSelector),
 			relatedPropertyList = $(relatedPropertyListSelector),
 			classId = selectedProperty.traitClass.traitClassId,
@@ -205,7 +240,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			i,
 			selectedVariableName,
 			variableId,
-			relatedPropertiesKey;
+			relatedPropertiesKey,
+			filteredProperties;
 
 		// If we know of aliases for any of the variables we're loading, set them now
 		for (i = 0; i < variables.length; i++) {
@@ -248,10 +284,19 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 				// Store for later to prevent multiple calls to the same service with the same data
 				this._relatedProperties[relatedPropertiesKey] = data;
-				_renderRelatedProperties(relatedPropertyList, selectedProperty, data);
+
+				// Remove exclusions but don't modify saved data
+				filteredProperties = JSON.parse(JSON.stringify(data));
+				_removeExclusions(filteredProperties, toExclude);
+
+				_renderRelatedProperties(relatedPropertyList, selectedProperty, filteredProperties, toExclude);
 			}, this));
 		} else {
-			_renderRelatedProperties(relatedPropertyList, selectedProperty, this._relatedProperties[relatedPropertiesKey]);
+			// Remove exclusions but don't modify saved data
+			filteredProperties = JSON.parse(JSON.stringify(this._relatedProperties[relatedPropertiesKey]));
+			_removeExclusions(filteredProperties, toExclude);
+
+			_renderRelatedProperties(relatedPropertyList, selectedProperty, filteredProperties, toExclude);
 		}
 	};
 

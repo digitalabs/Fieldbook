@@ -1702,12 +1702,12 @@ function displayEditFactorsAndGermplasmSection() {
 		
 		//enable/disable adding of factors if nursery has measurement data
 		if ($('#measurementDataExisting').val() === 'true') {
-			$('.nrm-var-select-open').hide();
+			$('.nrm-var-select-open-factor').hide();
 			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
 				$(row).find('.delete-icon').hide();
 			});
 		} else {
-			$('.nrm-var-select-open').show();
+			$('.nrm-var-select-open-factor').show();
 			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
 				$(row).find('.delete-icon').show();
 			});
@@ -1715,9 +1715,9 @@ function displayEditFactorsAndGermplasmSection() {
 	} else {
 		displayCorrespondingGermplasmSections();
 		if ($('#measurementDataExisting').val() === 'true') {
-			$('.nrm-var-select-open').hide();		
+			$('.nrm-var-select-open-factor').hide();		
 		} else {
-			$('.nrm-var-select-open').show();			
+			$('.nrm-var-select-open-factor').show();			
 		}
 	}
 }

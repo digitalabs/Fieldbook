@@ -393,6 +393,20 @@
 
                 return input;
             };
+        })
+
+        .filter('removeHiddenVariableFilter',function() {
+            return function(settingKeys,settingVals) {
+                var keys = [];
+
+                angular.forEach(settingKeys,function(val,key) {
+                    if (!settingVals[val].hidden) {
+                        keys.push(val);
+                    }
+                });
+
+                return keys;
+            };
         });
 
 })();

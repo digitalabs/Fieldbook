@@ -1362,31 +1362,32 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 }
 
 function openUsePreviousNurseryModal() {
-	$("#selectedNursery").select2("destroy");
-	$("#selectedNursery").val("");
-	$("#selectedNursery").select2({minimumResultsForSearch: 20});
-	$("#usePreviousNurseryModal").modal("show");
+	'use strict';
+	$('#selectedNursery').select2('destroy');
+	$('#selectedNursery').val('');
+	$('#selectedNursery').select2({minimumResultsForSearch: 20});
+	$('#usePreviousNurseryModal').modal('show');
 }
 
 function choosePreviousNursery(studyId) {
-
-	if ($("#chooseSettingsDiv").length !== 0) {
-		url = "/Fieldbook/NurseryManager/createNursery/nursery/";
+	'use strict';
+	if ($('#chooseSettingsDiv').length !== 0) {
+		url = '/Fieldbook/NurseryManager/createNursery/nursery/';
 	}
 
 
 	$.ajax({
 		url : url + studyId,
-		type : "GET",
+		type : 'GET',
 		cache : false,
-		data : "",
+		data : '',		
 		success : function(html) {
-			if ($("#chooseSettingsDiv").length !== 0) {
-				$("#chooseSettingsDiv").html(html);
+			if ($('#chooseSettingsDiv').length !== 0) {
+				$('#chooseSettingsDiv').html(html);
 			} else {
 				$('.container .row').first().html(html);
 			}
-
+			$('.nrm-var-select-open-factor').show();
 		}
 	});
 }

@@ -147,7 +147,11 @@ function chooseStudyNode(node, fromEnterKey) {
             if (choosingType === 1){
             	if($('#studyTreeModal').data('open') === '1'){
             		$('#studyTreeModal').data('open', '0'); 
-            		openTreeStudy(node.data.key);
+            		if(parseInt(node.data.key, 10) < 0){
+            			openTreeStudy(node.data.key);
+            		}else{
+            			addDetailsTab(node.data.key, node.data.title);	
+            		}            		
             	}else{
                 	addDetailsTab(node.data.key, node.data.title);
             	}

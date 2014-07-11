@@ -238,6 +238,8 @@ public class FieldbookServiceImpl implements FieldbookService{
             list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
         	list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
+        } else if (mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
+        	list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
         }
         return list;
     }

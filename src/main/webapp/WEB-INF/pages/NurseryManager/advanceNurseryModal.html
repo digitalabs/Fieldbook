@@ -63,7 +63,7 @@
                                     <label class="non-maize-control">
                                         <input class="advance-fav-method-checkbox" id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
                                         &nbsp;&nbsp;&nbsp;
-                                        <a href="javascript: openManageMethods()" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>
+                                        <a class="advance-manage-method" href="javascript: void(0)" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>
                                     </label>
                                 </div>
 
@@ -160,7 +160,7 @@
                                     <label class="control-label">
                                         <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
                                         &nbsp;&nbsp;&nbsp;
-                                        <a href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>
+                                        <a class='advance-manage-location' href="javascript: void(0)" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>
                                     </label>
                                 </div>
 							</div>
@@ -344,7 +344,17 @@
             // remove any other listeners for the location update
             $(document).off('location-update');
             $(document).on('location-update', recreateLocationCombo);
-
+			$('.advance-manage-method').on('click', function(){
+				$('#advanceNurseryModal').modal('hide');
+				$('#advanceNurseryModal').data('open', '1');
+				setTimeout(openManageMethods, 500);
+			});
+			$('.advance-manage-location').on('click', function(){
+				$('#advanceNurseryModal').modal('hide');
+				$('#advanceNurseryModal').data('open', '1');
+				setTimeout(openManageLocations, 500);
+			});
+			$('#advanceNurseryModal').data('open', '0');
 		});
 	//]]>
 	</script>

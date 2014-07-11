@@ -30,6 +30,16 @@
         document.programMethodUrl = /*[[${programMethodURL}]]*/ '';
         document.projectID = /*[[${projectID}]]*/ '';
     })();
+	$(function() {
+		'use strict';
+		$('#manageMethodModal').on('hidden.bs.modal', function () {
+			if($('#advanceNurseryModal').length !== 0 && $('#advanceNurseryModal').data('open') == '1'){
+				//we show the advance nursery modal
+				setTimeout(function(){$('#advanceNurseryModal').modal('show');}, 200);
+				$('#advanceNurseryModal').data('open', '0');
+			}
+	    });
+	});
 	function closeMethodFrame(){
 		recreateMethodCombo();
 		$('#manageMethodModal').modal('hide');

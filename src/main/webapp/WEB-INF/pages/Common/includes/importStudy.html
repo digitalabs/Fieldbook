@@ -3,7 +3,7 @@
 	<form id="importStudyUploadForm"
 	method="post" th:object="${createNurseryForm}"
 	enctype="multipart/form-data">
-		<div class="modal fade import-study-data" id="importStudyModal" role="dialog" aria-labelledby="importStudyModal" aria-hidden="true">
+		<div class="modal fade import-study-data import-window" id="importStudyModal" role="dialog" aria-labelledby="importStudyModal" aria-hidden="true">
 			<div class="modal-dialog modal-medium">
 				<div class="modal-content">
 					
@@ -76,7 +76,7 @@
 	</form>
 </div>
 
-<div class="modal fade" id="importStudyConfirmationModal" role="dialog" aria-labelledby="importStudyConfirmationModal" aria-hidden="true">
+<div class="modal fade import-window" id="importStudyConfirmationModal" role="dialog" aria-labelledby="importStudyConfirmationModal" aria-hidden="true">
 	<div class="modal-dialog modal-small">
 		<div class="modal-content">			
 			<div class="modal-body" id="importStudyConfirmationModalBody">
@@ -104,7 +104,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="importStudyDesigConfirmationModal" role="dialog" aria-labelledby="importStudyDesigConfirmationModal" aria-hidden="true">
+<div class="modal fade import-window" id="importStudyDesigConfirmationModal" role="dialog" aria-labelledby="importStudyDesigConfirmationModal" aria-hidden="true">
 	<div class="modal-dialog modal-medium">
 		<div class="modal-content">			
 			<div class="modal-body" id="importStudyDesigConfirmationModalBody">
@@ -238,7 +238,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="discardImportDataConfirmation" role="dialog" aria-labelledby="discardImportDataConfirmation" aria-hidden="true">
+<div class="modal fade import-window" id="discardImportDataConfirmation" role="dialog" aria-labelledby="discardImportDataConfirmation" aria-hidden="true">
 	<div class="modal-dialog modal-small">
 		<div class="modal-content">			
 			<div class="modal-body" id="discardImportDataConfirmationBody">
@@ -265,7 +265,7 @@
 		</div>
 	</div>
 </div>
-<div class="modal fade" id="importOverwriteConfirmation" role="dialog" aria-labelledby="importOverwriteConfirmation" aria-hidden="true">
+<div class="modal fade import-window" id="importOverwriteConfirmation" role="dialog" aria-labelledby="importOverwriteConfirmation" aria-hidden="true">
 	<div class="modal-dialog modal-small">
 		<div class="modal-content">			
 			<div class="modal-body" id="importOverwriteConfirmationBody">
@@ -314,7 +314,7 @@
 
 		$( document ).ready(function() {
 			'use strict';
-			$('#importStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
+			$('.import-window select').select2({width: 'copy', minimumResultsForSearch: 20});
 			$('#importType').on('change', function(){
 				if($(this).val() !== '0'){
 					importNursery($(this).val());

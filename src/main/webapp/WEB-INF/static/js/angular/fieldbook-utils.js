@@ -17,7 +17,7 @@
                     this.m_vals[keyExtract(list[i])] = list[i];
                 }
             }
-        }
+        };
 
 
         OrderedHash.prototype.push = function (k, v) {
@@ -203,19 +203,7 @@
                     }
                 },
                 controller : function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
-                    $scope.findSetting = function(targetKey) {
-                        var foundSetting = null;
-                        $.each($scope.settings.vals(), function(key, value) {
-                            if (value.variable.cvTermId == targetKey) {
-                                foundSetting = value;
-                                return false;
-                            }
-                        });
-
-                        return foundSetting;
-                    };
-
-                    $scope.variableDefinition = $scope.findSetting($scope.targetkey);
+                    $scope.variableDefinition = $scope.settings.val($scope.targetkey);
                     $scope.hasDropdownOptions = $scope.variableDefinition.variable.widgetType === 'DROPDOWN';
 
                     $scope.isLocation = $scope.variableDefinition.variable.cvTermId == LOCATION_ID;
@@ -247,10 +235,12 @@
                                 return {results: $scope.dropdownValues};
                             },
                             formatResult: function (value) {
-                                return value.name;
+                                // TODO : add code that can handle display of methods
+                                return value.description;
                             },
                             formatSelection: function (value) {
-                                return value.name;
+                                // TODO : add code that can handle display of methods
+                                return value.description;
                             },
                             minimumResultsForSearch : $scope.computeMinimumSearchResults(),
                             query : function (query) {
@@ -274,6 +264,7 @@
                         };
                     }
 
+                    // TODO : add code that can handle display of favorite methods, as well as update of possible values in case of click of manage methods
                     if ($scope.isLocation) {
                         $scope.updateLocationValues = function () {
                             if (!$scope.variableDefinition.locationUpdated) {
@@ -396,7 +387,7 @@
             };
         })
 
-        .filter('removeHiddenVariableFilter',function() {
+        .filter('removeHiddenVariableFilter', function() {
             return function(settingKeys,settingVals) {
                 var keys = [];
 

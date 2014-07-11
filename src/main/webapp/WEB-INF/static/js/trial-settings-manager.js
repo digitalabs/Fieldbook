@@ -3,7 +3,7 @@ window.TrialSettingsManager = (function() {
 
 	var MODES = {
 			TRIAL_SETTINGS: 1,
-			GERMPLASM_FACTORS: 2,
+			GERMPLASM_FACTORS: 8,
 			MEASUREMENT_TRAITS: 3,
             TRIAL_ENVIRONMENT: 4,
             TREATMENT_FACTORS: 5,

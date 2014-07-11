@@ -343,7 +343,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			},
 			success: $.proxy(function(data) {
 				// Prevent this variable from being selected again
-				this._currentlySelectedVariables[selectedVariable.id] = selectedVariable.alias;
+				this._currentlySelectedVariables[selectedVariable.id] = selectedVariable.alias || selectedVariable.name;
 
 				// Remove the edit button
 				selectButton.parent('p').find(aliasVariableButtonSelector).remove();

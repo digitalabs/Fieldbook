@@ -413,7 +413,6 @@ public class CreateTrialController extends SettingsController {
 
         List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
         variablesForEnvironment.addAll(workbook.getTrialVariables());
-        variablesForEnvironment.addAll(workbook.getTrialConditions());
 
         List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment) ;
         workbook.setTrialObservations(trialEnvironmentValues);

@@ -204,7 +204,7 @@ public class SettingsUtil {
     }
 
     protected static List<Constant> convertConditionsToConstants(List<SettingDetail> nurseryConditions, UserSelection userSelection,
-                                                                 org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+                                                                 org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, boolean isTrial) {
         List<Constant> constants = new ArrayList<Constant>();
         if (nurseryConditions != null && !nurseryConditions.isEmpty()) {
             for (SettingDetail settingDetail : nurseryConditions) {
@@ -217,7 +217,8 @@ public class SettingsUtil {
 
                     Constant constant = new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
                             variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-                            DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+                            DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), 
+                            variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange(), isTrial);
                     constant.setOperation(variable.getOperation());
                     constant.setStoredIn(standardVariable.getStoredIn().getId());
                     constant.setId(variable.getCvTermId());
@@ -273,10 +274,10 @@ public class SettingsUtil {
         List<Condition> conditions = convertDetailsToConditions(studyLevelConditions, userSelection, fieldbookMiddlewareService);
         List<Factor> factors = convertDetailsToFactors(plotsLevelList, userSelection, fieldbookMiddlewareService);
         List<Variate> variates = convertBaselineTraitsToVariates(baselineTraitsList, userSelection, fieldbookMiddlewareService);
-        List<Constant> constants = convertConditionsToConstants(nurseryConditions, userSelection, fieldbookMiddlewareService);
+        List<Constant> constants = convertConditionsToConstants(nurseryConditions, userSelection, fieldbookMiddlewareService, false);
         List<Factor> trialLevelVariables = convertDetailsToFactors(trialLevelVariablesList, userSelection, fieldbookMiddlewareService);
 
-        conditions.addAll(convertDetailsToConditions(trialLevelConditions, userSelection, fieldbookMiddlewareService));
+        constants.addAll(convertConditionsToConstants(trialLevelConditions, userSelection, fieldbookMiddlewareService, true));
 
         ParentDataset realDataset = null;
         if (trialLevelVariablesList != null) {
@@ -286,6 +287,7 @@ public class SettingsUtil {
             dataset.setConditions(conditions);
             dataset.setFactors(factors);
             dataset.setVariates(variates);
+            dataset.setConstants(constants);
             dataset.setName(name);
             dataset.setTrialLevelFactor(trialLevelVariables);
             dataset.setTreatmentFactors(new ArrayList<TreatmentFactor>());
@@ -945,6 +947,7 @@ public class SettingsUtil {
             workbook.setFactors(convertFactorsToMeasurementVariables(trialDataset.getFactors()));
             workbook.setVariates(convertVariatesToMeasurementVariables(trialDataset.getVariates()));
             workbook.getConditions().addAll(convertFactorsToMeasurementVariables(trialDataset.getTrialLevelFactor()));
+            workbook.setConstants(convertConstantsToMeasurementVariables(trialDataset.getConstants()));
             if (workbook.getTreatmentFactors() == null) {
                 workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
             }
@@ -972,7 +975,7 @@ public class SettingsUtil {
             List<Condition> conditions = convertMeasurementVariablesToConditions(workbook.getConditions());
             List<Factor> factors = convertMeasurementVariablesToFactors(workbook.getFactors());
             List<Variate> variates = convertMeasurementVariablesToVariates(workbook.getVariates());
-            List<Constant> constants = convertMeasurementVariablesToConstants(workbook.getConstants());
+            List<Constant> constants = convertMeasurementVariablesToConstants(workbook.getConstants(), !isNursery);
 
             nurseryDataset.setConditions(conditions);
             nurseryDataset.setFactors(factors);
@@ -985,11 +988,13 @@ public class SettingsUtil {
             List<Condition> conditions = convertMeasurementVariablesToConditions(workbook.getStudyConditions());
             List<Factor> factors = convertMeasurementVariablesToFactors(workbook.getFactors());
             List<Variate> variates = convertMeasurementVariablesToVariates(workbook.getVariates());
+            List<Constant> constants = convertMeasurementVariablesToConstants(workbook.getConstants(), !isNursery);
             List<TreatmentFactor> treatmentFactors = convertTreatmentVariablesToTreatmentFactors(workbook.getTreatmentFactors());
 
             trialDataset.setConditions(conditions);
             trialDataset.setFactors(factors);
             trialDataset.setVariates(variates);
+            trialDataset.setConstants(constants);
             trialDataset.setTrialLevelFactor(convertMeasurementVariablesToFactors(workbook.getTrialConditions()));
             trialDataset.setTreatmentFactors(treatmentFactors);
 
@@ -1026,7 +1031,7 @@ public class SettingsUtil {
         return conditions;
     }
 
-    private static List<Constant> convertMeasurementVariablesToConstants(List<MeasurementVariable> mlist) {
+    private static List<Constant> convertMeasurementVariablesToConstants(List<MeasurementVariable> mlist, boolean isTrial) {
         List<Constant> constants = new ArrayList<Constant>();
 
         if (mlist != null && !mlist.isEmpty()) {
@@ -1040,7 +1045,7 @@ public class SettingsUtil {
                         mvar.getMethod(),
                         PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(),
                         mvar.getDataType(),
-                        mvar.getValue(), null, null, null);
+                        mvar.getValue(), null, null, null, isTrial);
                 constant.setId(mvar.getTermId());
                 constants.add(constant);
             }
@@ -1194,7 +1199,12 @@ public class SettingsUtil {
     private static MeasurementVariable convertConstantToMeasurementVariable(Constant constant) {
         String label = null;
 
-        label = PhenotypicType.valueOf(constant.getRole()).getLabelList().get(0);
+        if (constant.isTrial()) {
+        	label = PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0);
+        }
+        else {
+        	label = PhenotypicType.valueOf(constant.getRole()).getLabelList().get(0);
+        }
 
         MeasurementVariable mvar = new MeasurementVariable(
                 constant.getName(), constant.getDescription(), constant.getScale(), constant.getMethod(), constant.getProperty(), constant.getDatatype(),

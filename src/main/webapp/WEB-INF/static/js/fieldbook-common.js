@@ -58,7 +58,7 @@ $(function() {
             $(document.body).css('padding-right', 0);
         });
 
-
+    
 
 });
 
@@ -841,7 +841,7 @@ function openStudyOldFb() {
 }
 
 function openStudy(tableName) {
-
+	'use strict';
 	var count = 0;
 
 	idVal = getCurrentStudyIdInTab();
@@ -856,6 +856,15 @@ function openStudy(tableName) {
 
 	if (idVal != null) {
 		location.href = openStudyHref + '/' + idVal;
+	}
+}
+
+function openTreeStudy(id){
+	'use strict';
+	if(isNursery()){
+		location.href = '/Fieldbook/NurseryManager/editNursery/' + id;
+	}else{
+		location.href = '/Fieldbook/TrialManager/editNursery/' + id;
 	}
 }
 
@@ -2879,4 +2888,3 @@ function initializeReviewDatasetTabs(datasetId) {
 		}
 	});
 }
-

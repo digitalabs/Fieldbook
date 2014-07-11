@@ -72,13 +72,13 @@
                     <div class="row">
                         <div th:include="/Common/includes/studyTreeManageNurseryOperation"/>
                     </div>
-
-
-
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-                    <button type="button" class="btn btn-primary" th:text="#{common.form.select.text}" onclick="javascript: chooseStudy();">Ok</button>
+                    <button type="button" class="btn btn-primary tree-select-button fbk-hide" th:text="#{common.form.select.text}" onclick="javascript: chooseStudy();">Ok</button>
+                    <button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.view.summary.text}" onclick="javascript: chooseStudy();">View Summary</button>
+                    <button type="button" class="btn btn-primary tree-review-button fbk-hide" th:text="#{common.form.open.text}" onclick="javascript: openStudyNode();">Open</button>
                 </div>
             </div>
         </div>
@@ -130,6 +130,12 @@ $(document).ready(function () {
 			submitRenameFolder();
 		}
 	});
+	if($('.landing-page').length !== 0){
+		//means we are in the landing page
+		$('.tree-review-button').removeClass('fbk-hide');
+	}else{
+		$('.tree-select-button').removeClass('fbk-hide');
+	}
 });
 
 
@@ -138,8 +144,14 @@ function chooseStudyNode(node, fromEnterKey) {
     'use strict';
     if (choosingType === 1 || choosingType === 3) {
         if (node.data.isFolder === false) {
-            if (choosingType === 1)
-                addDetailsTab(node.data.key, node.data.title);
+            if (choosingType === 1){
+            	if($('#studyTreeModal').data('open') === '1'){
+            		$('#studyTreeModal').data('open', '0'); 
+            		openTreeStudy(node.data.key);
+            	}else{
+                	addDetailsTab(node.data.key, node.data.title);
+            	}
+            }
             else {
                 choosePreviousNursery(node.data.key);
             }
@@ -174,6 +186,14 @@ function chooseStudy() {
     'use strict';
     var node = $('#studyTree').dynatree('getTree').getActiveNode();
     chooseStudyNode(node, false);
+}
+
+function openStudyNode(){
+	'use strict';
+	if(isNursery()){ //condition to be removed when trial is ready
+		$('#studyTreeModal').data('open', '1');
+	}
+	chooseStudy();
 }
 
 function doStudyLazyLoad(node) {
@@ -302,7 +322,13 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam) {
             $('#studyTreeModalBody a.dynatree-title').off('keyup');
             $('#studyTreeModalBody a.dynatree-title').on('keyup', function (e) {
                 if (e.keyCode === 13) {
-                    chooseStudyNode(focusNode, true);
+                	if($('.landing-page').length !== 0){
+                		//means we are in the landing page
+                		if(isNursery()){ //condition to be removed when trial is ready
+                			$('#studyTreeModal').data('open', '1');
+                		}                		
+                	}
+					chooseStudyNode(focusNode, true);                	
                 }
             });
         },

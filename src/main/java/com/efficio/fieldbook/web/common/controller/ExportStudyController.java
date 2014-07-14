@@ -291,6 +291,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
 					}else{
 						workbookSession = fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
 					}
+					SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbookSession.getObservations(), false, ontologyService);
 					
 					getPaginationListSelection().addReviewFullWorkbook(studyId, workbookSession);
 				}else{

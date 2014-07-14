@@ -1407,7 +1407,7 @@ function isNurseryNameUnique() {
 
 	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
 
-	return isStudyNameUnique(studyId, studyName);
+	return isStudyNameUnique(studyName, studyId);
 }
 
 function validateCreateNursery() {
@@ -1555,7 +1555,7 @@ function nurseryValidateStartEndDateBasic() {
 	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
 	var endDate = $("#" + getJquerySafeId("basicDetails.value4")).val();
 
-	var returnVal =  (validateStartDateEndDateBasic(startDate, endDate));
+	var returnVal =  (validateStartEndDateBasic(startDate, endDate));
 	if (returnVal === true) {
         return true;
     } else {

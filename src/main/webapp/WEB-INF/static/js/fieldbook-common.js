@@ -63,7 +63,7 @@ $(function() {
 });
 
 function isStudyNameUnique(studyName, studyId) {
-
+    'use strict';
     if (!studyId) {
         studyId = 0;
     }
@@ -87,6 +87,8 @@ function isStudyNameUnique(studyName, studyId) {
 }
 
 function validateStartEndDateBasic(startDate, endDate) {
+
+    'use strict';
 
     startDate = startDate == null ? '' : startDate.replace(/-/g, '');
     endDate = endDate == null ? '' : endDate.replace(/-/g, '');

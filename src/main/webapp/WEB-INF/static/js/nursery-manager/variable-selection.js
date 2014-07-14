@@ -328,11 +328,20 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		e.preventDefault();
 
 		var selectButton = $(e.currentTarget),
+			container = selectButton.parent('p'),
+			variableContainer = container.children(variableNameContainerSelector),
 			iconContainer = selectButton.children('.glyphicon'),
-			variableName = $(selectButton.parent('p').find('.nrm-var-name')[0]).text(),
+			variableName,
 			selectedVariable,
 			variableId;
 
+		// If the user is in the middle of entering an alias, close that before proceeding
+		if (variableContainer.find(aliasVariableInputSelector).length && !this._saveAlias(variableContainer)) {
+			// If save alias returns null, the save was not successful and we should not proceed
+			return;
+		}
+
+		variableName = $(container.find('.nrm-var-name')[0]).text();
 		selectedVariable = _findVariableByName(variableName, this._selectedProperty.standardVariables).variable;
 
 		// Disable the select button to prevent clicking twice
@@ -398,19 +407,29 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			alias: variableInfo.variable.alias || ''
 		}));
 
-		container.on('click', '.nrm-var-select-name-save', {}, $.proxy(this._saveAlias, this));
-		container.on('click', '.nrm-var-select-name-cancel', {}, $.proxy(this._cancelAlias, this));
+		container.on('click', '.nrm-var-select-name-save', {}, $.proxy(function(e) {
+			e.preventDefault();
+			this._saveAlias($(e.currentTarget).parent(variableNameContainerSelector));
+		}, this));
+
+		container.on('click', '.nrm-var-select-name-cancel', {}, $.proxy(function(e) {
+			e.preventDefault();
+			this._cancelAlias($(e.currentTarget).parent(variableNameContainerSelector));
+		}, this));
+
 		container.on('keyup ', aliasVariableInputSelector, {}, $.proxy(function(e) {
+
+			var container = $(e.currentTarget).parent(variableNameContainerSelector);
 
 			switch (e.keyCode) {
 				case 13:
 					// Save on enter
-					this._saveAlias(e);
+					this._saveAlias(container);
 					break;
 				case 27:
 					// Cancel on escape - this is actually being trapped by the escape to escape from
 					// the modal, so won't work at the moment :(
-					this._cancelAlias(e);
+					this._cancelAlias(container);
 					break;
 				default:
 					// Don't do anything for any other keys
@@ -430,15 +449,15 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	}
 
 	/*
-	 * Handles a variable alias save event.
+	 * Handles a variable alias save.
 	 *
-	 * @param {object} event the JQuery click event
+	 * @param {JQuery} container the variable container that holds the input
+	 * @returns {string} the new variable name (which will be the alias or the variable name if the alias was empty), or null if an error
+	 * occurred
 	 */
-	VariableSelection.prototype._saveAlias = function(e) {
-		e.preventDefault();
+	VariableSelection.prototype._saveAlias = function(container) {
 
-		var container = $(e.currentTarget).parent(variableNameContainerSelector),
-			input = container.find(aliasVariableInputSelector),
+		var input = container.find(aliasVariableInputSelector),
 			alias = input.val(),
 			index = input.data('index'),
 			unique = true,
@@ -457,8 +476,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			if (!unique) {
 				showErrorMessage(null, 'This name has been used before - please enter a different name');
 
-				// Don't close the input
-				return;
+				// Don't close the input before returning
+				return null;
 			}
 
 			// Store the alias
@@ -466,18 +485,18 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		}
 
 		_renderVariableName(this._selectedProperty.standardVariables[index], container);
+
+		return alias || this._selectedProperty.standardVariables[index].name;
 	};
 
 	/*
-	 * Handles a variable alias cancel event.
+	 * Cancels editing a variable alias.
 	 *
-	 * @param {object} event the JQuery click event
+	 * @param {JQuery} container the variable container that holds the input
 	 */
-	VariableSelection.prototype._cancelAlias = function(e) {
-		e.preventDefault();
+	VariableSelection.prototype._cancelAlias = function(container) {
 
-		var container = $(e.currentTarget).parent(variableNameContainerSelector),
-			input = container.find(aliasVariableInputSelector),
+		var input = container.find(aliasVariableInputSelector),
 			index = input.data('index');
 
 		_renderVariableName(this._selectedProperty.standardVariables[index], container);

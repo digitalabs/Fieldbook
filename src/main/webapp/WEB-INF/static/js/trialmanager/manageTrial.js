@@ -8,7 +8,7 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
 (function() {
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap','ngLodash']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants

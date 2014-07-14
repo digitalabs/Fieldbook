@@ -9,7 +9,7 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl',['$scope','TrialManagerDataService',function($scope,TrialManagerDataService) {
+    manageTrialApp.controller('TreatmentCtrl',['$scope','TrialManagerDataService','_',function($scope,TrialManagerDataService,_) {
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
         $scope.currentData = TrialManagerDataService.currentData.treatmentFactors;
@@ -23,12 +23,24 @@
             $scope.currentData = {};
         }
 
-        $scope.$watchCollection('settings.m_keys',function(newArr,oldArr) {
+        // note for some reasons this gets called twice :( , might be the diff function causing the watchCollection t
+        $scope.$watchCollection(function(){return $scope.settings.m_keys; },function(newArr,oldArr){
+            // add
             if (newArr.length > oldArr.length) {
-                $scope.settings.val(newArr[newArr.length-1]).labels = [];
-                $scope.settings.val(newArr[newArr.length-1]).levels = 0;
-
+                angular.forEach(_(newArr).difference(oldArr),function(val,key) {
+                    $scope.currentData[val] = {
+                        labels: [],
+                        pairCvTermId: 0
+                    };
+                });
             }
+            // delete
+            else {
+                angular.forEach(_(oldArr).difference(newArr),function(val,key) {
+                    delete $scope.currentData[val];
+                });
+            }
+
         });
 
         $scope.onLevelChange = function(key,levels) {
@@ -40,19 +52,19 @@
 
             levels = parseInt(levels);
 
-            var diff = Math.abs($scope.settings.val(key).labels.length - levels);
+            var diff = Math.abs($scope.currentData[key].labels.length - levels);
 
             // remove items if no of levels is less thant array
-            if ($scope.settings.val(key).labels.length > levels) {
-                while ($scope.settings.val(key).labels.length > levels) {
-                    $scope.settings.val(key).labels.pop();
+            if ($scope.currentData[key].labels.length > levels) {
+                while ($scope.currentData[key].labels.length > levels) {
+                    $scope.currentData[key].labels.pop();
                 }
             }
 
             // add items if no of levels is more thant array
             else {
                 for (var j = 0; j < diff; j++) {
-                    $scope.settings.val(key).labels.push('');
+                    $scope.currentData[key].labels.push('');
                 }
             }
 
@@ -65,6 +77,4 @@
     }]);
 
 })();
-
-
 

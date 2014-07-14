@@ -705,6 +705,7 @@ public class SettingsUtil {
             List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
             List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
             List<SettingDetail> treatmentFactors = new ArrayList<SettingDetail>();
+            List<SettingDetail> trialConditions = new ArrayList<SettingDetail>();
             if (dataset.getConditions() != null) {
                 for (Condition condition : dataset.getConditions()) {
 
@@ -827,12 +828,24 @@ public class SettingsUtil {
                     group++;
                 }
             }
+            
+            if (dataset.getConstants() != null && !dataset.getConstants().isEmpty()) {
+            	for (Constant constant : dataset.getConstants()) {
+                    SettingVariable variable = new SettingVariable(constant.getName(), constant.getDescription(), constant.getProperty(),
+                    		constant.getScale(), constant.getMethod(), constant.getRole(), constant.getDatatype());
+                    Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+                    variable.setCvTermId(stdVar);
+                    SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
+                    trialConditions.add(settingDetail);
+            	}
+            }
 
             userSelection.setStudyLevelConditions(studyLevelConditions);
             userSelection.setPlotsLevelList(plotsLevelList);
             userSelection.setBaselineTraitsList(baselineTraitsList);
             userSelection.setTrialLevelVariableList(trialLevelVariableList);
             userSelection.setTreatmentFactors(treatmentFactors);
+            userSelection.setNurseryConditions(trialConditions);
         }
     }
 

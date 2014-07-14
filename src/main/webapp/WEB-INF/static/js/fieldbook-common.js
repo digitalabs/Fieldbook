@@ -2675,6 +2675,8 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 	} else {
 		
 		if($('.check-table-popover tbody tr').length != 0){
+				reloadCheckListTable();
+				/*
 				var checkDataTable = isNursery() ? selectedCheckListDataTable.getDataTable() : germplasmDataTable.getDataTable();
 				
 				checkDataTable.$('.check-hidden').each(function(){
@@ -2696,12 +2698,38 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 						break;
 					}
 				}
-			});						    	
+				
+			});	
+			*/					    	
 			//we need to get the real index of the check						
 		}
 	}
 }
-
+function reloadCheckListTable(){
+	'use strict';
+	if(isNursery()){
+		$.ajax({
+			url: '/Fieldbook/ListManager/GermplasmList/reload/check/list/N',
+			type: 'GET',
+			data: '',
+			async: false,
+			success: function(data) {
+				$('#check-germplasm-list').html(data);
+			}
+		});
+	}else{
+		 $.ajax({
+             url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
+             type: 'GET',
+             cache: false,
+             data: ''
+         }).success(function (html) {
+             $('#imported-germplasm-list').html(html);
+             $('#entries-details').css('display', 'block');
+             $('#numberOfEntries').html($('#totalGermplasms').val());
+         });
+	}
+}
 function openStudyTree(type) {
 	'use strict';
 	$('#page-study-tree-message-modal').html('');

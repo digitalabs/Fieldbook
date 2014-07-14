@@ -471,7 +471,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				// For delete
 				columnsDef.push({
 					targets: columns.length - 1,
-					width: '15px',
+					width: '20px',
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<span class="delete-icon delete-check" data-index="'+meta.row+'"></span>';
@@ -509,7 +509,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
-				setTimeout(function(){oSettings.oInstance.fnAdjustColumnSizing();oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);}, 1);
+				setTimeout(function(){oSettings.oInstance.fnAdjustColumnSizing();}, 1);
 		  	}
 		});
 		$(parentDiv + ' div.dataTables_scrollBody').scroll( 

@@ -312,11 +312,29 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             long id = (new Date()).getTime();
             getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
             form.setUniqueId(id);
+            
+            List<Map<String, Object>> dataTableDataList = new ArrayList<Map<String, Object>>();
+        	if(importedGermplasmList != null){
+    	    	for(ImportedGermplasm germplasm : importedGermplasmList){
+    	        	Map<String, Object> dataMap = new HashMap<String, Object>();            	
+    				dataMap.put("desig", germplasm.getDesig().toString());
+    				dataMap.put("gid", "Pending");
+    				dataMap.put("entry", germplasm.getEntryId());
+    				dataMap.put("source", germplasm.getSource());
+    				dataMap.put("parentage", germplasm.getCross());
+    	    		dataTableDataList.add(dataMap);
+    	        }        	           
+        	}
+    		
+            model.addAttribute("advanceDataList", dataTableDataList);
+            
         } catch (MiddlewareQueryException e) {
         	form.setErrorInAdvance(e.getMessage());
         	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
         	form.setEntries(0);
         }
+        
+       
     	return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
     }
     

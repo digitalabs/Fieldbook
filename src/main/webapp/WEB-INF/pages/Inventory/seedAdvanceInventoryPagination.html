@@ -5,13 +5,14 @@
      <input type="hidden" th:field="*{listId}"/>
       
     <!-- case 1: no data means no table -->
-     <div th:if="*{paginatedInventoryList == null or #lists.isEmpty(paginatedInventoryList)}">
+     <div th:if="*{inventoryList == null or #lists.isEmpty(inventoryList)}">
        <span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
      </div>
      
      <!-- case 2: advanced view of the importedGermplasm -->
-     <div  class="advance-nursery-list-table" th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">      
-         <table id="inventory-table" th:if="*{not #lists.isEmpty(paginatedInventoryList)}" class="my-class table table-curved table-condensed">
+     <div  class="advance-nursery-list-table" th:if="*{inventoryList != null and not #lists.isEmpty(inventoryList)}">      
+         <table id="inventory-table" th:if="*{not #lists.isEmpty(inventoryList)}" 
+         class="table-curved table-condensed final-advance-list">
            <thead>
              <tr>
                <th class="fbk-advance-check-box"><img th:src="@{/static/img/check.png}" /></th>
@@ -27,7 +28,7 @@
              </tr>
            </thead>
            <tbody>
-             <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
+             <tr class="primaryRow" th:each="gid, row : *{inventoryList}" th:attr="data-gid=${gid.gid}">
             	<td th:class="${row.even}? 'even fbk-advance-check-box' : 'odd fbk-advance-check-box'">
             		<input type="checkbox" class="advancingListGid" th:attr="data-gid=${gid.gid}" th:attrappend="data-lotId=${gid.locationId}" name="advancingListGid" id="advancingListGid"/> 
            		</td>
@@ -47,12 +48,7 @@
              </tr>             
            </tbody>
          </table> 
-     </div>	           
-   
-   		
-        <div th:if="*{inventoryList != null and not #lists.isEmpty(inventoryList)}">
-        	<div id="inventory-germplasm-list-pagination"></div>
-        </div>
+     </div>	              
         
      	<div class="row col-xs-12 col-md-12" th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">
 	 		<input type="checkbox" class="selectAllAdvance" name="selectAllAdvance" id="selectAllAdvance"/> <label class="control-label">&nbsp;Select All</label>
@@ -61,40 +57,16 @@
      
  </div>
  		
- 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
     /*globals getJquerySafeId, showMultiTabPage, truncateStudyVariableNames*/
     /*exported paginationUrl, options*/
 
-        var paginationUrl = /*[[@{/SeedStoreManager/page/advance/}]]*/ '';
-
-        
-        var options = {
-            currentPage: /*[[${seedStoreForm.currentPage}]]*/'',
-            totalPages: /*[[${seedStoreForm.totalPages}]]*/'',
-
-            alignment:'center',
-            useBootstrapTooltip:true,
-            onPageClicked: function(e,originalEvent,type,page){   
-              'use strict';
-              var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
-                  sectionContainerDiv = 'advance-list'+listDivIdentifier,
-                  listIdentifier = $('#'+getJquerySafeId(sectionContainerDiv) + ' #listId').val();
-              showMultiTabPage(paginationUrl, page, 'inventory-germplasm-list', sectionContainerDiv, listIdentifier);
-              truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
-            }
-        };
         $( document ).ready(function() {  
           'use strict';
         	var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
               sectionContainerDiv = 'advance-list'+listDivIdentifier;
-        	
-    			if($('#' + sectionContainerDiv + ' #inventory-germplasm-list-pagination') !== null){
-    				$('#' + sectionContainerDiv + ' #inventory-germplasm-list-pagination').bootstrapPaginator(options);
-    			}			
-			
-	       		
+        		
 			$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(){
 				//select all the checkbox in the section container div
     				var isChecked = $(this).prop('checked');
@@ -167,6 +139,10 @@
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected)').remove('selected');								
 			});
 			truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
+			
+			
+			new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null);
+			
         });
         
         

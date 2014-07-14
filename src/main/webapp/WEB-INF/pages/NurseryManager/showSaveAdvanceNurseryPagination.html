@@ -1,58 +1,27 @@
 
 <div class="advance-nursery-list-table" th:object="${advancingNurseryform}">
-	<table class="my-class table table-curved table-condensed">
+	<table class="table-curved table-condensed advance-germplasm-items">	
 		<thead>
 			<tr>
-				<th th:utext="#{nursery.import.header.entry}">.Entry</th>
-				<th th:utext="#{nursery.import.header.designation}">.Designation</th>
-				<th th:utext="#{nursery.import.header.parentage}">Parentage</th>
-				<th th:utext="#{nursery.import.header.gid}">.GID</th>
-				<th th:utext="#{nursery.import.header.source}">.Source</th>
+				<th data-col-name="entry" th:utext="#{nursery.import.header.entry}">.Entry</th>
+				<th data-col-name="desig" th:utext="#{nursery.import.header.designation}">.Designation</th>
+				<th data-col-name="parentage" th:utext="#{nursery.import.header.parentage}">Parentage</th>
+				<th data-col-name="gid" th:utext="#{nursery.import.header.gid}">.GID</th>
+				<th data-col-name="source" th:utext="#{nursery.import.header.source}">.Source</th>
 			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="choice, rowStat : *{paginatedGermplasmList}">
-				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].entryId}">Entry</td>
-				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].desig}">Designation</td>
-				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].cross}">Cross</td>
-				<td th:class="${rowStat.even}? 'even' : 'odd'" >Pending</td>
-				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].source}">Source</td>
-			</tr>
-		</tbody>
+		</thead>		
 	</table>
-</div>
-<div th:object="${advancingNurseryform}">
-	<div th:if="*{germplasmList != null and not #lists.isEmpty(germplasmList)}">
-		<div id="advance-nursery-germplasm-list-pagination"></div>
-	</div>
 </div>
 
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
 		$( document ).ready(function() {
-			var listDivIdentifier = $('#create-nursery-tab-headers li.active button').attr('id');
+			var advanceDataList = /*[[${advanceDataList}]]*/ [];
+			var listDivIdentifier = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
 			var sectionContainerDiv = 'advance-list'+listDivIdentifier;
-			var listIdentifier = listDivIdentifier;
-
-			if($('#' + sectionContainerDiv + ' #advance-nursery-germplasm-list-pagination') != null){
-				var paginationUrlAdvance = /*[[@{/NurseryManager/saveAdvanceNursery/page/}]]*/;
-				var optionsAdvance = {
-					currentPage: /*[[${advancingNurseryform.currentPage}]]*/,
-					totalPages: /*[[${advancingNurseryform.totalPages}]]*/,
-
-					alignment:'center',
-					useBootstrapTooltip:true,
-					onPageClicked: function(e,originalEvent,type,page){
-
-						var listDivIdentifier = $('#create-nursery-tab-headers li.active button').attr('id');
-						var sectionContainerDiv = 'advance-list'+listDivIdentifier;
-						var listIdentifier = listDivIdentifier;
-						showMultiTabPage(paginationUrlAdvance, page, 'advance-nursery-germplasm-list', sectionContainerDiv, listIdentifier);
-					}
-				}
-				$('#' + sectionContainerDiv + ' #advance-nursery-germplasm-list-pagination').bootstrapPaginator(optionsAdvance);
-			}
+			new BMS.Fieldbook.AdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .advance-germplasm-items', '#'+sectionContainerDiv, advanceDataList);
+						
 		});
 	//]]>
 	</script>

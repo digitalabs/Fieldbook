@@ -517,7 +517,7 @@ padding-left: 20px; margin-top: 7px
         left: -15px;
         top: 5px; */
 }
-.germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table, .check-germplasm-list-table,
+.germplasm-list-table, .germplasm-measurement-list-table, .check-germplasm-list-table,
 .inventory-germplasm-list-table
 {
     max-height: 400px;

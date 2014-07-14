@@ -24,17 +24,17 @@ BMS.NurseryManager.PropertySelect = (function($) {
 
 	function formatResult(item, container, query) {
 		var searchTerm = query.term,
-			regex,
-			propertyName,
-			className,
+			regex = new RegExp(searchTerm, 'gi'),
+			propertyName = item.name,
+			className = item.traitClass.traitClassName,
 			formattedItem,
 			variables,
 			i;
 
-		regex = new RegExp(searchTerm, 'gi');
-
-		propertyName = item.name.replace(regex, '<strong>$&</strong>');
-		className = item.traitClass.traitClassName.replace(regex, '<strong>$&</strong>');
+		if (searchTerm) {
+			propertyName = item.name.replace(regex, '<strong>$&</strong>');
+			className = item.traitClass.traitClassName.replace(regex, '<strong>$&</strong>');
+		}
 
 		formattedItem  = '<p><span class="var-select-result-prop">' + propertyName + '</span> (<span class="var-select-result-class">' +
 			className + '</span>)<br/>';
@@ -50,7 +50,7 @@ BMS.NurseryManager.PropertySelect = (function($) {
 				formattedItem += ', ';
 			}
 
-			formattedItem += variables[i].name.replace(regex, '<strong>$&</strong>');
+			formattedItem += searchTerm ? variables[i].name.replace(regex, '<strong>$&</strong>') : variables[i].name;
 		}
 		return formattedItem + '</span></p>';
 	}

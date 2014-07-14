@@ -29,6 +29,7 @@
             if (newArr.length > oldArr.length) {
                 angular.forEach(_(newArr).difference(oldArr),function(val,key) {
                     $scope.currentData[val] = {
+                        levels: 0,
                         labels: [],
                         pairCvTermId: 0
                     };

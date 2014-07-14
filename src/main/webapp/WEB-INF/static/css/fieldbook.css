@@ -1443,3 +1443,7 @@ label[data-toggle="collapse"],
 .nrm-var-select-prop-col-left {
     width: 50%;
 }
+
+table.dataTable th, table.dataTable td {
+    overflow: hidden;
+}

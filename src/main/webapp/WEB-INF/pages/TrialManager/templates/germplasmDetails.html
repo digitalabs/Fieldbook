@@ -30,15 +30,17 @@
 
 
             <div  class="pull-right">
-                <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-                    <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-                </button>
-                <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-                    <li>
-                        <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
-                    </li>
-                </ul>
-            </div>
+	             <div class="btn-group">
+	                <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+	                    <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+	                </button>
+	                <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+	                    <li>
+	                        <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
+	                    </li>
+	                </ul>
+                </div>
+            </div>                       
 
         </div>
         <div>

@@ -67,7 +67,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				});
 			}
 		});
-
+		
 		table = $(tableIdentifier).DataTable({
 			ajax: ajaxUrl,
 			columns: columns,
@@ -88,14 +88,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			},
 			fnInitComplete: function(oSettings, json) {
 				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
-				// There is a bug in datatable for now
-				setTimeout(function() {$(tableIdentifier).dataTable().fnAdjustColumnSizing();}, 1000);
+				// There is a bug in datatable for now				
+				setTimeout(function(){oSettings.oInstance.fnAdjustColumnSizing(); 				
+				}, 1000);
 			},
 			language: {
 				search: '<span class="mdt-filtering-label">Search:</span>'
 			},
-			dom: 'R<<"mdt-header"rli<"mdt-filtering"f>r><t>p>',
-			// For column visibility
+			dom: 'JR<<"mdt-header"rli<"mdt-filtering"f>r><t>p>',
+            // For column visibility
 			colVis: {
 				exclude: [0],
 				restore: 'Restore',
@@ -107,6 +108,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			}
 		});
 
+		
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
@@ -213,7 +215,9 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
-				$(parentDiv).removeClass('fbk-hide-opacity');				
+				$(parentDiv).removeClass('fbk-hide-opacity');		
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 			}
 		});
 		
@@ -234,7 +238,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 		
 		var columns = [],
 		columnsDef = [],
-		germplasmDataTable;				
+		table;				
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
 			
@@ -289,7 +293,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				});
 			}
 		});
-		this.germplasmDataTable = $(tableIdentifier).dataTable({
+		this.table = $(tableIdentifier).dataTable({
 			data: dataList,
 			columns: columns,
 			columnDefs: columnsDef,
@@ -330,18 +334,21 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
-				$(parentDiv).removeClass('fbk-hide-opacity');				
+				$(parentDiv).removeClass('fbk-hide-opacity');		
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				
 			}
 		});
 		
 		TrialGermplasmListDataTable.prototype.getDataTable = function()
 		{
-		    return this.germplasmDataTable;
+		    return this.table;
 		};
 		
 		TrialGermplasmListDataTable.prototype.getDataTableColumnIndex = function(colName)
 		{
-			var colNames = this.germplasmDataTable.fnSettings().aoColumns;
+			var colNames = this.table.fnSettings().aoColumns;
 			for(var counter = 0 ; counter < colNames.length ; counter++){
 				if(colNames[counter].data === colName){
 					return colNames[counter].idx;
@@ -352,7 +359,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 		
 		TrialGermplasmListDataTable.prototype.getDataTableColumn = function(colName)
 		{
-			var colNames = this.germplasmDataTable.fnSettings().aoColumns;
+			var colNames = this.table.fnSettings().aoColumns;
 			for(var counter = 0 ; counter < colNames.length ; counter++){
 				if(colNames[counter].data === colName){
 					return colNames[counter];
@@ -378,11 +385,11 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				$(this).parent().addClass('fbk-dropdown-select-fade');
 				$(this).parent().removeClass('fbk-dropdown-select-highlight');
 			}
-
+			
 			// hide germplasm column
             (function(colName){
                 var column = null;
-                // Get the column API object
+                // Get the column API object                
                 if(germplasmDataTable != null){
                     column = germplasmDataTable.getDataTableColumn(colName);
                     // Toggle the visibility
@@ -502,6 +509,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
+				setTimeout(function(){oSettings.oInstance.fnAdjustColumnSizing();oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);}, 1);
 		  	}
 		});
 		$(parentDiv + ' div.dataTables_scrollBody').scroll( 

@@ -38,6 +38,10 @@
 				//we show the advance nursery modal
 				setTimeout(function(){$('#advanceNurseryModal').modal('show');}, 200);
 				$('#advanceNurseryModal').data('open', '0');
+			}else if($('#addLotsModal').length !== 0 && $('#addLotsModal').data('open') == '1'){
+				//we show the advance nursery modal
+				setTimeout(function(){$('#addLotsModal').modal('show');}, 200);
+				$('#addLotsModal').data('open', '0');
 			}
 	    });
 	});

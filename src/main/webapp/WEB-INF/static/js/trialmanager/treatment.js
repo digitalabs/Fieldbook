@@ -14,33 +14,47 @@
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
         $scope.currentData = TrialManagerDataService.currentData.treatmentFactors;
 
-        $scope.onLevelChange = function(variableName,levelCount) {
-            levelCount = parseInt(levelCount);
-            // search the treatment factors then update it
-            $.each($scope.data.managementDetails, function (key, val) {
-                if (val.variable.name === variableName) {
+        // watch $scope.settings, since we are sure that $scope.settings is an orderedhash even empty, we could just
+        // use $watchCollection, for every added change we retrieve the 'AMOUNT ' pairs dynamically. also creat a
+        // store to $scope.currentData for the variable levels.
 
-                    if (isNaN(levelCount)) { return; }
+        // initialize currentData if has no values yet
+        if (typeof $scope.currentData === 'undefined') {
+            $scope.currentData = {};
+        }
 
-                    var diff = Math.abs(val.variableLabels.length - levelCount);
+        $scope.$watchCollection('settings.m_keys',function(newArr,oldArr) {
+            if (newArr.length > oldArr.length) {
+                $scope.settings.val(newArr[newArr.length-1]).labels = [];
+                $scope.settings.val(newArr[newArr.length-1]).levels = 0;
 
-                    // remove items if no of levels is less thant array
-                    if (val.variableLabels.length  > levelCount) {
-                        while(val.variableLabels.length > levelCount) {
-                            val.variableLabels.pop();
-                        }
-                    }
+            }
+        });
 
-                    // add items if no of levels is more thant array
-                    else {
-                        for (var j = 0; j < diff; j++) {
-                            val.variableLabels.push('');
-                        }
-                    }
+        $scope.onLevelChange = function(key,levels) {
 
-                    return false;   // this breaks the each
+
+            if (isNaN(levels)) {
+                return;
+            }
+
+            levels = parseInt(levels);
+
+            var diff = Math.abs($scope.settings.val(key).labels.length - levels);
+
+            // remove items if no of levels is less thant array
+            if ($scope.settings.val(key).labels.length > levels) {
+                while ($scope.settings.val(key).labels.length > levels) {
+                    $scope.settings.val(key).labels.pop();
                 }
-            });
+            }
+
+            // add items if no of levels is more thant array
+            else {
+                for (var j = 0; j < diff; j++) {
+                    $scope.settings.val(key).labels.push('');
+                }
+            }
 
         }; // end $scope.onLevelChange
 
@@ -49,82 +63,6 @@
         };
 
     }]);
-
-    /**
-     * Data Structure of variable :
-     * { CV_ID : { variable : {
-     *
-     *  cvTermId:
-        name: LOCATION_ABBR
-        description: Location code - assigned (LOC_ABBR)
-        property: Location
-        scale: LOC_ABBR
-        method: Assigned
-        role: Trial environment information
-        dataType: Character  variable
-        traitClass: Trial environment
-        cropOntologyId:
-        dataTypeId: 1120
-        minRange: null
-        maxRange: null
-        widgetType: CTEXT
-        operation: ADD
-     *
-     * },  }
-     *
-     */
-
-    // factory and services
-    manageTrialApp.factory('TreatmentFactorsService',function() {
-        return {
-            data : {
-                managementDetails : {}
-            },
-
-            addManagementDetailVar : function(cvTermId,item) {
-                this.data.managementDetails[cvTermId] = item;
-                this.data.managementDetails[cvTermId].variableLabelCount = 0;
-                this.data.managementDetails[cvTermId].variableLabels = [];
-            },
-
-            removeManagementDetailVarByIndex : function(index) {
-                if (index !== undefined && index !== null) {
-                    delete this.data.managementDetails[index];
-                }
-            },
-
-            addDummyData : function() {
-                this.addManagementDetailVar(8195,{
-                    variable: {
-                        cvTermId: 8195,
-                        name: 'SITE_CODE',
-                        description: 'Site code - assigned (text)',
-                        property: 'Location',
-                        scale: 'Code',
-                        method: 'Assigned',
-                        role: 'Trial environment information',
-                        dataType: 'Character variable',
-                        traitClass: 'Trial environment',
-                        cropOntologyId: '',
-                        dataTypeId: 1120,
-                        minRange: null,
-                        maxRange: null,
-                        widgetType: 'CTEXT',
-                        operation: 'ADD'
-                    },
-                    possibleValues: [ ],
-                    possibleValuesFavorite: null,
-                    possibleValuesJson: null,
-                    possibleValuesFavoriteJson: null,
-                    value: null,
-                    order: 0,
-                    group: null,
-                    deletable: true,
-                    favorite: false
-                });
-            }
-        };
-    });
 
 })();
 

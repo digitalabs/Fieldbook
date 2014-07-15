@@ -342,7 +342,8 @@
                     variableType: '@',
                     showReminder: '=',
                     enableUpdate: '=',
-                    onUpdate: '&'
+                    onUpdate: '&',
+                    hideVariable : '=',
 
                 },
                 transclude : true,

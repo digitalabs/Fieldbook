@@ -9,7 +9,7 @@
                     <span class="btn btn-primary" ng-show="updateOccurred" ng-click="updateDataTable()">
                         <span class="glyphicon glyphicon-refresh"></span> Update
                     </span>
-                    <span select-standard-variable="" modeldata="settings" variable-type="8" class="btn btn-info nrm-md-variable-select" >Add</span>
+                    <span select-standard-variable="" ng-show="addVariable" modeldata="settings" variable-type="8" class="btn btn-info nrm-md-variable-select nrm-var-select-open-factor" >Add</span>
             </span>
 
             <section-container name="content" th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
@@ -18,10 +18,29 @@
 
         </section-container>
     </div>
-
 </div>
 
-<div class="collapse in germplasmListDetails germplasmAndCheckSection">
+
+
+<div class="row form-group overwrite-germplasm-list">
+	<div class="col-xs-12 col-md-12">
+		<label class="control-label" th:text="#{trial.edit.trial.overwrite.germplasm.list.message}">						
+		</label>
+		&nbsp;&nbsp;&nbsp;
+		<button class="btn btn-primary show-germplasm-details"  th:text="#{germplasm.replace}">Overwrite</button>
+	</div>
+</div>
+<div class="row form-group observation-exists-notif">
+	<div class="col-xs-12 col-md-12">
+		<label class="control-label">
+			<strong class="sub-content-heading" th:text="#{trial.edit.trial.cannot.modify.germplasm.list.message}">This Trial has saved observations, germplasm list cannot be modified.</strong>
+		</label>
+	</div>
+</div>
+
+
+	
+<div class="collapse in germplasmListDetails germplasmAndCheckSection" id="chooseGermplasmAndChecks">
 	<!-- Germplasm List Table View -->
     <div id="primary-section">
         <div>
@@ -98,7 +117,7 @@
 
         $(document).ready(function () {
             'use strict';
-            document.onLoadGermplasmDetails();
+            document.onLoadGermplasmDetails();            
         });
 
 

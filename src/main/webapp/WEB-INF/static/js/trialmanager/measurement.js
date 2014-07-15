@@ -13,7 +13,9 @@
             $scope.currentData = TrialManagerDataService.currentData.measurements;
 
             $scope.updateOccurred = false;
-
+            
+            $scope.addVariable = true;
+            
             $scope.$on('deleteOccurred', function() {
                 $scope.updateOccurred = true;
             });

@@ -14,6 +14,8 @@
         $scope.settings = TrialManagerDataService.settings.trialSettings;
         $scope.data = TrialManagerDataService.currentData.trialSettings;
 
+        $scope.addVariable = true;
+        
         $scope.removeVariable = function(cvTermId) {
             // remove the equivalent setting
             $scope.settings.remove(cvTermId);

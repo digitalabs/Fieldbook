@@ -1680,57 +1680,6 @@ function recreateSessionVariables() {
 	});
 }
 
-function displayEditFactorsAndGermplasmSection() {
-	'use strict';
-	if ($('#measurementDataExisting').length !== 0) {
-		displayCorrespondingGermplasmSections();
-		
-		//enable/disable adding of factors if nursery has measurement data
-		if ($('#measurementDataExisting').val() === 'true') {
-			$('.nrm-var-select-open-factor').hide();
-			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
-				$(row).find('.delete-icon').hide();
-			});
-		} else {
-			$('.nrm-var-select-open-factor').show();
-			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
-				$(row).find('.delete-icon').show();
-			});
-		}
-	} else {
-		displayCorrespondingGermplasmSections();
-		if ($('#measurementDataExisting').val() === 'true') {
-			$('.nrm-var-select-open-factor').hide();		
-		} else {
-			$('.nrm-var-select-open-factor').show();			
-		}
-	}
-}
-
-function displayCorrespondingGermplasmSections() {
-	'use strict';
-	if ($('#measurementDataExisting').val() === 'true') {
-		$('#chooseGermplasmAndChecks').hide();
-		$('.overwrite-germplasm-list').hide();
-		$('.observation-exists-notif').show();
-	} else if (measurementRowCount > 0) {
-		$('#chooseGermplasmAndChecks').hide();
-		$('.observation-exists-notif').hide();
-		$('.overwrite-germplasm-list').show();
-	} else {
-		$('#chooseGermplasmAndChecks').show();
-		$('.observation-exists-notif').hide();
-		$('.overwrite-germplasm-list').hide();
-	}
-}
-
-function showGermplasmDetailsSection() {
-	'use strict';
-	$('#chooseGermplasmAndChecks').show();
-	$('.observation-exists-notif').hide();
-	$('.overwrite-germplasm-list').hide();
-}
-
 // FIXME Should not be using global variables or functions
 /*
  * global lastDraggedChecksList, Spinner, validateCreateNursery,

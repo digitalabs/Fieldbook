@@ -58,7 +58,7 @@ public class OpenTrialController extends
     @ModelAttribute("operationMode")
     public String getOperationMode() {
         return "OPEN";
-    }
+    }      
 
     @RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
     public String showCreateTrial(Model model) {
@@ -108,7 +108,7 @@ public class OpenTrialController extends
     }
 
     @RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
-    public String openTrial(Model model, HttpSession session, @PathVariable Integer trialId) throws MiddlewareQueryException {
+    public String openTrial(@ModelAttribute("createTrialForm") CreateTrialForm form, Model model, HttpSession session, @PathVariable Integer trialId) throws MiddlewareQueryException {
         SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 
         if (trialId != null && trialId != 0) {
@@ -120,8 +120,9 @@ public class OpenTrialController extends
             model.addAttribute("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
             model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
             model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
-
-            
+            model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+            model.addAttribute("measurementRowCount", trialWorkbook.getObservations().size());
+            form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
         }
 
 

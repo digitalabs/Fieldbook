@@ -27,6 +27,8 @@
 
             $scope.temp.settingMap = {};
 
+            $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
+            
             $scope.findSetting = function(targetKey, type) {
                 if (! $scope.temp.settingMap[targetKey]) {
                     var targetSettingList = null;

@@ -13,13 +13,16 @@
 
         $scope.settings = TrialManagerDataService.settings.germplasm;
         $scope.currentData = TrialManagerDataService.currentData.germplasm;
-
+        
             $scope.labels = {};
         $scope.labels.germplasmFactors = {
             label: 'Temp label here',
             placeholderLabel: 'Temp placeholder here'
         };
 
+        $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement; 
+        displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement, TrialManagerDataService.trialMeasurement.count);
+        
         $scope.updateOccurred = false;
 
         $scope.$on('deleteOccurred', function() {
@@ -85,6 +88,8 @@
         initializeCheckTypeSelect2(document.checkTypes, [], false, 0, 'comboCheckCode');
         $('#updateCheckTypes').hide();
         $('#deleteCheckTypes').hide();
+        $('.show-germplasm-details').on('click', showGermplasmDetailsSection);
+        //displayEditFactorsAndGermplasmSection();
     };
 
 })();

@@ -1,7 +1,7 @@
 <div class="row" ng-controller="MeasurementsCtrl">
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <section-container th:attr="heading=#{trial.managesettings.measurement.title}"
-                           collapsible="true" add-variable="true" model-data="settings" variable-type="3">
+                           collapsible="true" add-variable="true" hide-variable="addVariable" model-data="settings" variable-type="3">
 
             <section-container name="content" th:attr="heading=#{trial.managesettings.baseline.traits},help-tooltip=#{trial.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}">
                 <display-settings name="content" settings="settings" variable-type="3"></display-settings>
@@ -11,9 +11,6 @@
 </div>
 
 <!-- This is the Measurements Tab -->
-<div th:if="${createTrialForm != null}">
-	<form  role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">	
-		 <input type="hidden" th:field="*{measurementDataExisting}"/>
-	</form>
+<div th:if="${createTrialForm != null}">	
 	<div th:include="/Common/showAddOrRemoveTraitsPagination"></div>
 </div>

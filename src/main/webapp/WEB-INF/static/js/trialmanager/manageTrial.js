@@ -122,9 +122,9 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        'BASIC_DETAILS_DATA', '$http',
+        'BASIC_DETAILS_DATA', '$http','TRIAL_HAS_MEASUREMENT','TRIAL_MEASUREMENT_COUNT',
         function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
-                  MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http) {
+                  MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT) {
 
             var extractData = function (initialData) {
                 if (!initialData) {
@@ -202,6 +202,11 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
                     experimentalDesign: extractSettings(EXPERIMENTAL_DESIGN_INITIAL_DATA),
                     measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
+                },
+                
+                trialMeasurement: { 
+                	hasMeasurement: TRIAL_HAS_MEASUREMENT == 'true' ? true : false,
+        			count: parseInt(TRIAL_MEASUREMENT_COUNT,10)                	
                 },
 
                 saveCurrentData: function () {

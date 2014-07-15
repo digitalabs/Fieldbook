@@ -2962,3 +2962,58 @@ function initializeReviewDatasetTabs(datasetId) {
 		}
 	});
 }
+
+function displayEditFactorsAndGermplasmSection() {
+	'use strict';
+	if ($('#measurementDataExisting').length !== 0) {
+		displayCorrespondingGermplasmSections();
+		
+		//enable/disable adding of factors if nursery has measurement data
+		if ($('#measurementDataExisting').val() === 'true') {
+			$('.nrm-var-select-open-factor').hide();
+			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
+				$(row).find('.delete-icon').hide();
+			});
+		} else {
+			$('.nrm-var-select-open-factor').show();
+			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
+				$(row).find('.delete-icon').show();
+			});
+		}
+	} else {
+		displayCorrespondingGermplasmSections();
+		if ($('#measurementDataExisting').val() === 'true') {
+			$('.nrm-var-select-open-factor').hide();		
+		} else {
+			$('.nrm-var-select-open-factor').show();			
+		}
+	}
+}
+function showGermplasmDetailsSection() {
+	'use strict';
+	$('#chooseGermplasmAndChecks').show();
+	$('.observation-exists-notif').hide();
+	$('.overwrite-germplasm-list').hide();	
+}
+
+function displayCorrespondingGermplasmSections() {
+	'use strict';	
+	var hasData = $('#measurementDataExisting').val() === 'true' ? true : false;
+	displayStudyGermplasmSection(hasData, measurementRowCount);
+}
+function displayStudyGermplasmSection(hasData, observationCount){
+	'use strict';
+	if (hasData) {
+		$('#chooseGermplasmAndChecks').hide();
+		$('.overwrite-germplasm-list').hide();
+		$('.observation-exists-notif').show();
+	} else if (observationCount > 0) {
+		$('#chooseGermplasmAndChecks').hide();
+		$('.observation-exists-notif').hide();
+		$('.overwrite-germplasm-list').show();
+	} else {
+		$('#chooseGermplasmAndChecks').show();
+		$('.observation-exists-notif').hide();
+		$('.overwrite-germplasm-list').hide();
+	}
+}

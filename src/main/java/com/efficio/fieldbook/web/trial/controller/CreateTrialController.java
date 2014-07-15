@@ -14,10 +14,12 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.*;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +76,12 @@ public class CreateTrialController extends BaseTrialController {
     public String getOperationMode() {
         return "CREATE";
     }
+    
+    
+    @ModelAttribute("measurementDataExisting")
+    public String getMeasurementDataExisting() throws MiddlewareQueryException {    	
+    	return "false";
+    }
 
     /**
      * Show.
@@ -83,7 +92,7 @@ public class CreateTrialController extends BaseTrialController {
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(Model model, HttpSession session) throws MiddlewareQueryException {
+    public String show(@ModelAttribute("createTrialForm") CreateTrialForm form,Model model, HttpSession session) throws MiddlewareQueryException {
 
 
         SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
@@ -92,6 +101,7 @@ public class CreateTrialController extends BaseTrialController {
         model.addAttribute("germplasmData", prepareGermplasmTabInfo());
         model.addAttribute("environmentData", prepareEnvironmentsTabInfo());
         model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo());
+        model.addAttribute("measurementRowCount", 0);
 
         return showAngularPage(model);
     }

@@ -55,6 +55,11 @@ public class OpenTrialController extends
         return buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
     }
 
+    @ModelAttribute("operationMode")
+    public String getOperationMode() {
+        return "OPEN";
+    }
+
     @RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
     public String showCreateTrial(Model model) {
         return showAjaxPage(model, URL_SETTINGS);

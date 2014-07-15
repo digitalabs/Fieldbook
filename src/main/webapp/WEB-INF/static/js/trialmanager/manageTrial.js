@@ -12,7 +12,7 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants
-    manageTrialApp.config(function($stateProvider, $urlRouterProvider,$stickyStateProvider) {
+    manageTrialApp.config(function($stateProvider, $urlRouterProvider,$stickyStateProvider, TRIAL_MANAGEMENT_MODE) {
 
         $stickyStateProvider.enableDebug(false);
 
@@ -42,11 +42,6 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
                 templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
             })
 
-            .state('measurements', {
-                url: '/measurements',
-                templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
-            })
-
             .state('germplasm', {
                 url: '/germplasm',
                 views: {
@@ -57,6 +52,18 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
                 },
                 deepStateRedirect: true, sticky: true
             });
+
+        if (TRIAL_MANAGEMENT_MODE === 'CREATE') {
+            $stateProvider.state('measurements', {
+                url: '/measurements',
+                templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
+            });
+        } else if (TRIAL_MANAGEMENT_MODE === 'OPEN') {
+            $stateProvider.state('measurements', {
+                url: '/measurements',
+                templateUrl: '/Fieldbook/TrialManager/openTrial/measurements'
+            });
+        }
     });
 
     // common filters

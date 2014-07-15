@@ -68,8 +68,11 @@ public class CreateTrialController extends BaseTrialController {
     public String getContentName() {
         return "TrialManager/createTrial";
     }
-    
 
+    @ModelAttribute("operationMode")
+    public String getOperationMode() {
+        return "CREATE";
+    }
 
     /**
      * Show.
@@ -91,6 +94,23 @@ public class CreateTrialController extends BaseTrialController {
         model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo());
 
         return showAngularPage(model);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
+    public Map<String, TabInfo> getExistingTrialDetails(Model model, @RequestParam(value = "trialID") Integer trialID) throws MiddlewareQueryException{
+        Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
+        if (trialID != null && trialID != 0) {
+            Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialID);
+
+            tabDetails.put("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), true));
+            tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
+            tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
+            tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
+            tabDetails.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
+        }
+
+        return tabDetails;
     }
 
     @ModelAttribute("programLocationURL")

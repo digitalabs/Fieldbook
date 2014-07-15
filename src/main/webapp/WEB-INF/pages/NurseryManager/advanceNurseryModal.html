@@ -158,7 +158,7 @@
 							<div class="row form-group">
                                 <div class="col-sm-offset-6 col-xs-6">
                                     <label class="control-label">
-                                        <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+                                        <input class="advance-favorite-location-checkbox" id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
                                         &nbsp;&nbsp;&nbsp;
                                         <a class='advance-manage-location' href="javascript: void(0)" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>
                                     </label>
@@ -328,9 +328,35 @@
 			
 			if($('input.study-level-method') !== null && $('input.study-level-method').val() !== '' && $('input.study-level-method').val() !== '0'){
 				oldMethodSelected = $('input.study-level-method').val()
-				$('input.advance-fav-method-checkbox').prop( "checked", $('input.study-level-method-checkbox').is(':checked'));
+				$('input.advance-fav-method-checkbox').prop( 'checked', $('input.study-level-method-checkbox').is(':checked'));
+			}					
+            var locationRowIndex = getLocationRowIndex();
+			if(locationRowIndex > -1){
+				if($('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value')).length !== 0 && $('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value')).select2('data') !== null){
+					$('input.advance-favorite-location-checkbox').prop('checked', $('#'+ getJquerySafeId('studyLevelVariables' + locationRowIndex + '.favorite1')).is(':checked'));
+					showCorrectLocationCombo();
+					var chosenSettingsLocationId = $('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value')).select2('data').id,
+						indexCounter = 0;
+					if($("#"+ getJquerySafeId('studyLevelVariables' + locationRowIndex + '.favorite1')).is(':checked')){
+						//meaning favorite is checked
+						$('#harvestLocationIdFavorite').select2('data', $('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value')).select2('data'));
+						for(indexCounter = 0 ; indexCounter < locationSuggestionsFavObj.length; indexCounter++){
+							if(locationSuggestionsFavObj[indexCounter].id == chosenSettingsLocationId){
+								$('#harvestLocationIdFavorite').select2('data',locationSuggestionsFavObj[indexCounter]);
+								break;
+							}            							
+						}
+					}else{
+						for(indexCounter = 0 ; indexCounter < locationSuggestionsObj.length; indexCounter++){
+							if(locationSuggestionsObj[indexCounter].id == chosenSettingsLocationId){
+								$('#harvestLocationIdAll').select2('data',locationSuggestionsObj[indexCounter]);
+								break;
+							}            							
+						}            						
+					}            					
+				}
 			}
-			
+
 			showCorrectMethodCombo();
 
 			checkMethod();
@@ -355,6 +381,7 @@
 				setTimeout(openManageLocations, 500);
 			});
 			$('#advanceNurseryModal').data('open', '0');
+			
 		});
 	//]]>
 	</script>

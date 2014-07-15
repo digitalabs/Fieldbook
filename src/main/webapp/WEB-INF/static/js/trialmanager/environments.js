@@ -9,6 +9,7 @@
 
     angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService',
         function ($scope, TrialManagerDataService) {
+
             $scope.data = {};
 
             $scope.data = TrialManagerDataService.currentData.environments;
@@ -19,6 +20,15 @@
                 $scope.settings.managementDetails = [];
                 $scope.settings.trialConditionDetails = [];
             }
+
+            $scope.$watch(function() { return TrialManagerDataService.currentData.environments;}, function(newValue) {
+                angular.copy(newValue, $scope.data);
+                $scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
+            });
+
+            $scope.$watch(function() { return TrialManagerDataService.settings.environments;}, function(newValue) {
+                angular.copy(newValue, $scope.settings);
+            });
 
             // storage of number of environments uses a temp variable to account for user temporarily deleting contents of field to enter new value
             $scope.temp = {

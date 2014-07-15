@@ -128,18 +128,19 @@
             $scope.useExistingTrial = function (existingTrialID) {
                 $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
                     // update data and settings
-                    TrialManagerDataService.currentData.trialSettings = TrialManagerDataService.extractData(data.trialSettingsData);
-                    TrialManagerDataService.currentData.environments = TrialManagerDataService.extractData(data.environmentData);
+                    angular.copy(TrialManagerDataService.extractData(data.trialSettingsData),
+                        TrialManagerDataService.currentData.trialSettings);
+                    angular.copy(TrialManagerDataService.extractData(data.environmentData),
+                        TrialManagerDataService.currentData.environments);
+                    // TODO : treatment factor here
 
-                    // treatment factor
-
-                    TrialManagerDataService.settings.trialSettings = TrialManagerDataService.extractSettings(data.trialSettingsData);
-                    TrialManagerDataService.settings.environments = TrialManagerDataService.extractSettings(data.environmentData);
-                    TrialManagerDataService.settings.germplasm = TrialManagerDataService.extractSettings(data.germplasmData);
-
-                    if (!$scope.$$phase) {
-                        $scope.$apply();
-                    }
+                    angular.copy(TrialManagerDataService.extractSettings(data.trialSettingsData),
+                        TrialManagerDataService.settings.trialSettings);
+                    angular.copy(TrialManagerDataService.extractSettings(data.environmentData),
+                        TrialManagerDataService.settings.environments);
+                    angular.copy(TrialManagerDataService.extractSettings(data.germplasmData),
+                        TrialManagerDataService.settings.germplasm);
+                    // TODO : treatment factor here
                 });
             };
         }]);
@@ -158,6 +159,9 @@
                     return initialData.data;
                 }
             };
+
+            var dataRegistry = {};
+            var settingRegistry = {};
 
             var extractSettings = function (initialData) {
 
@@ -265,6 +269,28 @@
 
                     }
                 },
+
+                /*registerData : function(dataKey, updateFunction) {
+                    if (!dataRegistry[dataKey]) {
+                        dataRegistry[dataKey] = [];
+                        dataRegistry[dataKey].push(updateFunction);
+                        $scope.$watch(function() {return service.currentData[dataKey];}, function(newValue) {
+                            angular.forEach(dataRegistry[dataKey], function(registeredFunction) {
+                                registeredFunction(newValue);
+                            });
+                        });
+                    } else {
+                        dataRegistry[dataKey].push(updateFunction);
+                    }
+                },
+
+                registerSetting: function (key, updateFunction) {
+                    if (!settingRegistry[key]) {
+                        settingRegistry[key] = [];
+                    }
+
+                    settingRegistry[key].push(updateFunction);
+                },*/
 
                 extractSettings : extractSettings,
 

@@ -15,6 +15,18 @@
         $scope.data = TrialManagerDataService.currentData.trialSettings;
 
         $scope.addVariable = true;
+
+        $scope.$watch(function () {
+            return TrialManagerDataService.currentData.trialSettings;
+        }, function (newValue) {
+            angular.copy(newValue, $scope.data);
+        });
+
+        $scope.$watch(function () {
+            return TrialManagerDataService.settings.trialSettings;
+        }, function (newValue) {
+            angular.copy(newValue, $scope.settings);
+        });
         
         $scope.removeVariable = function(cvTermId) {
             // remove the equivalent setting

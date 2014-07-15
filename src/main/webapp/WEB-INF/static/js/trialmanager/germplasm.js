@@ -5,65 +5,73 @@
 /*global angular, displayStudyGermplasmSection*/
 
 
-(function(){
+(function () {
     'use strict';
 
     angular.module('manageTrialApp').controller('GermplasmCtrl',
-        ['$scope', 'TrialManagerDataService', function($scope, TrialManagerDataService) {
+        ['$scope', 'TrialManagerDataService', function ($scope, TrialManagerDataService) {
 
-        $scope.settings = TrialManagerDataService.settings.germplasm;
+            $scope.settings = TrialManagerDataService.settings.germplasm;
 
-        $scope.labels = {};
-        $scope.labels.germplasmFactors = {
-            label: 'Temp label here',
-            placeholderLabel: 'Temp placeholder here'
-        };
+            $scope.labels = {};
+            $scope.labels.germplasmFactors = {
+                label: 'Temp label here',
+                placeholderLabel: 'Temp placeholder here'
+            };
 
-        $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
-        displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement,
-            TrialManagerDataService.trialMeasurement.count);
-        
-        $scope.updateOccurred = false;
+            $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
+            displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement,
+                TrialManagerDataService.trialMeasurement.count);
 
-        $scope.$on('deleteOccurred', function() {
-            $scope.updateOccurred = true;
-        });
+            $scope.updateOccurred = false;
 
-        $scope.$on('variableAdded', function() {
-            $scope.updateOccurred = true;
-        });
-
-        $scope.updateDataTable = function() {
-            $.ajax({
-                url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
-                type: 'GET',
-                cache: false,
-                data: ''
-            }).success(function (html) {
-                $('#imported-germplasm-list').html(html);
-                $('#entries-details').css('display', 'block');
-                $('#numberOfEntries').html($('#totalGermplasms').val());
-                $('#imported-germplasm-list-reset-button').css('opacity', '1');
-                $scope.updateOccurred = false;
-
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-
+            $scope.$on('deleteOccurred', function () {
+                $scope.updateOccurred = true;
             });
 
+            $scope.$on('variableAdded', function () {
+                $scope.updateOccurred = true;
+            });
 
-        };
-    }]);
+            $scope.$watch(function () {
+                return TrialManagerDataService.settings.germplasm;
+            }, function (newValue) {
+                if ($scope.settings !== newValue) {
+                    angular.copy(newValue, $scope.settings);
+                }
+            });
+
+            $scope.updateDataTable = function () {
+                $.ajax({
+                    url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
+                    type: 'GET',
+                    cache: false,
+                    data: ''
+                }).success(function (html) {
+                    $('#imported-germplasm-list').html(html);
+                    $('#entries-details').css('display', 'block');
+                    $('#numberOfEntries').html($('#totalGermplasms').val());
+                    $('#imported-germplasm-list-reset-button').css('opacity', '1');
+                    $scope.updateOccurred = false;
+
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                    }
+
+                });
+
+
+            };
+        }]);
 })();
 
 // README IMPORTANT: Code unmanaged by angular should go here
 
 /* This will be called when germplasm details page is loaded */
-(function(){
+(function () {
     'use strict';
 
-    document.onLoadGermplasmDetails = function() {
+    document.onLoadGermplasmDetails = function () {
 
 
         displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {

@@ -10,7 +10,12 @@
         ['$scope', 'TrialManagerDataService', function($scope, TrialManagerDataService) {
 
             $scope.settings = TrialManagerDataService.settings.measurements;
-            $scope.currentData = TrialManagerDataService.currentData.measurements;
+
+            $scope.$watch(function () {
+                return TrialManagerDataService.settings.measurements;
+            }, function (newValue) {
+                angular.copy(newValue, $scope.settings);
+            });
 
             $scope.updateOccurred = false;
             

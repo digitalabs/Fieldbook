@@ -204,7 +204,10 @@
                 },
                 controller : function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
                     $scope.variableDefinition = $scope.settings.val($scope.targetkey);
-                    $scope.hasDropdownOptions = $scope.variableDefinition.variable.widgetType === 'DROPDOWN';
+                    $scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
+                        $scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
+                    $scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
+
 
                     $scope.isLocation = $scope.variableDefinition.variable.cvTermId == LOCATION_ID;
 
@@ -254,14 +257,23 @@
                                         item.name));
 
                                 });
-                                /*
-                                 * if (data.results.length === 0){
-                                 * data.results.unshift({id:query.term,text:query.term}); }
-                                 */
+
                                 query.callback(data);
                             }
 
                         };
+
+                        if ($scope.valuecontainer[$scope.targetkey]) {
+                            $scope.dropdownOptions.initSelection = function(element, callback) {
+                                angular.forEach($scope.dropdownValues, function(value) {
+                                    if (value.id === $scope.valuecontainer[$scope.targetkey] ||
+                                        value.description === $scope.valuecontainer[$scope.targetkey]) {
+                                        callback(value);
+                                        return false;
+                                    }
+                                });
+                            };
+                        }
                     }
 
                     // TODO : add code that can handle display of favorite methods, as well as update of possible values in case of click of manage methods

@@ -8,8 +8,7 @@
 (function () {
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils', 'fieldbook-utils',
-        'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap','ngLodash','ngResource']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants
@@ -147,10 +146,10 @@
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        'BASIC_DETAILS_DATA', '$http', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE',
+        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE',
         function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
                   EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA,
-                  BASIC_DETAILS_DATA, $http, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE) {
+                  BASIC_DETAILS_DATA, $http,$resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE) {
 
             var extractData = function (initialData) {
                 if (!initialData) {
@@ -213,6 +212,9 @@
                 });
             };
 
+            var VariablePairService = $resource("/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id",{id:'@id'}, { 'get' : {method : 'get', isArray: true} });
+
+
             var service = {
                 // user input data and default values of standard variables
                 currentData: {
@@ -231,6 +233,12 @@
                     measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
                 },
+
+				// returns a promise object to be resolved later
+                retrieveVariablePairs: function (cvTermId) {
+                    return VariablePairService.get({id : cvTermId}).$promise;
+                },
+
 
                 trialMeasurement: {
                     hasMeasurement: TRIAL_HAS_MEASUREMENT == 'true',
@@ -258,7 +266,9 @@
                     }
                 },
 
-                isCurrentTrialDataValid: function () {
+                extractSettings : extractSettings,
+
+                isCurrentTrialDataValid : function() {
                     var hasError = false, name = '', customMessage = '';
 
                     if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {

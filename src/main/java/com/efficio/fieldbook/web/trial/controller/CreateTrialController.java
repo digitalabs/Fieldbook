@@ -19,6 +19,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -167,6 +168,12 @@ public class CreateTrialController extends BaseTrialController {
     @RequestMapping(value = "/measurements", method = RequestMethod.GET)
     public String showMeasurements(Model model) {
         return showAjaxPage(model, URL_MEASUREMENT);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/retrieveVariablePairs/{id}", method = RequestMethod.GET)
+    public List<SettingDetail> retrieveVariablePairs(@PathVariable int id) {
+        return super.retrieveVariablePairs(id);
     }
 
 

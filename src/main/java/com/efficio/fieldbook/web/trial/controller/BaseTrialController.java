@@ -4,17 +4,17 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.service.api.OntologyService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,6 +28,9 @@ public abstract class BaseTrialController extends SettingsController {
     public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
     public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
 
+    /** The ontology service. */
+    @Resource
+    protected OntologyService ontologyService;
 
     protected void createStudyDetails(Workbook workbook, BasicDetails detailBean) {
         if (workbook.getStudyDetails() == null) {
@@ -225,6 +228,27 @@ public abstract class BaseTrialController extends SettingsController {
 
 
         return info;
+    }
+
+    public List<SettingDetail> retrieveVariablePairs(int cvTermId) {
+        List<SettingDetail> output = new ArrayList<SettingDetail>();
+
+        try {
+
+            StandardVariable variable = ontologyService.getStandardVariable(cvTermId);
+
+            List<StandardVariable> pairs = fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(),variable.getProperty().getId());
+
+            for (StandardVariable item : pairs) {
+                output.add(createSettingDetail(item.getId(),null));
+            }
+
+        } catch (MiddlewareQueryException e) {
+            e.printStackTrace();
+
+        }
+
+        return output;
     }
 
     protected TabInfo prepareBasicDetailsTabInfo(StudyDetails studyDetails, boolean isUsePrevious) throws MiddlewareQueryException {

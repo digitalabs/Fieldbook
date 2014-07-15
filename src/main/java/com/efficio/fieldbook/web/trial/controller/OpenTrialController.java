@@ -1,5 +1,10 @@
 package com.efficio.fieldbook.web.trial.controller;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,10 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
@@ -129,6 +131,10 @@ public class OpenTrialController extends
         return showAngularPage(model);
     }
 
-
+    @ResponseBody
+    @RequestMapping(value = "/retrieveVariablePairs/{id}", method = RequestMethod.GET)
+    public List<SettingDetail> retrieveVariablePairs(@PathVariable int id) {
+        return super.retrieveVariablePairs(id);
+    }
 
 }

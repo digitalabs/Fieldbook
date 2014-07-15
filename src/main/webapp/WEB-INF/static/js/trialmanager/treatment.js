@@ -9,7 +9,7 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl',['$scope','TrialManagerDataService','_',function($scope,TrialManagerDataService,_) {
+    manageTrialApp.controller('TreatmentCtrl',['$scope','TrialManagerDataService','_','$http',function($scope,TrialManagerDataService,_,$http) {
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
         $scope.currentData = TrialManagerDataService.currentData.treatmentFactors;
@@ -22,6 +22,30 @@
         if (typeof $scope.currentData === 'undefined') {
             $scope.currentData = {};
         }
+
+        $scope.onAddVariable = function(result) {
+
+            angular.forEach(result,function(val,key) {
+                $scope.currentData[key] = {
+                    levels: 0,
+                    labels: [],
+                    pairCvTermId: 0,
+                    possiblePairs: new angular.OrderedHash()
+                };
+
+                TrialManagerDataService.retrieveVariablePairs(key).then(function(data) {
+
+                    angular.forEach(data,function(val1,key1) {
+                        $scope.currentData[key].possiblePairs.push(val1.variable.cvTermId,val1);
+
+
+                    });
+                });
+
+            });
+
+        };
+
         
         $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
         
@@ -29,13 +53,7 @@
         $scope.$watchCollection(function(){return $scope.settings.m_keys; },function(newArr,oldArr){
             // add
             if (newArr.length > oldArr.length) {
-                angular.forEach(_(newArr).difference(oldArr),function(val,key) {
-                    $scope.currentData[val] = {
-                        levels: 0,
-                        labels: [],
-                        pairCvTermId: 0
-                    };
-                });
+
             }
             // delete
             else {

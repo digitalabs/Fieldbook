@@ -19,10 +19,8 @@
 	<!--  RESOURCE FOLDERS CONFIGURATION                                  -->
 	<!--  Dispatcher configuration for serving static resources           -->
 	<!-- **************************************************************** -->
-	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
-
-
-
+	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" /> 
+       
 	<!-- **************************************************************** -->
 	<!--  SPRING ANNOTATION PROCESSING                                    -->
 	<!-- **************************************************************** -->
@@ -100,8 +98,11 @@
 	</bean>
 
 	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl" />
-
-
+	
+	<!-- to handle the issue in the abstract controller that needs httpservlet request -->
+	<bean id="httpServletRequest" class="org.springframework.mock.web.MockHttpServletRequest">
+	</bean>
+	
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
@@ -119,11 +120,6 @@
 		<aop:scoped-proxy />
 	</bean>
 	
-	<bean id="trialSelection" class="com.efficio.fieldbook.web.trial.bean.TrialSelection"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-
 	<bean id="seedSelection" class="com.efficio.fieldbook.web.inventory.bean.SeedSelection"
 		scope="session">
 		<aop:scoped-proxy />

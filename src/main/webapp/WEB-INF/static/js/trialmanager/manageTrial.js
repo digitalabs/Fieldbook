@@ -270,30 +270,6 @@
                     }
                 },
 
-                /*registerData : function(dataKey, updateFunction) {
-                    if (!dataRegistry[dataKey]) {
-                        dataRegistry[dataKey] = [];
-                        dataRegistry[dataKey].push(updateFunction);
-                        $scope.$watch(function() {return service.currentData[dataKey];}, function(newValue) {
-                            angular.forEach(dataRegistry[dataKey], function(registeredFunction) {
-                                registeredFunction(newValue);
-                            });
-                        });
-                    } else {
-                        dataRegistry[dataKey].push(updateFunction);
-                    }
-                },
-
-                registerSetting: function (key, updateFunction) {
-                    if (!settingRegistry[key]) {
-                        settingRegistry[key] = [];
-                    }
-
-                    settingRegistry[key].push(updateFunction);
-                },*/
-
-                extractSettings : extractSettings,
-
                 isCurrentTrialDataValid : function() {
                     var hasError = false, name = '', customMessage = '';
 

@@ -350,7 +350,7 @@
                     showReminder: '=',
                     enableUpdate: '=',
                     onUpdate: '&',
-                    callback: '&'
+                    callback: '&',
                     hideVariable : '=',
 
                 },

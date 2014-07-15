@@ -17,8 +17,8 @@ if (typeof (BMS.NurseryManager) === 'undefined') {
 BMS.NurseryManager.PropertySelect = (function($) {
 	'use strict';
 
-	var generateDropdownMarkup = Handlebars.compile($('#nrm-var-select-dropdown-template').html()),
-		propertyDropdownSelector = '.nrm-var-select-dropdown',
+	var generateDropdownMarkup = Handlebars.compile($('#vs-property-select-template').html()),
+		propertyDropdownSelector = '.vs-ps-input',
 
 		PropertySelect;
 

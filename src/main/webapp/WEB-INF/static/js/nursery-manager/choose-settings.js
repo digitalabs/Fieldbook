@@ -13,8 +13,7 @@ window.ChooseSettings = (function() {
 			NURSERY_CONDITIONS: 7
 		},
 
-		modalSelector = '.nrm-var-selection-modal',
-		dialogOpenSelector = '.nrm-var-select-open',
+		dialogOpenSelector = '.chs-add-variable',
 
 		variableSelectionGroups = {},
 		variableMarkupSelectors = [],
@@ -329,7 +328,7 @@ window.ChooseSettings = (function() {
 		checkShowSettingsFormReminder();
 	}
 
-	ChooseSettings = function(modalContainerSelector, translations) {
+	ChooseSettings = function(translations) {
 
 		var group;
 
@@ -339,35 +338,35 @@ window.ChooseSettings = (function() {
 		// Look for any existing variables and instaniate our list of them
 
 		variableSelectionGroups[MODES.MANAGEMENT_DETAILS] = {
-			selector: '.nrm-management-details',
+			selector: '.chs-management-details',
 			label: translations.mdLabel,
 			placeholder: translations.mdPlaceholder,
 			variableMarkupSelector: 'studyLevelVariables'
 		};
 
 		variableSelectionGroups[MODES.FACTORS] = {
-			selector: '.nrm-factors',
+			selector: '.chs-factors',
 			label: translations.fdLabel,
 			placeholder: translations.fdPlaceholder,
 			variableMarkupSelector: 'plotLevelVariables'
 		};
 
 		variableSelectionGroups[MODES.TRAITS] = {
-			selector: '.nrm-traits',
+			selector: '.chs-traits',
 			label: translations.tdLabel,
 			placeholder: translations.tdPlaceholder,
 			variableMarkupSelector: 'baselineTraitVariables'
 		};
 
 		variableSelectionGroups[MODES.SELECTION_VARIATES] = {
-			selector: '.nrm-selection-variates',
+			selector: '.chs-selection-variates',
 			label: translations.svLabel,
 			placeholder: translations.svPlaceholder,
 			variableMarkupSelector: 'selectionVariatesVariables'
 		};
 
 		variableSelectionGroups[MODES.NURSERY_CONDITIONS] = {
-			selector: '.nrm-nursery-conditions',
+			selector: '.chs-nursery-conditions',
 			label: translations.ncLabel,
 			placeholder: translations.ncPlaceholder,
 			variableMarkupSelector: 'nurseryConditions'
@@ -381,8 +380,13 @@ window.ChooseSettings = (function() {
 				variableMarkupSelectors.push(variableSelectionGroups[group].variableMarkupSelector);
 			}
 		}
+	};
 
-		$(modalContainerSelector).on('nrm-variable-select', addSelectedVariables);
+	ChooseSettings.prototype._initialiseVariableSelectionDialog = function() {
+		this._variableSelection = new window.BMS.NurseryManager.VariableSelection(this.variableSelectionTranslations);
+		this._variableSelection.getModal().on('variable-select', addSelectedVariables);
+
+		return this._variableSelection;
 	};
 
 	ChooseSettings.prototype._openVariableSelectionDialog = function(e) {
@@ -400,8 +404,7 @@ window.ChooseSettings = (function() {
 
 		// Initialise a variable selection modal if we haven't done so before
 		if (!modal) {
-			modal = this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector,
-				this.variableSelectionTranslations);
+			modal = this._initialiseVariableSelectionDialog();
 		}
 
 		selectedVariables = _findVariables(variableMarkupSelectors);

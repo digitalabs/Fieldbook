@@ -58,7 +58,7 @@ $(function() {
             $(document.body).css('padding-right', 0);
         });
 
-    
+
 
 });
 
@@ -281,7 +281,7 @@ function createFieldMap(tableName) {
 		index,
 		idVal,
 		idList;
-	
+
 	if($('.import-study-data').data('data-import') === '1'){
 		showErrorMessage('', needSaveImportDataError);
 		return;
@@ -633,7 +633,7 @@ function createLabelPrinting(tableName) {
 		labelPrintingHref,
 		id,
 		type;
-	
+
 	if($('.import-study-data').data('data-import') === '1'){
 		showErrorMessage('', needSaveImportDataError);
 		return;
@@ -672,7 +672,7 @@ function showFieldMap(tableName) {
 	if (selectedTableIds.length > 0) {
 		for (var index in selectedTableIds) {
 			var tempVal = selectedTableIds[index];
-			
+
 			if (tempVal != null) {
 				idVal = tempVal;
 				count++;
@@ -914,7 +914,7 @@ function openTreeStudy(id){
 
 function openDeleteConfirmation() {
 	'use strict';
-	
+
 	$('#deleteStudyModal').modal({ backdrop: 'static', keyboard: true });
 	var idVal = getCurrentStudyIdInTab();
 	if (!idVal) {
@@ -929,7 +929,7 @@ function openDeleteConfirmation() {
 
 function deleteNursery() {
 	'use strict';
-	
+
 	if ($('.review-nursery-page-identifier').length) {
 		deleteNurseryInReview();
 	}
@@ -949,7 +949,7 @@ function deleteNurseryInReview() {
 	var idVal = getCurrentStudyIdInTab();
 	doDeleteNursery(idVal, function(data) {
 		$('#deleteStudyModal').modal('hide');
-		
+
 		setTimeout(function() {
 			//simulate close tab
 			$('#' + idVal).trigger('click');
@@ -964,7 +964,7 @@ function deleteNurseryInReview() {
 
 function deleteNurseryInEdit() {
 	'use strict';
-	
+
 	var idVal = $('#studyId').val();
 	doDeleteNursery(idVal, function(data) {
 		$('#deleteStudyModal').modal('hide');
@@ -978,15 +978,15 @@ function deleteNurseryInEdit() {
 
 function advanceNursery(tableName) {
 	'use strict';
-	
-	var count = 0, 
+
+	var count = 0,
 		idVal = $('#createNurseryMainForm #studyId').val();
-	
+
 	if($('.import-study-data').data('data-import') === '1'){
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
-	
+
 	count++;
 	if (count !== 1) {
 		showMessage(advanceStudyError);
@@ -1006,18 +1006,18 @@ function advanceNursery(tableName) {
 				success: function(html) {
 					$('#advance-nursery-modal-div').html(html);
 					$('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
-					
+
 					$('#advanceNurseryModal select').each(function(){
 						$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
 					});
-					
-				}				
+
+				}
 			});
 		}
 	}
 }
 function showInvalidInputMessage(message){
-	'use strict';	
+	'use strict';
 	createErrorNotification(invalidInputMsgHeader,message);
 }
 function showErrorMessage(messageDivId, message) {
@@ -1217,7 +1217,7 @@ function exportStudy() {
 		showMessage('Please choose export type');
 		return false;
 	}
-		
+
 	if (type === '2') {
 		exportStudyToR(type);
 	} else {
@@ -1231,7 +1231,7 @@ function exportStudyToR(type) {
 }
 function getExportCheckedInstances(){
 	'use strict';
-	var checkedInstances = [];	
+	var checkedInstances = [];
 	$('.trial-instance-export').each(function(){
 			if($(this).is(':checked')){
 		  		checkedInstances.push({'instance': $(this).data('instance-number'), 'hasFieldmap' :  $(this).data('has-fieldmap')});
@@ -1245,7 +1245,7 @@ function validateTrialInstance() {
 		counter = 0,
 		additionalParam = '';
 	if(checkedInstances !== null && checkedInstances.length !== 0){
-		
+
 		for(counter = 0 ; counter < checkedInstances.length ; counter++){
 			if(additionalParam !== ''){
 				additionalParam += '|';
@@ -1328,7 +1328,7 @@ function submitImportStudy() {
 		showErrorMessage('page-import-study-message-modal', 'Please choose a file to import');
 		return false;
 	}
-	
+
 	if($('.import-study-data').data('data-import') === '1'){
 		setTimeout(function(){$('#importOverwriteConfirmation').modal({ backdrop: 'static', keyboard: true });}, 300);
 	}else{
@@ -1341,7 +1341,7 @@ function continueStudyImport(doDataRevert){
 		revertData(false);
 		$('#importOverwriteConfirmation').modal('hide');
 	}
-	
+
 	$('#importStudyUploadForm').ajaxForm(importOptions).submit();
 }
 
@@ -1357,7 +1357,7 @@ function goBackToImport(){
 	$('#importStudyDesigConfirmationModal').modal('hide');
 	$('#importOverwriteConfirmation').modal('hide');
 	setTimeout(function(){$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
-	
+
 }
 
 function isFloat(value) {
@@ -1366,7 +1366,7 @@ function isFloat(value) {
 }
 
 function moveToTopScreen() {
-	
+
 }
 
 function openImportGermplasmList(type) {
@@ -1375,7 +1375,7 @@ function openImportGermplasmList(type) {
 	if($('#importLocationUrl').length != 0){
 		importLocationUrl = $('#importLocationUrl').val();
 	}
-	
+
 	setTimeout(function() {
 		$('#importFrame').attr('src', importLocationUrl);
 		$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });
@@ -1713,7 +1713,7 @@ function recreateMethodCombo() {
 		selectedMethodFavorite = $('#methodIdFavorite').val();
 	var createGermplasm = false;
 	var createGermplasmOpened = false;
-	
+
 	if ($('#importStudyDesigConfirmationModal').length !== 0){
 		createGermplasm = true;
 		if ($('#importStudyDesigConfirmationModal').hasClass('in')) {
@@ -1735,7 +1735,7 @@ function recreateMethodCombo() {
 					refreshImportMethodCombo(data);
 					refreshMethodComboInSettings(data);
 				} else if (selectedMethodAll != null) {
-					
+
 					//recreate the select2 combos to get updated list of methods
 					recreateMethodComboAfterClose('methodIdAll', $.parseJSON(data.allNonGenerativeMethods));
 					recreateMethodComboAfterClose('methodIdFavorite', $.parseJSON(data.favoriteNonGenerativeMethods));
@@ -1776,7 +1776,7 @@ function refreshImportMethodCombo(data) {
 		selectedValue = $('#importMethodId').select2('data').id;
 	}
 	if ($('#importFavoriteMethod').is(':checked')) {
-		
+
 		initializePossibleValuesCombo($.parseJSON(data.favoriteMethods),
 				'#importMethodId', false, selectedValue);
 	} else {
@@ -1804,14 +1804,14 @@ function refreshImportLocationCombo(data) {
 function recreateLocationCombo() {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationFavorite = $('#harvestLocationIdFavorite').val();
-	
+
 	var inventoryPopup = false;
 	var advancePopup = false;
 	var fieldmapScreen = false;
 	var createGermplasm = false;
     var hasCreateGermplasm = false;
 	var createGermplasmOpened = false;
-	
+
 	if ($('#addLotsModal').length !== 0 && $('#addLotsModal').hasClass('in')){
 		inventoryPopup = true;
 	}
@@ -1820,7 +1820,7 @@ function recreateLocationCombo() {
 	} else if ($('#enterFieldDetailsForm').length !== 0) {
 		fieldmapScreen = true;
 	}
-	
+
 	if ($('#importStudyDesigConfirmationModal').length !== 0){
 		createGermplasm = true;
 		if ($('#importStudyDesigConfirmationModal').hasClass('in')) {
@@ -1869,7 +1869,7 @@ function recreateLocationCombo() {
                             setComboValues(locationSuggestions_obj, selectedLocationAll, 'harvestLocationIdAll');
                         }
                         refreshLocationComboInSettings(data);
-                        
+
                     } else if (fieldmapScreen === true) {
                         //recreate the select2 combos to get updated list of locations
                         recreateLocationComboAfterClose('fieldLocationIdAll', $.parseJSON(data.allBreedingLocations));
@@ -1909,22 +1909,22 @@ function refreshMethodComboInSettings(data) {
 		}else{
 			data.favoriteNonGenerativeMethods = '['+pleaseChoose+',' + data.favoriteNonGenerativeMethods.substring(1);
 		}
-		
+
 		if($.parseJSON( data.allNonGenerativeMethods).length == 0){
 			data.allNonGenerativeMethods = '['+pleaseChoose+']';
 		}else{
 			data.allNonGenerativeMethods = '['+pleaseChoose+', ' + data.allNonGenerativeMethods.substring(1);
 		}
-		
-		
+
+
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
 			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
 		}
-		
+
 		//recreate select2 of breeding method
 		initializePossibleValuesCombo([],
 				'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-		
+
 		//update values of combo
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
 			initializePossibleValuesCombo($.parseJSON(data.favoriteNonGenerativeMethods),
@@ -1933,7 +1933,7 @@ function refreshMethodComboInSettings(data) {
 			initializePossibleValuesCombo($.parseJSON(data.allNonGenerativeMethods),
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		}
-	
+
 		replacePossibleJsonValues(data.favoriteNonGenerativeMethods, data.allNonGenerativeMethods, index);
 	}
 }
@@ -1946,14 +1946,14 @@ function refreshLocationComboInSettings(data) {
 			selectedVal = $('#'+ getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
 		}
 		initializePossibleValuesCombo([], '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
-	
+
 		// update values in combo
 		if ($("#"+ getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
 			initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), "#" + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		} else {
 			initializePossibleValuesCombo($.parseJSON(data.allBreedingLocations), '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
 		}
-	
+
 		replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, index);
 	}
 }
@@ -2029,12 +2029,12 @@ function createFolder() {
         return false;
     }else {
     	var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
-    	
+
     	if(activeStudyNode == null || activeStudyNode.data.isFolder === false || activeStudyNode.data.key > 1 || activeStudyNode.data.key === 'CENTRAL'){
     		showErrorMessage('', studyProgramFolderRequired);
     		return false;
     	}
-    	
+
 		parentFolderId = activeStudyNode.data.key;
 		if (parentFolderId === 'LOCAL') {
 			parentFolderId = 1;
@@ -2091,10 +2091,10 @@ function deleteFolder(object) {
 
 function submitDeleteFolder() {
 	'use strict';
-	
+
 	var folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
 	var isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder;
-	
+
 	if (isFolder) {
 		$.ajax({
 			url: '/Fieldbook/StudyTreeManager/deleteStudyFolder',
@@ -2311,20 +2311,20 @@ function showListTreeToolTip(node, nodeSpan) {
 function truncateStudyVariableNames(domSelector, charLimit){
 	'use strict';
 	$(domSelector).each(function(){
-		var htmlString = $(this).html();		
+		var htmlString = $(this).html();
 		if($(this).data('truncate-limit') !== undefined) {
 			charLimit = parseInt($(this).data('truncate-limit'), 10);
 		}
-		
+
 		if(htmlString.length > charLimit){
 			if(!$(this).hasClass('variable-tooltip')){
 				$(this).addClass('variable-tooltip');
 				$(this).attr('title',htmlString);
-				
+
 				if($(this).data('truncate-placement') !== undefined) {
 					$(this).data('placement',$(this).data('truncate-placement'));
 				}
-				
+
 
 				htmlString = htmlString.substring(0,charLimit) + '...';
 
@@ -2503,13 +2503,13 @@ function deleteCheckType() {
 					isFound = true;
 				}
 			});
-		} 
+		}
         if(isFound){
         	showCheckTypeErrorMessage(checkTypeCurrentlyUseError);
         	return false;
         }
 
-		
+
 		var $form = $("#manageCheckValue,#comboCheckCode");
 		var serializedData = $form.serialize();
 		$
@@ -2677,17 +2677,17 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 							}
 						});
 	} else {
-		
+
 		if($('.check-table-popover tbody tr').length != 0){
 				reloadCheckListTable();
 				/*
 				var checkDataTable = isNursery() ? selectedCheckListDataTable.getDataTable() : germplasmDataTable.getDataTable();
-				
+
 				checkDataTable.$('.check-hidden').each(function(){
-				
-			
+
+
 				var currentCode = $(this).data('code');
-				
+
 				for (i = 0; i < suggestions_obj.length; i++) {
 					var val = suggestions_obj[i].text;
 					var id = suggestions_obj[i].id;
@@ -2702,10 +2702,10 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 						break;
 					}
 				}
-				
-			});	
-			*/					    	
-			//we need to get the real index of the check						
+
+			});
+			*/
+			//we need to get the real index of the check
 		}
 	}
 }
@@ -2767,7 +2767,7 @@ function isNursery(){
 		return true;
 	}else{
 		return false;
-	}		
+	}
 }
 
 
@@ -2967,15 +2967,15 @@ function displayEditFactorsAndGermplasmSection() {
 	'use strict';
 	if ($('#measurementDataExisting').length !== 0) {
 		displayCorrespondingGermplasmSections();
-		
+
 		//enable/disable adding of factors if nursery has measurement data
 		if ($('#measurementDataExisting').val() === 'true') {
-			$('.nrm-var-select-open-factor').hide();
+			$('.chs-add-variable-factor').hide();
 			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
 				$(row).find('.delete-icon').hide();
 			});
 		} else {
-			$('.nrm-var-select-open-factor').show();
+			$('.chs-add-variable-factor').show();
 			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
 				$(row).find('.delete-icon').show();
 			});
@@ -2983,9 +2983,9 @@ function displayEditFactorsAndGermplasmSection() {
 	} else {
 		displayCorrespondingGermplasmSections();
 		if ($('#measurementDataExisting').val() === 'true') {
-			$('.nrm-var-select-open-factor').hide();		
+			$('.chs-add-variable-factor').hide();
 		} else {
-			$('.nrm-var-select-open-factor').show();			
+			$('.chs-add-variable-factor').show();
 		}
 	}
 }
@@ -2993,11 +2993,11 @@ function showGermplasmDetailsSection() {
 	'use strict';
 	$('#chooseGermplasmAndChecks').show();
 	$('.observation-exists-notif').hide();
-	$('.overwrite-germplasm-list').hide();	
+	$('.overwrite-germplasm-list').hide();
 }
 
 function displayCorrespondingGermplasmSections() {
-	'use strict';	
+	'use strict';
 	var hasData = $('#measurementDataExisting').val() === 'true' ? true : false;
 	displayStudyGermplasmSection(hasData, measurementRowCount);
 }

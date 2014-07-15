@@ -68,7 +68,7 @@
                     <div class="row form-group">
                         <label class="control-label col-sm-4" id="folderLabel"><b>Save in</b>: <span class="required">*</span></label>
 
-                        <div class="col-sm-8">              
+                        <div class="col-sm-8">
                             <input type="hidden" id="folderId" ng-model="data.folderId"/>
 		                    <input type="hidden" id="folderName" ng-model="data.folderName"/>
 
@@ -120,7 +120,7 @@
             </div>
 
             <div class="row form-group">
-                <div class="col-xs-8 col-md-8 fb-build-options">                  
+                <div class="col-xs-8 col-md-8 fb-build-options">
                     <select id="studyBuildOption">
 						<option value="1">Start with Blank Trial</option>
 						<option value="2" th:text="#{trial.managesettings.use.previous.trial}">Use Previous Trial</option>
@@ -150,7 +150,7 @@
 
     <div class="row">
         <div class="col-xs-12 col-md-12">
-            <div class="nrm-var-selection-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
+            <div class="chs-vs-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
         </div>
     </div>
 
@@ -173,11 +173,11 @@
 	<div class="row">
 		<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 	</div>
-	
-	<form  role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">	
+
+	<form  role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
 		 <input type="hidden" th:field="*{measurementDataExisting}"/>
 	</form>
-   
+
     <!-- MAIN jS -->
     <script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
@@ -262,14 +262,14 @@
             ).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
             ).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
             );
-            
+
 
             $(document).ready(function() {
                 document.onInitManageTrial();
             });
 
         })();
-        
+
 
         //]]>
     </script>

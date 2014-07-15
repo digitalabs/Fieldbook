@@ -16,27 +16,28 @@ if (typeof (BMS.NurseryManager) === 'undefined') {
 BMS.NurseryManager.VariableSelection = (function($) {
 	'use strict';
 
-	var VARIABLE_SELECT_EVENT = 'nrm-variable-select',
+	var VARIABLE_SELECT_EVENT = 'variable-select',
+		MODAL_SELECTOR = '.vs-modal',
 
 		modalHeaderSelector = '.modal-header',
-		variableNameContainerSelector = '.nrm-var-select-var-name-container',
-		addVariableButtonSelector = '.nrm-var-select-add',
-		aliasVariableButtonSelector = '.nrm-var-select-name-alias',
-		aliasVariableInputSelector = '.nrm-var-select-alias-input',
-		relatedPropertyLinkSelector = '.nrm-var-property-name',
-		variableListSelector = '.nrm-var-select-vars',
-		relatedPropertyListSelector = '.nrm-var-select-related-props-wrapper',
-		propertySelectSelector = '.nrm-var-select-dropdown-container',
+		variableNameContainerSelector = '.vs-variable-name-container',
+		addVariableButtonSelector = '.vs-variable-select',
+		aliasVariableButtonSelector = '.vs-alias-edit',
+		aliasVariableInputSelector = '.vs-alias-input',
+		relatedPropertyLinkSelector = '.vs-related-prop-name',
+		variableListSelector = '.vs-variable-list',
+		relatedPropertyListSelector = '.vs-related-props-container',
+		propertySelectSelector = '.vs-ps-container',
 
 		// Only compile our templates once, rather than every time we need them
 		generateVariable = Handlebars.compile($('#variable-template').html()),
-		generateVariableName = Handlebars.compile($('#nrm-var-select-name-template').html()),
-		generateVariableAlias = Handlebars.compile($('#nrm-var-select-name-alias-template').html()),
+		generateVariableName = Handlebars.compile($('#vs-variable-name-template').html()),
+		generateVariableAlias = Handlebars.compile($('#vs-alias-edit-template').html()),
 		generateRelatedProperty = Handlebars.compile($('#related-prop-template').html()),
 
 		VariableSelection;
 
-	Handlebars.registerPartial('variable-name', $('#nrm-var-select-name-partial').html());
+	Handlebars.registerPartial('variable-name', $('#vs-variable-name-partial').html());
 
 	/* FIXME - this logic should be in the back end
 	 *
@@ -181,13 +182,11 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 * Creates a new Variable Selection dialog.
 	 *
 	 * @constructor
-	 * @param {string} selector the selector referencing the modal
 	 * @param {string} translations.label the title of the dialog
 	 * @param {string} translations.uniqueVariableError error message when a variable name is not unique
 	 */
-	VariableSelection = function(selector, translations) {
-		this._modalSelector = selector;
-		this._$modal = $(selector);
+	VariableSelection = function(translations) {
+		this._$modal = $(MODAL_SELECTOR);
 
 		this.translations = translations;
 
@@ -208,7 +207,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	VariableSelection.prototype.show = function(group, translations, groupData) {
 
 		var properties = groupData.propertyData,
-			modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
+			modalHeader = $(MODAL_SELECTOR + ' ' + modalHeaderSelector),
 			title;
 
 		properties.sort(function(propertyA, propertyB) {
@@ -222,7 +221,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._excludedProperties = groupData.excludedProperties || [];
 
 		// Append title
-		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');
+		title = $('<h4 class="modal-title" id="vs-modal-title">' + translations.label + '</h4>');
 		modalHeader.append(title);
 
 		// Instantiate property dropdown, passing in a function that will record the new property and load it's details on select
@@ -237,7 +236,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// Listen for variable selection
 		$(variableListSelector).on('click', addVariableButtonSelector, {}, $.proxy(function(e) {
 			e.preventDefault();
-			this._selectVariableButton($(e.currentTarget));
+			this._selectVariable($(e.currentTarget));
 		}, this));
 
 		// Listen for variable aliasing request
@@ -266,6 +265,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 */
 	VariableSelection.prototype.hide = function() {
 		this._$modal.modal('hide');
+	};
+
+	/**
+	 * @returns {JQuery} the modal
+	 */
+	VariableSelection.prototype.getModal = function() {
+		return this._$modal;
 	};
 
 	/*
@@ -349,11 +355,12 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	};
 
 	/*
-	 * Handles a variable select event. Selects the clicked variable.
+	 * Selects a variable.
 	 *
-	 * @param {JQuery} selectButton the button element that instantiated the event
+	 * @param {JQuery} selectButton the button element that was clicked on
+	 * @fires VariableSelection#variable-select
 	 */
-	VariableSelection.prototype._selectVariableButton = function(selectButton) {
+	VariableSelection.prototype._selectVariable = function(selectButton) {
 
 		var container = selectButton.parent('p'),
 			variableContainer = container.children(variableNameContainerSelector),
@@ -368,7 +375,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			return;
 		}
 
-		variableName = $(container.find('.nrm-var-name')[0]).text();
+		variableName = $(container.find('.vs-variable-name')[0]).text();
 		selectedVariable = _findVariableByName(variableName, this._selectedProperty.standardVariables).variable;
 
 		// Disable the select button to prevent clicking twice
@@ -395,9 +402,15 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				// Remove the edit button
 				selectButton.parent('p').find(aliasVariableButtonSelector).remove();
 
-				// Throw a variable select event, so interested parties can do something with the user's intention to add this variable.
-				// FIXME Should pass this selector through
-				$('.nrm-var-selection-modal-container').trigger({
+				/**
+				 * Variable select event.
+				 *
+				 * @event VariableSelection#variable-select
+				 * @type {object}
+				 * @property {number} group the group the variable belongs to
+				 * @property {object} responseData data returned from a successful call to /Fieldbook/manageSettings/addSettings/
+				 */
+				this._$modal.trigger({
 					type: VARIABLE_SELECT_EVENT,
 					group: this._group,
 					responseData: data
@@ -417,7 +430,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 */
 	VariableSelection.prototype._aliasVariableButton = function(container) {
 
-		var variableName = $(container.children('.nrm-var-name')[0]).text(),
+		var variableName = $(container.children('.vs-variable-name')[0]).text(),
 			variableInfo;
 
 		variableInfo = _findVariableByName(variableName, this._selectedProperty.standardVariables);
@@ -429,12 +442,12 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			alias: variableInfo.variable.alias || ''
 		}));
 
-		container.on('click', '.nrm-var-select-name-save', {}, $.proxy(function(e) {
+		container.on('click', '.vs-alias-save', {}, $.proxy(function(e) {
 			e.preventDefault();
 			this._saveAlias($(e.currentTarget).parent(variableNameContainerSelector));
 		}, this));
 
-		container.on('click', '.nrm-var-select-name-cancel', {}, $.proxy(function(e) {
+		container.on('click', '.vs-alias-cancel', {}, $.proxy(function(e) {
 			e.preventDefault();
 			this._cancelAlias($(e.currentTarget).parent(variableNameContainerSelector));
 		}, this));
@@ -502,7 +515,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		_renderVariableName(this._selectedProperty.standardVariables[index], container);
 
-		this._selectVariableButton(container.next(addVariableButtonSelector));
+		this._selectVariable(container.next(addVariableButtonSelector));
 
 		return alias || this._selectedProperty.standardVariables[index].name;
 	};
@@ -551,7 +564,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 */
 	VariableSelection.prototype._clear = function() {
 
-		var modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
+		var modalHeader = $(MODAL_SELECTOR + ' ' + modalHeaderSelector),
 			variableList = $(variableListSelector),
 			relatedPropertyList = $(relatedPropertyListSelector);
 

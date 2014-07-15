@@ -1,16 +1,16 @@
-<div class="modal fade nrm-var-selection-modal" tabindex="-1" role="dialog" aria-labelledby="nrm-var-selection-modal-title" aria-hidden="true">
+<div class="modal fade vs-modal" tabindex="-1" role="dialog" aria-labelledby="vs-modal-title" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<!-- Title will get inserted here -->
 			</div>
 			<div class="modal-body">
-				<div class="nrm-var-select-dropdown-container"></div>
-				<div class="nrm-var-select-results">
+				<div class="vs-ps-container"></div>
+				<div class="vs-content-container">
 					<!-- TODO Awaiting Rebecca's JSONified variable usage service
 					<ul class="nrm-var-select-popular-vars"></ul> -->
-					<div class="nrm-var-select-vars"></div>
-					<div class="nrm-var-select-related-props-wrapper"></div>
+					<div class="vs-variable-list"></div>
+					<div class="vs-related-props-container"></div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -25,16 +25,16 @@
 <h3 th:utext="#{add.variable.dialog.variablelist}">Variables</h3>
 <ul>
 	{{#each variables}}
-	<li class="nrm-var-select-var">
+	<li class="vs-variable">
 	<p>
-		<span class="nrm-var-select-var-name-container">{{> variable-name}}</span>
+		<span class="vs-variable-name-container">{{> variable-name}}</span>
 
 		{{#if selected}}
-			<button type="button" class="btn btn-default btn-s nrm-var-select-add icon-btn" disabled="disabled">
+			<button type="button" class="btn btn-default btn-s vs-variable-select icon-btn" disabled="disabled">
 				<span class="glyphicon glyphicon-ok"></span>
 			</button>
 		{{else}}
-			<button type="button" class="btn btn-default btn-s nrm-var-select-add icon-btn">
+			<button type="button" class="btn btn-default btn-s vs-variable-select icon-btn">
 				<span class="glyphicon glyphicon-plus"></span>
 			</button>
 		{{/if}}
@@ -50,21 +50,21 @@
 {{#if column1}}
 
 <h3>Related Properties</h3>
-<div class="nrm-var-select-related-props">
-    <div class="nrm-var-select-prop-col nrm-var-select-prop-col-left">
+<div class="vs-related-props-list">
+    <div class="vs-related-prop">
         <ul>
             {{#each column1}}
 			<li>
-				<a href="#" class="nrm-var-property-name" data-id="{{propertyId}}">{{name}}</a>
+				<a href="#" class="vs-related-prop-name" data-id="{{propertyId}}">{{name}}</a>
 			</li>
 			{{/each}}
         </ul>
     </div>
-    <div class="nrm-var-select-prop-cols">
+    <div class="vs-related-prop">
         <ul>
             {{#each column2}}
 			<li>
-				<a href="#" class="nrm-var-property-name" data-id="{{propertyId}}">{{name}}</a>
+				<a href="#" class="vs-related-prop-name" data-id="{{propertyId}}">{{name}}</a>
 			</li>
 			{{/each}}
         </ul>
@@ -74,37 +74,37 @@
 {{/if}}
 </script>
 
-<script id="nrm-var-select-dropdown-template" type="text/x-handlebars-template">
-	<input class="nrm-var-select-dropdown" type="hidden"></input>
+<script id="vs-property-select-template" type="text/x-handlebars-template">
+	<input class="vs-ps-input" type="hidden"></input>
 </script>
 
 <!-- Renders a variable name. Expects a variable object with a name and optional alias property. -->
-<script id="nrm-var-select-name-partial" type="text/x-handlebars-template">
-	<span class="nrm-var-name">{{name}}</span>
+<script id="vs-variable-name-partial" type="text/x-handlebars-template">
+	<span class="vs-variable-name">{{name}}</span>
 	{{#if alias}}
 		<span> ({{alias}})</span>
 	{{/if}}
 
 	{{#unless selected}}
-		<button type="button" class="btn btn-default btn-s nrm-var-select-name-alias icon-btn">
+		<button type="button" class="btn btn-default btn-s vs-alias-edit icon-btn">
 			<span class="glyphicon glyphicon-pencil"></span>
 		</button>
 	{{/unless}}
 </script>
 
 <!-- Renders an input that allows a user to provide an alias for a variable. Expects an object with a placeholder and optional alias.-->
-<script id="nrm-var-select-name-alias-template" type="text/x-handlebars-template">
-	<input class="nrm-var-select-alias-input" placeholder="Enter an alias" th:placeholder="#{variable.selection.alias}" type="text" data-index="{{index}}" value="{{alias}}"></input>
-	<button type="button" class="btn btn-default btn-xs nrm-var-select-name-save icon-btn">
+<script id="vs-alias-edit-template" type="text/x-handlebars-template">
+	<input class="vs-alias-input" placeholder="Enter an alias" th:placeholder="#{variable.selection.alias}" type="text" data-index="{{index}}" value="{{alias}}"></input>
+	<button type="button" class="btn btn-default btn-xs vs-alias-save icon-btn">
 		<span class="glyphicon glyphicon-ok"></span>
 	</button>
-	<button type="button" class="btn btn-default btn-xs nrm-var-select-name-cancel icon-btn">
+	<button type="button" class="btn btn-default btn-xs vs-alias-cancel icon-btn">
 		<span class="glyphicon glyphicon-remove"></span>
 	</button>
 </script>
 
 <!-- Also expose the variable name partial as a template for standalone use.-->
-<script id="nrm-var-select-name-template" type="text/x-handlebars-template">
+<script id="vs-variable-name-template" type="text/x-handlebars-template">
 	{{> variable-name}}
 </script>
 

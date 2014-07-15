@@ -1363,41 +1363,41 @@ label[data-toggle="collapse"],
 }
 /* Variable Selection Dialog CSS */
 
-.nrm-var-selection-modal ul {
+.vs-modal ul {
 	padding: 0;
 }
 
-.nrm-var-selection-modal li {
+.vs-modal li {
 	list-style-type: none;
 }
 
-.nrm-var-selection-modal .icon-btn {
+.vs-modal .icon-btn {
 	color: black;
 	background-color: white;
 	border: none;
 }
 
-.nrm-var-selection-modal .icon-btn:active {
+.vs-modal .icon-btn:active {
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
 }
 
-.nrm-var-selection-modal .icon-btn:hover {
+.vs-modal .icon-btn:hover {
 	color: rgb(90, 90, 90);
 	background-color: white;
 	border: none;
 }
 
-.nrm-var-selection-modal .nrm-var-select-var {
+.vs-modal .vs-variable {
 	padding-bottom: 15px;
 }
 
-.nrm-var-select-var p {
+.vs-variable p {
 	margin: 0;
 }
 
-.nrm-var-name,
+.vs-variable-name,
 .var-select-results .var-select-result-prop {
 	font-weight: bold;
 }
@@ -1410,35 +1410,32 @@ label[data-toggle="collapse"],
 	font-size: 0.8em;
 }
 
-.nrm-var-select-add {
+.vs-variable-select {
 	float: right;
 }
 
-.nrm-var-selection-modal .modal-body {
+.vs-modal .modal-body {
 	height: 300px;
 	max-height: 300px;
 }
 
-.nrm-var-selection-modal .nrm-var-select-dropdown-container {
+.vs-modal .vs-ps-container {
 	height: 45px;
 }
 
-.nrm-var-selection-modal .nrm-var-select-results {
+.vs-modal .vs-content-container {
 	height: 240px;
 	overflow-y: auto;
 }
 
-.nrm-var-select-related-props {
+.vs-related-props-list {
     display: table;
     table-layout: fixed;
     width: 100%
 }
 
-.nrm-var-select-prop-col {
-    display: table-cell
-}
-
-.nrm-var-select-prop-col-left {
+.vs-related-prop {
+   	display: table-cell;
     width: 50%;
 }
 

@@ -9,7 +9,7 @@
                     <span class="btn btn-primary" ng-show="updateOccurred" ng-click="updateDataTable()">
                         <span class="glyphicon glyphicon-refresh"></span> Update
                     </span>
-                    <span select-standard-variable="" ng-show="addVariable" modeldata="settings" variable-type="8" class="btn btn-info nrm-md-variable-select nrm-var-select-open-factor" >Add</span>
+                    <span select-standard-variable="" ng-show="addVariable" modeldata="settings" variable-type="8" class="btn btn-info nrm-md-variable-select chs-add-variable-factor" >Add</span>
             </span>
 
             <section-container name="content" th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
@@ -24,7 +24,7 @@
 
 <div class="row form-group overwrite-germplasm-list">
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label" th:text="#{trial.edit.trial.overwrite.germplasm.list.message}">						
+		<label class="control-label" th:text="#{trial.edit.trial.overwrite.germplasm.list.message}">
 		</label>
 		&nbsp;&nbsp;&nbsp;
 		<button class="btn btn-primary show-germplasm-details"  th:text="#{germplasm.replace}">Overwrite</button>
@@ -39,7 +39,7 @@
 </div>
 
 
-	
+
 <div class="collapse in germplasmListDetails germplasmAndCheckSection" id="chooseGermplasmAndChecks">
 	<!-- Germplasm List Table View -->
     <div id="primary-section">
@@ -59,7 +59,7 @@
 	                    </li>
 	                </ul>
                 </div>
-            </div>                       
+            </div>
 
         </div>
         <div>
@@ -91,7 +91,7 @@
 <div class="row">
 	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListModal"></div>
 </div>
- 
+
 <div class="row">
 	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListManageCheckType"></div>
 </div>
@@ -117,7 +117,7 @@
 
         $(document).ready(function () {
             'use strict';
-            document.onLoadGermplasmDetails();            
+            document.onLoadGermplasmDetails();
         });
 
 

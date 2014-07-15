@@ -55,7 +55,7 @@
     })();
 
     angular.module('fieldbook-utils', ['ui.select2'])
-        .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.nrm-var-selection-modal-container')
+        .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.chs-vs-modal-container')
         .constant('VARIABLE_SELECTED_EVENT_TYPE', 'nrm-variable-select')
         .directive('displaySettings', function() {
             return {

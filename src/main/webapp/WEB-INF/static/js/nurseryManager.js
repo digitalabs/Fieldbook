@@ -1046,8 +1046,8 @@ function resetIdsOfTables(name, tableId) {
 	var bodyContent = '', rowContent = '';
 	$.each($('#' + tableId + ' tbody tr'), function(index, row) {
 		rowContent = row.innerHTML.replace(reg, name + index);
-		rowContent = rowContent.replace(reg2, name + '[' + index + ']');		
-		bodyContent = bodyContent + ' <tr> ' + rowContent + '</tr>'; 
+		rowContent = rowContent.replace(reg2, name + '[' + index + ']');
+		bodyContent = bodyContent + ' <tr> ' + rowContent + '</tr>';
 	});
 	$('#' + tableId + ' tbody').html(bodyContent);
 }
@@ -1388,14 +1388,14 @@ function choosePreviousNursery(studyId) {
 		url : url + studyId,
 		type : 'GET',
 		cache : false,
-		data : '',		
+		data : '',
 		success : function(html) {
 			if ($('#chooseSettingsDiv').length !== 0) {
 				$('#chooseSettingsDiv').html(html);
 			} else {
 				$('.container .row').first().html(html);
 			}
-			$('.nrm-var-select-open-factor').show();
+			$('.chs-add-variable-factor').show();
 		}
 	});
 }
@@ -1673,7 +1673,7 @@ function recreateSessionVariables() {
 		cache: false,
 		success: function (html) {
 			$('#measurementsDiv').html(html);
-			displayEditFactorsAndGermplasmSection();			
+			displayEditFactorsAndGermplasmSection();
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
 
 		}

@@ -9,7 +9,7 @@ window.TrialSettingsManager = (function() {
             TREATMENT_FACTORS: 5,
             TRIAL_CONDITIONS: 7
 		},
-        modalSelector = '.nrm-var-selection-modal',
+        modalSelector = '.vs-modal',
 		variableSelectionGroups = {},
         TrialSettingsManager;
 

@@ -2,13 +2,14 @@
  * Created by cyrus on 7/1/14.
  */
 
-/*global angular, changeBuildOption, getJquerySafeId, isStudyNameUnique, showSuccessfulMessage,
-showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
+/*global angular, changeBuildOption, isStudyNameUnique, showSuccessfulMessage,
+showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree*/
 
 (function() {
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap','ngLodash']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils',
+        'ct.ui.router.extras','ui.bootstrap','ngLodash']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants
@@ -78,7 +79,7 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
 
     manageTrialApp.run(
         [          '$rootScope', '$state', '$stateParams',
-            function ($rootScope,   $state,   $stateParams) {
+            function ($rootScope, $state, $stateParams) {
 
                 // It's very handy to add references to $state and $stateParams to the $rootScope
                 // so that you can access them from any scope within your applications.For example,
@@ -92,8 +93,8 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
 
 
     // THE parent controller for the manageTrial (create/edit) page
-    manageTrialApp.controller('manageTrialCtrl',['$scope','$rootScope','TrialManagerDataService',
-        function($scope,$rootScope, TrialManagerDataService){
+    manageTrialApp.controller('manageTrialCtrl',['$scope','$rootScope','TrialManagerDataService', '$http',
+        function($scope,$rootScope, TrialManagerDataService, $http){
         $scope.trialTabs = [
             {   'name' : 'Trial Settings',
                 'state' : 'trialSettings'
@@ -118,6 +119,29 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
         $scope.data = TrialManagerDataService.currentData.basicDetails;
 
         $scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
+
+        $scope.selectPreviousTrial = function() {
+            openStudyTree(3, $scope.useExistingTrial);
+        };
+
+        $scope.useExistingTrial = function(existingTrialID) {
+            $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function(data) {
+                // update data and settings
+                TrialManagerDataService.currentData.trialSettings = TrialManagerDataService.extractData(data.trialSettingsData);
+                TrialManagerDataService.currentData.environments = TrialManagerDataService.extractData(data.environmentData);
+                TrialManagerDataService.currentData.germplasm = TrialManagerDataService.extractData(data.germplasmData);
+
+                // treatment factor
+
+                TrialManagerDataService.settings.trialSettings = TrialManagerDataService.extractSettings(data.trialSettingsData);
+                TrialManagerDataService.settings.environments = TrialManagerDataService.extractSettings(data.environmentData);
+                TrialManagerDataService.settings.germplasm = TrialManagerDataService.extractSettings(data.germplasmData);
+
+                if (!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+        };
     }]);
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
@@ -209,6 +233,8 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
         			count: parseInt(TRIAL_MEASUREMENT_COUNT,10)                	
                 },
 
+                extractData : extractData,
+                extractSettings : extractSettings,
                 saveCurrentData: function () {
                     if (service.isCurrentTrialDataValid()) {
                         // TODO : double check

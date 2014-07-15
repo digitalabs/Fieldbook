@@ -113,9 +113,7 @@ public abstract class BaseTrialController extends SettingsController {
         TabInfo info = new TabInfo();
         info.setSettings(detailList);
 
-        if (userSelection.getPlotsLevelList() == null) {
-            userSelection.setPlotsLevelList(detailList);
-        }
+        userSelection.setPlotsLevelList(detailList);
 
         return info;
     }
@@ -127,7 +125,7 @@ public abstract class BaseTrialController extends SettingsController {
         for (MeasurementVariable var : variatesList) {
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
 
-            if (isUsePrevious) {
+            if (!isUsePrevious) {
                 detail.getVariable().setOperation(Operation.UPDATE);
             } else {
                 detail.getVariable().setOperation(Operation.ADD);
@@ -139,9 +137,8 @@ public abstract class BaseTrialController extends SettingsController {
         TabInfo info = new TabInfo();
         info.setSettings(detailList);
 
-        if (userSelection.getBaselineTraitsList() == null) {
-            userSelection.setBaselineTraitsList(detailList);
-        }
+        userSelection.setBaselineTraitsList(detailList);
+
 
         return info;
     }
@@ -162,7 +159,7 @@ public abstract class BaseTrialController extends SettingsController {
 
             managementDetailList.add(detail);
 
-            if (isUsePrevious) {
+            if (!isUsePrevious) {
                 detail.getVariable().setOperation(Operation.UPDATE);
             } else {
                 detail.getVariable().setOperation(Operation.ADD);
@@ -172,7 +169,7 @@ public abstract class BaseTrialController extends SettingsController {
         for (MeasurementVariable var : workbook.getTrialConstants()) {
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
 
-            if (isUsePrevious) {
+            if (!isUsePrevious) {
                 detail.getVariable().setOperation(Operation.UPDATE);
             } else {
                 detail.getVariable().setOperation(Operation.ADD);
@@ -182,7 +179,7 @@ public abstract class BaseTrialController extends SettingsController {
         }
 
         settingMap.put("managementDetails", managementDetailList);
-        settingMap.put("trialConditionDetails", new ArrayList<SettingDetail>());
+        settingMap.put("trialConditionDetails", trialConditionsList);
 
         info.setSettingMap(settingMap);
 
@@ -222,13 +219,10 @@ public abstract class BaseTrialController extends SettingsController {
         info.setData(data);
 
 
-        if (userSelection.getTrialLevelVariableList() == null || userSelection.getTrialLevelVariableList().isEmpty()) {
-            userSelection.setTrialLevelVariableList(managementDetailList);
-        }
+        userSelection.setTrialLevelVariableList(managementDetailList);
 
-        if (userSelection.getNurseryConditions() == null || userSelection.getNurseryConditions().isEmpty()) {
-            userSelection.setNurseryConditions(trialConditionsList);
-        }
+        userSelection.setNurseryConditions(trialConditionsList);
+
 
         return info;
     }
@@ -243,7 +237,7 @@ public abstract class BaseTrialController extends SettingsController {
                 basicDetails.put(initialSettingID, "");
                 SettingDetail detail = createSettingDetail(initialSettingID, null);
 
-                if (isUsePrevious) {
+                if (!isUsePrevious) {
                     detail.getVariable().setOperation(Operation.UPDATE);
                 } else {
                     detail.getVariable().setOperation(Operation.ADD);
@@ -283,9 +277,9 @@ public abstract class BaseTrialController extends SettingsController {
         TabInfo tab = new TabInfo();
         tab.setData(basic);
 
-        if (userSelection.getBasicDetails() == null || userSelection.getBasicDetails().isEmpty()) {
-            userSelection.setBasicDetails(initialDetailList);
-        }
+
+        userSelection.setBasicDetails(initialDetailList);
+
 
         return tab;
     }
@@ -301,7 +295,7 @@ public abstract class BaseTrialController extends SettingsController {
                 SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
                 details.add(detail);
 
-                if (isUsePrevious) {
+                if (!isUsePrevious) {
                     detail.getVariable().setOperation(Operation.UPDATE);
                 } else {
                     detail.getVariable().setOperation(Operation.ADD);
@@ -310,6 +304,8 @@ public abstract class BaseTrialController extends SettingsController {
                 trialValues.put(var.getTermId(), var.getValue());
             }
         }
+
+        userSelection.setStudyLevelConditions(details);
 
         info.setSettings(details);
         TrialSettingsBean trialSettingsBean = new TrialSettingsBean();

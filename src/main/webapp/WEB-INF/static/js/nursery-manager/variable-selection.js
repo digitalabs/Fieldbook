@@ -182,10 +182,14 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 *
 	 * @constructor
 	 * @param {string} selector the selector referencing the modal
+	 * @param {string} translations.label the title of the dialog
+	 * @param {string} translations.uniqueVariableError error message when a variable name is not unique
 	 */
-	VariableSelection = function(selector) {
+	VariableSelection = function(selector, translations) {
 		this._modalSelector = selector;
 		this._$modal = $(selector);
+
+		this.translations = translations;
 
 		this._relatedProperties = [];
 
@@ -196,7 +200,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 * Display the variable selection dialog for the specified group.
 	 *
 	 * @param {number} group properties and variables will be filtered to be specific to the group represented by this number
-	 * @param {object} translations internationalised labels to be used in the dialog
+	 * @param {object} translations internationalised labels to be used in the dialog, specific to the group being shown
 	 * @param {string} translations.label the title of the dialog
 	 * @param {string} translations.placeholderLabel the placeholder in the property dropdown
 	 * @param {object} groupData data about the group, including selected variables and properties
@@ -422,8 +426,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		container.empty();
 		container.append(generateVariableAlias({
 			index: variableInfo.index,
-			// FIXME I18n placeholder
-			placeholder: 'Enter an alias',
 			alias: variableInfo.variable.alias || ''
 		}));
 
@@ -488,7 +490,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			}
 
 			if (!unique) {
-				showErrorMessage(null, 'This name has been used before - please enter a different name');
+				showErrorMessage(null, this.translations.uniqueVariableError);
 
 				// Don't close the input before returning
 				return null;

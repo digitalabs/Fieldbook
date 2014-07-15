@@ -333,6 +333,9 @@ window.ChooseSettings = (function() {
 
 		var group;
 
+		// Need to think about a better pattern than this
+		this.variableSelectionTranslations = translations.variableSelection;
+
 		// Look for any existing variables and instaniate our list of them
 
 		variableSelectionGroups[MODES.MANAGEMENT_DETAILS] = {
@@ -397,7 +400,8 @@ window.ChooseSettings = (function() {
 
 		// Initialise a variable selection modal if we haven't done so before
 		if (!modal) {
-			modal = this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector);
+			modal = this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector,
+				this.variableSelectionTranslations);
 		}
 
 		selectedVariables = _findVariables(variableMarkupSelectors);

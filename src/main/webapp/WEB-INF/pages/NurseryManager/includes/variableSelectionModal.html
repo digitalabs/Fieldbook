@@ -94,7 +94,7 @@
 
 <!-- Renders an input that allows a user to provide an alias for a variable. Expects an object with a placeholder and optional alias.-->
 <script id="nrm-var-select-name-alias-template" type="text/x-handlebars-template">
-	<input class="nrm-var-select-alias-input" placeholder="{{placeholder}}" type="text" data-index="{{index}}" value="{{alias}}"></input>
+	<input class="nrm-var-select-alias-input" placeholder="Enter an alias" th:placeholder="#{variable.selection.alias}" type="text" data-index="{{index}}" value="{{alias}}"></input>
 	<button type="button" class="btn btn-default btn-xs nrm-var-select-name-save icon-btn">
 		<span class="glyphicon glyphicon-ok"></span>
 	</button>

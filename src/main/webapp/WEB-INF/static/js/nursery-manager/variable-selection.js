@@ -90,6 +90,20 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		container.append(generateRelatedProperty(splitColumns));
 	}
 
+	/*
+	 * Renders a variable.
+	 *
+	 * @param {object} variable the variable to render
+	 * @param {JQuery} container the container into which the variable should be rendered
+	 */
+	function _renderVariableName(variable, variableContainer) {
+
+		variableContainer.off('click');
+		variableContainer.empty();
+
+		variableContainer.append(generateVariableName(variable));
+	}
+
 	/* Constructs a new property dropdown.
 	 *
 	 * @param {string} placeholder the placeholder to use in the select
@@ -216,13 +230,24 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// TODO Awaiting Rebecca's JSONified variable usage service
 		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: groupData.variables}));
 
-		// Listen for variable selection and name aliasing
-		$(variableListSelector).on('click', addVariableButtonSelector, {}, $.proxy(this._selectVariableButton, this));
+		// Listen for variable selection
+		$(variableListSelector).on('click', addVariableButtonSelector, {}, $.proxy(function(e) {
+			e.preventDefault();
+			this._selectVariableButton($(e.currentTarget));
+		}, this));
 
-		$(variableListSelector).on('click', aliasVariableButtonSelector, {}, $.proxy(this._aliasVariableButton, this));
+		// Listen for variable aliasing request
+		$(variableListSelector).on('click', aliasVariableButtonSelector, {}, $.proxy(function(e) {
+			e.preventDefault();
+			var aliasButton = $(e.currentTarget);
+			this._aliasVariableButton(aliasButton.parent(variableNameContainerSelector));
+		}, this));
 
 		// Listen for the user clicking on a related property
-		$(relatedPropertyListSelector).on('click', relatedPropertyLinkSelector, {}, $.proxy(this._loadRelatedProperty, this));
+		$(relatedPropertyListSelector).on('click', relatedPropertyLinkSelector, {}, $.proxy(function(e) {
+			e.preventDefault();
+			this._loadProperty($(e.target).data('id'));
+		}, this));
 
 		// Show the modal
 		this._$modal.modal({
@@ -322,13 +347,11 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	/*
 	 * Handles a variable select event. Selects the clicked variable.
 	 *
-	 * @param {object} event the JQuery click event
+	 * @param {JQuery} selectButton the button element that instantiated the event
 	 */
-	VariableSelection.prototype._selectVariableButton = function(e) {
-		e.preventDefault();
+	VariableSelection.prototype._selectVariableButton = function(selectButton) {
 
-		var selectButton = $(e.currentTarget),
-			container = selectButton.parent('p'),
+		var container = selectButton.parent('p'),
 			variableContainer = container.children(variableNameContainerSelector),
 			iconContainer = selectButton.children('.glyphicon'),
 			variableName,
@@ -336,8 +359,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			variableId;
 
 		// If the user is in the middle of entering an alias, close that before proceeding
-		if (variableContainer.find(aliasVariableInputSelector).length && !this._saveAlias(variableContainer)) {
-			// If save alias returns null, the save was not successful and we should not proceed
+		if (variableContainer.find(aliasVariableInputSelector).length) {
+			this._saveAlias(variableContainer);
 			return;
 		}
 
@@ -386,14 +409,11 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	/*
 	 * Handles a variable alias event. Allows the user to provide an alias for a variable name.
 	 *
-	 * @param {object} event the JQuery click event
+	 * @param {JQuery} container the container of the variable to be aliased
 	 */
-	VariableSelection.prototype._aliasVariableButton = function(e) {
-		e.preventDefault();
+	VariableSelection.prototype._aliasVariableButton = function(container) {
 
-		var aliasButton = $(e.currentTarget),
-			container = aliasButton.parent(variableNameContainerSelector),
-			variableName = $(container.children('.nrm-var-name')[0]).text(),
+		var variableName = $(container.children('.nrm-var-name')[0]).text(),
 			variableInfo;
 
 		variableInfo = _findVariableByName(variableName, this._selectedProperty.standardVariables);
@@ -424,11 +444,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			switch (e.keyCode) {
 				case 13:
 					// Save on enter
+					e.preventDefault();
 					this._saveAlias(container);
 					break;
 				case 27:
 					// Cancel on escape - this is actually being trapped by the escape to escape from
 					// the modal, so won't work at the moment :(
+					e.preventDefault();
 					this._cancelAlias(container);
 					break;
 				default:
@@ -439,14 +461,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		container.find(aliasVariableInputSelector).focus();
 	};
-
-	function _renderVariableName(variable, variableContainer) {
-
-		variableContainer.off('click');
-		variableContainer.empty();
-
-		variableContainer.append(generateVariableName(variable));
-	}
 
 	/*
 	 * Handles a variable alias save.
@@ -486,6 +500,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		_renderVariableName(this._selectedProperty.standardVariables[index], container);
 
+		this._selectVariableButton(container.next(addVariableButtonSelector));
+
 		return alias || this._selectedProperty.standardVariables[index].name;
 	};
 
@@ -503,16 +519,14 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	};
 
 	/*
-	 * Handles a click on a related property. Loads the selected property.
+	 * Loads the selected property.
 	 *
-	 * @param {object} event the JQuery click event
+	 * @param {string} propertyId the id of the property to load.
 	 */
-	VariableSelection.prototype._loadRelatedProperty = function(e) {
-		e.preventDefault();
+	VariableSelection.prototype._loadProperty = function(propertyId) {
 
 		// The id of the property that the user clicked on
-		var propertyId = $(e.target).data('id'),
-			property;
+		var property;
 
 		// Find the property that was selected from our list of properties
 		$.each(this._properties, function(index, propertyObj) {

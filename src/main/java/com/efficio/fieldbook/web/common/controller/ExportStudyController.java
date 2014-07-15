@@ -43,7 +43,7 @@ import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExceIExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
@@ -78,7 +78,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     private DataKaptureExportStudyService dataKaptureExportStudyService;
     
     @Resource
-    private KsuExceIExportStudyService ksuExcelExportStudyService;
+    private KsuExcelExportStudyService ksuExcelExportStudyService;
     
     @Resource
     private KsuCsvExportStudyService ksuCsvExportStudyService;

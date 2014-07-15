@@ -17,7 +17,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.stereotype.Service;
 
-import com.efficio.fieldbook.web.common.service.KsuExceIExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
@@ -26,7 +26,7 @@ import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
 public class KsuExcelExportStudyServiceImpl implements
-		KsuExceIExportStudyService {
+		KsuExcelExportStudyService {
 
 	@Resource
     private FieldbookProperties fieldbookProperties;

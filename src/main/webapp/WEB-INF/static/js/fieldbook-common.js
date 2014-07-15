@@ -1836,6 +1836,7 @@ function recreateLocationCombo() {
             type: 'GET',
             cache: false,
             data: '',
+            async: false,
             success: function (data) {
                 if (data.success == '1') {
                     if (createGermplasmOpened) {
@@ -1866,6 +1867,7 @@ function recreateLocationCombo() {
                             setComboValues(locationSuggestions_obj, selectedLocationAll, 'harvestLocationIdAll');
                         }
                         refreshLocationComboInSettings(data);
+                        
                     } else if (fieldmapScreen === true) {
                         //recreate the select2 combos to get updated list of locations
                         recreateLocationComboAfterClose('fieldLocationIdAll', $.parseJSON(data.allBreedingLocations));

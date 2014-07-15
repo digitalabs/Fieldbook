@@ -366,12 +366,15 @@ function checkIfEmpty(value) {
 }
 
 function hideDummyRow(tableId) {
-	$('#'+tableId).find('.dummy-row').remove();
+	'use strict';
+	if($('#'+tableId).find('.dummy-col').parent().length !== 0){
+		$('#'+tableId).find('.dummy-col').parent().remove()
+	}
 }
 
 function showDummyRow(tableId) {
 	var dummyRow = '<tr class=\'dummy-row\'> ' +
-                	'<td class=\'even\'>&nbsp;</td> ' +
+                	'<td class=\'even dummy-col\'>&nbsp;</td> ' +
                 	'<td class=\'even\'>&nbsp;</td> ' +
                 	'<td class=\'even\'>&nbsp;</td> </tr>';
 	$('#'+tableId+' tbody').append(dummyRow);

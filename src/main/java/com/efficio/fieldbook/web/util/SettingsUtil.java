@@ -235,6 +235,7 @@ public class SettingsUtil {
         if (listWithValue != null && listFromSession != null) {
             for (SettingDetail detailWithValue : listWithValue) {
                 SettingVariable variable = detailWithValue.getVariable();
+                detailWithValue.setPossibleValues(listFromSession.get(index).getPossibleValues());
                 variable.setName(listFromSession.get(index).getVariable().getName());
                 variable.setOperation(listFromSession.get(index++).getVariable().getOperation());
             }
@@ -607,10 +608,18 @@ public class SettingsUtil {
                         stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
                     }
                     variable.setCvTermId(stdVar);
+                    
                     StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 
+                    List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+                    
                     SettingDetail settingDetail = new SettingDetail(variable,
-                            null, null, true);
+                            possibleValues, null, true);
+                    
+                    settingDetail.setPossibleValuesToJson(possibleValues);
+                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                    settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                    
                     if (inPropertyList(standardVariable.getProperty().getId())) {
                         selectionVariates.add(settingDetail);
                     } else {

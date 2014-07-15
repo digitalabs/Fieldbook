@@ -34,14 +34,12 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
     private static final Logger LOG = LoggerFactory.getLogger(ManageTrialController.class);
     /** The Constant URL. */
     public static final String URL = "/TrialManager/manageTrial";
-  
+
     /**
-     * Shows the manage nurseries screen
      *
-     * @param manageNurseriesForm the manage nurseries form
-     * @param model the model
-     * @param session the session
-     * @return the string
+     * @param form
+     * @param model
+     * @return
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {

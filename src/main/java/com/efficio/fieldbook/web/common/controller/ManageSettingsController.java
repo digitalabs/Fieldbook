@@ -92,7 +92,6 @@ public class ManageSettingsController extends SettingsController{
      * Adds the settings.
      *
      * @param form  the form
-     * @param model the model
      * @param mode  the mode
      * @return the string
      */
@@ -147,7 +146,7 @@ public class ManageSettingsController extends SettingsController{
                 userSelection.getStudyLevelConditions().addAll(newDetails);
             }
 
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt() || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
             if (userSelection.getPlotsLevelList() == null) {
                 userSelection.setPlotsLevelList(newDetails);
             } else {
@@ -221,7 +220,7 @@ public class ManageSettingsController extends SettingsController{
     private List<SettingDetail> getSettingDetailList(int mode) {
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             return userSelection.getStudyLevelConditions();
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt() || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
             return userSelection.getPlotsLevelList();
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
             List<SettingDetail> newList = new ArrayList<SettingDetail>();
@@ -258,7 +257,7 @@ public class ManageSettingsController extends SettingsController{
                 addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
                 deleteVariableInSession(userSelection.getStudyLevelConditions(), Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
             }
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt() || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
             addVariableInDeletedList(userSelection.getPlotsLevelList(), mode, variableId);
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
@@ -268,8 +267,8 @@ public class ManageSettingsController extends SettingsController{
             addVariableInDeletedList(userSelection.getSelectionVariates(), mode, variableId);
             deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
         } else {
-            addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId);
-            deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
+            addVariableInDeletedList(getSettingDetailList(mode), mode, variableId);
+            deleteVariableInSession(getSettingDetailList(mode), variableId);
         }
         return "";
     }
@@ -287,7 +286,7 @@ public class ManageSettingsController extends SettingsController{
                 userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
             }
             userSelection.getDeletedStudyLevelConditions().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt() || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
             if (userSelection.getDeletedPlotLevelList() == null) {
                 userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
             }

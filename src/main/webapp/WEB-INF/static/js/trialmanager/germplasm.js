@@ -32,8 +32,8 @@
 
         $scope.updateDataTable = function() {
             $.ajax({
-                url: '/Fieldbook/TrialManager/GermplasmList/refreshListDetails',
-                type: 'POST',
+                url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
+                type: 'GET',
                 cache: false,
                 data: ''
             }).success(function (html) {

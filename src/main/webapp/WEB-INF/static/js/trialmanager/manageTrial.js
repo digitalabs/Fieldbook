@@ -8,7 +8,7 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
 (function() {
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap','ngLodash']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants
@@ -198,11 +198,9 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
                 },
 
                 saveCurrentData: function () {
-                    var returnVal = {};
-
                     if (service.isCurrentTrialDataValid()) {
                         // TODO : double check
-                        $http.post('/Fieldbook/TrialManager/createTrial', returnVal).success(submitGermplasmList);
+                        $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).success(submitGermplasmList);
                     }
                 },
 
@@ -225,6 +223,9 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
                         // validate creation date
                         hasError = true;
                         name = 'Creation Date';
+                    } else if (service.currentData.environments.noOfEnvironments <= 0) {
+                        hasError = true;
+                        customMessage = 'Trials should have at least one environment';
                     }
 
                     if (hasError) {
@@ -243,12 +244,8 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
 
                     var valid = validateStartEndDateBasic();
 
-                    if (!valid) {
-                        return false;
-                    }
+                    return valid;
 
-
-                    return true;
                 }
             };
 
@@ -259,10 +256,6 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic*/
     document.onInitManageTrial = function() {
         $('#studyBuildOption').on('change', changeBuildOption);
         $('#choosePreviousStudy').hide();
-
-        setTimeout(function() {
-            $('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());
-        }, 600);
     };
 
 })();

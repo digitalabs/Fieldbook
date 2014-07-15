@@ -1,20 +1,10 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,153 +14,91 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
 public class OpenTrialController extends
-		AbstractBaseFieldbookController {
+        BaseTrialController {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
-    public static final String URL = "/TrialManager/addOrRemoveTraits";
+    public static final String URL = "/TrialManager/openTrial";
 
-	@Resource
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	@Resource
-	protected FieldbookService fieldbookService;
-	
-	@Resource
-    protected UserSelection userSelection; 	
-	
-	@Override
-	public String getContentName() {
-        return "TrialManager/openTrial";
-	}
-
-    @RequestMapping(value="/viewTrial/{trialId}", method = RequestMethod.GET)
-    public String viewNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, 
-            @PathVariable int trialId, HttpServletRequest req, HttpSession session) {
-    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME});
-        Workbook workbook = null;
-        
-        try { 
-            workbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-        
-        if (workbook != null) {
-        	userSelection.setMeasurementRowList(workbook.getObservations());
-            form.setMeasurementRowList(userSelection.getMeasurementRowList());
-            form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
-            form.setStudyName(workbook.getStudyDetails().getStudyName());
-            form.changePage(1);
-            form.setNumberOfInstances(workbook.getTotalNumberOfInstances());
-            userSelection.setCurrentPage(form.getCurrentPage());
-            userSelection.setWorkbook(workbook);
-            
-            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
-            try {
-				SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, true);
-			} catch (MiddlewareQueryException e) {
-				LOG.debug(e.getMessage(), e);
-			}
-           
-            
-            List<SettingDetail> trialLevelVariableList = addDefaultTrialVariables();
-            for(SettingDetail settingDetail : trialLevelVariableList){
-            	String name = AppConstants.getString(settingDetail.getVariable().getCvTermId().intValue() + AppConstants.LABEL.getString());
-            	if(name != null){
-            		settingDetail.getVariable().setName(name);
-            	}
-            }
-            form.setTrialLevelVariables(trialLevelVariableList);
-            int numberOfInstance = workbook.getTotalNumberOfInstances();
-            List<List<ValueReference>> trialEnvList = createTrialEnvValueList(trialLevelVariableList, numberOfInstance, false);
-            form.setTrialEnvironmentValues(trialEnvList);
-            userSelection.setTrialLevelVariableList(trialLevelVariableList);
-        }
-        form.setLocationId(AppConstants.LOCATION_ID.getString());
-        form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
-        
-        return super.show(model);
+    @Override
+    public String getContentName() {
+        return "TrialManager/createTrial";
     }
-    
-    private List<SettingDetail> addDefaultTrialVariables() {
-        List<SettingDetail> trialLevelVariableList = userSelection.getTrialLevelVariableList();
-        /*
-        StringTokenizer token = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_DEFAULT_VARIABLES.getString(), ",");
 
-        while (token.hasMoreTokens()) {
-            Integer dataTypeId = Integer.valueOf(TermId.CATEGORICAL_VARIABLE.getId());
-            
-            String variableName = token.nextToken();
-            
-            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
-                dataTypeId = Integer.valueOf(TermId.NUMERIC_VARIABLE.getId());
-            }
-            
-            SettingVariable variable = new SettingVariable(variableName, variableName, "",
-                    "", "", "", "", dataTypeId, null, null);
-            SettingDetail settingDetail;
-            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
-                settingDetail = new SettingDetail(variable, null, null, false);
-            } else {
-                List<ValueReference> possibleValues = getPossibleValuesOfDefaultVariable(variableName);
-                settingDetail = new SettingDetail(variable, possibleValues, null, false);
-                
-                settingDetail.setPossibleValuesToJson(possibleValues);
-                settingDetail.setPossibleValuesFavoriteToJson(null);
-            }
-            
-            trialLevelVariableList.add(settingDetail);
-        }
-		*/
-        //set orderBy
-        StringTokenizer tokenOrder = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_ORDER.getString(), ",");
-        int i=0;
-        int tokenSize = tokenOrder.countTokens();
-        while (tokenOrder.hasMoreTokens()) {
-            String variableName = tokenOrder.nextToken();
-            for (SettingDetail settingDetail : trialLevelVariableList) {
-                if (settingDetail.getVariable().getName().equals(variableName)) {
-                    settingDetail.setOrder((tokenSize-i)*-1);
-                }
-            }
-            i++;
+    @ModelAttribute("programLocationURL")
+    public String getProgramLocation() {
+        return fieldbookProperties.getProgramLocationsUrl();
+    }
+
+    @ModelAttribute("projectID")
+    public String getProgramID() {
+        return getCurrentProjectId();
+    }
+
+    @ModelAttribute("trialEnvironmentHiddenFields")
+    public List<Integer> getTrialEnvironmentHiddenFields() {
+        return buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+    }
+
+    @RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
+    public String showCreateTrial(Model model) {
+        return showAjaxPage(model, URL_SETTINGS);
+    }
+
+    @RequestMapping(value = "/environment", method = RequestMethod.GET)
+    public String showEnvironments(Model model) {
+        return showAjaxPage(model, URL_ENVIRONMENTS);
+    }
+
+
+    @RequestMapping(value = "/germplasm", method = RequestMethod.GET)
+    public String showGermplasm(Model model, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
+        return showAjaxPage(model, URL_GERMPLASM);
+    }
+
+    @RequestMapping(value = "/treatment", method = RequestMethod.GET)
+    public String showTreatmentFactors(Model model, HttpSession session, HttpServletRequest req) {
+        return showAjaxPage(model, URL_TREATMENT);
+    }
+
+
+    @RequestMapping(value = "/experimentalDesign", method = RequestMethod.GET)
+    public String showExperimentalDesign(Model model) {
+        return showAjaxPage(model, URL_EXPERIMENTAL_DESIGN);
+    }
+
+    @RequestMapping(value = "/measurements", method = RequestMethod.GET)
+    public String showMeasurements(Model model) {
+        return showAjaxPage(model, URL_MEASUREMENT);
+    }
+
+    @RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
+    public String openTrial(Model model, HttpSession session, @PathVariable Integer trialId) throws MiddlewareQueryException {
+        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+
+        if (trialId != null && trialId != 0) {
+
+            Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
+
+            model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false));
+            model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
+            model.addAttribute("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
+            model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
+            model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
+
+            // TODO : integrate loading of data for
         }
 
-        Collections.sort(trialLevelVariableList, new  Comparator<SettingDetail>() {
-            @Override
-            public int compare(SettingDetail o1, SettingDetail o2) {
-                    return o1.getOrder() - o2.getOrder();
-            }
-        });
-        
-        return trialLevelVariableList;
+
+        return showAngularPage(model);
     }
-    private List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList, int trialInstances, boolean addDefault) {
-        List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
-        List<MeasurementRow> trialObservations = userSelection.getWorkbook().getTrialObservations();
-    	for (MeasurementRow trialObservation : trialObservations) {
-    		List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
-            for (SettingDetail detail : trialLevelVariableList) {
-        		String headerName = WorkbookUtil.getMeasurementVariableName(userSelection.getWorkbook().getTrialVariables(), detail.getVariable().getCvTermId());
-        		String value = trialObservation.getMeasurementDataValue(headerName);
-        		trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), value));
-            }
-        	trialEnvValueList.add(trialInstanceVariables);
-        }
-        userSelection.setTrialEnvironmentValues(trialEnvValueList);
-        return trialEnvValueList;
-    }
-    
+
+
+
 }

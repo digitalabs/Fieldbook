@@ -40,7 +40,7 @@
 							<input type="hidden" name="inventoryLocationIdFavorite" id="inventoryLocationIdFavorite" class="form-control select2" placeholder=""/>
 					
 	         			</div>
-	         			<div class="col-md-3 add_top_padding"><a class="" href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Methods</a></div>	         			         				         		
+	         			<div class="col-md-3 add_top_padding"><a class='inventory-manage-location' href="javascript: void(0)" th:text="#{advancing.nursery.manage.location}">Manage Locations</a></div>	         			         				         		
 	         		</div>
 	         		
 	         		<div class="row form-group">	         			
@@ -49,7 +49,7 @@
 		         			</div>
 		         			<div class="col-md-4">		         								
 								<label>
-									<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Method</span>
+									<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
 									&nbsp;&nbsp;											
 								</label>								
 		         			</div>		         				         			
@@ -117,6 +117,13 @@
              // remove any other listeners for the location update
              $(document).off('location-update');
              $(document).on('location-update', recreateLocationCombo);
+             
+             $('.inventory-manage-location').on('click', function(){
+ 				$('#addLotsModal').modal('hide');
+ 				$('#addLotsModal').data('open', '1');
+ 				setTimeout(openManageLocations, 500);
+ 			});
+ 			$('#addLotsModal').data('open', '0');
 		  });
 		  
     //]]>

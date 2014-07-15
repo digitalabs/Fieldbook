@@ -9,11 +9,11 @@
                     <span class="btn btn-primary" ng-show="updateOccurred" ng-click="updateDataTable()">
                         <span class="glyphicon glyphicon-refresh"></span> Update
                     </span>
-                    <span select-standard-variable="" modeldata="settings" variable-type="2" class="btn btn-info nrm-md-variable-select" >Add</span>
+                    <span select-standard-variable="" modeldata="settings" variable-type="8" class="btn btn-info nrm-md-variable-select" >Add</span>
             </span>
 
             <section-container name="content" th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
-                <display-settings settings="settings" variable-type="2" name="content"></display-settings>
+                <display-settings settings="settings" variable-type="8" name="content"></display-settings>
             </section-container>
 
         </section-container>
@@ -30,15 +30,17 @@
 
 
             <div  class="pull-right">
-                <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-                    <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-                </button>
-                <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-                    <li>
-                        <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
-                    </li>
-                </ul>
-            </div>
+	             <div class="btn-group">
+	                <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+	                    <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+	                </button>
+	                <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+	                    <li>
+	                        <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
+	                    </li>
+	                </ul>
+                </div>
+            </div>                       
 
         </div>
         <div>

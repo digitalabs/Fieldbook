@@ -950,7 +950,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 
 function proceedWithDelete() {
 	var variableId = $("#varToDelete").val();
-	var variableType = $("#variableType").val();
+	var variableType = parseInt($("#variableType").val(), 10);
 	var deleteButton = buttonToDelete;
 
 	// remove row from UI
@@ -1040,6 +1040,7 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 }
 
 function resetIdsOfTables(name, tableId) {
+	console.log(name + " " + tableId);
 	var reg = new RegExp(name + '[0-9]+', 'g');
 	var reg2 = new RegExp(name + '\[[0-9]+\]', 'g');
 	var bodyContent = '', rowContent = '';
@@ -1410,7 +1411,7 @@ function isNurseryNameUnique() {
 
 	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
 
-	return isStudyNameUnique(studyId, studyName);
+	return isStudyNameUnique(studyName, studyId);
 }
 
 function validateCreateNursery() {
@@ -1558,7 +1559,7 @@ function nurseryValidateStartEndDateBasic() {
 	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
 	var endDate = $("#" + getJquerySafeId("basicDetails.value4")).val();
 
-	var returnVal =  (validateStartDateEndDateBasic(startDate, endDate));
+	var returnVal =  (validateStartEndDateBasic(startDate, endDate));
 	if (returnVal === true) {
         return true;
     } else {

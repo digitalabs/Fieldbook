@@ -5,29 +5,27 @@ window.TrialSettingsManager = (function() {
 			TRIAL_SETTINGS: 1,
 			GERMPLASM_FACTORS: 8,
 			MEASUREMENT_TRAITS: 3,
-            TRIAL_ENVIRONMENT: 4,
-            TREATMENT_FACTORS: 5,
-            TRIAL_CONDITIONS: 7
+			TRIAL_ENVIRONMENT: 4,
+			TREATMENT_FACTORS: 5,
+			TRIAL_CONDITIONS: 7
 		},
-        modalSelector = '.vs-modal',
 		variableSelectionGroups = {},
-        TrialSettingsManager;
+		TrialSettingsManager;
 
-
-    TrialSettingsManager = function(translations) {
+	TrialSettingsManager = function(translations) {
 
 		// Look for any existing variables and instaniate our list of them
 
-        $.each(MODES, function(key, value) {
-            variableSelectionGroups[value] = {
-                label : translations[value] ? translations[value].label : '',
-                placeholder : translations[value] ? translations[value].placeholder : ''
-            };
-        });
+		$.each(MODES, function(key, value) {
+			variableSelectionGroups[value] = {
+				label: translations[value] ? translations[value].label : '',
+				placeholder: translations[value] ? translations[value].placeholder : ''
+			};
+		});
 
 	};
 
-    TrialSettingsManager.prototype._openVariableSelectionDialog = function(params) {
+	TrialSettingsManager.prototype._openVariableSelectionDialog = function(params) {
 		var groupId = params.variableType,
 			group = variableSelectionGroups[groupId],
 			groupTranslations = {
@@ -38,7 +36,10 @@ window.TrialSettingsManager = (function() {
 
 		// Initialise a variable selection modal if we haven't done so before
 		if (!modal) {
-			modal = this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector);
+			modal = this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
+				// FIXME pass in translated value with key variable.selection.unique.variable.error from html
+				uniqueVariableError: 'This name has been used before, please enter a different name.'
+			});
 		}
 
 		// If we haven't loaded data for this group before, then load it

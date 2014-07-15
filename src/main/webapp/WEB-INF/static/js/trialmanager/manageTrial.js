@@ -3,17 +3,17 @@
  */
 
 /*global angular, changeBuildOption, isStudyNameUnique, showSuccessfulMessage,
-showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree*/
+ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree*/
 
-(function() {
+(function () {
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils',
-        'ct.ui.router.extras','ui.bootstrap','ngLodash']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils', 'fieldbook-utils',
+        'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants
-    manageTrialApp.config(function($stateProvider, $urlRouterProvider,$stickyStateProvider, TRIAL_MANAGEMENT_MODE) {
+    manageTrialApp.config(function ($stateProvider, $urlRouterProvider, $stickyStateProvider, TRIAL_MANAGEMENT_MODE) {
 
         $stickyStateProvider.enableDebug(false);
 
@@ -46,7 +46,7 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, ope
             .state('germplasm', {
                 url: '/germplasm',
                 views: {
-                    'germplasm' : {
+                    'germplasm': {
                         controller: 'GermplasmCtrl',
                         templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm'
                     }
@@ -68,10 +68,12 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, ope
     });
 
     // common filters
-    manageTrialApp.filter('range', function() {
-        return function(input, total) {
+    manageTrialApp.filter('range', function () {
+        return function (input, total) {
             total = parseInt(total);
-            for (var i=0; i<total; i++) { input.push(i); }
+            for (var i = 0; i < total; i++) {
+                input.push(i);
+            }
 
             return input;
         };
@@ -93,62 +95,62 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, ope
 
 
     // THE parent controller for the manageTrial (create/edit) page
-    manageTrialApp.controller('manageTrialCtrl',['$scope','$rootScope','TrialManagerDataService', '$http',
-        function($scope,$rootScope, TrialManagerDataService, $http){
-        $scope.trialTabs = [
-            {   'name' : 'Trial Settings',
-                'state' : 'trialSettings'
-            },
-            {   'name' : 'Environments',
-                'state' : 'environment'
-            },
-            {   'name' : 'Germplasm',
-                'state' : 'germplasm'
-            },
-            {   'name' : 'Treatment Factors',
-                'state' : 'treatment'
-            },
-            {   'name' : 'Experimental Design',
-                'state' : 'experimentalDesign'
-            },
-            {   'name' : 'Measurements',
-                'state' : 'measurements'
-            }
-        ];
-
-        $scope.data = TrialManagerDataService.currentData.basicDetails;
-
-        $scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
-
-        $scope.selectPreviousTrial = function() {
-            openStudyTree(3, $scope.useExistingTrial);
-        };
-
-        $scope.useExistingTrial = function(existingTrialID) {
-            $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function(data) {
-                // update data and settings
-                TrialManagerDataService.currentData.trialSettings = TrialManagerDataService.extractData(data.trialSettingsData);
-                TrialManagerDataService.currentData.environments = TrialManagerDataService.extractData(data.environmentData);
-                TrialManagerDataService.currentData.germplasm = TrialManagerDataService.extractData(data.germplasmData);
-
-                // treatment factor
-
-                TrialManagerDataService.settings.trialSettings = TrialManagerDataService.extractSettings(data.trialSettingsData);
-                TrialManagerDataService.settings.environments = TrialManagerDataService.extractSettings(data.environmentData);
-                TrialManagerDataService.settings.germplasm = TrialManagerDataService.extractSettings(data.germplasmData);
-
-                if (!$scope.$$phase) {
-                    $scope.$apply();
+    manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http',
+        function ($scope, $rootScope, TrialManagerDataService, $http) {
+            $scope.trialTabs = [
+                {   'name': 'Trial Settings',
+                    'state': 'trialSettings'
+                },
+                {   'name': 'Environments',
+                    'state': 'environment'
+                },
+                {   'name': 'Germplasm',
+                    'state': 'germplasm'
+                },
+                {   'name': 'Treatment Factors',
+                    'state': 'treatment'
+                },
+                {   'name': 'Experimental Design',
+                    'state': 'experimentalDesign'
+                },
+                {   'name': 'Measurements',
+                    'state': 'measurements'
                 }
-            });
-        };
-    }]);
+            ];
+
+            $scope.data = TrialManagerDataService.currentData.basicDetails;
+
+            $scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
+
+            $scope.selectPreviousTrial = function () {
+                openStudyTree(3, $scope.useExistingTrial);
+            };
+
+            $scope.useExistingTrial = function (existingTrialID) {
+                $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
+                    // update data and settings
+                    TrialManagerDataService.currentData.trialSettings = TrialManagerDataService.extractData(data.trialSettingsData);
+                    TrialManagerDataService.currentData.environments = TrialManagerDataService.extractData(data.environmentData);
+
+                    // treatment factor
+
+                    TrialManagerDataService.settings.trialSettings = TrialManagerDataService.extractSettings(data.trialSettingsData);
+                    TrialManagerDataService.settings.environments = TrialManagerDataService.extractSettings(data.environmentData);
+                    TrialManagerDataService.settings.germplasm = TrialManagerDataService.extractSettings(data.germplasmData);
+
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                    }
+                });
+            };
+        }]);
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        'BASIC_DETAILS_DATA', '$http','TRIAL_HAS_MEASUREMENT','TRIAL_MEASUREMENT_COUNT',
-        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
-                  MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT) {
+        'BASIC_DETAILS_DATA', '$http', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE',
+        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+                  EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA,
+                  BASIC_DETAILS_DATA, $http, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE) {
 
             var extractData = function (initialData) {
                 if (!initialData) {
@@ -163,7 +165,7 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, ope
                 if (initialData) {
                     if (!initialData.settingMap) {
                         var data = new angular.OrderedHash();
-                        data.addList(initialData.settings,function(item) {
+                        data.addList(initialData.settings, function (item) {
                             return item.variable.cvTermId;
                         });
 
@@ -171,12 +173,14 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, ope
                     } else {
                         var dataMap = {};
 
-                        $.each(initialData.settingMap,function(key,value) {
+                        $.each(initialData.settingMap, function (key, value) {
                             dataMap[key] = new angular.OrderedHash();
-                            dataMap[key].addList(value,function(item) { return item.variable.cvTermId; });
+                            dataMap[key].addList(value, function (item) {
+                                return item.variable.cvTermId;
+                            });
                         });
 
-                         return dataMap;
+                        return dataMap;
                     }
 
                 }
@@ -185,7 +189,7 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, ope
             };
 
             // TODO : change function such that it does not require jQuery style element / id based access for value retrieval
-            var submitGermplasmList = function() {
+            var submitGermplasmList = function () {
                 var $form = $('#germplasm-list-form');
                 $('#startIndex').val($('#startIndex2').val());
                 $('#interval').val($('#interval2').val());
@@ -227,22 +231,34 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, ope
                     measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
                 },
-                
-                trialMeasurement: { 
-                	hasMeasurement: TRIAL_HAS_MEASUREMENT == 'true' ? true : false,
-        			count: parseInt(TRIAL_MEASUREMENT_COUNT,10)                	
+
+                trialMeasurement: {
+                    hasMeasurement: TRIAL_HAS_MEASUREMENT == 'true',
+                    count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
                 },
 
-                extractData : extractData,
-                extractSettings : extractSettings,
+                extractData: extractData,
+                extractSettings: extractSettings,
                 saveCurrentData: function () {
                     if (service.isCurrentTrialDataValid()) {
                         // TODO : double check
-                        $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).success(submitGermplasmList);
+                        if (TRIAL_MANAGEMENT_MODE === 'CREATE') {
+                            $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).success(submitGermplasmList);
+                        } else if (TRIAL_MANAGEMENT_MODE === 'OPEN') {
+                            if (service.trialMeasurement.hasMeasurement) {
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function() {
+                                    // TODO : other function here
+                                });
+                            } else {
+                                $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).success(submitGermplasmList);
+                            }
+
+                        }
+
                     }
                 },
 
-                isCurrentTrialDataValid : function() {
+                isCurrentTrialDataValid: function () {
                     var hasError = false, name = '', customMessage = '';
 
                     if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
@@ -291,7 +307,7 @@ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, ope
         }]);
 
     // README IMPORTANT: Code unmanaged by angular should go here
-    document.onInitManageTrial = function() {
+    document.onInitManageTrial = function () {
         $('#studyBuildOption').on('change', changeBuildOption);
         $('#choosePreviousStudy').hide();
     };

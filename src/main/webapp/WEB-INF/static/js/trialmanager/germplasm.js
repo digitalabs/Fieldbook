@@ -2,7 +2,7 @@
  * Created by cyrus on 7/2/14.
  */
 
-/*global angular*/
+/*global angular, displayStudyGermplasmSection*/
 
 
 (function(){
@@ -12,16 +12,16 @@
         ['$scope', 'TrialManagerDataService', function($scope, TrialManagerDataService) {
 
         $scope.settings = TrialManagerDataService.settings.germplasm;
-        $scope.currentData = TrialManagerDataService.currentData.germplasm;
-        
-            $scope.labels = {};
+
+        $scope.labels = {};
         $scope.labels.germplasmFactors = {
             label: 'Temp label here',
             placeholderLabel: 'Temp placeholder here'
         };
 
-        $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement; 
-        displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement, TrialManagerDataService.trialMeasurement.count);
+        $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
+        displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement,
+            TrialManagerDataService.trialMeasurement.count);
         
         $scope.updateOccurred = false;
 

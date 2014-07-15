@@ -101,7 +101,7 @@ public abstract class BaseTrialController extends SettingsController {
                 detail.setDeletable(true);
             }
 
-            if (isUsePrevious) {
+            if (!isUsePrevious) {
                 detail.getVariable().setOperation(Operation.UPDATE);
             } else {
                 detail.getVariable().setOperation(Operation.ADD);

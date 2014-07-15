@@ -9,3 +9,11 @@
         </section-container>
     </div>
 </div>
+
+<!-- This is the Measurements Tab -->
+<div th:if="${createTrialForm != null}">
+	<form  role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">	
+		 <input type="hidden" th:field="*{measurementDataExisting}"/>
+	</form>
+	<div th:include="/Common/showAddOrRemoveTraitsPagination"></div>
+</div>

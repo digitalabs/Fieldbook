@@ -11,9 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.trial.form;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.oms.TermId;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
@@ -83,6 +86,9 @@ public class CreateTrialForm {
      * The trial environment values.
      */
     private List<List<ValueReference>> trialEnvironmentValues;
+    
+    private List<MeasurementVariable> measurementVariables;
+    private boolean isMeasurementDataExisting;
 
 
 
@@ -274,4 +280,50 @@ public class CreateTrialForm {
         this.folderNameLabel = folderNameLabel;
     }
 
+	public List<MeasurementVariable> getMeasurementVariables() {
+		return measurementVariables;
+	}
+
+	public void setMeasurementVariables(
+			List<MeasurementVariable> measurementVariables) {
+		this.measurementVariables = measurementVariables;
+	}
+
+	public boolean isMeasurementDataExisting() {
+		return isMeasurementDataExisting;
+	}
+
+	public void setMeasurementDataExisting(boolean isMeasurementDataExisting) {
+		this.isMeasurementDataExisting = isMeasurementDataExisting;
+	}
+
+	public List<MeasurementVariable> getArrangeMeasurementVariables(){
+		List<MeasurementVariable> measureList = new ArrayList<MeasurementVariable>();
+		List<MeasurementVariable> newMeasureList = new ArrayList<MeasurementVariable>();
+		if(getMeasurementVariables() != null && !getMeasurementVariables().isEmpty()){
+			//we arrange and make GID and Designation always first
+			MeasurementVariable gidVariable = null;
+			MeasurementVariable desigVariable = null;
+			for(MeasurementVariable var : getMeasurementVariables()){
+				measureList.add(var);
+				if(var.getTermId() == TermId.GID.getId()){
+					gidVariable = var;
+				}else if(var.getTermId() == TermId.DESIG.getId()){
+					desigVariable = var;
+				}
+			}
+			if(!measureList.isEmpty()){
+				if(gidVariable != null) {
+					measureList.remove(gidVariable);
+				}
+				if(desigVariable != null) {
+					measureList.remove(desigVariable);
+				}
+			}
+			newMeasureList.add(gidVariable);
+			newMeasureList.add(desigVariable);
+			newMeasureList.addAll(measureList);
+		}
+		return newMeasureList;
+	}
 }

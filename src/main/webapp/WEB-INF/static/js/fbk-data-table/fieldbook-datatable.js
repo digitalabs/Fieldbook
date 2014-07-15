@@ -95,7 +95,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			language: {
 				search: '<span class="mdt-filtering-label">Search:</span>'
 			},
-			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+			dom: 'JR<<"mdt-header"rli<"mdt-filtering">r><t>p>',
 			// For column visibility
 			colVis: {
 				exclude: [0],

@@ -908,7 +908,7 @@ function openTreeStudy(id){
 	if(isNursery()){
 		location.href = '/Fieldbook/NurseryManager/editNursery/' + id;
 	}else{
-		location.href = '/Fieldbook/TrialManager/editNursery/' + id;
+		location.href = '/Fieldbook/TrialManager/openTrial/' + id;
 	}
 }
 

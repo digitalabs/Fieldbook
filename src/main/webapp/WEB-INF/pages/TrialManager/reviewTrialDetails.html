@@ -11,8 +11,7 @@
 				<img style="display:none; margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{trial.trialdetails.header}">BASIC DETAILS</strong>				
 			</label>
-			<!-- <a class="btn btn-info fbk-open-button-left-margin" th:if="*{id lt 0}" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a> -->
-			<a onclick="javascript: openStudyOldFb()" href="javascript: void(0)" th:if="*{id lt 0}" class="btn btn-info fbk-open-button-left-margin" th:text="#{common.form.open}">Open</a>
+			<a class="btn btn-info fbk-open-button-left-margin" th:if="*{id lt 0}" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>			
 			<div style="float:right;" th:if="*{id lt 0}" >
 				<div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
@@ -20,7 +19,7 @@
                 	</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 						<li th:if="${false}">
-							<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/editTrial}"></a>
+							<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/openTrial}"></a>
 							<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{trial.trialdetails.action.edit}">Edit Trial</a>
 						</li>
 						<!-- next to be worked on -->

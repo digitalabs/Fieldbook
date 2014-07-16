@@ -14,7 +14,9 @@
             $scope.$watch(function () {
                 return TrialManagerDataService.settings.measurements;
             }, function (newValue) {
-                angular.copy(newValue, $scope.settings);
+                if ($scope.settings !== newValue) {
+                	angular.copy(newValue, $scope.settings);
+                }
             });
 
             $scope.updateOccurred = false;

@@ -19,13 +19,17 @@
         $scope.$watch(function () {
             return TrialManagerDataService.currentData.trialSettings;
         }, function (newValue) {
-            angular.copy(newValue, $scope.data);
+        	if ($scope.data !== newValue) {
+        		angular.copy(newValue, $scope.data);
+            }            
         });
 
         $scope.$watch(function () {
             return TrialManagerDataService.settings.trialSettings;
         }, function (newValue) {
-            angular.copy(newValue, $scope.settings);
+            if ($scope.settings !== newValue) {
+                angular.copy(newValue, $scope.settings);
+            }
         });
         
         $scope.removeVariable = function(cvTermId) {

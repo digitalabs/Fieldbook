@@ -26,7 +26,9 @@
         // map containing the treatment factor level pairs
         $scope.treatmentLevelPairs = {};
 
-
+        $scope.$on('variableAdded',function() {
+            console.log('test');
+        });
 
 
         $scope.onAddVariable = function(result) {

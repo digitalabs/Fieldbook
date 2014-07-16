@@ -152,8 +152,9 @@
                                         scope.modeldata.push(data.variable.cvTermId, data);
                                     }
 
-                                    scope.$emit('variableAdded', out);
                                 }
+
+                                scope.$emit('variableAdded', out);
                             });
                         };
 

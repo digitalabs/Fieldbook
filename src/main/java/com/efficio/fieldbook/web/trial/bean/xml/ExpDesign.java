@@ -61,4 +61,15 @@ public class ExpDesign  implements Serializable {
 			parameters.add(new ExpDesignParameter(name, value));
 		}
 	}
+	
+	public String getParameterValue(String name){
+		if(parameters != null){
+			for(ExpDesignParameter param : parameters){
+				if(name != null && param.getName() != null && param.getName().equalsIgnoreCase(name)){
+					return param.getValue();
+				}
+			}
+		}
+		return "";
+	}
 }

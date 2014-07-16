@@ -1,5 +1,7 @@
 package com.efficio.fieldbook.web.util;
 
+import static org.junit.Assert.*;
+
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -30,10 +32,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.mchange.util.AssertException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
@@ -52,7 +56,7 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 <Parameter name="treatmentfactor" value="Treat"/>
 <Parameter name="replicatefactor" value="Reps"/>
 <Parameter name="blockfactor" value="Subblocks"/>
-<Parameter name="plotwithinblockfactor" value="Plots"/>
+<Parameter name="plotfactor" value="Plots"/>
 <Parameter name="nblatin" value="0"/>
 <Parameter name="replatingroups" value="0"/>
 <Parameter name="timelimit" value="1"/>
@@ -66,7 +70,7 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 <Parameter name="ntreatments" value="24"/>
 <Parameter name="replicatefactor" value="replicates"/>
 <Parameter name="blockfactor" value="blocks"/>
-<Parameter name="plotwithinblockfactor" value="plots"/>
+<Parameter name="plotfactor" value="Plots"/>
 <Parameter name="treatmentfactor" value="genotypes"/>
 <Parameter name="nblatin" value="1"/>
 <Parameter name="replatingroups">
@@ -78,15 +82,18 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 </Templates>
 		 */
 		List<ExpDesignParameter> paramList = new ArrayList();
-		paramList.add(createExpDesignParameter("blocksize", "6", null));
-		paramList.add(createExpDesignParameter("ntreatments", "24", null));
-		paramList.add(createExpDesignParameter("nreplicates", "2", null));
-		paramList.add(createExpDesignParameter("treatmentfactor", "Treat", null));
-		paramList.add(createExpDesignParameter("replicatefactor", "Reps", null));
-		paramList.add(createExpDesignParameter("blockfactor", "Subblocks", null));
-		paramList.add(createExpDesignParameter("plotwithinblockfactor", "Plots", null));
-		paramList.add(createExpDesignParameter("nblatin", "0", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("blocksize", "6", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("ntreatments", "24", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("nreplicates", "2", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("treatmentfactor", "Treat", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("replicatefactor", "Reps", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("blockfactor", "Subblocks", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("plotfactor", "Plots", null));
 		
+		//paramList.add(createExpDesignParameter("plotwithinblockfactor", "Plots", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("nblatin", "0", null));
+		
+		/*
 		ExpDesignParameter param = createExpDesignParameter("replatingroups", "0", null);
 		
 		if(hasReplatingGroup){
@@ -99,18 +106,13 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		
 		paramList.add(param);
-		paramList.add(createExpDesignParameter("timelimit", "1", null));
-		paramList.add(createExpDesignParameter("outputfile", "c:/documents/output.csv", null));
+		*/
+		paramList.add(ExpDesignUtil.createExpDesignParameter("timelimit", "1", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("outputfile", "c:/documents/output.csv", null));
 		return paramList;
 	}
 	
-	private ExpDesignParameter createExpDesignParameter(String name, String value, List<ListItem> items){
-		ExpDesignParameter designParam = new ExpDesignParameter(name, value);
-		if(items != null && !items.isEmpty()){
-			designParam.setListItem(items);
-		}
-		return designParam;
-	}
+	
 	public List<ExpDesignParameter> createResolvableRowColumnParameterList(boolean hasReplatingGroup){
 		/*
 <Templates>
@@ -153,16 +155,18 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 </Templates>
 		 */
 		List<ExpDesignParameter> paramList = new ArrayList();
-		paramList.add(createExpDesignParameter("nreplicates", "3", null));
-		paramList.add(createExpDesignParameter("nrows", "6", null));
-		paramList.add(createExpDesignParameter("ncolumns", "4", null));
-		paramList.add(createExpDesignParameter("ntreatments", "24", null));
-		paramList.add(createExpDesignParameter("replicatefactor", "replicates", null));
-		paramList.add(createExpDesignParameter("rowfactor", "rows", null));
-		paramList.add(createExpDesignParameter("columnfactor", "columns", null));
-		paramList.add(createExpDesignParameter("treatmentfactor", "genotypes", null));
-		paramList.add(createExpDesignParameter("nrlatin", "0", null));
-		paramList.add(createExpDesignParameter("nclatin", "1", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("nreplicates", "3", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("nrows", "6", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("ncolumns", "4", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("ntreatments", "24", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("replicatefactor", "replicates", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("rowfactor", "rows", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("columnfactor", "columns", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("treatmentfactor", "genotypes", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("nrlatin", "0", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("nclatin", "1", null));
+		
+		/*
 		ExpDesignParameter param = createExpDesignParameter("replatingroups", "6", null);
 		
 		if(hasReplatingGroup){
@@ -174,8 +178,9 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		}
 		
 		paramList.add(param);
-		paramList.add(createExpDesignParameter("timelimit", "1", null));
-		paramList.add(createExpDesignParameter("outputfile", "c:/documents/output.csv", null));
+		*/
+		paramList.add(ExpDesignUtil.createExpDesignParameter("timelimit", "1", null));
+		paramList.add(ExpDesignUtil.createExpDesignParameter("outputfile", "c:/documents/output.csv", null));
 		
 		return paramList;
 	}
@@ -183,18 +188,14 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	@Test
 	public void testResolvableIncompleteBlockExpDesignToXml() {
 		
-		ExpDesign design = new ExpDesign("ResolvableIncompleteBlock", createResolvableIncompleteBlockParameterList(false));
-		MainDesign mainDesign = new MainDesign(design);
+		MainDesign design = ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", 
+				"2", "Treat", "Reps", "Subblocks", 
+				"Plots", "0", "", "1", "");
 		
-		String expectedWithoutLatinized = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableIncompleteBlock\"><Parameter name=\"blocksize\" value=\"6\"/><Parameter name=\"ntreatments\" value=\"24\"/><Parameter name=\"nreplicates\" value=\"2\"/><Parameter name=\"treatmentfactor\" value=\"Treat\"/><Parameter name=\"replicatefactor\" value=\"Reps\"/><Parameter name=\"blockfactor\" value=\"Subblocks\"/><Parameter name=\"plotwithinblockfactor\" value=\"Plots\"/><Parameter name=\"nblatin\" value=\"0\"/><Parameter name=\"replatingroups\" value=\"0\"/><Parameter name=\"timelimit\" value=\"1\"/><Parameter name=\"outputfile\" value=\"c:/documents/output.csv\"/></Template></Templates>";
-		String expectedWithLatinized = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableIncompleteBlock\"><Parameter name=\"blocksize\" value=\"6\"/><Parameter name=\"ntreatments\" value=\"24\"/><Parameter name=\"nreplicates\" value=\"2\"/><Parameter name=\"treatmentfactor\" value=\"Treat\"/><Parameter name=\"replicatefactor\" value=\"Reps\"/><Parameter name=\"blockfactor\" value=\"Subblocks\"/><Parameter name=\"plotwithinblockfactor\" value=\"Plots\"/><Parameter name=\"nblatin\" value=\"0\"/><Parameter name=\"replatingroups\"><ListItem value=\"2\"/><ListItem value=\"1\"/></Parameter><Parameter name=\"timelimit\" value=\"1\"/><Parameter name=\"outputfile\" value=\"c:/documents/output.csv\"/></Template></Templates>";
 		try {
-			Assert.assertEquals(expectedWithoutLatinized, ExpDesignUtil.getXmlStringForSetting(mainDesign));
+					
+			System.out.println(ExpDesignUtil.getXmlStringForSetting(design));
 			
-			design = new ExpDesign("ResolvableIncompleteBlock", createResolvableIncompleteBlockParameterList(true));
-			mainDesign.setDesign(design);
-			//System.out.println(ExpDesignUtil.getXmlStringForSetting(mainDesign));
-			Assert.assertEquals(expectedWithLatinized, ExpDesignUtil.getXmlStringForSetting(mainDesign));
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -204,8 +205,9 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	@Test
 	public void testResolvableIncompleteBlockExpDesignRunToBvDesign() {
 		
-		ExpDesign design = new ExpDesign("ResolvableIncompleteBlock", createResolvableIncompleteBlockParameterList(false));
-		MainDesign mainDesign = new MainDesign(design);
+		MainDesign mainDesign = ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", 
+				"2", "Treat", "Reps", "Subblocks", 
+				"Plots", "0", "", "1", "");
 		
 		try{
 			ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
@@ -215,20 +217,33 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	}	
 	
 	@Test
-	public void testResolvableRowColumnExpDesignToXml() {
+	public void testResolvableRowColExpDesignRunToBvDesign() {
 		
-		ExpDesign design = new ExpDesign("ResolvableRowColumn", createResolvableRowColumnParameterList(false));
-		MainDesign mainDesign = new MainDesign(design);
-		String expectedWithoutLatinized = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableRowColumn\"><Parameter name=\"nreplicates\" value=\"3\"/><Parameter name=\"nrows\" value=\"6\"/><Parameter name=\"ncolumns\" value=\"4\"/><Parameter name=\"ntreatments\" value=\"24\"/><Parameter name=\"replicatefactor\" value=\"replicates\"/><Parameter name=\"rowfactor\" value=\"rows\"/><Parameter name=\"columnfactor\" value=\"columns\"/><Parameter name=\"treatmentfactor\" value=\"genotypes\"/><Parameter name=\"nrlatin\" value=\"0\"/><Parameter name=\"nclatin\" value=\"1\"/><Parameter name=\"replatingroups\" value=\"6\"/><Parameter name=\"timelimit\" value=\"1\"/><Parameter name=\"outputfile\" value=\"c:/documents/output.csv\"/></Template></Templates>";
-		String expectedWithLatinized = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Templates><Template name=\"ResolvableRowColumn\"><Parameter name=\"nreplicates\" value=\"3\"/><Parameter name=\"nrows\" value=\"6\"/><Parameter name=\"ncolumns\" value=\"4\"/><Parameter name=\"ntreatments\" value=\"24\"/><Parameter name=\"replicatefactor\" value=\"replicates\"/><Parameter name=\"rowfactor\" value=\"rows\"/><Parameter name=\"columnfactor\" value=\"columns\"/><Parameter name=\"treatmentfactor\" value=\"genotypes\"/><Parameter name=\"nrlatin\" value=\"0\"/><Parameter name=\"nclatin\" value=\"1\"/><Parameter name=\"replatingroups\"><ListItem value=\"2\"/><ListItem value=\"1\"/></Parameter><Parameter name=\"timelimit\" value=\"1\"/><Parameter name=\"outputfile\" value=\"c:/documents/output.csv\"/></Template></Templates>";
-		try {
-			//System.out.println(ExpDesignUtil.getXmlStringForSetting(mainDesign));
-			Assert.assertEquals(expectedWithoutLatinized, ExpDesignUtil.getXmlStringForSetting(mainDesign));
+		MainDesign mainDesign = ExpDesignUtil.createResolvableRowColDesign("50",
+				"2", "5", "10", "Treat", "Reps", 
+				"Rows", "Columns","Plots",
+				"0", "0", "", "1", "");
+		
+		try{
+			BVDesignOutput output = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			assertEquals(output.isSuccess(), true);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}	
+	
+	@Test
+	public void testResolvableRowColumnExpDesignToXml() {
 			
-			design = new ExpDesign("ResolvableRowColumn", createResolvableRowColumnParameterList(true));
-			mainDesign.setDesign(design);
-			//System.out.println(ExpDesignUtil.getXmlStringForSetting(mainDesign));
-			Assert.assertEquals(expectedWithLatinized, ExpDesignUtil.getXmlStringForSetting(mainDesign));
+		MainDesign design = ExpDesignUtil.createResolvableRowColDesign("50",
+				"2", "5", "10", "Treat", "Reps", 
+				"Rows", "Columns","Plots",
+				"0", "0", "", "1", "");
+		
+		try {
+			System.out.println(ExpDesignUtil.getXmlStringForSetting(design));
+			
+			
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

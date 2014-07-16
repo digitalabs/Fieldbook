@@ -2005,13 +2005,14 @@ function recreateMethodComboAfterClose(comboName, data) {
 }
 
 function changeBuildOption() {
-	'use strict';
-
-	if ($('#studyBuildOption').val() === '1') {
-		$('#choosePreviousStudy').hide();
+	'use strict';	
+	if($('#studyBuildOption').is(':checked')){
+		$('#choosePreviousStudy').removeClass('fbk-hide');
+		$('#choosePreviousStudy').addClass('fbk-show-inline');
+	}else{
+		$('#choosePreviousStudy').addClass('fbk-hide');
+		$('#choosePreviousStudy').removeClass('fbk-show-inline');
 		clearSettings();
-	} else if ($('#studyBuildOption').val() === '2') {
-		$('#choosePreviousStudy').show();
 	}
 }
 

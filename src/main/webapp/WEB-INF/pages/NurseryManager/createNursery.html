@@ -125,26 +125,20 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
             </div>
         </div>
     </div>
+    
 
 	<div class="row form-group add_top_padding">
 		<div class="col-xs-12 col-md-12">
-			<label class="label-bold" th:text="#{nursery.create.nursery.build.nursery} + '? '">How would you like to build your nursery?</label>
-		</div>
-	</div>
-
-	<div class="row form-group">
-		<div class="col-xs-8 col-md-8 fb-build-options">
-			<select id="studyBuildOption">
-				<option value="1">Start with Blank Nursery</option>
-				<option value="2" th:text="#{nursery.managesettings.use.previous.nursery}">Use Previous Nursery</option>
-			</select>
+			<input type="checkbox" name="studyBuildOption" id="studyBuildOption"/>
+			<label class="" th:text="#{nursery.managesettings.create.nursery.label}">Use a previously created nursery as a template</label>
 			&nbsp;&nbsp;
-			<input type="button" onclick="javascript: openStudyTree(3);" th:value="#{common.form.choose.text}" class="btn btn-info" id="choosePreviousStudy" />
-		</div>
-		<div class="col-xs-4 col-md-4">
-			&nbsp;
+			<input type="button" onclick="javascript: openStudyTree(3);" 
+			th:value="#{common.form.choose.text}" 
+			class="btn btn-info fbk-hide" id="choosePreviousStudy" />
 		</div>
 	</div>
+	
+	
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			&nbsp;
@@ -263,7 +257,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			});
 
 			$('#studyBuildOption').on('change', changeBuildOption);
-			$('#choosePreviousStudy').hide();
+			$('#choosePreviousStudy').addClass('fbk-hide');
 
 			setTimeout(function() {
 				$('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());

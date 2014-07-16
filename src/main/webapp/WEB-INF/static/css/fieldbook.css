@@ -1442,3 +1442,6 @@ label[data-toggle="collapse"],
 table.dataTable th, table.dataTable td {
     overflow: hidden;
 }
+.fbk-show-inline{
+    display: inline-block;
+}

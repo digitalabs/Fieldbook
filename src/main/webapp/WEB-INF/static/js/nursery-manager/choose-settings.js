@@ -1,5 +1,4 @@
-// These should moved into this file
-/* global checkShowSettingsFormReminder */
+/* global checkShowSettingsFormReminder, showErrorMessage */
 /* global createDynamicSettingVariables, createTableSettingVariables, checkTraitsAndSelectionVariateTable, hideDummyRow */
 
 window.ChooseSettings = (function() {
@@ -51,11 +50,11 @@ window.ChooseSettings = (function() {
 	 * @param {string} id the id of the item to remove
 	 * @param {object[]} list the list of objects to search
 	 * @param {string} idSelector the key with which the id property should be accessed on each item of the list (e.g. `id` or `propertyId`)
-	 * @returns {object} the object that was removed
+	 * @returns {object} the object that was removed or null if the property was not found
 	 */
 	function _removeById(id, list, idSelector) {
 
-		var property;
+		var property = null;
 
 		// Use each instead of grep to prevent the need to continue to iterate over the array once we've found what we're looking for
 		$.each(list, function(index, obj) {
@@ -101,12 +100,15 @@ window.ChooseSettings = (function() {
 				if (typeof selectedVariables[id] !== 'undefined') {
 					index = _findPropertyById(exclusion.propertyId, properties);
 
-					// Remove the excluded variable from the property
-					_removeById(exclusion.variableId, properties[index].standardVariables, 'id');
+					// Remove the variable if we found the property. Weird if we can't find the property, but not an issue since we just
+					// wanted to make sure one of it's variables was excluded
+					if (index !== -1) {
+						_removeById(exclusion.variableId, properties[index].standardVariables, 'id');
 
-					// If the property has no more variables, remove it too
-					if (properties[index].standardVariables.length === 0) {
-						removedProperties.push(properties.splice(index, 1)[0]);
+						// If the property has no more variables, remove it too
+						if (properties[index].standardVariables.length === 0) {
+							removedProperties.push(properties.splice(index, 1)[0]);
+						}
 					}
 				}
 			}
@@ -130,12 +132,15 @@ window.ChooseSettings = (function() {
 
 			index = _findPropertyById(variable.propertyId, properties);
 
-			// Remove the variable from the property
-			_removeById(variable.variableId, properties[index].standardVariables, 'id');
+			// Remove the variable if we found the property. Weird if we can't find the property, but not an issue since we just
+			// wanted to make sure one of it's variables was excluded
+			if (index !== -1) {
+				_removeById(variable.variableId, properties[index].standardVariables, 'id');
 
-			// If the property has no more variables, remove it too
-			if (properties[index].standardVariables.length === 0) {
-				removedProperties.push(properties.splice(index, 1)[0]);
+				// If the property has no more variables, remove it too
+				if (properties[index].standardVariables.length === 0) {
+					removedProperties.push(properties.splice(index, 1)[0]);
+				}
 			}
 		});
 		return removedProperties;
@@ -222,13 +227,19 @@ window.ChooseSettings = (function() {
 				}
 			},
 
-			exclusions = [];
+			exclusions = [],
+			removedProperty;
 
 		// Currently we only have special handling for management details (1) and selection strategy (6)
 		switch (group) {
 			case 1:
 				// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
-				exclusions.push(_removeById(studyLevelBreedingMethodPropertyId, filteredProperties, 'propertyId'));
+				removedProperty = _removeById(studyLevelBreedingMethodPropertyId, filteredProperties, 'propertyId');
+
+				// If we found the property to remove. Weird but not disastrous if we can't find the variable to remove it.
+				if (removedProperty) {
+					exclusions.push(removedProperty);
+				}
 
 				// Remove variables and properties as necessary
 				exclusions = exclusions.concat(_performExclusions(managementDetailExclusions, selectedVariables, filteredProperties));
@@ -269,6 +280,7 @@ window.ChooseSettings = (function() {
 			for (i = allMatches.length - 1; i >= 0; i--) {
 				variableElement = allMatches.filter(findElement);
 
+
 				if (variableElement.length > 0) {
 
 					// Find the name of the variable
@@ -282,10 +294,25 @@ window.ChooseSettings = (function() {
 					nameElement = parent.find(variableNameSelector)[0];
 					variableId = parseInt($(variableElement[0]).attr('value'));
 
-					variables[variableId] = nameElement ? $(nameElement).text() : null;
+					if (typeof variableId === 'number') {
+						variables[variableId] = nameElement ? $(nameElement).text() : null;
+					} else {
+						if (console) {
+							console.error('Could not parse variable id from variable element with id \'' + startingSelector + i +
+								'.variable.cvTermId' + '\'. Value that was attempted to be parsed was ' + variableId);
+						}
+					}
 				}
-				// TODO Error handling
+
+				// We expect there to be only one matching variable. If there are more than one, we have changed the way variables are
+				// inserted into the page, and the logic here would have to change as well. There should really be unit tests for this.
+				if (variableElement.length > 1) {
+					if (console) {
+						console.error('More than one variable with id \'' + startingSelector + i + '.variable.cvTermId' + '\' was found.');
+					}
+				}
 			}
+
 		});
 
 		return variables;
@@ -333,9 +360,7 @@ window.ChooseSettings = (function() {
 		var group;
 
 		// Need to think about a better pattern than this
-		this.variableSelectionTranslations = translations.variableSelection;
-
-		// Look for any existing variables and instaniate our list of them
+		this._translations = translations;
 
 		variableSelectionGroups[MODES.MANAGEMENT_DETAILS] = {
 			selector: '.chs-management-details',
@@ -383,7 +408,10 @@ window.ChooseSettings = (function() {
 	};
 
 	ChooseSettings.prototype._initialiseVariableSelectionDialog = function() {
-		this._variableSelection = new window.BMS.NurseryManager.VariableSelection(this.variableSelectionTranslations);
+		this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
+			uniqueVariableError: this._translations.variableSelection,
+			generalAjaxError: this._translations.generalAjaxError
+		});
 		this._variableSelection.getModal().on('variable-select', addSelectedVariables);
 
 		return this._variableSelection;
@@ -399,6 +427,7 @@ window.ChooseSettings = (function() {
 				placeholderLabel: group.placeholder
 			},
 			modal = this._variableSelection,
+			generalAjaxErrorMessage = this._translations.generalAjaxError,
 			selectedVariables,
 			properties;
 
@@ -426,9 +455,17 @@ window.ChooseSettings = (function() {
 					selectedVariables: selectedVariables
 				});
 
-			});
+			}).fail(function(jqxhr, textStatus, error) {
 
-			// TODO Error handling
+				var errorMessage;
+
+				showErrorMessage(null, generalAjaxErrorMessage);
+
+				if (console) {
+					errorMessage = textStatus + ', ' + error;
+					console.error('Request to get properties for group ' + groupId + ' failed with error: ' + errorMessage);
+				}
+			});
 
 		} else {
 			// We've shown this before, and have the data. Just show the dialog. Note - we have to filter the properties again in case
@@ -448,15 +485,26 @@ window.ChooseSettings = (function() {
 	ChooseSettings.prototype.initialiseVariableSelection = function() {
 
 		var key,
-			group;
+			group,
+			openDialogButton;
 
 		// Initialising on click handlers for variable selection buttons
 		for (key in variableSelectionGroups) {
 			if (variableSelectionGroups.hasOwnProperty(key)) {
 				group = variableSelectionGroups[key];
 
-				$(group.selector  + ' ' + dialogOpenSelector).click({group: parseInt(key, 10)},
-					$.proxy(this._openVariableSelectionDialog, this));
+				openDialogButton = $(group.selector  + ' ' + dialogOpenSelector);
+
+				if (openDialogButton) {
+					openDialogButton.click({group: parseInt(key, 10)}, $.proxy(this._openVariableSelectionDialog, this));
+				} else {
+					// This shouldn't happen.
+					if (console) {
+						console.error('Failed to find button with selector \'' + group.selector  + ' ' + dialogOpenSelector + '\' to ' +
+							'attach open dialog handler to.');
+					}
+				}
+
 			}
 		}
 	};

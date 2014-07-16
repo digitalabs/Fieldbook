@@ -124,6 +124,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 *
 	 * @param {string} variableName the name fo the variable to find
 	 * @param {object[]} variableList the array of variables to search through
+	 * @returns {object} an object with two properties, index - the index of the variable, and variable, the variable itself. Returns null
+	 * if the element is not found
 	 */
 	function _findVariableByName(variableName, variableList) {
 
@@ -139,7 +141,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			return !selectedVariable;
 		});
 
-		return {
+		// Return null if we failed to find the variable
+		return index === -1 ? null : {
 			index: index,
 			variable: selectedVariable
 		};
@@ -184,12 +187,11 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 * @constructor
 	 * @param {string} translations.label the title of the dialog
 	 * @param {string} translations.uniqueVariableError error message when a variable name is not unique
+	 * @param {string} translations.generalAjaxError error message to display when an ajax request fails
 	 */
 	VariableSelection = function(translations) {
 		this._$modal = $(MODAL_SELECTOR);
-
-		this.translations = translations;
-
+		this._translations = translations;
 		this._relatedProperties = [];
 
 		this._$modal.on('hide.bs.modal', $.proxy(this._clear, this));
@@ -286,6 +288,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			relatedPropertyList = $(relatedPropertyListSelector),
 			classId = selectedProperty.traitClass.traitClassId,
 			selectedVariables = this._currentlySelectedVariables,
+			generalAjaxErrorMessage = this._translations.generalAjaxError,
 
 			i,
 			selectedVariableName,
@@ -327,24 +330,38 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		if (!this._relatedProperties[relatedPropertiesKey]) {
 
-			var url = '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + this._group + '&classId=' + classId;
+			var groupId = this._group,
+				url = '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&classId=' + classId;
 
-			// TODO Deal with the situation where they have moved on before it returns
 			$.getJSON(url, $.proxy(function(data) {
 
-				data.sort(function(propertyA, propertyB) {
-					return propertyA.name.localeCompare(propertyB.name);
-				});
+				// Check we have not moved on by the time the call returns
+				if (this._selectedProperty.propertyId === selectedProperty.propertyId) {
+					data.sort(function(propertyA, propertyB) {
+						return propertyA.name.localeCompare(propertyB.name);
+					});
 
-				// Store for later to prevent multiple calls to the same service with the same data
-				this._relatedProperties[relatedPropertiesKey] = data;
+					// Store for later to prevent multiple calls to the same service with the same data
+					this._relatedProperties[relatedPropertiesKey] = data;
 
-				// Remove exclusions but don't modify saved data
-				filteredProperties = JSON.parse(JSON.stringify(data));
-				_removeExclusions(filteredProperties, toExclude);
+					// Remove exclusions but don't modify saved data
+					filteredProperties = JSON.parse(JSON.stringify(data));
+					_removeExclusions(filteredProperties, toExclude);
 
-				_renderRelatedProperties(relatedPropertyList, selectedProperty, filteredProperties, toExclude);
-			}, this));
+					_renderRelatedProperties(relatedPropertyList, selectedProperty, filteredProperties, toExclude);
+				}
+			}, this)).fail(function(jqxhr, textStatus, error) {
+
+				var errorMessage;
+
+				showErrorMessage(null, generalAjaxErrorMessage);
+
+				if (console) {
+					errorMessage = textStatus + ', ' + error;
+					console.error('Request to get properties for group ' + groupId + ' and class ' + classId + ' failed with error: ' +
+						errorMessage);
+				}
+			});
 		} else {
 			// Remove exclusions but don't modify saved data
 			filteredProperties = JSON.parse(JSON.stringify(this._relatedProperties[relatedPropertiesKey]));
@@ -365,6 +382,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		var container = selectButton.parent('p'),
 			variableContainer = container.children(variableNameContainerSelector),
 			iconContainer = selectButton.children('.glyphicon'),
+			generalErrorMessage = this._translations.generalAjaxError,
 			variableName,
 			selectedVariable,
 			variableId;
@@ -377,6 +395,14 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		variableName = $(container.find('.vs-variable-name')[0]).text();
 		selectedVariable = _findVariableByName(variableName, this._selectedProperty.standardVariables).variable;
+
+		if (!selectedVariable) {
+			showErrorMessage(null, generalErrorMessage);
+			if (console) {
+				console.error('Failed to find variable with name \'' + variableName + '\' in list of variables on property with id \' ' +
+					this._selectedProperty.propertyId + '\'.');
+			}
+		}
 
 		// Disable the select button to prevent clicking twice
 		selectButton.attr('disabled', 'disabled');
@@ -416,7 +442,18 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					responseData: data
 				});
 			}, this),
-			failure: function() {
+			error: function(jqxhr, textStatus, error) {
+
+				var errorMessage;
+
+				showErrorMessage(null, generalErrorMessage);
+
+				if (console) {
+					errorMessage = textStatus + ', ' + error;
+					console.error('Failed to add variable with id ' + variableId + '. Error was: ' + errorMessage);
+				}
+
+				// Re-enable the add button
 				selectButton.removeAttr('disabled');
 				iconContainer.removeClass('glyphicon-ok').addClass('glyphicon-plus');
 			}
@@ -431,9 +468,18 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	VariableSelection.prototype._aliasVariableButton = function(container) {
 
 		var variableName = $(container.children('.vs-variable-name')[0]).text(),
+			generalErrorMessage = this._translations.generalAjaxError,
 			variableInfo;
 
 		variableInfo = _findVariableByName(variableName, this._selectedProperty.standardVariables);
+
+		if (!variableInfo) {
+			showErrorMessage(null, generalErrorMessage);
+			if (console) {
+				console.error('Failed to find variable with name \'' + variableName + '\' in list of variables on property with id \' ' +
+					this._selectedProperty.propertyId + '\'.');
+			}
+		}
 
 		// Remove the display of the name and edit button, and render the input and save/ cancel buttons
 		container.empty();
@@ -492,6 +538,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			unique = true,
 			id;
 
+		// If there is no alias we ignore it
 		if (alias) {
 
 			// Validate alias is unique among selected variables
@@ -503,7 +550,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			}
 
 			if (!unique) {
-				showErrorMessage(null, this.translations.uniqueVariableError);
+				showErrorMessage(null, this._translations.uniqueVariableError);
 
 				// Don't close the input before returning
 				return null;
@@ -515,6 +562,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		_renderVariableName(this._selectedProperty.standardVariables[index], container);
 
+		// Select this variable. It's unlikely the user wanted to add an alias but not use the variable.
 		this._selectVariable(container.next(addVariableButtonSelector));
 
 		return alias || this._selectedProperty.standardVariables[index].name;
@@ -540,8 +588,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 */
 	VariableSelection.prototype._loadProperty = function(propertyId) {
 
-		// The id of the property that the user clicked on
-		var property;
+		var property,
+			generalErrorMessage = this._translations.generalAjaxError;
 
 		// Find the property that was selected from our list of properties
 		$.each(this._properties, function(index, propertyObj) {
@@ -552,6 +600,14 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 			return !property;
 		});
+
+		if (!property) {
+			showErrorMessage('', generalErrorMessage);
+			if (console) {
+				console.error('Failed to load property with id ' + propertyId + '. Could not find it in the list of available properties.');
+			}
+			return;
+		}
 
 		// Set the selected property in the dropdown, store for later use and load the variables and related properties for that property
 		this._propertyDropdown.setValue(property);

@@ -384,6 +384,8 @@ $(document).ready(function() {
 	'use strict';
 
 	chooseSettings = new ChooseSettings({
+		generalAjaxError: /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
+		uniqueVariableError: /*[[#{variable.selection.unique.variable.error}]]*/ '',
 		mdLabel: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
 		mdPlaceholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
 		fdLabel: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
@@ -393,10 +395,7 @@ $(document).ready(function() {
 		tdLabel: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
 		tdPlaceholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
 		ncLabel: /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-		ncPlaceholder: /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '',
-		variableSelection: {
-			uniqueVariableError: /*[[#{variable.selection.unique.variable.error}]]*/ ''
-		}
+		ncPlaceholder: /*[[#{nursery.reminder.add.nursery.conditions}]]*/ ''
 	});
 
 	chooseSettings.initialiseVariableSelection();

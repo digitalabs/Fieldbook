@@ -41,18 +41,28 @@
 
         <div id='treatment-levels' ng-hide="false" class="add_top_padding">
             <!-- title -->
-            <div><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.specify.level}">Specify Treatment Levels</strong></div>
+            <div><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.specify.level}">Specify Treatment Factor Levels</strong></div>
 
-            <div class='treatment-level-item' ng-repeat="key in settings.keys() track by key">
-                <div>
-                    <span class="sub-content-heading" style="text-transform: uppercase"><b>{{settings.val(key).variable.name}}</b>: <b>{{settings.val(key).variable.description}}</b></span>
+            <div class='treatment-level-item row' ng-repeat="key in settings.keys() track by key">
+                <div class="col-md-6">
+
+                    <div>
+                        <span class="sub-content-heading">Treatment Factor:</span>
+                        <span class="sub-content-heading"><a style="text-transform: uppercase">{{settings.val(key).variable.name}}</a> - {{settings.val(key).variable.description}}</span>
+
+                    </div>
+                    <div>
+                        <span class="sub-content-heading">Treatment Factor Level:</span>
+                        <span class="sub-content-heading"><a style="text-transform: uppercase">{{settings.val(key).variable.name}}</a> - {{settings.val(key).variable.description}}</span>
+                    </div>
+
                 </div>
 
-                <div>
-                    <b th:text="#{trial.managesettings.treatment.factors.define.label}">Define the labels for this factor</b>:
-                </div>
+                <div class="col-md-6">
 
-                <div>
+                    <div>
+                        <b th:text="#{trial.managesettings.treatment.factors.define.label}">Define the labels for this factor</b>:
+                    </div>
                     <table class='factor-level-tbl table table-curved table-condensed'>
                         <thead>
                         <tr>
@@ -80,7 +90,10 @@
 
                         </tbody>
                     </table>
+
                 </div>
+
+
             </div>
         </div><!-- end treatment-levels -->
 

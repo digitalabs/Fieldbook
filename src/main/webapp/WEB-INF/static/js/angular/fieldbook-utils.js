@@ -55,8 +55,8 @@
     })();
 
     angular.module('fieldbook-utils', ['ui.select2'])
-        .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.chs-vs-modal-container')
-        .constant('VARIABLE_SELECTED_EVENT_TYPE', 'nrm-variable-select')
+        .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
+        .constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
         .directive('displaySettings', function() {
             return {
                 restrict : 'E',
@@ -130,33 +130,31 @@
 
                 controller : function($scope, $element, $attrs, VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, TrialSettingsManager) {
                     $scope.processModalData = function (data) {
-
-                        if (data.responseData) {
-                            data = data.responseData;
-                        }
-                        if (data) {
-                            var out = {};
-                            // if retrieved data is an array of values
-                            if (data.length && data.length > 0) {
-                                $.each(data, function (key, value) {
-                                    $scope.modeldata.push(value.variable.cvTermId, value);
-
-                                    out[value.variable.cvTermId] = value;
-
-                                    $scope.callback({ result: out });
-
-                                });
-                            } else {
-                                // if retrieved data is a single object
-                                $scope.modeldata.push(data.variable.cvTermId, data);
+                        $scope.$apply(function() {
+                            if (data.responseData) {
+                                data = data.responseData;
                             }
+                            if (data) {
+                                var out = {};
+                                // if retrieved data is an array of values
+                                if (data.length && data.length > 0) {
+                                    $.each(data, function (key, value) {
+                                        $scope.modeldata.push(value.variable.cvTermId, value);
 
-                            $scope.$apply();
-                            $scope.$emit('variableAdded', out);
-                        }
+                                        out[value.variable.cvTermId] = value;
+
+                                        $scope.callback({ result: out });
+
+                                    });
+                                } else {
+                                    // if retrieved data is a single object
+                                    $scope.modeldata.push(data.variable.cvTermId, data);
+                                }
+
+                                $scope.$emit('variableAdded', out);
+                            }
+                        });
                     };
-
-
 
                     $element.on('click',  function() {
 

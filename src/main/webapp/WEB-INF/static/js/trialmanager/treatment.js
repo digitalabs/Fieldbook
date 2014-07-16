@@ -27,13 +27,15 @@
         $scope.treatmentLevelPairs = {};
 
 
+
+
         $scope.onAddVariable = function(result) {
 
             angular.forEach(result,function(val,key) {
                 $scope.currentData[key] = {
                     levels: 0,
                     labels: [],
-                    pairCvTermId: 0,
+                    pairCvTermId: 0
                 };
 
                 TrialManagerDataService.retrieveVariablePairs(key).then(function(data) {

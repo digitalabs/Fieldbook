@@ -119,66 +119,67 @@
                 }
             };
         })
-        .directive('selectStandardVariable', function() {
+        .directive('selectStandardVariable',['VARIABLE_SELECTION_MODAL_SELECTOR', 'VARIABLE_SELECTED_EVENT_TYPE', 'TrialSettingsManager',
+            function(VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, TrialSettingsManager) {
+               return {
+                    restrict : 'A',
+                    scope : {
+                        modeldata : '=',
+                        callback : '&'
+                    },
 
-            return {
-                restrict : 'A',
-                scope : {
-                    modeldata : '=',
-                    callback : '&'
-                },
+                    link : function(scope,elem,attrs) {
 
-                controller : function($scope, $element, $attrs, VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, TrialSettingsManager) {
-                    $scope.processModalData = function (data) {
-                        $scope.$apply(function() {
-                            if (data.responseData) {
-                                data = data.responseData;
-                            }
-                            if (data) {
-                                var out = {};
-                                // if retrieved data is an array of values
-                                if (data.length && data.length > 0) {
-                                    $.each(data, function (key, value) {
-                                        $scope.modeldata.push(value.variable.cvTermId, value);
-
-                                        out[value.variable.cvTermId] = value;
-
-                                        $scope.callback({ result: out });
-
-                                    });
-                                } else {
-                                    // if retrieved data is a single object
-                                    $scope.modeldata.push(data.variable.cvTermId, data);
+                        scope.processData = function(data) {
+                            scope.$apply(function(){
+                                if (data.responseData) {
+                                    data = data.responseData;
                                 }
+                                if (data) {
+                                    var out = {};
+                                    // if retrieved data is an array of values
+                                    if (data.length && data.length > 0) {
+                                        $.each(data, function (key, value) {
+                                            scope.modeldata.push(value.variable.cvTermId, value);
 
-                                $scope.$emit('variableAdded', out);
-                            }
-                        });
-                    };
+                                            out[value.variable.cvTermId] = value;
 
-                    $element.on('click',  function() {
+                                            scope.callback({ result: out });
 
-                        var params = {
-                            variableType : $attrs.variableType,
-                            retrieveSelectedVariableFunction: function () {
-                                var selected = [];
+                                        });
+                                    } else {
+                                        // if retrieved data is a single object
+                                        scope.modeldata.push(data.variable.cvTermId, data);
+                                    }
 
-                                $.each($scope.modeldata.vals(), function(key, value) {
-                                    selected.push(value.variable.cvTermId);
-                                });
-
-                                return selected;
-                            }
+                                    scope.$emit('variableAdded', out);
+                                }
+                            });
                         };
 
-                        $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
-                        $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
+                        elem.on('click',  function() {
 
-                        TrialSettingsManager.openVariableSelectionDialog(params);
-                    });
-                }
-            };
-        })
+                            var params = {
+                                variableType : attrs.variableType,
+                                retrieveSelectedVariableFunction: function () {
+                                    var selected = [];
+
+                                    $.each(scope.modeldata.vals(), function(key, value) {
+                                        selected.push(value.variable.cvTermId);
+                                    });
+
+                                    return selected;
+                                }
+                            };
+
+                            $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
+                            $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE,scope.processData);
+
+                            TrialSettingsManager.openVariableSelectionDialog(params);
+                        });
+                    }
+               };
+        }])
         .service('TrialSettingsManager', ['TRIAL_VARIABLE_SELECTION_LABELS', function(TRIAL_VARIABLE_SELECTION_LABELS) {
             var TrialSettingsManager = window.TrialSettingsManager;
             var settingsManager = new TrialSettingsManager(TRIAL_VARIABLE_SELECTION_LABELS);

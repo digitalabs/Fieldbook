@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
@@ -19,14 +20,15 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +116,7 @@ public class CreateTrialController extends BaseTrialController {
         if (trialID != null && trialID != 0) {
             Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialID);
 
-            tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
+            tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getGermplasmFactors(), true));
             tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
             tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
             tabDetails.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
@@ -196,14 +198,20 @@ public class CreateTrialController extends BaseTrialController {
 
         String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
 
-        // TODO : integrate treatment factor detail once it's finalized
-
+        StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
+        SettingVariable svar = new SettingVariable();
+        svar.setCvTermId(TermId.PLOT_NO.getId());
+        svar.setName(stdvar.getName());
+        SettingDetail settingDetail = new SettingDetail(svar, null, null, false);
+        userSelection.getPlotsLevelList().add(settingDetail); //we always add plot no
+        
+        // TODO : integrate treatment factor detail once it's finalized               
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
                 userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
 
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
-
+        
         List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
         variablesForEnvironment.addAll(workbook.getTrialVariables());
 

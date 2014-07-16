@@ -77,6 +77,7 @@
     					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('selected');
         				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('manual-selected');
     				}
+    				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.selected').length);
     			});
 			
 			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').tableSelect({
@@ -96,7 +97,7 @@
 							$(row).find('input.advancingListGid').prop('checked', false);
 						}
 					}
-					
+					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.selected').length);
 				},
 				onCtrl: function(row){
 					
@@ -116,11 +117,13 @@
 							$(row).removeClass('selected');	
 						}
 					}
+					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.selected').length);
 				},
 				onShift: function(){
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected-dummy').addClass('selected');					
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid').prop('checked', true);
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.advancingListGid').prop('checked', false);
+					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.selected').length);
 				}
 			
 			});
@@ -136,7 +139,8 @@
 				}
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.advancingListGid').prop('checked', true);
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
-				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected)').remove('selected');								
+				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected)').remove('selected');
+				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.selected').length);
 			});
 			truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
 			

@@ -664,6 +664,9 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 		  iDisplayLength: 100,
 		  fnDrawCallback: function( oSettings ) {
 			  makeDraggable(true);
+			  $(parentDiv + ' .numberOfAdvanceSelected')
+			  $(parentDiv + ' input.advancingListGid:checked').parent().parent().addClass('selected');
+			  $(parentDiv + ' .numberOfAdvanceSelected').html($(parentDiv + ' tr.selected').length);			
 		    },
 		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {			
 				$(nRow).data('entry', aData.entry);
@@ -681,6 +684,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 				$(parentDiv).removeClass('fbk-hide-opacity');		
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+								
 			}
 		});
 		

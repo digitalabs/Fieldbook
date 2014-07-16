@@ -22,14 +22,28 @@ import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.util.Debug;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
-public class ExpDesignTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
+public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	
+	@Autowired
+    private WorkbenchService workbenchService;
+	@Autowired
+    private FieldbookProperties fieldbookProperties;
+	 
 	public List<ExpDesignParameter> createResolvableIncompleteBlockParameterList(boolean hasReplatingGroup){
 		/*
 <Parameter name="blocksize" value="6"/>
@@ -186,6 +200,19 @@ public class ExpDesignTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testResolvableIncompleteBlockExpDesignRunToBvDesign() {
+		
+		ExpDesign design = new ExpDesign("ResolvableIncompleteBlock", createResolvableIncompleteBlockParameterList(false));
+		MainDesign mainDesign = new MainDesign(design);
+		
+		try{
+			ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}	
 	
 	@Test
 	public void testResolvableRowColumnExpDesignToXml() {

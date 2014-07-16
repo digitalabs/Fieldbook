@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.trial.bean.xml;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -42,5 +43,22 @@ public class ExpDesign  implements Serializable {
 		this.parameters = parameters;
 	}
 	
-	
+	public void setParameterValue(String name, String value){
+		boolean isFound = false;
+		if(parameters != null){
+			for(ExpDesignParameter param : parameters){
+				if(name != null && param.getName() != null && param.getName().equalsIgnoreCase(name)){
+					param.setValue(value);
+					isFound = true;
+					break;
+				}
+			}
+		}
+		if(!isFound){
+			if(parameters == null){
+				parameters = new ArrayList();
+			}
+			parameters.add(new ExpDesignParameter(name, value));
+		}
+	}
 }

@@ -9,6 +9,7 @@
 <!-- BASIC DETAILS FORM -->
 <div class="row">
     <form action="#" th:object="${createTrialForm}" enctype="multipart/form-data" id="createTrialMainForm" role="form-horizontal">
+		<input type="hidden" th:field="*{studyId}" />
         <div class="row add-top-bottom-padding">
             <div class="col-md-12">
                 <div class="pull-left">
@@ -40,7 +41,7 @@
                             <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
                         </li>
                         <li ng-show="displayMeasurementOnlyActions">
-                            <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
+                            <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
                             <a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
                         </li>
                         <li ng-show="displayMeasurementOnlyActions">
@@ -188,6 +189,15 @@
     <div class="col-xs-12 col-md-12">
         <div th:include="/Common/includes/manageMethodsModal"></div>
     </div>
+</div>
+<div class="row">
+	<div id="ontology-add-variable" th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
+</div>
+<div class="row">
+	<div th:include="/NurseryManager/includes/deleteStudyConfirmation"></div>
+</div>
+<div class="row">
+	<div id="import-study" th:include="/Common/includes/importStudy"></div>
 </div>
 
 

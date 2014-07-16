@@ -18,7 +18,7 @@
 						<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
                 	</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-						<li>
+						<li  th:if="*{id lt 0}">
 							<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/editNursery}"></a>
 							<a href="javascript: openStudy('nursery-table');" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.edit}">Edit Nursery</a>
 						</li>

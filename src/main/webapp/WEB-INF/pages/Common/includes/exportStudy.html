@@ -261,26 +261,12 @@
 				studyType = $("#study"+getCurrentStudyIdInTab()+" #study-type").val();
 				studyId = getCurrentStudyIdInTab();
 			} else {
-				studyType = $("#study-type").val();
+				studyType = isNursery() ? 'Nursery' : 'Trial';
 			}
 
 			$('#exportStudyModal #heading-modal').html(exportHeader + " " + studyType + " " + exportBookHeader);
 			$('#selectedRTrait').empty();
 			$('#selectedRTrait').select2('destroy');
-
-			if(!isNursery()){
-				//we call an ajax to display the table of instances
-				$.ajax({
-					url: '/Fieldbook/ExportManager/trial/instances/'+studyId,
-					type: 'GET',
-					cache: false,
-					success: function (data) {
-						$('.exportTrialInstanceSection .trial-instance').html(data);
-						$('.exportTrialInstanceSection').removeClass('fbk-hide');
-					}
-				});
-			}
-
 
 			$.ajax({
 				url: '/Fieldbook/ExportManager/study/traits/?studyId='+studyId,
@@ -305,6 +291,23 @@
 
 				}
 			});
+			
+			if(!isNursery()){
+				//we call an ajax to display the table of instances
+				studyId = $('#studyId').val();
+				$.ajax({
+					url: '/Fieldbook/ExportManager/trial/instances/'+studyId,
+					type: 'GET',
+					cache: false,
+					success: function (data) {
+						$('.exportTrialInstanceSection .trial-instance').html(data);
+						$('.exportTrialInstanceSection').removeClass('fbk-hide');
+					}
+				});
+			}
+
+
+			
 
 		}
 		function showExportResponse(responseText, statusText, xhr, $form) {

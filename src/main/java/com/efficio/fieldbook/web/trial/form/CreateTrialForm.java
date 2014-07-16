@@ -17,6 +17,7 @@ import java.util.List;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
@@ -89,6 +90,20 @@ public class CreateTrialForm {
     
     private List<MeasurementVariable> measurementVariables;
     private boolean isMeasurementDataExisting;
+    private Integer studyId;
+    /** The name type. */
+    private int nameType;
+    
+    /** The import date. */
+    private String importDate;
+    
+    /** The import method id. */
+    private int importMethodId;
+    
+    /** The import location id. */
+    private int importLocationId;
+    private MultipartFile file;
+
 
 
 
@@ -325,5 +340,53 @@ public class CreateTrialForm {
 			newMeasureList.addAll(measureList);
 		}
 		return newMeasureList;
+	}
+
+	public Integer getStudyId() {
+		return studyId;
+	}
+
+	public void setStudyId(Integer studyId) {
+		this.studyId = studyId;
+	}
+
+	public int getNameType() {
+		return nameType;
+	}
+
+	public void setNameType(int nameType) {
+		this.nameType = nameType;
+	}
+
+	public String getImportDate() {
+		return importDate;
+	}
+
+	public void setImportDate(String importDate) {
+		this.importDate = importDate;
+	}
+
+	public int getImportMethodId() {
+		return importMethodId;
+	}
+
+	public void setImportMethodId(int importMethodId) {
+		this.importMethodId = importMethodId;
+	}
+
+	public int getImportLocationId() {
+		return importLocationId;
+	}
+
+	public void setImportLocationId(int importLocationId) {
+		this.importLocationId = importLocationId;
+	}
+
+	public MultipartFile getFile() {
+		return file;
+	}
+
+	public void setFile(MultipartFile file) {
+		this.file = file;
 	}
 }

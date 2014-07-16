@@ -200,9 +200,7 @@ function chooseStudy() {
 
 function openStudyNode(){
 	'use strict';
-	if(isNursery()){ //condition to be removed when trial is ready
-		$('#studyTreeModal').data('open', '1');
-	}
+	$('#studyTreeModal').data('open', '1');
 	chooseStudy();
 }
 
@@ -338,9 +336,7 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStud
                 if (e.keyCode === 13) {
                 	if($('.landing-page').length !== 0){
                 		//means we are in the landing page
-                		if(isNursery()){ //condition to be removed when trial is ready
-                			$('#studyTreeModal').data('open', '1');
-                		}                		
+               			$('#studyTreeModal').data('open', '1');                		
                 	}
 					chooseStudyNode(focusNode, true);                	
                 }

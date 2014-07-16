@@ -291,6 +291,8 @@ function createFieldMap(tableName) {
 		// Get selected studies
 		if ($('#createNurseryMainForm #studyId').length  === 1) {
 			ids.push($('#createNurseryMainForm #studyId').val());
+		}else if ($('#createTrialMainForm #studyId').length  === 1) {
+			ids.push($('#createTrialMainForm #studyId').val());
 		} else {
 			ids.push(getCurrentStudyIdInTab());
 		}
@@ -642,6 +644,9 @@ function createLabelPrinting(tableName) {
 	if ($('#createNurseryMainForm #studyId').length === 1) {
 		idVal = ($('#createNurseryMainForm #studyId').val());
 		count++;
+	}else if ($('#createTrialMainForm #studyId').length === 1) {
+		idVal = ($('#createTrialMainForm #studyId').val());
+		count++;
 	} else {
 		idVal = getCurrentStudyIdInTab();
 		count++;
@@ -667,23 +672,15 @@ function createLabelPrinting(tableName) {
 }
 
 function showFieldMap(tableName) {
-	var count = 0;
-	var idVal = null;
-	if (selectedTableIds.length > 0) {
-		for (var index in selectedTableIds) {
-			var tempVal = selectedTableIds[index];
+	'use strict';
+	var count = 0,
+		idVal = null;
 
-			if (tempVal != null) {
-				idVal = tempVal;
-				count++;
-			}
-		}
-	} else {
-		//edit nursery
-		if ($('#studyId')) {
-			idVal = $('#studyId').val();
-		}
+	//edit study
+	if ($('#studyId')) {
+		idVal = $('#studyId').val();
 	}
+
 
 	if (idVal != null) {
 		if (count > 1) {

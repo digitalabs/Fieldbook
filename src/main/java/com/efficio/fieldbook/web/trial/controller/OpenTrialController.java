@@ -4,7 +4,9 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
+
 import org.generationcp.middleware.domain.dms.StandardVariable;
+
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,6 +128,8 @@ public class OpenTrialController extends
             model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             model.addAttribute("measurementRowCount", trialWorkbook.getObservations().size());
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+            form.setStudyId(trialId);
+            model.addAttribute("createNurseryForm", form); //so that we can reuse the same age being use for nursery
         }
 
 
@@ -137,4 +142,16 @@ public class OpenTrialController extends
         return super.retrieveVariablePairs(id);
     }
 
+    @ModelAttribute("nameTypes")
+    public List<UserDefinedField> getNameTypes(){
+        try {
+            List<UserDefinedField> nameTypes = fieldbookMiddlewareService.getGermplasmNameTypes();
+            
+            return nameTypes;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
 }

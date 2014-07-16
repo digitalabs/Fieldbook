@@ -143,6 +143,9 @@
                     // TODO : treatment factor here
                 });
             };
+
+            $scope.displayMeasurementOnlyActions = TrialManagerDataService.trialMeasurement.count &&
+                TrialManagerDataService.trialMeasurement.count > 0;
         }]);
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',

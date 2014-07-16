@@ -27,28 +27,23 @@
                         <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
                     </button>
                     <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-                        <li class="withMeasurementsOnly">
-                            <!--th:if="${createNurseryForm.measurementRowList.size() != 0}"-->
-                            <a href="javascript: showExportOptions();" th:text="#{nursery.nurserydetails.action.export.nursery}">Export Trial Book</a>
+                        <li ng-show="displayMeasurementOnlyActions">
+                            <a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
                         </li>
-                        <li class="withMeasurementsOnly">
-                            <!--th:if="${createNurseryForm.measurementRowList.size() != 0}"-->
-                            <!--<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>-->
-                            <a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link"
-                               th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+                        <li ng-show="displayMeasurementOnlyActions">
+                            <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+                            <a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
                         </li>
-                        <li class="withMeasurementsOnly">
+                        <li ng-show="displayMeasurementOnlyActions">
                             <!--th:if="${createNurseryForm.measurementRowList.size() != 0} and ${createNurseryForm.hasFieldmap}" -->
                             <!--<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>-->
-                            <a href="javascript: showFieldMap('nursery-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
+                            <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
                         </li>
-                        <li class="withMeasurementsOnly">
-                            <!--th:if="${createNurseryForm.measurementRowList.size() != 0}"
-                            <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>-->
-                            <a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link"
-                               th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+                        <li ng-show="displayMeasurementOnlyActions">
+                            <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
+                            <a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
                         </li>
-                        <li class="withMeasurementsOnly">
+                        <li ng-show="displayMeasurementOnlyActions">
                             <!--th:if="${createNurseryForm.measurementRowList.size() != 0}"
                             <a href="" style="display: none" id="open-study-url"></a>-->
                             <a href="javascript: showImportOptions();" id="open-study-url-link"
@@ -57,18 +52,16 @@
 
                         <li>
                             <!--// TODO : replace this with actual saving of nursery-->
-                            <a href="javascript: submitEditForm();" id="save-study-url-link"
-                               th:text="#{nursery.option.save}">Save Trial</a>
+                            <a href="javascript: void(0);" ng-click="saveCurrentTrialData()" th:text="#{trial.option.save}">Save Trial</a>
                         </li>
                         <li>
                             <!--<a id="delete-success-return-url" style="display:none;" th:href="@{/NurseryManager}"></a>-->
                             <!--TODO : implement delete-->
-                            <a href="javascript: openDeleteConfirmation();" th:text="#{browse.nursery.delete.nursery.name}">Delete Trial</a>
+                            <a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
                         </li>
                         <li>
                             <!--TODO : replace with URL for manage trial-->
-                            <a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"
-                               th:text="#{nursery.nurserydetails.action.close.nursery}">Close Trial</a>
+                            <a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
                         </li>
                     </ul>
                 </div>
@@ -215,6 +208,10 @@
 
 <div class="row">
     <div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
+</div>
+
+<div class="row">
+    <div id="export-trial" th:include="/Common/includes/exportStudy"></div>
 </div>
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">

@@ -39,7 +39,7 @@ public class OpenTrialController extends
 
     @Override
     public String getContentName() {
-        return "TrialManager/createTrial";
+        return "TrialManager/openTrial";
     }
 
     @ModelAttribute("programLocationURL")

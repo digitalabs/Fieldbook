@@ -1,233 +1,326 @@
-<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
-	<div class="page-header">
-		<h1 th:text="#{trial.open.trial}">
-			OPEN TRIAL
-		</h1>
-	</div>
+<div ng-app="manageTrialApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
+<!-- header -->
+<div class="row col-xs-12">
+    <h1 class="page-header col-xs-12">
+        MANAGE TRIALS
+    </h1>
 </div>
 
-<input type="hidden" id="study-type" name="study-type" value="Trial" />
+<!-- BASIC DETAILS FORM -->
+<div class="row">
+    <form action="#" th:object="${createTrialForm}" enctype="multipart/form-data" id="createTrialMainForm" role="form-horizontal">
+        <div class="row add-top-bottom-padding">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <img class="image-padding image-padding-with-text" height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
+                    <span class="heading">Trial : {{data.basicDetails[8005]}}</span>
+                    <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
+                </div>
+                <a class="pull-right" href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
+            </div>
+        </div>
 
-<form role="form-horizontal"  action="#"
-      method="post" th:object="${addOrRemoveTraitsForm}">
- 	<input type="hidden" th:field="*{locationId}"/>
- 	<input type="hidden" th:field="*{locationUrl}"/>
-   <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
-           <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
-   </div>
+        <section-container heading="BASIC DETAILS" collapsible="true">
+            <span name="action-buttons">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+                        <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+                    </button>
+                    <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+                        <li class="withMeasurementsOnly">
+                            <!--th:if="${createNurseryForm.measurementRowList.size() != 0}"-->
+                            <a href="javascript: showExportOptions();" th:text="#{nursery.nurserydetails.action.export.nursery}">Export Trial Book</a>
+                        </li>
+                        <li class="withMeasurementsOnly">
+                            <!--th:if="${createNurseryForm.measurementRowList.size() != 0}"-->
+                            <!--<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>-->
+                            <a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link"
+                               th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+                        </li>
+                        <li class="withMeasurementsOnly">
+                            <!--th:if="${createNurseryForm.measurementRowList.size() != 0} and ${createNurseryForm.hasFieldmap}" -->
+                            <!--<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>-->
+                            <a href="javascript: showFieldMap('nursery-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
+                        </li>
+                        <li class="withMeasurementsOnly">
+                            <!--th:if="${createNurseryForm.measurementRowList.size() != 0}"
+                            <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>-->
+                            <a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link"
+                               th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+                        </li>
+                        <li class="withMeasurementsOnly">
+                            <!--th:if="${createNurseryForm.measurementRowList.size() != 0}"
+                            <a href="" style="display: none" id="open-study-url"></a>-->
+                            <a href="javascript: showImportOptions();" id="open-study-url-link"
+                               th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
+                        </li>
+
+                        <li>
+                            <!--// TODO : replace this with actual saving of nursery-->
+                            <a href="javascript: submitEditForm();" id="save-study-url-link"
+                               th:text="#{nursery.option.save}">Save Trial</a>
+                        </li>
+                        <li>
+                            <!--<a id="delete-success-return-url" style="display:none;" th:href="@{/NurseryManager}"></a>-->
+                            <!--TODO : implement delete-->
+                            <a href="javascript: openDeleteConfirmation();" th:text="#{browse.nursery.delete.nursery.name}">Delete Trial</a>
+                        </li>
+                        <li>
+                            <!--TODO : replace with URL for manage trial-->
+                            <a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"
+                               th:text="#{nursery.nurserydetails.action.close.nursery}">Close Trial</a>
+                        </li>
+                    </ul>
+                </div>
+            </span>
+
+            <div name="content">
+                <div class="row fbk-mandatory">
+                    <div class="col-md-12 ">
+                        <label class=""><em><span class="required">*</span> indicates a mandatory field</em></label>
+                    </div>
+                </div>
+
+                <!-- basic details -->
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="row form-group">
+                            <label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
+
+                            <div class="col-sm-8">
+                                {{data.basicDetails[8005]}}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="control-label col-sm-4"><b>Description</b>: <span class="required">*</span></label>
+
+                            <div class="col-sm-8">
+                                <input class="form-control character-input" type="text" ng-model="data.basicDetails[8007]"/>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="control-label col-sm-4"><b>Objective</b>:</label>
+
+                            <div class="col-sm-8">
+                                <textarea class="form-control character-input" rows="3" ng-model="data.basicDetails[8030]"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- second col -->
+                    <div class="col-xs-6">
+                        <div class="row form-group">
+                            <label class="control-label col-sm-4" id="folderLabel"><b>Save in</b>: <span class="required">*</span></label>
+
+                            <div class="col-sm-8">
+                                <input type="hidden" id="folderId" ng-model="data.folderId"/>
+                                <input type="hidden" id="folderName" ng-model="data.folderName"/>
+
+                                <div class="pull-left">
+                                    <label class="control-label" id="folderNameLabel" ng-bind="data.folderNameLabel"></label>
+                                </div>
+
+                                <a class="pull-right" href="javascript: void(0)" id="chooseLocation" onclick="openStudyTree(2);">Change Folder</a>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="control-label col-sm-4"><b>Created by</b>: <span class="required">*</span></label>
+
+                            <div class="col-sm-8">
+
+                                <label ng-bind="data.userName"></label>
+                            </div>
+
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="control-label col-sm-4"><b>Creation date</b>: <span class="required">*</span></label>
+
+                            <div class="col-sm-8">
+                                <input class="form-control date-input" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker="" set-current-date-as-default="true"/>
+                                <label class="btn">
+                                    <img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png"/>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="control-label col-sm-4"><b>Completion date</b>:</label>
+
+                            <div class="col-sm-8">
+                                <input class="form-control date-input" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8060]" jq-datepicker=""/>
+                                <label class="btn">
+                                    <img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png"/>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        &nbsp;
+                    </div>
+                </div>
+            </div>
+        </section-container>
+    </form>
+</div>
+<div class="form-group" id="create-trial">
+    <div th:include="/Common/includes/studyTree"></div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div class="chs-vs-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div th:include="/Common/includes/manageLocationsModal"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div th:include="/Common/includes/manageMethodsModal"></div>
+    </div>
+</div>
+
+
+<!-- tab + content -->
+<ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
+    <li ng-repeat="tab in trialTabs" ng-class="{active: $state.includes(tab.state)}"><a ui-sref="{{tab.state}}">{{tab.name}}</a></li>
+
+</ul>
+
+
+<!-- CURRENT TAB CONTENT -->
+<div class="row fb-tabs" id="manage-trial-tabs" style="padding-top: 15px;">
+    <div class="info">
+        <div class="col-xs-12" ui-view=""></div>
+        <div class="col-xs-12" ui-view="germplasm" ng-show="$state.includes('germplasm')"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
+</div>
+
+<form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
+    <input type="hidden" th:field="*{measurementDataExisting}"/>
 </form>
 
-<div id="page-message">
-</div>
-
-<div class="col-xs-12 col-md-12 move-left ">
-	<div class="panel panel-default">
-	   	<div class="panel-body manage-settings-panel-body">
-	   	<div class="row form-group">
-
-	   	<div class="col-xs-1 col-md-1 add_top_padding">
-   			<label class="control-label"> <strong th:text="#{nursery.managenurseries.shownurseries.name}+':'"> Choose Saved Settings: </strong></label>
-   		</div>
-
-   		<div class="col-xs-3 col-md-3 add_top_padding">
-   			<label class="control-label" th:text="${addOrRemoveTraitsForm.studyName}"> </label>
-   		</div>
-
-	<div style="float: right;">
-
-		<div  class="btn-group">
-		  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-		    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Export
-		  </button>
-		  <ul class="dropdown-menu" role="menu">
-		    <li>
-	    		<a href="javascript: exportTrial(1);"  th:text="#{nursery.export.fieldlog.fieldroid}">Fieldlog / Fieldroid</a>
-		    </li>
-		    <li>
-		    	<a href="javascript: exportTrial(2);"  th:text="#{nursery.export.r}">R</a>
-		    </li>
-			<li>
-		    	<a href="javascript: exportTrial(3);"  th:text="#{nursery.export.excel}">Excel</a>
-		    </li>
-			<li>
-		    	<a href="javascript: exportTrial(4);"  th:text="#{nursery.export.datakapture}">Data Kapture</a>
-		    </li>
-			  <li class="dropdown-submenu">
-			    <a  href="javascript: void(0)">KSU Fieldbook</a>
-			    <ul class="dropdown-menu">
-			      <li><a href="javascript: exportTrial(5);">Excel</a></li>
-			      <li><a href="javascript: exportTrial(6);">CSV</a></li>
-			    </ul>
-			  </li>
-
-		  </ul>
-		</div>
-
-		<div  class="btn-group">
-		  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-		    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Import
-		  </button>
-		  <ul class="dropdown-menu" role="menu">
-		    <li>
-		    	<a href="javascript: importNursery(1);"  th:text="#{nursery.import.fieldlog.fieldroid}">Fieldlog / Fieldroid</a>
-		    </li>
-		    <li>
-		    	<a href="javascript: importNursery(3);" th:text="#{nursery.import.excel}">Excel</a>
-		    </li>
-		    <li>
-		    	<a href="javascript: importNursery(4);" th:text="#{nursery.import.datakapture}">Data Kapture</a>
-		    </li>
-		  </ul>
-		</div>
-	</div>
-	</div>
-
-	<!-- Tab Navigation section -->
-
-	<ul id="trial-tab-headers" class="nav nav-tabs" >
-		<li id="germplasm-measurement-list-table-div-li" class="active"><a href="javascript:showSelectedTab('germplasm-measurement-list-table-div');" th:text="#{trial.tab.measurements}">Measurements</a></li>
-		<li id="trial-trials-tab-li"><a href="javascript:showSelectedTab('trial-trials-tab');" th:text="#{trial.tab.trials}">Trials</a></li>
-	</ul>
-
-	<div id="trial-tabs" style="padding-top: 15px;">
-		<div id="germplasm-measurement-list-table-div" th:include="/Common/showAddOrRemoveTraitsPagination">
-    	</div>
-		<div id="trial-trials-tab" style="padding-top: 15px; display:none;">
-
-			<div class="row col-xs-12 col-md-12">
-  				<div class="col-xs-1 col-md-1">
-  					<label class="control-label" th:text="#{trial.createtrial.location}+':'">Location:</label>
-  				</div>
-  				<div class="col-xs-7 col-md-7">
-  					<a href="javascript: openManageLocations();" th:text="#{trial.managesettings.manage.location}">Manage Location</a> &nbsp;&nbsp;
-  					<input type="checkbox" id="showFavoriteLocationForAll" onclick="javascript: toggleLocationDropdownForAll();" />&nbsp;&nbsp;
-				<span th:text="#{trial.createtrial.show.favorite.location.for.all}">Show Favorite Location for All</span>
-  				</div>
-  			</div>
-		<form id="addVariableForm2" role="form-horizontal" class="form-horizontal" action="#"
-	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
-			<div class="col-xs-12 col-md-12">
-	    			<div th:include="/TrialManager/trialEnvironmentMatrix"></div>
-    			</div>
-    			</form>
-		</div>
-
-	<div class="form-group">
-	    <div class="col-xs-5 col-md-5">&nbsp;</div>
-	    <div class="col-xs-7 col-md-7">
-	      	<a id="btnBack" href="" th:href="@{/NurseryManager/importGermplasmList}"   th:text="#{common.form.back.text}" class="btn btn-default" />
-	      	<input type="button" id="btnUpdate" th:value="#{common.form.update.text}" class="btn btn-primary" onclick="doSave();return false;"/>
-
-	    </div>
-	  </div>
+<!-- MAIN jS -->
+<script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trial-settings-manager.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/fieldbook-common.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 
 
-	</div>
+<!-- constants here -->
+<script type="text/javascript" th:inline="javascript">
+    //<![CDATA[
+    // TODO: move the ff later as constant in the angular app module
+    var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '';
+    var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '';
+    var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/ '';
+    var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '';
+    var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '';
+    var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '';
+    var addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '';
+    var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/ '';
+    var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/ '';
+    var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/ '';
+    var templateSettingNameError = /*[[#{manage.settings.setting.name.error}]]*/ '';
+    var templateSettingNameErrorUnique = /*[[#{manage.settings.setting.name.unique.error}]]*/ '';
+    var programMethodUrl = '';
+    var locationIframeOpened = false;
+    var methodIframeOpened = false;
+    var nurseryLevelValueEmpty = /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/ '';
+    var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/ '';
+    var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/ '';
+    var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '';
+    var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '';
+    var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/ '';
+    var breedingMethodId = '';
+    var locationId = '';
 
-	</div>
-	</div>
-</div>
+    var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '';
+    var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '';
 
-	<div class="row">
-        <div class="col-xs-12 col-md-12">
-            <div id="manage-location" th:include="/Common/includes/manageLocationsModal"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12 col-md-12">
-            <div id="manage-location" th:include="/Common/includes/openStudyModals"></div>
-        </div>
-    </div>
-    <div class="row">
-		<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
-	</div>
+    var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '';
 
+    var inputChange = false;
+    var reminderNursery = /*[[#{trial.reminder.add.trial.settings}]]*/ '';
+    var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '';
+    var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '';
+    var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/ '';
+    var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/ '';
 
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
-<link th:href="@{/static/css/lib/bootstrap/bootstrap-slider.css}" rel="stylesheet"/>
-<script type="text/javascript" th:src="@{/static/js/trialManager.js}"></script>
-<link th:href="@{/static/css/lib/bootstrap/bootstrap-datepicker.css}" rel="stylesheet"/>
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-slider.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
+    var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/ '';
+    var noTreatmentFactorPairError = /*[[#{manage.settings.no.treatment.factor.pair.missing}]]*/ '';
+    var noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/ '';
 
-<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-        var locationId = '';
-        var locationIframeOpened = false;
-        var programLocationUrl = '';
-	function showSelectedTab(selectedTabName) {
-		$("#trial-tab-headers").show();
-		var tabs = $("#trial-tabs").children();
-		for (var i = 0; i < tabs.length; i++) {
-			if (tabs[i].id == selectedTabName) {
-				$("#" + tabs[i].id + "-li").addClass("active");
-				$("#" + tabs[i].id).show();
-			} else {
-				$("#" + tabs[i].id + "-li").removeClass("active");
-				$("#" + tabs[i].id).hide();
-			}
-		}
-	}
-	$(document).ready(function() {
-   		//disable experimental design related variables
-   		disableEnableExperimentalFields(true);
-
-    	locationId = $('#locationId').val();
-		programLocationUrl = $('#locationUrl').val();
-		$.each($(".possibleValuesJsonTrial"), function(index, divElem) {
-			var select2Index = $(divElem).attr("id").split("possibleValuesJsonTrial")[1].split("a");
+    var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '';
+    var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '';
+    var startDateId = '';
+    var endDateId = '';
 
 
-			if (parseInt($("#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".id")).val()) == parseInt(locationId)) {
-				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
-				 			"#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".name"), true, $(divElem).siblings(".div-select-val").html());
+    var mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+            mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '';
 
-			} else {
-				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
-				 			"#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".name"), false, $(divElem).siblings(".div-select-val").html());
 
-			}
-		});
-	});
+    (function () {
 
-	function doSave(){
-		if(validateCells() == false)
-			return false;
-		disableEnableExperimentalFields(false);
-      	var $form = $("#addVariableForm, #addVariableForm2");
-		serializedData = $form.serialize();
-		$("btnUpdate").attr("disabled", "disabled");
+        angular.module('manageTrialApp')
+                .constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
+        ).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
+        ).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
+        ).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
+        ).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
+        ).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
+        ).constant('TREATMENT_FACTORS_INITIAL_DATA', /*[[${treatmentFactorsData}]]*/ ''
+        ).constant('EXPERIMENTAL_DESIGN_INITIAL_DATA', /*[[${experimentalDesignData}]]*/ ''
+        ).constant('MEASUREMENTS_INITIAL_DATA', /*[[${measurementsData}]]*/ ''
+        ).constant('BASIC_DETAILS_DATA', /*[[${basicDetailsData}]]*/ ''
+        ).constant('TRIAL_VARIABLE_SELECTION_LABELS', '{}'
+        ).constant('TRIAL_MANAGEMENT_MODE', /*[[${operationMode}]]*/ ''
+        ).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
+        ).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
+        );
 
-		$.ajax({
-			url: "/Fieldbook/Common/addOrRemoveTraits/Trial/updateTraits",
-			type: "post",
-			dataType: "json",
-			data: serializedData,
-		    success: function(data){
-			    if (data.status == "1") {
-			    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true })
-			    	$("#successMessageModal").modal("show");
-		       	} else if (data.status == "-1") {
-		       		showErrorMessage('page-message', data.errorMessage);
-		       	}
-		   },
-		   error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown);
-		   },
-		   complete: function(){
-			   $("btnUpdate").removeAttr("disabled");
-		   }
-		});
-	}
 
-	function disableEnableExperimentalFields(isDisabled) {
-   		var cvTermIds = $("#trialInstancesTable").find(".cvTermIds");
-   		$.each(cvTermIds, function(i, elem) {
-   			if ($(elem).val() == 8135 || $(elem).val() == 77793 || $(elem).val() == 77795 || $(elem).val() == 77797) {
-   				$(elem).parent().children(".form-control").attr("disabled", isDisabled);
-   			}
-   		});
-	}
+        $(document).ready(function () {
+            document.onInitManageTrial();
+        });
 
-	//]]>
+    })();
+
+
+    //]]>
 </script>
+
+<!-- Controller js files for each tabs -->
+<script type="text/javascript" th:src="@{/static/js/trialmanager/trialSettings.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/germplasm.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/treatment.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
+
+</div>

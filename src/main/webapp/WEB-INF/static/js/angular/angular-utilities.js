@@ -3,7 +3,7 @@
     'use strict';
 
     angular.module('leafnode-utils', [])
-        .directive('jqDatepicker', function () {
+        .directive('jqDatepicker', function ($compile) {
             return {
                 require: '?ngModel',
                 link: function (scope, el, attr, ngModel) {
@@ -33,11 +33,17 @@
                         }
                     }
 
-                    /*if (attr.withImage === 'true') {
-                        var labelElement = angular.element('<label class="btn">' +
-                            '<img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png" ng-click=""/></label>');
-                        el.append('<label class="btn"><img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png"/></label>');
-                    }*/
+                    if (attr.withImage === 'true') {
+                        var labelElement = angular.element('<label class="btn"></label>');
+                        var imageElement = angular.element('<img style="padding-bottom:3px;" src="' + attr.imageSrc + '"/>');
+
+                        imageElement.on('click', function() {
+                            $(el).datepicker('show');
+                        });
+
+                        labelElement.html(imageElement);
+                        $(el).parent().append(labelElement);
+                    }
                 }
             };
         })

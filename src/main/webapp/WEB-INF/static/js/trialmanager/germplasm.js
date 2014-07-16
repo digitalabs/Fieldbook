@@ -33,13 +33,21 @@
                 $scope.updateOccurred = true;
             });
 
-            $scope.$watch(function () {
+            $scope.updateSettings = function(newValue) {
+                angular.copy(newValue, $scope.settings);
+                $scope.updateOccurred = true;
+            };
+
+            TrialManagerDataService.registerSetting('germplasm', $scope.updateSettings);
+
+            /*$scope.$watch(function () {
                 return TrialManagerDataService.settings.germplasm;
             }, function (newValue) {
                 if ($scope.settings !== newValue) {
                     angular.copy(newValue, $scope.settings);
+                    $scope.updateOccurred = true;
                 }
-            });
+            });*/
 
             $scope.updateDataTable = function () {
                 $.ajax({

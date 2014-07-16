@@ -128,18 +128,13 @@
             $scope.useExistingTrial = function (existingTrialID) {
                 $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
                     // update data and settings
-                    angular.copy(TrialManagerDataService.extractData(data.trialSettingsData),
-                        TrialManagerDataService.currentData.trialSettings);
-                    angular.copy(TrialManagerDataService.extractData(data.environmentData),
-                        TrialManagerDataService.currentData.environments);
+                    TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
+                    TrialManagerDataService.updateCurrentData('environments', TrialManagerDataService.extractData(data.environmentData));
                     // TODO : treatment factor here
 
-                    angular.copy(TrialManagerDataService.extractSettings(data.trialSettingsData),
-                        TrialManagerDataService.settings.trialSettings);
-                    angular.copy(TrialManagerDataService.extractSettings(data.environmentData),
-                        TrialManagerDataService.settings.environments);
-                    angular.copy(TrialManagerDataService.extractSettings(data.germplasmData),
-                        TrialManagerDataService.settings.germplasm);
+                    TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(data.trialSettingsData));
+                    TrialManagerDataService.updateSettings('environments', TrialManagerDataService.extractSettings(data.environmentData));
+                    TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
                     // TODO : treatment factor here
                 });
             };
@@ -165,6 +160,14 @@
 
             var dataRegistry = {};
             var settingRegistry = {};
+
+            var propagateChange = function(targetRegistry, dataKey, newValue) {
+                if (targetRegistry[dataKey]) {
+                    angular.forEach(targetRegistry[dataKey], function(updateFunction) {
+                        updateFunction(newValue);
+                    });
+                }
+            };
 
             var extractSettings = function (initialData) {
 
@@ -270,6 +273,33 @@
 
                         }
 
+                    }
+                },
+                registerData: function (dataKey, updateFunction) {
+                    if (!dataRegistry[dataKey]) {
+                        dataRegistry[dataKey] = [];
+                        dataRegistry[dataKey].push(updateFunction);
+                    } else if (dataRegistry[dataKey].indexOf(updateFunction) === -1) {
+                        dataRegistry[dataKey].push(updateFunction);
+                    }
+                },
+
+                updateCurrentData : function(dataKey, newValue) {
+                    service.currentData[dataKey] = newValue;
+                    propagateChange(dataRegistry, dataKey, newValue);
+                },
+
+                updateSettings : function(key, newValue) {
+                    service.settings[key] = newValue;
+                    propagateChange(settingRegistry, key, newValue);
+                },
+
+                registerSetting: function (key, updateFunction) {
+                    if (!settingRegistry[key]) {
+                        settingRegistry[key] = [];
+                        settingRegistry[key].push(updateFunction);
+                    } else if (settingRegistry[key].indexOf(updateFunction) === -1) {
+                        settingRegistry[key].push(updateFunction);
                     }
                 },
 

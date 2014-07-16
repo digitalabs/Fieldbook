@@ -21,17 +21,12 @@
                 $scope.settings.trialConditionDetails = [];
             }
 
-            $scope.$watch(function() { return TrialManagerDataService.currentData.environments;}, function(newValue) {
-                if ($scope.data !== newValue) {
-            		angular.copy(newValue, $scope.data);
-                }
-                $scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
+            TrialManagerDataService.registerData('environments', function(newValue) {
+                angular.copy(newValue, $scope.data);
             });
 
-            $scope.$watch(function() { return TrialManagerDataService.settings.environments;}, function(newValue) {                
-                if ($scope.settings !== newValue) {
-                	angular.copy(newValue, $scope.settings);
-                }
+            TrialManagerDataService.registerSetting('environments', function (newValue) {
+                angular.copy(newValue, $scope.settings);
             });
 
             // storage of number of environments uses a temp variable to account for user temporarily deleting contents of field to enter new value

@@ -4,35 +4,27 @@
 
 /*global angular*/
 
-(function(){
+(function () {
     'use strict';
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TrialSettingsCtrl',['$scope','TrialManagerDataService',function($scope,TrialManagerDataService) {
+    manageTrialApp.controller('TrialSettingsCtrl', ['$scope', 'TrialManagerDataService', function ($scope, TrialManagerDataService) {
 
         $scope.settings = TrialManagerDataService.settings.trialSettings;
         $scope.data = TrialManagerDataService.currentData.trialSettings;
 
         $scope.addVariable = true;
 
-        $scope.$watch(function () {
-            return TrialManagerDataService.currentData.trialSettings;
-        }, function (newValue) {
-        	if ($scope.data !== newValue) {
-        		angular.copy(newValue, $scope.data);
-            }            
+        TrialManagerDataService.registerData('trialSettings', function(newValue) {
+            angular.copy(newValue, $scope.data);
         });
 
-        $scope.$watch(function () {
-            return TrialManagerDataService.settings.trialSettings;
-        }, function (newValue) {
-            if ($scope.settings !== newValue) {
-                angular.copy(newValue, $scope.settings);
-            }
+        TrialManagerDataService.registerSetting('trialSettings', function (newValue) {
+            angular.copy(newValue, $scope.settings);
         });
-        
-        $scope.removeVariable = function(cvTermId) {
+
+        $scope.removeVariable = function (cvTermId) {
             // remove the equivalent setting
             $scope.settings.remove(cvTermId);
             $.ajax({
@@ -50,13 +42,11 @@
         };
 
 
-
-        $scope.managementDetailsSize = function() {
+        $scope.managementDetailsSize = function () {
             return $scope.settings.length();
         };
 
     }]);
-
 
 
 })();

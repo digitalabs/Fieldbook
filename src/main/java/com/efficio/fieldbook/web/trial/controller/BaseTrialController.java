@@ -56,7 +56,7 @@ public abstract class BaseTrialController extends SettingsController {
             Map<Integer, String> values = data.getEnvironments().get(i).getManagementDetailValues();
             if (!values.containsKey(TermId.TRIAL_INSTANCE_FACTOR.getId())) {
                 values.put(TermId.TRIAL_INSTANCE_FACTOR.getId(), Integer.toString(i + 1));
-            } else if (values.get(TermId.TRIAL_INSTANCE_FACTOR.getId()) == null || values.get(TermId.TRIAL_INSTANCE_FACTOR).isEmpty()) {
+            } else if (values.get(TermId.TRIAL_INSTANCE_FACTOR.getId()) == null || values.get(TermId.TRIAL_INSTANCE_FACTOR.getId()).isEmpty()) {
                 values.put(TermId.TRIAL_INSTANCE_FACTOR.getId(), Integer.toString(i + 1));
             }
         }

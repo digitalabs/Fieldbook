@@ -8,24 +8,36 @@
                 require: '?ngModel',
                 link: function (scope, el, attr, ngModel) {
                     if (!ngModel) {
-                        $(el).datepicker();
+                        $(el).datepicker({
+                            format : 'yyyy-mm-dd'
+                        });
                         return;
                     }
 
-                    $(el).datepicker().on('changeDate', function () {
+                    $(el).datepicker({
+                        format: 'yyyy-mm-dd'
+                    }).on('changeDate', function () {
                         scope.$apply(function () {
                             ngModel.$setViewValue(el.val());
                         });
                     });
+
                     ngModel.$render = function () {
                         $(el).datepicker('update', ngModel.$viewValue);
                     };
 
                     if (attr.setCurrentDateAsDefault === 'true') {
-                        $(el).datepicker('setDate', new Date());
-                        ngModel.$setViewValue(el.val());
-
+                        if (! ngModel.$viewValue) {
+                            $(el).datepicker('setDate', new Date());
+                            ngModel.$setViewValue(el.val());
+                        }
                     }
+
+                    /*if (attr.withImage === 'true') {
+                        var labelElement = angular.element('<label class="btn">' +
+                            '<img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png" ng-click=""/></label>');
+                        el.append('<label class="btn"><img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png"/></label>');
+                    }*/
                 }
             };
         })

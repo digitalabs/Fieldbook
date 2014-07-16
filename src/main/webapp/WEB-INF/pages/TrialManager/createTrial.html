@@ -93,7 +93,7 @@
                     <div class="row form-group">
                         <label class="control-label col-sm-4"><b>Creation date</b>: <span class="required">*</span></label>
                         <div class="col-sm-8">
-                            <input class="form-control date-input" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker="" set-current-date-as-default="true"/>
+                            <input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker="" set-current-date-as-default="true" data-date-format="yyyy-mm-dd"/>
                             <label class="btn">
                                 <img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png"/>
                             </label>
@@ -104,7 +104,7 @@
                         <label class="control-label col-sm-4"><b>Completion date</b>:</label>
 
                         <div class="col-sm-8">
-                            <input class="form-control date-input" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8060]" jq-datepicker=""/>
+                            <input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8060]" data-date-format="yyyy-mm-dd" jq-datepicker=""/>
                             <label class="btn">
                                 <img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png"/>
                             </label>
@@ -182,6 +182,7 @@
 	</form>
 
     <!-- MAIN jS -->
+    <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/trial-settings-manager.js}"></script>

@@ -165,6 +165,17 @@
 	<div class="row">
 		<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 	</div>
+	
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div id="manage-location" th:include="/Common/includes/manageLocationsModal"></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div id="manage-location" th:include="/Common/includes/manageMethodsModal"></div>
+		</div>
+	</div>
 
 	<form  role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
 		 <input type="hidden" th:field="*{measurementDataExisting}"/>

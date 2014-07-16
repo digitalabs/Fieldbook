@@ -800,7 +800,7 @@ function showBlockDetails(isHide, blockInfo){
 				rangesInBlock 20	
 				rowsInBlock 20
 			 */
-			if(blockInfo.new == false){
+			if(blockInfo.newBlock == false){
 				var rowsPerPlotData = {'id': blockInfo.numberOfRowsInPlot , 'text' : blockInfo.numberOfRowsInPlot};
 				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
 				$('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(blockInfo.rowsInBlock);

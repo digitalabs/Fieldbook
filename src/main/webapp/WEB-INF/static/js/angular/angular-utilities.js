@@ -20,6 +20,7 @@
                         scope.$apply(function () {
                             ngModel.$setViewValue(el.val());
                         });
+                        $(this).datepicker('hide');
                     });
 
                     ngModel.$render = function () {

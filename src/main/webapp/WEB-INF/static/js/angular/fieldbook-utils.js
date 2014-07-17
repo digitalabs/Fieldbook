@@ -119,8 +119,8 @@
                 }
             };
         })
-        .directive('selectStandardVariable',['VARIABLE_SELECTION_MODAL_SELECTOR', 'VARIABLE_SELECTED_EVENT_TYPE', 'TrialSettingsManager',
-            function(VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, TrialSettingsManager) {
+        .directive('selectStandardVariable',['VARIABLE_SELECTION_MODAL_SELECTOR', 'VARIABLE_SELECTED_EVENT_TYPE', 'TrialSettingsManager', 'TrialManagerDataService',
+            function(VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, TrialSettingsManager, TrialManagerDataService) {
                return {
                     restrict : 'A',
                     scope : {
@@ -163,10 +163,13 @@
                             var params = {
                                 variableType : attrs.variableType,
                                 retrieveSelectedVariableFunction: function () {
-                                    var selected = [];
+                                    var allSettings = TrialManagerDataService.getSettingsArray();
+                                    var selected = {};
 
-                                    $.each(scope.modeldata.vals(), function(key, value) {
-                                        selected.push(value.variable.cvTermId);
+                                    angular.forEach(allSettings, function(tabSettings) {
+                                        angular.forEach(tabSettings.vals(), function(value) {
+                                            selected[value.variable.cvTermId] = value.variable.name;
+                                        });
                                     });
 
                                     return selected;

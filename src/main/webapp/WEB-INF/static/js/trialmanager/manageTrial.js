@@ -160,6 +160,7 @@
 
             var dataRegistry = {};
             var settingRegistry = {};
+            var settingsArray = [];
 
             var propagateChange = function(targetRegistry, dataKey, newValue) {
                 if (targetRegistry[dataKey]) {
@@ -292,6 +293,7 @@
                 updateSettings : function(key, newValue) {
                     service.settings[key] = newValue;
                     propagateChange(settingRegistry, key, newValue);
+                    settingsArray = [];
                 },
 
                 registerSetting: function (key, updateFunction) {
@@ -301,6 +303,23 @@
                     } else if (settingRegistry[key].indexOf(updateFunction) === -1) {
                         settingRegistry[key].push(updateFunction);
                     }
+                },
+
+                getSettingsArray : function() {
+                    if (settingsArray.length === 0) {
+                        angular.forEach(service.settings, function(value, key) {
+                            if (key !== 'environments') {
+                                if (value) {
+                                    settingsArray.push(value);
+                                }
+                            } else {
+                                settingsArray.push(value.managementDetails);
+                                settingsArray.push(value.trialConditionDetails);
+                            }
+                        });
+                    }
+
+                    return settingsArray;
                 },
 
                 isCurrentTrialDataValid : function(isEdit) {

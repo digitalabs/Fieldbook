@@ -1,7 +1,7 @@
 <div ng-app="manageTrialApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
 <!-- header -->
 <div class="row col-xs-12">
-    <h1 class="page-header col-xs-12">
+    <h1 class="page-header col-xs-12 edit-trial-page-identifier">
         MANAGE TRIALS
     </h1>
 </div>
@@ -56,8 +56,7 @@
                             <a href="javascript: void(0);" ng-click="saveCurrentTrialData()" th:text="#{trial.option.save}">Save Trial</a>
                         </li>
                         <li>
-                            <!--<a id="delete-success-return-url" style="display:none;" th:href="@{/NurseryManager}"></a>-->
-                            <!--TODO : implement delete-->
+                            <a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
                             <a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
                         </li>
                         <li>
@@ -81,7 +80,7 @@
                         <div class="row form-group">
                             <label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
 
-                            <div class="col-sm-8">
+                            <div class="col-sm-8 nursery-name-display">
                                 {{data.basicDetails[8005]}}
                             </div>
                         </div>

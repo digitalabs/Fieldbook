@@ -7,7 +7,9 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +44,7 @@ public class OpenTrialController extends
 
     @Override
     public String getContentName() {
-        return "TrialManager/openTrial";
+        return "TrialManager/createTrial";
     }
 
     @ModelAttribute("programLocationURL")
@@ -125,7 +127,8 @@ public class OpenTrialController extends
             model.addAttribute("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
             model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
             model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
-            model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+            model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
+                    SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             model.addAttribute("measurementRowCount", trialWorkbook.getObservations().size());
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             form.setStudyId(trialId);
@@ -134,6 +137,23 @@ public class OpenTrialController extends
 
 
         return showAngularPage(model);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)
+    public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") int id) throws MiddlewareQueryException {
+        Map<String, Object> returnVal = new HashMap<String, Object>();
+        Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(id);
+        returnVal.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
+        returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
+                            SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+        returnVal.put("measurementRowCount", trialWorkbook.getObservations().size());
+        prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
+        prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
+        prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false);
+        prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false);
+
+        return returnVal;
     }
 
     @ResponseBody

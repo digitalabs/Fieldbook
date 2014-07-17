@@ -117,10 +117,7 @@
                 }
             ];
 
-            $scope.isOpenTrial = function() {
-                return TrialManagerDataService.currentData.basicDetails.studyID !== null &&
-                    TrialManagerDataService.currentData.basicDetails.studyID !== 0;
-            };
+            $scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
 
             $scope.isChoosePreviousTrial = false;
 
@@ -181,6 +178,18 @@
                 }
             };
 
+            var updateTrialInfoAfterCreation = function(trialID) {
+                $http.get('/Fieldbook/TrialManager/openTrial/updateSavedTrial?trialID=' + trialID).success(function (data) {
+                    // update necessary data and settings
+                    // currently identified is the stockid, locationid, and experimentid found in the environment tab
+                    service.updateCurrentData('environments', extractData(data.environmentData));
+                    service.updateSettings('environments', extractSettings(data.environmentData));
+
+                    service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
+                    service.trialMeasurement.count = data.measurementRowCount;
+                });
+            };
+
             var extractSettings = function (initialData) {
 
                 if (initialData) {
@@ -217,21 +226,12 @@
                 $('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
 
                 var serializedData = $form.serialize();
-
-                $.ajax({
-                    url: '/Fieldbook/NurseryManager/importGermplasmList/next',
-                    type: 'POST',
-                    data: serializedData,
-                    cache: false,
-                    success: function (data) {
-                        if (data) {
-                            showSuccessfulMessage('', 'Success');
-                        }
-                    },
-                    complete: function () {
-
-                    }
+                var d = $q.defer();
+                $http.post('/Fieldbook/NurseryManager/importGermplasmList/next', serializedData).success(function(data) {
+                    d.resolve(data);
                 });
+
+                return d.promise;
             };
 
             var VariablePairService = $resource("/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id",{id:'@id'}, { 'get' : {method : 'get', isArray: true} });
@@ -286,14 +286,28 @@
                     count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
                 },
 
+                isOpenTrial : function() {
+                    return service.currentData.basicDetails.studyID !== null &&
+                        service.currentData.basicDetails.studyID !== 0;
+                },
+
                 extractData: extractData,
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
-                    if (service.isCurrentTrialDataValid(TRIAL_MANAGEMENT_MODE === 'OPEN')) {
+                    if (service.isCurrentTrialDataValid(service.isOpenTrial()) ) {
                         // TODO : double check
-                        if (TRIAL_MANAGEMENT_MODE === 'CREATE') {
-                            $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).success(submitGermplasmList);
-                        } else if (TRIAL_MANAGEMENT_MODE === 'OPEN') {
+                        if (!service.isOpenTrial()) {
+                            $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
+                                success(function() {
+                                    submitGermplasmList().then(function(generatedID) {
+                                        showSuccessfulMessage('', 'Success');
+                                        service.currentData.basicDetails.studyID = generatedID;
+                                        updateTrialInfoAfterCreation(generatedID);
+                                    });
+                                });
+
+
+                        } else {
                             if (service.trialMeasurement.hasMeasurement) {
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function() {
                                     // TODO : other function here

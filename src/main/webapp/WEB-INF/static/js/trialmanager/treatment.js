@@ -20,16 +20,11 @@
 
         // initialize currentData if has no values yet
         if (typeof $scope.currentData === 'undefined') {
-            $scope.currentData = {};
+            $scope.currentData = TrialManagerDataService.currentData.treatmentFactors = {};
         }
 
         // map containing the treatment factor level pairs
-        $scope.treatmentLevelPairs = {};
-
-        $scope.$on('variableAdded',function() {
-            console.log('test');
-        });
-
+        $scope.treatmentLevelPairs = TrialManagerDataService.specialSettings.treatmentLevelPairs;
 
         $scope.onAddVariable = function(result) {
 
@@ -40,13 +35,16 @@
                     pairCvTermId: 0
                 };
 
-                TrialManagerDataService.retrieveVariablePairs(key).then(function(data) {
-                    $scope.treatmentLevelPairs[key] = new angular.OrderedHash();
-                    angular.forEach(data,function(val1,key1) {
-                        $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId,val1);
+                // there's no existing treatmentLevelPair
+                if (!$scope.treatmentLevelPairs[key]) {
+                    TrialManagerDataService.retrieveVariablePairs(key).then(function(data) {
+                        $scope.treatmentLevelPairs[key] = new angular.OrderedHash();
+                        angular.forEach(data,function(val1,key1) {
+                            $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId,val1);
 
+                        });
                     });
-                });
+                }
 
             });
 

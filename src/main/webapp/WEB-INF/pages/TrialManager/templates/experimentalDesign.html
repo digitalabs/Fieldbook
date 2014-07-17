@@ -40,20 +40,21 @@
             <section-container heading="SPECIFY DESIGN PARAMETERS">
                 <div name="content">
                     <div ng-include="currentParams"></div>
-                    <div class="add_top_padding"><span class="btn btn-info" ng-click="">Generate Design</span></div>
+                    <div class="add_top_padding"><a class="btn btn-info" ng-click="generateDesign()">Generate Design</a></div>
                 </div>
             </section-container>
         </div>
         <div class="col-sm-6">
             <section-container heading="SUMMARY OF DESIGN DETAILS">
                 <div name="content">
-                    <div ng-show="currentDesignType.settings.trialEnvironments"><b>Number of trial environments:</b> <span>{{currentDesignType.settings.trialEnvironments}}</span></div>
-                    <div ng-show="currentDesignType.settings.treatments"><b>Number of Treatments:</b> <span>{{currentDesignType.settings.treatments}}</span></div>
-                    <div ng-show="currentDesignType.settings.blocks"><b>Number of Blocks:</b> <span>{{currentDesignType.settings.blocks}}</span></div>
-                    <div ng-repeat="factor in currentDesignType.settings.factors">
-                        <b>{{factor.type}}</b><a>{{factor.name}}</a>
+                    <div ng-show="currentDesignType.settings.trialEnvironments &gt;= 0"><b>Number of trial environments:</b> <span>{{currentDesignType.settings.trialEnvironments}}</span></div>
+                    <div ng-show="currentDesignType.settings.treatments &gt;= 0"><b>Number of Treatments:</b> <span>{{currentDesignType.settings.treatments}}</span></div>
+                    <div ng-show="currentDesignType.settings.blocks &gt;= 0"><b>Number of Blocks:</b> <span>{{currentDesignType.settings.blocks}}</span></div>
+                    <div ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id" >
+                        <b>{{currentDesignType.settings.factors.val(key).label}}</b> - <a show-details-modal="key">{{currentDesignType.settings.factors.val(key).variable.name}}</a>
                     </div>
                     <div ng-show="currentDesignType.settings.treatmentFactors">
+                        <div class="sub-content-heading"><b>Treatment Factors:</b></div>
                         <table class="table table-curved">
                             <thead>
                                 <tr>
@@ -63,12 +64,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="treatment in filteredTreatmentFactors = (currentDesignType.settings.treatmentFactors.keys() | removeHiddenVariableFilter : currentDesignType.settings.vals() )">
-                                    <td  ng-class="{even : $even, odd : $odd}">{{treatment.name}}</td>
-                                    <td  ng-class="{even : $even, odd : $odd}">{{treatment.description}}</td>
-                                    <td  ng-class="{even : $even, odd : $odd}">{{treatment.levels}}</td>
+                                <tr ng-repeat="treatmentKey in currentDesignType.settings.treatmentFactors.keys()">
+                                    <td  ng-class="{even : $even, odd : $odd}">{{currentDesignType.data.treatmentFactors.val(treatmentKey).variable.name}}</td>
+                                    <td  ng-class="{even : $even, odd : $odd}">{{currentDesignType.data.treatmentFactors.val(treatmentKey).variable.description}}</td>
+                                    <td  ng-class="{even : $even, odd : $odd}">{{currentDesignType.data.treatmentFactorsData[treatmentKey].levels}}</td>
                                 </tr>
-                                <tr ng-hide="filteredTreatmentFactors.length &gt; 0">
+                                <tr ng-hide="currentDesignType.settings.treatmentFactors.keys().length &gt; 0">
                                     <td class="odd">&nbsp;</td>
                                     <td class="odd">&nbsp;</td>
                                     <td class="odd">&nbsp;</td>

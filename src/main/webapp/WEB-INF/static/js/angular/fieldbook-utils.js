@@ -93,6 +93,20 @@
                 }
             };
         })
+        .directive('showDetailsModal',function() {
+            return {
+                scope: {
+                     showDetailsModal : '='
+                },
+
+                link : function(scope,elem,attrs) {
+                    elem.css({ cursor : "pointer" });
+                    elem.on('click',function(){
+                        showBaselineTraitDetailsModal(scope.showDetailsModal);
+                    });
+                }
+            };
+        })
         .directive('validNumber', function() {
 
             return {

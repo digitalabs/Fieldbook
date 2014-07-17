@@ -15,8 +15,8 @@
                                 <th>&nbsp;</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
-                                <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
                                 <th>Treatment Level Factors</th>
+                                <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
                             </tr>
                             </thead>
 
@@ -24,7 +24,7 @@
                             <tr ng-repeat="key in settings.keys() track by key">
                                 <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="settings.remove(key)"></span>
                                 </td>
-                                <td ng-class="{even : $even, odd : $odd}"><a showBaselineTraitDetailsModalLink="{{key}}" >{{settings.val(key).variable.name}}</a>
+                                <td ng-class="{even : $even, odd : $odd}"><a show-details-modal="key" >{{settings.val(key).variable.name}}</a>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">{{settings.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
@@ -72,12 +72,12 @@
                         <div class="col-sm-6">
                             <div>
                                 <b class="sub-content-heading">Treatment Factor:</b>
-                                <a style="text-transform: uppercase" ng-click="">{{settings.val(key).variable.name}}</a> -
+                                <a style="text-transform: uppercase" show-details-modal="key">{{settings.val(key).variable.name}}</a> -
                                 <span>{{settings.val(key).variable.description}}</span>
                             </div>
                             <div class="add-bottom-padding" ng-show="currentData[key].pairCvTermId > 0">
                                 <b class="sub-content-heading">Treatment Factor Level:</b>
-                                <a style="text-transform: uppercase" ng-click="">{{treatmentLevelPairs[key].val(currentData[key].pairCvTermId).variable.name}}</a> -
+                                <a style="text-transform: uppercase" show-details-modal="currentData[key].pairCvTermId">{{treatmentLevelPairs[key].val(currentData[key].pairCvTermId).variable.name}}</a> -
                                 <span>{{treatmentLevelPairs[key].val(currentData[key].pairCvTermId).variable.description}}</span>
                             </div>
 
@@ -100,7 +100,7 @@
                                 <tbody>
                                 <tr ng-show="currentData[key].pairCvTermId > 0" ng-repeat="n in currentData[key].labels track by $index">
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <a ng-click='showDetailsModal(settings.val(key).variable.cvTermId)'>{{settings.val(key).variable.name}} {{$index + 1}}</a>
+                                        <a show-details-modal="key">{{settings.val(key).variable.name}} {{$index + 1}}</a>
                                     </td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">{{settings.val(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">

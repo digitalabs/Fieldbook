@@ -235,7 +235,7 @@
             };
 
             var VariablePairService = $resource("/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id",{id:'@id'}, { 'get' : {method : 'get', isArray: true} });
-
+            var GenerateExpDesignService = $resource("/Fieldbook/TrialManager/experimental/design/generate",{}, { });
 
             var service = {
                 // user input data and default values of standard variables
@@ -251,16 +251,35 @@
                     environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
                     germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
                     treatmentFactors: extractSettings(TREATMENT_FACTORS_INITIAL_DATA),
-                    experimentalDesign: extractSettings(EXPERIMENTAL_DESIGN_INITIAL_DATA),
                     measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
                 },
 
-				// returns a promise object to be resolved later
+                // settings that has special data structure
+                specialSettings: {
+                    experimentalDesign: {
+                        factors: (function(){
+                            var hardFactors = new angular.OrderedHash();
+                            hardFactors.addList(EXPERIMENTAL_DESIGN_INITIAL_DATA.data.expDesignDetailList,function(item) {
+                                return item.variable.cvTermId;
+                            });
+
+                            return hardFactors;
+
+                        })()
+                    },
+                    treatmentLevelPairs: {}
+                },
+
+                // returns a promise object to be resolved later
                 retrieveVariablePairs: function (cvTermId) {
                     return VariablePairService.get({id : cvTermId}).$promise;
                 },
 
+                // the data param structures
+                generateExpDesign: function(data) {
+                    return GenerateExpDesignService.save(data).$promise;
+                },
 
                 trialMeasurement: {
                     hasMeasurement: TRIAL_HAS_MEASUREMENT == 'true',

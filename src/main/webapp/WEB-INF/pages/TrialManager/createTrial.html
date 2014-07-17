@@ -241,11 +241,38 @@
         var startDateId = '';
         var endDateId = '';
 
-
-        var mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-            mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '';
-
-
+        var translations = {
+            /*TRIAL SETTINGS*/
+            1: {
+                label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+                placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+            },
+            /*GERMPLASM FACTORS*/
+            8: {
+                label: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
+                placeholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ ''
+            },
+            /*MEASUREMENT TRAITS*/
+            3: {
+                label: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
+                placeholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ ''
+            },
+            /*TRIAL ENVIRONMENT MANAGEMENT DETAILS*/
+            4: {
+                label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+                placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+            },
+            /*TREATMENT FACTORS*/
+            5: {
+                label: '',
+                placeholder: ''
+            },
+            /*TRIAL CONDITIONS*/
+            7: {
+                label: '',
+                placeholder: ''
+            }
+        };
 
         (function(){
 
@@ -260,12 +287,11 @@
             ).constant('EXPERIMENTAL_DESIGN_INITIAL_DATA', /*[[${experimentalDesignData}]]*/ ''
             ).constant('MEASUREMENTS_INITIAL_DATA', /*[[${measurementsData}]]*/ ''
             ).constant('BASIC_DETAILS_DATA', /*[[${basicDetailsData}]]*/ ''
-            ).constant('TRIAL_VARIABLE_SELECTION_LABELS', '{}'
+            ).constant('TRIAL_VARIABLE_SELECTION_LABELS', translations
             ).constant('TRIAL_MANAGEMENT_MODE', /*[[${operationMode}]]*/ ''
             ).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
             ).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
             );
-
 
             $(document).ready(function() {
                 document.onInitManageTrial();

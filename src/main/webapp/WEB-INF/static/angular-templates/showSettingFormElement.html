@@ -1,6 +1,6 @@
 <div ng-switch="widgetType">
     <div ng-switch-when="DROPDOWN">
-        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="userInput" ng-change="updateModel" value-as-object="false"/>
+        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]" ng-change="updateModel" value-as-object="false"/>
         <div ng-if="isLocation">
             <div class="possibleValuesDiv">
                 <input type="checkbox" ng-model="localData.useFavorites" ng-change="updateDropdownValues()"> &nbsp; &nbsp;
@@ -15,15 +15,15 @@
         </div>
     </div>
     <div ng-switch-when="NTEXT">
-        <input type="text" valid-number="" class="form-control numeric-input" ng-model="userInput"/>
+        <input type="text" valid-number="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]"/>
     </div>
     <div ng-switch-when="CTEXT">
-        <input type="text" class="form-control character-input" ng-model="userInput"/>
+        <input type="text" class="form-control character-input" ng-model="valuecontainer[targetkey]"/>
     </div>
     <div ng-switch-when="TEXTAREA">
-        <textarea class="form-control character-input" rows="3" ng-model="userInput"/>
+        <textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]"/>
     </div>
     <div ng-switch-when="DATE">
-        <input type="text" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="userInput" jq-datepicker="true"/>
+        <input type="text" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="valuecontainer[targetkey]" jq-datepicker="true" with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
     </div>
 </div>

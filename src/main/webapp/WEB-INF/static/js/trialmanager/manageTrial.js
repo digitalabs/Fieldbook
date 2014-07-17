@@ -8,7 +8,7 @@
 (function () {
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap','ngLodash','ngResource']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils', 'fieldbook-utils', 'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants
@@ -51,19 +51,18 @@
                     }
                 },
                 deepStateRedirect: true, sticky: true
-            });
+            })
 
-        if (TRIAL_MANAGEMENT_MODE === 'CREATE') {
-            $stateProvider.state('measurements', {
-                url: '/measurements',
+            .state('createMeasurements', {
+                url: '/createMeasurements',
                 templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
-            });
-        } else if (TRIAL_MANAGEMENT_MODE === 'OPEN') {
-            $stateProvider.state('measurements', {
-                url: '/measurements',
+            })
+
+            .state('editMeasurements', {
+                url: '/editMeasurements',
                 templateUrl: '/Fieldbook/TrialManager/openTrial/measurements'
             });
-        }
+
     });
 
     // common filters
@@ -113,7 +112,7 @@
                     'state': 'experimentalDesign'
                 },
                 {   'name': 'Measurements',
-                    'state': 'measurements'
+                    'state': TrialManagerDataService.isOpenTrial() ? 'editMeasurements' : 'createMeasurements'
                 }
             ];
 
@@ -121,7 +120,7 @@
 
             $scope.isChoosePreviousTrial = false;
 
-            $scope.toggleChoosePreviousTrial = function() {
+            $scope.toggleChoosePreviousTrial = function () {
                 $scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
             };
 
@@ -153,10 +152,10 @@
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
+        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q', '$location',
         function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
                   EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA,
-                  BASIC_DETAILS_DATA, $http,$resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q) {
+                  BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,$location) {
 
             var extractData = function (initialData) {
                 if (!initialData) {
@@ -170,23 +169,27 @@
             var settingRegistry = {};
             var settingsArray = [];
 
-            var propagateChange = function(targetRegistry, dataKey, newValue) {
+            var propagateChange = function (targetRegistry, dataKey, newValue) {
                 if (targetRegistry[dataKey]) {
-                    angular.forEach(targetRegistry[dataKey], function(updateFunction) {
+                    angular.forEach(targetRegistry[dataKey], function (updateFunction) {
                         updateFunction(newValue);
                     });
                 }
             };
 
-            var updateTrialInfoAfterCreation = function(trialID) {
+            var updateTrialDataAfterCreation = function (trialID) {
                 $http.get('/Fieldbook/TrialManager/openTrial/updateSavedTrial?trialID=' + trialID).success(function (data) {
                     // update necessary data and settings
                     // currently identified is the stockid, locationid, and experimentid found in the environment tab
                     service.updateCurrentData('environments', extractData(data.environmentData));
                     service.updateSettings('environments', extractSettings(data.environmentData));
 
+                    service.currentData.basicDetails.studyID = trialID;
                     service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
                     service.trialMeasurement.count = data.measurementRowCount;
+
+                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                        service.trialMeasurement.count);
                 });
             };
 
@@ -227,15 +230,15 @@
 
                 var serializedData = $form.serialize();
                 var d = $q.defer();
-                $http.post('/Fieldbook/NurseryManager/importGermplasmList/next', serializedData).success(function(data) {
+                $http.post('/Fieldbook/NurseryManager/importGermplasmList/next', serializedData).success(function (data) {
                     d.resolve(data);
                 });
 
                 return d.promise;
             };
 
-            var VariablePairService = $resource("/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id",{id:'@id'}, { 'get' : {method : 'get', isArray: true} });
-            var GenerateExpDesignService = $resource("/Fieldbook/TrialManager/experimental/design/generate",{}, { });
+            var VariablePairService = $resource("/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id", {id: '@id'}, { 'get': {method: 'get', isArray: true} });
+            var GenerateExpDesignService = $resource("/Fieldbook/TrialManager/experimental/design/generate", {}, { });
 
             var service = {
                 // user input data and default values of standard variables
@@ -258,11 +261,14 @@
                 // settings that has special data structure
                 specialSettings: {
                     experimentalDesign: {
-                        factors: (function(){
+                        factors: (function () {
                             var hardFactors = new angular.OrderedHash();
-                            hardFactors.addList(EXPERIMENTAL_DESIGN_INITIAL_DATA.data.expDesignDetailList,function(item) {
-                                return item.variable.cvTermId;
-                            });
+                            if (EXPERIMENTAL_DESIGN_INITIAL_DATA && EXPERIMENTAL_DESIGN_INITIAL_DATA.data) {
+                                hardFactors.addList(EXPERIMENTAL_DESIGN_INITIAL_DATA.data.expDesignDetailList, function (item) {
+                                    return item.variable.cvTermId;
+                                });
+                            }
+
 
                             return hardFactors;
 
@@ -273,11 +279,11 @@
 
                 // returns a promise object to be resolved later
                 retrieveVariablePairs: function (cvTermId) {
-                    return VariablePairService.get({id : cvTermId}).$promise;
+                    return VariablePairService.get({id: cvTermId}).$promise;
                 },
 
                 // the data param structures
-                generateExpDesign: function(data) {
+                generateExpDesign: function (data) {
                     return GenerateExpDesignService.save(data).$promise;
                 },
 
@@ -286,7 +292,7 @@
                     count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
                 },
 
-                isOpenTrial : function() {
+                isOpenTrial: function () {
                     return service.currentData.basicDetails.studyID !== null &&
                         service.currentData.basicDetails.studyID !== 0;
                 },
@@ -294,22 +300,22 @@
                 extractData: extractData,
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
-                    if (service.isCurrentTrialDataValid(service.isOpenTrial()) ) {
+                    if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // TODO : double check
                         if (!service.isOpenTrial()) {
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
-                                success(function() {
-                                    submitGermplasmList().then(function(generatedID) {
+                                success(function () {
+                                    submitGermplasmList().then(function (generatedID) {
                                         showSuccessfulMessage('', 'Success');
-                                        service.currentData.basicDetails.studyID = generatedID;
-                                        updateTrialInfoAfterCreation(generatedID);
+                                        /*updateTrialDataAfterCreation(generatedID);*/
+                                        window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
                                     });
                                 });
 
 
                         } else {
                             if (service.trialMeasurement.hasMeasurement) {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function() {
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function () {
                                     // TODO : other function here
                                 });
                             } else {
@@ -329,12 +335,12 @@
                     }
                 },
 
-                updateCurrentData : function(dataKey, newValue) {
+                updateCurrentData: function (dataKey, newValue) {
                     service.currentData[dataKey] = newValue;
                     propagateChange(dataRegistry, dataKey, newValue);
                 },
 
-                updateSettings : function(key, newValue) {
+                updateSettings: function (key, newValue) {
                     service.settings[key] = newValue;
                     propagateChange(settingRegistry, key, newValue);
                     settingsArray = [];
@@ -349,9 +355,9 @@
                     }
                 },
 
-                getSettingsArray : function() {
+                getSettingsArray: function () {
                     if (settingsArray.length === 0) {
-                        angular.forEach(service.settings, function(value, key) {
+                        angular.forEach(service.settings, function (value, key) {
                             if (key !== 'environments') {
                                 if (value) {
                                     settingsArray.push(value);
@@ -359,8 +365,8 @@
                             } else if (key === 'experimentalDesign') {
                                 return true;
                             } else {
-                                    settingsArray.push(value.managementDetails);
-                                    settingsArray.push(value.trialConditionDetails);
+                                settingsArray.push(value.managementDetails);
+                                settingsArray.push(value.trialConditionDetails);
 
                             }
                         });
@@ -369,7 +375,7 @@
                     return settingsArray;
                 },
 
-                isCurrentTrialDataValid : function(isEdit) {
+                isCurrentTrialDataValid: function (isEdit) {
                     if (isEdit === undefined) {
                         isEdit = false;
                     }

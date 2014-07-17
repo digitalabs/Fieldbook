@@ -209,12 +209,16 @@ public abstract class BaseTrialController extends SettingsController {
 
         List<Environment> environments = new ArrayList<Environment>();
         for (int i = 0; i < trialObservations.size(); i++) {
+            MeasurementRow row = trialObservations.get(i);
             Environment environment = new Environment();
+            environment.setExperimentId(row.getExperimentId());
+            environment.setLocationId(row.getLocationId());
+            environment.setStockId(row.getStockId());
 
             Map<Integer, String> managementDetailValues = new HashMap<Integer, String>();
             for (SettingDetail detail : managementDetailList) {
 
-                MeasurementData mData = trialObservations.get(i).getMeasurementData(detail.getVariable().getCvTermId());
+                MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
                 if (mData != null) {
                     managementDetailValues.put(mData.getMeasurementVariable().getTermId(), mData.getValue());
                 }
@@ -223,7 +227,7 @@ public abstract class BaseTrialController extends SettingsController {
             Map<Integer, String> trialConditionValues = new HashMap<Integer, String>();
             for (SettingDetail detail : trialConditionsList) {
 
-                MeasurementData mData = trialObservations.get(i).getMeasurementData(detail.getVariable().getCvTermId());
+                MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
                 if (mData != null) {
                     trialConditionValues.put(mData.getMeasurementVariable().getTermId(), mData.getValue());
                 }

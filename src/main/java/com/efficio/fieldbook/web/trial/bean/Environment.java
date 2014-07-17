@@ -10,6 +10,10 @@ import java.util.Map;
  * Time: 5:08 PM
  */
 public class Environment{
+    private long stockId;
+    private long locationId;
+    private long experimentId;
+
     private Map<Integer, String> managementDetailValues;
     private Map<Integer, String> trialDetailValues;
 
@@ -32,5 +36,29 @@ public class Environment{
 
     public void setTrialDetailValues(Map<Integer, String> trialDetailValues) {
         this.trialDetailValues = trialDetailValues;
+    }
+
+    public long getStockId() {
+        return stockId;
+    }
+
+    public void setStockId(long stockId) {
+        this.stockId = stockId;
+    }
+
+    public long getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(long locationId) {
+        this.locationId = locationId;
+    }
+
+    public long getExperimentId() {
+        return experimentId;
+    }
+
+    public void setExperimentId(long experimentId) {
+        this.experimentId = experimentId;
     }
 }

@@ -225,14 +225,16 @@ public class ManageSettingsController extends SettingsController{
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
             List<SettingDetail> newList = new ArrayList<SettingDetail>();
 
-            for (SettingDetail setting : userSelection.getBaselineTraitsList()) {
-                newList.add(setting);
+            if(userSelection.getBaselineTraitsList() != null){
+	            for (SettingDetail setting : userSelection.getBaselineTraitsList()) {
+	                newList.add(setting);
+	            }
             }
-
-            for (SettingDetail setting : userSelection.getNurseryConditions()) {
-                newList.add(setting);
+            if(userSelection.getNurseryConditions() != null){
+	            for (SettingDetail setting : userSelection.getNurseryConditions()) {
+	                newList.add(setting);
+	            }
             }
-
             return newList;
         } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
             return userSelection.getSelectionVariates();

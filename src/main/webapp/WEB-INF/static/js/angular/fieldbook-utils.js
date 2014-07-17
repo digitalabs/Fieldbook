@@ -352,6 +352,7 @@
                     onUpdate: '&',
                     callback: '&',
                     hideVariable : '=',
+                    useExactProperties: ''
 
                 },
                 transclude : true,

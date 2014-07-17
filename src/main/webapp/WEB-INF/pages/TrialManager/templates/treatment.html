@@ -16,6 +16,7 @@
                                 <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
+                                <th>Treatment Level Factors</th>
                             </tr>
                             </thead>
 
@@ -27,16 +28,23 @@
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">{{settings.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
+                                    <select class="form-control" ng-model="currentData[key].pairCvTermId" ng-options="pair_key as item.variable.name for (pair_key,item) in treatmentLevelPairs[key].vals()">
+                                        <option value="">Please Choose</option>
+                                    </select>
+                                </td>
+                                <td ng-class="{even : $even, odd : $odd}">
                                     <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='currentData[key].levels' ng-change='onLevelChange(key,currentData[key].levels)' />
                                 </td>
                             </tr>
 
                             <tr ng-hide="settings.keys().length &gt; 0">
-                                <td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td>
+                                <td class="odd" ng-repeat="val in [] | range : 5">&nbsp;</td>
                             </tr>
 
                             </tbody>
                         </table>
+
+
                     </div>
 
                 </section-container>
@@ -55,7 +63,7 @@
 
                 <div class='treatment-level-item' ng-repeat="key in settings.keys() track by key">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-12 add-bottom-padding">
                             <span class="sub-content-heading" style="text-transform: uppercase"><b>{{settings.val(key).variable.name}}</b> : <b>{{settings.val(key).variable.description}}</b></span>
                         </div>
                     </div>
@@ -67,7 +75,7 @@
                                 <a style="text-transform: uppercase" ng-click="">{{settings.val(key).variable.name}}</a> -
                                 <span>{{settings.val(key).variable.description}}</span>
                             </div>
-                            <div>
+                            <div class="add-bottom-padding" ng-show="currentData[key].pairCvTermId > 0">
                                 <b class="sub-content-heading">Treatment Factor Level:</b>
                                 <a style="text-transform: uppercase" ng-click="">{{treatmentLevelPairs[key].val(currentData[key].pairCvTermId).variable.name}}</a> -
                                 <span>{{treatmentLevelPairs[key].val(currentData[key].pairCvTermId).variable.description}}</span>
@@ -90,20 +98,19 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="n in currentData[key].labels track by $index">
+                                <tr ng-show="currentData[key].pairCvTermId > 0" ng-repeat="n in currentData[key].labels track by $index">
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
                                         <a ng-click='showDetailsModal(settings.val(key).variable.cvTermId)'>{{settings.val(key).variable.name}} {{$index + 1}}</a>
                                     </td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">{{settings.val(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <input type='text' class='form-control' ng-model="currentData[key].labels[$index]" />
+                                        <show-setting-form-element settings="settings" targetkey="{{key}}"
+                                                                   valuecontainer="currentData[key].labels[$index]" use-exact-properties="true"></show-setting-form-element>
                                     </td>
                                 </tr>
 
-                                <tr ng-hide="currentData[key].labels.length &gt; 0">
-                                    <td class="odd">&nbsp;</td>
-                                    <td class="odd">&nbsp;</td>
-                                    <td class="odd">&nbsp;</td>
+                                <tr ng-hide="currentData[key].labels.length &gt; 0 &amp;&amp; currentData[key].pairCvTermId > 0">
+                                    <td class="odd" ng-repeat="item in [] | range : 3">&nbsp;</td>
                                 </tr>
 
                                 </tbody>

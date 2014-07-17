@@ -45,8 +45,6 @@
                     angular.forEach(data,function(val1,key1) {
                         $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId,val1);
 
-                        // TODO: for the meantime, init the pairCvTermId of currentData
-                        $scope.currentData[key].pairCvTermId = val1.variable.cvTermId;
                     });
                 });
 
@@ -59,12 +57,8 @@
         
         // note for some reasons this gets called twice :( , might be the diff function causing the watchCollection t
         $scope.$watchCollection(function(){return $scope.settings.m_keys; },function(newArr,oldArr){
-            // add
-            if (newArr.length > oldArr.length) {
-
-            }
             // delete
-            else {
+            if (newArr.length < oldArr.length) {
                 angular.forEach(_(oldArr).difference(newArr),function(val,key) {
                     delete $scope.currentData[val];
                 });
@@ -93,15 +87,12 @@
             // add items if no of levels is more thant array
             else {
                 for (var j = 0; j < diff; j++) {
-                    $scope.currentData[key].labels.push('');
+                    $scope.currentData[key].labels.push(0);
                 }
             }
 
         }; // end $scope.onLevelChange
 
-        $scope.removeTreatmentFactorByIndex = function(cvTermId) {
-            // remove an item from the service
-        };
 
     }]);
 

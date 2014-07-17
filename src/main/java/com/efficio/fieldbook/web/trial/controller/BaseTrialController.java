@@ -94,6 +94,7 @@ public abstract class BaseTrialController extends SettingsController {
     protected TabInfo prepareGermplasmTabInfo(List<MeasurementVariable> measurementVariables, boolean isUsePrevious) throws MiddlewareQueryException {
         List<SettingDetail> detailList = new ArrayList<SettingDetail>();
         List<Integer> requiredIDList = buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
+        List<Integer> hiddenFields = buildVariableIDList(AppConstants.CREATE_TRIAL_DEFAULT_PLOT_FIELDS.getString());
 
         for (MeasurementVariable var : measurementVariables) {
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
@@ -102,6 +103,12 @@ public abstract class BaseTrialController extends SettingsController {
                 detail.setDeletable(false);
             } else {
                 detail.setDeletable(true);
+            }
+
+            if (hiddenFields.contains(var.getTermId())) {
+                detail.setHidden(true);
+            } else {
+                detail.setHidden(false);
             }
 
             if (!isUsePrevious) {

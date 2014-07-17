@@ -174,7 +174,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 
 		List<StandardVariableReference> dbList = null;
 		if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
-			dbList = fieldbookMiddlewareService.getAllTreatmentLevels();
+			dbList = fieldbookMiddlewareService.getAllTreatmentLevels(AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 		}
 		else {
 			List<Integer> storedInIds = getStoredInIdsByMode(mode, false);

@@ -198,12 +198,7 @@ public class CreateTrialController extends BaseTrialController {
 
         String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
 
-        StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
-        SettingVariable svar = new SettingVariable();
-        svar.setCvTermId(TermId.PLOT_NO.getId());
-        svar.setName(stdvar.getName());
-        SettingDetail settingDetail = new SettingDetail(svar, null, null, false);
-        userSelection.getPlotsLevelList().add(settingDetail); //we always add plot no
+        addDefaultTrialPlotFields();
         
         // TODO : integrate treatment factor detail once it's finalized               
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
@@ -227,6 +222,19 @@ public class CreateTrialController extends BaseTrialController {
         // TODO : clarify if the environment values placed in session also need to be updated to include the values for the trial level conditions
         userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
         return "success";
+    }
+    
+    private void addDefaultTrialPlotFields() throws MiddlewareQueryException{
+    	List<Integer> ids = buildVariableIDList(AppConstants.CREATE_TRIAL_DEFAULT_PLOT_FIELDS.getString());
+    	for(Integer id : ids){
+    		//we always add plot no, rep , block
+	    	StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(id);
+	        SettingVariable svar = new SettingVariable();
+	        svar.setCvTermId(id);
+	        svar.setName(stdvar.getName());
+	        SettingDetail settingDetail = new SettingDetail(svar, null, null, false);
+	        userSelection.getPlotsLevelList().add(settingDetail); 
+    	}
     }
 
     protected void extractDataFromMetadata(List<SettingDetail> details, Map<Integer, String> values) {

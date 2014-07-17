@@ -258,7 +258,7 @@
                 extractData: extractData,
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
-                    if (service.isCurrentTrialDataValid()) {
+                    if (service.isCurrentTrialDataValid(TRIAL_MANAGEMENT_MODE === 'OPEN')) {
                         // TODO : double check
                         if (TRIAL_MANAGEMENT_MODE === 'CREATE') {
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).success(submitGermplasmList);
@@ -303,7 +303,11 @@
                     }
                 },
 
-                isCurrentTrialDataValid : function() {
+                isCurrentTrialDataValid : function(isEdit) {
+                    if (isEdit === undefined) {
+                        isEdit = false;
+                    }
+
                     var hasError = false, name = '', customMessage = '';
 
                     if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
@@ -312,7 +316,7 @@
                     } else if ($.trim(service.currentData.basicDetails.basicDetails[8007]) === '') {
                         hasError = true;
                         name = 'Description';
-                    } else if (isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {
+                    } else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {
                         hasError = true;
                         customMessage = 'Name should be unique';
                     } else if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {

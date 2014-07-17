@@ -51,6 +51,7 @@ import com.efficio.fieldbook.web.common.bean.PropertyTree;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.ontology.bean.OntologyUsage;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class OntologyDetailsController.
@@ -103,7 +104,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
                 if (variable.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN 
                 		&& variable.getDataType().getId() == TermId.NUMERIC_VARIABLE.getId()) {
                 	//look for possible pairs
-                	List<StandardVariable> pairs = fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(), variable.getProperty().getId());
+                	List<StandardVariable> pairs = fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(), variable.getProperty().getId(), 
+                			AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
                 	ObjectMapper objectMapper = new ObjectMapper();
                 	form.setPossiblePairsJson(objectMapper.writeValueAsString(pairs));
                 }

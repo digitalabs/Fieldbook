@@ -237,7 +237,8 @@ public abstract class BaseTrialController extends SettingsController {
 
             StandardVariable variable = ontologyService.getStandardVariable(cvTermId);
 
-            List<StandardVariable> pairs = fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(),variable.getProperty().getId());
+            List<StandardVariable> pairs = fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(),variable.getProperty().getId(), 
+            		AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 
             for (StandardVariable item : pairs) {
                 output.add(createSettingDetail(item.getId(),null));

@@ -12,10 +12,14 @@
 package com.efficio.fieldbook.web.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -319,5 +323,26 @@ public enum AppConstants {
     		}
     	}
     	return map;
+    }
+    
+    public List<String> getList() {
+    	String[] arr = getString().split(",");
+    	if (arr != null) {
+    		return Arrays.asList(arr);
+    	}
+    	return new ArrayList<String>();
+    }
+
+    public List<Integer> getIntegerList() {
+    	List<Integer> list = new ArrayList<Integer>();
+    	String[] arr = getString().split(",");
+    	if (arr != null) {
+    		for (String rec : arr) {
+    			if (NumberUtils.isNumber(rec)) {
+    				list.add(Integer.valueOf(rec));
+    			}
+    		}
+    	}
+    	return list;
     }
 }

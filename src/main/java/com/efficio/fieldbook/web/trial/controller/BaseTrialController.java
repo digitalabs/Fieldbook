@@ -141,6 +141,8 @@ public abstract class BaseTrialController extends SettingsController {
                 detail.getVariable().setOperation(Operation.ADD);
             }
 
+            detail.setDeletable(true);
+
             detailList.add(detail);
         }
 
@@ -159,12 +161,17 @@ public abstract class BaseTrialController extends SettingsController {
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
         List<SettingDetail> trialConditionsList = new ArrayList<SettingDetail>();
         List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+        List<Integer> requiredFields = buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
 
         for (MeasurementVariable var : workbook.getTrialConditions()) {
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
 
             if (hiddenFields.contains(var.getTermId())) {
                 detail.setHidden(true);
+            }
+
+            if (!requiredFields.contains(var.getTermId())) {
+                detail.setDeletable(true);
             }
 
             managementDetailList.add(detail);
@@ -185,6 +192,7 @@ public abstract class BaseTrialController extends SettingsController {
                 detail.getVariable().setOperation(Operation.ADD);
             }
 
+            detail.setDeletable(true);
             trialConditionsList.add(detail);
         }
 
@@ -326,6 +334,7 @@ public abstract class BaseTrialController extends SettingsController {
         for (MeasurementVariable var : measurementVariables) {
             if (!basicDetailIDList.contains(var.getTermId())) {
                 SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
+                detail.setDeletable(true);
                 details.add(detail);
 
                 if (!isUsePrevious) {

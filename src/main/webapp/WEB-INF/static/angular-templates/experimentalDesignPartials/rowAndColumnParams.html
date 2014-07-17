@@ -12,7 +12,7 @@
         <span><input ng-model="currentDesignType.data.colsPerReplications" type="text" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
     </div>
 
-<div ng-show="currentDesignType.data.isResolvable">
+<div ng-show="currentDesignType.data.isResolvable &amp;&amp; !hideFeatures">
     <div ng-hide="currentDesignType.showAdvancedOptions" class="add_top_padding">
         <a ng-click="currentDesignType.showAdvancedOptions = true">Show Advanced Options</a>
     </div>

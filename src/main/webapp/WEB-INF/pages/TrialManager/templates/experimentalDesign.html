@@ -19,7 +19,7 @@
                                     -->
 
                                 </div>
-                                <div class="row" ng-show="currentDesignType.withResolvable">
+                                <div class="row" ng-show="currentDesignType.withResolvable &amp;&amp; !hideFeatures">
                                     <div class="col-md-12">
                                         <label class="checkbox-inline">
                                             <input type="checkbox" ng-model="currentDesignType.data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>

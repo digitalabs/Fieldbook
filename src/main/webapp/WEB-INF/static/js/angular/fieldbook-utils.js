@@ -352,7 +352,7 @@
                     onUpdate: '&',
                     callback: '&',
                     hideVariable : '=',
-                    useExactProperties: ''
+                    useExactProperties: '@'
 
                 },
                 transclude : true,

@@ -9,6 +9,10 @@
     angular.module('manageTrialApp')
         .constant("EXPERIMENTAL_DESIGN_PARTIALS_LOC", "/Fieldbook/static/angular-templates/experimentalDesignPartials/")
         .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC){
+
+            //TODO: temporarily hide features that are not implemented in this release
+            $scope.hideFeatures = true;
+
             $scope.designTypes = [
                 {name: 'Randomized Complete Block Design',params :'randomizedCompleteBlockParams.html',
                     data: {

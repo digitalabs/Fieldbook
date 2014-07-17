@@ -17,6 +17,7 @@ public class BasicDetails implements TabInfoBean{
     private String folderNameLabel;
     private String userName;
     private Integer userID;
+    private Integer studyID;
 
     public BasicDetails() {
         basicDetails = new HashMap<Integer, String>();
@@ -68,5 +69,13 @@ public class BasicDetails implements TabInfoBean{
 
     public void setUserID(Integer userID) {
         this.userID = userID;
+    }
+
+    public Integer getStudyID() {
+        return studyID;
+    }
+
+    public void setStudyID(Integer studyID) {
+        this.studyID = studyID;
     }
 }

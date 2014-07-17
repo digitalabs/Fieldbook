@@ -251,7 +251,7 @@ public abstract class BaseTrialController extends SettingsController {
         return output;
     }
 
-    protected TabInfo prepareBasicDetailsTabInfo(StudyDetails studyDetails, boolean isUsePrevious) throws MiddlewareQueryException {
+    protected TabInfo prepareBasicDetailsTabInfo(StudyDetails studyDetails, boolean isUsePrevious, int trialID) throws MiddlewareQueryException {
         Map<Integer, String> basicDetails = new HashMap<Integer, String>();
         List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
         List<Integer> initialSettingIDs = buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
@@ -281,6 +281,7 @@ public abstract class BaseTrialController extends SettingsController {
         basicDetails.put(TermId.START_DATE.getId(), studyDetails.getStartDate());
         basicDetails.put(TermId.END_DATE.getId(), studyDetails.getEndDate());
         basic.setBasicDetails(basicDetails);
+        basic.setStudyID(trialID);
 
         int folderId = (int) studyDetails.getParentFolderId();
         String folderName;

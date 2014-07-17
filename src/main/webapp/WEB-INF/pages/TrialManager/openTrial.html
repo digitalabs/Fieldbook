@@ -14,7 +14,7 @@
             <div class="col-md-12">
                 <div class="pull-left">
                     <img class="image-padding image-padding-with-text" height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
-                    <span class="heading">Trial : {{data.basicDetails[8005]}}</span>
+                    <span class="heading" ng-bind="'Trial : ' + data.basicDetails[8005]"></span>
                     <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
                 </div>
                 <a class="pull-right" href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
@@ -80,9 +80,7 @@
                         <div class="row form-group">
                             <label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
 
-                            <div class="col-sm-8 nursery-name-display">
-                                {{data.basicDetails[8005]}}
-                            </div>
+                            <div class="col-sm-8 nursery-name-display" ng-bind="data.basicDetails[8005]"></div>
                         </div>
 
                         <div class="row form-group">

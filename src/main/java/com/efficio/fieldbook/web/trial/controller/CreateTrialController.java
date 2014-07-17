@@ -104,6 +104,7 @@ public class CreateTrialController extends BaseTrialController {
         model.addAttribute("germplasmData", prepareGermplasmTabInfo());
         model.addAttribute("environmentData", prepareEnvironmentsTabInfo());
         model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo());
+        model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
         model.addAttribute("measurementRowCount", 0);
 
         return showAngularPage(model);
@@ -312,6 +313,28 @@ public class CreateTrialController extends BaseTrialController {
         }
 
         info.setSettingMap(settingMap);
+        return info;
+    }
+    
+    protected TabInfo prepareExpDesignTabInfo() throws MiddlewareQueryException{
+        TabInfo info = new TabInfo();        
+        ExpDesignData data = new ExpDesignData();
+        List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();
+        
+        List<Integer> ids = buildVariableIDList(AppConstants.CREATE_TRIAL_EXP_DESIGN_DEFAULT_FIELDS.getString());
+    	for(Integer id : ids){
+    		//PLOT, REP, BLOCK, ENTRY NO
+	    	StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(id);
+	        SettingVariable svar = new SettingVariable();
+	        svar.setCvTermId(id);
+	        svar.setName(stdvar.getName());	        
+	        ExpDesignDataDetail dataDetail = new ExpDesignDataDetail(AppConstants.getString(id+AppConstants.LABEL.getString()), svar);
+	        detailList.add(dataDetail);
+	        
+    	}
+    	data.setExpDesignDetailList(detailList);
+        info.setData(data);
+
         return info;
     }
 

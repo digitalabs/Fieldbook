@@ -3,7 +3,7 @@
  */
 
 /*global angular, changeBuildOption, isStudyNameUnique, showSuccessfulMessage,
- showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree*/
+ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree,alert*/
 
 (function () {
     'use strict';
@@ -117,6 +117,17 @@
                 }
             ];
 
+            $scope.isOpenTrial = function() {
+                return TrialManagerDataService.currentData.basicDetails.studyID !== null &&
+                    TrialManagerDataService.currentData.basicDetails.studyID !== 0;
+            };
+
+            $scope.isChoosePreviousTrial = false;
+
+            $scope.toggleChoosePreviousTrial = function() {
+                $scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
+            };
+
             $scope.data = TrialManagerDataService.currentData.basicDetails;
 
             $scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
@@ -145,10 +156,10 @@
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE',
+        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
         function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
                   EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA,
-                  BASIC_DETAILS_DATA, $http,$resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE) {
+                  BASIC_DETAILS_DATA, $http,$resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q) {
 
             var extractData = function (initialData) {
                 if (!initialData) {
@@ -312,9 +323,12 @@
                                 if (value) {
                                     settingsArray.push(value);
                                 }
+                            } else if (key === 'experimentalDesign') {
+                                return true;
                             } else {
-                                settingsArray.push(value.managementDetails);
-                                settingsArray.push(value.trialConditionDetails);
+                                    settingsArray.push(value.managementDetails);
+                                    settingsArray.push(value.trialConditionDetails);
+
                             }
                         });
                     }
@@ -376,8 +390,6 @@
 
     // README IMPORTANT: Code unmanaged by angular should go here
     document.onInitManageTrial = function () {
-        $('#studyBuildOption').on('change', changeBuildOption);
-		$('#choosePreviousStudy').addClass('fbk-hide');
     };
 
 })();

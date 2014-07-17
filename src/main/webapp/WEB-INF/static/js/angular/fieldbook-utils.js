@@ -203,6 +203,7 @@
                 scope : {
                     settings : '=',
                     targetkey : '@targetkey',
+                    settingkey : '@',
                     valuecontainer : '='
                 },
 
@@ -213,7 +214,11 @@
                     }
                 },
                 controller : function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
-                    $scope.variableDefinition = $scope.settings.val($scope.targetkey);
+                    if ($scope.settingkey === undefined) {
+                        $scope.settingkey = $scope.targetkey;
+                    }
+
+                    $scope.variableDefinition = $scope.settings.val($scope.settingkey);
                     $scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
                         $scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
                     $scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
@@ -355,13 +360,13 @@
                     onUpdate: '&',
                     callback: '&',
                     hideVariable : '=',
-                    useExactProperties: '@'
+                    useExactProperties: '@',
+                    collapsible : '='
 
                 },
                 transclude : true,
                 templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
                 link : function (scope,elem,attrs) {
-                    scope.collapsible = $parse(attrs.collapsible)();
                     scope.addVariable =  $parse(attrs.addVariable)();
 
 
@@ -375,6 +380,7 @@
                 },
                 controller : ['$scope','$attrs',function($scope,$attrs) {
                     $scope.toggleCollapse = false;
+                    $scope.toggleSection = $attrs.startCollapsed && $attrs.startCollapsed === 'true';
                     $scope.doCollapse = function() {
                         if ($scope.collapsible) {
                             $scope.toggleSection = !$scope.toggleSection;

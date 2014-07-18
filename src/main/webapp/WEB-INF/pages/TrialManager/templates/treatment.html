@@ -33,7 +33,7 @@
                                     </select>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">
-                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='currentData[key].levels' ng-change='onLevelChange(key,currentData[key].levels)' />
+                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-disabled="!currentData[key].pairCvTermId" ng-model='currentData[key].levels' ng-change='onLevelChange(key,currentData[key].levels)' />
                                 </td>
                             </tr>
 

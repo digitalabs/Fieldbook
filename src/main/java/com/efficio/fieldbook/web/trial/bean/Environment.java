@@ -16,10 +16,12 @@ public class Environment{
 
     private Map<Integer, String> managementDetailValues;
     private Map<Integer, String> trialDetailValues;
+    private Map<Integer, Integer> phenotypeIDMap;
 
     public Environment() {
         managementDetailValues = new HashMap<Integer, String>();
         trialDetailValues = new HashMap<Integer, String>();
+        phenotypeIDMap = new HashMap<Integer, Integer>();
     }
 
     public Map<Integer, String> getManagementDetailValues() {
@@ -60,5 +62,13 @@ public class Environment{
 
     public void setExperimentId(long experimentId) {
         this.experimentId = experimentId;
+    }
+
+    public Map<Integer, Integer> getPhenotypeIDMap() {
+        return phenotypeIDMap;
+    }
+
+    public void setPhenotypeIDMap(Map<Integer, Integer> phenotypeIDMap) {
+        this.phenotypeIDMap = phenotypeIDMap;
     }
 }

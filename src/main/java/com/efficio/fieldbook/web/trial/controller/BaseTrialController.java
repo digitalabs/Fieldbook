@@ -228,18 +228,22 @@ public abstract class BaseTrialController extends SettingsController {
             }
 
             Map<Integer, String> trialConditionValues = new HashMap<Integer, String>();
+            Map<Integer, Integer> phenotypeIDMap = new HashMap<Integer, Integer>();
             for (SettingDetail detail : trialConditionsList) {
 
                 MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
                 if (mData != null) {
+                    phenotypeIDMap.put(mData.getMeasurementVariable().getTermId(), mData.getPhenotypeId());
                     trialConditionValues.put(mData.getMeasurementVariable().getTermId(), mData.getValue());
                 }
             }
 
             environment.setManagementDetailValues(managementDetailValues);
             environment.setTrialDetailValues(trialConditionValues);
+            environment.setPhenotypeIDMap(phenotypeIDMap);
             environments.add(environment);
         }
+
         data.setEnvironments(environments);
         info.setData(data);
 

@@ -11,14 +11,25 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.Tool;
+import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +37,9 @@ import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.controller.ImportStudyController;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
@@ -40,6 +53,7 @@ public class ExpDesignUtil {
 	private static String BREEDING_VIEW_EXE = "BreedingView.exe";
 	private static String BVDESIGN_EXE = "BVDesign.exe";
 	private static String OUTPUT_FILE_PARAMETER_NAME = "outputfile";
+	private static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
 	private static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
 	private static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
 	
@@ -151,12 +165,46 @@ public class ExpDesignUtil {
 	}
 	
 	public static ExpDesignParameter createExpDesignParameter(String name, String value, List<ListItem> items){
+		
 		ExpDesignParameter designParam = new ExpDesignParameter(name, value);
 		if(items != null && !items.isEmpty()){
 			designParam.setListItem(items);
 		}
 		return designParam;
 	}
+	
+	public static MainDesign createRandomizedCompleteBlockDesign(String nBlock, String blockFactor, String plotFactor,
+			List<String> treatmentFactor, List<String> levels, String timeLimit, String outputfile){
+		
+		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		paramList.add(createExpDesignParameter("nblocks", nBlock, null));
+		paramList.add(createExpDesignParameter("blockfactor", blockFactor, null));
+		paramList.add(createExpDesignParameter("plotfactor", plotFactor, null));
+		List<ListItem> itemsTreatmentFactor = new ArrayList<ListItem>();
+		List<ListItem> itemsLevels = new ArrayList<ListItem>();
+		if(treatmentFactor != null){
+			for(String treatment : treatmentFactor){
+				ListItem listItem = new ListItem(treatment);
+				itemsTreatmentFactor.add(listItem);
+			}
+		}
+		if(levels != null){
+			for(String level : levels){
+				ListItem listItem = new ListItem(level);
+				itemsLevels.add(listItem);
+			}
+		}
+		paramList.add(createExpDesignParameter("treatmentfactors", null, itemsTreatmentFactor));		
+		paramList.add(createExpDesignParameter("levels", null,itemsLevels));
+				
+		paramList.add(createExpDesignParameter("timelimit", timeLimit, null));
+		paramList.add(createExpDesignParameter("outputfile", outputfile, null));
+		
+		ExpDesign design = new ExpDesign(RANDOMIZED_COMPLETE_BLOCK_DESIGN, paramList);
+		MainDesign mainDesign = new MainDesign(design);
+		return mainDesign;
+	}
+	
 	public static MainDesign createResolvableIncompleteBlockDesign(String blockSize, String nTreatments,
 			String nReplicates, String treatmentFactor, String replicateFactor, String blockFactor,
 			String plotFactor, String nBlatin, String replatingGroups, String timeLimit, String outputfile){
@@ -203,5 +251,127 @@ public class ExpDesignUtil {
 		ExpDesign design = new ExpDesign(RESOLVABLE_ROW_COL_DESIGN, paramList);
 		MainDesign mainDesign = new MainDesign(design);
 		return mainDesign;
+	}
+	
+	public static MeasurementVariable convertStandardVariableToMeasurementVariable(StandardVariable var, Operation operation) {
+        MeasurementVariable mvar = new MeasurementVariable(
+        		var.getName(), var.getDescription(), var.getScale().getName(), var.getMethod().getName(), var.getProperty().getName(), var.getDataType().getName(), null,
+        		var.getPhenotypicType().getLabelList().get(0));
+        mvar.setFactor(true);
+        mvar.setOperation(operation);
+        mvar.setStoredIn(var.getStoredIn().getId());
+        mvar.setTermId(var.getId());        
+        return mvar;
+    }
+
+	
+	public static MeasurementRow createMeasurementRow(List<MeasurementVariable> headerVariable, 
+			ImportedGermplasm germplasm, Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues)
+	throws MiddlewareQueryException {
+		MeasurementRow measurementRow = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+		boolean isNextIsTreatmentValue = false;
+		MeasurementData treatmentLevelData = null;
+		for(MeasurementVariable var : headerVariable){
+			
+				MeasurementData measurementData =null;
+				
+				
+				Integer termId = var.getTermId();											
+				
+				if(termId.intValue() == TermId.ENTRY_NO.getId())
+					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+				else if(termId.intValue() == TermId.SOURCE.getId())
+					measurementData = new MeasurementData(var.getName(), "", false, var.getDataType(), var);
+				else if(termId.intValue() == TermId.CROSS.getId())	
+					measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);
+				else if(termId.intValue() == TermId.DESIG.getId())	
+					measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType(), var);
+				else if(termId.intValue() == TermId.GID.getId()){	    					
+					measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
+				}else if(termId.intValue() == TermId.ENTRY_CODE.getId())	    					
+					measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
+				else if(termId.intValue() == TermId.PLOT_NO.getId())
+					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+				else if(termId.intValue() == TermId.CHECK.getId()){
+					measurementData = new MeasurementData(var.getName(), germplasm.getCheckName(), 
+			    							false, var.getDataType(), germplasm.getCheckId(), var);
+					
+				} else if (termId.intValue() == TermId.REP_NO.getId()) {
+					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+					
+				} else if (termId.intValue() == TermId.BLOCK_NO.getId()) {
+					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+					
+				}else if (var.getTreatmentLabel() != null && !"".equals(var.getTreatmentLabel())) {
+					if (treatmentLevelData == null){
+						measurementData = new MeasurementData(var.getName(), bvEntryMap.get(Integer.toString(var.getTermId())), false, var.getDataType(), var);
+						treatmentLevelData = measurementData;
+					} else {
+						String level = treatmentLevelData.getValue();
+						if (NumberUtils.isNumber(level)) {
+							int index = Integer.valueOf(level);
+							if (treatmentFactorValues != null && treatmentFactorValues.containsKey(String.valueOf(var.getTermId()))) {
+								String value = treatmentFactorValues.get(String.valueOf(var.getTermId())).get(index);
+								measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), var);
+							}
+						}
+						treatmentLevelData = null;
+					}
+					
+				}else{
+					//meaning non factor
+                	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
+                	var.setFactor(false);
+				}
+				
+				
+				dataList.add(measurementData); 
+		}
+		measurementRow.setDataList(dataList);
+		return measurementRow;
+	}
+	
+	public static List<MeasurementRow> generateExpDesignMeasurements(int environments, 
+			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
+			List<TreatmentVariable> treatmentVariables, List<StandardVariable> requiredExpDesignVariable, 
+			List<ImportedGermplasm> germplasmList, MainDesign mainDesign, WorkbenchService workbenchService, 
+			FieldbookProperties fieldbookProperties, StandardVariable stdvarTreatment, Map<String, List<String>> treatmentFactorValues) throws JAXBException, IOException, MiddlewareQueryException{
+		List<MeasurementRow> measurementRowList = new ArrayList();
+		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();			
+		varList.addAll(nonTrialFactors);
+		for(StandardVariable var : requiredExpDesignVariable){
+			if(WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null){
+				varList.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD));
+			}		
+		}
+		if(treatmentVariables != null){
+			for(int i = 0 ; i < treatmentVariables.size() ; i++){
+				varList.add(treatmentVariables.get(i).getLevelVariable());
+				varList.add(treatmentVariables.get(i).getValueVariable());
+			}
+		}
+		varList.addAll(variates);
+		
+		
+		for(int i = 0 ; i < environments ; i++){
+			BVDesignOutput bvOutput = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			
+			if(bvOutput.isSuccess()){
+				for(int counter = 0 ; counter < bvOutput.getBvResultList().size() ; counter++){
+					String entryNo = bvOutput.getEntryValue(stdvarTreatment.getName(), counter);
+					if(NumberUtils.isNumber(entryNo)){
+						int germplasmIndex = Integer.valueOf(entryNo) - 1;
+						if(germplasmIndex >= 0 && germplasmIndex < germplasmList.size()){
+							ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
+							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues);
+							measurementRowList.add(row);
+						}
+					}
+				}
+			}
+			
+		}
+		return measurementRowList;
 	}
 }

@@ -122,6 +122,7 @@ public class OpenTrialController extends
 
             Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
             userSelection.setWorkbook(trialWorkbook);
+            userSelection.setTemporaryWorkbook(null);
             model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
             model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
             model.addAttribute("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));

@@ -128,6 +128,7 @@ public class UserSelection implements Serializable {
     
     /** The workbook. */
     private Workbook workbook;
+    private Workbook temporaryWorkbook;
     
     /** The current page. */
     private int currentPage;
@@ -774,4 +775,12 @@ public class UserSelection implements Serializable {
 	    public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
 	        this.measurementRowList = measurementRowList;
 	    }
+
+		public Workbook getTemporaryWorkbook() {
+			return temporaryWorkbook;
+		}
+
+		public void setTemporaryWorkbook(Workbook temporaryWorkbook) {
+			this.temporaryWorkbook = temporaryWorkbook;
+		}
  }

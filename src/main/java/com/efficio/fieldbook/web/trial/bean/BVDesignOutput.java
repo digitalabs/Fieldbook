@@ -2,6 +2,7 @@ package com.efficio.fieldbook.web.trial.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ public class BVDesignOutput implements Serializable{
 	private int returnCode;
 	private String[] bvHeaders;
 	private List<String[]> bvResultList;
+	private List<Map<String, String>> bvResultMap;
 	
 	public BVDesignOutput(int returnCode){
 		super();
@@ -20,15 +22,28 @@ public class BVDesignOutput implements Serializable{
 		//1st entry is always the header 
 		if(entries != null && !entries.isEmpty()){
 			bvResultList = new ArrayList<String[]>();
+			
+			bvResultMap = new ArrayList<Map<String, String>>();
 			for(int i = 0 ; i < entries.size() ; i++){
 				if(i == 0){
 					//this is the header
 					setBvHeaders(entries.get(i));					
 				}else{
+					Map<String, String> dataMap = new HashMap<String, String>();
 					bvResultList.add(entries.get(i));
+					for(int index = 0 ; index < bvHeaders.length ; index++){
+						dataMap.put(bvHeaders[index], entries.get(i)[index]);
+					}
+					bvResultMap.add(dataMap);
 				}
 			}
 		}
+	}
+	
+	public Map<String, String> getEntryMap(int index){
+		if(index < bvResultMap.size() && index >= 0)
+			return bvResultMap.get(index);
+		return null;
 	}
 	
 	public int getReturnCode() {

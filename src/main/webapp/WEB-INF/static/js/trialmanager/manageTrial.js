@@ -114,12 +114,12 @@
                 },
                 {   'name': 'Environments',
                     'state': 'environment'
-                },                
+                },
                 {   'name': 'Experimental Design',
                     'state': 'experimentalDesign'
                 },
                 {   'name': 'Measurements',
-                    'state':'createMeasurements'
+                    'state': 'createMeasurements'
                 },
                 {
                     'name': 'Measurements',
@@ -158,7 +158,7 @@
                 });
             };
 
-            $scope.displayMeasurementOnlyActions = function() {
+            $scope.displayMeasurementOnlyActions = function () {
                 return TrialManagerDataService.trialMeasurement.count &&
                     TrialManagerDataService.trialMeasurement.count > 0;
             };
@@ -167,9 +167,7 @@
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
-                  EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA,
-                  BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q) {
+        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q) {
 
             var extractData = function (initialData) {
                 if (!initialData) {
@@ -182,6 +180,7 @@
             var dataRegistry = {};
             var settingRegistry = {};
             var settingsArray = [];
+            var saveEventListeners = {};
 
             var propagateChange = function (targetRegistry, dataKey, newValue) {
                 if (targetRegistry[dataKey]) {
@@ -250,7 +249,7 @@
                 });
                 return d.promise;
             };
-            
+
             var recreateSessionVariablesTrial = function () {
                 $.ajax({
                     url: '/Fieldbook/TrialManager/openTrial/recreate/session/variables',
@@ -263,19 +262,25 @@
                     }
                 });
             };
-            
+
             var loadMeasurementScreen = function () {
-            	if($('.germplasm-list-data-table tr.primaryRow').length !== 0){
-	                $.ajax({
-	                    url: '/Fieldbook/TrialManager/openTrial/load/measurement',
-	                    type: 'GET',
-	                    data: '',
-	                    cache: false,
-	                    success: function (html) {
-	                        $('#measurementsDiv').html(html);
-	                    }
-	                });
-            	}
+                if ($('.germplasm-list-data-table tr.primaryRow').length !== 0) {
+                    $.ajax({
+                        url: '/Fieldbook/TrialManager/openTrial/load/measurement',
+                        type: 'GET',
+                        data: '',
+                        cache: false,
+                        success: function (html) {
+                            $('#measurementsDiv').html(html);
+                        }
+                    });
+                }
+            };
+
+            var notifySaveEventListeners = function () {
+                angular.forEach(saveEventListeners, function (saveListenerFunction) {
+                    saveListenerFunction();
+                });
             };
 
             var VariablePairService = $resource("/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id", {id: '@id'}, { 'get': {method: 'get', isArray: true} });
@@ -342,9 +347,9 @@
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
                     // TODO FIXME IMPT: PLEASE find a way not to use jQuery inside angular's services or controllers as this is an anti-pattern for working with angular
-                	if($('#folderId').val() !== ''){
-                		service.currentData.basicDetails.folderId = $('#folderId').val();
-                	}
+                    if ($('#folderId').val() !== '') {
+                        service.currentData.basicDetails.folderId = $('#folderId').val();
+                    }
                     if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // TODO : double check
                         if (!service.isOpenTrial()) {
@@ -354,22 +359,28 @@
                                         showSuccessfulMessage('', saveSuccessMessage);
                                         /*updateTrialDataAfterCreation(generatedID);*/
                                         window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
+                                        notifySaveEventListeners();
                                     });
                                 });
                         } else {
                             if (service.trialMeasurement.count > 0) {
-                                    $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(recreateSessionVariablesTrial);
-                                } else {
-                                    $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList).then(function() {
-                                    	loadMeasurementScreen();
-                                    	showSuccessfulMessage('', saveSuccessMessage);                                    	
-                                    	//we also hide the update button
-                                    });
-                                }
-
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function () {
+                                    recreateSessionVariablesTrial();
+                                    notifySaveEventListeners();
+                                });
+                            } else {
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList).then(function () {
+                                    loadMeasurementScreen();
+                                    showSuccessfulMessage('', saveSuccessMessage);
+                                    notifySaveEventListeners();
+                                    //we also hide the update button
+                                });
                             }
 
+                        }
+
                     }
+
                 },
                 registerData: function (dataKey, updateFunction) {
                     if (!dataRegistry[dataKey]) {
@@ -398,6 +409,10 @@
                     } else if (settingRegistry[key].indexOf(updateFunction) === -1) {
                         settingRegistry[key].push(updateFunction);
                     }
+                },
+
+                registerSaveListener: function (name, saveListenerFunction) {
+                    saveEventListeners[name] = saveListenerFunction;
                 },
 
                 getSettingsArray: function () {
@@ -470,21 +485,23 @@
             };
 
             return service;
-        }])
+        }
+    ])
 
-        .filter('filterMeasurementState',function() {
-            return function (tabs,isOpenTrial) {
+        .
+        filter('filterMeasurementState', function () {
+            return function (tabs, isOpenTrial) {
                 var filtered = angular.copy(tabs);
 
                 for (var i = 0; i < filtered.length; i++) {
                     if (filtered[i].state === 'editMeasurements' && isOpenTrial) {
-                        filtered.splice(i,1);
+                        filtered.splice(i, 1);
 
                         break;
                     }
 
                     else if (filtered[i].state === 'openMeasurements' && !isOpenTrial) {
-                        filtered.splice(i,1);
+                        filtered.splice(i, 1);
 
                         break;
                     }
@@ -494,9 +511,10 @@
             };
         });
 
-    // README IMPORTANT: Code unmanaged by angular should go here
+// README IMPORTANT: Code unmanaged by angular should go here
     document.onInitManageTrial = function () {
-
+        // do nothing for now
     };
 
-})();
+})
+();

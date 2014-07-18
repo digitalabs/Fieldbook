@@ -33,6 +33,12 @@
                 $scope.updateOccurred = true;
             });
 
+            $scope.handleSaveEvent = function() {
+                $scope.updateOccurred = false;
+            };
+
+            TrialManagerDataService.registerSaveListener('germplasmUpdate', $scope.handleSaveEvent);
+
             $scope.displayUpdateButton = function() {
                 return $scope.updateOccurred && $scope.listAvailable();
             };

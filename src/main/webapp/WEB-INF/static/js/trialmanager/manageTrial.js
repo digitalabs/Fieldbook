@@ -3,7 +3,7 @@
  */
 
 /*global angular, changeBuildOption, isStudyNameUnique, showSuccessfulMessage,
- showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree,alert, displayStudyGermplasmSection*/
+ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree,alert, displayStudyGermplasmSection,saveSuccessMessage*/
 
 (function () {
     'use strict';
@@ -158,16 +158,18 @@
                 });
             };
 
-            $scope.displayMeasurementOnlyActions = TrialManagerDataService.trialMeasurement.count &&
-                TrialManagerDataService.trialMeasurement.count > 0;
+            $scope.displayMeasurementOnlyActions = function() {
+                return TrialManagerDataService.trialMeasurement.count &&
+                    TrialManagerDataService.trialMeasurement.count > 0;
+            };
         }]);
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q', '$location',
+        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
         function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
                   EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA,
-                  BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,$location) {
+                  BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q) {
 
             var extractData = function (initialData) {
                 if (!initialData) {
@@ -202,6 +204,7 @@
 
                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                         service.trialMeasurement.count);
+                    /*$('#studyId').val(trialID);*/
                 });
             };
 

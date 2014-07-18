@@ -341,6 +341,7 @@
                 extractData: extractData,
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
+                    // TODO FIXME IMPT: PLEASE find a way not to use jQuery inside angular's services or controllers as this is an anti-pattern for working with angular
                 	if($('#folderId').val() !== ''){
                 		service.currentData.basicDetails.folderId = $('#folderId').val();
                 	}

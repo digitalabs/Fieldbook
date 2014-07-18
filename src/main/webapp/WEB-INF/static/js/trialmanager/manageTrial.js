@@ -144,6 +144,14 @@
                 openStudyTree(3, $scope.useExistingTrial);
             };
 
+            $scope.changeFolderLocation = function() {
+                openStudyTree(2, $scope.updateSelectedFolder);
+            };
+
+            $scope.updateSelectedFolder = function(folderID) {
+                TrialManagerDataService.currentData.basicDetails.folderId = folderID;
+            };
+
             $scope.useExistingTrial = function (existingTrialID) {
                 $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
                     // update data and settings
@@ -347,9 +355,6 @@
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
                     // TODO FIXME IMPT: PLEASE find a way not to use jQuery inside angular's services or controllers as this is an anti-pattern for working with angular
-                    if ($('#folderId').val() !== '') {
-                        service.currentData.basicDetails.folderId = $('#folderId').val();
-                    }
                     if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // TODO : double check
                         if (!service.isOpenTrial()) {
@@ -369,10 +374,11 @@
                                     notifySaveEventListeners();
                                 });
                             } else {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList).then(function () {
-                                    loadMeasurementScreen();
-                                    showSuccessfulMessage('', saveSuccessMessage);
-                                    notifySaveEventListeners();
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
+                                    success(submitGermplasmList).then(function () {
+                                        loadMeasurementScreen();
+                                        showSuccessfulMessage('', saveSuccessMessage);
+                                        notifySaveEventListeners();
                                     //we also hide the update button
                                 });
                             }

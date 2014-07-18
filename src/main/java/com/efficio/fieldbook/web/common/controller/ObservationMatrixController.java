@@ -175,7 +175,7 @@ public class ObservationMatrixController extends
     }
     @ResponseBody
     @RequestMapping(value="/data/table/ajax", method = RequestMethod.GET)
-    public Map<String, Object> demoPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+    public List<Map<String, Object>> demoPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	
     	UserSelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
@@ -191,10 +191,8 @@ public class ObservationMatrixController extends
     		
     		masterList.add(dataMap);
     	}
-    	HashMap<String, Object> map = new HashMap<String, Object>();
-    	map.put("data", masterList);
-    	//map.put("columns", masterColumnList);    	
-    	return map;
+   	
+    	return masterList;
     }
     @ResponseBody
     @RequestMapping(value="/data/table/ajax/submit/{index}", method = RequestMethod.POST)

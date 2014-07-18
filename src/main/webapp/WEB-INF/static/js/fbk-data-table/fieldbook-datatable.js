@@ -22,7 +22,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function MeasurementsDataTable(tableIdentifier, ajaxUrl) {
+	var dataTableConstructor = function MeasurementsDataTable(tableIdentifier, dataList) {
 		'use strict';
 
 		var columns = [],
@@ -67,9 +67,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				});
 			}
 		});
-		
 		table = $(tableIdentifier).DataTable({
-			ajax: ajaxUrl,
+			data: dataList,
 			columns: columns,
 			scrollY: '500px',
 			scrollX: '100%',
@@ -89,13 +88,14 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			fnInitComplete: function(oSettings, json) {
 				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
 				// There is a bug in datatable for now				
-				setTimeout(function(){oSettings.oInstance.fnAdjustColumnSizing(); 				
-				}, 1000);
+				
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 			},
 			language: {
 				search: '<span class="mdt-filtering-label">Search:</span>'
 			},
-			dom: 'JR<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
 			// For column visibility
 			colVis: {
 				exclude: [0],

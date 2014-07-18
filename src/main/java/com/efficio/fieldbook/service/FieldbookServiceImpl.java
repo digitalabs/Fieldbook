@@ -163,7 +163,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 	public List<StandardVariableReference> filterStandardVariablesForTrialSetting(int mode, Collection<SettingDetail> selectedList)
 	throws MiddlewareQueryException {
 		
-		List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
+		List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();		
 
 		Set<Integer> selectedIds = new HashSet<Integer>();
 		if (selectedList != null && !selectedList.isEmpty()) {
@@ -178,8 +178,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 		}
 		else {
 			List<Integer> storedInIds = getStoredInIdsByMode(mode, false);
-			dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, new ArrayList<Integer>(),
-                    mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt());
+			List<Integer> propertyIds = getPropertyIdsByMode(mode);
+			dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, propertyIds,
+					 mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt() ? true : false);
 		}
 		
 		if (dbList != null && !dbList.isEmpty()) {
@@ -193,15 +194,18 @@ public class FieldbookServiceImpl implements FieldbookService{
 								 || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()
 								 || ref.getId().intValue() == TermId.DATASET_NAME.getId()
 								 || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
-								 || ref.getId().intValue() == TermId.DATASET_TYPE.getId())
+								 || ref.getId().intValue() == TermId.DATASET_TYPE.getId()){
 							 continue;
+						 }else if(inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_MANAGEMENT_SETTINGS_FIELDS.getString())){
+							 continue;
+						 }
 						 
 			         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
 		                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
 		                     continue;
 		                 }
 			         } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
-		                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())) {
+		                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString()) || inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getString())) {
 		                     continue;
 		                 }
 			         } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {

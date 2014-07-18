@@ -85,7 +85,7 @@
             // add items if no of levels is more thant array
             else {
                 for (var j = 0; j < diff; j++) {
-                    $scope.currentData[key].labels.push(0);
+                    $scope.currentData[key].labels.push(null);
                 }
             }
 

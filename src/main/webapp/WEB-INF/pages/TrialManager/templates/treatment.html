@@ -61,7 +61,7 @@
                 <!-- title -->
                 <div><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.specify.level}">Specify Treatment Factor Levels</strong></div>
 
-                <div class='treatment-level-item' ng-repeat="key in settings.keys() track by key">
+                <div class='horizontal-level-item' ng-repeat="key in settings.keys() track by key">
                     <div class="row">
                         <div class="col-lg-12 add-bottom-padding">
                             <span class="sub-content-heading" style="text-transform: uppercase"><b>{{settings.val(key).variable.name}}</b> : <b>{{settings.val(key).variable.description}}</b></span>

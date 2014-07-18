@@ -2,7 +2,7 @@
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <!-- management details title -->
 
-        <section-container th:attr="heading=#{fb.study.managementdetails},reminder=#{section.reminder.to.add.records}" show-reminder="settings.keys().length &lt;= 0" add-variable="true" hide-variable="addVariable" model-data="settings" variable-type="1">
+        <section-container th:attr="heading=#{fb.study.managementdetails},reminder=#{section.reminder.to.add.records},help-tooltip=#{trial.managesettings.management.details.tooltip}" show-reminder="settings.keys().length &lt;= 0" add-variable="true" hide-variable="addVariable" model-data="settings" variable-type="1">
             <div name="content">
                 <div class="row form-group" ng-repeat="key in settings.keys() track by key">
                     <div class="col-xs-5 1st">

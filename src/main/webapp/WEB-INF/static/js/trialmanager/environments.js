@@ -29,11 +29,9 @@
                 angular.copy(newValue, $scope.settings);
             });
 
-            // storage of number of environments uses a temp variable to account for user temporarily deleting contents of field to enter new value
             $scope.temp = {
-            };
-
-            $scope.temp.settingMap = {};
+                settingMap : {}
+            }
 
             $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
             

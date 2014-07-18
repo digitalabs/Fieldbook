@@ -1349,14 +1349,14 @@ label[data-toggle="collapse"],
 	top: 10px;
 }
 
-.treatment-level-item {
+.horizontal-level-item {
     border-bottom: 1px solid gainsboro;
     margin-top: 10pt;
     margin-bottom: 10pt;
     padding-bottom: 10pt;
 }
 
-.treatment-level-item:last-child {
+.horizontal-level-item:last-child {
     border-bottom: none;
     margin-bottom: 10pt;
     padding-bottom: 0;

@@ -5,7 +5,7 @@
             <div class="environments col-lg-12">
                 <div class="row">
                     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12 add-bottom-padding">
-                        <label class="control-label">Specify the number of environments for this trial:</label>
+                        <label class="control-label" th:text="#{trial.managesettings.trial.environment.specify.level.no}">Specify the number of environments for this trial:</label>
                         <div class="pull-right">
                             <input valid-number="" class="form-control" ng-model="data.noOfEnvironments"/>
                         </div>
@@ -15,13 +15,13 @@
                 <div class="row">
                     <div class="col-xs-6 col-md-6">
 
-                        <section-container heading="MANAGEMENT DETAILS" add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails" variable-type="4">
+                        <section-container th:attr="heading=#{trial.managesettings.trial.environment.management.details},help-tooltip=#{trial.managesettings.management.details.tooltip}" add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails" variable-type="4">
                             <display-settings name="content" settings="settings.managementDetails" variable-type="4"></display-settings>
                         </section-container>
 
                     </div>
                     <div class="col-xs-6 col-md-6">
-                        <section-container heading="TRIAL CONDITION DETAILS" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails" variable-type="7">
+                        <section-container th:attr="heading=#{trial.managesettings.trial.environment.trial.condition.details},help-tooltip=#{trial.managesettings.trial.conditions.tooltip}" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails" variable-type="7">
                             <display-settings name="content" settings="settings.trialConditionDetails" variable-type="7"></display-settings>
                         </section-container>
                     </div>
@@ -30,38 +30,44 @@
         </div>
     </section-container>
 
-    <div ng-repeat="environment in data.environments">
-        <div class="row col-xs-12">
-            <label class="control-label" style="text-transform: uppercase">
-                <strong class="sub-content-heading">Environment {{$index + 1}}</strong>
-            </label>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 col-md-6">
-                <div class="row form-group" ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">
-                    <div class="col-xs-5 1st">
+    <div class="col-md-12" style="padding-top: 20px">
+        <strong class="sub-content-heading" th:text="#{trial.managesettings.trial.environment.specify.level}">Specify Environment-Level Details</strong>
+    </div>
+
+    <div class="col-md-12">
+        <div class="horizontal-level-item" ng-repeat="environment in data.environments">
+            <div class="row">
+                <label class="control-label col-md-12" style="text-transform: uppercase">
+                    <strong class="sub-content-heading add-bottom-padding"><span th:text="#{trial.managesettings.trial.environment.label}">Environment</span> {{$index + 1}}</strong>
+                </label>
+            </div>
+            <div class="row form-horizontal">
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group" ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">
+                        <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
                         label-bold var-names">{{settings.managementDetails.val(key).variable.name}}</span>
-                    </div>
-                    <div class="col-xs-7 2nd">
-                        <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
-                                                   valuecontainer="environment.managementDetailValues"></show-setting-form-element>
+                        </div>
+                        <div class="col-xs-7 2nd">
+                            <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
+                                                       valuecontainer="environment.managementDetailValues"></show-setting-form-element>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xs-6 col-md-6">
-                <div class="row form-group" ng-repeat="key in settings.trialConditionDetails.keys()">
-                    <div class="col-xs-5 1st">
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group" ng-repeat="key in settings.trialConditionDetails.keys()">
+                        <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
                         label-bold var-names">{{settings.trialConditionDetails.val(key).variable.name}}</span>
-                    </div>
-                    <div class="col-xs-7 2nd">
-                        <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
-                                                   valuecontainer="environment.trialDetailValues"></show-setting-form-element>
+                        </div>
+                        <div class="col-xs-7 2nd">
+                            <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
+                                                       valuecontainer="environment.trialDetailValues"></show-setting-form-element>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
 </div>

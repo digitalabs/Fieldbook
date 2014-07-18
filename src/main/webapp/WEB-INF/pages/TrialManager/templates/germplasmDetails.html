@@ -6,10 +6,11 @@
                            collapsible="true">
 
             <span name="action-buttons">
-                    <span class="btn btn-primary" ng-show="updateOccurred" ng-click="updateDataTable()">
-                        <span class="glyphicon glyphicon-refresh"></span> Update
-                    </span>
-                    <span select-standard-variable="" ng-show="addVariable" modeldata="settings" variable-type="8" class="btn btn-info" >Add</span>
+                <span class="btn btn-primary" ng-show="displayUpdateButton()" ng-click="updateDataTable()">
+                    <span class="glyphicon glyphicon-refresh"></span> Update
+                </span>
+
+                <span select-standard-variable="" ng-show="addVariable" modeldata="settings" variable-type="8" class="btn btn-info" >Add</span>
             </span>
 
             <section-container name="content" th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
@@ -89,18 +90,18 @@
 <div th:include="/Common/browseGermplasmList"></div>
 
 <div class="row">
-	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListModal"></div>
+	<div th:include="/NurseryManager/includes/importGermplasmListModal"></div>
 </div>
 
 <div class="row">
-	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListManageCheckType"></div>
+	<div th:include="/NurseryManager/includes/importGermplasmListManageCheckType"></div>
 </div>
 
 <div class="row">
-	<div id="open-germplasm" th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
+	<div th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
 </div>
 <div class="row">
-	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
+	<div th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
 
 </div>

@@ -33,6 +33,15 @@
                 $scope.updateOccurred = true;
             });
 
+            $scope.displayUpdateButton = function() {
+                return $scope.updateOccurred && $scope.listAvailable();
+            };
+
+            $scope.listAvailable = function() {
+                var entryHtml = $('#numberOfEntries').html();
+                return (entryHtml !== '' && parseInt(entryHtml,10) > 0);
+            };
+
             $scope.updateSettings = function(newValue) {
                 angular.copy(newValue, $scope.settings);
                 $scope.updateOccurred = true;
@@ -104,7 +113,15 @@
         initializeCheckTypeSelect2(document.checkTypes, [], false, 0, 'comboCheckCode');
         $('#updateCheckTypes').hide();
         $('#deleteCheckTypes').hide();
-        $('.show-germplasm-details').on('click', showGermplasmDetailsSection);
+
+
+        // this is the handler for when user clicks on the Replace button
+        $('.show-germplasm-details').on('click', function() {
+            showGermplasmDetailsSection();
+
+            $('#imported-germplasm-list').html('<H3></H3>');
+            $('#imported-germplasm-list').show();
+        });
         //displayEditFactorsAndGermplasmSection();
     };
 

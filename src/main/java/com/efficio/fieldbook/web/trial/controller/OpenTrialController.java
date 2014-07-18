@@ -109,7 +109,7 @@ public class OpenTrialController extends
 				userSelection.setMeasurementRowList(workbook.getObservations());
 				form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
 	            form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
-	            model.addAttribute("measurementRowCount", workbook.getObservations().size());
+	            model.addAttribute("measurementRowCount", workbook.getObservations() != null ? workbook.getObservations().size() : 0);
 			} catch (MiddlewareQueryException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

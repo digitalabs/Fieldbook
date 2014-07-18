@@ -106,15 +106,15 @@
                 {   'name': 'Trial Settings',
                     'state': 'trialSettings'
                 },
-                {   'name': 'Environments',
-                    'state': 'environment'
-                },
                 {   'name': 'Germplasm',
                     'state': 'germplasm'
                 },
                 {   'name': 'Treatment Factors',
                     'state': 'treatment'
                 },
+                {   'name': 'Environments',
+                    'state': 'environment'
+                },                
                 {   'name': 'Experimental Design',
                     'state': 'experimentalDesign'
                 },

@@ -327,6 +327,7 @@
                 extractData: extractData,
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
+                	service.currentData.basicDetails.folderId = $('#folderId').val();                	
                     if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // TODO : double check
                         if (!service.isOpenTrial()) {

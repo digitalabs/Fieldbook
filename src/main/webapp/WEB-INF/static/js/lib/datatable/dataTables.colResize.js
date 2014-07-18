@@ -670,4 +670,3 @@ var dt;
         "sFeature": "ColResize"
     });
 }(window, document, undefined));
-//# sourceMappingURL=dataTables.colResize.js.map

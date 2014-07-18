@@ -115,7 +115,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
 		//new $.fn.dataTable.FixedColumns(table, {iLeftColumns: 3});
 
-		$('.mdt-columns').detach().insertBefore('.mdt-filtering');
+		$('#measurementsDiv .mdt-columns').detach().insertBefore('.mdt-filtering');
 		$('.measurement-dropdown-menu a').click(function(e) {
 			var column;
 
@@ -372,7 +372,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 		
 		
 		$('.col-show-hide').html('');
-		$('.col-show-hide').html($('.mdt-columns').clone().removeClass('fbk-hide'));
+		$('.col-show-hide').html($(parentDiv + ' .mdt-columns').clone().removeClass('fbk-hide'));
 		
 		$('.germplasm-dropdown-menu a').click(function(e) {
 			

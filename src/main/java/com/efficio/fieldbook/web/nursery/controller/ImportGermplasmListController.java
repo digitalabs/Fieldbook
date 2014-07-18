@@ -322,6 +322,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 				
 				if(!isNursery){
 					germplasm.setCheck(defaultTestCheckId);
+					germplasm.setCheckId(Integer.valueOf(defaultTestCheckId));
 					dataMap.put("check", defaultTestCheckId);
 					
 					List<SettingDetail> factorsList = userSelection.getPlotsLevelList();
@@ -739,6 +740,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     			importedCheckGermplasm = getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(form.getIndex());	
         	}
         	importedCheckGermplasm.setCheck(form.getCheckVal());
+        	importedCheckGermplasm.setCheckId(Integer.valueOf(form.getCheckVal()));
         	
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

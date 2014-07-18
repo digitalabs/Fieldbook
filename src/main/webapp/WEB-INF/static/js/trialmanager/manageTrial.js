@@ -245,7 +245,7 @@
 
                 var serializedData = $form.serialize();
                 var d = $q.defer();
-                $http.post('/Fieldbook/NurseryManager/importGermplasmList/next', serializedData).success(function (data) {
+                $http.post('/Fieldbook/TrialManager/GermplasmList/next', serializedData).success(function (data) {
                     d.resolve(data);
                 });
                 return d.promise;
@@ -343,7 +343,8 @@
                                     $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(recreateSessionVariablesTrial);
                                 } else {
                                     $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList).then(function() {
-                                    	showSuccessfulMessage('', saveSuccessMessage);
+                                    	showSuccessfulMessage('', saveSuccessMessage);                                    	
+                                    	//we also hide the update button
                                     });
                                 }
 

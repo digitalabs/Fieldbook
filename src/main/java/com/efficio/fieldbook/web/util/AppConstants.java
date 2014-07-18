@@ -254,6 +254,7 @@ public enum AppConstants {
     ,TABLE_HEADER_KEY_SUFFIX
     
     ,TRIAL_BASIC_REQUIRED_FIELDS
+    ,EXP_DESIGN_TIME_LIMIT
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

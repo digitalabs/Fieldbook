@@ -75,7 +75,7 @@ public class ResolvableRowColumnDesignServiceImpl implements
 				
 				measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
 						nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
-						mainDesign, workbenchService, fieldbookProperties, stdvarTreatment, null);					
+						mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null);					
 				
 			}catch(Exception e){
 				e.printStackTrace();

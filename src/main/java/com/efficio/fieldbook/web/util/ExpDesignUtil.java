@@ -19,7 +19,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -29,16 +28,12 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.Tool;
-import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.ImportStudyController;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
@@ -56,6 +51,7 @@ public class ExpDesignUtil {
 	private static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
 	private static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
 	private static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
+	public static String TREATMENT_PREFIX = "_";
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 	
@@ -230,6 +226,9 @@ public class ExpDesignUtil {
 			String nReplicates, String nRows, String nColumns, String treatmentFactor, String replicateFactor, 
 			String rowFactor, String columnFactor,String plotFactor,
 			String nrLatin, String ncLatin, String replatingGroups, String timeLimit, String outputfile){
+		//we override the timelimit from the propfile
+		
+		timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(createExpDesignParameter("ntreatments", nTreatments, null));
@@ -305,7 +304,7 @@ public class ExpDesignUtil {
 					
 				}else if (var.getTreatmentLabel() != null && !"".equals(var.getTreatmentLabel())) {
 					if (treatmentLevelData == null){
-						measurementData = new MeasurementData(var.getName(), bvEntryMap.get(Integer.toString(var.getTermId())), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(), bvEntryMap.get(TREATMENT_PREFIX+Integer.toString(var.getTermId())), false, var.getDataType(), var);
 						treatmentLevelData = measurementData;
 					} else {
 						String level = treatmentLevelData.getValue();
@@ -336,7 +335,7 @@ public class ExpDesignUtil {
 			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables, List<StandardVariable> requiredExpDesignVariable, 
 			List<ImportedGermplasm> germplasmList, MainDesign mainDesign, WorkbenchService workbenchService, 
-			FieldbookProperties fieldbookProperties, StandardVariable stdvarTreatment, Map<String, List<String>> treatmentFactorValues) throws JAXBException, IOException, MiddlewareQueryException{
+			FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues) throws JAXBException, IOException, MiddlewareQueryException{
 		List<MeasurementRow> measurementRowList = new ArrayList();
 		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();			
 		varList.addAll(nonTrialFactors);
@@ -359,7 +358,7 @@ public class ExpDesignUtil {
 			
 			if(bvOutput.isSuccess()){
 				for(int counter = 0 ; counter < bvOutput.getBvResultList().size() ; counter++){
-					String entryNo = bvOutput.getEntryValue(stdvarTreatment.getName(), counter);
+					String entryNo = bvOutput.getEntryValue(entryNumberIdentifier, counter);
 					if(NumberUtils.isNumber(entryNo)){
 						int germplasmIndex = Integer.valueOf(entryNo) - 1;
 						if(germplasmIndex >= 0 && germplasmIndex < germplasmList.size()){

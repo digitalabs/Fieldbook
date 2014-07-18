@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
@@ -37,7 +39,9 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
+import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
@@ -57,6 +61,10 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
     private FieldbookProperties fieldbookProperties;
 	@Autowired
     private ResolvableIncompleteBlockDesignService resolveIncompleteBlockDesign;
+	@Autowired
+    private ResolvableRowColumnDesignService resolveRowColumn;
+	@Autowired
+    private RandomizeCompleteBlockDesignService randomizeBlockDesign;
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
@@ -308,6 +316,95 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			for(MeasurementRow measurementRow : measurementRowList){
 				System.out.println(measurementRow.toString());
 			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testResolvableRowColumnDesignService() {
+			
+		
+		try {
+			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 200);
+			Map<String, String> parameterMap = new HashMap();
+			parameterMap.put("rows", "2");
+			parameterMap.put("cols", "100");	    	
+			parameterMap.put("replicates", "2");
+			parameterMap.put("environments", "2");			
+			
+			//number of replicates should be 2 or more
+			
+			List<MeasurementVariable> factors = new ArrayList();		
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        
+	        List<MeasurementVariable> variates = new ArrayList();		
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+        		
+	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, parameterMap, factors, 
+					variates, null, null);
+			for(MeasurementRow measurementRow : measurementRowList){
+				System.out.println(measurementRow.toString());
+			}
+			
+			assertEquals(800, measurementRowList.size());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testRandomizeCompleteBlockDesignService() {
+			
+		
+		try {
+			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 200);
+			Map<String, String> parameterMap = new HashMap();    	
+			parameterMap.put("block", "2");
+			parameterMap.put("environments", "2");			
+			Map<String, List<String>> treatmentFactorValues = new HashMap();
+			List<TreatmentVariable> treatmentVarList = new ArrayList();
+			
+			
+			treatmentFactorValues.put("8230", Arrays.asList("200"));
+			treatmentFactorValues.put("8284", Arrays.asList("100", "200", "300"));
+			treatmentFactorValues.put("8377", Arrays.asList("100", "200", "300"));
+			
+			TreatmentVariable treatmentVar1 = new TreatmentVariable();
+			treatmentVar1.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8284), Operation.ADD));
+			treatmentVar1.setValueVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8282), Operation.ADD));
+
+			
+			TreatmentVariable treatmentVar2 = new TreatmentVariable();
+			treatmentVar2.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8377), Operation.ADD));
+			treatmentVar2.setValueVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8263), Operation.ADD));
+
+			treatmentVarList.add(treatmentVar2);
+
+			
+			//number of replicates should be 2 or more
+			
+			List<MeasurementVariable> factors = new ArrayList();		
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        
+	        List<MeasurementVariable> variates = new ArrayList();		
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+        		
+	        List<MeasurementRow> measurementRowList = randomizeBlockDesign.generateDesign(germplasmList, parameterMap, factors, 
+					variates, treatmentVarList, treatmentFactorValues);
+			for(MeasurementRow measurementRow : measurementRowList){
+				System.out.println(measurementRow.toString());
+			}
+			
+			assertEquals(7200, measurementRowList.size());
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -31,7 +31,6 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	protected WorkbenchService workbenchService;
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
-	
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
 			Map<String, String> parameterMap, 
@@ -41,9 +40,9 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		String block = parameterMap.get("block");	
+		int environments = Integer.valueOf(parameterMap.get("environments"));
 		
 		try {
-			int environments = Integer.valueOf(parameterMap.get("environments"));
 			
 			List<String> treatmentFactor = new ArrayList<String>();
 			List<String> levels = new ArrayList<String>();
@@ -52,8 +51,12 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				Set<String> keySet = treatmentFactorValues.keySet();
 				for(String key : keySet){
 					int level = treatmentFactorValues.get(key).size();
-					treatmentFactor.add(key);					
-					levels.add(Integer.toString(level));					
+					treatmentFactor.add(ExpDesignUtil.TREATMENT_PREFIX + key);										
+					if(key != null && key.equalsIgnoreCase(Integer.toString(TermId.ENTRY_NO.getId()))){
+						levels.add(treatmentFactorValues.get(key).get(0));	
+					}else{
+						levels.add(Integer.toString(level));
+					}
 				}
 			}
 			
@@ -78,13 +81,13 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			
 			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
 					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
-					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment, treatmentFactorValues);					
+					mainDesign, workbenchService, fieldbookProperties, (TREATMENT_PREFIX + stdvarTreatment.getId()), treatmentFactorValues);					
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
-		return null;
+		return measurementRowList;
 	}
 	
 	@Override

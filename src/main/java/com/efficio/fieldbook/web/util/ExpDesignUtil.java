@@ -269,7 +269,6 @@ public class ExpDesignUtil {
 	throws MiddlewareQueryException {
 		MeasurementRow measurementRow = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-		boolean isNextIsTreatmentValue = false;
 		MeasurementData treatmentLevelData = null;
 		for(MeasurementVariable var : headerVariable){
 			

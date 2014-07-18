@@ -3,7 +3,7 @@
  */
 
 /*global angular, changeBuildOption, isStudyNameUnique, showSuccessfulMessage,
- showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree,alert*/
+ showInvalidInputMessage, nurseryFieldsIsRequired, validateStartEndDateBasic, openStudyTree,alert, displayStudyGermplasmSection*/
 
 (function () {
     'use strict';
@@ -55,12 +55,19 @@
 
             .state('createMeasurements', {
                 url: '/createMeasurements',
-                templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
+                templateUrl: '/Fieldbook/TrialManager/createTrial/measurements',
+                controller: 'MeasurementsCtrl'
             })
 
             .state('editMeasurements', {
                 url: '/editMeasurements',
-                templateUrl: '/Fieldbook/TrialManager/openTrial/measurements'
+                views: {
+                    'editMeasurements': {
+                        controller: 'GermplasmCtrl',
+                        templateUrl: '/Fieldbook/TrialManager/openTrial/measurements'
+                    }
+                },
+                deepStateRedirect: true, sticky: true
             });
 
     });
@@ -112,8 +119,13 @@
                     'state': 'experimentalDesign'
                 },
                 {   'name': 'Measurements',
-                    'state': TrialManagerDataService.isOpenTrial() ? 'editMeasurements' : 'createMeasurements'
+                    'state':'createMeasurements'
+                },
+                {
+                    'name': 'Measurements',
+                    'state': 'editMeasurements'
                 }
+
             ];
 
             $scope.isOpenTrial = TrialManagerDataService.isOpenTrial;
@@ -237,8 +249,6 @@
             };
             
             var recreateSessionVariablesTrial = function () {
-                'use strict';
-
                 $.ajax({
                     url: '/Fieldbook/TrialManager/openTrial/recreate/session/variables',
                     type: 'GET',
@@ -326,13 +336,13 @@
                                     });
                                 });
                         } else {
-                        	if (service.trialMeasurement.count > 0) {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(recreateSessionVariablesTrial);
-                            } else {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList);
-                            }
+                            if (service.trialMeasurement.count > 0) {
+                                    $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(recreateSessionVariablesTrial);
+                                } else {
+                                    $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList);
+                                }
 
-                        }
+                            }
 
                     }
                 },
@@ -435,10 +445,33 @@
             };
 
             return service;
-        }]);
+        }])
+
+        .filter('filterMeasurementState',function() {
+            return function (tabs,isOpenTrial) {
+                var filtered = angular.copy(tabs);
+
+                for (var i = 0; i < filtered.length; i++) {
+                    if (filtered[i].state === 'editMeasurements' && isOpenTrial) {
+                        filtered.splice(i,1);
+
+                        break;
+                    }
+
+                    else if (filtered[i].state === 'openMeasurements' && !isOpenTrial) {
+                        filtered.splice(i,1);
+
+                        break;
+                    }
+                }
+
+                return filtered;
+            };
+        });
 
     // README IMPORTANT: Code unmanaged by angular should go here
     document.onInitManageTrial = function () {
+
     };
 
 })();

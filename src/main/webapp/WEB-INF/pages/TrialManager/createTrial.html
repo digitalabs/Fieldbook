@@ -196,8 +196,7 @@
 
 <!-- tab + content -->
 <ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
-    <li ng-repeat="tab in trialTabs" ng-class="{active: $state.includes(tab.state)}"><a ui-sref="{{tab.state}}">{{tab.name}}</a></li>
-
+    <li ng-repeat="tab in trialTabs"  ng-class="{active: $state.includes(tab.state)}" ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())"><a ui-sref="{{tab.state}}">{{tab.name}}</a></li>
 </ul>
 
 
@@ -206,6 +205,7 @@
     <div class="info">
         <div class="col-xs-12" ui-view=""></div>
         <div class="col-xs-12" ui-view="germplasm" ng-show="$state.includes('germplasm')"></div>
+        <div class="col-xs-12" ui-view="editMeasurements" ng-show="$state.includes('editMeasurements')"></div>
     </div>
 </div>
 

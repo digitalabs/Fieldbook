@@ -178,6 +178,11 @@ function chooseStudyNode(node, fromEnterKey) {
                 showErrorMessage('page-study-tree-message-modal', chooseProgramListFolderError);
             } else {
                 var folderDataId = node.data.key === 'LOCAL' ? 1 : node.data.key;
+
+                if (selectStudyFunction) {
+                    selectStudyFunction(folderDataId);
+                }
+
                 $('#folderId').val(folderDataId);
                 $('#folderName').val(node.data.title);
                 $('#folderNameLabel').html(node.data.title);

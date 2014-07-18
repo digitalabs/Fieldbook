@@ -109,6 +109,7 @@ public class OpenTrialController extends
 				userSelection.setMeasurementRowList(workbook.getObservations());
 				form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
 	            form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+	            model.addAttribute("measurementRowCount", workbook.getObservations().size());
 			} catch (MiddlewareQueryException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -307,8 +308,28 @@ public class OpenTrialController extends
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
         
         resetSessionVariablesAfterSave(workbook, false);
-        
-        //set measurements data
+        return loadMeasurementDataPage(form, workbook, model);
+    }
+
+    /**
+     * Reset session variables after save.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    @RequestMapping(value="/load/measurement", method = RequestMethod.GET)
+    public String loadMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
+            HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+        Workbook workbook = userSelection.getWorkbook();
+        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));        
+        return loadMeasurementDataPage(form, workbook, model);
+    }
+    
+    private String loadMeasurementDataPage(CreateNurseryForm form, Workbook workbook, Model model) throws MiddlewareQueryException{
+    	 //set measurements data
         userSelection.setMeasurementRowList(workbook.getObservations());
         userSelection.setWorkbook(workbook);
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
@@ -318,5 +339,4 @@ public class OpenTrialController extends
         
         return super.showAjaxPage(model, URL_DATATABLE);
     }
-
 }

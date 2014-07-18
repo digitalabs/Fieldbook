@@ -263,6 +263,20 @@
                     }
                 });
             };
+            
+            var loadMeasurementScreen = function () {
+            	if($('.germplasm-list-data-table tr.primaryRow').length !== 0){
+	                $.ajax({
+	                    url: '/Fieldbook/TrialManager/openTrial/load/measurement',
+	                    type: 'GET',
+	                    data: '',
+	                    cache: false,
+	                    success: function (html) {
+	                        $('#measurementsDiv').html(html);
+	                    }
+	                });
+            	}
+            };
 
             var VariablePairService = $resource("/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id", {id: '@id'}, { 'get': {method: 'get', isArray: true} });
             var GenerateExpDesignService = $resource("/Fieldbook/TrialManager/experimental/design/generate", {}, { });
@@ -327,7 +341,9 @@
                 extractData: extractData,
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
-                	service.currentData.basicDetails.folderId = $('#folderId').val();                	
+                	if($('#folderId').val() !== ''){
+                		service.currentData.basicDetails.folderId = $('#folderId').val();
+                	}
                     if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         // TODO : double check
                         if (!service.isOpenTrial()) {
@@ -344,6 +360,7 @@
                                     $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(recreateSessionVariablesTrial);
                                 } else {
                                     $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList).then(function() {
+                                    	loadMeasurementScreen();
                                     	showSuccessfulMessage('', saveSuccessMessage);                                    	
                                     	//we also hide the update button
                                     });

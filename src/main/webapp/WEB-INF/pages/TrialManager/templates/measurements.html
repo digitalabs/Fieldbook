@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<!-- This is the Measurements Tab -->
-<div th:if="${createTrialForm != null}" id="measurementsDiv">	
-	<div th:include="/Common/showAddOrRemoveTraitsPagination"></div>
+
+<div id="measurementsDiv">	
+	<div th:if="${createTrialForm != null and measurementRowCount != 0}" th:include="/Common/showAddOrRemoveTraitsPagination"></div>
 </div>

@@ -407,7 +407,7 @@ public class EditNurseryController extends SettingsController {
                 
                 fieldbookService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
                 fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION.getString(), true);
-                fieldbookMiddlewareService.saveMeasurementRows(workbook, false);
+                fieldbookMiddlewareService.saveMeasurementRows(workbook);
                 workbook.setTrialObservations(
                 		fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));
                 workbook.setOriginalObservations(workbook.getObservations());

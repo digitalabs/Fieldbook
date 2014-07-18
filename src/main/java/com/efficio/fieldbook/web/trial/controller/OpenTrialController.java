@@ -171,18 +171,6 @@ public class OpenTrialController extends
             combinedList.addAll(studyLevelConditions);
         }
         
-        /***************************check**************************/
-        if (userSelection.getRemovedConditions() != null) {
-            combinedList.addAll(userSelection.getRemovedConditions());
-        }
-        
-        /***************************check**************************/
-        //add hidden variables like OCC in factors list
-        if (userSelection.getRemovedFactors() != null) {
-            userSelection.getPlotsLevelList().addAll(userSelection.getRemovedFactors());
-        }
-        
-        /***************************check**************************/
         if (userSelection.getPlotsLevelList() == null) {
             userSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
         }
@@ -191,6 +179,9 @@ public class OpenTrialController extends
         }
         if (userSelection.getNurseryConditions() == null) {
             userSelection.setNurseryConditions(new ArrayList<SettingDetail>());
+        }
+        if (userSelection.getTrialLevelVariableList() == null) {
+            userSelection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
         }
         
         //include deleted list if measurements are available
@@ -241,8 +232,7 @@ public class OpenTrialController extends
         
         //saving of measurement rows
         if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
-            try {
-                boolean isDeleteTrialDataset = false;
+            try {                
                 WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, userSelection, ontologyService, fieldbookService);
                 WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, userSelection, ontologyService, fieldbookService);
                 
@@ -252,20 +242,8 @@ public class OpenTrialController extends
                 userSelection.setWorkbook(workbook);
                 
                 fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION.getString(), true);
-                fieldbookMiddlewareService.saveMeasurementRows(workbook, isDeleteTrialDataset);
-                //workbook.setTrialObservations(
-                //        fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));
-                //workbook.setOriginalObservations(workbook.getObservations());
-                
-                //resetSessionVariablesAfterSave(workbook, false);
-                
-                //set measurement session variables to form
-                /*
-                model.addAttribute("measurementsData", prepareMeasurementsTabInfo(workbook.getVariates(), false));
-                model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
-                model.addAttribute("measurementRowCount", workbook.getObservations().size());
-                form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
-                */
+                fieldbookMiddlewareService.saveMeasurementRows(workbook);
+
                 return "success";
             } catch (MiddlewareQueryException e) {
                 LOG.error(e.getMessage());

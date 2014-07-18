@@ -114,13 +114,15 @@ public class WorkbookUtil {
                 List<MeasurementData> dataList = new ArrayList<MeasurementData>();
                 for (MeasurementVariable var : variables) {
                     String value = environment.getManagementDetailValues().get(var.getTermId());
-
+                    Integer phenotypeId = null;
                     if (value == null) {
                         value = environment.getTrialDetailValues().get(var.getTermId());
+                        phenotypeId = environment.getPhenotypeIDMap().get(var.getTermId());
                     }
 
                     boolean isEditable = ! (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());
                     MeasurementData data = new MeasurementData(var.getName(), value, isEditable, var.getDataType(), var);
+                    data.setPhenotypeId(phenotypeId);
                     dataList.add(data);
                 }
                 MeasurementRow row = new MeasurementRow(environment.getStockId(), environment.getLocationId(), dataList);

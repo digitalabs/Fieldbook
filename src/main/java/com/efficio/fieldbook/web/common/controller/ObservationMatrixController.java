@@ -130,7 +130,7 @@ public class ObservationMatrixController extends
 
         try { 
         	validationService.validateObservationValues(workbook);
-            fieldbookMiddlewareService.saveMeasurementRows(workbook, false);
+            fieldbookMiddlewareService.saveMeasurementRows(workbook);
             resultMap.put("status", "1");
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

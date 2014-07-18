@@ -365,7 +365,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 								    			userSelection.getWorkbook().getVariates(), 
 								    			userSelection.getWorkbook().getObservations());
     	userSelection.getWorkbook().getVariates().addAll(traits);
-    	fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), false);
+    	fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook());
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
     	userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());

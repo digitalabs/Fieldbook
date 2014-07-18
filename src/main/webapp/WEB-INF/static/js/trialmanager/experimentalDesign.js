@@ -7,14 +7,13 @@
     'use strict';
 
     angular.module('manageTrialApp')
-        .constant("EXPERIMENTAL_DESIGN_PARTIALS_LOC", "/Fieldbook/static/angular-templates/experimentalDesignPartials/")
+        .constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
         .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC','TrialManagerDataService',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC,TrialManagerDataService){
 
             //TODO: temporarily hide features that are not implemented in this release
             $scope.hideFeatures = true;
 
             $scope.settings = {
-                trialEnvironments : TrialManagerDataService.settings.trialSettings.keys().length ? TrialManagerDataService.settings.trialSettings.keys().length : 0,
                 factors: TrialManagerDataService.specialSettings.experimentalDesign.factors,
                 treatmentFactors : TrialManagerDataService.settings.treatmentFactors,
                 treatments: TrialManagerDataService.settings.treatmentFactors.keys().length ? TrialManagerDataService.settings.treatmentFactors.keys().length : 0,
@@ -26,10 +25,12 @@
                     id: 0,
                     name: 'Randomized Complete Block Design',params :'randomizedCompleteBlockParams.html',
                     data: {
+                    	'noOfEnvironments' : TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0,
                         'designType': 0,
                         'replicationsCount' : 5,
                         'treatmentFactors' : $scope.settings.treatmentFactors,
                         'treatmentFactorsData': TrialManagerDataService.currentData.treatmentFactors
+                        
                     },
                     settings: {
                         trialEnvironments: $scope.settings.trialEnvironments,
@@ -42,6 +43,7 @@
                     withResolvable: true,
                     showAdvancedOptions: false,
                     data: {
+                    	'noOfEnvironments' :  TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0,
                         'designType': 1,
                         'isResolvable' : true,
                         'replicationsCount' : 0,
@@ -62,6 +64,7 @@
                     withResolvable: true,
                     showAdvancedOptions: false,
                     data: {
+                    	'noOfEnvironments' :  TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0,
                         'designType': 2,
                         'isResolvable' : true,
                         'replicationsCount': 0,

@@ -31,7 +31,6 @@
 
             // storage of number of environments uses a temp variable to account for user temporarily deleting contents of field to enter new value
             $scope.temp = {
-                noOfEnvironments: $scope.data.noOfEnvironments
             };
 
             $scope.temp.settingMap = {};

@@ -106,7 +106,7 @@ public class ExpDesignController extends
 						treatmentFactorValues.put(key, (List)treatmentData.get("labels"));
 					}
 				}
-				treatmentFactorValues.put(Integer.toString(TermId.ENTRY_NO.getId()), Arrays.asList(germplasmList.size()));
+				treatmentFactorValues.put(Integer.toString(TermId.ENTRY_NO.getId()), Arrays.asList(Integer.toString(germplasmList.size())));
 				//TODO : still need to entry no
 	    		randomizeCompleteBlockDesign.generateDesign(germplasmList, parameterMap, workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors(), treatmentFactorValues);
 	    	}else if(designType == 1){

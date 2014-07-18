@@ -4,7 +4,7 @@
 
         <section-container th:attr="heading=#{fb.study.managementdetails},reminder=#{section.reminder.to.add.records},help-tooltip=#{trial.managesettings.management.details.tooltip}" show-reminder="settings.keys().length &lt;= 0" add-variable="true" hide-variable="addVariable" model-data="settings" variable-type="1">
             <div name="content">
-                <div class="row form-group" ng-repeat="key in settings.keys() track by key">
+                <div class="row form-group" ng-repeat="key in filteredKeys = ( settings.keys() | removeHiddenVariableFilter: settings.vals() ) track by key">
                     <div class="col-xs-5 1st">
                         <span class="delete-icon" style="font-size: 16px;" ng-click="removeVariable(key)"></span>
                         &nbsp;&nbsp;&nbsp;

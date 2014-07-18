@@ -1,13 +1,14 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 
-import org.generationcp.middleware.domain.dms.StandardVariable;
-
 import java.util.HashMap;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +16,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +30,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -101,7 +105,7 @@ public class OpenTrialController extends
 	    Workbook workbook = userSelection.getWorkbook();
         if (workbook != null) {
             try {
-				SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
+				//SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
 				userSelection.setMeasurementRowList(workbook.getObservations());
 				form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
 	            form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
@@ -131,6 +135,7 @@ public class OpenTrialController extends
             model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                     SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             model.addAttribute("measurementRowCount", trialWorkbook.getObservations().size());
+            userSelection.setMeasurementRowList(trialWorkbook.getObservations());
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             form.setStudyId(trialId);
             model.addAttribute("createNurseryForm", form); //so that we can reuse the same age being use for nursery
@@ -139,6 +144,138 @@ public class OpenTrialController extends
 
         return showAngularPage(model);
     }
+    
+    /**
+     * Submit.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST)
+    public String submit(@RequestBody TrialData data) throws MiddlewareQueryException {
+        
+        processEnvironmentData(data.getEnvironments());
+        List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
+        List<SettingDetail> basicDetails = userSelection.getBasicDetails();
+        // transfer over data from user input into the list of setting details stored in the session
+        populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
+
+        List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+        combinedList.addAll(basicDetails);
+
+        if (studyLevelConditions != null) {
+            populateSettingData(studyLevelConditions, data.getTrialSettings().getUserInput());
+            combinedList.addAll(studyLevelConditions);
+        }
+        
+        /***************************check**************************/
+        if (userSelection.getRemovedConditions() != null) {
+            combinedList.addAll(userSelection.getRemovedConditions());
+        }
+        
+        /***************************check**************************/
+        //add hidden variables like OCC in factors list
+        if (userSelection.getRemovedFactors() != null) {
+            userSelection.getPlotsLevelList().addAll(userSelection.getRemovedFactors());
+        }
+        
+        /***************************check**************************/
+        if (userSelection.getPlotsLevelList() == null) {
+            userSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
+        }
+        if (userSelection.getBaselineTraitsList() == null) {
+            userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
+        }
+        if (userSelection.getNurseryConditions() == null) {
+            userSelection.setNurseryConditions(new ArrayList<SettingDetail>());
+        }
+        
+        //include deleted list if measurements are available
+        SettingsUtil.addDeletedSettingsList(combinedList, userSelection.getDeletedStudyLevelConditions(), 
+            userSelection.getStudyLevelConditions());
+        SettingsUtil.addDeletedSettingsList(null, userSelection.getDeletedPlotLevelList(), 
+            userSelection.getPlotsLevelList());
+        SettingsUtil.addDeletedSettingsList(null, userSelection.getDeletedBaselineTraitsList(), 
+            userSelection.getBaselineTraitsList());
+        SettingsUtil.addDeletedSettingsList(null, userSelection.getDeletedNurseryConditions(), 
+            userSelection.getNurseryConditions());
+        SettingsUtil.addDeletedSettingsList(null, userSelection.getDeletedTrialLevelVariables(), 
+            userSelection.getTrialLevelVariableList());
+
+        String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
+        
+        //retain measurement dataset id and trial dataset id
+        int trialDatasetId = userSelection.getWorkbook().getTrialDatasetId();
+        int measurementDatasetId = userSelection.getWorkbook().getMeasurementDatesetId();
+
+        // TODO : integrate treatment factor detail once it's finalized
+
+        Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
+                userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
+                userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
+
+        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+        
+        workbook.setOriginalObservations(userSelection.getWorkbook().getOriginalObservations());
+        workbook.setTrialObservations(userSelection.getWorkbook().getTrialObservations());
+        workbook.setTrialDatasetId(trialDatasetId);
+        workbook.setMeasurementDatesetId(measurementDatasetId);
+
+        List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
+        variablesForEnvironment.addAll(workbook.getTrialVariables());
+
+        List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment) ;
+        workbook.setTrialObservations(trialEnvironmentValues);
+
+        createStudyDetails(workbook, data.getBasicDetails());
+
+        // TODO : integration with experimental design here
+
+        userSelection.setWorkbook(workbook);
+
+        // TODO : clarify if the environment values placed in session also need to be updated to include the values for the trial level conditions
+        userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
+        
+        //saving of measurement rows
+        if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+            try {
+                boolean isDeleteTrialDataset = false;
+                WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, userSelection, ontologyService, fieldbookService);
+                WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, userSelection, ontologyService, fieldbookService);
+                
+                workbook.setMeasurementDatasetVariables(null);
+                workbook.setObservations(userSelection.getMeasurementRowList());
+                
+                userSelection.setWorkbook(workbook);
+                
+                fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION.getString(), true);
+                fieldbookMiddlewareService.saveMeasurementRows(workbook, isDeleteTrialDataset);
+                //workbook.setTrialObservations(
+                //        fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));
+                //workbook.setOriginalObservations(workbook.getObservations());
+                
+                //resetSessionVariablesAfterSave(workbook, false);
+                
+                //set measurement session variables to form
+                /*
+                model.addAttribute("measurementsData", prepareMeasurementsTabInfo(workbook.getVariates(), false));
+                model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
+                model.addAttribute("measurementRowCount", workbook.getObservations().size());
+                form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
+                */
+                return "success";
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage());
+                return "error";
+            }
+        } else {
+            return "success";
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)
@@ -175,4 +312,33 @@ public class OpenTrialController extends
 
         return null;
     }
+    
+    /**
+     * Reset session variables after save.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    @RequestMapping(value="/recreate/session/variables", method = RequestMethod.GET)
+    public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
+            HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+        Workbook workbook = userSelection.getWorkbook();
+        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
+        
+        resetSessionVariablesAfterSave(workbook, false);
+        
+        //set measurements data
+        userSelection.setMeasurementRowList(workbook.getObservations());
+        userSelection.setWorkbook(workbook);
+        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
+        form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());        
+        
+        model.addAttribute("createNurseryForm", form);
+        
+        return super.showAjaxPage(model, URL_DATATABLE);
+    }
+
 }

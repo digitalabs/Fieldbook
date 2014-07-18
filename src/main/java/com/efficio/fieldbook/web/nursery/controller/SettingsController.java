@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -27,6 +28,9 @@ import javax.annotation.Resource;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -36,6 +40,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -88,6 +93,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/** The data import service. */
 	@Resource
 	protected DataImportService dataImportService;
+	
+	@Resource
+	protected OntologyService ontologyService;
 	
 
 	
@@ -523,4 +531,291 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             }
         }
     }
+            
+    protected void resetSessionVariablesAfterSave(Workbook workbook, boolean isNursery) throws MiddlewareQueryException {
+        
+        //update variables in measurement rows
+        if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
+            MeasurementRow row = userSelection.getMeasurementRowList().get(0);
+            for (MeasurementVariable mvar : workbook.getMeasurementDatasetVariables()) {
+                if (mvar.getOperation() == Operation.UPDATE) {
+                    for (MeasurementVariable rvar : row.getMeasurementVariables()) {
+                        if (mvar.getTermId() == rvar.getTermId()) {
+                            if (mvar.getName() != null && !"".equals(mvar.getName())) {
+                                rvar.setName(mvar.getName());
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        //remove deleted variables in measurement rows & header for variates
+        removeDeletedVariablesInMeasurements(userSelection.getDeletedPlotLevelList(), workbook, userSelection);
+        removeDeletedVariablesInMeasurements(userSelection.getDeletedBaselineTraitsList(), workbook, userSelection);
+        
+        //remove deleted variables in the original lists
+        //and change add operation to update
+        removeDeletedSetUpdate(userSelection.getStudyLevelConditions(), workbook.getConditions());
+        removeDeletedSetUpdate(userSelection.getPlotsLevelList(), workbook.getFactors());
+        removeDeletedSetUpdate(userSelection.getBaselineTraitsList(), workbook.getVariates());
+        removeDeletedSetUpdate(userSelection.getNurseryConditions(), workbook.getConstants());
+        removeDeletedSetUpdate(userSelection.getTrialLevelVariableList(), null);
+        removeDeletedSetUpdate(userSelection.getSelectionVariates(), null);
+        workbook.reset();
+        
+        //reorder variates based on measurementrow order
+        int index = 0;
+        List<MeasurementVariable> newVariatesList = new ArrayList<MeasurementVariable>();
+        if (userSelection.getMeasurementRowList() != null) {
+            for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+                if (index == 0) {
+                    for (MeasurementData var : row.getDataList()) {
+                        for (MeasurementVariable varToArrange : workbook.getVariates()) {
+                            if (var.getMeasurementVariable().getTermId() == varToArrange.getTermId()) {
+                                newVariatesList.add(varToArrange);
+                            }
+                        }
+                    }
+                }
+                index++;
+                break;
+            }
+        }
+        workbook.setVariates(newVariatesList);
+                
+        //remove deleted variables in the deleted lists
+        resetDeletedLists(userSelection);
+        
+        //add name variables
+        if (userSelection.getRemovedConditions() == null) {
+            userSelection.setRemovedConditions(new ArrayList<SettingDetail>());
+        }
+        
+        //remove basic details & hidden variables from study level variables
+        SettingsUtil.removeBasicDetailsVariables(userSelection.getStudyLevelConditions());
+        
+        if (isNursery) {
+            removeHiddenVariables(userSelection.getStudyLevelConditions(), AppConstants.HIDE_NURSERY_FIELDS.getString());
+            removeHiddenVariables(userSelection.getPlotsLevelList(), AppConstants.HIDE_PLOT_FIELDS.getString());
+            addNameVariables(userSelection.getRemovedConditions(), workbook, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+            removeCodeVariablesIfNeeded(userSelection.getStudyLevelConditions(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+            //set value of breeding method code back to code after saving
+            SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
+            //remove selection variates from traits list
+            removeSelectionVariatesFromTraits(userSelection.getBaselineTraitsList());
+        }                 
+    }
+    
+    private void removeDeletedVariablesInMeasurements(List<SettingDetail> deletedList, Workbook workbook, UserSelection userSelection) {
+        if (deletedList != null) {
+            for (SettingDetail setting : deletedList) {
+                //remove from measurement rows
+                int index = 0;
+                int varIndex = 0;
+                for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+                    if (index == 0) {
+                        for (MeasurementData var : row.getDataList()) {
+                            if (var.getMeasurementVariable().getTermId() == setting.getVariable().getCvTermId()) {
+                                break;
+                            }
+                            varIndex++;
+                        }
+                    }
+                    row.getDataList().remove(varIndex);
+                    index++;
+                }
+                //remove from header
+                if (workbook.getMeasurementDatasetVariables() != null) {
+                    Iterator<MeasurementVariable> iter = workbook.getMeasurementDatasetVariables().iterator();
+                    while(iter.hasNext()) {
+                        if (iter.next().getTermId() == setting.getVariable().getCvTermId()) {
+                            iter.remove();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Removes the deleted set update.
+     *
+     * @param settingList the setting list
+     * @param variableList the variable list
+     */
+    private void removeDeletedSetUpdate(List<SettingDetail> settingList, List<MeasurementVariable> variableList) {
+        if (settingList != null) {
+            //remove all variables having delete and add operation
+            Iterator<SettingDetail> iter = settingList.iterator();
+            while (iter.hasNext()) {
+                SettingDetail setting = iter.next();
+                if (setting.getVariable().getOperation() != null && setting.getVariable().getOperation().equals(Operation.DELETE)) {
+                    iter.remove();
+                } else if (setting.getVariable().getOperation() != null && setting.getVariable().getOperation().equals(Operation.ADD)) {
+                    setting.getVariable().setOperation(Operation.UPDATE);
+                } 
+            }
+        }
+        
+        if (variableList != null) {
+            //remove all variables having delete and add operation
+            Iterator<MeasurementVariable> iter2 = variableList.iterator();
+            while (iter2.hasNext()) {
+                MeasurementVariable var = iter2.next();
+                if (var.getOperation() != null && var.getOperation().equals(Operation.DELETE)) {
+                    iter2.remove();
+                } else if (var.getOperation() != null && var.getOperation().equals(Operation.ADD)) {
+                    var.setOperation(Operation.UPDATE);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Reset deleted lists.
+     */
+    private void resetDeletedLists(UserSelection userSelection) {
+        userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
+        userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
+        userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+        userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+        userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
+    }
+    
+    
+    
+    /**
+     * Removes the selection variates from traits.
+     *
+     * @param traits the traits
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    private void removeSelectionVariatesFromTraits(List<SettingDetail> traits) throws MiddlewareQueryException {
+        if (traits != null) {
+            Iterator<SettingDetail> iter = traits.iterator();
+            while (iter.hasNext()) {
+                SettingDetail var = iter.next();
+                if (SettingsUtil.inPropertyList(ontologyService.getProperty(var.getVariable().getProperty()).getId())) {
+                    iter.remove();
+                }
+            }
+        }
+    }
+    
+    /**
+     * Removes the hidden variables.
+     *
+     * @param nurseryLevelConditions the nursery level conditions
+     */
+    private void removeHiddenVariables(List<SettingDetail> settingList, String hiddenVarList) {
+        if (settingList != null) {
+            
+            Iterator<SettingDetail> iter = settingList.iterator();
+            while (iter.hasNext()) {
+                if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), hiddenVarList)) {
+                    iter.remove();
+                }
+            }
+        }
+    }
+    
+    private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException {
+        Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+        Map<String, SettingDetail> removedConditionsMap = new HashMap<String, SettingDetail>();
+        if (workbook != null && idCodeNamePairs != null && !idCodeNamePairs.equalsIgnoreCase("")) {
+            //we get a map so we can check easily instead of traversing it again
+            for(MeasurementVariable var : workbook.getConditions()){
+                if(var != null){
+                    studyConditionMap.put(Integer.toString(var.getTermId()), var);
+                }
+            }
+            
+            if (removedConditions != null) {
+                for(SettingDetail setting : removedConditions){
+                    if(setting != null){
+                        removedConditionsMap.put(Integer.toString(setting.getVariable().getCvTermId()), setting);
+                    }
+                }
+            }
+            
+            StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+            if(tokenizer.hasMoreTokens()){
+              //we iterate it
+                while(tokenizer.hasMoreTokens()){
+                    String pair = tokenizer.nextToken();
+                    StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+                    String idTermId = tokenizerPair.nextToken();
+                    String codeTermId = tokenizerPair.nextToken();
+                    String nameTermId = tokenizerPair.nextToken();
+                    
+                    Method method = null;
+                    if (studyConditionMap.get(idTermId) != null) {
+                        method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
+                    } else if (studyConditionMap.get(codeTermId) != null) {
+                        method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodByCode(studyConditionMap.get(codeTermId).getValue());
+                    }
+                    
+                    //add code to the removed conditions if code is not yet in the list
+                    if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null && removedConditionsMap.get(codeTermId) == null) {
+                        addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, codeTermId, 
+                                method == null ? "" : method.getMcode(), this.getCurrentIbdbUserId().toString());
+                    }
+                    
+                    //add name to the removed conditions if name is not yet in the list
+                    if (studyConditionMap.get(nameTermId) != null && removedConditionsMap.get(nameTermId) == null) {
+                        addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId, 
+                                method == null ? "" : method.getMname(), this.getCurrentIbdbUserId().toString());
+                    }
+                }
+            }
+        }        
+    }
+    
+    private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap, 
+            Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) throws MiddlewareQueryException {
+        if (removedConditionsMap.get(id) == null) {
+            removedConditions.add(createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName()));
+        }
+        if (removedConditions != null) {
+            for (SettingDetail setting : removedConditions) {
+                if (setting.getVariable().getCvTermId() == Integer.parseInt(id)) {
+                    setting.setValue(value);
+                    setting.getVariable().setOperation(Operation.UPDATE);
+                }
+            }
+        }
+    }
+    
+    private void removeCodeVariablesIfNeeded(List<SettingDetail> variableList, String idCodeNamePairs) {
+        Map<String, SettingDetail> variableListMap = new HashMap<String, SettingDetail>();
+        if (variableList != null) {
+            for(SettingDetail setting : variableList){
+                if(setting != null){
+                    variableListMap.put(Integer.toString(setting.getVariable().getCvTermId()), setting);
+                }
+            }
+        }
+        
+        StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+        if(tokenizer.hasMoreTokens()){
+          //we iterate it
+            while(tokenizer.hasMoreTokens()){
+                String pair = tokenizer.nextToken();
+                StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+                String idTermId = tokenizerPair.nextToken();
+                String codeTermId = tokenizerPair.nextToken();
+                
+                Iterator<SettingDetail> iter = variableList.iterator();
+                while (iter.hasNext()) {
+                    Integer cvTermId = iter.next().getVariable().getCvTermId();
+                    if (cvTermId.equals(Integer.parseInt(codeTermId)) && variableListMap.get(idTermId) != null) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }
+
 }

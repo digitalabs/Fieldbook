@@ -76,7 +76,7 @@ public class ObservationMatrixController extends
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	UserSelection userSelection = getUserSelection(isTrial);    	
-    	
+    	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	form.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
     	form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
@@ -130,7 +130,7 @@ public class ObservationMatrixController extends
 
         try { 
         	validationService.validateObservationValues(workbook);
-            fieldbookMiddlewareService.saveMeasurementRows(workbook);
+            fieldbookMiddlewareService.saveMeasurementRows(workbook, false);
             resultMap.put("status", "1");
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

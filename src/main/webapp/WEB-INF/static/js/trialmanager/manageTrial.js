@@ -233,8 +233,22 @@
                 $http.post('/Fieldbook/NurseryManager/importGermplasmList/next', serializedData).success(function (data) {
                     d.resolve(data);
                 });
-
                 return d.promise;
+            };
+            
+            var recreateSessionVariablesTrial = function () {
+                'use strict';
+
+                $.ajax({
+                    url: '/Fieldbook/TrialManager/openTrial/recreate/session/variables',
+                    type: 'GET',
+                    data: '',
+                    cache: false,
+                    success: function (html) {
+                        $('#measurementsDiv').html(html);
+                        showSuccessfulMessage('', 'Success');
+                    }
+                });
             };
 
             var VariablePairService = $resource("/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id", {id: '@id'}, { 'get': {method: 'get', isArray: true} });
@@ -311,15 +325,11 @@
                                         window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
                                     });
                                 });
-
-
                         } else {
-                            if (service.trialMeasurement.hasMeasurement) {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function () {
-                                    // TODO : other function here
-                                });
+                        	if (service.trialMeasurement.count > 0) {
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(recreateSessionVariablesTrial);
                             } else {
-                                $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).success(submitGermplasmList);
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList);
                             }
 
                         }

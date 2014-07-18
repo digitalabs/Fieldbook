@@ -3,14 +3,21 @@ package com.efficio.fieldbook.web.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.Environment;
+
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.service.api.OntologyService;
 
 public class WorkbookUtil {
 
@@ -112,14 +119,13 @@ public class WorkbookUtil {
                         value = environment.getTrialDetailValues().get(var.getTermId());
                     }
 
-                    if (value != null && !value.isEmpty()) {
-                        boolean isEditable = ! (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());
-                        MeasurementData data = new MeasurementData(var.getName(), value, isEditable, var.getDataType(), var);
-                        dataList.add(data);
-                    }
+                    boolean isEditable = ! (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());
+                    MeasurementData data = new MeasurementData(var.getName(), value, isEditable, var.getDataType(), var);
+                    dataList.add(data);
                 }
-
-                observations.add(new MeasurementRow(dataList));
+                MeasurementRow row = new MeasurementRow(environment.getStockId(), environment.getLocationId(), dataList);
+                row.setExperimentId((int)environment.getExperimentId());
+                observations.add(row);
             }
         }
 
@@ -229,5 +235,83 @@ public class WorkbookUtil {
 	    	}
     	}
     }
+	 
+     public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, boolean isVariate, 
+             UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService) throws MiddlewareQueryException{
+        //add new variables in measurement rows
+        for (MeasurementVariable variable : variableList) {
+            if (variable.getOperation().equals(Operation.ADD)) {
+                StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+                for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+                    MeasurementData measurementData = new MeasurementData(variable.getName(), 
+                            "", true,  
+                            getDataType(variable.getDataTypeId()),
+                            variable);
+                    
+                    measurementData.setPhenotypeId(null);
+                    int insertIndex = getInsertIndex(row.getDataList(), isVariate);
+                    row.getDataList().add(insertIndex, measurementData);
+                }
+                
+                if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
+                    variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true));
+                } else {
+                    variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
+                }
+            }
+        }
+    }
+     
+     /**
+     * Gets the data type.
+     *
+     * @param dataTypeId the data type id
+     * @return the data type
+     */
+    private static String getDataType(int dataTypeId) {
+        //datatype ids: 1120, 1125, 1128, 1130
+        if (dataTypeId == TermId.CHARACTER_VARIABLE.getId() || dataTypeId == TermId.TIMESTAMP_VARIABLE.getId() || 
+                dataTypeId == TermId.CHARACTER_DBID_VARIABLE.getId() || dataTypeId == TermId.CATEGORICAL_VARIABLE.getId()) {
+            return "C";
+        } else {
+            return "N";
+        }
+    }
+    
+    private static int getInsertIndex(List<MeasurementData> dataList, boolean isVariate) {
+        int index = -1;
+        if (dataList != null) {
+            if (!isVariate) {
+                for (MeasurementData data : dataList) {
+                    if ((!data.getMeasurementVariable().isFactor())) {
+                        return index;
+                    }
+                    index++;
+                }
+            } else {
+                return dataList.size();
+            }
+        }
+        return index;
+    }
+    
+    /**
+     * Transform possible values.
+     *
+     * @param enumerations the enumerations
+     * @return the list
+     */
+    private static List<ValueReference> transformPossibleValues(List<Enumeration> enumerations) {
+        List<ValueReference> list = new ArrayList<ValueReference>();
+        
+        if (enumerations != null) {
+            for (Enumeration enumeration : enumerations) {
+                list.add(new ValueReference(enumeration.getId(), enumeration.getName(), enumeration.getDescription()));
+            }
+        }
+        
+        return list;
+    }
+
     
 }

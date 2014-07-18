@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -1850,5 +1851,62 @@ public class SettingsUtil {
             }
         }
         return details;
+    }
+    
+    /**
+     * Adds the deleted settings list.
+     *
+     * @param formList the form list
+     * @param deletedList the deleted list
+     * @param sessionList the session list
+     */
+    public static void addDeletedSettingsList(List<SettingDetail> formList, List<SettingDetail> deletedList, List<SettingDetail> sessionList) {
+        if (deletedList != null) {
+            List<SettingDetail> newDeletedList = new ArrayList<SettingDetail>();
+            for (SettingDetail setting : deletedList) {
+                if (setting.getVariable().getOperation().equals(Operation.UPDATE)) {
+                    setting.getVariable().setOperation(Operation.DELETE);
+                    newDeletedList.add(setting);
+                }
+            }
+            if (!newDeletedList.isEmpty()) {
+                if (formList == null) formList = new ArrayList<SettingDetail>();
+                formList.addAll(newDeletedList);
+                if (sessionList == null) sessionList = new ArrayList<SettingDetail>();
+                sessionList.addAll(newDeletedList);
+            }
+        }
+    }
+    
+    
+    
+    /**
+     * Removes the basic details variables.
+     *
+     * @param nurseryLevelConditions the nursery level conditions
+     */
+    public static void removeBasicDetailsVariables(List<SettingDetail> nurseryLevelConditions) {
+        Iterator<SettingDetail> iter = nurseryLevelConditions.iterator();
+        while (iter.hasNext()) {
+            if (inFixedNurseryList(iter.next().getVariable().getCvTermId())) {
+                iter.remove();
+            }
+        }
+    }
+    
+    /**
+     * In fixed nursery list.
+     *
+     * @param propertyId the property id
+     * @return true, if successful
+     */
+    private static boolean inFixedNurseryList(int propertyId) {
+        StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
+        while(token.hasMoreTokens()){
+            if (Integer.parseInt(token.nextToken()) == propertyId) {
+                return true;
+            }
+        }
+        return false;
     }
 }

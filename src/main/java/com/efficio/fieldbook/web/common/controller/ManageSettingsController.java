@@ -268,9 +268,12 @@ public class ManageSettingsController extends SettingsController{
         } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
             addVariableInDeletedList(userSelection.getSelectionVariates(), mode, variableId);
             deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
+        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+            addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId);
+            deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
         } else {
-            addVariableInDeletedList(getSettingDetailList(mode), mode, variableId);
-            deleteVariableInSession(getSettingDetailList(mode), variableId);
+            addVariableInDeletedList(userSelection.getTrialLevelVariableList(), mode, variableId);
+            deleteVariableInSession(userSelection.getTrialLevelVariableList(), variableId);
         }
         return "";
     }
@@ -308,6 +311,11 @@ public class ManageSettingsController extends SettingsController{
                 userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
             }
             userSelection.getDeletedNurseryConditions().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+            if (userSelection.getDeletedTrialLevelVariables() == null) {
+                userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedTrialLevelVariables().add(newSetting);
         }
     }
 

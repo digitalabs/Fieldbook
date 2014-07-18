@@ -111,6 +111,9 @@ public class UserSelection implements Serializable {
     /** The deleted nursery conditions. */
     private List<SettingDetail> deletedNurseryConditions;
     
+    /** The deleted trial level variables. */
+    private List<SettingDetail> deletedTrialLevelVariables;
+    
     /** The change details. */
     private List<GermplasmChangeDetail> changeDetails;
     
@@ -128,6 +131,8 @@ public class UserSelection implements Serializable {
     
     /** The workbook. */
     private Workbook workbook;
+    
+    /** The temporary workbook. */
     private Workbook temporaryWorkbook;
     
     /** The current page. */
@@ -776,11 +781,39 @@ public class UserSelection implements Serializable {
 	        this.measurementRowList = measurementRowList;
 	    }
 
+		/**
+		 * Gets the temporary workbook.
+		 *
+		 * @return the temporary workbook
+		 */
 		public Workbook getTemporaryWorkbook() {
 			return temporaryWorkbook;
 		}
 
+		/**
+		 * Sets the temporary workbook.
+		 *
+		 * @param temporaryWorkbook the new temporary workbook
+		 */
 		public void setTemporaryWorkbook(Workbook temporaryWorkbook) {
 			this.temporaryWorkbook = temporaryWorkbook;
 		}
+		
+        /**
+         * Gets the deleted trial level variables.
+         *
+         * @return the deleted trial level variables
+         */
+        public List<SettingDetail> getDeletedTrialLevelVariables() {
+            return deletedTrialLevelVariables;
+        }
+
+        /**
+         * Sets the deleted trial level variables.
+         *
+         * @param deletedTrialLevelVariables the new deleted trial level variables
+         */
+        public void setDeletedTrialLevelVariables(List<SettingDetail> deletedTrialLevelVariables) {
+            this.deletedTrialLevelVariables = deletedTrialLevelVariables;
+        }
  }

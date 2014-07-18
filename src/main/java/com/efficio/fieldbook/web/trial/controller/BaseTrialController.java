@@ -27,6 +27,7 @@ public abstract class BaseTrialController extends SettingsController {
     public static final String URL_TREATMENT = "TrialManager/templates/treatment";
     public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
     public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
+    public static final String URL_DATATABLE = "Common/showAddOrRemoveTraitsPagination";
 
     /** The ontology service. */
     @Resource
@@ -38,10 +39,12 @@ public abstract class BaseTrialController extends SettingsController {
         }
         StudyDetails studyDetails = workbook.getStudyDetails();
 
-
+        studyDetails.setId(detailBean.getStudyID());
         studyDetails.setTitle(detailBean.getBasicDetails().get(TermId.STUDY_TITLE.getId()));
         studyDetails.setObjective(detailBean.getBasicDetails().get(TermId.STUDY_OBJECTIVE.getId()));
         studyDetails.setStudyName(detailBean.getBasicDetails().get(TermId.STUDY_NAME.getId()));
+        studyDetails.setStartDate(detailBean.getBasicDetails().get(TermId.START_DATE.getId()));
+        studyDetails.setEndDate(detailBean.getBasicDetails().get(TermId.END_DATE.getId()));
         studyDetails.setStudyType(StudyType.T);
 
         if (detailBean.getFolderId() != null) {

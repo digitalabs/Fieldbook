@@ -256,7 +256,7 @@
                     cache: false,
                     success: function (html) {
                         $('#measurementsDiv').html(html);
-                        showSuccessfulMessage('', 'Success');
+                        showSuccessfulMessage('', saveSuccessMessage);
                     }
                 });
             };
@@ -330,7 +330,7 @@
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
                                 success(function () {
                                     submitGermplasmList().then(function (generatedID) {
-                                        showSuccessfulMessage('', 'Success');
+                                        showSuccessfulMessage('', saveSuccessMessage);
                                         /*updateTrialDataAfterCreation(generatedID);*/
                                         window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
                                     });
@@ -339,7 +339,9 @@
                             if (service.trialMeasurement.count > 0) {
                                     $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(recreateSessionVariablesTrial);
                                 } else {
-                                    $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList);
+                                    $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(submitGermplasmList).then(function() {
+                                    	showSuccessfulMessage('', saveSuccessMessage);
+                                    });
                                 }
 
                             }

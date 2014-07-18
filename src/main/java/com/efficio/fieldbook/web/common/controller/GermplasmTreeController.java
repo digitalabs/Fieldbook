@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
@@ -300,6 +301,18 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     public String getGermplasmUrl() {
 
         return fieldbookProperties.getGermplasmDetailsUrl();
+    }
+    
+    /**
+     * Load initial germplasm tree.
+     *
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/germplasm/import/url", method = RequestMethod.GET)
+    public String getImportGermplasmUrl(HttpServletRequest request) {
+    	String contextParams = ContextUtil.getContextParameterString(request);
+        return fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams;
     }
     
     /**

@@ -409,7 +409,7 @@ window.ChooseSettings = (function() {
 
 	ChooseSettings.prototype._initialiseVariableSelectionDialog = function() {
 		this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
-			uniqueVariableError: this._translations.variableSelection,
+			uniqueVariableError: this._translations.uniqueVariableError,
 			generalAjaxError: this._translations.generalAjaxError
 		});
 		this._variableSelection.getModal().on('variable-select', addSelectedVariables);

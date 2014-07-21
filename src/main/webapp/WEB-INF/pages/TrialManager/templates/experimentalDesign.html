@@ -39,7 +39,7 @@
                     <div ng-show="currentDesignType.settings.treatments &gt;= 0"><b>Number of Treatments:</b> <span>{{currentDesignType.settings.treatments}}</span></div>
                     <div ng-show="currentDesignType.settings.blocks &gt;= 0"><b>Number of Blocks:</b> <span>{{currentDesignType.settings.blocks}}</span></div>
                     <div ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id" >
-                        <b>{{currentDesignType.settings.factors.val(key).label}}</b> - <a show-details-modal="key">{{currentDesignType.settings.factors.val(key).variable.name}}</a>
+                        <b>{{settings.factors.val(key).label}}</b> - <a show-details-modal="key">{{settings.factors.val(key).variable.name}}</a>
                     </div>
                     <div ng-show="currentDesignType.id == 0">
                         <div class="sub-content-heading"><b>Treatment Factors:</b></div>

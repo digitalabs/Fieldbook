@@ -1,15 +1,15 @@
 
     <div class="add_top_padding">
         <label class=" control-label"><strong>Number of replications:</strong></label>
-        <span><input ng-model="currentDesignType.data.replicationsCount" type="text" class="form-control" style="width: 100px"/></span>
+        <span><input ng-model="currentDesignType.data.replicationsCount" type="number" class="form-control" style="width: 100px"/></span>
     </div>
     <div class="add_top_padding">
         <label class=" control-label"><strong>Number of rows in replications:</strong></label>
-        <span><input ng-model="currentDesignType.data.rowsPerReplications" type="text" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+        <span><input ng-model="currentDesignType.data.rowsPerReplications" type="number" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
     </div>
     <div class="add_top_padding">
         <label class=" control-label"><strong>Number of columns in replications:</strong></label>
-        <span><input ng-model="currentDesignType.data.colsPerReplications" type="text" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+        <span><input ng-model="currentDesignType.data.colsPerReplications" type="number" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
     </div>
 
 <div ng-show="currentDesignType.data.isResolvable &amp;&amp; !hideFeatures">

@@ -910,6 +910,12 @@ div.sectionContainer {
     border:1px solid #e4e4e4;
     border-top: 0px;
 }
+
+#manage-trial-tabs .form-control[type=number] {
+    display: inline;
+
+}
+
 #create-nursery-tab-headers  > li > a,
 #create-nursery-tab-headers  > li > a:hover,
 #create-nursery-tab-headers  > li > a:focus {
@@ -1574,3 +1580,4 @@ table.dataTable th, table.dataTable td {
 .fbk-show-inline{
     display: inline-block;
 }
+

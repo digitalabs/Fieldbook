@@ -132,21 +132,7 @@
                 currentData: {
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
-                    basicDetails: extractData(BASIC_DETAILS_DATA),
-                    experimentalDesign: {
-                        'noOfEnvironments' : 0,
-                        'designType': 0,
-                        'replicationsCount' : 0,
-                        'isResolvable' : true,
-                        'blockSize' : 0,
-                        'useLatenized' : true,
-                        'contiguousBlocksToLatenize' : 0,
-                        'replicationsPerCol' : 0,
-                        'rowsPerReplications' : 0,
-                        'colsPerReplications' : 0,
-                        'contiguousRowsToLatenize':0,
-                        'contiguousColToLatenize': 0
-                    }
+                    basicDetails: extractData(BASIC_DETAILS_DATA)
                 },
                 // standard variable [meta-data] information or a particular tab settings information
                 // what I get is an instance of OrderedHash containing an array of keys with the map
@@ -174,7 +160,22 @@
                             return hardFactors;
 
                         })(),
-                        germplasmTotalListCount : 0
+                        germplasmTotalListCount : 0,
+
+                        data: {
+                            'noOfEnvironments' : 0,
+                            'designType': 0,
+                            'replicationsCount' : 0,
+                            'isResolvable' : true,
+                            'blockSize' : 0,
+                            'useLatenized' : true,
+                            'contiguousBlocksToLatenize' : 0,
+                            'replicationsPerCol' : 0,
+                            'rowsPerReplications' : 0,
+                            'colsPerReplications' : 0,
+                            'contiguousRowsToLatenize':0,
+                            'contiguousColToLatenize': 0
+                        }
                     },
                     treatmentLevelPairs: {}
 

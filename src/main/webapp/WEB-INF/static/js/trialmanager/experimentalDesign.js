@@ -2,7 +2,7 @@
  * Created by cyrus on 7/2/14.
  */
 
-/* global angular */
+/* global angular, showErrorMessage */
 (function(){
     'use strict';
 
@@ -22,33 +22,33 @@
             };
 
             // initialize some data not in currentData
-            TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
-            TrialManagerDataService.currentData.experimentalDesign.treatmentFactors = $scope.settings.treatmentFactors;
-            TrialManagerDataService.currentData.experimentalDesign.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors;
-            TrialManagerDataService.currentData.experimentalDesign.totalGermplasmListCount = $scope.totalGermplasmEntryListCount;
+            TrialManagerDataService.specialSettings.experimentalDesign.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
+            TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactors = $scope.settings.treatmentFactors;
+            TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors;
+            TrialManagerDataService.specialSettings.experimentalDesign.data.totalGermplasmListCount = $scope.totalGermplasmEntryListCount;
 
             $scope.designTypes = [
             {
                 id: 0,
                 name: 'Randomized Complete Block Design',params :'randomizedCompleteBlockParams.html',
-                data : TrialManagerDataService.currentData.experimentalDesign
+                data : TrialManagerDataService.specialSettings.experimentalDesign.data
             },
             {
                 id: 1,
                 name: 'Incomplete Block Design', params: 'incompleteBlockParams.html',
                 withResolvable: true,
                 showAdvancedOptions: false,
-                data : TrialManagerDataService.currentData.experimentalDesign
+                data : TrialManagerDataService.specialSettings.experimentalDesign.data
             },
             {
                 id: 2,
                 name: 'Row-and-Column',params:'rowAndColumnParams.html',
                 withResolvable: true,
                 showAdvancedOptions: false,
-                data : TrialManagerDataService.currentData.experimentalDesign
+                data : TrialManagerDataService.specialSettings.experimentalDesign.data
             }];
 
-            $scope.currentDesignType = $scope.designTypes[TrialManagerDataService.currentData.experimentalDesign.designType];
+            $scope.currentDesignType = $scope.designTypes[TrialManagerDataService.specialSettings.experimentalDesign.data.designType];
 
             $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 
@@ -65,7 +65,7 @@
                     return;
                 }
 
-                var data = angular.copy(TrialManagerDataService.currentData.experimentalDesign);
+                var data = angular.copy(TrialManagerDataService.specialSettings.experimentalDesign.data.experimentalDesign);
                 // transform ordered has of treatment factors if existing to just the map
                 if (data.treatmentFactors) {
                     data.treatmentFactors = $scope.currentDesignType.data.treatmentFactors.vals();

@@ -25,12 +25,12 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		aliasVariableButtonSelector = '.vs-alias-edit',
 		aliasVariableInputSelector = '.vs-alias-input',
 		relatedPropertyLinkSelector = '.vs-related-prop-name',
-		variableListSelector = '.vs-variable-list',
+		propertyContainerSelector = '.vs-property-container',
 		relatedPropertyListSelector = '.vs-related-props-container',
 		propertySelectSelector = '.vs-ps-container',
 
 		// Only compile our templates once, rather than every time we need them
-		generateVariable = Handlebars.compile($('#variable-template').html()),
+		generatePropertyVariableList = Handlebars.compile($('#vs-property-template').html()),
 		generateVariableName = Handlebars.compile($('#vs-variable-name-template').html()),
 		generateVariableAlias = Handlebars.compile($('#vs-alias-edit-template').html()),
 		generateRelatedProperty = Handlebars.compile($('#related-prop-template').html()),
@@ -79,7 +79,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 			splitColumns = {
 				column1: filteredProperties,
-				column2: []
+				column2: [],
+				className: selectedProperty.traitClass.traitClassName
 			};
 
 		// Split the list of filtered properties in two if there are more than 4
@@ -236,13 +237,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: groupData.variables}));
 
 		// Listen for variable selection
-		$(variableListSelector).on('click', addVariableButtonSelector, {}, $.proxy(function(e) {
+		$(propertyContainerSelector).on('click', addVariableButtonSelector, {}, $.proxy(function(e) {
 			e.preventDefault();
 			this._selectVariable($(e.currentTarget));
 		}, this));
 
 		// Listen for variable aliasing request
-		$(variableListSelector).on('click', aliasVariableButtonSelector, {}, $.proxy(function(e) {
+		$(propertyContainerSelector).on('click', aliasVariableButtonSelector, {}, $.proxy(function(e) {
 			e.preventDefault();
 			var aliasButton = $(e.currentTarget);
 			this._aliasVariableButton(aliasButton.parent(variableNameContainerSelector));
@@ -284,7 +285,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		var selectedProperty = this._selectedProperty,
 			variables = this._selectedProperty.standardVariables,
 			toExclude = this._excludedProperties,
-			variableListElement = $(variableListSelector),
+			propertyVariableList = $(propertyContainerSelector),
 			relatedPropertyList = $(relatedPropertyListSelector),
 			classId = selectedProperty.traitClass.traitClassId,
 			selectedVariables = this._currentlySelectedVariables,
@@ -317,8 +318,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._selectedProperty.standardVariables = variables;
 
 		// Clear out any existing variables and append the variables of the selectedProperty
-		variableListElement.empty();
-		variableListElement.append(generateVariable({
+		propertyVariableList.empty();
+		propertyVariableList.append(generatePropertyVariableList({
+			propertyName: this._selectedProperty.name,
+			className: this._selectedProperty.traitClass.traitClassName,
 			variables: variables
 		}));
 
@@ -379,8 +382,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 */
 	VariableSelection.prototype._selectVariable = function(selectButton) {
 
-		var container = selectButton.parent('p'),
-			variableContainer = container.children(variableNameContainerSelector),
+		var container = selectButton.parent('.vs-variable-select-container'),
 			iconContainer = selectButton.children('.glyphicon'),
 			generalErrorMessage = this._translations.generalAjaxError,
 			variableName,
@@ -388,8 +390,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			variableId;
 
 		// If the user is in the middle of entering an alias, close that before proceeding
-		if (variableContainer.find(aliasVariableInputSelector).length) {
-			this._saveAlias(variableContainer);
+		if (container.find(aliasVariableInputSelector).length) {
+			this._saveAlias(container.children(variableNameContainerSelector));
 			return;
 		}
 
@@ -406,7 +408,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		// Disable the select button to prevent clicking twice
 		selectButton.attr('disabled', 'disabled');
-		iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
 
 		variableId = _convertVariableId(selectedVariable.id);
 
@@ -426,7 +427,11 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				this._currentlySelectedVariables[selectedVariable.id] = selectedVariable.alias || selectedVariable.name;
 
 				// Remove the edit button
-				selectButton.parent('p').find(aliasVariableButtonSelector).remove();
+				selectButton.parents('.vs-variable').find(aliasVariableButtonSelector).remove();
+
+				// Change the add button to a tick to indicate success
+				iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
+				selectButton.children('.vs-variable-select-label').text('');
 
 				/**
 				 * Variable select event.
@@ -455,7 +460,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 				// Re-enable the add button
 				selectButton.removeAttr('disabled');
-				iconContainer.removeClass('glyphicon-ok').addClass('glyphicon-plus');
 			}
 		});
 	};
@@ -621,7 +625,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	VariableSelection.prototype._clear = function() {
 
 		var modalHeader = $(MODAL_SELECTOR + ' ' + modalHeaderSelector),
-			variableList = $(variableListSelector),
+			variableList = $(propertyContainerSelector),
 			relatedPropertyList = $(relatedPropertyListSelector);
 
 		// Clear title

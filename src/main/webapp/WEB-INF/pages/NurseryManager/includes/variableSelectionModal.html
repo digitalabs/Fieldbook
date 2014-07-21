@@ -9,46 +9,64 @@
 				<div class="vs-content-container">
 					<!-- TODO Awaiting Rebecca's JSONified variable usage service
 					<ul class="nrm-var-select-popular-vars"></ul> -->
-					<div class="vs-variable-list"></div>
+					<div class="vs-property-container"></div>
 					<div class="vs-related-props-container"></div>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal" th:utext="#{common.form.done.text}">Done</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" th:text="#{common.form.close}">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
 
-<!-- Renders a property's list of variables. The service we use strips out properties with no variables, so it should never be empty. -->
-<script id="variable-template" type="text/x-handlebars-template">
-<h3 th:utext="#{add.variable.dialog.variablelist}">Variables</h3>
-<ul>
-	{{#each variables}}
-	<li class="vs-variable">
-	<p>
-		<span class="vs-variable-name-container">{{> variable-name}}</span>
+<!-- Renders a property's information and list of variables. The service we use strips out properties with no variables, so it should never
+be empty. -->
+<script id="vs-property-template" type="text/x-handlebars-template">
 
-		{{#if selected}}
-			<button type="button" class="btn btn-default btn-s vs-variable-select icon-btn" disabled="disabled">
-				<span class="glyphicon glyphicon-ok"></span>
-			</button>
-		{{else}}
-			<button type="button" class="btn btn-default btn-s vs-variable-select icon-btn">
-				<span class="glyphicon glyphicon-plus"></span>
-			</button>
-		{{/if}}
-	</p>
-	<p>{{description}}</p>
-	</li>
-	{{/each}}
-</ul>
+<!-- Property Information -->
+<div>
+	<img class="vs-icon vs-icon-lg" src="../static/img/vs/property.svg" alt="Property"/>
+	<h2 class="vs-title">{{propertyName}} <span class="vs-class-name">({{className}})</span></h2>
+</div>
+
+<!-- Variable List -->
+<div class="vs-variable-list-container">
+	<ul>
+		{{#each variables}}
+		<li class="vs-variable">
+			<span class="vs-variable-select-container">
+				<span class="vs-variable-name-container">
+					{{> variable-name}}
+				</span>
+				{{#if selected}}
+					<button type="button" class="btn btn-default btn-xs vs-variable-select icon-btn icon-btn" disabled="disabled">
+						<span class="glyphicon glyphicon-ok"></span>
+					</button>
+				{{else}}
+					<button type="button" class="btn btn-default btn-xs vs-variable-select icon-btn icon-btn">
+						<span class="glyphicon glyphicon-plus"></span>
+						<span class="vs-variable-select-label" th:text="#{common.form.add.text}">Add</span>
+					</button>
+				{{/if}}
+			</span>
+			<div class="vs-variable-description">
+				<span class="vs-variable-description-label" th:text="#{variable.details.label.method}">Method:</span>
+				<span title="{{method.definition}}">{{method.name}}</span>
+				<span class="vs-variable-description-scale">
+					<span class="vs-variable-description-label" th:text="#{variable.details.label.scale}">Method:</span>
+					<span title="{{scale.definition}}">{{scale.name}}</span>
+				</span>
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+</div>
 </script>
 
 <script id="related-prop-template" type="text/x-handlebars-template">
 
 {{#if column1}}
-
 <h3>Related Properties</h3>
 <div class="vs-related-props-list">
     <div class="vs-related-prop">
@@ -74,19 +92,15 @@
 {{/if}}
 </script>
 
-<script id="vs-property-select-template" type="text/x-handlebars-template">
-	<input class="vs-ps-input" type="hidden"></input>
-</script>
-
 <!-- Renders a variable name. Expects a variable object with a name and optional alias property. -->
 <script id="vs-variable-name-partial" type="text/x-handlebars-template">
-	<span class="vs-variable-name">{{name}}</span>
+	<span class="vs-variable-name" title="{{description}}">{{name}}</span>
 	{{#if alias}}
 		<span> ({{alias}})</span>
 	{{/if}}
 
 	{{#unless selected}}
-		<button type="button" class="btn btn-default btn-s vs-alias-edit icon-btn">
+		<button type="button" class="btn btn-default btn-xs vs-alias-edit icon-btn icon-btn-sm">
 			<span class="glyphicon glyphicon-pencil"></span>
 		</button>
 	{{/unless}}
@@ -108,3 +122,7 @@
 	{{> variable-name}}
 </script>
 
+<!-- Property Select Templates-->
+<script id="vs-property-select-template" type="text/x-handlebars-template">
+	<input class="ps-input" type="hidden"></input>
+</script>

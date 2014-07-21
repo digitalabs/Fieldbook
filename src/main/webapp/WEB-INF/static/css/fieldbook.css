@@ -1361,20 +1361,32 @@ label[data-toggle="collapse"],
     margin-bottom: 10pt;
     padding-bottom: 0;
 }
-/* Variable Selection Dialog CSS */
+/* ----- Variable Selection Dialog ----- */
+
+.vs-modal .modal-body {
+	height: 380px;
+	max-height: 380px;
+}
 
 .vs-modal ul {
-	padding: 0;
+	padding: 0 15px;
 }
 
 .vs-modal li {
 	list-style-type: none;
 }
 
+.vs-class-name {
+	text-transform: capitalize;
+}
+
+/* Icon and icon button styling */
+
 .vs-modal .icon-btn {
 	color: black;
 	background-color: white;
 	border: none;
+	font-size: 13px;
 }
 
 .vs-modal .icon-btn:active {
@@ -1389,54 +1401,164 @@ label[data-toggle="collapse"],
 	border: none;
 }
 
-.vs-modal .vs-variable {
-	padding-bottom: 15px;
+.vs-modal .icon-btn-lg {
+	font-size: 18px;
+}
+
+.vs-modal .icon-btn-sm {
+	font-size: 11px;
+}
+
+.vs-icon {
+	width: 13px;
+	height: 13px;
+}
+
+.vs-icon-lg {
+	width: 18px;
+	height: 18px;
+}
+
+.vs-icon-sm {
+	width: 11px;
+	height: 11px;
+}
+
+/* ----- Variable Selection Dialog: Property Select Dropdown ----- */
+
+.vs-modal .vs-ps-container {
+	height: 45px;
+}
+
+.ps-results .ps-item-prop-name {
+	font-weight: bold;
+}
+
+.ps-results .ps-item-class-name {
+	font-style: italic;
+}
+
+.ps-results .ps-item-variables {
+	font-size: 11px;
+	padding: 5px;
+}
+
+.ps-results li {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.ps-results li:last-child {
+	border-bottom: none;
+}
+
+.ps-item-property-info > span,
+.ps-item-variables > span {
+	vertical-align: middle;
+}
+
+.ps-item-attr {
+	display: inline-block;
+	padding-left: 5px;
+}
+
+.ps-item-variables .ps-item-attr {
+	padding-left: 8px;
+}
+
+
+/* ----- Variable Selection Dialog: Content ----- */
+.vs-modal .vs-content-container {
+	height: 320px;
+	overflow-y: auto;
+
+	/* Make room for the scroll bar */
+	margin-right: -15px;
+	margin-top: 5px;
+}
+
+.vs-title {
+	display: inline-block;
+	padding-left: 5px;
+	margin: 0;
+	vertical-align: middle;
+}
+
+/* ----- Variable Selection Dialog: Content - Variable List ----- */
+
+.vs-variable-list-container {
+	margin-top: 10px;
+}
+
+.vs-property-container .vs-variable {
+	padding-top: 5px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.vs-property-container .vs-variable:last-child {
+	border-bottom: none;
 }
 
 .vs-variable p {
 	margin: 0;
 }
 
-.vs-variable-name,
-.var-select-results .var-select-result-prop {
+.vs-variable .vs-variable-description {
+	font-size: 11px;
+	margin-top: -5px;
+}
+
+.vs-variable .vs-variable-description > span {
+	vertical-align: middle;
+}
+
+.vs-variable .vs-variable-description-scale {
+	padding-left: 15px;
+}
+
+.vs-variable-description-label {
+	font-weight: bold;
+	padding-right: 2px;
+}
+
+.vs-property-container .vs-variable-select-container {
+	height: 30px;
+	width: 100%;
+	display: inline-block;
+}
+
+.vs-property-container .vs-variable-name {
 	font-weight: bold;
 }
 
-.var-select-result-class {
-	font-style: italic;
-}
-
-.var-select-results .var-select-result-vars {
-	font-size: 0.8em;
-}
-
-.vs-variable-select {
+.vs-property-container .vs-variable-select {
 	float: right;
 }
 
-.vs-modal .modal-body {
-	height: 300px;
-	max-height: 300px;
+.vs-variable-name-container .vs-alias-input {
+	padding: 2px;
 }
 
-.vs-modal .vs-ps-container {
-	height: 45px;
+.vs-variable-name {
+	vertical-align: middle;
 }
 
-.vs-modal .vs-content-container {
-	height: 240px;
-	overflow-y: auto;
+/* ----- Variable Selection Dialog: Content - Related Property List ----- */
+
+.vs-related-props-container {
+	margin-top: 15px;
 }
 
 .vs-related-props-list {
-    display: table;
-    table-layout: fixed;
-    width: 100%
+	padding-top: 10px;
+	display: table;
+	table-layout: fixed;
+	width: 100%
 }
 
-.vs-related-prop {
-   	display: table-cell;
-    width: 50%;
+.vs-related-props-list .vs-related-prop {
+	display: table-cell;
+	width: 50%;
 }
 
 table.dataTable th, table.dataTable td {

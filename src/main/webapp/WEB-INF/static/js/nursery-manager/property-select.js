@@ -18,7 +18,7 @@ BMS.NurseryManager.PropertySelect = (function($) {
 	'use strict';
 
 	var generateDropdownMarkup = Handlebars.compile($('#vs-property-select-template').html()),
-		propertyDropdownSelector = '.vs-ps-input',
+		propertyDropdownSelector = '.ps-input',
 
 		PropertySelect;
 
@@ -36,14 +36,14 @@ BMS.NurseryManager.PropertySelect = (function($) {
 			className = item.traitClass.traitClassName.replace(regex, '<strong>$&</strong>');
 		}
 
-		formattedItem  = '<p><span class="var-select-result-prop">' + propertyName + '</span> (<span class="var-select-result-class">' +
-			className + '</span>)<br/>';
+		formattedItem  = '<div class="ps-item-property-info"><img class="vs-icon" src="../static/img/vs/property.svg" alt="Property"/><span class="ps-item-attr ps-item-prop-name">' +
+			propertyName + '</span> (<span class="ps-item-class-name">' + className + '</span>)</div>';
 
 		variables = item.standardVariables.sort(function(a, b) {
 			return a.name.localeCompare(b.name);
 		});
 
-		formattedItem += '<span class="var-select-result-vars">';
+		formattedItem += '<div class="ps-item-variables"><img class="vs-icon vs-icon-sm" src="../static/img/vs/variable.png" alt="Variable"/><span class="ps-item-attr">';
 
 		for (i = 0; i < variables.length; i++) {
 			if (i !== 0) {
@@ -52,11 +52,11 @@ BMS.NurseryManager.PropertySelect = (function($) {
 
 			formattedItem += searchTerm ? variables[i].name.replace(regex, '<strong>$&</strong>') : variables[i].name;
 		}
-		return formattedItem + '</span></p>';
+		return formattedItem + '</span></div>';
 	}
 
 	function formatSelection(item) {
-		return '<p><strong>' + item.name + '</strong> (' + item.traitClass.traitClassName + ')</p>';
+		return '<strong>' + item.name + '</strong> (' + item.traitClass.traitClassName + ')';
 	}
 
 	/**
@@ -147,7 +147,7 @@ BMS.NurseryManager.PropertySelect = (function($) {
 
 				options.callback(result);
 			},
-			dropdownCssClass: 'var-select-results'
+			dropdownCssClass: 'ps-results'
 		});
 	};
 

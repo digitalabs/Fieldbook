@@ -176,7 +176,7 @@
                     if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
                         $timeout(function() {
                             $('#measurement-table').dataTable().fnAdjustColumnSizing();
-                        }, 500);
+                        }, 1);
                     }
                 }
             };

@@ -319,6 +319,13 @@
                         };
 
                         if ($scope.valuecontainer[$scope.targetkey]) {
+                            var currentVal = $scope.valuecontainer[$scope.targetkey];
+
+                            // check if the value currently stored is an object
+                            if (currentVal.id) {
+                                $scope.valuecontainer[$scope.targetkey] = currentVal.id;
+                            }
+
                             $scope.dropdownOptions.initSelection = function(element, callback) {
                                 angular.forEach($scope.dropdownValues, function(value) {
                                     var idNumber;

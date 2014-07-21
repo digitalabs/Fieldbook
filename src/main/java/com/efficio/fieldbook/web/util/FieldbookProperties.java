@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.util;
 public class FieldbookProperties {
 
 	private String programLocationsUrl;
-	private String programBreedintMethodsUrl;
+	private String programBreedingMethodsUrl;
 	private String germplasmImportUrl;
 	private String germplasmDetailsUrl;
 	
@@ -17,12 +17,12 @@ public class FieldbookProperties {
 		this.programLocationsUrl = programLocationsUrl;
 	}
 
-	public String getProgramBreedintMethodsUrl() {
-		return programBreedintMethodsUrl;
+	public String getProgramBreedingMethodsUrl() {
+		return programBreedingMethodsUrl;
 	}
 
-	public void setProgramBreedintMethodsUrl(String programBreedintMethodsUrl) {
-		this.programBreedintMethodsUrl = programBreedintMethodsUrl;
+	public void setProgramBreedingMethodsUrl(String programBreedingMethodsUrl) {
+		this.programBreedingMethodsUrl = programBreedingMethodsUrl;
 	}
 
 	public String getGermplasmImportUrl() {

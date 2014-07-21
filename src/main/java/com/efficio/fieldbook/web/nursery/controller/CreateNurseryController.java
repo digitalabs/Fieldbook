@@ -282,7 +282,7 @@ public class CreateNurseryController extends SettingsController {
 
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
-        form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
+        form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedingMethodsUrl());
         form.setImportLocationUrl(fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams);
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
@@ -658,7 +658,7 @@ public class CreateNurseryController extends SettingsController {
     
     @ModelAttribute("programMethodURL")
     public String getProgramMethod() {
-        return fieldbookProperties.getProgramBreedintMethodsUrl();
+        return fieldbookProperties.getProgramBreedingMethodsUrl();
     }
 
     @ModelAttribute("projectID")

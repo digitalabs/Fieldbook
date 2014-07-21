@@ -435,7 +435,7 @@ public class EditNurseryController extends SettingsController {
     private void setFormStaticData(CreateNurseryForm form, String contextParams, Workbook workbook){
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
-        form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
+        form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedingMethodsUrl());
         form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
         form.setProjectId(this.getCurrentProjectId());
         form.setImportLocationUrl(fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams);
@@ -590,7 +590,7 @@ public class EditNurseryController extends SettingsController {
     
     @ModelAttribute("programMethodURL")
     public String getProgramMethod() {
-        return fieldbookProperties.getProgramBreedintMethodsUrl();
+        return fieldbookProperties.getProgramBreedingMethodsUrl();
     }
 
     @ModelAttribute("projectID")

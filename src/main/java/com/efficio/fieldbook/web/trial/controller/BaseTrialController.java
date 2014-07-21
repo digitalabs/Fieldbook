@@ -4,8 +4,8 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.*;
@@ -13,12 +13,13 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.service.api.OntologyService;
 
 import javax.annotation.Resource;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -315,8 +316,8 @@ public abstract class BaseTrialController extends SettingsController {
         basicDetails.put(TermId.STUDY_NAME.getId(), studyDetails.getStudyName());
         basicDetails.put(TermId.STUDY_TITLE.getId(), studyDetails.getTitle());
         basicDetails.put(TermId.STUDY_OBJECTIVE.getId(), studyDetails.getObjective());
-        basicDetails.put(TermId.START_DATE.getId(), studyDetails.getStartDate());
-        basicDetails.put(TermId.END_DATE.getId(), studyDetails.getEndDate());
+        basicDetails.put(TermId.START_DATE.getId(), convertDateStringForUI(studyDetails.getStartDate()));
+        basicDetails.put(TermId.END_DATE.getId(), convertDateStringForUI(studyDetails.getEndDate()));
         basic.setBasicDetails(basicDetails);
         basic.setStudyID(trialID);
 
@@ -344,6 +345,15 @@ public abstract class BaseTrialController extends SettingsController {
 
 
         return tab;
+    }
+
+    protected String convertDateStringForUI(String value) {
+        if (value.indexOf("-") == -1) {
+            return DateUtil.convertToUIDateFormat(TermId.DATE_VARIABLE.getId(), value);
+        } else {
+            return value;
+        }
+
     }
 
     protected TabInfo prepareTrialSettingsTabInfo(List<MeasurementVariable> measurementVariables, boolean isUsePrevious) throws MiddlewareQueryException {

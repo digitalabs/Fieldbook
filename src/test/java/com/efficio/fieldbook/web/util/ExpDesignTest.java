@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,7 @@ import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
@@ -299,10 +301,7 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
-			Map<String, String> parameterMap = new HashMap();
-			parameterMap.put("blockSize", "6");
-			parameterMap.put("replicates", "2");	    	
-			parameterMap.put("environments", "1");
+		
 			List<MeasurementVariable> factors = new ArrayList();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
@@ -311,8 +310,13 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        List<MeasurementVariable> variates = new ArrayList();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
-	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, parameterMap, factors, 
-					variates, null, null);
+	        ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setBlockSize("6");
+	        param.setReplicationsCount("2");
+	        param.setNoOfEnvironments("1");
+	        
+	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, param, factors, 
+					variates, null);
 			for(MeasurementRow measurementRow : measurementRowList){
 				System.out.println(measurementRow.toString());
 			}
@@ -329,11 +333,14 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 200);
-			Map<String, String> parameterMap = new HashMap();
-			parameterMap.put("rows", "2");
-			parameterMap.put("cols", "100");	    	
-			parameterMap.put("replicates", "2");
-			parameterMap.put("environments", "2");			
+				
+			
+			ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setRowsPerReplications("2");
+	        param.setColsPerReplications("100");
+	        param.setReplicationsCount("2");
+	        param.setNoOfEnvironments("2");
+	        
 			
 			//number of replicates should be 2 or more
 			
@@ -345,8 +352,8 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        List<MeasurementVariable> variates = new ArrayList();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
-	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, parameterMap, factors, 
-					variates, null, null);
+	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, factors, 
+					variates, null);
 			for(MeasurementRow measurementRow : measurementRowList){
 				System.out.println(measurementRow.toString());
 			}
@@ -365,16 +372,8 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 200);
-			Map<String, String> parameterMap = new HashMap();    	
-			parameterMap.put("block", "2");
-			parameterMap.put("environments", "2");			
-			Map<String, List<String>> treatmentFactorValues = new HashMap();
+			
 			List<TreatmentVariable> treatmentVarList = new ArrayList();
-			
-			
-			treatmentFactorValues.put("8230", Arrays.asList("200"));
-			treatmentFactorValues.put("8284", Arrays.asList("100", "200", "300"));
-			treatmentFactorValues.put("8377", Arrays.asList("100", "200", "300"));
 			
 			TreatmentVariable treatmentVar1 = new TreatmentVariable();
 			treatmentVar1.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8284), Operation.ADD));
@@ -388,6 +387,22 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			treatmentVarList.add(treatmentVar2);
 
 			
+			ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setReplicationsCount("2");
+	        param.setNoOfEnvironments("2");
+	        
+	        
+	        Map<String, Map<String, List>> treatmentFactorValues = new HashMap<String, Map<String, List>>(); //Key - CVTerm ID , List of values
+			Map<String, List> treatmentData = new HashMap();
+			treatmentData.put("labels",  Arrays.asList("100", "200", "300"));
+			
+	        treatmentFactorValues.put("8284", treatmentData);
+			treatmentFactorValues.put("8377", treatmentData);
+			
+			
+	        param.setTreatmentFactorsData(treatmentFactorValues);
+	        
+			
 			//number of replicates should be 2 or more
 			
 			List<MeasurementVariable> factors = new ArrayList();		
@@ -398,8 +413,8 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        List<MeasurementVariable> variates = new ArrayList();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
-	        List<MeasurementRow> measurementRowList = randomizeBlockDesign.generateDesign(germplasmList, parameterMap, factors, 
-					variates, treatmentVarList, treatmentFactorValues);
+	        List<MeasurementRow> measurementRowList = randomizeBlockDesign.generateDesign(germplasmList, param, factors, 
+					variates, treatmentVarList);
 			for(MeasurementRow measurementRow : measurementRowList){
 				System.out.println(measurementRow.toString());
 			}

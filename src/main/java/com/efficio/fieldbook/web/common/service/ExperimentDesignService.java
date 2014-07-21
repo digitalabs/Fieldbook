@@ -23,11 +23,43 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface ExperimentDesignService.
+ */
 public interface ExperimentDesignService {	
 	
-	List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, Map<String, String> parameterMap, List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, List<TreatmentVariable> treatmentVariables, Map<String, List<String>> treatmentFactorValues);
+	/**
+	 * Generate design.
+	 *
+	 * @param germplasmList the germplasm list
+	 * @param parameterMap the parameter map
+	 * @param nonTrialFactors the non trial factors
+	 * @param variates the variates
+	 * @param treatmentVariables the treatment variables
+	 * @param treatmentFactorValues the treatment factor values
+	 * @return the list
+	 */
+	List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter, List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, List<TreatmentVariable> treatmentVariables) throws BVDesignException;
+	
+	/**
+	 * Gets the required variable.
+	 *
+	 * @return the required variable
+	 */
 	List<StandardVariable> getRequiredVariable();
+	
+	/**
+	 * Validate.
+	 *
+	 * @param expDesignParameter the exp design parameter
+	 * @return the exp design validation output
+	 */
+	ExpDesignValidationOutput validate(ExpDesignParameterUi expDesignParameter, List<ImportedGermplasm> germplasmList);
 }

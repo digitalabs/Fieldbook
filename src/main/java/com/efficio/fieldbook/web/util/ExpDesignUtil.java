@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
@@ -334,7 +335,8 @@ public class ExpDesignUtil {
 			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables, List<StandardVariable> requiredExpDesignVariable, 
 			List<ImportedGermplasm> germplasmList, MainDesign mainDesign, WorkbenchService workbenchService, 
-			FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues) throws JAXBException, IOException, MiddlewareQueryException{
+			FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues) 
+					throws JAXBException, IOException, MiddlewareQueryException, BVDesignException{
 		List<MeasurementRow> measurementRowList = new ArrayList();
 		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();			
 		varList.addAll(nonTrialFactors);
@@ -367,6 +369,8 @@ public class ExpDesignUtil {
 						}
 					}
 				}
+			}else{
+				throw new BVDesignException("experiment.design.generate.generic.error");
 			}
 			
 		}

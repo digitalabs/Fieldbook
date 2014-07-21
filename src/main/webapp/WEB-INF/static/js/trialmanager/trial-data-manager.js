@@ -9,6 +9,7 @@
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
         function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q) {
 
+            // TODO : clean up data service, at the very least arrange the functions in alphabetical order
             var extractData = function (initialData) {
                 if (!initialData) {
                     return null;
@@ -128,6 +129,26 @@
                 });
             };
 
+            var performDataCleanup = function() {
+                // TODO : delegate the task of cleaning up data to each tab that produces it, probably via listener
+
+                // perform cleanup of data for trial settings
+                // right now, just make sure that no objects are sent as user input for user-defined settings
+                cleanupData(service.currentData.trialSettings.userInput);
+                angular.forEach(service.currentData.environments.environments, function(environment) {
+                    cleanupData(environment.managementDetailValues);
+                    cleanupData(environment.trialDetailValues);
+                });
+            };
+
+            var cleanupData = function(values) {
+                angular.forEach(values, function(value, key) {
+                    if (value.id) {
+                        values[key] = value.id;
+                    }
+                });
+            };
+
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
                 {id: '@id'}, { 'get': {method: 'get', isArray: true} });
             var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, { });
@@ -210,6 +231,7 @@
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
                     if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
+                        performDataCleanup();
                         if (!service.isOpenTrial()) {
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
                                 success(function () {

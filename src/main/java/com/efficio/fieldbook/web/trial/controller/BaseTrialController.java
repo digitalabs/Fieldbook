@@ -234,7 +234,13 @@ public abstract class BaseTrialController extends SettingsController {
 
                 MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
                 if (mData != null) {
-                    managementDetailValues.put(mData.getMeasurementVariable().getTermId(), mData.getValue());
+                    String value;
+                    if (detail.getVariable().getWidgetType().getType().equals("DATE")) {
+                        value = convertDateStringForUI(mData.getValue());
+                    } else {
+                        value = mData.getValue();
+                    }
+                    managementDetailValues.put(mData.getMeasurementVariable().getTermId(), value);
                 }
             }
 
@@ -244,8 +250,14 @@ public abstract class BaseTrialController extends SettingsController {
 
                 MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
                 if (mData != null) {
+                    String value;
+                    if (detail.getVariable().getWidgetType().getType().equals("DATE")) {
+                        value = convertDateStringForUI(mData.getValue());
+                    } else {
+                        value = mData.getValue();
+                    }
                     phenotypeIDMap.put(mData.getMeasurementVariable().getTermId(), mData.getPhenotypeId());
-                    trialConditionValues.put(mData.getMeasurementVariable().getTermId(), mData.getValue());
+                    trialConditionValues.put(mData.getMeasurementVariable().getTermId(), value);
                 }
             }
 
@@ -388,7 +400,13 @@ public abstract class BaseTrialController extends SettingsController {
                 	detail.getVariable().setName(settingsMap.get(nameTermId).getName());
                 }
 
-                trialValues.put(var.getTermId(), var.getValue());
+                String value;
+                if (detail.getVariable().getWidgetType().getType().equals("DATE")) {
+                    value = convertDateStringForUI(var.getValue());
+                } else {
+                    value = var.getValue();
+                }
+                trialValues.put(var.getTermId(), value);
             }
         }
 

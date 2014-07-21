@@ -159,9 +159,11 @@
 
                             return hardFactors;
 
-                        })()
+                        })(),
+                        germplasmTotalListCount : 0
                     },
                     treatmentLevelPairs: {}
+
                 },
 
                 // returns a promise object to be resolved later

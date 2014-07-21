@@ -26,7 +26,7 @@
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">{{settings.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
-                                    <select class="form-control" ng-model="currentData[key].pairCvTermId" ng-options="pair_key as item.variable.name for (pair_key,item) in treatmentLevelPairs[key].vals()">
+                                    <select ui-select2="{minimumResultsForSearch: 10}" class="form-control" ng-model="currentData[key].pairCvTermId" ng-options="pair_key as item.variable.name for (pair_key,item) in treatmentLevelPairs[key].vals()">
                                         <option value="">Please Choose</option>
                                     </select>
                                 </td>

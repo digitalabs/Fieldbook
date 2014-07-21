@@ -13,10 +13,13 @@
             //TODO: temporarily hide features that are not implemented in this release
             $scope.hideFeatures = true;
 
+            $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
+            //FIXME: cheating a bit for the meantime.
+            $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = ($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
             $scope.settings = {
                 factors: TrialManagerDataService.specialSettings.experimentalDesign.factors,
                 treatmentFactors : TrialManagerDataService.settings.treatmentFactors,
-                treatments: TrialManagerDataService.settings.treatmentFactors.keys().length ? TrialManagerDataService.settings.treatmentFactors.keys().length : 0,
+                treatments: TrialManagerDataService.settings.treatmentFactors.keys().length ? TrialManagerDataService.settings.treatmentFactors.keys().length : 0
 
             };
 
@@ -25,11 +28,12 @@
                     id: 0,
                     name: 'Randomized Complete Block Design',params :'randomizedCompleteBlockParams.html',
                     data: {
-                    	'noOfEnvironments' : TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0,
+                        'noOfEnvironments' : TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0,
                         'designType': 0,
                         'replicationsCount' : 5,
                         'treatmentFactors' : $scope.settings.treatmentFactors,
-                        'treatmentFactorsData': TrialManagerDataService.currentData.treatmentFactors
+                        'treatmentFactorsData': TrialManagerDataService.currentData.treatmentFactors,
+                        'totalGermplasmListCount': $scope.totalGermplasmEntryListCount
                         
                     },
                     settings: {
@@ -50,7 +54,8 @@
                         'blockSize' : 0,
                         'useLatenized' : true,
                         'contiguousBlocksToLatenize' : 0,
-                        'replicationsPerCol' : 0
+                        'replicationsPerCol' : 0,
+                        'totalGermplasmListCount': $scope.totalGermplasmEntryListCount
                     },
                     settings: {
                         trialEnvironments: $scope.settings.trialEnvironments,
@@ -71,7 +76,8 @@
                         'rowsPerReplications' : 0,
                         'colsPerReplications' : 0,
                         'contiguousRowsToLatenize':0,
-                        'contiguousColToLatenize': 0
+                        'contiguousColToLatenize': 0,
+                        'totalGermplasmListCount': $scope.totalGermplasmEntryListCount
                     },
                     settings: {
                         trialEnvironments: $scope.settings.trialEnvironments,

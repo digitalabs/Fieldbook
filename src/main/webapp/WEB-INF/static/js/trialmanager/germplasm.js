@@ -35,6 +35,8 @@
 
             $scope.handleSaveEvent = function() {
                 $scope.updateOccurred = false;
+
+                TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = $scope.getTotalListNo();
             };
 
             TrialManagerDataService.registerSaveListener('germplasmUpdate', $scope.handleSaveEvent);
@@ -46,6 +48,10 @@
             $scope.listAvailable = function() {
                 var entryHtml = $('#numberOfEntries').html();
                 return (entryHtml !== '' && parseInt(entryHtml,10) > 0);
+            };
+
+            $scope.getTotalListNo = function() {
+                return (parseInt($('#totalGermplasms').val())) ? parseInt($('#totalGermplasms').val()) : 0;
             };
 
             $scope.updateSettings = function(newValue) {
@@ -76,6 +82,8 @@
                     $('#numberOfEntries').html($('#totalGermplasms').val());
                     $('#imported-germplasm-list-reset-button').css('opacity', '1');
                     $scope.updateOccurred = false;
+
+                    TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = $scope.getTotalListNo();
 
                     if (!$scope.$$phase) {
                         $scope.$apply();

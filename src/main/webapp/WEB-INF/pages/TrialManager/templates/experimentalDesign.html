@@ -2,32 +2,20 @@
     <section-container heading="Experimental Design">
         <section-container name="content" heading="CHOOSE A DESIGN TYPE">
             <div class="row" name="content">
-                <div class="col-lg-7 col-md-9 col-sm-10 col-xs-12">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-6 control-label"><strong>Select the design type you would like to use for this trial:</strong></label>
-                            <div class="col-sm-6">
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <select class="form-control" ng-model="currentDesignType" ng-change="onSwitchDesignTypes(currentDesignType)" ng-options="item.name for item in designTypes">
-                                        </select>
-                                    </div>
-                                    <!--
-                                    <div class="col-xs-2">
-                                        <span class="btn btn-info">Change</span>
-                                    </div>
-                                    -->
+                <div class="col-md-12 add-bottom-padding">
+                    <label class="control-label" style="vertical-align: top; position: relative; top: 6px;"><strong>Select the design type you would like to use for this trial:</strong></label>
 
-                                </div>
-                                <div class="row" ng-show="currentDesignType.withResolvable &amp;&amp; !hideFeatures">
-                                    <div class="col-md-12">
-                                        <label class="checkbox-inline">
-                                            <input type="checkbox" ng-model="currentDesignType.data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                    <div style="display:inline-block">
+                        <div>
+                            <select ui-select2="{minimumResultsForSearch: -1}" style="width: 350px !important;" class="form-control" ng-model="currentDesignType" ng-change="onSwitchDesignTypes(currentDesignType)" ng-options="item.name for item in designTypes">
+                            </select>
                         </div>
+                        <div ng-show="currentDesignType.withResolvable &amp;&amp; !hideFeatures">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" ng-model="currentDesignType.data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
+                            </label>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -64,16 +52,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="treatmentKey in settings.treatmentFactors.keys()">
-                                    <td  ng-class="{even : $even, odd : $odd}">{{settings.treatmentFactors.val(treatmentKey).variable.name}}</td>
-                                    <td  ng-class="{even : $even, odd : $odd}">{{settings.treatmentFactors.val(treatmentKey).variable.description}}</td>
-                                    <td  ng-class="{even : $even, odd : $odd}">{{currentDesignType.data.treatmentFactorsData[treatmentKey].levels}}</td>
+
+                            <tr>
+                                <td class="even"><a show-details-modal="entry_no_key" ng-init="entry_no_key = 8230" >{{germplasmDescriptorSettings.val(entry_no_key).variable.name}}</a></td>
+                                <td class="even">{{germplasmDescriptorSettings.val(8230).variable.description}}</td>
+                                <td class="even">{{totalGermplasmEntryListCount}}</td>
+                            </tr>
+
+                            <tr ng-repeat="treatmentKey in settings.treatmentFactors.keys()">
+                                    <td  ng-class="{odd : $even, even : $odd}"><a show-details-modal="treatmentKey">{{settings.treatmentFactors.val(treatmentKey).variable.name}}</a></td>
+                                    <td  ng-class="{odd : $even, even : $odd}">{{settings.treatmentFactors.val(treatmentKey).variable.description}}</td>
+                                    <td  ng-class="{odd : $even, even : $odd}">{{currentDesignType.data.treatmentFactorsData[treatmentKey].levels}}</td>
                                 </tr>
-                                <tr ng-hide="settings.treatmentFactors.keys().length &gt; 0">
-                                    <td class="odd">&nbsp;</td>
-                                    <td class="odd">&nbsp;</td>
-                                    <td class="odd">&nbsp;</td>
-                                </tr>
+
                             </tbody>
                         </table>
                     </div>

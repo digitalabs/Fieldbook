@@ -179,8 +179,19 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.title", studyDetails.getTitle());
 //		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.pmkey", studyDetails.getPmKey());
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.objective", studyDetails.getObjective());
-		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.startdate", studyDetails.getStartDate());
-		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.enddate", studyDetails.getEndDate());
+		String startDate = studyDetails.getStartDate();
+		String endDate = studyDetails.getEndDate();
+		
+		if(startDate != null){
+			startDate = startDate.replace("-", "");
+		}
+		
+		if(endDate != null){
+			endDate = endDate.replace("-", "");
+		}
+		
+		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.startdate", startDate);
+		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.enddate", endDate);
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.studytype", studyDetails.getStudyType().name());
 		
 		return currentRowNum;

@@ -154,7 +154,7 @@ public class OpenTrialController extends
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String submit(@RequestBody TrialData data) throws MiddlewareQueryException {
+    public Map<String, Object> submit(@RequestBody TrialData data) throws MiddlewareQueryException {
         
         processEnvironmentData(data.getEnvironments());
         List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
@@ -228,7 +228,12 @@ public class OpenTrialController extends
 
         // TODO : clarify if the environment values placed in session also need to be updated to include the values for the trial level conditions
         userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
-        
+
+
+        Map<String, Object> returnVal = new HashMap<String, Object>();
+        returnVal.put("environmentData", prepareEnvironmentsTabInfo(workbook, false));
+        returnVal.put("measurementDataExisting", false);
+        returnVal.put("measurementRowCount", 0);
         //saving of measurement rows
         if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
             try {                
@@ -243,13 +248,17 @@ public class OpenTrialController extends
                 fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION.getString(), true);
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
 
-                return "success";
+                returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
+                        SettingsUtil.buildVariates(workbook.getVariates())));
+                returnVal.put("measurementRowCount", workbook.getObservations().size());
+
+                return returnVal;
             } catch (MiddlewareQueryException e) {
                 LOG.error(e.getMessage());
-                return "error";
+                return new HashMap<String, Object>();
             }
         } else {
-            return "success";
+            return returnVal;
         }
     }
 

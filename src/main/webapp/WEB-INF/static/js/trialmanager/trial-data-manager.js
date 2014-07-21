@@ -30,20 +30,25 @@
                 }
             };
 
-            var updateTrialDataAfterCreation = function (trialID) {
+            var updateTrialDataAfterCreation = function (trialID, updateFunction) {
                 $http.get('/Fieldbook/TrialManager/openTrial/updateSavedTrial?trialID=' + trialID).success(function (data) {
-                    // update necessary data and settings
-                    // currently identified is the stockid, locationid, and experimentid found in the environment tab
-                    service.updateCurrentData('environments', extractData(data.environmentData));
-                    service.updateSettings('environments', extractSettings(data.environmentData));
+                    if (updateFunction) {
+                        updateFunction(data);
+                    } else {
+                        // update necessary data and settings
+                        // currently identified is the stockid, locationid, and experimentid found in the environment tab
+                        service.updateCurrentData('environments', extractData(data.environmentData));
+                        service.updateSettings('environments', extractSettings(data.environmentData));
 
-                    service.currentData.basicDetails.studyID = trialID;
-                    service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
-                    service.trialMeasurement.count = data.measurementRowCount;
+                        service.currentData.basicDetails.studyID = trialID;
+                        service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
+                        service.trialMeasurement.count = data.measurementRowCount;
 
-                    // TODO : change from global function call
-                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                        service.trialMeasurement.count);
+                        // TODO : change from global function call
+                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                            service.trialMeasurement.count);
+                    }
+
                 });
             };
 
@@ -218,22 +223,30 @@
                                     });
                                 });
                         } else {
-                            if (service.trialMeasurement.count > 0) {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function () {
+                            if (service.trialMeasurement.count >  0) {
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
+                                    service.trialMeasurement.hasMeasurement = (data.measurementDataExisting == 'true');
+                                    service.trialMeasurement.count = data.measurementRowCount;
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                                             service.trialMeasurement.count);
                                 });
                             } else {
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
-                                    success(submitGermplasmList).then(function () {
-                                        loadMeasurementScreen();
-                                        showSuccessfulMessage('', saveSuccessMessage);
-                                        notifySaveEventListeners();
-                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                            service.trialMeasurement.count);
-                                        //we also hide the update button
+                                    success(function() {
+                                        submitGermplasmList().then(function (trialID) {
+                                            loadMeasurementScreen();
+                                            showSuccessfulMessage('', saveSuccessMessage);
+                                            notifySaveEventListeners();
+                                            updateTrialDataAfterCreation(trialID, function (data) {
+                                                service.trialMeasurement.hasMeasurement = (data.measurementDataExisting == 'true');
+                                                service.trialMeasurement.count = data.measurementRowCount;
+                                                displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                                    service.trialMeasurement.count);
+                                            });
+                                            //we also hide the update button
+                                        });
                                     });
                             }
 

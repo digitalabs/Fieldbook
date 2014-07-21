@@ -1,7 +1,7 @@
 <div class="fbk-hide" ng-app="manageTrialApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
 <!-- header -->
 <div class="row col-xs-12">
-    <h1 class="page-header col-xs-12">
+    <h1 class="page-header col-xs-12 edit-trial-page-identifier">
         MANAGE TRIALS
     </h1>
 </div>
@@ -241,6 +241,9 @@
         <div id="manage-location" th:include="/Common/includes/importStudy"></div>
     </div>
 </div>-->
+<div class="row">
+	<div th:include="/NurseryManager/includes/deleteStudyConfirmation"></div>
+</div>
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
     <input type="hidden" th:field="*{measurementDataExisting}"/>

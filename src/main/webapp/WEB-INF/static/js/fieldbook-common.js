@@ -911,7 +911,17 @@ function openTreeStudy(id){
 
 function openDeleteConfirmation() {
 	'use strict';
-
+	
+	var deleteConfirmationText;
+	
+	if (isNursery() && !$('.edit-trial-page-identifier').length) {
+		$('#delete-nursery-heading-modal').text(deleteNurseryTitle);
+		deleteConfirmationText = deleteNurseryConfirmation;
+	}
+	else {
+		$('#delete-nursery-heading-modal').text(deleteTrialTitle);
+		deleteConfirmationText = deleteTrialConfirmation;
+	}
 	$('#deleteStudyModal').modal({ backdrop: 'static', keyboard: true });
 	var idVal = getCurrentStudyIdInTab();
 	if (!idVal) {
@@ -921,7 +931,7 @@ function openDeleteConfirmation() {
 	if (!name) {
 		name = $('.nursery-name-display').text();
 	}
-	$('#delete-study-confirmation').html(deleteNurseryConfirmation + ' ' + name + '?');
+	$('#delete-study-confirmation').html(deleteConfirmationText + ' ' + name + '?');
 }
 
 function deleteNursery() {
@@ -2080,8 +2090,14 @@ function deleteFolder(object) {
 			deleteConfirmationText = deleteConfirmation;
 		}
 		else {
-			$('#delete-heading-modal').text(deleteNurseryTitle);
-			deleteConfirmationText = deleteNurseryConfirmation;
+			if (isNursery()) {
+				$('#delete-heading-modal').text(deleteNurseryTitle);
+				deleteConfirmationText = deleteNurseryConfirmation;
+			}
+			else {
+				$('#delete-heading-modal').text(deleteTrialTitle);
+				deleteConfirmationText = deleteTrialConfirmation;
+			}
 		}
 		$('#deleteStudyFolder').modal('show');
         hideAddFolderDiv();

@@ -135,6 +135,7 @@
 
             $('#imported-germplasm-list').html('<H3></H3>');
             $('#imported-germplasm-list').show();
+            $('#entries-details').hide();
         });
         //displayEditFactorsAndGermplasmSection();
     };

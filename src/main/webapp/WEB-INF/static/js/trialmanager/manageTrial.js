@@ -100,8 +100,8 @@
 
 
     // THE parent controller for the manageTrial (create/edit) page
-    manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http',
-        function ($scope, $rootScope, TrialManagerDataService, $http) {
+    manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout',
+        function ($scope, $rootScope, TrialManagerDataService, $http, $timeout) {
             $scope.trialTabs = [
                 {   'name': 'Trial Settings',
                     'state': 'trialSettings'
@@ -174,7 +174,9 @@
             $scope.resizeMeasurementsIfNecessary = function(targetState) {
                 if (targetState === 'editMeasurements') {
                     if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
-                        $('#measurement-table').dataTable().fnAdjustColumnSizing();
+                        $timeout(function() {
+                            $('#measurement-table').dataTable().fnAdjustColumnSizing();
+                        }, 5000);
                     }
                 }
             };

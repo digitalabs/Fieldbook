@@ -195,9 +195,11 @@
                                 success(function () {
                                     submitGermplasmList().then(function (generatedID) {
                                         showSuccessfulMessage('', saveSuccessMessage);
-                                        /*updateTrialDataAfterCreation(generatedID);*/
-                                        window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
                                         notifySaveEventListeners();
+                                        window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
+
+                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                                                service.trialMeasurement.count);
                                     });
                                 });
                         } else {
@@ -205,6 +207,8 @@
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function () {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
+                                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                                            service.trialMeasurement.count);
                                 });
                             } else {
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
@@ -212,6 +216,8 @@
                                         loadMeasurementScreen();
                                         showSuccessfulMessage('', saveSuccessMessage);
                                         notifySaveEventListeners();
+                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                            service.trialMeasurement.count);
                                         //we also hide the update button
                                     });
                             }

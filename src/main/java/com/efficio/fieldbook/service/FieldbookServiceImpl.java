@@ -30,6 +30,8 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
@@ -718,6 +720,7 @@ public class FieldbookServiceImpl implements FieldbookService{
   						if(tempVarId.getOperation() != Operation.DELETE){
 	  						tempVarName.setOperation(Operation.ADD);
 	  						workbook.getConditions().add(tempVarName);
+	  						workbook.getTrialConditions().add(tempVarName);
 	  						 SettingVariable svar = new SettingVariable(
 	  								tempVarName.getName(), stdvar.getDescription(), stdvar.getProperty().getName(),
 	  								stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getStoredIn().getName(), 
@@ -771,12 +774,62 @@ public class FieldbookServiceImpl implements FieldbookService{
   	  						tempVarId.setDataTypeId(stdvar.getDataType().getId());
   	  						tempVarId.setFactor(false);
   	  						tempVarId.setOperation(Operation.ADD);
-  							workbook.getConditions().add(tempVarId);	
+  							workbook.getConditions().add(tempVarId);
+  							workbook.getTrialConditions().add(tempVarId);
   						}
   					}
   					
   				}
   			}
   		}
+		addConditionsToTrialObservationsIfNecessary(workbook);
   	}
+    
+    private void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
+    	if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()
+    			&& workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+
+			Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
+			Set<String> keys = idNameMap.keySet();
+			Map<String, String> nameIdMap = new HashMap<String, String>();
+			for (String key : keys) {
+				String entry = idNameMap.get(key);
+				nameIdMap.put(entry, key);
+			}
+    		int index = 0;
+    		for (MeasurementVariable variable : workbook.getTrialConditions()) {
+    			for (MeasurementRow row : workbook.getTrialObservations()) {
+    				MeasurementData data = row.getMeasurementData(variable.getTermId());
+    				if (data == null) {
+    					
+    					String actualNameVal = "";
+    					Integer idTerm = variable.getTermId();
+						String pairId = idNameMap.get(String.valueOf(variable.getTermId()));
+						if (pairId == null) {
+							pairId = nameIdMap.get(String.valueOf(variable.getTermId()));
+							idTerm = Integer.valueOf(pairId);
+						}
+						MeasurementData pairData = row.getMeasurementData(Integer.valueOf(pairId));
+						
+						MeasurementData idData = row.getMeasurementData(idTerm);
+						if (idData != null) {
+							List<ValueReference> possibleValues = idData.getMeasurementVariable().getPossibleValues();
+						
+							for(ValueReference ref : possibleValues){
+								if(ref.getId() != null && ref.getId().toString().equalsIgnoreCase(pairData.getValue())){
+									actualNameVal = ref.getName();
+									break;
+								}
+							}
+						}
+  						
+    					MeasurementData newData = new MeasurementData(variable.getName(), actualNameVal);
+    					newData.setMeasurementVariable(variable);
+    					row.getDataList().add(index, newData);
+    				}
+    			}
+    			index++;
+    		}
+    	}
+    }
 }

@@ -441,7 +441,14 @@ public class SettingsUtil {
         }
         return inList;
     }
-
+    public static HashMap<String, MeasurementVariable> buildMeasurementVariableMap(List<MeasurementVariable> factors) {
+        HashMap<String, MeasurementVariable> factorsMap = new HashMap<String, MeasurementVariable>();
+        for (MeasurementVariable factor : factors) {
+        	factorsMap.put(String.valueOf(factor.getTermId()), factor);
+        }
+        return factorsMap;
+    }
+    
     private static HashMap<String, Condition> buildConditionsMap(List<Condition> conditions) {
         HashMap<String, Condition> conditionsMap = new HashMap<String, Condition>();
         for (Condition condition : conditions) {
@@ -450,7 +457,7 @@ public class SettingsUtil {
         return conditionsMap;
     }
 
-    private static String getNameCounterpart(Integer idTermId, String idNameCombination) {
+    public static String getNameCounterpart(Integer idTermId, String idNameCombination) {
         StringTokenizer tokenizer = new StringTokenizer(idNameCombination, ",");
         while (tokenizer.hasMoreTokens()) {
             String pair = tokenizer.nextToken();
@@ -716,6 +723,9 @@ public class SettingsUtil {
             List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
             List<SettingDetail> treatmentFactors = new ArrayList<SettingDetail>();
             List<SettingDetail> trialConditions = new ArrayList<SettingDetail>();
+            
+            HashMap<String, Condition> conditionsMap = buildConditionsMap(dataset.getConditions());
+            
             if (dataset.getConditions() != null) {
                 for (Condition condition : dataset.getConditions()) {
 
@@ -725,7 +735,7 @@ public class SettingsUtil {
                     //Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
                     Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 
-                    if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
+                    if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString()) || !inHideVariableFields(stdVar, AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString())) {
                         variable.setCvTermId(stdVar);
                         List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
                         SettingDetail settingDetail = new SettingDetail(variable,
@@ -734,6 +744,12 @@ public class SettingsUtil {
                         settingDetail.setPossibleValuesToJson(possibleValues);
                         List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
                         settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                        
+                        String nameTermId = getNameCounterpart(variable.getCvTermId(), AppConstants.ID_NAME_COMBINATION.getString());
+                        if (conditionsMap.get(nameTermId) != null) {
+                            settingDetail.getVariable().setName(conditionsMap.get(nameTermId).getName());
+                        }
+                        
                         studyLevelConditions.add(settingDetail);
                         if (userSelection != null) {
                             StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
@@ -791,6 +807,8 @@ public class SettingsUtil {
                 }
             }
 
+            
+            
             if (dataset.getTrialLevelFactor() != null) {
                 for (Factor factor : dataset.getTrialLevelFactor()) {
                     String variableName = factor.getName();
@@ -818,6 +836,7 @@ public class SettingsUtil {
                             settingDetail.setDeletable(false);
                         }
 
+                      
                         trialLevelVariableList.add(settingDetail);
 
                         if (userSelection != null) {

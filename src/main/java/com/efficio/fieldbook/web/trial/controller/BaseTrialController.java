@@ -4,6 +4,8 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.*;
@@ -11,9 +13,11 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.service.api.OntologyService;
 
 import javax.annotation.Resource;
+
 import java.util.*;
 
 /**
@@ -163,9 +167,9 @@ public abstract class BaseTrialController extends SettingsController {
         Map<String, List<SettingDetail>> settingMap = new HashMap<String, List<SettingDetail>>();
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
         List<SettingDetail> trialConditionsList = new ArrayList<SettingDetail>();
-        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
         List<Integer> requiredFields = buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
-
+        HashMap<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
         for (MeasurementVariable var : workbook.getTrialConditions()) {
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
 
@@ -183,6 +187,12 @@ public abstract class BaseTrialController extends SettingsController {
                 detail.getVariable().setOperation(Operation.UPDATE);
             } else {
                 detail.getVariable().setOperation(Operation.ADD);
+            }
+            
+          //set local name of id variable to local name of name variable
+            String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
+            if (factorsMap.get(nameTermId) != null) {
+            	detail.getVariable().setName(factorsMap.get(nameTermId).getName());
             }
         }
 
@@ -340,18 +350,32 @@ public abstract class BaseTrialController extends SettingsController {
         TabInfo info = new TabInfo();
         Map<Integer, String> trialValues = new HashMap<Integer, String>();
         List<SettingDetail> details = new ArrayList<SettingDetail>();
+        
+        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
         List<Integer> basicDetailIDList = buildVariableIDList(AppConstants.HIDE_TRIAL_FIELDS.getString());
-
+        HashMap<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
         for (MeasurementVariable var : measurementVariables) {
             if (!basicDetailIDList.contains(var.getTermId())) {
                 SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
                 detail.setDeletable(true);
                 details.add(detail);
 
+                if (hiddenFields.contains(var.getTermId())) {
+                    detail.setHidden(true);
+                } else {
+                    detail.setHidden(false);
+                }
+                
                 if (!isUsePrevious) {
                     detail.getVariable().setOperation(Operation.UPDATE);
                 } else {
                     detail.getVariable().setOperation(Operation.ADD);
+                }
+                
+              //set local name of id variable to local name of name variable
+                String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
+                if (settingsMap.get(nameTermId) != null) {
+                	detail.getVariable().setName(settingsMap.get(nameTermId).getName());
                 }
 
                 trialValues.put(var.getTermId(), var.getValue());

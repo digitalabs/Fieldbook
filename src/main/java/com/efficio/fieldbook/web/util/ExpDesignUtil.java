@@ -293,13 +293,19 @@ public class ExpDesignUtil {
 				else if(termId.intValue() == TermId.PLOT_NO.getId())
 					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
 				else if(termId.intValue() == TermId.CHECK.getId()){
-					measurementData = new MeasurementData(var.getName(), germplasm.getCheckName(), 
+					measurementData = new MeasurementData(var.getName(), Integer.toString(germplasm.getCheckId()), 
 			    							false, var.getDataType(), germplasm.getCheckId(), var);
 					
 				} else if (termId.intValue() == TermId.REP_NO.getId()) {
 					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
 					
 				} else if (termId.intValue() == TermId.BLOCK_NO.getId()) {
+					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+					
+				} else if (termId.intValue() == TermId.ROW.getId()) {
+					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+					
+				} else if (termId.intValue() == TermId.COL.getId()) {
 					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
 					
 				}else if (var.getTreatmentLabel() != null && !"".equals(var.getTreatmentLabel())) {

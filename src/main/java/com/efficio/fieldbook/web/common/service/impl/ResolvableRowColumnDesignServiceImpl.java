@@ -68,9 +68,9 @@ public class ResolvableRowColumnDesignServiceImpl implements
 				for(StandardVariable var : reqVarList){
 					if(var.getId() == TermId.REP_NO.getId()){
 						stdvarRep = var;
-					}else if(var.getId() == 8581){
+					}else if(var.getId() == TermId.ROW.getId()){
 						stdvarRows = var;
-					}else if(var.getId() == 8582){
+					}else if(var.getId() == TermId.COL.getId()){
 						stdvarCols = var;
 					}else if(var.getId() == TermId.PLOT_NO.getId()){
 						stdvarPlot = var;
@@ -103,8 +103,8 @@ public class ResolvableRowColumnDesignServiceImpl implements
 			//StandardVariable stdvarTreatment = fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
 			StandardVariable stdvarRep = fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());				
 			StandardVariable stdvarPlot = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
-			StandardVariable stdvarRows = fieldbookMiddlewareService.getStandardVariable(8581);
-			StandardVariable stdvarCols = fieldbookMiddlewareService.getStandardVariable(8582);
+			StandardVariable stdvarRows = fieldbookMiddlewareService.getStandardVariable(TermId.ROW.getId());
+			StandardVariable stdvarCols = fieldbookMiddlewareService.getStandardVariable(TermId.COL.getId());
 			
 			varList.add(stdvarRep);
 			varList.add(stdvarPlot);

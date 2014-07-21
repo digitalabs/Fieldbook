@@ -321,8 +321,14 @@
                         if ($scope.valuecontainer[$scope.targetkey]) {
                             $scope.dropdownOptions.initSelection = function(element, callback) {
                                 angular.forEach($scope.dropdownValues, function(value) {
-                                    if (value.id === $scope.valuecontainer[$scope.targetkey] ||
-                                        value.description === $scope.valuecontainer[$scope.targetkey]) {
+                                    var idNumber;
+
+                                    if (! isNaN($scope.valuecontainer[$scope.targetkey])) {
+                                        idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+                                    }
+
+                                    if (value.description === $scope.valuecontainer[$scope.targetkey] ||
+                                        value.id === idNumber) {
                                         callback(value);
                                         return false;
                                     }

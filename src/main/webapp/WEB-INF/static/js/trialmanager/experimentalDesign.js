@@ -15,12 +15,10 @@
 
             $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
             //FIXME: cheating a bit for the meantime.
-            $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = ($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
+            $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
             $scope.settings = {
                 factors: TrialManagerDataService.specialSettings.experimentalDesign.factors,
-                treatmentFactors : TrialManagerDataService.settings.treatmentFactors,
-                treatments: TrialManagerDataService.settings.treatmentFactors.keys().length ? TrialManagerDataService.settings.treatmentFactors.keys().length : 0
-
+                treatmentFactors : TrialManagerDataService.settings.treatmentFactors
             };
 
             // initialize some data not in currentData
@@ -67,7 +65,7 @@
                     return;
                 }
 
-                var data = angular.copy($scope.currentDesignType.data);
+                var data = angular.copy(TrialManagerDataService.currentData.experimentalDesign);
                 // transform ordered has of treatment factors if existing to just the map
                 if (data.treatmentFactors) {
                     data.treatmentFactors = $scope.currentDesignType.data.treatmentFactors.vals();
@@ -106,7 +104,7 @@
                             return false;
                         }
 
-                        if ($scope.currentDesignType.data.rowsPerReplications * $scope.currentDesignType.data.colsPerReplications !== $scope.settings.treatments) {
+                        if ($scope.currentDesignType.data.rowsPerReplications * $scope.currentDesignType.data.colsPerReplications !== $scope.totalGermplasmEntryListCount) {
                             showErrorMessage('page-message','Product of rows and cols  (rows x cols) should be equal to the number of treatments');
                             return false;
                         }
@@ -121,7 +119,7 @@
                 }
 
                 return true;
-            }
+            };
 
 
     }]).

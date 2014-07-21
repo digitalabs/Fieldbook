@@ -196,7 +196,10 @@
 
 <!-- tab + content -->
 <ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
-    <li ng-repeat="tab in trialTabs"  ng-class="{active: $state.includes(tab.state)}" ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())"><a ui-sref="{{tab.state}}">{{tab.name}}</a></li>
+    <li ng-repeat="tab in trialTabs"  ng-class="{active: $state.includes(tab.state)}"
+        ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
+        <a ui-sref="{{tab.state}}" ng-click="resizeMeasurementsIfNecessary(tab.state)">{{tab.name}}</a>
+    </li>
 </ul>
 
 
@@ -215,22 +218,22 @@
 
 <div class="row">
     <div class="col-xs-12 col-md-12">
-        <div id="manage-location" th:include="/Common/includes/manageLocationsModal"></div>
+        <div th:include="/Common/includes/manageLocationsModal"></div>
     </div>
 </div>
 <div class="row">
     <div class="col-xs-12 col-md-12">
-        <div id="manage-location" th:include="/Common/includes/manageMethodsModal"></div>
+        <div th:include="/Common/includes/manageMethodsModal"></div>
     </div>
 </div>
 <div class="row">
     <div class="col-xs-12 col-md-12">
-        <div id="manage-location" th:include="/Common/includes/exportStudy"></div>
+        <div th:include="/Common/includes/exportStudy"></div>
     </div>
 </div>
 <div class="row">
     <div class="col-xs-12 col-md-12">
-        <div id="manage-location" th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
+        <div th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
     </div>
 </div>
 <!--<div class="row">
@@ -252,6 +255,7 @@
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/fieldbook-common.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
 
 
 <!-- constants here -->

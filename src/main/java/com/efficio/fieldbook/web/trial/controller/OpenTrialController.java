@@ -145,14 +145,12 @@ public class OpenTrialController extends
 
         return showAngularPage(model);
     }
-    
+
     /**
-     * Submit.
      *
-     * @param form the form
-     * @param model the model
-     * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
+     * @param data
+     * @return
+     * @throws MiddlewareQueryException
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
@@ -261,6 +259,7 @@ public class OpenTrialController extends
     public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") int id) throws MiddlewareQueryException {
         Map<String, Object> returnVal = new HashMap<String, Object>();
         Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(id);
+        userSelection.setWorkbook(trialWorkbook);
         returnVal.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
         returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                             SettingsUtil.buildVariates(trialWorkbook.getVariates())));

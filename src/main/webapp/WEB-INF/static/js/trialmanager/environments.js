@@ -31,7 +31,7 @@
 
             $scope.temp = {
                 settingMap : {}
-            }
+            };
 
             $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
             

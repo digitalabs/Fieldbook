@@ -18,6 +18,7 @@
 			</div>
 		</div>
 	</div>
+	<input type="hidden" value="Variable icon modified from original retrieved from http://www.visualpharm.com."/>
 </div>
 
 <!-- Renders a property's information and list of variables. The service we use strips out properties with no variables, so it should never
@@ -125,4 +126,21 @@ be empty. -->
 <!-- Property Select Templates-->
 <script id="vs-property-select-template" type="text/x-handlebars-template">
 	<input class="ps-input" type="hidden"></input>
+</script>
+
+<script id="vs-property-result-template" type="text/x-handlebars-template">
+	<div class="ps-item-property-info">
+		<img class="vs-icon" src="../static/img/vs/property.svg" alt="Property"/>
+		<span class="ps-item-attr ps-item-prop-name">{{{searchTermHighlight propertyName searchTerm}}}</span>
+		(<span class="ps-item-class-name">{{{searchTermHighlight className searchTerm}}}</span>)
+	</div>
+
+	<div class="ps-item-variables">
+		<img class="vs-icon vs-icon-sm" src="../static/img/vs/variable.png" alt="Variable"/>
+		<span class="ps-item-attr">
+			{{#each variables}}
+				{{{searchTermHighlight name ../searchTerm}}}{{#unless @last}}, {{/unless}}
+			{{/each}}
+		</span>
+	</div>
 </script>

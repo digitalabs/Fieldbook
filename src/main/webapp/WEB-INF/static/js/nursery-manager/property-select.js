@@ -18,41 +18,33 @@ BMS.NurseryManager.PropertySelect = (function($) {
 	'use strict';
 
 	var generateDropdownMarkup = Handlebars.compile($('#vs-property-select-template').html()),
+		generateFormattedResult = Handlebars.compile($('#vs-property-result-template').html()),
 		propertyDropdownSelector = '.ps-input',
 
 		PropertySelect;
 
-	function formatResult(item, container, query) {
-		var searchTerm = query.term,
-			regex = new RegExp(searchTerm, 'gi'),
-			propertyName = item.name,
-			className = item.traitClass.traitClassName,
-			formattedItem,
-			variables,
-			i;
+	Handlebars.registerHelper('searchTermHighlight', function(name, searchTerm) {
+		var regex = new RegExp(searchTerm, 'gi');
 
-		if (searchTerm) {
-			propertyName = item.name.replace(regex, '<strong>$&</strong>');
-			className = item.traitClass.traitClassName.replace(regex, '<strong>$&</strong>');
+		if (searchTerm && name) {
+			return name.replace(regex, '<span class="ps-item-property-search-term">$&</span>');
 		}
 
-		formattedItem  = '<div class="ps-item-property-info"><img class="vs-icon" src="../static/img/vs/property.svg" alt="Property"/><span class="ps-item-attr ps-item-prop-name">' +
-			propertyName + '</span> (<span class="ps-item-class-name">' + className + '</span>)</div>';
+		return name;
+	});
 
-		variables = item.standardVariables.sort(function(a, b) {
+	function formatResult(item, container, query) {
+
+		var variables = item.standardVariables.sort(function(a, b) {
 			return a.name.localeCompare(b.name);
 		});
 
-		formattedItem += '<div class="ps-item-variables"><img class="vs-icon vs-icon-sm" src="../static/img/vs/variable.png" alt="Variable"/><span class="ps-item-attr">';
-
-		for (i = 0; i < variables.length; i++) {
-			if (i !== 0) {
-				formattedItem += ', ';
-			}
-
-			formattedItem += searchTerm ? variables[i].name.replace(regex, '<strong>$&</strong>') : variables[i].name;
-		}
-		return formattedItem + '</span></div>';
+		return generateFormattedResult({
+			propertyName: item.name,
+			searchTerm: query.term,
+			className: item.traitClass.traitClassName,
+			variables: variables
+		});
 	}
 
 	function formatSelection(item) {

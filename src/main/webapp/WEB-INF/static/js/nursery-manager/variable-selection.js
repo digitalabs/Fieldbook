@@ -547,6 +547,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 			// Validate alias is unique among selected variables
 
+			alias = alias.trim();
+
 			for (id in this._currentlySelectedVariables) {
 				if (this._currentlySelectedVariables.hasOwnProperty(id)) {
 					unique = unique && (alias !== this._currentlySelectedVariables[id]);

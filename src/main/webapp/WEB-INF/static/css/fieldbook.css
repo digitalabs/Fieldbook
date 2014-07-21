@@ -1436,7 +1436,8 @@ label[data-toggle="collapse"],
 	height: 45px;
 }
 
-.ps-results .ps-item-prop-name {
+.ps-results .ps-item-prop-name,
+.ps-results .ps-item-property-search-term {
 	font-weight: bold;
 }
 

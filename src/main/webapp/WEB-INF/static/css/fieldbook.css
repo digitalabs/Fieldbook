@@ -1207,6 +1207,12 @@ input::-ms-clear {
 .fbk-hide{
     display: none;
 }
+
+
+.fbk-hide.ng-scope{
+    display: inherit !important;
+}
+
 .fbk-hide-opacity{
     opacity: 0;
 }

@@ -11,77 +11,54 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.trial.controller;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
-
-import org.junit.Before;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.web.ModelAndViewAssert;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.service.api.FieldbookService;
-import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 
-/**
- * The Class ManageTrialControllerTest.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class ManageTrialControllerTest extends AbstractJUnit4SpringContextTests {
 	
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(ManageTrialControllerTest.class);
-    
-    /** The fieldbook middleware service. */
-    @Autowired
-    FieldbookService fieldbookMiddlewareService;
+	@Autowired
+	private RequestMappingHandlerAdapter handleAdapter;
 
-    /**
-     * Sets the up.
-     */
-    @Before
-    public void setUp() {
+	@Autowired
+	private RequestMappingHandlerMapping handlerMapping;
 
-    }
-	
-	/**
-	 * Test manage nurseries pagination.
-	 */
 	@Test
-	public void testManageNurseriesPagination(){
-	    ManageTrialForm form = new ManageTrialForm();
-	    
-	    try {    
-            List<StudyDetails> nurseryDetailsList = 
-                    fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
-            form.setTrialDetailsList(nurseryDetailsList);
-	    } catch (MiddlewareQueryException e) {
-	        LOG.error(e.getMessage(), e);
-	    }
-            
-	    if (form.getPaginatedTrialDetailsList() != null) {
-            if (form.getPaginatedTrialDetailsList().size() > 0) {
-                form.setCurrentPage(1);
-                if (form.getPaginatedTrialDetailsList().size() > 10) {
-                    assertEquals(form.getPaginatedTrialDetailsList().size(), form.getResultPerPage());
-                }
-            }
+	public void testGetReturnsCorrectModelAndView() throws Exception {
 
-            if (form.getPaginatedTrialDetailsList().size() > 10 
-                    && form.getPaginatedTrialDetailsList().size() <= 20) {
-                form.setCurrentPage(2);
-                assertEquals(form.getPaginatedTrialDetailsList().size()
-                        , form.getTrialDetailsList().size() - 10);
-            }
-	    }
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		MockHttpSession session = new MockHttpSession();
+		request.setSession(session);
+		
+		request.setRequestURI(ManageTrialController.URL);
+		request.setMethod(HttpMethod.GET.name());
+
+		Object handler = handlerMapping.getHandler(request).getHandler();
+		ModelAndView mav = handleAdapter.handle(request, response, handler);
+
+		ModelAndViewAssert.assertViewName(mav, ManageTrialController.BASE_TEMPLATE_NAME);
+		ModelAndViewAssert.assertModelAttributeValue(mav, 
+				AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy");
+		ModelAndViewAssert.assertModelAttributeValue(mav, 
+				"type", StudyType.T.getName());
+
 	}
 }

@@ -11,9 +11,11 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -28,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml" })
+@ContextConfiguration(locations = { "file:src/test/resources/Fieldbook-servlet-test.xml" })
 public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTests {
 
 	@Autowired
@@ -46,14 +48,16 @@ public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTe
 		request.setSession(session);
 		
 		request.setRequestURI(ManageNurseriesController.URL);
-		request.setMethod("GET");
+		request.setMethod(HttpMethod.GET.name());
 
 		Object handler = handlerMapping.getHandler(request).getHandler();
 		ModelAndView mav = handleAdapter.handle(request, response, handler);
 
 		ModelAndViewAssert.assertViewName(mav, ManageNurseriesController.BASE_TEMPLATE_NAME);
 		ModelAndViewAssert.assertModelAttributeValue(mav, 
-				AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "NurseryManager/manageNurseries");
+				AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy");
+		ModelAndViewAssert.assertModelAttributeValue(mav, 
+				"type", StudyType.N.getName());
 
 	}
 

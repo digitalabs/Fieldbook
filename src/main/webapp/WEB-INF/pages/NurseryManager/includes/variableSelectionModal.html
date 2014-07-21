@@ -27,7 +27,7 @@ be empty. -->
 
 <!-- Property Information -->
 <div>
-	<img class="vs-icon vs-icon-lg" src="../static/img/vs/property.svg" alt="Property"/>
+	<img class="vs-icon vs-icon-lg" th:src="@{/static/img/vs/property.svg}" alt="Property"/>
 	<h2 class="vs-title">{{propertyName}} <span class="vs-class-name">({{className}})</span></h2>
 </div>
 
@@ -130,13 +130,13 @@ be empty. -->
 
 <script id="vs-property-result-template" type="text/x-handlebars-template">
 	<div class="ps-item-property-info">
-		<img class="vs-icon" src="../static/img/vs/property.svg" alt="Property"/>
+		<img class="vs-icon" th:src="@{/static/img/vs/property.svg}" alt="Property"/>
 		<span class="ps-item-attr ps-item-prop-name">{{{searchTermHighlight propertyName searchTerm}}}</span>
 		(<span class="ps-item-class-name">{{{searchTermHighlight className searchTerm}}}</span>)
 	</div>
 
 	<div class="ps-item-variables">
-		<img class="vs-icon vs-icon-sm" src="../static/img/vs/variable.png" alt="Variable"/>
+		<img class="vs-icon vs-icon-sm" th:src="@{/static/img/vs/variable.png}" alt="Variable"/>
 		<span class="ps-item-attr">
 			{{#each variables}}
 				{{{searchTermHighlight name ../searchTerm}}}{{#unless @last}}, {{/unless}}

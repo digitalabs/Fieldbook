@@ -46,7 +46,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
-			ExpDesignParameterUi parameter, List<MeasurementVariable> factors,
+			ExpDesignParameterUi parameter, List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors,
 			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 		
@@ -106,7 +106,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					stdvarRep.getName(), stdvarPlot.getName(),
 				treatmentFactor, levels, "1", "");
 			
-			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, factors,
+			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, trialVariables, factors,
 					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 					mainDesign, workbenchService, fieldbookProperties, (ExpDesignUtil.TREATMENT_PREFIX + stdvarTreatment.getId()), treatmentFactorValues);					
 			

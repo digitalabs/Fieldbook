@@ -266,14 +266,21 @@ public class ExpDesignUtil {
 
 	
 	public static MeasurementRow createMeasurementRow(List<MeasurementVariable> headerVariable, 
-			ImportedGermplasm germplasm, Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues)
+			ImportedGermplasm germplasm, Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues, List<MeasurementVariable> trialVariables, int trialNo)
 	throws MiddlewareQueryException {
 		MeasurementRow measurementRow = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
 		MeasurementData treatmentLevelData = null;
+		
+		MeasurementVariable trialInstanceVar = 
+				WorkbookUtil.getMeasurementVariable(trialVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
+		MeasurementData measurementData = new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, 
+				trialInstanceVar.getDataType(), trialInstanceVar);
+		dataList.add(measurementData);
+		
 		for(MeasurementVariable var : headerVariable){
 			
-				MeasurementData measurementData =null;
+				measurementData =null;
 				
 				
 				Integer termId = var.getTermId();											
@@ -338,12 +345,12 @@ public class ExpDesignUtil {
 	}
 	
 	public static List<MeasurementRow> generateExpDesignMeasurements(int environments, 
-			List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
+			List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables, List<StandardVariable> requiredExpDesignVariable, 
 			List<ImportedGermplasm> germplasmList, MainDesign mainDesign, WorkbenchService workbenchService, 
 			FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues) 
 					throws JAXBException, IOException, MiddlewareQueryException, BVDesignException{
-		List<MeasurementRow> measurementRowList = new ArrayList();
+		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();			
 		varList.addAll(nonTrialFactors);
 		for(StandardVariable var : requiredExpDesignVariable){
@@ -353,6 +360,7 @@ public class ExpDesignUtil {
 				factors.add(measureVar);
 			}		
 		}
+		
 		if(treatmentVariables != null){
 			for(int i = 0 ; i < treatmentVariables.size() ; i++){
 				varList.add(treatmentVariables.get(i).getLevelVariable());
@@ -362,7 +370,8 @@ public class ExpDesignUtil {
 		varList.addAll(variates);
 		
 		
-		for(int i = 0 ; i < environments ; i++){
+		for(int i = 1 ; i <= environments ; i++){
+			int trialNo = i;
 			BVDesignOutput bvOutput = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
 			
 			if(bvOutput.isSuccess()){
@@ -372,7 +381,7 @@ public class ExpDesignUtil {
 						int germplasmIndex = Integer.valueOf(entryNo) - 1;
 						if(germplasmIndex >= 0 && germplasmIndex < germplasmList.size()){
 							ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
-							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues);
+							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo);
 							measurementRowList.add(row);
 						}
 					}

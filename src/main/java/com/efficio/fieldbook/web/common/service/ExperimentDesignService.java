@@ -46,7 +46,7 @@ public interface ExperimentDesignService {
 	 * @param treatmentFactorValues the treatment factor values
 	 * @return the list
 	 */
-	List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter, List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, List<TreatmentVariable> treatmentVariables) throws BVDesignException;
+	List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter, List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, List<TreatmentVariable> treatmentVariables) throws BVDesignException;
 	
 	/**
 	 * Gets the required variable.

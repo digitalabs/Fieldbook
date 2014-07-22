@@ -341,7 +341,7 @@ public class OpenTrialController extends
             HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
         Workbook workbook = userSelection.getWorkbook();
         List<MeasurementVariable> variates = workbook.getVariates();
-        List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariables();
+        List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariablesView();
         List<MeasurementRow> observations = workbook.getObservations();
         Integer measurementDatasetId = workbook.getMeasurementDatesetId();        
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(measurementDatasetId, SettingsUtil.buildVariates(variates)));        
@@ -353,7 +353,7 @@ public class OpenTrialController extends
             HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
         Workbook workbook = userSelection.getTemporaryWorkbook();
         List<MeasurementVariable> variates = workbook.getVariates();
-        List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariables();        
+        List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariablesView();        
         List<MeasurementRow> observations = workbook.getObservations();
         Integer measurementDatasetId = workbook.getMeasurementDatesetId();
         userSelection.setMeasurementRowList(workbook.getObservations());

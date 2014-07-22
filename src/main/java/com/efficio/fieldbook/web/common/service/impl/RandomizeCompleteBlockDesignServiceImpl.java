@@ -106,7 +106,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					stdvarRep.getName(), stdvarPlot.getName(),
 				treatmentFactor, levels, "1", "");
 			
-			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
+			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, factors,
 					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 					mainDesign, workbenchService, fieldbookProperties, (ExpDesignUtil.TREATMENT_PREFIX + stdvarTreatment.getId()), treatmentFactorValues);					
 			

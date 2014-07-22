@@ -18,6 +18,8 @@ public class ExpDesignParameterUi implements Serializable {
 	private String contiguousColToLatenize;
 	private Map treatmentFactors;
 	private Map treatmentFactorsData;
+	private String totalGermplasmListCount;
+	
 	public String getNoOfEnvironments() {
 		return noOfEnvironments;
 	}
@@ -102,6 +104,12 @@ public class ExpDesignParameterUi implements Serializable {
 	}
 	public void setTreatmentFactorsData(Map treatmentFactorsData) {
 		this.treatmentFactorsData = treatmentFactorsData;
+	}
+	public String getTotalGermplasmListCount() {
+		return totalGermplasmListCount;
+	}
+	public void setTotalGermplasmListCount(String totalGermplasmListCount) {
+		this.totalGermplasmListCount = totalGermplasmListCount;
 	}
 	
 	

@@ -23,11 +23,20 @@
 
         <div class="add_top_padding">
             <label class=" control-label"><strong>Number of contiguous blocks to latinize:</strong></label>
-            <span class=""><input ng-model="currentDesignType.data.contiguousBlocksToLatenize" type="text" valid-numbe="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+            <span class=""><input ng-model="currentDesignType.data.nblatin" type="text" valid-numbe="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
         </div>
+
         <div class="add_top_padding">
-            <label class=" control-label"><strong>Number of replications within each column:</strong></label>
-            <span class=""><input ng-model="currentDesignType.data.replicationsPerCol" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+            <label class=" control-label"><strong>How are the replications to be arranged in the field?</strong></label>
+            <span class="">
+                <select ui-select2="{minimumResultsForSearch: 10}" style="width: 300px !important;" class="form-control" ng-model="currentDesignType.data.replatinGroups" ng-options="key as name for (key,name) in replatinGroupsOpts">
+                </select>
+            </span>
+        </div>
+
+        <div class="add_top_padding">
+            <label class=" control-label"><strong>Please enter the number of reps in each column, running from left to right:</strong></label>
+            <span class=""><input ng-model="currentDesignType.data.replicationsArrangement" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
         </div>
         <div class="add_top_padding">
             <a ng-click="currentDesignType.showAdvancedOptions = false">Hide Advanced Options</a>

@@ -196,12 +196,13 @@
                             'isResolvable' : true,
                             'blockSize' : 0,
                             'useLatenized' : true,
-                            'contiguousBlocksToLatenize' : 0,
-                            'replicationsPerCol' : 0,
+                            'nblatin' : 0,
+                            'replicationsArrangement' : 0,
                             'rowsPerReplications' : 0,
                             'colsPerReplications' : 0,
-                            'contiguousRowsToLatenize':0,
-                            'contiguousColToLatenize': 0
+                            'nrlatin':0,
+                            'nclatin': 0,
+                            'replatinGroups': 0
                         }
                     },
                     treatmentLevelPairs: {}

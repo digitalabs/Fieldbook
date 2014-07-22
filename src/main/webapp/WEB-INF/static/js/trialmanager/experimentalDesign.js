@@ -11,7 +11,7 @@
         .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC','TrialManagerDataService',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC,TrialManagerDataService){
 
             //TODO: temporarily hide features that are not implemented in this release
-            $scope.hideFeatures = true;
+            //$scope.hideFeatures = true;
 
             $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
             //FIXME: cheating a bit for the meantime.
@@ -26,6 +26,8 @@
             TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactors = $scope.settings.treatmentFactors;
             TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors;
             TrialManagerDataService.specialSettings.experimentalDesign.data.totalGermplasmListCount = $scope.totalGermplasmEntryListCount;
+
+            $scope.replatinGroupsOpts = ['Please Choose','single col','single row','adjacent'];
 
             $scope.designTypes = [
             {

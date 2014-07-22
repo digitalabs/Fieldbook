@@ -142,11 +142,13 @@
             };
 
             var cleanupData = function(values) {
-                angular.forEach(values, function(value, key) {
-                    if (value.id) {
-                        values[key] = value.id;
-                    }
-                });
+                if (values) {
+                    angular.forEach(values, function (value, key) {
+                        if (value && value.id) {
+                            values[key] = value.id;
+                        }
+                    });
+                }
             };
 
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',

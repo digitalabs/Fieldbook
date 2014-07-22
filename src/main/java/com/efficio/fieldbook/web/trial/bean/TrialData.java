@@ -12,7 +12,7 @@ public class TrialData {
     private BasicDetails basicDetails;
     private TrialSettingsBean trialSettings;
     private EnvironmentData environments;
-    private Map treatmentFactors;
+    private TreatmentFactorTabBean treatmentFactors;
 
     public TrialData() {
     }
@@ -41,11 +41,11 @@ public class TrialData {
         this.environments = environments;
     }
 
-    public Map getTreatmentFactors() {
+    public TreatmentFactorTabBean getTreatmentFactors() {
         return treatmentFactors;
     }
 
-    public void setTreatmentFactors(Map treatmentFactors) {
+    public void setTreatmentFactors(TreatmentFactorTabBean treatmentFactors) {
         this.treatmentFactors = treatmentFactors;
     }
 }

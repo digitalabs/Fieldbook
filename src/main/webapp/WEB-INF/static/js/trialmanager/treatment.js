@@ -9,10 +9,17 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$http', function ($scope, TrialManagerDataService, _) {
+    manageTrialApp.controller('TreatmentCtrl',['$scope','TrialManagerDataService','_',function($scope,TrialManagerDataService,_) {
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
-        $scope.currentData = TrialManagerDataService.currentData.treatmentFactors;
+
+        if ($scope.settings && $scope.settings.keys() > 0) {
+            angular.forEach($scope.settings.keys(), function(value) {
+                $scope.generateTreatmentLevelPair(value);
+            });
+        }
+
+        $scope.data = TrialManagerDataService.currentData.treatmentFactors;
 
         // watch $scope.settings, since we are sure that $scope.settings is an orderedhash even empty, we could just
         // use $watchCollection, for every added change we retrieve the 'AMOUNT ' pairs dynamically. also creat a
@@ -133,19 +140,19 @@
 
             levels = parseInt(levels);
 
-            var diff = Math.abs($scope.currentData[key].labels.length - levels);
+            var diff = Math.abs($scope.data.currentData[key].labels.length - levels);
 
             // remove items if no of levels is less thant array
-            if ($scope.currentData[key].labels.length > levels) {
-                while ($scope.currentData[key].labels.length > levels) {
-                    $scope.currentData[key].labels.pop();
+            if ($scope.data.currentData[key].labels.length > levels) {
+                while ($scope.data.currentData[key].labels.length > levels) {
+                    $scope.data.currentData[key].labels.pop();
                 }
             }
 
             // add items if no of levels is more thant array
             else {
                 for (var j = 0; j < diff; j++) {
-                    $scope.currentData[key].labels.push(null);
+                    $scope.data.currentData[key].labels.push(null);
                 }
             }
 
@@ -157,4 +164,3 @@
     }]);
 
 })();
-

@@ -19,8 +19,8 @@
                             </thead>
 
                             <tbody>
-                            <tr ng-repeat="(key,value) in currentData track by key">
-                                <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' style="cursor: pointer" ng-click="deleteTreatmentFactor(key)"></span>
+                            <tr ng-repeat="key in settings.keys() track by key">
+                                <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="settings.remove(key)"></span>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}"><a show-details-modal="key" >{{settings.val(key).variable.name}}</a>
                                 </td>
@@ -71,10 +71,10 @@
                                 <a style="text-transform: uppercase" show-details-modal="key">{{settings.val(key).variable.name}}</a> -
                                 <span>{{settings.val(key).variable.description}}</span>
                             </div>
-                            <div class="add-bottom-padding" ng-show="currentData[key].variableId != 0">
+                            <div class="add-bottom-padding" ng-show="data.currentData[key].pairCvTermId > 0">
                                 <b class="sub-content-heading">Treatment Factor Level:</b>
-                                <a style="text-transform: uppercase" show-details-modal="currentData[key].variableId">{{treatmentLevelPairs[key].val(currentData[key].variableId).variable.name}}</a> -
-                                <span>{{treatmentLevelPairs[key].val(currentData[key].variableId).variable.description}}</span>
+                                <a style="text-transform: uppercase" show-details-modal="data.currentData[key].pairCvTermId">{{treatmentLevelPairs[key].val(data.currentData[key].pairCvTermId).variable.name}}</a> -
+                                <span>{{treatmentLevelPairs[key].val(data.currentData[key].pairCvTermId).variable.description}}</span>
                             </div>
 
 
@@ -94,18 +94,18 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-show="currentData[key].variableId != 0" ng-repeat="n in currentData[key].labels track by $index">
+                                <tr ng-show="data.currentData[key].pairCvTermId > 0" ng-repeat="n in data.currentData[key].labels track by $index">
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
                                         <a show-details-modal="key">{{settings.val(key).variable.name}} {{$index + 1}}</a>
                                     </td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">{{settings.val(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <show-setting-form-element settings="settings" targetkey="{{$index}}" settingkey="{{key}}" changefunction="onLabelChange"
-                                                                   valuecontainer="currentData[key].labels" use-exact-properties="true"></show-setting-form-element>
+                                        <show-setting-form-element settings="settings" targetkey="{{$index}}" settingkey="{{key}}"
+                                                                   valuecontainer="data.currentData[key].labels" use-exact-properties="true"></show-setting-form-element>
                                     </td>
                                 </tr>
 
-                                <tr ng-hide="currentData[key].labels.length &gt; 0 &amp;&amp; currentData[key].variableId != 0">
+                                <tr ng-hide="data.currentData[key].labels.length &gt; 0 &amp;&amp; data.currentData[key].pairCvTermId > 0">
                                     <td class="odd" ng-repeat="item in [] | range : 3">&nbsp;</td>
                                 </tr>
 

@@ -13,6 +13,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.service.api.OntologyService;
 
 import javax.annotation.Resource;
@@ -105,6 +106,11 @@ public abstract class BaseTrialController extends SettingsController {
         List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString());
 
         for (MeasurementVariable var : measurementVariables) {
+            // this condition is required so that treatment factors are not included in the list of factors for the germplasm tab
+            if (var.getTreatmentLabel()!= null && !var.getTreatmentLabel().isEmpty()) {
+                continue;
+            }
+
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
 
             if (requiredIDList.contains(var.getTermId())) {
@@ -132,6 +138,48 @@ public abstract class BaseTrialController extends SettingsController {
         info.setSettings(detailList);
 
         userSelection.setPlotsLevelList(detailList);
+
+        return info;
+    }
+
+    protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables, boolean isUsePrevious) throws MiddlewareQueryException {
+        Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
+        Map<Integer, TreatmentFactorData> currentData = new HashMap<Integer, TreatmentFactorData>();
+
+        for (TreatmentVariable treatmentVariable : treatmentVariables) {
+            Integer levelFactorId = treatmentVariable.getLevelVariable().getTermId();
+            if (!levelDetails.containsKey(levelFactorId)) {
+                SettingDetail detail = createSettingDetail(levelFactorId, null);
+
+                if (!isUsePrevious) {
+                    detail.getVariable().setOperation(Operation.UPDATE);
+                } else {
+                    detail.getVariable().setOperation(Operation.ADD);
+                }
+
+                levelDetails.put(levelFactorId, detail);
+            }
+
+            TreatmentFactorData treatmentFactorData;
+            if (! currentData.containsKey(levelFactorId)) {
+                treatmentFactorData = new TreatmentFactorData();
+                treatmentFactorData.setLevels(Integer.parseInt(treatmentVariable.getLevelVariable().getValue()));
+                treatmentFactorData.setPairCvTermId(treatmentVariable.getValueVariable().getTermId());
+                currentData.put(levelFactorId, treatmentFactorData);
+            } else {
+                treatmentFactorData = currentData.get(levelFactorId);
+            }
+
+            treatmentFactorData.getLabels().add(treatmentVariable.getValueVariable().getValue());
+        }
+
+        TabInfo info = new TabInfo();
+        TreatmentFactorTabBean tabBean = new TreatmentFactorTabBean();
+        tabBean.setCurrentData(currentData);
+
+        info.setData(tabBean);
+        List<SettingDetail> detailList = new ArrayList<SettingDetail>(levelDetails.values());
+        info.setSettings(detailList);
 
         return info;
     }

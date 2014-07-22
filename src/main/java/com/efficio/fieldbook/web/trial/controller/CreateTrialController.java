@@ -130,7 +130,7 @@ public class CreateTrialController extends BaseTrialController {
         if (trialID != null && trialID != 0) {
             Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialID);
 
-            tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getGermplasmFactors(), true));
+            tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
             tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
             tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
             tabDetails.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
@@ -213,10 +213,10 @@ public class CreateTrialController extends BaseTrialController {
 
         String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
         
-        // TODO : integrate treatment factor detail once it's finalized               
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
-                userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
-                userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
+                userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection,
+                userSelection.getTrialLevelVariableList(), data.getTreatmentFactors().getCurrentData(),
+                null, userSelection.getNurseryConditions(), false);
 
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
         

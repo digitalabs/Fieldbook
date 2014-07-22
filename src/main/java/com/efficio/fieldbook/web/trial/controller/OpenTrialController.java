@@ -1,13 +1,13 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 
 import java.util.HashMap;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.record.UseSelFSRecord;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -104,6 +106,11 @@ public class OpenTrialController extends
     	// TODO : integrate loading of data for
 	    Workbook workbook = userSelection.getWorkbook();
         if (workbook != null) {
+        	//this is so we can preview the exp design
+        	if(userSelection.getTemporaryWorkbook() != null){
+        		workbook = userSelection.getTemporaryWorkbook();
+        	}
+        	
             try {
 				//SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
 				userSelection.setMeasurementRowList(workbook.getObservations());
@@ -225,6 +232,7 @@ public class OpenTrialController extends
         // TODO : integration with experimental design here
 
         userSelection.setWorkbook(workbook);
+        userSelection.setTemporaryWorkbook(null);
 
         // TODO : clarify if the environment values placed in session also need to be updated to include the values for the trial level conditions
         userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
@@ -316,7 +324,7 @@ public class OpenTrialController extends
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
         
         resetSessionVariablesAfterSave(workbook, false);
-        return loadMeasurementDataPage(form, workbook, model);
+        return loadMeasurementDataPage(false, form, workbook,workbook.getMeasurementDatasetVariables(), workbook.getObservations(), workbook.getMeasurementDatesetId(), workbook.getVariates(), model);
     }
 
     /**
@@ -332,16 +340,40 @@ public class OpenTrialController extends
     public String loadMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
             HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
         Workbook workbook = userSelection.getWorkbook();
-        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));        
-        return loadMeasurementDataPage(form, workbook, model);
+        List<MeasurementVariable> variates = workbook.getVariates();
+        List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariables();
+        List<MeasurementRow> observations = workbook.getObservations();
+        Integer measurementDatasetId = workbook.getMeasurementDatesetId();        
+        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(measurementDatasetId, SettingsUtil.buildVariates(variates)));        
+        return loadMeasurementDataPage(false, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
     }
     
-    private String loadMeasurementDataPage(CreateNurseryForm form, Workbook workbook, Model model) throws MiddlewareQueryException{
-    	 //set measurements data
+    @RequestMapping(value="/load/preview/measurement", method = RequestMethod.GET)
+    public String loadPreviewMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
+            HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+        Workbook workbook = userSelection.getTemporaryWorkbook();
+        List<MeasurementVariable> variates = workbook.getVariates();
+        List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariables();        
+        List<MeasurementRow> observations = workbook.getObservations();
+        Integer measurementDatasetId = workbook.getMeasurementDatesetId();
         userSelection.setMeasurementRowList(workbook.getObservations());
-        userSelection.setWorkbook(workbook);
-        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
-        form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());        
+        return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
+    }
+    
+    
+    private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, List<MeasurementVariable> measurementDatasetVariables, List<MeasurementRow> observations, Integer measurementDatasetId,  List<MeasurementVariable> variates, Model model) throws MiddlewareQueryException{
+    	 //set measurements data
+        userSelection.setMeasurementRowList(observations);
+        if(!isTemporary){
+        	userSelection.setWorkbook(workbook);
+        }
+        if(measurementDatasetId != null){
+        	form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(measurementDatasetId, SettingsUtil.buildVariates(variates)));
+        }else{
+        	form.setMeasurementDataExisting(false);
+        }
+        
+        form.setMeasurementVariables(measurementDatasetVariables);        
         
         model.addAttribute("createNurseryForm", form);
         

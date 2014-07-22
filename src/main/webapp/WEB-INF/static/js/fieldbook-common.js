@@ -3037,3 +3037,19 @@ function displayStudyGermplasmSection(hasData, observationCount){
 		$('.overwrite-germplasm-list').hide();
 	}
 }
+
+function showMeasurementsPreview(){
+	'use strict';
+	var domElemId = '#measurementsDivTemp';
+	if ($(domElemId).length != 0) {
+        $.ajax({
+            url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
+            type: 'GET',
+            data: '',
+            cache: false,
+            success: function (html) {
+                $(domElemId).html(html);
+            }
+        });
+    }
+}

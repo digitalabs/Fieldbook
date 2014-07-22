@@ -73,6 +73,13 @@
 
                 TrialManagerDataService.generateExpDesign(data).then(
                     function (response) {
+                    	if(response.valid == true){
+                    		//we show the preview
+                    		showSuccessfulMessage('', 'Experimental Design generated successfully, please check the measurements tab');
+                    		showMeasurementsPreview();
+                    	}else{
+                    		showErrorMessage('', response.message);
+                    	}
                     }
                 );
             };

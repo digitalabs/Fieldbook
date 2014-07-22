@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -77,11 +78,28 @@ public class ResolvableRowColumnDesignServiceImpl implements
 					}
 				}
 				
-				
+				if(parameter.getUseLatenized() != null && parameter.getUseLatenized().booleanValue()){
+					if(parameter.getReplicationsArrangement() != null){
+						if(parameter.getReplicationsArrangement().intValue() == 1){
+							//column
+							parameter.setReplatinGroups(parameter.getReplicationsCount());
+						}else if(parameter.getReplicationsArrangement().intValue() == 2){
+							//rows
+							String rowReplatingGroup = "";
+							for(int i = 0 ; i < Integer.parseInt(parameter.getReplicationsCount()) ; i++){
+								if(rowReplatingGroup != null && !rowReplatingGroup.equalsIgnoreCase("")){
+									rowReplatingGroup += ",";
+								}
+								rowReplatingGroup += "1";
+							}
+							parameter.setReplatinGroups(rowReplatingGroup);
+						}
+					}
+				}
 				MainDesign mainDesign = ExpDesignUtil.createResolvableRowColDesign(Integer.toString(nTreatments),
 						replicates, rows, cols, stdvarTreatment.getName(), stdvarRep.getName(), 
 						stdvarRows.getName(),stdvarCols.getName(),stdvarPlot.getName(),
-						"0", "0", "", "1", "");
+						parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "1", "", parameter.getUseLatenized());
 				
 				measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
 						trialVariables, factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
@@ -146,6 +164,44 @@ public class ResolvableRowColumnDesignServiceImpl implements
 					}else if( size != (rowsPerReplication * colsPerReplication) ){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.resolvable.incorrect.row.and.col.product.to.germplasm.size", null, locale));
+					}else if(expDesignParameter.getUseLatenized() != null && expDesignParameter.getUseLatenized().booleanValue()){
+						//we add validation for latinize
+						Integer nrLatin = Integer.parseInt(expDesignParameter.getNrlatin());
+						Integer ncLatin = Integer.parseInt(expDesignParameter.getNclatin());
+						/*
+"nrows" and "ncolumns" are indeed the factors of the "ntreatments" value. Equation: nrows x ncolumns = ntreatments.
+"nrlatin" parameter value should be a positive integer less than the "nrows" value set
+"nclatin" parameter value should be a positive integer less than the "ncolumns" value set
+The sum of the values set for "replatingroups" should always be equal to the "nreplicates" value specified by the plant breeder.
+nrlatin somehow cannot exceed the nreplicates value specified.  A technical error is thrown with this unclear message: "Error from CycDesigN: output parameters 13, 0, 0, 0." This might be a possible bug.
+
+						 */				
+						//nrlatin and nclatin validation
+						if(nrLatin >= rowsPerReplication){
+							output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+				                    "experiment.design.nrlatin.should.be.less.than.rows.per.replication", null, locale));
+						}else if(nrLatin > replicationCount){
+							output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+				                    "experiment.design.nrlatin.should.not.be.greater.than.the.replication.count", null, locale));
+						}else if(ncLatin >= colsPerReplication){
+							output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+				                    "experiment.design.nclatin.should.be.less.than.cols.per.replication", null, locale));
+						}else if(ncLatin > replicationCount){
+							output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+				                    "experiment.design.nclatin.should.not.be.greater.than.the.replication.count", null, locale));
+						}else if(expDesignParameter.getReplicationsArrangement() != null && expDesignParameter.getReplicationsArrangement().intValue() == 3){
+							//meaning adjacent
+							StringTokenizer tokenizer = new StringTokenizer(expDesignParameter.getReplatinGroups(), ",");
+							int totalReplatingGroup = 0;
+							
+							while(tokenizer.hasMoreTokens()){
+								totalReplatingGroup += Integer.parseInt(tokenizer.nextToken());
+							}
+							if(totalReplatingGroup != replicationCount){
+								output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+					                    "experiment.design.replating.groups.not.equal.to.replicates", null, locale));
+							}
+						}
 					}
 				}
 			}

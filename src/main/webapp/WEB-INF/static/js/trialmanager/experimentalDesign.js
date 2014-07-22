@@ -28,10 +28,10 @@
             TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors;
             TrialManagerDataService.specialSettings.experimentalDesign.data.totalGermplasmListCount = $scope.totalGermplasmEntryListCount;
 
-            $scope.replatinGroupsOpts = {};
-            $scope.replatinGroupsOpts[1] = 'single col';
-            $scope.replatinGroupsOpts[2] = 'single row';
-            $scope.replatinGroupsOpts[3] = 'adjacent';
+            $scope.replicationsArrangementGroupsOpts = {};
+            $scope.replicationsArrangementGroupsOpts[1] = 'single col';
+            $scope.replicationsArrangementGroupsOpts[2] = 'single row';
+            $scope.replicationsArrangementGroupsOpts[3] = 'adjacent';
 
             $scope.designTypes = [
             {

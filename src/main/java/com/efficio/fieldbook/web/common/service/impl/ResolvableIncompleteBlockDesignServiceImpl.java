@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -30,6 +31,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
@@ -81,11 +83,29 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				}
 			}
 			
+			if(parameter.getUseLatenized() != null && parameter.getUseLatenized().booleanValue()){
+				if(parameter.getReplicationsArrangement() != null){
+					if(parameter.getReplicationsArrangement().intValue() == 1){
+						//column
+						parameter.setReplatinGroups(parameter.getReplicationsCount());
+					}else if(parameter.getReplicationsArrangement().intValue() == 2){
+						//rows
+						String rowReplatingGroup = "";
+						for(int i = 0 ; i < Integer.parseInt(parameter.getReplicationsCount()) ; i++){
+							if(rowReplatingGroup != null && !rowReplatingGroup.equalsIgnoreCase("")){
+								rowReplatingGroup += ",";
+							}
+							rowReplatingGroup += "1";
+						}
+						parameter.setReplatinGroups(rowReplatingGroup);
+					}
+				}
+			}
 			
 			MainDesign mainDesign = ExpDesignUtil.createResolvableIncompleteBlockDesign(blockSize,
 				Integer.toString(nTreatments), replicates, 
 				stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), 
-				"0", "", "1", "");
+				parameter.getNblatin(), parameter.getReplatinGroups(), "1", "", parameter.getUseLatenized());
 			
 			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
 					trialVariables, factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
@@ -134,6 +154,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				}else{
 					int blockSize = Integer.valueOf(expDesignParameter.getBlockSize());
 					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
+					int treatmentSize = germplasmList.size();
 					
 					if(replicationCount <= 1 || replicationCount >= 11){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
@@ -141,6 +162,34 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					}else if( blockSize < 1 ){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.block.size.should.be.a.greater.than.1", null, locale));
+					}else if( treatmentSize % blockSize != 0 ){
+						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+			                    "experiment.design.block.size.not.a.factor.of.treatment.size", null, locale));
+					}else if(expDesignParameter.getUseLatenized() != null && expDesignParameter.getUseLatenized().booleanValue()){
+						//we add validation for latinize
+						Integer nbLatin = Integer.parseInt(expDesignParameter.getNblatin());
+						/*
+The value set for "nblatin" xml parameter cannot be value higher than or equal the block level value. To get the block levels, we just need to divide the "ntreatments" value by the "blocksize" value. This means the BVDesign tool works to any value you specify in the "nblatin" parameter as long as it does not exceed the computed block levels value. As mentioned in the requirements, an "nblatin" parameter with value 0 means there is no latinization that will take place.
+The sum of the values set for "replatingroups" should always be equal to the "nreplicates" value specified by the plant breeder.
+						 */
+						int blockLevel = treatmentSize / blockSize;						
+						//nbLatin should be less than the block level
+						if(nbLatin >= blockLevel){
+							output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+				                    "experiment.design.nblatin.should.not.be.greater.than.block.level", null, locale));
+						}else if(expDesignParameter.getReplicationsArrangement() != null && expDesignParameter.getReplicationsArrangement().intValue() == 3){
+							//meaning adjacent
+							StringTokenizer tokenizer = new StringTokenizer(expDesignParameter.getReplatinGroups(), ",");
+							int totalReplatingGroup = 0;
+							
+							while(tokenizer.hasMoreTokens()){
+								totalReplatingGroup += Integer.parseInt(tokenizer.nextToken());
+							}
+							if(totalReplatingGroup != replicationCount){
+								output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+					                    "experiment.design.replating.groups.not.equal.to.replicates", null, locale));
+							}
+						}
 					}
 				}
 			}

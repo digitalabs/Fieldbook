@@ -319,12 +319,15 @@ public class CreateTrialForm {
 			//we arrange and make GID and Designation always first
 			MeasurementVariable gidVariable = null;
 			MeasurementVariable desigVariable = null;
+			MeasurementVariable trialInstanceVariable = null;
 			for(MeasurementVariable var : getMeasurementVariables()){
 				measureList.add(var);
 				if(var.getTermId() == TermId.GID.getId()){
 					gidVariable = var;
 				}else if(var.getTermId() == TermId.DESIG.getId()){
 					desigVariable = var;
+				}else if(var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()){
+					trialInstanceVariable = var;
 				}
 			}
 			if(!measureList.isEmpty()){
@@ -334,7 +337,11 @@ public class CreateTrialForm {
 				if(desigVariable != null) {
 					measureList.remove(desigVariable);
 				}
+				if(trialInstanceVariable != null) {
+					measureList.remove(trialInstanceVariable);
+				}
 			}
+			newMeasureList.add(trialInstanceVariable);
 			newMeasureList.add(gidVariable);
 			newMeasureList.add(desigVariable);
 			newMeasureList.addAll(measureList);

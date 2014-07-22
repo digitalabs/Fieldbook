@@ -357,6 +357,7 @@ public class OpenTrialController extends
         List<MeasurementRow> observations = workbook.getObservations();
         Integer measurementDatasetId = workbook.getMeasurementDatesetId();
         userSelection.setMeasurementRowList(workbook.getObservations());
+        model.addAttribute("isExpDesignPreview", "1");
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
     }
     

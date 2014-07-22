@@ -46,7 +46,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
-			ExpDesignParameterUi parameter, 
+			ExpDesignParameterUi parameter, List<MeasurementVariable> factors,
 			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 		

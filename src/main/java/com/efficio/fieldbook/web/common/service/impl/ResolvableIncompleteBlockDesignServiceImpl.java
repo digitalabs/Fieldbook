@@ -51,7 +51,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
-			ExpDesignParameterUi parameter, 
+			ExpDesignParameterUi parameter,List<MeasurementVariable> factors, 
 			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 		
@@ -88,7 +88,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				"0", "", "1", "");
 			
 			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
-					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
+					factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null);					
 			
 		}catch(BVDesignException e){

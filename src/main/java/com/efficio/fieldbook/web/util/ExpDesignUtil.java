@@ -338,7 +338,7 @@ public class ExpDesignUtil {
 	}
 	
 	public static List<MeasurementRow> generateExpDesignMeasurements(int environments, 
-			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
+			List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables, List<StandardVariable> requiredExpDesignVariable, 
 			List<ImportedGermplasm> germplasmList, MainDesign mainDesign, WorkbenchService workbenchService, 
 			FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues) 
@@ -348,7 +348,9 @@ public class ExpDesignUtil {
 		varList.addAll(nonTrialFactors);
 		for(StandardVariable var : requiredExpDesignVariable){
 			if(WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null){
-				varList.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD));
+				MeasurementVariable measureVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD);
+				varList.add(measureVar);
+				factors.add(measureVar);
 			}		
 		}
 		if(treatmentVariables != null){

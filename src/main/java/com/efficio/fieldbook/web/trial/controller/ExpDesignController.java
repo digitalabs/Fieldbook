@@ -114,7 +114,7 @@ public class ExpDesignController extends
 		    		expParameterOutput = designService.validate(expDesign, germplasmList);
 		    		//we call the actual process
 		    		if(expParameterOutput.isValid()){
-		    			List<MeasurementRow> measurementRows = designService.generateDesign(germplasmList, expDesign, workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
+		    			List<MeasurementRow> measurementRows = designService.generateDesign(germplasmList, expDesign, workbook.getFactors(), workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
 		    			//TODO: we need the actual headers here, do we pass the temp workbook?
 		    			workbook.setObservations(measurementRows);
 		    			//should have at least 1 record

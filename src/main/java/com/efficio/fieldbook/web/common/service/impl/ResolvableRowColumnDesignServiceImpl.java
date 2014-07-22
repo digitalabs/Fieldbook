@@ -44,7 +44,7 @@ public class ResolvableRowColumnDesignServiceImpl implements
 	 
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
-			ExpDesignParameterUi parameter, 
+			ExpDesignParameterUi parameter, List<MeasurementVariable> factors,
 			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 			
@@ -84,7 +84,7 @@ public class ResolvableRowColumnDesignServiceImpl implements
 						"0", "0", "", "1", "");
 				
 				measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
-						nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
+						factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 						mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null);					
 				
 			}catch(BVDesignException e){

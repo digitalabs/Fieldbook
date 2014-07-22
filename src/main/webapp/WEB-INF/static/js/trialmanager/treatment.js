@@ -45,8 +45,8 @@
 
         };
 
-        
-        $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
+        $scope.invalidBlockSizeMsg = '<b class="text-danger">Invalid Block Size</b>';
+        $scope.addVariable = function(){ return !TrialManagerDataService.trialMeasurement.hasMeasurement; };
         
         // note for some reasons this gets called twice :( , might be the diff function causing the watchCollection t
         $scope.$watchCollection(function(){return $scope.settings.m_keys; },function(newArr,oldArr){

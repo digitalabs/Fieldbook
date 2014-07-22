@@ -12,10 +12,11 @@
 
             //TODO: temporarily hide features that are not implemented in this release
             //$scope.hideFeatures = true;
-
+            $scope.Math = Math;
             $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
             //FIXME: cheating a bit for the meantime.
             $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
+
             $scope.settings = {
                 factors: TrialManagerDataService.specialSettings.experimentalDesign.factors,
                 treatmentFactors : TrialManagerDataService.settings.treatmentFactors
@@ -27,7 +28,10 @@
             TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors;
             TrialManagerDataService.specialSettings.experimentalDesign.data.totalGermplasmListCount = $scope.totalGermplasmEntryListCount;
 
-            $scope.replatinGroupsOpts = ['Please Choose','single col','single row','adjacent'];
+            $scope.replatinGroupsOpts = {};
+            $scope.replatinGroupsOpts[1] = 'single col';
+            $scope.replatinGroupsOpts[2] = 'single row';
+            $scope.replatinGroupsOpts[3] = 'adjacent';
 
             $scope.designTypes = [
             {
@@ -51,6 +55,9 @@
             }];
 
             $scope.currentDesignType = $scope.designTypes[TrialManagerDataService.specialSettings.experimentalDesign.data.designType];
+
+            //$scope.noOfBlocks = ($scope.currentDesignType.data.blockSize > 0) ? $scope.totalGermplasmEntryListCount / $scope.currentDesignType.data.blockSize : 0;
+
 
             $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
 

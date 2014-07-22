@@ -32,6 +32,7 @@
             <label class=" control-label"><strong>How are the replications to be arranged in the field?</strong></label>
             <span class="">
                 <select ui-select2="{minimumResultsForSearch: 10}" style="width: 300px !important;" class="form-control" ng-model="currentDesignType.data.replatinGroups" ng-options="key as name for (key,name) in replatinGroupsOpts">
+                    <option value="">Please Choose</option>
                 </select>
             </span>
         </div>

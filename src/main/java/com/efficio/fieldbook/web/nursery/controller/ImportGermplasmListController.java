@@ -63,6 +63,7 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -382,7 +383,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     			//we iterate the map for dynamic header of trial
     			for(int counter = 0 ; counter < factorsList.size() ; counter++){
     				SettingDetail factorDetail= factorsList.get(counter);
-    				if(factorDetail != null && factorDetail.getVariable() != null){		    					
+    				if(factorDetail != null && factorDetail.getVariable() != null &&
+    						!SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(), AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString())){		    					
     					tableHeaderList.add(new TableHeader(factorDetail.getVariable().getName(), factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));
     				}
 					    				

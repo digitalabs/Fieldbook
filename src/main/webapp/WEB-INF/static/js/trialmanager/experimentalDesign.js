@@ -2,7 +2,7 @@
  * Created by cyrus on 7/2/14.
  */
 
-/* global angular, showErrorMessage */
+/* global angular, showErrorMessage, showSuccessfulMessage, showMeasurementsPreview */
 (function(){
     'use strict';
 
@@ -73,13 +73,13 @@
 
                 TrialManagerDataService.generateExpDesign(data).then(
                     function (response) {
-                    	if(response.valid == true){
-                    		//we show the preview
-                    		showSuccessfulMessage('', 'Experimental Design generated successfully, please check the measurements tab');
-                    		showMeasurementsPreview();
-                    	}else{
-                    		showErrorMessage('', response.message);
-                    	}
+                        if(response.valid === true){
+                            //we show the preview
+                            showSuccessfulMessage('', 'Experimental Design generated successfully, please check the measurements tab');
+                            showMeasurementsPreview();
+                        }else{
+                            showErrorMessage('', response.message);
+                        }
                     }
                 );
             };
@@ -91,6 +91,11 @@
                         // validate replication count, must be 1 to 11
                         if (!($scope.currentDesignType.data.replicationsCount > 0 && $scope.currentDesignType.data.replicationsCount <= 10)) {
                             showErrorMessage('page-message','Number of Replications must be between 1 to 10');
+                            return false;
+                        }
+
+                        if (!$scope.settings.treatmentFactors || !TrialManagerDataService.currentData.treatmentFactors) {
+                            showErrorMessage('page-message','Please setup the treatment factors to be used');
                             return false;
                         }
 
@@ -112,7 +117,7 @@
                         }
 
                         if ($scope.currentDesignType.data.rowsPerReplications * $scope.currentDesignType.data.colsPerReplications !== $scope.totalGermplasmEntryListCount) {
-                            showErrorMessage('page-message','Product of rows and cols  (rows x cols) should be equal to the number of treatments');
+                            showErrorMessage('page-message','Product of rows and cols (rows x cols) should be equal to the number of treatments');
                             return false;
                         }
 

@@ -2,13 +2,44 @@
  * Created by cyrus on 7/1/14.
  */
 
-/*global angular,openStudyTree*/
+/*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage*/
 
 (function () {
     'use strict';
 
     var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils', 'fieldbook-utils',
         'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource']);
+
+    manageTrialApp.factory('spinnerHttpInterceptor', function($q) {
+        return {
+            'request' : function(config) {
+                SpinnerManager.addActive();
+
+                return config || $q.when(config);
+            },
+            'requestError' : function(config) {
+                SpinnerManager.resolveActive();
+                showErrorMessage('', ajaxGenericErrorMsg);
+
+                return config || $q.when(config);
+            },
+            'response' : function(config) {
+                SpinnerManager.resolveActive();
+
+                return config || $q.when(config);
+            },
+            'responseError' : function(config) {
+                SpinnerManager.resolveActive();
+                showErrorMessage('', ajaxGenericErrorMsg);
+
+                return config || $q.when(config);
+            }
+        };
+    });
+
+    manageTrialApp.config(['$httpProvider',function($httpProvider) {
+      $httpProvider.interceptors.push('spinnerHttpInterceptor');
+    }]);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants

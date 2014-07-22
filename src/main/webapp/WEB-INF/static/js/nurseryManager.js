@@ -1317,8 +1317,10 @@ function initializeDateAndSliderInputs() {
 				try {
 					var r = $.datepicker.parseDate("yy-mm-dd", curDate);
 					$(this).datepicker('setDate', r);
-				} catch(e) {
-					$(this).datepicker('setDate', new Date());
+				} catch(e) {					
+					if(curDate !== ''){						
+						$(this).datepicker('setDate', new Date());
+					}
 				}
 			});
 		});

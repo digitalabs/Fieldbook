@@ -782,7 +782,10 @@ public class FieldbookServiceImpl implements FieldbookService{
   				}
   			}
   		}
-		addConditionsToTrialObservationsIfNecessary(workbook);
+  		if(workbook != null && !workbook.isNursery()){
+  			//to be only done when it is a trial
+  			addConditionsToTrialObservationsIfNecessary(workbook);
+  		}
   	}
     
     private void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {

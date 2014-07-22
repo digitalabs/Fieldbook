@@ -14,11 +14,9 @@ package com.efficio.fieldbook.web.ontology.controller;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
@@ -49,7 +47,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PropertyTree;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.ontology.bean.OntologyUsage;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -240,107 +237,6 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			LOG.error("Error querying Ontology Manager for full Ontology Tree " + e.getMessage());
 		}
     	 			
-    	return "[]";
-    } 
-      
-    /**
-     * Gets the usage stats for standard variables 
-     *
-     * @return the ontology usage details
-     * @throws IOException 
-     * @throws JsonMappingException 
-     * @throws JsonGenerationException 
-     */
-    @SuppressWarnings("unchecked")
-	@ResponseBody
-    @RequestMapping(value = "/OntologyBrowser/variables/usage", method = RequestMethod.GET)
-    public String getUsageBySettingsMode(@RequestParam(required=true) Integer groupId, @RequestParam(required=false) Boolean flat,
-    		@RequestParam(required=false) Integer maxResults) {
-    	try {
-    		
-    		if(flat == null) flat = true;
-    		
-    		// Fetch the list of filtered Standard Variable References and extract ids (this would be better if 
-    		// filtered SVs were full objects)
-    		List<StandardVariableReference> stdVars = fieldbookService.filterStandardVariablesForSetting(groupId, new ArrayList<SettingDetail>());
-    		if(maxResults == null) maxResults = stdVars.size();
-    		LOG.info("Filtering for " + groupId + " : results : " + stdVars.size());
-    		
-    		List<Integer> ids = new ArrayList<Integer>();
-    		for (StandardVariableReference standardVariableReference : stdVars) {
-				ids.add(standardVariableReference.getId());
-			}
-    		// create a Map - - we will select from this list to return, as the include method and scale information
-    		Map<Integer, StandardVariableSummary> svMap = new HashMap<Integer, StandardVariableSummary>();
-    		// fetch filtered Standard Variables 
-    		List<StandardVariableSummary> standardVariables = ontologyService.getStandardVariableSummaries(ids);
-    		for (StandardVariableSummary standardVariable : standardVariables) {
-				svMap.put(Integer.valueOf(standardVariable.getId()), standardVariable);
-			}
-    		
-    		// Collecting stats in a TreeMap to sort on experimental usage
-    		Map<Long, List<String>> usageMap = new TreeMap<Long, List<String>>(Collections.reverseOrder());
-    		List<OntologyUsage> usageList = new ArrayList<OntologyUsage>();
-    		
-    		List<TraitClassReference> tree = ontologyService.getAllTraitGroupsHierarchy(true);
-    		for (TraitClassReference root : tree) {
-    			for (TraitClassReference traitClassReference : root.getTraitClassChildren()) {
-					for (PropertyReference property : traitClassReference.getProperties()) {
-						if(!property.getStandardVariables().isEmpty()) {
-							for (StandardVariableReference svRef : property.getStandardVariables()) {
-								if(stdVars.contains(svRef)) {
-									StandardVariableSummary sv = svMap.get(svRef.getId());
-									long projectCount = ontologyService.countProjectsByVariable(svRef.getId());
-									long experimentCount = ontologyService.countExperimentsByVariable(sv.getId(), sv.getStoredIn().getId());
-									// if std variable is in the limited set, then add to the result
-									StringBuilder resultBuilder = new StringBuilder().append(svRef.getId());
-									resultBuilder.append(":");
-									resultBuilder.append(svRef.getName());
-									resultBuilder.append(":");
-									resultBuilder.append(svRef.getDescription());
-									resultBuilder.append(":");
-									resultBuilder.append(projectCount);
-									resultBuilder.append(":");
-									resultBuilder.append(experimentCount);
-									OntologyUsage ou = new OntologyUsage();
-									ou.setStandardVariable(sv);
-									ou.setProjectCount(Long.valueOf(projectCount));
-									ou.setExperimentCount(Long.valueOf(experimentCount));
-									if(usageMap.get(Long.valueOf(experimentCount)) == null) {
-										usageMap.put(Long.valueOf(experimentCount), new ArrayList<String>());
-									}
-									usageMap.get(Long.valueOf(experimentCount)).add(resultBuilder.toString());
-									usageList.add(ou);
-								}
-								else LOG.info("Missed : " + svRef.getId() + ":" + svRef.getName() + ":" + svRef.getDescription());
-							}
-						}
-					}					
-				}
-			}
-    		
-	    	ObjectMapper om = new ObjectMapper();
-	    	if(flat) {
-	    		return om.writeValueAsString(usageMap.values());
-	    	}
-	    	else {
-	    		// FIXME : aim to avoid warning suppression
-	    		Collections.sort(usageList);
-	    		if(maxResults < usageList.size()) {
-	    			return om.writeValueAsString(usageList.subList(0, maxResults));
-	    		}
-	    		return om.writeValueAsString(usageList);
-	    	}
-			
-		} catch (JsonGenerationException e) {
-			LOG.error("Error generating JSON for property trees " + e.getMessage());
-		} catch (JsonMappingException e) {
-			LOG.error("Error mapping JSON for property trees " + e.getMessage());
-		} catch (IOException e) {
-			LOG.error("Error writing JSON for property trees " + e.getMessage());
-		} catch (MiddlewareQueryException e) {
-			LOG.error("Error querying Ontology Manager for full Ontology Tree " + e.getMessage());
-		}
     	return "[]";
     } 
     

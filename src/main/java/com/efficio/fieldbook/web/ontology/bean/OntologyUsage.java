@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.ontology.bean;
 import org.generationcp.middleware.domain.dms.StandardVariableSummary;
 
 
-public class OntologyUsage implements Comparable {
+public class OntologyUsage  {
 	
 	private StandardVariableSummary standardVariable;
 	
@@ -34,11 +34,21 @@ public class OntologyUsage implements Comparable {
 	public void setExperimentCount(Long experimentCount) {
 		this.experimentCount = experimentCount;
 	}
-
-	@Override
-	public int compareTo(Object other) {
-		return this.getExperimentCount() > ((OntologyUsage)other).getExperimentCount() ? 1 : 0;
+	
+	public String getFlatView() {
+		StringBuilder resultBuilder = new StringBuilder();
+		resultBuilder.append(standardVariable.getIsA().getName());
+		resultBuilder.append(":");
+		resultBuilder.append(standardVariable.getId());
+		resultBuilder.append(":");
+		resultBuilder.append(standardVariable.getName());
+		resultBuilder.append(":");
+		resultBuilder.append(standardVariable.getDescription());
+		resultBuilder.append(":");
+		resultBuilder.append(projectCount);
+		resultBuilder.append(":");
+		resultBuilder.append(experimentCount);
+		return resultBuilder.toString();
 	}
-
 
 }

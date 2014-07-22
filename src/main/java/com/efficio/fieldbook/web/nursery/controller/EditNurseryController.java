@@ -31,6 +31,7 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -401,6 +402,7 @@ public class EditNurseryController extends SettingsController {
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
                 form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
                 workbook.setObservations(form.getMeasurementRowList());
+                setTrialObservationsFromVariables(workbook);
                 
                 userSelection.setWorkbook(workbook);
                 //validationService.validateObservationValues(workbook);
@@ -425,6 +427,29 @@ public class EditNurseryController extends SettingsController {
     	    return resultMap;
     	}
     	
+    }
+    
+    private void setTrialObservationsFromVariables(Workbook workbook) {
+    	if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()) {
+    		if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+    			for (MeasurementVariable condition : workbook.getTrialConditions()) {
+    				for (MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
+    					if (data.getMeasurementVariable().getTermId() == condition.getTermId()) {
+    						data.setValue(condition.getValue());
+    					}
+    				}
+    			}
+    		}
+    		if (workbook.getTrialConstants() != null && !workbook.getTrialConditions().isEmpty()) {
+    			for (MeasurementVariable constant : workbook.getTrialConstants()) {
+    				for (MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
+    					if (data.getMeasurementVariable().getTermId() == constant.getTermId()) {
+    						data.setValue(constant.getValue());
+    					}
+    				}
+    			}
+    		}
+    	}
     }
           
     /**

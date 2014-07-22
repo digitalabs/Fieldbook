@@ -279,9 +279,12 @@ window.TrialSettingsManager = (function () {
                 break;
         }
 
-        if (Object.keys(this._dynamicExclusion[group]).length) {
-            exclusions = exclusions.concat(_removeVariablesByVariableId(this._dynamicExclusion[group],filteredProperties));
+        if (this._dynamicExclusion[group]) {
+            if (Object.keys(this._dynamicExclusion[group]).length) {
+                exclusions = exclusions.concat(_removeVariablesByVariableId(this._dynamicExclusion[group],filteredProperties));
+            }
         }
+
 
         return {
             exclusions: exclusions,

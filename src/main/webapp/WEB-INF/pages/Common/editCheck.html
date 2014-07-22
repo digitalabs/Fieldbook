@@ -13,9 +13,9 @@
             <a href="javascript: void(0)" class="btn btn-success submit-edit-check">
                 <span class="glyphicon glyphicon-ok"></span>
             </a>
-            <button class="btn btn-danger cancel-edit-check">
+            <a href="javascript: void()" class="btn btn-danger cancel-edit-check">
                 <span class="glyphicon glyphicon-remove"></span>
-            </button>
+            </a>
         </span>
     </div>
 </div>
@@ -78,9 +78,9 @@
 		
 		$( document ).ready(function() {
 			'use strict';
-			$('.cancel-edit-check').on('click', function(event){	
-					$('.check-table-popover .popover').remove();
+			$('.cancel-edit-check').on('click', function(event){
 					event.stopPropagation();
+					$('.check-table-popover .popover').remove();					
 				}
 			);
 			$('.submit-edit-check').on('click', updateCheck);

@@ -13,46 +13,19 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class ManageTrialControllerTest extends AbstractJUnit4SpringContextTests {
+public class ManageTrialControllerTest extends AbstractBaseControllerTest {
 	
-	@Autowired
-	private RequestMappingHandlerAdapter handleAdapter;
-
-	@Autowired
-	private RequestMappingHandlerMapping handlerMapping;
-
 	@Test
 	public void testGetReturnsCorrectModelAndView() throws Exception {
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockHttpSession session = new MockHttpSession();
-		request.setSession(session);
-		
-		request.setRequestURI(ManageTrialController.URL);
-		request.setMethod(HttpMethod.GET.name());
-
-		Object handler = handlerMapping.getHandler(request).getHandler();
-		ModelAndView mav = handleAdapter.handle(request, response, handler);
+		ModelAndView mav = request(ManageTrialController.URL, HttpMethod.GET.name());
 
 		ModelAndViewAssert.assertViewName(mav, ManageTrialController.BASE_TEMPLATE_NAME);
 		ModelAndViewAssert.assertModelAttributeValue(mav, 

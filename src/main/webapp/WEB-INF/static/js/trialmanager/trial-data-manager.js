@@ -154,7 +154,7 @@
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
                 {id: '@id'}, { 'get': {method: 'get', isArray: true} });
             var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, { });
-
+            
             var service = {
                 // user input data and default values of standard variables
                 currentData: {
@@ -223,7 +223,7 @@
                 },
 
                 trialMeasurement: {
-                    hasMeasurement: TRIAL_HAS_MEASUREMENT == 'true',
+                    hasMeasurement: TRIAL_HAS_MEASUREMENT,
                     count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
                 },
 
@@ -262,14 +262,27 @@
                                 });
                         } else {
                             if (service.trialMeasurement.count >  0) {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
-                                    recreateSessionVariablesTrial();
-                                    notifySaveEventListeners();
-                                    service.trialMeasurement.hasMeasurement = (data.measurementDataExisting == 'true');
-                                    service.trialMeasurement.count = data.measurementRowCount;
-                                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                                            service.trialMeasurement.count);
-                                });
+                            	if($('.import-study-data').data('data-import') === '1'){
+            						doSaveImportedData();
+            						
+            						notifySaveEventListeners();
+            						updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
+                                        service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
+                                        service.trialMeasurement.count = data.measurementRowCount;
+                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                            service.trialMeasurement.count);
+                                    });
+            						//need to refresh trait screen
+            					}else{
+	                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
+	                                    recreateSessionVariablesTrial();
+	                                    notifySaveEventListeners();
+	                                    service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
+	                                    service.trialMeasurement.count = data.measurementRowCount;
+	                                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+	                                                            service.trialMeasurement.count);
+	                                });
+            					}
                             } else {
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
                                     success(function() {

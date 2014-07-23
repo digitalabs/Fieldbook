@@ -382,18 +382,22 @@
 					{ 
 						url: '/Fieldbook/ImportManager/import/save',
 						type: 'POST',
+						async: false,
 						success: function(html) {
-							$('#measurementsDiv').html(html);
-							doRefreshNurserySettings();
+							$('#measurementsDiv').html(html);							
 							$('.import-study-data').data('data-import', '0');
 							$('.fbk-discard-imported-data').addClass('fbk-hide');
-							displayEditFactorsAndGermplasmSection();
+							if(isNursery()){
+								doRefreshNurserySettings();
+								displayEditFactorsAndGermplasmSection();
+							}else{
+								displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
+							}
 						}
 				});
 		}
 		function doMeasurementsReload(){
-			'use strict';
-			showSelectedTab('nursery-measurements');
+			'use strict';			
 			$('.import-study-data').data('data-import', '1');			
 			$.ajax(
 				{ 

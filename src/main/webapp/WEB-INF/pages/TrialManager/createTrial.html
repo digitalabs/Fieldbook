@@ -16,7 +16,8 @@
                     <img class="image-padding image-padding-with-text" height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
                     <span class="heading" ng-hide="isOpenTrial()">Create Trial</span>
                     <span class="heading" ng-show="isOpenTrial()" ng-bind="'Trial : ' + data.basicDetails[8005]"></span>
-                    <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" type="button" value="Save"/>
+                    <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
+                    <input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
                 </div>
                 <a class="pull-right" href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
             </div>
@@ -45,12 +46,11 @@
                                             <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
                                             <a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
                                         </li>
-                                        <!--<li ng-show="displayMeasurementOnlyActions()">
-                                            &lt;!&ndash;th:if="${createNurseryForm.measurementRowList.size() != 0}"
-                                            <a href="" style="display: none" id="open-study-url"></a>&ndash;&gt;
+                                       <li ng-show="displayMeasurementOnlyActions()">
+                                            <a href="" style="display: none" id="open-study-url"></a>
                                             <a href="javascript: showImportOptions();" id="open-study-url-link"
                                                th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
-                                        </li>-->
+                                        </li>
 
                                         <li>
                                             <!--// TODO : replace this with actual saving of nursery-->
@@ -236,11 +236,11 @@
         <div th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
     </div>
 </div>
-<!--<div class="row">
+<div class="row">
     <div class="col-xs-12 col-md-12">
         <div id="manage-location" th:include="/Common/includes/importStudy"></div>
     </div>
-</div>-->
+</div>
 <div class="row">
 	<div th:include="/NurseryManager/includes/deleteStudyConfirmation"></div>
 </div>

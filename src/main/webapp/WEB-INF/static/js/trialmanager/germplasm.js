@@ -19,7 +19,13 @@
                 placeholderLabel: 'Temp placeholder here'
             };
 
-            $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
+            
+            
+            $scope.trialMeasurement = TrialManagerDataService.trialMeasurement
+            
+
+            
+            
             displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement,
                 TrialManagerDataService.trialMeasurement.count);
 

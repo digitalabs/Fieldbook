@@ -61,7 +61,8 @@
             return {
                 restrict : 'E',
                 scope : {
-                    settings : '='
+                    settings : '=',
+                    hideDelete : '='
                 },
                 templateUrl : '/Fieldbook/static/angular-templates/displaySettings.html',
                 controller : function($scope, $element, $attrs) {

@@ -19,6 +19,8 @@
                 }
             });
 
+            $scope.isHideDelete = false;
+            
             $scope.updateOccurred = false;
             
             $scope.addVariable = true;

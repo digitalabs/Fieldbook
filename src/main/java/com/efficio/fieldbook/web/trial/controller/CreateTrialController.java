@@ -94,8 +94,8 @@ public class CreateTrialController extends BaseTrialController {
     
     
     @ModelAttribute("measurementDataExisting")
-    public String getMeasurementDataExisting() throws MiddlewareQueryException {    	
-    	return "false";
+    public Boolean getMeasurementDataExisting() throws MiddlewareQueryException {    	
+    	return false;
     }
 
     /**
@@ -119,6 +119,7 @@ public class CreateTrialController extends BaseTrialController {
         model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
         model.addAttribute("measurementRowCount", 0);
 
+        model.addAttribute("createNurseryForm", form); //so that we can reuse the same page being use for nursery
         return showAngularPage(model);
     }
 

@@ -10,11 +10,11 @@
                     <span class="glyphicon glyphicon-refresh"></span> Update
                 </span>
 
-                <span select-standard-variable="" ng-show="addVariable" modeldata="settings" variable-type="8" class="btn btn-info" >Add</span>
+                <span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="8" class="btn btn-info" >Add</span>
             </span>
 
             <section-container name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
-                <display-settings settings="settings" variable-type="8" name="content"></display-settings>
+                <display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="8" name="content"></display-settings>
             </section-container>
 
         </section-container>

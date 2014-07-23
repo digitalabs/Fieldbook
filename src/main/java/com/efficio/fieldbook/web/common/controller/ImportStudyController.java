@@ -15,6 +15,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
@@ -364,6 +365,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(
 								    			userSelection.getWorkbook().getVariates(), 
 								    			userSelection.getWorkbook().getObservations());
+    	Workbook workbook = userSelection.getWorkbook();
     	userSelection.getWorkbook().getVariates().addAll(traits);
     	fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook());
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
@@ -373,16 +375,20 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
     	SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, 
     			fieldbookMiddlewareService, fieldbookService, newTraits, selectedVariates);
-    	userSelection.getSelectionVariates().addAll(selectedVariates);
+    	
+    	if(workbook.isNursery()){
+    		userSelection.getSelectionVariates().addAll(selectedVariates);
+    		userSelection.setNewSelectionVariates(selectedVariates);
+    	}
     	userSelection.getBaselineTraitsList().addAll(newTraits);
+    	userSelection.setNewTraits(newTraits);
+    	
     	for (SettingDetail detail : newTraits) {
     		detail.getVariable().setOperation(Operation.UPDATE);
     	}
     	for (SettingDetail detail : selectedVariates) {
     		detail.getVariable().setOperation(Operation.UPDATE);
-    	}
-    	userSelection.setNewTraits(newTraits);
-    	userSelection.setNewSelectionVariates(selectedVariates);
+    	}    	    	
     	form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(userSelection.getWorkbook().getMeasurementDatesetId(), SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
         return super.showAjaxPage(model,ADD_OR_REMOVE_TRAITS_HTML);
     }

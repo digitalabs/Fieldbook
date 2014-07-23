@@ -1356,6 +1356,11 @@ function showImportOptions(){
 	'use strict';
 	$('#fileupload').val('');
 	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
+	if(isNursery()){
+		showSelectedTab('nursery-measurements');
+	}else{
+		window.location.hash = '#/editMeasurements';
+	}
 }
 function goBackToImport(){
 	'use strict';

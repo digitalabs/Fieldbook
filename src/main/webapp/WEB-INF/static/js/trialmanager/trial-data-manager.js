@@ -142,11 +142,13 @@
             };
 
             var cleanupData = function(values) {
-                angular.forEach(values, function(value, key) {
-                    if (value.id) {
-                        values[key] = value.id;
-                    }
-                });
+                if (values) {
+                    angular.forEach(values, function (value, key) {
+                        if (value && value.id) {
+                            values[key] = value.id;
+                        }
+                    });
+                }
             };
 
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
@@ -247,7 +249,7 @@
                                     });
                                 });
                         } else {
-                            if (service.trialMeasurement.count >  0) {
+                            if (service.trialMeasurement.count >  0 && parseInt($('.germplasm-list-items tbody tr').length) === 0) {
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
@@ -260,16 +262,12 @@
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
                                     success(function() {
                                         submitGermplasmList().then(function (trialID) {
-                                            loadMeasurementScreen();
                                             showSuccessfulMessage('', saveSuccessMessage);
                                             notifySaveEventListeners();
-                                            updateTrialDataAfterCreation(trialID, function (data) {
-                                                service.trialMeasurement.hasMeasurement = (data.measurementDataExisting == 'true');
-                                                service.trialMeasurement.count = data.measurementRowCount;
-                                                displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                                    service.trialMeasurement.count);
-                                            });
-                                            //we also hide the update button
+                                            window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
+
+                                            displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                                                    service.trialMeasurement.count);
                                         });
                                     });
                             }

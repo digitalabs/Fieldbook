@@ -198,8 +198,6 @@ public class CreateTrialController extends BaseTrialController {
         }
 
         String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
-
-        addDefaultTrialPlotFields();
         
         // TODO : integrate treatment factor detail once it's finalized               
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,

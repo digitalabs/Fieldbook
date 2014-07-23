@@ -110,8 +110,8 @@ public class OpenTrialController extends
 	    Integer measurementDatasetId = null;
         if (workbook != null) {
         	
-        	if(workbook != null && workbook.getMeansDatasetId() != null){
-        		measurementDatasetId = workbook.getMeansDatasetId(); 
+        	if(workbook != null && workbook.getMeasurementDatesetId() != null){
+        		measurementDatasetId = workbook.getMeasurementDatesetId(); 
         	}
         	
         	//this is so we can preview the exp design
@@ -128,7 +128,9 @@ public class OpenTrialController extends
 				}else{
 					form.setMeasurementDataExisting(false);
 				}
-	            form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+				
+	            form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
+	            
 	            model.addAttribute("measurementRowCount", workbook.getObservations() != null ? workbook.getObservations().size() : 0);
 			} catch (MiddlewareQueryException e) {
 				// TODO Auto-generated catch block
@@ -229,6 +231,12 @@ public class OpenTrialController extends
 
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
         
+        if (userSelection.getTemporaryWorkbook() != null) {
+            userSelection.setMeasurementRowList(null);
+            userSelection.getWorkbook().setOriginalObservations(null);
+            userSelection.getWorkbook().setObservations(null);
+        }
+        
         workbook.setOriginalObservations(userSelection.getWorkbook().getOriginalObservations());
         workbook.setTrialObservations(userSelection.getWorkbook().getTrialObservations());
         workbook.setTrialDatasetId(trialDatasetId);
@@ -242,10 +250,7 @@ public class OpenTrialController extends
 
         createStudyDetails(workbook, data.getBasicDetails());
 
-        // TODO : integration with experimental design here
-
         userSelection.setWorkbook(workbook);
-        userSelection.setTemporaryWorkbook(null);
 
         // TODO : clarify if the environment values placed in session also need to be updated to include the values for the trial level conditions
         userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
@@ -257,7 +262,7 @@ public class OpenTrialController extends
         returnVal.put("measurementRowCount", 0);
         //saving of measurement rows
         if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
-            try {                
+            try {                                
                 WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, userSelection, ontologyService, fieldbookService);
                 WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, userSelection, ontologyService, fieldbookService);
                 
@@ -337,7 +342,7 @@ public class OpenTrialController extends
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
         
         resetSessionVariablesAfterSave(workbook, false);
-        return loadMeasurementDataPage(false, form, workbook,workbook.getMeasurementDatasetVariables(), workbook.getObservations(), workbook.getMeasurementDatesetId(), workbook.getVariates(), model);
+        return loadMeasurementDataPage(false, form, workbook,workbook.getMeasurementDatasetVariablesView(), workbook.getObservations(), workbook.getMeasurementDatesetId(), workbook.getVariates(), model);
     }
 
     /**

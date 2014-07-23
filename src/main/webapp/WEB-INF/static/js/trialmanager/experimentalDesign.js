@@ -99,12 +99,12 @@
                 );
             };
 
-
+            // TODO FIXME Please put the messages in a global list
             $scope.doValidate = function() {
+
                 switch($scope.currentDesignType.id) {
                     case 0: {
-                        // validate replication count, must be 1 to 11
-                        if (!($scope.currentDesignType.data.replicationsCount > 0 && $scope.currentDesignType.data.replicationsCount <= 10)) {
+                        if (!$scope.currentDesignType.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
                             showErrorMessage('page-message','Number of Replications must be between 1 to 10');
                             return false;
                         }
@@ -118,15 +118,58 @@
                     }
                     case 1: {
 
-                        if (!($scope.currentDesignType.data.replicationsCount > 1 && $scope.currentDesignType.data.replicationsCount <= 10)) {
+                        if (!$scope.currentDesignType.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
                             showErrorMessage('page-message','Number of Replications must be between 2 to 10');
                             return false;
+                        }
+
+                        if (!$scope.currentDesignType.data.blockSize || $scope.expDesignForm.blockSize.$invalid) {
+                            showErrorMessage('page-message','Block Size should be greater than 0');
+                            return false;
+                        }
+
+                        if ($scope.totalGermplasmEntryListCount % $scope.currentDesignType.data.blockSize > 0) {
+                            showErrorMessage('page-message','Block size should be divisible by the number of treatments');
+                            return false;
+                        }
+
+                        // latinized
+                        if ($scope.currentDesignType.data.useLatenized) {
+                            if ($scope.currentDesignType.data.nblatin < $scope.currentDesignType.data.blockSize) {
+                                showErrorMessage('page-message','Number of contiguous blocks to latinize should be greater or equal to block size');
+                                return false;
+                            }
+
+                            if ($scope.currentDesignType.data.replicationsArrangement <= 0) {
+                                showErrorMessage('page-message','Please select the field arrangement for the replications');
+                                return false;
+
+                            }
+                            if (Number($scope.currentDesignType.data.replicationsArrangement) === 3) {
+                                if (!$scope.currentDesignType.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
+                                    showErrorMessage('page-message','The Number of reps in each column should be comma delimited, with values greater than 0.');
+                                    return false;
+                                }
+
+                                // validate sum of replatinGroups
+                                var sum=0;
+                                var arrGroups =  $scope.currentDesignType.data.replatinGroups.split(",");
+
+                                for (var i = 0; i < arrGroups.length;i++) {
+                                    sum += Number(arrGroups[i]);
+                                }
+
+                                if (sum !== $scope.currentDesignType.data.replicationsCount) {
+                                    showErrorMessage('page-message','The total sum of reps in each column should be equal to the number of replications');
+                                    return false;
+                                }
+                            }
                         }
 
                         break;
                     }
                     case 2: {
-                        if (!($scope.currentDesignType.data.replicationsCount > 1 && $scope.currentDesignType.data.replicationsCount <= 10)) {
+                        if (!$scope.currentDesignType.data.replicationsCount && $scope.expDesignForm.replicationsCount.$invalid) {
                             showErrorMessage('page-message','Number of Replications must be between 2 to 10');
                             return false;
                         }
@@ -135,6 +178,60 @@
                             showErrorMessage('page-message','Product of rows and cols (rows x cols) should be equal to the number of treatments');
                             return false;
                         }
+
+                        if ($scope.currentDesignType.data.useLatenized) {
+
+                            if ($scope.currentDesignType.data.nrlatin > $scope.currentDesignType.data.replicationsCount) {
+                                showErrorMessage('page-message','Number of contiguous rows to latinize should be greater than the replication count.');
+                                return false;
+                            }
+
+                            if ($scope.currentDesignType.data.nclatin > $scope.currentDesignType.data.replicationsCount) {
+                                showErrorMessage('page-message','Number of contiguous columns to latinize should be greater than the replication count.');
+                                return false;
+                            }
+
+                            if($scope.currentDesignType.data.nrlatin <= 0 || $scope.currentDesignType.data.nrlatin > $scope.currentDesignType.data.rowsPerReplications) {
+                                showErrorMessage('page-message','Number of contiguous rows to latinize should be less than the number of rows per replications');
+                                return false;
+
+                            }
+
+                            if($scope.currentDesignType.data.nclatin <= 0 || $scope.currentDesignType.data.nclatin > $scope.currentDesignType.data.colsPerReplications) {
+                                showErrorMessage('page-message','Number of contiguous columns to latinize should be greater than the number of rows per replications');
+                                return false;
+
+                            }
+
+                            if ($scope.currentDesignType.data.replicationsArrangement <= 0) {
+                                showErrorMessage('page-message','Please select the field arrangement for the replications');
+                                return false;
+                            }
+
+                            if (Number($scope.currentDesignType.data.replicationsArrangement) === 3) {
+                                if (!$scope.currentDesignType.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
+                                    showErrorMessage('page-message','The Number of reps in each column should be comma delimited, with values greater than 0.');
+                                    return false;
+                                }
+
+                                // validate sum of replatinGroups
+                                var _sum=0;
+                                var _arrGroups =  $scope.currentDesignType.data.replatinGroups.split(",");
+
+                                for (var j = 0; j < _arrGroups.length;j++) {
+                                    _sum += Number(_arrGroups[j]);
+                                }
+
+                                if (_sum !== $scope.currentDesignType.data.replicationsCount) {
+                                    showErrorMessage('page-message','The total sum of reps in each column should be equal to the number of replications');
+                                    return false;
+                                }
+                            }
+
+
+
+                        }
+
 
                         break;
                     }
@@ -166,6 +263,59 @@
                 });
 
                 return copyList;
+            };
+        })
+
+        .directive('inputType', function () {
+            return {
+                require: 'ngModel',
+                link: function (scope, elem, attrs, ctrl) {
+                    // Custom number validation logic.
+                    if (attrs.inputType === 'number') {
+                        elem.attr('type', 'text');
+
+                        return ctrl.$parsers.push(function (value) {
+                            var valid = value === null || isFinite(value);
+
+                            ctrl.$setValidity('number', valid);
+
+                            return valid && value !== null ? Number(value) : undefined;
+                        });
+                    }
+
+                    // Fallback to setting the default `type` attribute.
+                    return elem.attr('type', attrs.inputType);
+                }
+            };
+        })
+
+        .directive('minVal', function () {
+            return {
+                require: 'ngModel',
+                link: function (scope, elem, attrs, ctrl) {
+                    return ctrl.$parsers.push(function (value) {
+                        var valid = value === null || Number(value) >= Number(attrs.minVal);
+
+                        ctrl.$setValidity('min', valid);
+
+                        return valid ? value : undefined;
+                    });
+                }
+            };
+        })
+
+        .directive('maxVal', function () {
+            return {
+                require: 'ngModel',
+                link: function (scope, elem, attrs, ctrl) {
+                    return ctrl.$parsers.push(function (value) {
+                        var valid = value === null || Number(value) <= Number(attrs.maxVal);
+
+                        ctrl.$setValidity('max', valid);
+
+                        return valid ? value : undefined;
+                    });
+                }
             };
         });
 

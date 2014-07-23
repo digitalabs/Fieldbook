@@ -195,7 +195,7 @@
                             'replicationsCount' : 0,
                             'isResolvable' : true,
                             'blockSize' : 0,
-                            'useLatenized' : true,
+                            'useLatenized' : false,
                             'nblatin' : 0,
                             'replicationsArrangement' : 0,
                             'rowsPerReplications' : 0,

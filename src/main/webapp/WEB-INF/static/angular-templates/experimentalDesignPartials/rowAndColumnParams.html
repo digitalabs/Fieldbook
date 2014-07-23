@@ -1,15 +1,15 @@
 
     <div class="add_top_padding">
         <label class=" control-label"><strong>Number of replications:</strong></label>
-        <span><input ng-model="currentDesignType.data.replicationsCount" type="text" valid-number="" class="form-control" style="width: 100px"/></span>
+        <span><input name="replicationsCount" ng-model="currentDesignType.data.replicationsCount" input-type="number" min-val="2" max-val="10" valid-number="" class="form-control" style="width: 100px"/></span>
     </div>
     <div class="add_top_padding">
         <label class=" control-label"><strong>Number of rows in replications:</strong></label>
-        <span><input ng-model="currentDesignType.data.rowsPerReplications" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+        <span><input name="rowsPerReplications" ng-model="currentDesignType.data.rowsPerReplications" input-type="number" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
     </div>
     <div class="add_top_padding">
         <label class=" control-label"><strong>Number of columns in replications:</strong></label>
-        <span><input ng-model="currentDesignType.data.colsPerReplications" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+        <span><input name="colsPerReplications" ng-model="currentDesignType.data.colsPerReplications" input-type="number" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
     </div>
 
 <div ng-show="currentDesignType.data.isResolvable &amp;&amp; !hideFeatures">
@@ -22,31 +22,31 @@
 
         <div class="add_top_padding">
             <label class="checkbox-inline">
-                <input ng-model="currentDesignType.data.useLatenized" type="checkbox" id="inlineCheckbox2" value="option2"/> <span>Use Latenized Design</span>
+                <input name="useLatenized" ng-model="currentDesignType.data.useLatenized" type="checkbox" id="inlineCheckbox2" value="option2"/> <span>Use Latenized Design</span>
             </label>
         </div>
 
         <div class="add_top_padding">
             <label class=" control-label"><strong>Number of contiguous rows to latinize:</strong></label>
-            <span><input ng-model="currentDesignType.data.nrlatin" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+            <span><input name="nrlatin" ng-model="currentDesignType.data.nrlatin" min-val="1" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
         </div>
         <div class="add_top_padding">
             <label class=" control-label"><strong>Number of contiguous columns to latinize:</strong></label>
-            <span><input ng-model="currentDesignType.data.nclatin" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+            <span><input name="nclatin" ng-model="currentDesignType.data.nclatin" min-val="1" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
         </div>
 
         <div class="add_top_padding">
             <label class=" control-label"><strong>How are the replications to be arranged in the field?</strong></label>
             <span class="">
-                <select ui-select2="{minimumResultsForSearch: 10}" style="width: 300px !important;" class="form-control" ng-model="currentDesignType.data.replicationsArrangement" ng-options="key as name for (key,name) in replicationsArrangementGroupsOpts">
+                <select name="replicationsArrangement" ui-select2="{minimumResultsForSearch: 10}" style="width: 300px !important;" class="form-control" ng-model="currentDesignType.data.replicationsArrangement" ng-options="key as name for (key,name) in replicationsArrangementGroupsOpts">
                     <option value="">Please Choose</option>
                 </select>
             </span>
         </div>
 
-        <div class="add_top_padding">
+        <div ng-show="currentDesignType.data.replicationsArrangement == 3" class="add_top_padding">
             <label class=" control-label"><strong>Please enter the number of reps in each column, running from left to right:</strong></label>
-            <span class=""><input ng-model="currentDesignType.data.replatinGroups" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+            <span class=""><input name="replatinGroups" ng-pattern="/^[1-9]+(,[1-9]+)*$/gm" ng-model="currentDesignType.data.replatinGroups" type="text" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
         </div>
 
         <div class="add_top_padding">

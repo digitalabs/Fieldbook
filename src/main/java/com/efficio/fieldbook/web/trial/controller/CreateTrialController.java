@@ -82,8 +82,8 @@ public class CreateTrialController extends BaseTrialController {
     
     
     @ModelAttribute("measurementDataExisting")
-    public String getMeasurementDataExisting() throws MiddlewareQueryException {    	
-    	return "false";
+    public Boolean getMeasurementDataExisting() throws MiddlewareQueryException {
+    	return false;
     }
 
     /**

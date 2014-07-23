@@ -48,6 +48,8 @@
 
             });
 
+            TrialManagerDataService.indicateUnappliedChangesAvailable();
+
         };
 
         
@@ -63,6 +65,11 @@
             }
 
         });
+
+        $scope.onLabelChange = function() {
+            alert('here');
+            TrialManagerDataService.indicateUnappliedChangesAvailable();
+        };
 
         $scope.onLevelChange = function(key,levels) {
 
@@ -88,6 +95,8 @@
                     $scope.currentData[key].labels.push(null);
                 }
             }
+
+            TrialManagerDataService.indicateUnappliedChangesAvailable();
 
         }; // end $scope.onLevelChange
 

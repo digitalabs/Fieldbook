@@ -1,5 +1,5 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
- showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic*/
+ showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage*/
 
 (function() {
     'use strict';
@@ -172,6 +172,9 @@
                     measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
                 },
+                applicationData : {
+                    unappliedChangesAvailable : false
+                },
 
                 // settings that has special data structure
                 specialSettings: {
@@ -229,10 +232,21 @@
                         service.currentData.basicDetails.studyID !== 0;
                 },
 
+                indicateUnappliedChangesAvailable : function() {
+                    if (!service.applicationData.unappliedChangesAvailable) {
+                        service.applicationData.unappliedChangesAvailable = true;
+                        showAlertMessage('', 'These changes have not yet been applied to the Measurements table. To update the Measurements table, ' +
+                            'please review your settings and regenerate the Experimental Design on the next tab', 10000);
+                    }
+                },
+
                 extractData: extractData,
                 extractSettings: extractSettings,
                 saveCurrentData: function () {
-                    if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
+                    if (service.applicationData.unappliedChangesAvailable) {
+                        showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
+                            'regenerate the design on the Experimental Design tab', 10000);
+                    } else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         performDataCleanup();
                         if (!service.isOpenTrial()) {
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).

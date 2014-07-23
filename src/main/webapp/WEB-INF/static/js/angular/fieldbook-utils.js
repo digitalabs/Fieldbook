@@ -238,13 +238,14 @@
         }])
         .directive('showSettingFormElement', function() {
             return {
-                require: '?uiSelect2',
+                require: '?uiSelect2, ?ngModel',
                 restrict : 'E',
                 scope : {
                     settings : '=',
                     targetkey : '@targetkey',
                     settingkey : '@',
-                    valuecontainer : '='
+                    valuecontainer : '=',
+                    changefunction : '&'
                 },
 
                 templateUrl:  '/Fieldbook/static/angular-templates/showSettingFormElement.html',
@@ -256,6 +257,10 @@
                 controller : function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
                     if ($scope.settingkey === undefined) {
                         $scope.settingkey = $scope.targetkey;
+                    }
+
+                    if (!$scope.changefunction) {
+                        $scope.changefunction = function() {};
                     }
 
                     $scope.variableDefinition = $scope.settings.val($scope.settingkey);

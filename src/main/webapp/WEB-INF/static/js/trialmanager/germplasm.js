@@ -2,7 +2,7 @@
  * Created by cyrus on 7/2/14.
  */
 
-/*global angular, displayStudyGermplasmSection*/
+/*global angular, displayStudyGermplasmSection, openListTree*/
 
 
 (function () {
@@ -37,6 +37,15 @@
                 $scope.updateOccurred = false;
 
                 TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = $scope.getTotalListNo();
+            };
+
+            // function called whenever the user has successfully selected a germplasm list
+            $scope.germplasmListSelected = function() {
+                TrialManagerDataService.indicateUnappliedChangesAvailable();
+            };
+
+            $scope.openGermplasmTree = function() {
+                openListTree(1, $scope.germplasmListSelected);
             };
 
             TrialManagerDataService.registerSaveListener('germplasmUpdate', $scope.handleSaveEvent);

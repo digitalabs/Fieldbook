@@ -67,14 +67,17 @@
 
                 var data = angular.copy(TrialManagerDataService.specialSettings.experimentalDesign.data.experimentalDesign);
                 // transform ordered has of treatment factors if existing to just the map
-                if (data.treatmentFactors) {
+                if (data && data.treatmentFactors) {
                     data.treatmentFactors = $scope.currentDesignType.data.treatmentFactors.vals();
                 }
 
-                TrialManagerDataService.generateExpDesign(data).then(
+                TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
+
+                /*TrialManagerDataService.generateExpDesign(data).then(
                     function (response) {
+
                     }
-                );
+                );*/
             };
 
 

@@ -330,9 +330,14 @@
             }
         }
 		
-        function openListTree(type) {
+        function openListTree(type, selectListFunctionParam) {
 			'use strict';
 			openTreeType = type;
+
+            if (selectListFunctionParam) {
+                selectListFunction = selectListFunctionParam;
+            }
+
 			$('#listTreeModal').modal({ backdrop: 'static', keyboard: true });
 			$('#page-import-message-modal').html('');
 			additionalLazyLoadUrl = '/0';
@@ -348,6 +353,7 @@
 				}
 			}
 		}
+
 		function chooseList(){
 			'use strict';
 			var node = $('#'+getDisplayedTreeName()).dynatree('getTree').getActiveNode();
@@ -368,6 +374,11 @@
 						// Loads the primary germplasm list
 						lastDraggedPrimaryList = node.data.key;
 						displayGermplasmDetails(node.data.key);
+
+                        if (selectListFunction) {
+                            selectListFunction(node.data.key);
+                        }
+
 					} else {
 						if(fromEnterKey === false){
 							showErrorMessage('page-import-message-modal', sameListErr);

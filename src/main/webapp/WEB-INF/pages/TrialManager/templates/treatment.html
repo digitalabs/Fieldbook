@@ -102,7 +102,7 @@
                                     </td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">{{settings.val(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <show-setting-form-element settings="settings" targetkey="{{$index}}" settingkey="{{key}}"
+                                        <show-setting-form-element settings="settings" targetkey="{{$index}}" settingkey="{{key}}" changefunction="onLabelChange"
                                                                    valuecontainer="currentData[key].labels" use-exact-properties="true"></show-setting-form-element>
                                     </td>
                                 </tr>

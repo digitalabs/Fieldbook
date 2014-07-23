@@ -69,6 +69,7 @@
                     while ($scope.data.environments.length > newVal) {
                         $scope.data.environments.pop();
                     }
+                    TrialManagerDataService.indicateUnappliedChangesAvailable();
                 } else if (oldVal < newVal) {
                     // if new environment count is greater than old value, add new element to environments array
                     while ($scope.data.environments.length < newVal) {
@@ -77,6 +78,7 @@
                             trialDetailValues: $scope.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
                         });
                     }
+                    TrialManagerDataService.indicateUnappliedChangesAvailable();
                 }   // else do nothing equal
             });
 

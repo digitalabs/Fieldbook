@@ -16,7 +16,7 @@
                     <img class="image-padding image-padding-with-text" height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
                     <span class="heading" ng-hide="isOpenTrial()">Create Trial</span>
                     <span class="heading" ng-show="isOpenTrial()" ng-bind="'Trial : ' + data.basicDetails[8005]"></span>
-                    <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
+                    <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" type="button" value="Save"/>
                 </div>
                 <a class="pull-right" href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
             </div>
@@ -198,7 +198,7 @@
 <ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
     <li ng-repeat="tab in trialTabs"  ng-class="{active: $state.includes(tab.state)}"
         ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
-        <a ui-sref="{{tab.state}}" ng-click="resizeMeasurementsIfNecessary(tab.state)">{{tab.name}}</a>
+        <a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
     </li>
 </ul>
 

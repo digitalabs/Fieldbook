@@ -1039,9 +1039,9 @@ function showSuccessfulMessage(messageDivId, message) {
 	createSuccessNotification(successMsgHeader,message);
 }
 
-function showAlertMessage(messageDivId, message) {
+function showAlertMessage(messageDivId, message, duration) {
 	'use strict';
-	createWarningNotification(warningMsgHeader,message);
+	createWarningNotification(warningMsgHeader,message, duration);
 }
 
 function hideErrorMessage() {

@@ -20,9 +20,12 @@ function createSuccessNotification( titleDisplay, textDisplay){
 	$('.warning-notify').remove();
 	createNotification('default-notification',titleDisplay,textDisplay, 3000, '');
 }
-function createWarningNotification( titleDisplay, textDisplay){
+function createWarningNotification( titleDisplay, textDisplay, duration){
 	'use strict';
-	createNotification('default-notification',titleDisplay,textDisplay, 3000, 'warning-notify');
+    if (! duration) {
+        duration = 3000;
+    }
+	createNotification('default-notification',titleDisplay,textDisplay, duration, 'warning-notify');
 }
 function createNotification( template, titleDisplay, textDisplay, expires, className){
 	'use strict';

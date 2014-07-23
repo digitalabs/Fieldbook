@@ -202,12 +202,26 @@
                     TrialManagerDataService.trialMeasurement.count > 0;
             };
 
-            $scope.resizeMeasurementsIfNecessary = function(targetState) {
+            $scope.performFunctionOnTabChange = function(targetState) {
                 if (targetState === 'editMeasurements') {
                     if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
                         $timeout(function() {
                             $('#measurement-table').dataTable().fnAdjustColumnSizing();
                         }, 1);
+                    }
+                    if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
+                        showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
+                            'Please regenerate the design on the Experimental Design tab', 10000);
+                    }
+                } else if (targetState === 'experimentalDesign') {
+                    if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
+                        showAlertMessage('', 'Trial settings have been updated since the experimental design was generated. ' +
+                            'Please select a design type and specify the parameters for your trial again', 10000);
+                    }
+                } else if (targetState === 'createMeasurements') {
+                    if (TrialManagerDataService.applicationData.unappliedChangesAvailable) {
+                        showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial.' +
+                            'Please regenerate the design on the Experimental Design tab', 10000);
                     }
                 }
             };

@@ -82,7 +82,7 @@
 
                 TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
 
-                /*TrialManagerDataService.generateExpDesign(data).then(
+                TrialManagerDataService.generateExpDesign(data).then(
                     function (response) {
                         if(response.valid === true){
                             //we show the preview
@@ -99,7 +99,7 @@
                             showErrorMessage('', response.message);
                         }
                     }
-                );*/
+                );
             };
 
             // TODO FIXME Please put the messages in a global list

@@ -10,12 +10,8 @@ public class ExpDesignParameterUi implements Serializable {
 	private Boolean isResolvable;
 	private Boolean useLatenized;
 	private String blockSize;
-	private String contiguousBlocksToLatenize;
-	private String replicationsPerCol;
 	private String rowsPerReplications;
 	private String colsPerReplications;
-	private String contiguousRowsToLatenize;
-	private String contiguousColToLatenize;
 	private Map treatmentFactors;
 	private Map treatmentFactorsData;
 	private String totalGermplasmListCount;
@@ -23,13 +19,13 @@ public class ExpDesignParameterUi implements Serializable {
 	private String nrlatin;
 	private String nblatin;
 	private String replatinGroups;
-	/*
-		1 - single col
-		2 - single row
-		3 - adjacent
-	 */
-	private Integer replicationsArrangement;  
-	
+/*
+	1 - single col
+	2 - single row
+	3 - adjacent
+ */
+	private Integer replicationsArrangement;	   
+		
 	public String getNoOfEnvironments() {
 		return noOfEnvironments;
 	}
@@ -67,18 +63,8 @@ public class ExpDesignParameterUi implements Serializable {
 	public void setBlockSize(String blockSize) {
 		this.blockSize = blockSize;
 	}
-	public String getContiguousBlocksToLatenize() {
-		return contiguousBlocksToLatenize;
-	}
-	public void setContiguousBlocksToLatenize(String contiguousBlocksToLatenize) {
-		this.contiguousBlocksToLatenize = contiguousBlocksToLatenize;
-	}
-	public String getReplicationsPerCol() {
-		return replicationsPerCol;
-	}
-	public void setReplicationsPerCol(String replicationsPerCol) {
-		this.replicationsPerCol = replicationsPerCol;
-	}
+	
+	
 	public String getRowsPerReplications() {
 		return rowsPerReplications;
 	}
@@ -91,18 +77,7 @@ public class ExpDesignParameterUi implements Serializable {
 	public void setColsPerReplications(String colsPerReplications) {
 		this.colsPerReplications = colsPerReplications;
 	}
-	public String getContiguousRowsToLatenize() {
-		return contiguousRowsToLatenize;
-	}
-	public void setContiguousRowsToLatenize(String contiguousRowsToLatenize) {
-		this.contiguousRowsToLatenize = contiguousRowsToLatenize;
-	}
-	public String getContiguousColToLatenize() {
-		return contiguousColToLatenize;
-	}
-	public void setContiguousColToLatenize(String contiguousColToLatenize) {
-		this.contiguousColToLatenize = contiguousColToLatenize;
-	}
+	
 	public Map getTreatmentFactors() {
 		return treatmentFactors;
 	}

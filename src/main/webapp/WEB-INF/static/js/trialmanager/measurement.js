@@ -11,6 +11,12 @@
 
             $scope.settings = TrialManagerDataService.settings.measurements;
 
+            $scope.updateSettings = function(newValue) {
+                angular.copy(newValue, $scope.settings);
+            };
+
+            TrialManagerDataService.registerSetting('measurementsData', $scope.updateSettings);
+
             $scope.$watch(function () {
                 return TrialManagerDataService.settings.measurements;
             }, function (newValue) {

@@ -81,6 +81,26 @@
                 return new angular.OrderedHash();
             };
 
+            var extractTreatmentFactorSettings = function(initialData) {
+                var settingMap = {};
+                if (initialData) {
+                    if (initialData.settingMap && initialData.settingMap.details) {
+                        var data = new angular.OrderedHash();
+                        data.addList(initialData.settings, function (item) {
+                            return item.variable.cvTermId;
+                        });
+
+                        settingMap.details = data;
+                    }
+
+                    if (initialData.settingMap && initialData.settingMap.treatmentLevelPairs) {
+                        settingMap.treatmentLevelPairs = initialData.settingMap.treatmentLevelPairs;
+                    }
+                }
+
+                return settingMap;
+            };
+
             // TODO : change function such that it does not require jQuery style element / id based access for value retrieval
             var submitGermplasmList = function () {
                 var $form = $('#germplasm-list-form');
@@ -161,7 +181,7 @@
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
                     basicDetails: extractData(BASIC_DETAILS_DATA),
-                    treatmentFactors : {}
+                    treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA)
                 },
                 // standard variable [meta-data] information or a particular tab settings information
                 // what I get is an instance of OrderedHash containing an array of keys with the map
@@ -169,7 +189,7 @@
                     trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
                     germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
-                    treatmentFactors: extractSettings(TREATMENT_FACTORS_INITIAL_DATA),
+                    treatmentFactors: extractTreatmentFactorSettings(TREATMENT_FACTORS_INITIAL_DATA),
                     measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
                 },

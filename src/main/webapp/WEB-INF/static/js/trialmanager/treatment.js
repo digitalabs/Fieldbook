@@ -24,6 +24,16 @@
         // map containing the treatment factor level pairs
         $scope.treatmentLevelPairs = TrialManagerDataService.specialSettings.treatmentLevelPairs;
 
+        $scope.generateTreatmentLevelPair = function (key) {
+            TrialManagerDataService.retrieveVariablePairs(key).then(function (data) {
+                $scope.treatmentLevelPairs[key] = new angular.OrderedHash();
+                angular.forEach(data, function (val1) {
+                    $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
+                });
+            });
+        };
+
+
         $scope.onAddVariable = function (result) {
 
             angular.forEach(result, function (val, key) {

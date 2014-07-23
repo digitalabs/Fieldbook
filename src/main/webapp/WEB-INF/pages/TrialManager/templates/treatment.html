@@ -71,9 +71,9 @@
                                 <a style="text-transform: uppercase" show-details-modal="key">{{settings.val(key).variable.name}}</a> -
                                 <span>{{settings.val(key).variable.description}}</span>
                             </div>
-                            <div class="add-bottom-padding" ng-show="data.currentData[key].pairCvTermId > 0">
+                            <div class="add-bottom-padding" ng-show="data.currentData[key].variableId > 0">
                                 <b class="sub-content-heading">Treatment Factor Level:</b>
-                                <a style="text-transform: uppercase" show-details-modal="data.currentData[key].pairCvTermId">{{treatmentLevelPairs[key].val(data.currentData[key].pairCvTermId).variable.name}}</a> -
+                                <a style="text-transform: uppercase" show-details-modal="data.currentData[key].variableId">{{treatmentLevelPairs[key].val(data.currentData[key].pairCvTermId).variable.name}}</a> -
                                 <span>{{treatmentLevelPairs[key].val(data.currentData[key].pairCvTermId).variable.description}}</span>
                             </div>
 

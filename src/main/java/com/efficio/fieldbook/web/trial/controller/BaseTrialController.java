@@ -147,9 +147,9 @@ public abstract class BaseTrialController extends SettingsController {
         Map<Integer, TreatmentFactorData> currentData = new HashMap<Integer, TreatmentFactorData>();
 
         for (TreatmentVariable treatmentVariable : treatmentVariables) {
-            Integer levelFactorId = treatmentVariable.getLevelVariable().getTermId();
-            if (!levelDetails.containsKey(levelFactorId)) {
-                SettingDetail detail = createSettingDetail(levelFactorId, null);
+            Integer valueFactorID = treatmentVariable.getValueVariable().getTermId();
+            if (!levelDetails.containsKey(valueFactorID)) {
+                SettingDetail detail = createSettingDetail(valueFactorID, null);
 
                 if (!isUsePrevious) {
                     detail.getVariable().setOperation(Operation.UPDATE);
@@ -157,28 +157,33 @@ public abstract class BaseTrialController extends SettingsController {
                     detail.getVariable().setOperation(Operation.ADD);
                 }
 
-                levelDetails.put(levelFactorId, detail);
+                levelDetails.put(valueFactorID, detail);
             }
 
             TreatmentFactorData treatmentFactorData;
-            if (! currentData.containsKey(levelFactorId)) {
+            if (! currentData.containsKey(valueFactorID)) {
                 treatmentFactorData = new TreatmentFactorData();
-                treatmentFactorData.setLevels(Integer.parseInt(treatmentVariable.getLevelVariable().getValue()));
-                treatmentFactorData.setPairCvTermId(treatmentVariable.getValueVariable().getTermId());
-                currentData.put(levelFactorId, treatmentFactorData);
+                /*treatmentFactorData.setLevels(Integer.parseInt(treatmentVariable.getLevelVariable().getValue()));*/
+                treatmentFactorData.setPairCvTermId(treatmentVariable.getLevelVariable().getTermId());
+                currentData.put(valueFactorID, treatmentFactorData);
             } else {
-                treatmentFactorData = currentData.get(levelFactorId);
+                treatmentFactorData = currentData.get(valueFactorID);
             }
 
-            treatmentFactorData.getLabels().add(treatmentVariable.getValueVariable().getValue());
+            /*treatmentFactorData.getLabels().add(treatmentVariable.getValueVariable().getValue());*/
         }
 
         TabInfo info = new TabInfo();
         TreatmentFactorTabBean tabBean = new TreatmentFactorTabBean();
         tabBean.setCurrentData(currentData);
-
         info.setData(tabBean);
+
+
         List<SettingDetail> detailList = new ArrayList<SettingDetail>(levelDetails.values());
+        Map<String, Object> treatmentFactorSettings = new HashMap<String, Object>();
+        treatmentFactorSettings.put("details", detailList);
+
+        Map<Integer, List<SettingDetail>> treatmentFactorPairs = new HashMap<Integer, List<SettingDetail>>();
         info.setSettings(detailList);
 
         return info;

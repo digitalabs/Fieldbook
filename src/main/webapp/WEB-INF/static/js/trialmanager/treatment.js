@@ -18,6 +18,8 @@
         // use $watchCollection, for every added change we retrieve the 'AMOUNT ' pairs dynamically. also creat a
         // store to $scope.currentData for the variable levels.
 
+        $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
+        
         // map containing the treatment factor level pairs
         $scope.treatmentLevelPairs = TrialManagerDataService.specialSettings.treatmentLevelPairs;
 

@@ -33,7 +33,7 @@
                 settingMap : {}
             };
 
-            $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
+            $scope.addVariable = true;
             
             $scope.findSetting = function(targetKey, type) {
                 if (! $scope.temp.settingMap[targetKey]) {

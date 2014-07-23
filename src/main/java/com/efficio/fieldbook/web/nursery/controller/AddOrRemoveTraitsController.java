@@ -135,13 +135,14 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         return this.userSelection;
     }
 
-    @RequestMapping(value="/viewNurseryAjax/{datasetId}", method = RequestMethod.GET)
+    @RequestMapping(value="/viewStudyAjax/{studyType}/{datasetId}", method = RequestMethod.GET)
     public String viewNurseryAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
-            @PathVariable int datasetId) {
+    		@PathVariable String studyType, @PathVariable int datasetId) {
 
     	Workbook workbook = null;
         try { 
-        	workbook = fieldbookMiddlewareService.getCompleteDataset(datasetId, false);
+        	boolean isTrial = studyType != null && "T".equalsIgnoreCase(studyType);
+        	workbook = fieldbookMiddlewareService.getCompleteDataset(datasetId, isTrial);
             fieldbookService.setAllPossibleValuesInWorkbook(workbook);
             SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
         } catch (MiddlewareQueryException e) {

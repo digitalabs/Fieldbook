@@ -1,5 +1,6 @@
 <div class="row form-group col-xs-12 col-md-12">
-<strong class="sub-content-heading" th:text="#{nursery.edit.nursery.add.measurements}"></strong>
+<strong class="sub-content-heading" th:if="${isExpDesignPreview != '1'}" th:text="#{nursery.edit.nursery.add.measurements}"></strong>
+<strong class="sub-content-heading exp-design-preview" th:if="${isExpDesignPreview == '1'}" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
 </div>
 
 

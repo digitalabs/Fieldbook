@@ -3040,16 +3040,17 @@ function displayStudyGermplasmSection(hasData, observationCount){
 
 function showMeasurementsPreview(){
 	'use strict';
-	var domElemId = '#measurementsDivTemp';
-	if ($(domElemId).length != 0) {
-        $.ajax({
-            url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
-            type: 'GET',
-            data: '',
-            cache: false,
-            success: function (html) {
-                $(domElemId).html(html);
-            }
-        });
-    }
+	var domElemId = '#measurementsDiv';	
+		if ($('.exp-design-preview').length == 0) {
+	        $.ajax({
+	            url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
+	            type: 'GET',
+	            data: '',
+	            cache: false,
+	            success: function (html) {
+	                $(domElemId).html(html);
+	            }
+	        });
+	    }
+	
 }

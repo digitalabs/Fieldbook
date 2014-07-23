@@ -8,7 +8,7 @@
 
     angular.module('manageTrialApp')
         .constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
-        .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC','TrialManagerDataService',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC,TrialManagerDataService){
+        .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC','TrialManagerDataService','$state',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC,TrialManagerDataService,$state){
 
             //TODO: temporarily hide features that are not implemented in this release
             //$scope.hideFeatures = true;
@@ -85,6 +85,13 @@
                         if(response.valid === true){
                             //we show the preview
                             showSuccessfulMessage('', 'Experimental Design generated successfully, please check the measurements tab');
+
+                            if (TrialManagerDataService.isOpenTrial()) {
+                                $state.transitionTo("editMeasurements");
+                            } else {
+                                $state.transitionTo("createMeasurements");
+                            }
+
                             showMeasurementsPreview();
                         }else{
                             showErrorMessage('', response.message);

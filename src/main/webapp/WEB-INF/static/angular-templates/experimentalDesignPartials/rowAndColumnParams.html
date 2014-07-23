@@ -19,6 +19,13 @@
 
     <div ng-show="currentDesignType.showAdvancedOptions">
 
+
+        <div class="add_top_padding">
+            <label class="checkbox-inline">
+                <input ng-model="currentDesignType.data.useLatenized" type="checkbox" id="inlineCheckbox2" value="option2"/> <span>Use Latenized Design</span>
+            </label>
+        </div>
+
         <div class="add_top_padding">
             <label class=" control-label"><strong>Number of contiguous rows to latinize:</strong></label>
             <span><input ng-model="currentDesignType.data.nrlatin" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>

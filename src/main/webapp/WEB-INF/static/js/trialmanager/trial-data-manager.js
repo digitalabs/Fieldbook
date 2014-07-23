@@ -202,7 +202,7 @@
                             'colsPerReplications' : 0,
                             'nrlatin':0,
                             'nclatin': 0,
-                            'replatinGroups': 0
+                            'replatinGroups': ''
                         }
                     },
                     treatmentLevelPairs: {}

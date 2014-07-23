@@ -303,16 +303,13 @@ public class ExpDesignUtil {
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
 		MeasurementData treatmentLevelData = null;
 		MeasurementData measurementData = null;		
-		if(WorkbookUtil.getMeasurementVariable(factors, TermId.TRIAL_INSTANCE_FACTOR.getId()) == null){
-			//this is for newly created
-			MeasurementVariable trialInstanceVar = 
-					WorkbookUtil.getMeasurementVariable(trialVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
-			if(trialInstanceVar != null){
-				measurementData = new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, 
-						trialInstanceVar.getDataType(), trialInstanceVar);
-				dataList.add(measurementData);
-			}
-		}	
+        
+        MeasurementVariable trialInstanceVar = 
+                WorkbookUtil.getMeasurementVariable(trialVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
+        measurementData = new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, 
+                trialInstanceVar.getDataType(), trialInstanceVar);
+        dataList.add(measurementData);
+	
 		
 		for(MeasurementVariable var : headerVariable){
 			

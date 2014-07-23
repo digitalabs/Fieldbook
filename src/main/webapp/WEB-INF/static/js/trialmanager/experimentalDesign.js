@@ -2,13 +2,14 @@
  * Created by cyrus on 7/2/14.
  */
 
-/* global angular, showErrorMessage, showSuccessfulMessage, showMeasurementsPreview */
+/* global angular, showErrorMessage, showSuccessfulMessage, showMeasurementsPreview, expDesignMsgs */
 (function(){
     'use strict';
 
     angular.module('manageTrialApp')
+        .constant('EXP_DESIGN_MSGS',expDesignMsgs)
         .constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
-        .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC','TrialManagerDataService',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC,TrialManagerDataService){
+        .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC','TrialManagerDataService','EXP_DESIGN_MSGS',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC,TrialManagerDataService,EXP_DESIGN_MSGS){
 
             //TODO: temporarily hide features that are not implemented in this release
             //$scope.hideFeatures = true;
@@ -105,12 +106,12 @@
                 switch($scope.currentDesignType.id) {
                     case 0: {
                         if (!$scope.currentDesignType.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
-                            showErrorMessage('page-message','Number of Replications must be between 1 to 10');
+                            showErrorMessage('page-message',EXP_DESIGN_MSGS[4]);
                             return false;
                         }
 
                         if (!$scope.settings.treatmentFactors || !TrialManagerDataService.currentData.treatmentFactors) {
-                            showErrorMessage('page-message','Please setup the treatment factors to be used');
+                            showErrorMessage('page-message',EXP_DESIGN_MSGS[18]);
                             return false;
                         }
 
@@ -119,35 +120,35 @@
                     case 1: {
 
                         if (!$scope.currentDesignType.data.replicationsCount || $scope.expDesignForm.replicationsCount.$invalid) {
-                            showErrorMessage('page-message','Number of Replications must be between 2 to 10');
+                            showErrorMessage('page-message',EXP_DESIGN_MSGS[5]);
                             return false;
                         }
 
                         if (!$scope.currentDesignType.data.blockSize || $scope.expDesignForm.blockSize.$invalid) {
-                            showErrorMessage('page-message','Block Size should be greater than 0');
+                            showErrorMessage('page-message',EXP_DESIGN_MSGS[8]);
                             return false;
                         }
 
                         if ($scope.totalGermplasmEntryListCount % $scope.currentDesignType.data.blockSize > 0) {
-                            showErrorMessage('page-message','Block size should be divisible by the number of treatments');
+                            showErrorMessage('page-message',EXP_DESIGN_MSGS[19]);
                             return false;
                         }
 
                         // latinized
                         if ($scope.currentDesignType.data.useLatenized) {
                             if ($scope.currentDesignType.data.nblatin < $scope.currentDesignType.data.blockSize) {
-                                showErrorMessage('page-message','Number of contiguous blocks to latinize should be greater or equal to block size');
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[20]);
                                 return false;
                             }
 
                             if ($scope.currentDesignType.data.replicationsArrangement <= 0) {
-                                showErrorMessage('page-message','Please select the field arrangement for the replications');
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[21]);
                                 return false;
 
                             }
                             if (Number($scope.currentDesignType.data.replicationsArrangement) === 3) {
                                 if (!$scope.currentDesignType.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
-                                    showErrorMessage('page-message','The Number of reps in each column should be comma delimited, with values greater than 0.');
+                                    showErrorMessage('page-message',EXP_DESIGN_MSGS[22]);
                                     return false;
                                 }
 
@@ -160,7 +161,7 @@
                                 }
 
                                 if (sum !== $scope.currentDesignType.data.replicationsCount) {
-                                    showErrorMessage('page-message','The total sum of reps in each column should be equal to the number of replications');
+                                    showErrorMessage('page-message',EXP_DESIGN_MSGS[12]);
                                     return false;
                                 }
                             }
@@ -170,47 +171,47 @@
                     }
                     case 2: {
                         if (!$scope.currentDesignType.data.replicationsCount && $scope.expDesignForm.replicationsCount.$invalid) {
-                            showErrorMessage('page-message','Number of Replications must be between 2 to 10');
+                            showErrorMessage('page-message',EXP_DESIGN_MSGS[5]);
                             return false;
                         }
 
                         if ($scope.currentDesignType.data.rowsPerReplications * $scope.currentDesignType.data.colsPerReplications !== $scope.totalGermplasmEntryListCount) {
-                            showErrorMessage('page-message','Product of rows and cols (rows x cols) should be equal to the number of treatments');
+                            showErrorMessage('page-message',EXP_DESIGN_MSGS[6]);
                             return false;
                         }
 
                         if ($scope.currentDesignType.data.useLatenized) {
 
                             if ($scope.currentDesignType.data.nrlatin > $scope.currentDesignType.data.replicationsCount) {
-                                showErrorMessage('page-message','Number of contiguous rows to latinize should be greater than the replication count.');
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[15]);
                                 return false;
                             }
 
                             if ($scope.currentDesignType.data.nclatin > $scope.currentDesignType.data.replicationsCount) {
-                                showErrorMessage('page-message','Number of contiguous columns to latinize should be greater than the replication count.');
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[16]);
                                 return false;
                             }
 
                             if($scope.currentDesignType.data.nrlatin <= 0 || $scope.currentDesignType.data.nrlatin > $scope.currentDesignType.data.rowsPerReplications) {
-                                showErrorMessage('page-message','Number of contiguous rows to latinize should be less than the number of rows per replications');
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[14]);
                                 return false;
 
                             }
 
                             if($scope.currentDesignType.data.nclatin <= 0 || $scope.currentDesignType.data.nclatin > $scope.currentDesignType.data.colsPerReplications) {
-                                showErrorMessage('page-message','Number of contiguous columns to latinize should be greater than the number of rows per replications');
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[17]);
                                 return false;
 
                             }
 
                             if ($scope.currentDesignType.data.replicationsArrangement <= 0) {
-                                showErrorMessage('page-message','Please select the field arrangement for the replications');
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[21]);
                                 return false;
                             }
 
                             if (Number($scope.currentDesignType.data.replicationsArrangement) === 3) {
                                 if (!$scope.currentDesignType.data.replatinGroups || $scope.expDesignForm.replatinGroups.$invalid) {
-                                    showErrorMessage('page-message','The Number of reps in each column should be comma delimited, with values greater than 0.');
+                                    showErrorMessage('page-message',EXP_DESIGN_MSGS[22]);
                                     return false;
                                 }
 
@@ -223,7 +224,7 @@
                                 }
 
                                 if (_sum !== $scope.currentDesignType.data.replicationsCount) {
-                                    showErrorMessage('page-message','The total sum of reps in each column should be equal to the number of replications');
+                                    showErrorMessage('page-message',EXP_DESIGN_MSGS[12]);
                                     return false;
                                 }
                             }

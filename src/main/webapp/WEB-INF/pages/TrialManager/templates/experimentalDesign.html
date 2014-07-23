@@ -1,4 +1,4 @@
-<div class="fbk-hide" ng-controller="ExperimentalDesignCtrl">
+<form name="expDesignForm" novalidate="" ng-submit="generateDesign()" class="fbk-hide" ng-controller="ExperimentalDesignCtrl">
     <section-container heading="Experimental Design">
         <section-container name="content" heading="CHOOSE A DESIGN TYPE">
             <div class="row" name="content">
@@ -10,7 +10,7 @@
                             <select ui-select2="{minimumResultsForSearch: -1}" style="width: 350px !important;" class="form-control" ng-model="currentDesignType" ng-change="onSwitchDesignTypes(currentDesignType)" ng-options="item.name for item in designTypes">
                             </select>
                         </div>
-                        <div ng-show="currentDesignType.withResolvable &amp;&amp; !hideFeatures">
+                        <div ng-show="currentDesignType.withResolvable &amp;&amp; false">
                             <label class="checkbox-inline">
                                 <input type="checkbox" ng-model="currentDesignType.data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
                             </label>
@@ -28,7 +28,7 @@
             <section-container heading="SPECIFY DESIGN PARAMETERS">
                 <div name="content">
                     <div ng-include="currentParams"></div>
-                    <div class="add_top_padding"><a class="btn btn-info" ng-click="generateDesign()">Generate Design</a></div>
+                    <div class="add_top_padding"><input type="submit" class="btn btn-info" value="Generate Design" /></div>
                 </div>
             </section-container>
         </div>
@@ -37,7 +37,7 @@
                 <div name="content">
                     <div class="add-bottom-padding" ng-show="currentDesignType.data.noOfEnvironments &gt;= 0"><b>Number of trial environments:</b> <span>{{currentDesignType.data.noOfEnvironments}}</span></div>
                     <div class="add-bottom-padding" ng-show="currentDesignType.id > 0"><b>Number of Treatments:</b> <span>{{totalGermplasmEntryListCount}}</span></div>
-                    <div class="add-bottom-padding" ng-show="currentDesignType.settings.blocks &gt;= 0"><b>Number of Blocks:</b> <span>{{currentDesignType.settings.blocks}}</span></div>
+                    <div class="add-bottom-padding" ng-show="currentDesignType.id == 1"><b>Number of Blocks:</b> <span>{{(currentDesignType.data.blockSize > 0) ? ((totalGermplasmEntryListCount % currentDesignType.data.blockSize === 0) ? totalGermplasmEntryListCount / currentDesignType.data.blockSize : '') : 0}} <b class="text-danger" ng-show="currentDesignType.data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % currentDesignType.data.blockSize > 0">Invalid Block Size</b></span></div>
                     <div class="add-bottom-padding" ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id" >
                         <b>{{settings.factors.val(key).label}}</b> - <a show-details-modal="key">{{settings.factors.val(key).variable.name}}</a>
                     </div>
@@ -72,4 +72,7 @@
             </section-container>
         </div>
     </div>
-</div>
+    <!-- TODO just for testing, to be removed -->
+    <div id="measurementsDivTemp">
+    </div>
+</form>

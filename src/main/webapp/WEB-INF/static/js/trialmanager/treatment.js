@@ -18,11 +18,6 @@
         // use $watchCollection, for every added change we retrieve the 'AMOUNT ' pairs dynamically. also creat a
         // store to $scope.currentData for the variable levels.
 
-        // initialize currentData if has no values yet
-        if (typeof $scope.currentData === 'undefined') {
-            $scope.currentData = TrialManagerDataService.currentData.treatmentFactors = {};
-        }
-
         // map containing the treatment factor level pairs
         $scope.treatmentLevelPairs = TrialManagerDataService.specialSettings.treatmentLevelPairs;
 
@@ -32,7 +27,7 @@
                 $scope.currentData[key] = {
                     levels: 0,
                     labels: [],
-                    pairCvTermId: 0
+                    variableId: 0
                 };
 
                 // there's no existing treatmentLevelPair
@@ -52,8 +47,8 @@
 
         };
 
-        
-        $scope.addVariable = !TrialManagerDataService.trialMeasurement.hasMeasurement;
+        $scope.invalidBlockSizeMsg = '<b class="text-danger">Invalid Block Size</b>';
+        $scope.addVariable = function(){ return !TrialManagerDataService.trialMeasurement.hasMeasurement; };
         
         // note for some reasons this gets called twice :( , might be the diff function causing the watchCollection t
         $scope.$watchCollection(function(){return $scope.settings.m_keys; },function(newArr,oldArr){

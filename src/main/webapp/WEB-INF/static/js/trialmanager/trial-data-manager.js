@@ -1,13 +1,13 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
- showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage*/
+ showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData*/
 
 (function () {
     'use strict';
 
     angular.module('manageTrialApp').service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q) {
+        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q','TrialSettingsManager',
+        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager) {
 
             // TODO : clean up data service, at the very least arrange the functions in alphabetical order
             var extractData = function (initialData) {
@@ -141,7 +141,7 @@
                 });
             };
 
-            var cleanupData = function (values) {
+            var cleanupData = function(values) {
                 if (values) {
                     angular.forEach(values, function (value, key) {
                         if (value && value.id) {
@@ -160,7 +160,8 @@
                 currentData: {
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
-                    basicDetails: extractData(BASIC_DETAILS_DATA)
+                    basicDetails: extractData(BASIC_DETAILS_DATA),
+                    treatmentFactors : {}
                 },
                 // standard variable [meta-data] information or a particular tab settings information
                 // what I get is an instance of OrderedHash containing an array of keys with the map
@@ -196,16 +197,17 @@
                         data: {
                             'noOfEnvironments': 0,
                             'designType': 0,
-                            'replicationsCount': 0,
-                            'isResolvable': true,
-                            'blockSize': 0,
-                            'useLatenized': true,
-                            'contiguousBlocksToLatenize': 0,
-                            'replicationsPerCol': 0,
-                            'rowsPerReplications': 0,
-                            'colsPerReplications': 0,
-                            'contiguousRowsToLatenize': 0,
-                            'contiguousColToLatenize': 0
+                            'replicationsCount' : 0,
+                            'isResolvable' : true,
+                            'blockSize' : 0,
+                            'useLatenized' : false,
+                            'nblatin' : 0,
+                            'replicationsArrangement' : 0,
+                            'rowsPerReplications' : 0,
+                            'colsPerReplications' : 0,
+                            'nrlatin':0,
+                            'nclatin': 0,
+                            'replatinGroups': ''
                         }
                     },
                     treatmentLevelPairs: {}
@@ -261,44 +263,39 @@
                                     });
                                 });
                         } else {
-                            if (service.trialMeasurement.count > 0) {
-                                if ($('.import-study-data').data('data-import') === '1') {
-                                    doSaveImportedData();
 
+							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
+                                doSaveImportedData();
+
+                                notifySaveEventListeners();
+                                updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
+                                    service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
+                                    service.trialMeasurement.count = data.measurementRowCount;
+                                    service.updateSettings('measurements', extractSettings(data.measurementsData));
+                                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                        service.trialMeasurement.count);
+                                  });
+							}
+                            else if (service.trialMeasurement.count >  0 && parseInt($('.germplasm-list-items tbody tr').length) === 0) {
+                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
+                                    recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
-                                    updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
-                                        service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-                                        service.trialMeasurement.count = data.measurementRowCount;
-                                        service.updateSettings('measurements', extractSettings(data.measurementsData));
-                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                            service.trialMeasurement.count);
-
-                                    });
-                                    //need to refresh trait screen
-                                } else {
-                                    $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
-                                        recreateSessionVariablesTrial();
-                                        notifySaveEventListeners();
-                                        service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-                                        service.trialMeasurement.count = data.measurementRowCount;
-                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                            service.trialMeasurement.count);
-                                    });
-                                }
-                            } else {
+                                    service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
+                                    service.trialMeasurement.count = data.measurementRowCount;
+                                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                        service.trialMeasurement.count);
+                                });
+                            }
+                            else {
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
                                     success(function () {
                                         submitGermplasmList().then(function (trialID) {
-                                            loadMeasurementScreen();
                                             showSuccessfulMessage('', saveSuccessMessage);
                                             notifySaveEventListeners();
-                                            updateTrialDataAfterCreation(trialID, function (data) {
-                                                service.trialMeasurement.hasMeasurement = (data.measurementDataExisting == 'true');
-                                                service.trialMeasurement.count = data.measurementRowCount;
-                                                displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                                    service.trialMeasurement.count);
-                                            });
-                                            //we also hide the update button
+                                            window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
+
+                                            displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                                                    service.trialMeasurement.count);
                                         });
                                     });
                             }
@@ -408,7 +405,33 @@
                 }
             };
 
+            // 5 is the group no of treatment factors
+            TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors,5);
+
+
             return service;
         }
-    ]);
+    ])
+
+    .service('TrialSettingsManager', ['TRIAL_VARIABLE_SELECTION_LABELS', function(TRIAL_VARIABLE_SELECTION_LABELS) {
+        var TrialSettingsManager = window.TrialSettingsManager;
+        var settingsManager = new TrialSettingsManager(TRIAL_VARIABLE_SELECTION_LABELS);
+
+
+
+        var service = {
+            openVariableSelectionDialog : function(params) {
+                settingsManager._openVariableSelectionDialog(params);
+            },
+
+            // @param = this map contains variables of the pair that will be filtered
+            addDynamicFilterObj : function(_map,group) {
+                settingsManager._addDynamicFilter(_map,group);
+            }
+
+
+        };
+
+        return service;
+    }]);
 })();

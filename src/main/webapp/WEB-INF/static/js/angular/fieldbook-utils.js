@@ -225,18 +225,6 @@
                     }
                };
         }])
-        .service('TrialSettingsManager', ['TRIAL_VARIABLE_SELECTION_LABELS', function(TRIAL_VARIABLE_SELECTION_LABELS) {
-            var TrialSettingsManager = window.TrialSettingsManager;
-            var settingsManager = new TrialSettingsManager(TRIAL_VARIABLE_SELECTION_LABELS);
-
-            var service = {
-                openVariableSelectionDialog : function(params) {
-                    settingsManager._openVariableSelectionDialog(params);
-                }
-            };
-
-            return service;
-        }])
         .directive('showSettingFormElement', function() {
             return {
                 require: '?uiSelect2, ?ngModel',

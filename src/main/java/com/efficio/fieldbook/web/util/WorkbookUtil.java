@@ -1,6 +1,8 @@
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -238,6 +240,43 @@ public class WorkbookUtil {
     	}
     }
 	 
+	 private static boolean inMeasurementDataList(List<MeasurementData> dataList, int termId) {
+	     for (MeasurementData data : dataList) {
+	         if (data.getMeasurementVariable().getTermId() == termId) {
+	             return true;
+	         }
+	     }
+	     return false;
+	 }
+	 
+	 public static void addMeasurementDataToRowsExp(List<MeasurementVariable> variableList, List<MeasurementRow> observations, 
+	         boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService) throws MiddlewareQueryException{
+	     //add new variables in measurement rows
+	    if (observations != null && observations.size() > 0) { 
+            for (MeasurementVariable variable : variableList) {
+                if (variable.getOperation().equals(Operation.ADD) && !inMeasurementDataList(observations.get(0).getDataList(), variable.getTermId())) {
+                    StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+                    for (MeasurementRow row : observations) {
+                        MeasurementData measurementData = new MeasurementData(variable.getName(), 
+                                "", true,  
+                                getDataType(variable.getDataTypeId()),
+                                variable);
+                        
+                        measurementData.setPhenotypeId(null);
+                        int insertIndex = getInsertIndex(row.getDataList(), isVariate);
+                        row.getDataList().add(insertIndex, measurementData);
+                    }
+                    
+                    if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
+                        variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true));
+                    } else {
+                        variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
+                    }
+                }
+            }
+	    }
+	 }
+	 
      public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, boolean isVariate, 
              UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService) throws MiddlewareQueryException{
         //add new variables in measurement rows
@@ -315,5 +354,32 @@ public class WorkbookUtil {
         return list;
     }
 
-    
+    public static void manageExpDesignVariablesAndObs(Workbook workbook, Workbook tempWorkbook) {
+        //edit original factors to add/delete new/deleted variables based on tempWorkbook.getFactors
+        //create map of factors in tempWorkbook and factors in workbook
+        HashMap<Integer, MeasurementVariable> tempFactorsMap = new HashMap<Integer, MeasurementVariable>();
+        HashMap<Integer, MeasurementVariable> factorsMap = new HashMap<Integer, MeasurementVariable>();
+        for (MeasurementVariable var: tempWorkbook.getFactors()) {
+            tempFactorsMap.put(Integer.valueOf(var.getTermId()), var);
+        }
+        for (MeasurementVariable var: workbook.getFactors()) {
+            factorsMap.put(Integer.valueOf(var.getTermId()), var);
+        }
+        
+        for (MeasurementVariable var: tempWorkbook.getFactors()) {
+            if (factorsMap.get(Integer.valueOf(var.getTermId())) == null) {
+                var.setOperation(Operation.ADD);
+                workbook.getFactors().add(var);
+            }
+        }
+        
+        for (MeasurementVariable var : workbook.getFactors()) {
+            if (tempFactorsMap.get(Integer.valueOf(var.getTermId())) == null && var.getOperation().equals(Operation.UPDATE)) {
+                var.setOperation(Operation.DELETE);
+            }
+        }
+        
+        //copy observations generated from experimental design
+        workbook.setObservations(tempWorkbook.getObservations());
+    } 
 }

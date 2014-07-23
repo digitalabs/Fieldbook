@@ -139,6 +139,37 @@ window.TrialSettingsManager = (function () {
         return removedProperties;
     }
 
+    function _removeVariablesByVariableId(variableList,properties) {
+        var removedProperties = [];
+
+        $.each(variableList,function(i,variable) {
+            $.each(properties,function(key,val) {
+                _removeById(parseInt(variable.variableId),properties[key].standardVariables,'id');
+
+                // If the property has no more variables, remove it too
+                if (properties[key].standardVariables.length === 0) {
+                    removedProperties.push(properties.splice(key, 1)[0]);
+                }
+
+            });
+        });
+
+        return removedProperties;
+    }
+
+    TrialSettingsManager = function (translations) {
+        this._dynamicExclusion = {};
+        // Look for any existing variables and instaniate our list of them
+
+        $.each(MODES, function (key, value) {
+            variableSelectionGroups[value] = {
+                label: translations[value] ? translations[value].label : '',
+                placeholder: translations[value] ? translations[value].placeholder : ''
+            };
+        });
+
+    };
+
     /* FIXME - this logic should be in the back end
      *
      * Filters a list of properties according to some hard coded rules (see comments for details).
@@ -147,7 +178,8 @@ window.TrialSettingsManager = (function () {
      * @param {number} group properties and variables will be filtered to be specific to the group represented by this number
      * @returns {object} an object with two properties, excluded and included - the list of properties that were removed and left
      */
-    function _filterProperties(properties, selectedVariables, group) {
+
+    TrialSettingsManager.prototype._filterProperties = function(properties, selectedVariables, group) {
 
         // Don't modify the original list
         var filteredProperties = JSON.parse(JSON.stringify(properties)),
@@ -238,6 +270,7 @@ window.TrialSettingsManager = (function () {
                 exclusions = exclusions.concat(_performExclusions(managementDetailExclusions, selectedVariables, filteredProperties));
                 exclusions = exclusions.concat(_removeVariables(basicDetails, filteredProperties));
                 break;
+
             case 6:
                 // Remove variables and properties as necessary
                 exclusions = exclusions.concat(_performExclusions(selectionExclusions, selectedVariables, filteredProperties));
@@ -245,24 +278,20 @@ window.TrialSettingsManager = (function () {
             default:
                 break;
         }
+
+        if (this._dynamicExclusion[group]) {
+            if (Object.keys(this._dynamicExclusion[group]).length) {
+                exclusions = exclusions.concat(_removeVariablesByVariableId(this._dynamicExclusion[group],filteredProperties));
+            }
+        }
+
+
         return {
             exclusions: exclusions,
             inclusions: filteredProperties
         };
-    }
-
-    TrialSettingsManager = function (translations) {
-
-        // Look for any existing variables and instaniate our list of them
-
-        $.each(MODES, function (key, value) {
-            variableSelectionGroups[value] = {
-                label: translations[value] ? translations[value].label : '',
-                placeholder: translations[value] ? translations[value].placeholder : ''
-            };
-        });
-
     };
+
 
     TrialSettingsManager.prototype._initialiseVariableSelectionDialog = function () {
         this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
@@ -274,6 +303,10 @@ window.TrialSettingsManager = (function () {
         return this._variableSelection;
     };
 
+    TrialSettingsManager.prototype._addDynamicFilter = function(_list,_group) {
+        this._dynamicExclusion[_group] = _list;
+    };
+
     TrialSettingsManager.prototype._openVariableSelectionDialog = function (params) {
         var groupId = parseInt(params.variableType, 10),
             group = variableSelectionGroups[groupId],
@@ -281,7 +314,9 @@ window.TrialSettingsManager = (function () {
                 label: group.label,
                 placeholderLabel: group.placeholder
             },
+            thisInstance = this,
             modal = this._variableSelection;
+
 
         // Initialise a variable selection modal if we haven't done so before
         if (!modal) {
@@ -290,12 +325,13 @@ window.TrialSettingsManager = (function () {
 
         selectedVariables = params.retrieveSelectedVariableFunction();
 
+
         // If we haven't loaded data for this group before, then load it
         if (!group.data) {
 
             $.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&useTrialFiltering=true', function (data) {
                 group.data = data;
-                properties = _filterProperties(group.data, selectedVariables, groupId);
+                properties = thisInstance._filterProperties(group.data, selectedVariables, groupId);
 
                 // Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
                 // TODO get variable usage
@@ -311,7 +347,7 @@ window.TrialSettingsManager = (function () {
 
         } else {
             // We've shown this before, and have the data. Just show the dialog.
-            properties = _filterProperties(group.data, selectedVariables, groupId);
+            properties = this._filterProperties(group.data, selectedVariables, groupId);
             modal.show(groupId, groupTranslations, {
                 propertyData: properties.inclusions,
                 excludedProperties: properties.exclusions,

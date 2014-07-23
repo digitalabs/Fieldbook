@@ -199,6 +199,7 @@ public class EditNurseryController extends SettingsController {
         form.changePage(1);
         userSelection.setCurrentPage(form.getCurrentPage());
         userSelection.setWorkbook(workbook);
+        userSelection.setTemporaryWorkbook(null);
     }
     
     /**

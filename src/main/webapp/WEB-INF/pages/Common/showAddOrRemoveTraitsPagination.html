@@ -1,5 +1,6 @@
 <div class="row form-group col-xs-12 col-md-12">
-<strong class="sub-content-heading" th:text="#{nursery.edit.nursery.add.measurements}"></strong>
+<strong class="sub-content-heading" th:if="${isExpDesignPreview != '1'}" th:text="#{nursery.edit.nursery.add.measurements}"></strong>
+<strong class="sub-content-heading exp-design-preview" th:if="${isExpDesignPreview == '1'}" th:text="#{nursery.edit.nursery.preview.measurements}"></strong>
 </div>
 
 
@@ -19,7 +20,7 @@
 <table th:object="${createNurseryForm != null ? createNurseryForm : createTrialForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
 	<thead>
 		<tr>
-			<th nowrap="nowrap" data-term-id="Action" class="factors">Action</th>
+			<th th:if="${isExpDesignPreview != '1'}" nowrap="nowrap" data-term-id="Action" class="factors">Action</th>
 			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId}"
 			th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
 			th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>

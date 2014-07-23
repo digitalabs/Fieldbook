@@ -11,9 +11,13 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -91,6 +95,9 @@ public class ExpDesignController extends
                 userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
 
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+        StudyDetails details = new StudyDetails();
+        details.setStudyType(StudyType.T);
+        workbook.setStudyDetails(details);
         userSelection.setTemporaryWorkbook(workbook);
         
     	int designType = expDesign.getDesignType();
@@ -112,8 +119,20 @@ public class ExpDesignController extends
 		    		expParameterOutput = designService.validate(expDesign, germplasmList);
 		    		//we call the actual process
 		    		if(expParameterOutput.isValid()){
-		    			List<MeasurementRow> measurementRows = designService.generateDesign(germplasmList, expDesign, workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
+		    			List<MeasurementRow> measurementRows = designService.generateDesign(germplasmList, expDesign,workbook.getConditions(), workbook.getFactors(), workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
 		    			//TODO: we need the actual headers here, do we pass the temp workbook?
+		    			workbook.setObservations(measurementRows);
+		    			//should have at least 1 record
+		    			
+		    			if(measurementRows != null && !measurementRows.isEmpty()){
+		    				List<MeasurementVariable> measurementDatasetVariables = new ArrayList();
+			    	        MeasurementRow dataRow =  measurementRows.get(0);
+			    	        for(MeasurementData measurementData : dataRow.getDataList()){
+			    	        	measurementDatasetVariables.add(measurementData.getMeasurementVariable());
+			    	        }
+			    	        workbook.setMeasurementDatasetVariables(measurementDatasetVariables);
+		    			}
+		    			
 		    		}
 		    	}
 	    	}

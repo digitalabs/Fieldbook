@@ -96,7 +96,37 @@
     	headerMsg2 = /*[[#{open.germplasm.gid}]]*/ '',
         idNameVariables = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).ID_NAME_COMBINATION.getString()}]]*/ '';
         idCodeNameCombination = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).ID_CODE_NAME_COMBINATION_STUDY.getString()+","+T(com.efficio.fieldbook.web.util.AppConstants).ID_CODE_NAME_COMBINATION_VARIATE.getString()}]]*/ '',
-		saveSuccessMessage = /*[[#{common.form.save.successful.text}]]*/ '';
+		saveSuccessMessage = /*[[#{common.form.save.successful.text}]]*/ '',
+
+		expDesignMsgs = {
+            0 : /*[[#{experiment.design.invalid.generic.error}]]*/ '',
+            1: /*[[#{experiment.design.rows.per.replication.should.be.a.number}]]*/ '',
+            2: /*[[#{experiment.design.cols.per.replication.should.be.a.number}]]*/ '',
+            3: /*[[#{experiment.design.replication.count.should.be.a.number}]]*/ '',
+            4: /*[[#{experiment.design.replication.count.rcbd.error}]]*/ '',
+            5: /*[[#{experiment.design.replication.count.resolvable.error}]]*/ '',
+            6: /*[[#{experiment.design.resolvable.incorrect.row.and.col.product.to.germplasm.size}]]*/ '',
+            7: /*[[#{experiment.design.block.size.should.be.a.number}]]*/ '',
+            8: /*[[#{experiment.design.block.size.should.be.a.greater.than.1}]]*/ '',
+            9: /*[[#{experiment.design.generate.no.germplasm}]]*/ '',
+            10: /*[[#{experiment.design.generate.generic.error}]]*/ '',
+            11: /*[[#{experiment.design.nblatin.should.not.be.greater.than.block.level}]]*/ '',
+            12: /*[[#{experiment.design.replating.groups.not.equal.to.replicates}]]*/ '',
+            13: /*[[#{experiment.design.block.size.not.a.factor.of.treatment.size}]]*/ '',
+            14: /*[[#{experiment.design.nrlatin.should.be.less.than.rows.per.replication}]]*/ '',
+            15: /*[[#{experiment.design.nrlatin.should.not.be.greater.than.the.replication.count}]]*/ '',
+            16: /*[[#{experiment.design.nclatin.should.not.be.greater.than.the.replication.count}]]*/ '',
+            17: /*[[#{experiment.design.nclatin.should.be.less.than.cols.per.replication}]]*/ '',
+            18: /*[[#{experiment.design.no.treatment}]]*/ '',
+            19: /*[[#{experiment.design.block.size.should.be.divisible}]]*/ '',
+            20: /*[[#{experiment.design.block.size.contiguous}]]*/ '',
+            21: /*[[#{experiment.design.select.field.arrangement}]]*/ '',
+            22: /*[[#{experiment.design.replatinGroups.invalid}]]*/ ''
+
+
+        };
+
+
 		/* jshint ignore:end */
 		//]]>
 	</script>

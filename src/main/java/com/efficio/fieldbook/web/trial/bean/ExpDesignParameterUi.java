@@ -18,6 +18,18 @@ public class ExpDesignParameterUi implements Serializable {
 	private String contiguousColToLatenize;
 	private Map treatmentFactors;
 	private Map treatmentFactorsData;
+	private String totalGermplasmListCount;
+	private String nclatin;
+	private String nrlatin;
+	private String nblatin;
+	private String replatinGroups;
+	/*
+		1 - single col
+		2 - single row
+		3 - adjacent
+	 */
+	private Integer replicationsArrangement;  
+	
 	public String getNoOfEnvironments() {
 		return noOfEnvironments;
 	}
@@ -103,6 +115,43 @@ public class ExpDesignParameterUi implements Serializable {
 	public void setTreatmentFactorsData(Map treatmentFactorsData) {
 		this.treatmentFactorsData = treatmentFactorsData;
 	}
+	public String getTotalGermplasmListCount() {
+		return totalGermplasmListCount;
+	}
+	public void setTotalGermplasmListCount(String totalGermplasmListCount) {
+		this.totalGermplasmListCount = totalGermplasmListCount;
+	}
+	public String getNclatin() {
+		return nclatin;
+	}
+	public void setNclatin(String nclatin) {
+		this.nclatin = nclatin;
+	}
+	public String getNrlatin() {
+		return nrlatin;
+	}
+	public void setNrlatin(String nrlatin) {
+		this.nrlatin = nrlatin;
+	}
+	public String getNblatin() {
+		return nblatin;
+	}
+	public void setNblatin(String nblatin) {
+		this.nblatin = nblatin;
+	}
+	public String getReplatinGroups() {
+		return replatinGroups;
+	}
+	public void setReplatinGroups(String replatinGroups) {
+		this.replatinGroups = replatinGroups;
+	}
+	public Integer getReplicationsArrangement() {
+		return replicationsArrangement;
+	}
+	public void setReplicationsArrangement(Integer replicationsArrangement) {
+		this.replicationsArrangement = replicationsArrangement;
+	}
+	
 	
 	
 }

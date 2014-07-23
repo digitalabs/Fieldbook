@@ -173,14 +173,15 @@ public class ObservationMatrixController extends
     	model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
         return super.showAjaxPage(model, EDIT_EXPERIMENT_TEMPLATE);
     }
+
+    
     @ResponseBody
     @RequestMapping(value="/data/table/ajax", method = RequestMethod.GET)
-    public List<Map<String, Object>> demoPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+    public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	
     	UserSelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-    	//for(int i = 0 ; i < 20; i++)
-    		tempList.addAll(userSelection.getMeasurementRowList());
+    	tempList.addAll(userSelection.getMeasurementRowList());
     	form.setMeasurementRowList(tempList);
     	
     	List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();

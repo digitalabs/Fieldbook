@@ -46,7 +46,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
-			ExpDesignParameterUi parameter, 
+			ExpDesignParameterUi parameter, List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors,
 			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 		
@@ -106,7 +106,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					stdvarRep.getName(), stdvarPlot.getName(),
 				treatmentFactor, levels, "1", "");
 			
-			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
+			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, trialVariables, factors,
 					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 					mainDesign, workbenchService, fieldbookProperties, (ExpDesignUtil.TREATMENT_PREFIX + stdvarTreatment.getId()), treatmentFactorValues);					
 			
@@ -145,15 +145,15 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		ExpDesignValidationOutput output = new ExpDesignValidationOutput(true, "");
 		try{
 			if(expDesignParameter != null && germplasmList != null){
-				if(!NumberUtils.isNumber(expDesignParameter.getBlockSize())){
+				if(!NumberUtils.isNumber(expDesignParameter.getReplicationsCount())){
 					output = new ExpDesignValidationOutput(false, messageSource.getMessage(
-		                    "experiment.design.block.size.should.be.a.number", null, locale));
+		                    "experiment.design.replication.count.should.be.a.number", null, locale));
 				}else{
-					int blockSize = Integer.valueOf(expDesignParameter.getBlockSize());
+					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
 					
-					if( blockSize < 1 ){
+					if(replicationCount <= 0 || replicationCount >= 11){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
-			                    "experiment.design.block.size.should.be.a.greater.than.1", null, locale));
+			                    "experiment.design.replication.count.rcbd.error", null, locale));
 					}
 				}
 			}

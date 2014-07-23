@@ -47,6 +47,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
 import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
 import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
@@ -69,170 +70,17 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
     private RandomizeCompleteBlockDesignService randomizeBlockDesign;
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	
-	public List<ExpDesignParameter> createResolvableIncompleteBlockParameterList(boolean hasReplatingGroup){
-		/*
-<Parameter name="blocksize" value="6"/>
-<Parameter name="ntreatments" value="24"/>
-<Parameter name="nreplicates" value="2"/>
-<Parameter name="treatmentfactor" value="Treat"/>
-<Parameter name="replicatefactor" value="Reps"/>
-<Parameter name="blockfactor" value="Subblocks"/>
-<Parameter name="plotfactor" value="Plots"/>
-<Parameter name="nblatin" value="0"/>
-<Parameter name="replatingroups" value="0"/>
-<Parameter name="timelimit" value="1"/>
-<Parameter name="outputfile" value="c:/documents/output.csv"/>
-
-<Templates>
-<Template name=" ResolvableIncompleteBlock">
-<Parameter name="seed" value="146207"/>
-<Parameter name="nreplicates" value="3"/>
-<Parameter name="blocksize" value="4"/>
-<Parameter name="ntreatments" value="24"/>
-<Parameter name="replicatefactor" value="replicates"/>
-<Parameter name="blockfactor" value="blocks"/>
-<Parameter name="plotfactor" value="Plots"/>
-<Parameter name="treatmentfactor" value="genotypes"/>
-<Parameter name="nblatin" value="1"/>
-<Parameter name="replatingroups">
-<ListItem value="2"/>
-<ListItem value="1"/>
-</Parameter>
-<Parameter name="outputfile" value="c:/documents/output.csv"/>
-</Template>
-</Templates>
-		 */
-		List<ExpDesignParameter> paramList = new ArrayList();
-		paramList.add(ExpDesignUtil.createExpDesignParameter("blocksize", "6", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("ntreatments", "24", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("nreplicates", "2", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("treatmentfactor", "Treat", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("replicatefactor", "Reps", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("blockfactor", "Subblocks", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("plotfactor", "Plots", null));
 		
-		//paramList.add(createExpDesignParameter("plotwithinblockfactor", "Plots", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("nblatin", "0", null));
-		
-		/*
-		ExpDesignParameter param = createExpDesignParameter("replatingroups", "0", null);
-		
-		if(hasReplatingGroup){
-			List<ListItem> items = new ArrayList();
-			items.add(new ListItem("2"));
-			items.add(new ListItem("1"));
-			param = createExpDesignParameter("replatingroups", "0", items);
-			param.setValue(null);
-		}
-		
-		
-		paramList.add(param);
-		*/
-		paramList.add(ExpDesignUtil.createExpDesignParameter("timelimit", "1", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("outputfile", "c:/documents/output.csv", null));
-		return paramList;
-	}
-	
-	
-	public List<ExpDesignParameter> createResolvableRowColumnParameterList(boolean hasReplatingGroup){
-		/*
-<Templates>
-<Template name="ResolvableRowColumn">
-<Parameter name="ntreatments" value="25"/>
-<Parameter name="nreplicates" value="2"/>
-<Parameter name="nrows" value="5"/>
-<Parameter name="ncolumns" value="10"/>
-<Parameter name="treatmentfactor" value="Treat"/>
-<Parameter name="replicatefactor" value="Reps"/>
-<Parameter name="rowfactor" value="Rows"/>
-<Parameter name="columnfactor" value="Columns"/>
-<Parameter name="nrlatin" value="0"/>
-<Parameter name="nclatin" value="0"/>
-<Parameter name="replatingroups" value="0"/>
-<Parameter name="timelimit" value="1"/>
-<Parameter name="outputfile" value="c:/documents/output.csv"/>
-</Template>
-</Templates> 
-
-<Templates>
-<Template name="ResolvableRowColumn">
-<Parameter name="nreplicates" value="3"/>
-<Parameter name="nrows" value="6"/>
-<Parameter name="ncolumns" value="4"/>
-<Parameter name="ntreatments" value="24"/>
-<Parameter name="replicatefactor" value="replicates"/>
-<Parameter name="rowfactor" value="rows"/>
-<Parameter name="columnfactor" value="columns"/>
-<Parameter name="treatmentfactor" value="genotypes"/>
-<Parameter name="nrlatin" value="0"/>
-<Parameter name="nclatin" value="1"/>
-<Parameter name="replatingroups">
-<ListItem value="1"/>
-<ListItem value="2"/>
-</Parameter>
-<Parameter name="timelimit" value="1"/>
-<Parameter name="outputfile" value="c:/documents/output.csv"/>
-</Template>
-</Templates>
-		 */
-		List<ExpDesignParameter> paramList = new ArrayList();
-		paramList.add(ExpDesignUtil.createExpDesignParameter("nreplicates", "3", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("nrows", "6", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("ncolumns", "4", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("ntreatments", "24", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("replicatefactor", "replicates", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("rowfactor", "rows", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("columnfactor", "columns", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("treatmentfactor", "genotypes", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("nrlatin", "0", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("nclatin", "1", null));
-		
-		/*
-		ExpDesignParameter param = createExpDesignParameter("replatingroups", "6", null);
-		
-		if(hasReplatingGroup){
-			List<ListItem> items = new ArrayList();
-			items.add(new ListItem("2"));
-			items.add(new ListItem("1"));
-			param = createExpDesignParameter("replatingroups", "0", items);
-			param.setValue(null);
-		}
-		
-		paramList.add(param);
-		*/
-		paramList.add(ExpDesignUtil.createExpDesignParameter("timelimit", "1", null));
-		paramList.add(ExpDesignUtil.createExpDesignParameter("outputfile", "c:/documents/output.csv", null));
-		
-		return paramList;
-	}
-	
-	@Test
-	public void testResolvableIncompleteBlockExpDesignToXml() {
-		
-		MainDesign design = ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", 
-				"2", "Treat", "Reps", "Subblocks", 
-				"Plots", "0", "", "1", "");
-		
-		try {
-					
-			System.out.println(ExpDesignUtil.getXmlStringForSetting(design));
-			
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	@Test
 	public void testResolvableIncompleteBlockExpDesignRunToBvDesign() {
 		
 		MainDesign mainDesign = ExpDesignUtil.createResolvableIncompleteBlockDesign("6", "24", 
 				"2", "Treat", "Reps", "Subblocks", 
-				"Plots", "0", "", "1", "");
+				"Plots", "0", "", "1", "", false);
 		
 		try{
-			ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			BVDesignOutput output = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			assertEquals(output.isSuccess(), true);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -244,7 +92,7 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		MainDesign mainDesign = ExpDesignUtil.createResolvableRowColDesign("50",
 				"2", "5", "10", "Treat", "Reps", 
 				"Rows", "Columns","Plots",
-				"0", "0", "", "1", "");
+				"0", "0", "", "1", "", false);
 		
 		try{
 			BVDesignOutput output = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
@@ -276,24 +124,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		}
 	}	
 	
-	
-	@Test
-	public void testResolvableRowColumnExpDesignToXml() {
-			
-		MainDesign design = ExpDesignUtil.createResolvableRowColDesign("50",
-				"2", "5", "10", "Treat", "Reps", 
-				"Rows", "Columns","Plots",
-				"0", "0", "", "1", "");
-		
-		try {
-			System.out.println(ExpDesignUtil.getXmlStringForSetting(design));
-			
-			
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	@Test
 	public void testResolvableIncompleteBlockDesignService() {
@@ -301,7 +131,9 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
-		
+			List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			
 			List<MeasurementVariable> factors = new ArrayList();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
@@ -315,12 +147,137 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        param.setReplicationsCount("2");
 	        param.setNoOfEnvironments("1");
 	        
-	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, param, factors, 
+	        ExpDesignValidationOutput output = resolveIncompleteBlockDesign.validate(param, germplasmList);	        	        
+	        assertEquals(true, output.isValid());
+	        
+	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, param, trialVariables, factors,factors, 
 					variates, null);
 			for(MeasurementRow measurementRow : measurementRowList){
 				System.out.println(measurementRow.toString());
 			}
 			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testResolvableIncompleteBlockLatinizedAdjacentDesignService() {
+			
+		
+		try {
+			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
+			List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			
+			List<MeasurementVariable> factors = new ArrayList();		
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        
+	        List<MeasurementVariable> variates = new ArrayList();		
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+        		
+	        ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setBlockSize("4");
+	        param.setReplicationsCount("4");
+	        param.setNoOfEnvironments("1");
+	        param.setUseLatenized(true);
+	        param.setReplicationsArrangement(Integer.valueOf(3));
+	        param.setReplatinGroups("1,1,2");
+	        param.setNblatin("3"); //should be less than or equal the block level (ntreatment / blocksize)
+	        
+	        ExpDesignValidationOutput output = resolveIncompleteBlockDesign.validate(param, germplasmList);	        	        
+	        assertEquals(true, output.isValid());
+	        
+	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, param, trialVariables, factors, factors, 
+					variates, null);
+			for(MeasurementRow measurementRow : measurementRowList){
+				System.out.println(measurementRow.toString());
+			}
+			assertEquals(96, measurementRowList.size());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testResolvableIncompleteBlockLatinizedRowsDesignService() {
+			
+		
+		try {
+			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
+			List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			
+			List<MeasurementVariable> factors = new ArrayList();		
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        
+	        List<MeasurementVariable> variates = new ArrayList();		
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+        		
+	        ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setBlockSize("4");
+	        param.setReplicationsCount("4");
+	        param.setNoOfEnvironments("1");
+	        param.setUseLatenized(true);
+	        param.setReplicationsArrangement(Integer.valueOf(2));
+	        param.setReplatinGroups("1,1,1,1");
+	        param.setNblatin("3"); //should be less than or equal the block level (ntreatment / blocksize)
+	        
+	        ExpDesignValidationOutput output = resolveIncompleteBlockDesign.validate(param, germplasmList);	        	        
+	        assertEquals(true, output.isValid());
+	        
+	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, param, trialVariables, factors, factors, 
+					variates, null);
+//			for(MeasurementRow measurementRow : measurementRowList){
+//				System.out.println(measurementRow.toString());
+//			}
+			assertEquals(96, measurementRowList.size());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@Test
+	public void testResolvableIncompleteBlockLatinizedColsDesignService() {
+			
+		
+		try {
+			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
+			List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			
+			List<MeasurementVariable> factors = new ArrayList();		
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        
+	        List<MeasurementVariable> variates = new ArrayList();		
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+        		
+	        ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setBlockSize("4");
+	        param.setReplicationsCount("4");
+	        param.setNoOfEnvironments("1");
+	        param.setUseLatenized(true);
+	        param.setReplicationsArrangement(Integer.valueOf(1));
+	        param.setReplatinGroups("4");
+	        param.setNblatin("3"); //should be less than or equal the block level (ntreatment / blocksize)
+	        
+	        ExpDesignValidationOutput output = resolveIncompleteBlockDesign.validate(param, germplasmList);	        	        
+	        assertEquals(true, output.isValid());
+	        
+	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, param, trialVariables, factors, factors, 
+					variates, null);
+//			for(MeasurementRow measurementRow : measurementRowList){
+//				System.out.println(measurementRow.toString());
+//			}
+			assertEquals(96, measurementRowList.size());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -343,6 +300,8 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        
 			
 			//number of replicates should be 2 or more
+	        List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
 			List<MeasurementVariable> factors = new ArrayList();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
@@ -351,8 +310,11 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        
 	        List<MeasurementVariable> variates = new ArrayList();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
-        		
-	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, factors, 
+	        
+	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);	        	        
+	        assertEquals(true, output.isValid());	
+	        
+	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, 
 					variates, null);
 			for(MeasurementRow measurementRow : measurementRowList){
 				System.out.println(measurementRow.toString());
@@ -365,6 +327,150 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testResolvableRowColumnAdjacentDesignService() {
+			
+		
+		try {
+			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 200);
+				
+			
+			ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setRowsPerReplications("4");
+	        param.setColsPerReplications("50");
+	        param.setReplicationsCount("2");
+	        param.setNoOfEnvironments("2");
+	        param.setUseLatenized(true);
+	        param.setReplicationsArrangement(Integer.valueOf(3));
+	        param.setReplatinGroups("1,1");
+	        param.setNrlatin("2");
+	        param.setNclatin("2");
+			
+			//number of replicates should be 2 or more
+	        List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			
+			List<MeasurementVariable> factors = new ArrayList();		
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        
+	        List<MeasurementVariable> variates = new ArrayList();		
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+        		
+	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);
+	        assertEquals(true, output.isValid());
+	        
+	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, 
+					variates, null);
+//			for(MeasurementRow measurementRow : measurementRowList){
+//				System.out.println(measurementRow.toString());
+//			}
+			
+			assertEquals(800, measurementRowList.size());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testResolvableRowColumnColsDesignService() {
+			
+		
+		try {
+			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 200);
+				
+			
+			ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setRowsPerReplications("4");
+	        param.setColsPerReplications("50");
+	        param.setReplicationsCount("2");
+	        param.setNoOfEnvironments("2");
+	        param.setUseLatenized(true);
+	        param.setReplicationsArrangement(Integer.valueOf(1));
+	        param.setReplatinGroups("2");
+	        param.setNrlatin("2");
+	        param.setNclatin("2");
+			
+			//number of replicates should be 2 or more
+	        List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			
+			List<MeasurementVariable> factors = new ArrayList();		
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        
+	        List<MeasurementVariable> variates = new ArrayList();		
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+        		
+	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);	        
+	        assertEquals(true, output.isValid());
+	        
+	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, 
+					variates, null);
+//			for(MeasurementRow measurementRow : measurementRowList){
+//				System.out.println(measurementRow.toString());
+//			}
+			
+			assertEquals(800, measurementRowList.size());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testResolvableRowColumnRowsDesignService() {
+			
+		
+		try {
+			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 200);
+				
+			ExpDesignParameterUi param = new ExpDesignParameterUi();
+	        param.setRowsPerReplications("4");
+	        param.setColsPerReplications("50");
+	        param.setReplicationsCount("3");
+	        param.setNoOfEnvironments("2");
+	        param.setUseLatenized(true);
+	        param.setReplicationsArrangement(Integer.valueOf(2));
+	        param.setReplatinGroups("1,1");
+	        param.setNrlatin("3");
+	        param.setNclatin("2");
+			
+			//number of replicates should be 2 or more
+	        List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			
+			List<MeasurementVariable> factors = new ArrayList();		
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        
+	        List<MeasurementVariable> variates = new ArrayList();		
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+        		
+	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);
+	        assertEquals(true, output.isValid());
+	        
+	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, 
+					variates, null);
+//			for(MeasurementRow measurementRow : measurementRowList){
+//				System.out.println(measurementRow.toString());
+//			}
+			
+			assertEquals(1200, measurementRowList.size());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+		
 	
 	@Test
 	public void testRandomizeCompleteBlockDesignService() {
@@ -404,6 +510,8 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        
 			
 			//number of replicates should be 2 or more
+	        List<MeasurementVariable> trialVariables = new ArrayList();
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
 			List<MeasurementVariable> factors = new ArrayList();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
@@ -413,11 +521,14 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        List<MeasurementVariable> variates = new ArrayList();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
-	        List<MeasurementRow> measurementRowList = randomizeBlockDesign.generateDesign(germplasmList, param, factors, 
+	        ExpDesignValidationOutput output = randomizeBlockDesign.validate(param, germplasmList);	        	       
+	        assertEquals(true, output.isValid());
+	        
+	        List<MeasurementRow> measurementRowList = randomizeBlockDesign.generateDesign(germplasmList, param, trialVariables, factors, factors, 
 					variates, treatmentVarList);
-			for(MeasurementRow measurementRow : measurementRowList){
-				System.out.println(measurementRow.toString());
-			}
+//			for(MeasurementRow measurementRow : measurementRowList){
+//				System.out.println(measurementRow.toString());
+//			}
 			
 			assertEquals(7200, measurementRowList.size());
 			

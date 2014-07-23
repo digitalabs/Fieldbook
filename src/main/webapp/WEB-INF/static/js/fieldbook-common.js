@@ -3037,9 +3037,27 @@ function displayStudyGermplasmSection(hasData, observationCount){
         $('#imported-germplasm-list').hide();
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').show();
+		$('.germplasm-list-items tbody').remove();
 	} else {
 		$('#chooseGermplasmAndChecks').show();
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').hide();
 	}
+}
+
+function showMeasurementsPreview(){
+	'use strict';
+	var domElemId = '#measurementsDiv';	
+		if ($('.exp-design-preview').length == 0) {
+	        $.ajax({
+	            url: '/Fieldbook/TrialManager/openTrial/load/preview/measurement',
+	            type: 'GET',
+	            data: '',
+	            cache: false,
+	            success: function (html) {
+	                $(domElemId).html(html);
+	            }
+	        });
+	    }
+	
 }

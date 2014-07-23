@@ -351,7 +351,11 @@ public class ExpDesignUtil {
 				} else if (termId.intValue() == TermId.COL.getId()) {
 					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
 					
-				}else if (var.getTreatmentLabel() != null && !"".equals(var.getTreatmentLabel())) {
+				} else if (termId.intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+					measurementData = new MeasurementData(var.getName(), Integer.toString(trialNo), false, 
+							var.getDataType(), var);
+					
+				} else if (var.getTreatmentLabel() != null && !"".equals(var.getTreatmentLabel())) {
 					if (treatmentLevelData == null){
 						measurementData = new MeasurementData(var.getName(), bvEntryMap.get(TREATMENT_PREFIX+Integer.toString(var.getTermId())), false, var.getDataType(), var);
 						treatmentLevelData = measurementData;

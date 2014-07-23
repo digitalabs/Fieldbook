@@ -70,7 +70,8 @@
 
             .state('experimentalDesign', {
                 url: '/experimentalDesign',
-                templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
+                templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign',
+                controller : 'ExperimentalDesignCtrl'
             })
 
             .state('germplasm', {

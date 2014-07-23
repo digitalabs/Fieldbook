@@ -234,8 +234,8 @@
                         service.currentData.basicDetails.studyID !== 0;
                 },
 
-                indicateUnappliedChangesAvailable: function () {
-                    if (!service.applicationData.unappliedChangesAvailable) {
+                indicateUnappliedChangesAvailable: function (fromGermplasm) {
+                    if (!service.applicationData.unappliedChangesAvailable && (fromGermplasm || service.trialMeasurement.count > 0)) {
                         service.applicationData.unappliedChangesAvailable = true;
                         showAlertMessage('', 'These changes have not yet been applied to the Measurements table. To update the Measurements table, ' +
                             'please review your settings and regenerate the Experimental Design on the next tab', 10000);

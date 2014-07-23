@@ -47,7 +47,7 @@
 
             // function called whenever the user has successfully selected a germplasm list
             $scope.germplasmListSelected = function() {
-                TrialManagerDataService.indicateUnappliedChangesAvailable();
+                TrialManagerDataService.indicateUnappliedChangesAvailable(true);
             };
 
             $scope.openGermplasmTree = function() {

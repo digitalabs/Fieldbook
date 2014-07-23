@@ -296,17 +296,23 @@ public class ExpDesignUtil {
 
 	
 	public static MeasurementRow createMeasurementRow(List<MeasurementVariable> headerVariable, 
-			ImportedGermplasm germplasm, Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues, List<MeasurementVariable> trialVariables, int trialNo)
+			ImportedGermplasm germplasm, Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues, 
+			List<MeasurementVariable> trialVariables, int trialNo, List<MeasurementVariable> factors)
 	throws MiddlewareQueryException {
 		MeasurementRow measurementRow = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
 		MeasurementData treatmentLevelData = null;
-		
-		MeasurementVariable trialInstanceVar = 
-				WorkbookUtil.getMeasurementVariable(trialVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
-		MeasurementData measurementData = new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, 
-				trialInstanceVar.getDataType(), trialInstanceVar);
-		dataList.add(measurementData);
+		MeasurementData measurementData = null;		
+		if(WorkbookUtil.getMeasurementVariable(factors, TermId.TRIAL_INSTANCE_FACTOR.getId()) == null){
+			//this is for newly created
+			MeasurementVariable trialInstanceVar = 
+					WorkbookUtil.getMeasurementVariable(trialVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
+			if(trialInstanceVar != null){
+				measurementData = new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, 
+						trialInstanceVar.getDataType(), trialInstanceVar);
+				dataList.add(measurementData);
+			}
+		}	
 		
 		for(MeasurementVariable var : headerVariable){
 			
@@ -411,7 +417,7 @@ public class ExpDesignUtil {
 						int germplasmIndex = Integer.valueOf(entryNo) - 1;
 						if(germplasmIndex >= 0 && germplasmIndex < germplasmList.size()){
 							ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
-							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo);
+							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo, factors);
 							measurementRowList.add(row);
 						}
 					}

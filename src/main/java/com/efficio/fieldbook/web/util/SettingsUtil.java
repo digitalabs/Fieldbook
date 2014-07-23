@@ -257,22 +257,24 @@ public class SettingsUtil {
         List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
 
         for (Map.Entry<Integer, TreatmentFactorData> entry : treatmentFactorItems.entrySet()) {
-            StandardVariable levelVariable = getStandardVariable(entry.getKey(), userSelection, fieldbookMiddlewareService);
-            Factor levelFactor = convertStandardVariableToFactor(levelVariable);
-            levelFactor.setTreatmentLabel(levelVariable.getName());
+            StandardVariable valueVariable = getStandardVariable(entry.getKey(), userSelection, fieldbookMiddlewareService);
+            Factor valueFactor = convertStandardVariableToFactor(valueVariable);
 
             TreatmentFactorData data = entry.getValue();
             /*StandardVariable valueVariable = getStandardVariable(data.getPairVariable().get(TreatmentFactorData.PAIR_VARIABLE_ID_KEY),
                     userSelection, fieldbookMiddlewareService);*/
 
-            StandardVariable valueVariable = getStandardVariable(data.getPairCvTermId(),
+            StandardVariable levelVariable = getStandardVariable(data.getPairCvTermId(),
                                 userSelection, fieldbookMiddlewareService);
 
-            Factor valueFactor = convertStandardVariableToFactor(valueVariable);
-            valueFactor.setTreatmentLabel(valueVariable.getName());
+            Factor levelFactor = convertStandardVariableToFactor(levelVariable);
+            levelFactor.setTreatmentLabel(levelVariable.getName());
+            valueFactor.setTreatmentLabel(levelVariable.getName());
+            int index = 1;
             for (String labelValue : entry.getValue().getLabels()) {
-                TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, data.getLevels(), labelValue);
+                TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, index, labelValue);
                 treatmentFactors.add(treatmentFactor);
+                index++;
             }
 
             factorList.add(levelFactor);

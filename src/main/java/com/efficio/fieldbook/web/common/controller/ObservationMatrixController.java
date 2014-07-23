@@ -171,6 +171,7 @@ public class ObservationMatrixController extends
     	form.setExperimentIndex(index);
     	model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
     	model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
+    	model.addAttribute("isNursery", userSelection.getWorkbook().isNursery());
         return super.showAjaxPage(model, EDIT_EXPERIMENT_TEMPLATE);
     }
 

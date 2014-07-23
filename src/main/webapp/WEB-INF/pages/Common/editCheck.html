@@ -50,14 +50,19 @@
 					$('.editCheck #checkVal').select2('destroy');															
 					
 					
-					var listDataTable = selectedCheckListDataTable;
+					var listDataTable = selectedCheckListDataTable,
+					columnIndex = -1; 
 		    		if(!isNursery()){
 		    			listDataTable = germplasmDataTable;
+		    			columnIndex = listDataTable.getDataTableColumnIndex('8255-key');
+		    		}else{
+		    			columnIndex = listDataTable.getDataTableColumnIndex('check');
 		    		}			    	
 					//we need to get the real index of the check
 					
 					if(listDataTable != null){
-						listDataTable.getDataTable().fnUpdate($('#selectedCheck'+$('.editCheck #index').val()).val(), $('.editCheck #dataTableIndex').val(),listDataTable.getDataTableColumnIndex('8255-key'), false, false); // Single cell
+						
+						listDataTable.getDataTable().fnUpdate($('#selectedCheck'+$('.editCheck #index').val()).val(), $('.editCheck #dataTableIndex').val(), columnIndex, false, false); // Single cell
 						listDataTable.getDataTable().fnDraw();
 						listDataTable.getDataTable().$('.delete-check').off('click');
 						listDataTable.getDataTable().$('.delete-check').on('click', function(){

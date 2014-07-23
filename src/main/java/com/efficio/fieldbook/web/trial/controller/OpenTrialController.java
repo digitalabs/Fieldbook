@@ -273,10 +273,12 @@ public class OpenTrialController extends
         returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                             SettingsUtil.buildVariates(trialWorkbook.getVariates())));
         returnVal.put("measurementRowCount", trialWorkbook.getObservations().size());
+        returnVal.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
         prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
         prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
         prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false);
-        prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false);
+
+
 
         return returnVal;
     }

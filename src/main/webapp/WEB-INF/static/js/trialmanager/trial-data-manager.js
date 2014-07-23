@@ -1,7 +1,7 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage*/
 
-(function() {
+(function () {
     'use strict';
 
     angular.module('manageTrialApp').service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
@@ -129,19 +129,19 @@
                 });
             };
 
-            var performDataCleanup = function() {
+            var performDataCleanup = function () {
                 // TODO : delegate the task of cleaning up data to each tab that produces it, probably via listener
 
                 // perform cleanup of data for trial settings
                 // right now, just make sure that no objects are sent as user input for user-defined settings
                 cleanupData(service.currentData.trialSettings.userInput);
-                angular.forEach(service.currentData.environments.environments, function(environment) {
+                angular.forEach(service.currentData.environments.environments, function (environment) {
                     cleanupData(environment.managementDetailValues);
                     cleanupData(environment.trialDetailValues);
                 });
             };
 
-            var cleanupData = function(values) {
+            var cleanupData = function (values) {
                 if (values) {
                     angular.forEach(values, function (value, key) {
                         if (value && value.id) {
@@ -154,7 +154,7 @@
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
                 {id: '@id'}, { 'get': {method: 'get', isArray: true} });
             var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, { });
-            
+
             var service = {
                 // user input data and default values of standard variables
                 currentData: {
@@ -172,8 +172,8 @@
                     measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
                 },
-                applicationData : {
-                    unappliedChangesAvailable : false
+                applicationData: {
+                    unappliedChangesAvailable: false
                 },
 
                 // settings that has special data structure
@@ -191,20 +191,20 @@
                             return hardFactors;
 
                         })(),
-                        germplasmTotalListCount : 0,
+                        germplasmTotalListCount: 0,
 
                         data: {
-                            'noOfEnvironments' : 0,
+                            'noOfEnvironments': 0,
                             'designType': 0,
-                            'replicationsCount' : 0,
-                            'isResolvable' : true,
-                            'blockSize' : 0,
-                            'useLatenized' : true,
-                            'contiguousBlocksToLatenize' : 0,
-                            'replicationsPerCol' : 0,
-                            'rowsPerReplications' : 0,
-                            'colsPerReplications' : 0,
-                            'contiguousRowsToLatenize':0,
+                            'replicationsCount': 0,
+                            'isResolvable': true,
+                            'blockSize': 0,
+                            'useLatenized': true,
+                            'contiguousBlocksToLatenize': 0,
+                            'replicationsPerCol': 0,
+                            'rowsPerReplications': 0,
+                            'colsPerReplications': 0,
+                            'contiguousRowsToLatenize': 0,
                             'contiguousColToLatenize': 0
                         }
                     },
@@ -232,7 +232,7 @@
                         service.currentData.basicDetails.studyID !== 0;
                 },
 
-                indicateUnappliedChangesAvailable : function() {
+                indicateUnappliedChangesAvailable: function () {
                     if (!service.applicationData.unappliedChangesAvailable) {
                         service.applicationData.unappliedChangesAvailable = true;
                         showAlertMessage('', 'These changes have not yet been applied to the Measurements table. To update the Measurements table, ' +
@@ -257,35 +257,37 @@
                                         window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
 
                                         displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                                                service.trialMeasurement.count);
+                                            service.trialMeasurement.count);
                                     });
                                 });
                         } else {
-                            if (service.trialMeasurement.count >  0) {
-                            	if($('.import-study-data').data('data-import') === '1'){
-            						doSaveImportedData();
-            						
-            						notifySaveEventListeners();
-            						updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
+                            if (service.trialMeasurement.count > 0) {
+                                if ($('.import-study-data').data('data-import') === '1') {
+                                    doSaveImportedData();
+
+                                    notifySaveEventListeners();
+                                    updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
+                                        service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
+                                        service.trialMeasurement.count = data.measurementRowCount;
+                                        service.updateSettings('measurements', extractSettings(data.measurementsData));
+                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                            service.trialMeasurement.count);
+
+                                    });
+                                    //need to refresh trait screen
+                                } else {
+                                    $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
+                                        recreateSessionVariablesTrial();
+                                        notifySaveEventListeners();
                                         service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
                                         service.trialMeasurement.count = data.measurementRowCount;
                                         displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                             service.trialMeasurement.count);
                                     });
-            						//need to refresh trait screen
-            					}else{
-	                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
-	                                    recreateSessionVariablesTrial();
-	                                    notifySaveEventListeners();
-	                                    service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-	                                    service.trialMeasurement.count = data.measurementRowCount;
-	                                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-	                                                            service.trialMeasurement.count);
-	                                });
-            					}
+                                }
                             } else {
                                 $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
-                                    success(function() {
+                                    success(function () {
                                         submitGermplasmList().then(function (trialID) {
                                             loadMeasurementScreen();
                                             showSuccessfulMessage('', saveSuccessMessage);

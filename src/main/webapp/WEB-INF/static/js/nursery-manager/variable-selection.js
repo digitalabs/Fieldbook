@@ -335,7 +335,9 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 			var groupId = this._group,
 				url = '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&classId=' + classId;
-
+			if(!isNursery()){
+				url += '&useTrialFiltering=true';
+			}
 			$.getJSON(url, $.proxy(function(data) {
 
 				// Check we have not moved on by the time the call returns

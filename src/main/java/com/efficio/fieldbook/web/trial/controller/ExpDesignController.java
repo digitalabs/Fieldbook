@@ -141,6 +141,7 @@ public class ExpDesignController extends
     		expParameterOutput = new ExpDesignValidationOutput(false,  messageSource.getMessage(
                     e.getBvErrorCode(), null, locale));
 		}catch(Exception e){
+			e.printStackTrace();
 			expParameterOutput = new ExpDesignValidationOutput(false, messageSource.getMessage(
                     "experiment.design.invalid.generic.error", null, locale));
     	}

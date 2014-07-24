@@ -359,9 +359,9 @@ public class ExpDesignUtil {
 					} else {
 						String level = treatmentLevelData.getValue();
 						if (NumberUtils.isNumber(level)) {
-							int index = Integer.valueOf(level);
-							if (treatmentFactorValues != null && treatmentFactorValues.containsKey(String.valueOf(var.getTermId()))) {
-								String value = treatmentFactorValues.get(String.valueOf(var.getTermId())).get(index);
+							int index = Integer.valueOf(level) - 1;
+							if (treatmentFactorValues != null && treatmentFactorValues.containsKey(String.valueOf(treatmentLevelData.getMeasurementVariable().getTermId()))) {
+								String value = treatmentFactorValues.get(String.valueOf(treatmentLevelData.getMeasurementVariable().getTermId())).get(index);
 								measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), var);
 							}
 						}

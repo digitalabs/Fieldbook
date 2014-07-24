@@ -18,6 +18,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -69,6 +70,27 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					String key = (String) keySetIter.next();
 					Map treatmentData = (Map) treatmentFactorsData.get(key);						
 					treatmentFactorValues.put(key, (List)treatmentData.get("labels"));
+					//add the treatment variables
+					String pairVar = (String)treatmentData.get("variableId");
+					if(key != null && NumberUtils.isNumber(key) && pairVar != null && NumberUtils.isNumber(pairVar)){
+						int treatmentPair1 = Integer.parseInt(key);
+						int treatmentPair2 = Integer.parseInt(pairVar);
+						StandardVariable stdVar1 = fieldbookMiddlewareService.getStandardVariable(treatmentPair1);
+						StandardVariable stdVar2 =  fieldbookMiddlewareService.getStandardVariable(treatmentPair2);
+						TreatmentVariable treatmentVar = new TreatmentVariable();
+						MeasurementVariable measureVar1 = ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar1, Operation.ADD);
+						MeasurementVariable measureVar2 = ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar2, Operation.ADD);
+						measureVar1.setFactor(true);
+						measureVar2.setFactor(true);
+						
+						measureVar1.setTreatmentLabel(measureVar1.getName());
+						measureVar2.setTreatmentLabel(measureVar1.getName());
+						
+						treatmentVar.setLevelVariable(measureVar1);
+						treatmentVar.setValueVariable(measureVar2);
+						treatmentVariables.add(treatmentVar);
+					}
+
 				}
 			}
 			treatmentFactorValues.put(Integer.toString(TermId.ENTRY_NO.getId()), Arrays.asList(Integer.toString(germplasmList.size())));
@@ -86,7 +108,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					}
 				}
 			}
-			
+				
 			StandardVariable stdvarTreatment = fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
 			StandardVariable stdvarRep = null;				
 			StandardVariable stdvarPlot = null;

@@ -184,10 +184,6 @@
                 TrialManagerDataService.currentData.basicDetails.folderId = folderID;
             };
 
-            $scope.disableOptionsFromUnsavedDesign = function () {
-                return TrialManagerDataService.applicationData.unsavedGeneratedDesign;
-            };
-
             $scope.useExistingTrial = function (existingTrialID) {
                 $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
                     // update data and settings
@@ -204,7 +200,7 @@
 
             $scope.displayMeasurementOnlyActions = function () {
                 return TrialManagerDataService.trialMeasurement.count &&
-                    TrialManagerDataService.trialMeasurement.count > 0;
+                    TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign;
             };
 
             $scope.performFunctionOnTabChange = function(targetState) {

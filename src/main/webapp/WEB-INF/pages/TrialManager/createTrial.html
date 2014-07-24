@@ -31,48 +31,33 @@
                                     </button>
                                     <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
                                         <li ng-show="displayMeasurementOnlyActions()">
-                                            <div ng-hide="disableOptionsFromUnsavedDesign()">
+
                                                 <a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
-                                            </div>
-                                            <div ng-show="disableOptionsFromUnsavedDesign()" style="text-align: center">
-                                                <span th:text="#{trial.trialdetails.action.export.trial}" class="">Export Trial Book</span>
-                                            </div>
+
                                         </li>
                                         <li ng-show="displayMeasurementOnlyActions()">
-                                            <div ng-hide="disableOptionsFromUnsavedDesign()">
+
                                                 <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
                                                 <a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
-                                            </div>
-                                            <div ng-show="disableOptionsFromUnsavedDesign()" style="text-align: center">
-                                                <span th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</span>
-                                            </div>
+
                                         </li>
                                         <li ng-show="displayMeasurementOnlyActions()">
-                                            <div ng-hide="disableOptionsFromUnsavedDesign()">
+
                                                 <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
-                                            </div>
-                                            <div ng-show="disableOptionsFromUnsavedDesign()" style="text-align: center">
-                                                <span th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</span>
-                                            </div>
+
                                         </li>
                                         <li ng-show="displayMeasurementOnlyActions()">
-                                            <div ng-hide="disableOptionsFromUnsavedDesign()">
+
                                                 <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
                                                 <a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
-                                            </div>
-                                            <div ng-show="disableOptionsFromUnsavedDesign()" style="text-align: center">
-                                                <span th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</span>
-                                            </div>
+
                                         </li>
                                        <li ng-show="displayMeasurementOnlyActions()">
-                                           <div ng-hide="disableOptionsFromUnsavedDesign()">
+
                                                <a href="" style="display: none" id="open-study-url"></a>
                                                <a href="javascript: showImportOptions();" id="open-study-url-link"
                                                   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
-                                           </div>
-                                           <div ng-show="disableOptionsFromUnsavedDesign()" style="text-align: center">
-                                               <span th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</span>
-                                           </div>
+
                                         </li>
 
                                         <li>

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 
 // TODO: Auto-generated Javadoc
@@ -1063,33 +1064,7 @@ public class CreateNurseryForm {
 		 * @return the arrange measurement variables
 		 */
 		public List<MeasurementVariable> getArrangeMeasurementVariables(){
-			List<MeasurementVariable> measureList = new ArrayList<MeasurementVariable>();
-			List<MeasurementVariable> newMeasureList = new ArrayList<MeasurementVariable>();
-			if(getMeasurementVariables() != null && !getMeasurementVariables().isEmpty()){
-				//we arrange and make GID and Designation always first
-				MeasurementVariable gidVariable = null;
-				MeasurementVariable desigVariable = null;
-				for(MeasurementVariable var : getMeasurementVariables()){
-					measureList.add(var);
-					if(var.getTermId() == TermId.GID.getId()){
-						gidVariable = var;
-					}else if(var.getTermId() == TermId.DESIG.getId()){
-						desigVariable = var;
-					}
-				}
-				if(!measureList.isEmpty()){
-					if(gidVariable != null) {
-						measureList.remove(gidVariable);
-					}
-					if(desigVariable != null) {
-						measureList.remove(desigVariable);
-					}
-				}
-				newMeasureList.add(gidVariable);
-				newMeasureList.add(desigVariable);
-				newMeasureList.addAll(measureList);
-			}
-			return newMeasureList;
+			return SettingsUtil.getArrangedMeasurementVariable(getMeasurementVariables());
 		}
 		
         /**

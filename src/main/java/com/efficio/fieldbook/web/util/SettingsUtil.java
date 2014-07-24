@@ -1928,4 +1928,43 @@ public class SettingsUtil {
         }
         return false;
     }
+    public static List<MeasurementVariable> getArrangedMeasurementVariable(List<MeasurementVariable> measurementVariables){
+    	List<MeasurementVariable> measureList = new ArrayList<MeasurementVariable>();
+		List<MeasurementVariable> newMeasureList = new ArrayList<MeasurementVariable>();
+		if(measurementVariables != null && !measurementVariables.isEmpty()){
+			//we arrange and make GID and Designation always first
+			MeasurementVariable gidVariable = null;
+			MeasurementVariable desigVariable = null;
+			MeasurementVariable trialInstanceVariable = null;
+			
+			gidVariable = WorkbookUtil.getMeasurementVariable(measurementVariables, TermId.GID.getId());
+			desigVariable = WorkbookUtil.getMeasurementVariable(measurementVariables, TermId.DESIG.getId());
+			trialInstanceVariable = WorkbookUtil.getMeasurementVariable(measurementVariables, TermId.TRIAL_INSTANCE_FACTOR.getId());
+			
+			measureList.addAll(measurementVariables);
+			
+			if(!measureList.isEmpty()){
+				if(gidVariable != null) {
+					measureList.remove(gidVariable);
+				}
+				if(desigVariable != null) {
+					measureList.remove(desigVariable);
+				}
+				if(trialInstanceVariable != null) {
+					measureList.remove(trialInstanceVariable);
+				}
+			}
+			if(trialInstanceVariable != null){
+				newMeasureList.add(trialInstanceVariable);
+			}
+			if(gidVariable != null){
+				newMeasureList.add(gidVariable);
+			}
+			if(desigVariable != null){
+				newMeasureList.add(desigVariable);
+			}
+			newMeasureList.addAll(measureList);
+		}
+		return newMeasureList;
+    }
 }

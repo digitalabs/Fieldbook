@@ -129,7 +129,7 @@ public class ObservationMatrixController extends
         workbook.updateTrialObservationsWithReferenceList(form.getTrialEnvironmentValues());
 
         try { 
-        	validationService.validateObservationValues(workbook);
+        	validationService.validateObservationValues(workbook, "");
             fieldbookMiddlewareService.saveMeasurementRows(workbook);
             resultMap.put("status", "1");
         } catch (MiddlewareQueryException e) {

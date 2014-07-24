@@ -290,8 +290,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     private void doRevertData(CreateNurseryForm form){
     	UserSelection userSelection = (UserSelection) getUserSelection(false);
     	//we should remove here the newly added traits
-    	List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
-    	newVariableList.addAll(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();    	    	
+    	
+    	newVariableList.addAll(userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables() : userSelection.getWorkbook().getMeasurementDatasetVariablesView());
     	form.setMeasurementVariables(newVariableList);
     	List<MeasurementRow> list = new ArrayList<MeasurementRow>();
     	if (userSelection.getWorkbook().getOriginalObservations() != null) {
@@ -404,10 +405,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
-    	newVariableList.addAll(userSelection.getWorkbook().getMeasurementDatasetVariables());
-    	newVariableList.addAll(traits);
+    	
     	form.setMeasurementVariables(newVariableList);
-    	    	
+    	
+    	newVariableList.addAll(userSelection.getWorkbook().isNursery() ? userSelection.getWorkbook().getMeasurementDatasetVariables() :  userSelection.getWorkbook().getMeasurementDatasetVariablesView());
+    	newVariableList.addAll(traits); 	
         return super.showAjaxPage(model, ADD_OR_REMOVE_TRAITS_HTML);
     }
     

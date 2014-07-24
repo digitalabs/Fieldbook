@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.DateUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
 public class ValidationServiceImpl implements ValidationService {
@@ -78,10 +81,18 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 	
 	@Override
-	public void validateObservationValues(Workbook workbook) throws MiddlewareQueryException {
-		Locale locale = LocaleContextHolder.getLocale();
+	public void validateObservationValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException {
+		Locale locale = LocaleContextHolder.getLocale();		
 		if (workbook.getObservations() != null) {
-			for (MeasurementRow row : workbook.getObservations()) {
+			List<MeasurementRow> observations = new ArrayList();
+			if(instanceNumber != null && "".equalsIgnoreCase(instanceNumber)){
+				//meaning we want to validate all
+				observations = workbook.getObservations();
+			}else{
+				observations = workbook.isNursery() ? workbook.getObservations() : WorkbookUtil.filterObservationsByTrialInstance(workbook.getObservations(), instanceNumber);
+			}
+			
+			for (MeasurementRow row : observations) {
 				for (MeasurementData data : row.getDataList()) {
 					MeasurementVariable variate = data.getMeasurementVariable();
 					if (!isValidValue(variate, data.getValue(), true)) {

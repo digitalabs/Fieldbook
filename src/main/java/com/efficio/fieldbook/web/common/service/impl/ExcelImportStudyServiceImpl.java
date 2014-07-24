@@ -111,13 +111,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			
 			Set<ChangeType> modes = new HashSet<ChangeType>();
 			checkForAddedAndDeletedTraits(modes, xlsBook, workbook);
-			Map<String, MeasurementRow> rowsMap = createMeasurementRowsMap(workbook.getObservations());
+			Map<String, MeasurementRow> rowsMap = createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
 			
 			importDataToWorkbook(modes, xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations(), changeDetailsList);
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
 
 			try {
-				validationService.validateObservationValues(workbook);
+				validationService.validateObservationValues(workbook, trialInstanceNumber);
 			} catch (MiddlewareQueryException e) {
 				WorkbookUtil.resetWorkbookObservations(workbook);
 				return new ImportResult(e.getMessage());
@@ -458,10 +458,19 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		return null;
     }
     
-    private Map<String, MeasurementRow> createMeasurementRowsMap(List<MeasurementRow> observations) {
+    private Map<String, MeasurementRow> createMeasurementRowsMap(List<MeasurementRow> observations, String instanceNumber, boolean isNursery) {
     	Map<String, MeasurementRow> map = new HashMap<String, MeasurementRow>();
-    	if (observations != null && !observations.isEmpty()) {
-    		for (MeasurementRow row : observations) {
+    	List<MeasurementRow> newObservations = new ArrayList<MeasurementRow>();
+    	if(!isNursery){
+    		if(instanceNumber != null && !"".equalsIgnoreCase(instanceNumber)){
+    			newObservations =  WorkbookUtil.filterObservationsByTrialInstance(observations, instanceNumber);
+    		}	
+    	}else{
+    		newObservations = observations;
+    	}
+    	
+    	if (newObservations != null && !newObservations.isEmpty()) {
+    		for (MeasurementRow row : newObservations) {
     			map.put(row.getKeyIdentifier(), row);
     		}
     	}

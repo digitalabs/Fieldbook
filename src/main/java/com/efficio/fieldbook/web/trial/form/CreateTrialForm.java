@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 // TODO: Auto-generated Javadoc
 
@@ -313,40 +314,7 @@ public class CreateTrialForm {
 	}
 
 	public List<MeasurementVariable> getArrangeMeasurementVariables(){
-		List<MeasurementVariable> measureList = new ArrayList<MeasurementVariable>();
-		List<MeasurementVariable> newMeasureList = new ArrayList<MeasurementVariable>();
-		if(getMeasurementVariables() != null && !getMeasurementVariables().isEmpty()){
-			//we arrange and make GID and Designation always first
-			MeasurementVariable gidVariable = null;
-			MeasurementVariable desigVariable = null;
-			MeasurementVariable trialInstanceVariable = null;
-			for(MeasurementVariable var : getMeasurementVariables()){
-				measureList.add(var);
-				if(var.getTermId() == TermId.GID.getId()){
-					gidVariable = var;
-				}else if(var.getTermId() == TermId.DESIG.getId()){
-					desigVariable = var;
-				}else if(var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()){
-					trialInstanceVariable = var;
-				}
-			}
-			if(!measureList.isEmpty()){
-				if(gidVariable != null) {
-					measureList.remove(gidVariable);
-				}
-				if(desigVariable != null) {
-					measureList.remove(desigVariable);
-				}
-				if(trialInstanceVariable != null) {
-					measureList.remove(trialInstanceVariable);
-				}
-			}
-			newMeasureList.add(trialInstanceVariable);
-			newMeasureList.add(gidVariable);
-			newMeasureList.add(desigVariable);
-			newMeasureList.addAll(measureList);
-		}
-		return newMeasureList;
+		return SettingsUtil.getArrangedMeasurementVariable(getMeasurementVariables());
 	}
 
 	public Integer getStudyId() {

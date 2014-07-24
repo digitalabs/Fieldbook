@@ -42,6 +42,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(ExpDesignController.URL)
@@ -120,17 +121,34 @@ public class ExpDesignController extends
 		    		//we call the actual process
 		    		if(expParameterOutput.isValid()){
 		    			List<MeasurementRow> measurementRows = designService.generateDesign(germplasmList, expDesign,workbook.getConditions(), workbook.getFactors(), workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
-		    			//TODO: we need the actual headers here, do we pass the temp workbook?
+		    			
 		    			workbook.setObservations(measurementRows);
 		    			//should have at least 1 record
-		    			
+		    			List<MeasurementVariable> currentNewFactors = new ArrayList();
+		    			List<MeasurementVariable> oldFactors = workbook.getFactors();
+		    			List<MeasurementVariable> deletedFactors = new ArrayList();
 		    			if(measurementRows != null && !measurementRows.isEmpty()){
 		    				List<MeasurementVariable> measurementDatasetVariables = new ArrayList();
 			    	        MeasurementRow dataRow =  measurementRows.get(0);
 			    	        for(MeasurementData measurementData : dataRow.getDataList()){
 			    	        	measurementDatasetVariables.add(measurementData.getMeasurementVariable());
+			    	        	if(measurementData.getMeasurementVariable() != null && measurementData.getMeasurementVariable().isFactor()){
+			    	        		currentNewFactors.add(measurementData.getMeasurementVariable());
+			    	        	}
 			    	        }
 			    	        workbook.setMeasurementDatasetVariables(measurementDatasetVariables);
+		    			}
+		    			for(MeasurementVariable var : oldFactors){
+		    				//we do the cleanup of old variables
+		    				if(WorkbookUtil.getMeasurementVariable(currentNewFactors, var.getTermId()) == null){
+		    					//we remove it
+		    					deletedFactors.add(var);
+		    				}
+		    			}
+		    			if(oldFactors != null){
+			    			for(MeasurementVariable var : deletedFactors){
+			    				oldFactors.remove(var);
+			    			}
 		    			}
 		    			
 		    		}

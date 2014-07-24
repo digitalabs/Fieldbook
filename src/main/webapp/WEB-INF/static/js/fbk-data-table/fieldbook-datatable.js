@@ -563,13 +563,15 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 		columnsDef = [],
 		germplasmDataTable;				
 
-		$(tableIdentifier + ' thead tr th').each(function() {
-			columns.push({data: $(this).data('col-name')});			
+		$(tableIdentifier + ' thead tr th').each(function(index) {
+			columns.push({data: $(this).data('col-name')});
+			
 		});
+
 		this.germplasmDataTable = $(tableIdentifier).dataTable({
 			data: dataList,
 			columns: columns,
-			columnDefs: columnsDef,
+			columnDefs: columnsDef,			
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,
@@ -624,10 +626,17 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 		
 		var columns = [],
 		columnsDef = [],
+		aoColumnsDef = [],
 		germplasmDataTable;				
 
-		$(tableIdentifier + ' thead tr th').each(function() {
+		$(tableIdentifier + ' thead tr th').each(function(index) {
 			columns.push({data: $(this).data('col-name')});
+			if(index === 0){
+				aoColumnsDef.push({bSortable: false});
+			}else{
+				aoColumnsDef.push(null);
+			}
+			
 			if ($(this).data('col-name') == 'gid') {
 				// For GID
 				columnsDef.push({
@@ -660,13 +669,14 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,
+			aoColumns: aoColumnsDef,
 		  dom: 'R<t><"fbk-page-div"p>',
 		  iDisplayLength: 100,
 		  fnDrawCallback: function( oSettings ) {
-			  makeDraggable(true);
-			  $(parentDiv + ' .numberOfAdvanceSelected')
+			  $(parentDiv + ' #selectAllAdvance').prop('checked', false)
+			  $(parentDiv + ' #selectAllAdvance').change()
 			  $(parentDiv + ' input.advancingListGid:checked').parent().parent().addClass('selected');
-			  $(parentDiv + ' .numberOfAdvanceSelected').html($(parentDiv + ' tr.selected').length);			
+			  $(parentDiv + ' .numberOfAdvanceSelected').html($(parentDiv + ' tr.primaryRow.selected').length);			
 		    },
 		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {			
 				$(nRow).data('entry', aData.entry);

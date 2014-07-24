@@ -15,7 +15,11 @@
          class="table-curved table-condensed final-advance-list">
            <thead>
              <tr>
-               <th class="fbk-advance-check-box"><img th:src="@{/static/img/check.png}" /></th>
+               <th class="fbk-advance-check-box"> 
+               	<div>
+               		<input type="checkbox" class="selectAllAdvance" name="selectAllAdvance" id="selectAllAdvance"/>
+               	</div>
+               </th>
                <th th:utext="#{seed.entry.number}">Entry #</th>
                <th th:utext="#{seed.entry.designation}">Designation</th>
                <th th:utext="#{seed.entry.parentage}">Parentage</th>
@@ -48,11 +52,7 @@
              </tr>             
            </tbody>
          </table> 
-     </div>	              
-        
-     	<div class="row col-xs-12 col-md-12" th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">
-	 		<input type="checkbox" class="selectAllAdvance" name="selectAllAdvance" id="selectAllAdvance"/> <label class="control-label">&nbsp;Select All</label>
-	    </div>
+     </div>	     
      </form>
      
  </div>
@@ -67,8 +67,9 @@
         	var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
               sectionContainerDiv = 'advance-list'+listDivIdentifier;
         		
-			$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(){
+			$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(event){
 				//select all the checkbox in the section container div
+				event.stopPropagation();
     				var isChecked = $(this).prop('checked');
     				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('selected');
     				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('manual-selected');
@@ -77,7 +78,7 @@
     					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('selected');
         				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('manual-selected');
     				}
-    				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.selected').length);
+    				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
     			});
 			
 			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').tableSelect({
@@ -97,7 +98,7 @@
 							$(row).find('input.advancingListGid').prop('checked', false);
 						}
 					}
-					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.selected').length);
+					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
 				},
 				onCtrl: function(row){
 					
@@ -117,13 +118,13 @@
 							$(row).removeClass('selected');	
 						}
 					}
-					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.selected').length);
+					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
 				},
 				onShift: function(){
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected-dummy').addClass('selected');					
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid').prop('checked', true);
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.advancingListGid').prop('checked', false);
-					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.selected').length);
+					$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.primaryRow.selected').length);
 				}
 			
 			});
@@ -140,7 +141,7 @@
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.advancingListGid').prop('checked', true);
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected)').remove('selected');
-				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.selected').length);
+				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
 			});
 			truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
 			

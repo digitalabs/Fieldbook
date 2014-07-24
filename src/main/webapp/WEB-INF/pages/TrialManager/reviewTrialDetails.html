@@ -129,17 +129,21 @@
 				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="treatmentFactors">
 				<thead>
 					<tr>
-						<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-						<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+						<th width="25%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+						<th width="25%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+						<th width="25%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+						<th width="25%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="treatmentFactor, rowStat : *{treatmentFactorDetails}">
-						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+						<td th:class="${rowStat.even}? 'even' : 'odd'">
 							<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 							*{treatmentFactorDetails[__${rowStat.index}__].levelId} + '\');'" th:text="${treatmentFactor.levelName}"></a>
 						</td>
-						<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.amountName}"></td>
+						<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.levelDescription}"></td>
+						<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.levelValue}"></td>
+						<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.amountName}"></td>
 					</tr>
 				</tbody>
 				</table>

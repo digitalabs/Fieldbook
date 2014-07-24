@@ -1850,11 +1850,12 @@ public class SettingsUtil {
                 try {
                     levelFactor = factor.getLevelVariable();
                     amountFactor = factor.getValueVariable();
+                    int levels = factor.getValues() != null ? factor.getValues().size() : 0;
 
                     TreatmentFactorDetail detail = new TreatmentFactorDetail(
                             levelFactor.getTermId(),
                             amountFactor.getTermId(),
-                            levelFactor.getValue(),
+                            String.valueOf(levels),
                             amountFactor.getValue(),
                             levelFactor.getName(),
                             amountFactor.getName(),
@@ -1862,6 +1863,7 @@ public class SettingsUtil {
                             objectMapper.writeValueAsString(amountFactor.getPossibleValues()),
                             amountFactor.getMinRange(),
                             amountFactor.getMaxRange());
+                    detail.setLevelDescription(levelFactor.getDescription());
                     details.add(detail);
 
                 } catch (Exception e) {

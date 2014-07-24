@@ -58,6 +58,8 @@ public class TreatmentFactorDetail implements Serializable {
 	
 	/** The max range. */
 	private Double maxRange;
+	
+	private String levelDescription;
 
 	/**
 	 * Instantiates a new treatment factor detail.
@@ -310,4 +312,20 @@ public class TreatmentFactorDetail implements Serializable {
         public void setMaxRange(Double maxRange) {
             this.maxRange = maxRange;
         }
+
+		/**
+		 * @return the levelDescription
+		 */
+		public String getLevelDescription() {
+			return levelDescription;
+		}
+
+		/**
+		 * @param levelDescription the levelDescription to set
+		 */
+		public void setLevelDescription(String levelDescription) {
+			this.levelDescription = levelDescription;
+		}
+        
+        
 }

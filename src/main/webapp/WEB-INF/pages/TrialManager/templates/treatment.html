@@ -26,12 +26,11 @@
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">{{settings.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
-                                    <select ui-select2="{minimumResultsForSearch: 10}" class="form-control" ng-model="currentData[key].variableId" ng-options="pair_key as item.variable.name for (pair_key,item) in treatmentLevelPairs[key].vals()">
-                                        <option value="">Please Choose</option>
-                                    </select>
+                                    <input type="hidden" ui-select2="generateDropdownOption(key)" class="form-control" ng-model="currentData[key].variableId"  value-as-object="false"/>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">
-                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-disabled="!currentData[key].variableId" ng-model='currentData[key].levels' ng-change='onLevelChange(key,currentData[key].levels)' />
+                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-disabled="isDisableLevel(key)" ng-model='currentData[key].levels'
+                                           ng-change='onLevelChange(key,currentData[key].levels)'/>
                                 </td>
                             </tr>
 
@@ -44,7 +43,6 @@
 
 
                     </div>
-
                 </section-container>
             </section-container>
 

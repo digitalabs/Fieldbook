@@ -336,6 +336,19 @@
                     saveEventListeners[name] = saveListenerFunction;
                 },
 
+                treatmentFactorDataInvalid : function() {
+                    var hasError = false;
+
+                    angular.forEach(service.currentData.treatmentFactors, function(value, key) {
+                        if (service.currentData.treatmentFactors[value.variableId]) {
+                            hasError = true;
+                            return false;
+                        }
+                    });
+
+                    return hasError;
+                },
+
                 getSettingsArray: function () {
                     if (settingsArray.length === 0) {
                         angular.forEach(service.settings, function (value, key) {
@@ -382,6 +395,9 @@
                     } else if (service.currentData.environments.noOfEnvironments <= 0) {
                         hasError = true;
                         customMessage = 'Trials should have at least one environment';
+                    } else if (service.treatmentFactorDataInvalid()) {
+                        hasError = true;
+                        customMessage = 'You cannot use a treatment factor as a treatment level factor';
                     }
 
                     if (hasError) {

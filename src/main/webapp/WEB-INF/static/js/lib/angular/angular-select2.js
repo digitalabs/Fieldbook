@@ -108,7 +108,13 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                   if (isValueAsObject) {
                       controller.$setViewValue(elm.select2('data'));
                   } else {
-                      controller.$setViewValue(elm.select2('val'));
+                      var value;
+                      if (!isNaN(elm.select2('val'))) {
+                          value = parseInt(elm.select2('val'), 10);
+                      } else {
+                          value = elm.select2('val');
+                      }
+                      controller.$setViewValue(value);
                   }
 
               });
@@ -154,7 +160,14 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
               if (isValueAsObject) {
                   controller.$setViewValue(elm.select2('data'));
               } else {
-                  controller.$setViewValue(elm.select2('val'));
+
+                  var value;
+                  if (!isNaN(elm.select2('val'))) {
+                      value = parseInt(elm.select2('val'), 10);
+                  } else {
+                      value = elm.select2('val');
+                  }
+                  controller.$setViewValue(value);
               }
 
           }

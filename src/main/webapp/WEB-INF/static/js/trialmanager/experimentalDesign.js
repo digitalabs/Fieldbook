@@ -30,9 +30,9 @@
             TrialManagerDataService.specialSettings.experimentalDesign.data.totalGermplasmListCount = $scope.totalGermplasmEntryListCount;
 
             $scope.replicationsArrangementGroupsOpts = {};
-            $scope.replicationsArrangementGroupsOpts[1] = 'single col';
-            $scope.replicationsArrangementGroupsOpts[2] = 'single row';
-            $scope.replicationsArrangementGroupsOpts[3] = 'adjacent';
+            $scope.replicationsArrangementGroupsOpts[1] = 'In a single column';
+            $scope.replicationsArrangementGroupsOpts[2] = 'In a single row';
+            $scope.replicationsArrangementGroupsOpts[3] = 'In a adjacent columns';
 
             $scope.designTypes = [
             {

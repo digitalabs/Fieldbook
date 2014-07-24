@@ -6,8 +6,9 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12 add-bottom-padding">
                         <label class="control-label label-bold add_top_padding" th:text="#{trial.managesettings.trial.environment.specify.level.no}">Specify the number of environments for this trial:</label>
-                        <div class="pull-right">
-                            <input valid-number="" class="form-control" ng-model="data.noOfEnvironments"/>
+                        <div class="pull-right input-group">
+                            <input valid-number="" class="form-control" ng-model="temp.noOfEnvironments"/>
+                            <input ng-click="updateEnvironmentCount()" class="btn btn-info input-group-btn" type="button" value="Ok"/>
                         </div>
                     </div>
                 </div>
@@ -71,3 +72,18 @@
         </div>
     </div>
 </div>
+<script type="text/ng-template" id="confirmModal.html">
+    <div class="modal-body">
+        <div class="row form-group">
+            <button class="close pull-right glyphicon glyphicon-remove" ng-click="cancel()"/>
+        </div>
+        <div class="row">
+            <label class="la">This operation will result in a loss of data from the removed environments. Continue?</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+        <button class="btn btn-primary" ng-click="confirm()">OK</button>
+
+    </div>
+</script>

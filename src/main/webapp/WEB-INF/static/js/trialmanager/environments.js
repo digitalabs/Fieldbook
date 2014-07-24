@@ -7,8 +7,8 @@
 (function () {
     'use strict';
 
-    angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService',
-        function ($scope, TrialManagerDataService) {
+    angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$modal',
+        function ($scope, TrialManagerDataService, $modal) {
 
             $scope.data = {};
 
@@ -23,14 +23,37 @@
 
             TrialManagerDataService.registerData('environments', function(newValue) {
                 angular.copy(newValue, $scope.data);
+                $scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
             });
+
 
             TrialManagerDataService.registerSetting('environments', function (newValue) {
                 angular.copy(newValue, $scope.settings);
             });
 
             $scope.temp = {
-                settingMap : {}
+                settingMap : {},
+                noOfEnvironments : $scope.data.noOfEnvironments
+            };
+
+            $scope.updateEnvironmentCount = function() {
+                if ($scope.temp.noOfEnvironments > $scope.data.environments.length) {
+                    $scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
+                } else if ($scope.temp.noOfEnvironments < $scope.data.environments.length) {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'confirmModal.html',
+                        controller: 'ConfirmModalController',
+                        resolve: {
+                        }
+                    });
+
+                    modalInstance.result.then(function(shouldContinue) {
+                        if (shouldContinue) {
+                            $scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
+                        }
+                    });
+                }
+
             };
 
             $scope.addVariable = true;
@@ -55,12 +78,6 @@
 
                 return $scope.temp.settingMap[targetKey];
             };
-
-            $scope.$watch('temp.noOfEnvironments', function (newVal) {
-                if (newVal) {
-                    $scope.data.noOfEnvironments = newVal;
-                }
-            });
 
             $scope.$watch('data.noOfEnvironments', function (newVal, oldVal) {
 
@@ -131,4 +148,14 @@
                 return returnVal;
             };
         }]);
+
+    angular.module('manageTrialApp').controller('ConfirmModalController', function($scope, $modalInstance) {
+        $scope.confirm = function() {
+            $modalInstance.close(true);
+        };
+
+        $scope.cancel = function() {
+            $modalInstance.close(false);
+        };
+    });
 })();

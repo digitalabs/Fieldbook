@@ -177,6 +177,9 @@ The sum of the values set for "replatingroups" should always be equal to the "nr
 						if(nbLatin >= blockLevel){
 							output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 				                    "experiment.design.nblatin.should.not.be.greater.than.block.level", null, locale));
+						}else if(nbLatin >= replicationCount){
+							output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+				                    "experiment.design.nblatin.should.not.be.greater.than.the.replication.count", null, locale));
 						}else if(expDesignParameter.getReplicationsArrangement() != null && expDesignParameter.getReplicationsArrangement().intValue() == 3){
 							//meaning adjacent
 							StringTokenizer tokenizer = new StringTokenizer(expDesignParameter.getReplatinGroups(), ",");

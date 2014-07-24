@@ -138,8 +138,13 @@
 
                         // latinized
                         if ($scope.currentDesignType.data.useLatenized) {
-                            if ($scope.currentDesignType.data.nblatin < $scope.currentDesignType.data.blockSize) {
-                                showErrorMessage('page-message',EXP_DESIGN_MSGS[20]);
+                            if ($scope.currentDesignType.data.nblatin >= ($scope.totalGermplasmEntryListCount / $scope.currentDesignType.data.blockSize)) {
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[11]);
+                                return false;
+                            }
+                            
+                            if ($scope.currentDesignType.data.nblatin >= $scope.currentDesignType.data.replicationsCount) {
+                                showErrorMessage('page-message',EXP_DESIGN_MSGS[23]);
                                 return false;
                             }
 
@@ -184,23 +189,23 @@
 
                         if ($scope.currentDesignType.data.useLatenized) {
 
-                            if ($scope.currentDesignType.data.nrlatin > $scope.currentDesignType.data.replicationsCount) {
+                            if ($scope.currentDesignType.data.nrlatin >= $scope.currentDesignType.data.replicationsCount) {
                                 showErrorMessage('page-message',EXP_DESIGN_MSGS[15]);
                                 return false;
                             }
 
-                            if ($scope.currentDesignType.data.nclatin > $scope.currentDesignType.data.replicationsCount) {
+                            if ($scope.currentDesignType.data.nclatin >= $scope.currentDesignType.data.replicationsCount) {
                                 showErrorMessage('page-message',EXP_DESIGN_MSGS[16]);
                                 return false;
                             }
 
-                            if($scope.currentDesignType.data.nrlatin <= 0 || $scope.currentDesignType.data.nrlatin > $scope.currentDesignType.data.rowsPerReplications) {
+                            if($scope.currentDesignType.data.nrlatin <= 0 || $scope.currentDesignType.data.nrlatin >= $scope.currentDesignType.data.rowsPerReplications) {
                                 showErrorMessage('page-message',EXP_DESIGN_MSGS[14]);
                                 return false;
 
                             }
 
-                            if($scope.currentDesignType.data.nclatin <= 0 || $scope.currentDesignType.data.nclatin > $scope.currentDesignType.data.colsPerReplications) {
+                            if($scope.currentDesignType.data.nclatin <= 0 || $scope.currentDesignType.data.nclatin >= $scope.currentDesignType.data.colsPerReplications) {
                                 showErrorMessage('page-message',EXP_DESIGN_MSGS[17]);
                                 return false;
 

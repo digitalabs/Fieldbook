@@ -5,11 +5,11 @@
     </div>
     <div class="add_top_padding">
         <label class=" control-label"><strong>Number of rows in replications:</strong></label>
-        <span><input name="rowsPerReplications" ng-model="currentDesignType.data.rowsPerReplications" input-type="number" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+        <span><input name="rowsPerReplications" ng-model="currentDesignType.data.rowsPerReplications" input-type="number" valid-number="" class="form-control" style="width: 100px"/> <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-append-to-body="true" tooltip="rows in reps tooltip"></span></span>
     </div>
     <div class="add_top_padding">
         <label class=" control-label"><strong>Number of columns in replications:</strong></label>
-        <span><input name="colsPerReplications" ng-model="currentDesignType.data.colsPerReplications" input-type="number" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+        <span><input name="colsPerReplications" ng-model="currentDesignType.data.colsPerReplications" input-type="number" valid-number="" class="form-control" style="width: 100px"/> <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-append-to-body="true" tooltip="cols in reps tooltip"></span></span>
     </div>
 
 <div ng-show="currentDesignType.data.isResolvable &amp;&amp; !hideFeatures">
@@ -28,28 +28,31 @@
 
         <div class="add_top_padding">
             <label class=" control-label"><strong>Number of contiguous rows to latinize:</strong></label>
-            <span><input name="nrlatin" ng-model="currentDesignType.data.nrlatin" min-val="1" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+            <span><input name="nrlatin" ng-model="currentDesignType.data.nrlatin" min-val="1" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-append-to-body="true" tooltip="nrlatin tooltip"></span></span>
         </div>
         <div class="add_top_padding">
             <label class=" control-label"><strong>Number of contiguous columns to latinize:</strong></label>
-            <span><input name="nclatin" ng-model="currentDesignType.data.nclatin" min-val="1" type="text" valid-number="" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+            <span><input name="nclatin" ng-model="currentDesignType.data.nclatin" min-val="1" type="text" valid-number="" class="form-control" style="width: 80px"/> <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-append-to-body="true" tooltip="nclatin tooltip"></span></span>
         </div>
 
         <div class="add_top_padding">
-            <label class=" control-label"><strong>How are the replications to be arranged in the field?</strong></label>
-            <span class="">
-                <select name="replicationsArrangement" ui-select2="{minimumResultsForSearch: 10}" style="width: 300px !important;" class="form-control" ng-model="currentDesignType.data.replicationsArrangement" ng-options="key as name for (key,name) in replicationsArrangementGroupsOpts">
+            <label class=" control-label"><strong style="display: inline-block; width: 180px;">How are the replications to be arranged in the field?</strong></label>
+            <span style="display: inline-block;">
+                <select name="replicationsArrangement" ui-select2="{minimumResultsForSearch: 10}" style="width: 210px !important;" class="form-control" ng-model="currentDesignType.data.replicationsArrangement" ng-options="key as name for (key,name) in replicationsArrangementGroupsOpts">
                     <option value="">Please Choose</option>
                 </select>
             </span>
         </div>
 
         <div ng-show="currentDesignType.data.replicationsArrangement == 3" class="add_top_padding">
-            <label class=" control-label"><strong>Please enter the number of reps in each column, running from left to right:</strong></label>
-            <span class=""><input name="replatinGroups" ng-pattern="/^[1-9]+(,[1-9]+)*$/gm" ng-model="currentDesignType.data.replatinGroups" type="text" class="form-control" style="width: 100px"/> <span class="glyphicon glyphicon-question-sign"></span></span>
+            <label class=" control-label"><strong style="display: inline-block; width: 270px;">Please enter the number of reps in each column, running from left to right:</strong></label>
+            <div style="display: inline-block; vertical-align: top">
+                <input name="replatinGroups" ng-pattern="/^[1-9]+(,[1-9]+)*$/gm" ng-model="currentDesignType.data.replatinGroups" style="width: 100px" type="text" class="form-control"/>
+                <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-append-to-body="true" tooltip="The number of reps in each column should be noted as numbers separated by columns, e.g. 1,1,1"></span>
+            </div>
         </div>
 
-        <div class="add_top_padding">
+        <div class="add_top_padding ">
             <a ng-click="currentDesignType.showAdvancedOptions = false">Hide Advanced Options</a>
         </div>
 

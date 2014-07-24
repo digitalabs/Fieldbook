@@ -24,15 +24,15 @@
     </section-container>
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-md-6 col-sm-7">
             <section-container heading="SPECIFY DESIGN PARAMETERS">
                 <div name="content">
                     <div ng-include="currentParams"></div>
-                    <div class="add_top_padding"><input type="submit" class="btn btn-info" value="Generate Design" /></div>
+                    <div class="add_top_padding add-bottom-padding"><input type="submit" class="btn btn-info" value="Generate Design" /></div>
                 </div>
             </section-container>
         </div>
-        <div class="col-sm-6">
+        <div class="col-md-6 col-sm-5">
             <section-container heading="SUMMARY OF DESIGN DETAILS">
                 <div name="content">
                     <div class="add-bottom-padding" ng-show="currentDesignType.data.noOfEnvironments &gt;= 0"><b>Number of trial environments:</b> <span>{{currentDesignType.data.noOfEnvironments}}</span></div>

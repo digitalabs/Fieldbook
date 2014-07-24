@@ -1317,8 +1317,8 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 }
 
 function importNursery(type) {
-
-	var action = '/Fieldbook/ImportManager/import/' + $('#study-type').val() + '/' + type,
+	'use strict';
+	var action = '/Fieldbook/ImportManager/import/' + (isNursery() ? 'Nursery' : 'Trial') + '/' + type,
 		formName = '#importStudyUploadForm';
 
 	$(formName).attr('action', action);
@@ -1829,10 +1829,10 @@ function recreateLocationCombo() {
     var hasCreateGermplasm = false;
 	var createGermplasmOpened = false;
 
-	if ($('#addLotsModal').length !== 0 && $('#addLotsModal').hasClass('in')){
+	if ($('#addLotsModal').length !== 0 && ($('#addLotsModal').data('open') === '1' ||  $('#addLotsModal').hasClass('in'))){
 		inventoryPopup = true;
 	}
-	else if ($('#advanceNurseryModal').length !== 0 && $('#advanceNurseryModal').hasClass('in')) {
+	else if ($('#advanceNurseryModal').length !== 0 && ($('#advanceNurseryModal').data('open') === '1' ||  $('#advanceNurseryModal').hasClass('in'))) {
 		advancePopup = true;
 	} else if ($('#enterFieldDetailsForm').length !== 0) {
 		fieldmapScreen = true;

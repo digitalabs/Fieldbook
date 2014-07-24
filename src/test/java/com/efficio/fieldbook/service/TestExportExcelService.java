@@ -24,6 +24,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseControllerTest;
@@ -35,7 +36,7 @@ import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLay
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 
-public class TestExportExcelService extends AbstractBaseControllerTest {
+public class TestExportExcelService extends AbstractBaseIntegrationTest {
        
 	@Autowired
 	private ExportExcelService exportExcelService;

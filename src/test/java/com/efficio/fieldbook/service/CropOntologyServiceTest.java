@@ -24,12 +24,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.CropOntologyService;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.pojos.cropontology.CropTerm;
 import com.efficio.pojos.cropontology.Ontology;
 
-public class CropOntologyServiceTest extends AbstractBaseControllerTest {
+public class CropOntologyServiceTest extends AbstractBaseIntegrationTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(CropOntologyServiceTest.class);
     

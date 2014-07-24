@@ -7,10 +7,10 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
-public class TestMergeCheckServiceImpl extends AbstractBaseControllerTest {
+public class TestMergeCheckServiceImpl extends AbstractBaseIntegrationTest {
 
 	@Resource
 	private MergeCheckService mergeCheckService;

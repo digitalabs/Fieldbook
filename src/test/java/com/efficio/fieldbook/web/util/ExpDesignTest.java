@@ -18,8 +18,8 @@ import org.generationcp.middleware.manager.Operation;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
@@ -29,7 +29,7 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
-public class ExpDesignTest extends AbstractBaseControllerTest {
+public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	
 	@Autowired
     private WorkbenchService workbenchService;

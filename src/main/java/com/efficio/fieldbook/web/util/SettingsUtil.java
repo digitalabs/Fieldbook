@@ -257,18 +257,18 @@ public class SettingsUtil {
         List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
 
         for (Map.Entry<Integer, TreatmentFactorData> entry : treatmentFactorItems.entrySet()) {
-            StandardVariable valueVariable = getStandardVariable(entry.getKey(), userSelection, fieldbookMiddlewareService);
-            Factor valueFactor = convertStandardVariableToFactor(valueVariable);
+            StandardVariable levelVariable = getStandardVariable(entry.getKey(), userSelection, fieldbookMiddlewareService);
+            Factor levelFactor = convertStandardVariableToFactor(levelVariable);
+            levelFactor.setTreatmentLabel(levelVariable.getName());
 
             TreatmentFactorData data = entry.getValue();
             /*StandardVariable valueVariable = getStandardVariable(data.getPairVariable().get(TreatmentFactorData.PAIR_VARIABLE_ID_KEY),
                     userSelection, fieldbookMiddlewareService);*/
 
-            StandardVariable levelVariable = getStandardVariable(data.getPairCvTermId(),
+            StandardVariable valueVariable = getStandardVariable(data.getPairCvTermId(),
                                 userSelection, fieldbookMiddlewareService);
 
-            Factor levelFactor = convertStandardVariableToFactor(levelVariable);
-            levelFactor.setTreatmentLabel(levelVariable.getName());
+            Factor valueFactor = convertStandardVariableToFactor(valueVariable);
             valueFactor.setTreatmentLabel(levelVariable.getName());
             int index = 1;
             for (String labelValue : entry.getValue().getLabels()) {

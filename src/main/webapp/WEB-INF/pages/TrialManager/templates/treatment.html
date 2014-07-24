@@ -71,7 +71,7 @@
                                 <a style="text-transform: uppercase" show-details-modal="key">{{settings.val(key).variable.name}}</a> -
                                 <span>{{settings.val(key).variable.description}}</span>
                             </div>
-                            <div class="add-bottom-padding" ng-show="currentData[key].variableId > 0">
+                            <div class="add-bottom-padding" ng-show="currentData[key].variableId != 0">
                                 <b class="sub-content-heading">Treatment Factor Level:</b>
                                 <a style="text-transform: uppercase" show-details-modal="currentData[key].variableId">{{treatmentLevelPairs[key].val(currentData[key].variableId).variable.name}}</a> -
                                 <span>{{treatmentLevelPairs[key].val(currentData[key].variableId).variable.description}}</span>
@@ -94,7 +94,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-show="currentData[key].variableId > 0" ng-repeat="n in currentData[key].labels track by $index">
+                                <tr ng-show="currentData[key].variableId != 0" ng-repeat="n in currentData[key].labels track by $index">
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
                                         <a show-details-modal="key">{{settings.val(key).variable.name}} {{$index + 1}}</a>
                                     </td>
@@ -105,7 +105,7 @@
                                     </td>
                                 </tr>
 
-                                <tr ng-hide="currentData[key].labels.length &gt; 0 &amp;&amp; currentData[key].variableId > 0">
+                                <tr ng-hide="currentData[key].labels.length &gt; 0 &amp;&amp; currentData[key].variableId != 0">
                                     <td class="odd" ng-repeat="item in [] | range : 3">&nbsp;</td>
                                 </tr>
 

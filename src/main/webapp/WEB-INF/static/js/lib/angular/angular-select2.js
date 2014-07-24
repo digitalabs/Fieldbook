@@ -48,10 +48,10 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                     if (opts.simple_tags) {
                         model = [];
                         angular.forEach(select2_data, function(value, index) {
-                            model.push(value.id);
+                            model.push(!isNaN(value.id) ? Number(value.id) : value.id);
                         });
                     } else {
-                        model = select2_data;
+                        model = !isNaN(select2_data) ? Number(select2_data) : select2_data;
                     }
                     return model;
                 };

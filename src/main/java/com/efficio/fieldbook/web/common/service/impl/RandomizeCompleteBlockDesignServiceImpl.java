@@ -173,7 +173,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				}else{
 					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
 					
-					if(replicationCount <= 0 || replicationCount >= 11){
+					if(replicationCount <= 0 || replicationCount >= 13){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.replication.count.rcbd.error", null, locale));
 					}

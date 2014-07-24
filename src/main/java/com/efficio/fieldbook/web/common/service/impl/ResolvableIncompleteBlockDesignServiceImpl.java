@@ -156,7 +156,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
 					int treatmentSize = germplasmList.size();
 					
-					if(replicationCount <= 1 || replicationCount >= 11){
+					if(replicationCount <= 1 || replicationCount >= 13){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.replication.count.resolvable.error", null, locale));
 					}else if( blockSize < 1 ){

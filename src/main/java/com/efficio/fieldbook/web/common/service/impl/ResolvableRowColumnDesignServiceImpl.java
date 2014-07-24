@@ -158,7 +158,7 @@ public class ResolvableRowColumnDesignServiceImpl implements
 					int colsPerReplication = Integer.valueOf(expDesignParameter.getColsPerReplications());
 					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
 					
-					if(replicationCount <= 1 || replicationCount >= 11){
+					if(replicationCount <= 1 || replicationCount >= 13){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.replication.count.resolvable.error", null, locale));
 					}else if( size != (rowsPerReplication * colsPerReplication) ){

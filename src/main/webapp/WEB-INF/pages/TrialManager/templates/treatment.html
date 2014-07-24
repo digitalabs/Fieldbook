@@ -19,7 +19,7 @@
                             </thead>
 
                             <tbody>
-                            <tr ng-repeat="key in settings.keys() track by key">
+                            <tr ng-repeat="(key,value) in currentData track by key">
                                 <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' style="cursor: pointer" ng-click="settings.remove(key)"></span>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}"><a show-details-modal="key" >{{settings.val(key).variable.name}}</a>

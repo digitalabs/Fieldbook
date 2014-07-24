@@ -2,7 +2,7 @@
 	 <table th:if="${not #lists.isEmpty(trialInstances)}" class="my-class table table-curved table-condensed">
 	      <thead>
 	        <tr>
-	          <th>&nbsp;</th>
+	          <th class="fbk-export-select-instance-check-box" ><input type="checkbox" class="selectAllExportInstance" name="selectAllExportInstance" id="selectAllExportInstance"/></th>
 	          <th th:utext="#{trial.export.instance.number}">Trial Instance #</th>
 	          <th th:utext="#{trial.export.has.fieldmap}">Has Fieldmap</th>                        
 	        </tr>
@@ -17,4 +17,15 @@
 	    </tr>             
 	  </tbody>
 	</table>
- 
+	
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+        $( document ).ready(function() {  
+          'use strict';        	
+			$('.selectAllExportInstance').on('change', function(event){
+    				var isChecked = $(this).prop('checked');
+    				$('input.trial-instance-export').prop('checked', isChecked);    				
+   			});
+        });
+      //]]>
+</script>

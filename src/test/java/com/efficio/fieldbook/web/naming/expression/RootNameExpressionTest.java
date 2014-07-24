@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class TestRootNameExpression extends TestExpression {
+public class RootNameExpressionTest extends TestExpression {
 
 	@Test
 	public void test() throws Exception {

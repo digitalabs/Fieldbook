@@ -6,15 +6,15 @@ import org.junit.Test;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class TestSequenceExpression extends TestExpression {
+public class NumberExpressionTest extends TestExpression {
 
 	@Test
-	public void testSequence() throws Exception {
-		SequenceExpression expression = new SequenceExpression();
+	public void testNumber() throws Exception {
+		NumberExpression expression = new NumberExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				"-", null, "[SEQUENCE]", null, true);
-		source.setPlantsSelected(5);
+				"-", null, "[NUMBER]", null, true);
+		source.setPlantsSelected(2);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
 		printResult(values, source);
@@ -22,10 +22,10 @@ public class TestSequenceExpression extends TestExpression {
 
 	@Test
 	public void testNegativeNumber() throws Exception {
-		SequenceExpression expression = new SequenceExpression();
+		NumberExpression expression = new NumberExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				"-", null, "[SEQUENCE]", null, true);
+				"-", null, "[NUMBER]", null, true);
 		source.setPlantsSelected(-2);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
@@ -34,11 +34,11 @@ public class TestSequenceExpression extends TestExpression {
 
 	@Test
 	public void testCaseSensitive() throws Exception {
-		SequenceExpression expression = new SequenceExpression();
+		NumberExpression expression = new NumberExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				"-", null, "[sequence]", null, true);
-		source.setPlantsSelected(5);
+				"-", null, "[number]", null, true);
+		source.setPlantsSelected(2);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
 		System.out.println("process code is in lower case");

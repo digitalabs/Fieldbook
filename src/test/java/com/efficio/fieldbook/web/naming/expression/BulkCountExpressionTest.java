@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class TestBulkCountExpression extends TestExpression {
+public class BulkCountExpressionTest extends TestExpression {
 
 	@Test
 	public void testNonBulkingSource() throws Exception {

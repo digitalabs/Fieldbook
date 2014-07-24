@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class TestFirstExpression extends TestExpression {
+public class FirstExpressionTest extends TestExpression {
 
 	@Test
 	public void testFirst() throws Exception {

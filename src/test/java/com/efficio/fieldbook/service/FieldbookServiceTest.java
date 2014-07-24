@@ -10,9 +10,9 @@ import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 
-public class TestFieldbookServiceImpl extends AbstractBaseIntegrationTest {
+public class FieldbookServiceTest extends AbstractBaseIntegrationTest {
     
-    private static final Logger LOG = LoggerFactory.getLogger(TestFieldbookServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FieldbookServiceTest.class);
     
     /*private static ManagerFactory      factory;
     private static StudyDataManager    manager;

@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 
 import com.efficio.fieldbook.web.util.ZipUtil;
 
-public class ZipTester {
+public class ZipUtilTest {
     
-    private static final Logger LOG = LoggerFactory.getLogger(ZipTester.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZipUtilTest.class);
     List<String> filenameList;
     String zipFilename = "test.zip";
 

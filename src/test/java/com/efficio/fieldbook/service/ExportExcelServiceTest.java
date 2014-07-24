@@ -36,7 +36,7 @@ import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLay
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 
-public class TestExportExcelService extends AbstractBaseIntegrationTest {
+public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
        
 	@Autowired
 	private ExportExcelService exportExcelService;

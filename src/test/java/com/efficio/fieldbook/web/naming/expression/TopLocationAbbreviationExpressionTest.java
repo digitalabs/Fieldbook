@@ -6,37 +6,37 @@ import org.junit.Test;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class TestSeasonExpression extends TestExpression {
+public class TopLocationAbbreviationExpressionTest extends TestExpression {
 
 	@Test
-	public void testSeasonAsPrefix() throws Exception {
-		SeasonExpression expression = new SeasonExpression();
+	public void testLabbrAsPrefix() throws Exception {
+		TopLocationAbbreviationExpression expression = new TopLocationAbbreviationExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				null, "[SEASON]", null, null, true);
+				null, "[TLABBR]", null, null, true);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
 		printResult(values, source);
 	}
 
 	@Test
-	public void testSeasonAsSuffix() throws Exception {
-		SeasonExpression expression = new SeasonExpression();
+	public void testLabbrAsSuffix() throws Exception {
+		TopLocationAbbreviationExpression expression = new TopLocationAbbreviationExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				":", null, null, "[SEASON]", true);
+				":", null, null, "[TLABBR]", true);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
 		printResult(values, source);
 	}
 
 	@Test
-	public void testNoSeason() throws Exception {
-		SeasonExpression expression = new SeasonExpression();
+	public void testNoLabbr() throws Exception {
+		TopLocationAbbreviationExpression expression = new TopLocationAbbreviationExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				null, null, null, "[SEASON]", true);
-		source.setSeason(null);
+				null, null, null, "[TLABBR]", true);
+		source.setLocationAbbreviation(null);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
 		printResult(values, source);
@@ -44,10 +44,10 @@ public class TestSeasonExpression extends TestExpression {
 
 	@Test
 	public void testCaseSensitive() throws Exception {
-		SeasonExpression expression = new SeasonExpression();
+		TopLocationAbbreviationExpression expression = new TopLocationAbbreviationExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				null, "[seasOn]", null, null, true);
+				null, "[tLabbr]", null, null, true);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
 		System.out.println("process code is in lower case");

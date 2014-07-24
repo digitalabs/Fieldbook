@@ -6,50 +6,51 @@ import org.junit.Test;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class TestBracketsExpression extends TestExpression {
+public class LocationAbbreviationExpressionTest extends TestExpression {
 
 	@Test
-	public void testNameWithNoBrackets() throws Exception {
-		BracketsExpression expression = new BracketsExpression();
+	public void testLabbrAsPrefix() throws Exception {
+		LocationAbbreviationExpression expression = new LocationAbbreviationExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				"[BRACKETS]", null, null, null, true);
+				null, "[LABBR]", null, null, true);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
 		printResult(values, source);
 	}
 
 	@Test
-	public void testNameWithBrackets() throws Exception {
-		BracketsExpression expression = new BracketsExpression();
+	public void testLabbrAsSuffix() throws Exception {
+		LocationAbbreviationExpression expression = new LocationAbbreviationExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
-				"(GERMPLASM_TEST)", 
-				"[BRACKETS]", null, null, null, true);
+				"GERMPLASM_TEST", 
+				":", null, null, "[LABBR]", true);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
 		printResult(values, source);
 	}
 
 	@Test
-	public void testDoubleBrackets() throws Exception {
-		BracketsExpression expression = new BracketsExpression();
+	public void testNoLabbr() throws Exception {
+		LocationAbbreviationExpression expression = new LocationAbbreviationExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				"[BRACKETS][BRACKETS]", null, null, null, true);
+				null, null, null, "[LABBR]", true);
+		source.setLocationAbbreviation(null);
 		List<StringBuilder> values = createInitialValues(source);
-		expression.apply(values, source);
 		expression.apply(values, source);
 		printResult(values, source);
 	}
 
 	@Test
-	public void testCaseSensitivity() throws Exception {
-		BracketsExpression expression = new BracketsExpression();
+	public void testCaseSensitive() throws Exception {
+		LocationAbbreviationExpression expression = new LocationAbbreviationExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
 				"GERMPLASM_TEST", 
-				"[brackets]", null, null, null, true);
+				null, "[labbr]", null, null, true);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);
+		System.out.println("process code is in lower case");
 		printResult(values, source);
 	}
 

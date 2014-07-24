@@ -1,62 +1,35 @@
 package com.efficio.fieldbook.web.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
-import junit.framework.Assert;
-
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.workbench.settings.Condition;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.pojos.workbench.settings.Factor;
-import org.generationcp.middleware.pojos.workbench.settings.Variate;
-import org.generationcp.middleware.util.Debug;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.ExpDesign;
-import com.efficio.fieldbook.web.trial.bean.xml.ExpDesignParameter;
-import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.mchange.util.AssertException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
+public class ExpDesignTest extends AbstractBaseControllerTest {
 	
 	@Autowired
     private WorkbenchService workbenchService;
@@ -131,15 +104,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
-			List<MeasurementVariable> trialVariables = new ArrayList();
+			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
 	        ExpDesignParameterUi param = new ExpDesignParameterUi();
@@ -157,7 +130,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			}
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -168,15 +140,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
-			List<MeasurementVariable> trialVariables = new ArrayList();
+			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
 	        ExpDesignParameterUi param = new ExpDesignParameterUi();
@@ -198,7 +170,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			}
 			assertEquals(96, measurementRowList.size());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -209,15 +180,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
-			List<MeasurementVariable> trialVariables = new ArrayList();
+			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
 	        ExpDesignParameterUi param = new ExpDesignParameterUi();
@@ -239,7 +210,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 //			}
 			assertEquals(96, measurementRowList.size());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -249,15 +219,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
-			List<MeasurementVariable> trialVariables = new ArrayList();
+			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
 	        ExpDesignParameterUi param = new ExpDesignParameterUi();
@@ -279,7 +249,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 //			}
 			assertEquals(96, measurementRowList.size());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -300,15 +269,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        
 			
 			//number of replicates should be 2 or more
-	        List<MeasurementVariable> trialVariables = new ArrayList();
+	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
 	        
 	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);	        	        
@@ -323,7 +292,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			assertEquals(800, measurementRowList.size());
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -348,15 +316,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        param.setNclatin("2");
 			
 			//number of replicates should be 2 or more
-	        List<MeasurementVariable> trialVariables = new ArrayList();
+	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
 	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);
@@ -371,7 +339,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			assertEquals(800, measurementRowList.size());
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -396,15 +363,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        param.setNclatin("2");
 			
 			//number of replicates should be 2 or more
-	        List<MeasurementVariable> trialVariables = new ArrayList();
+	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
 	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);	        
@@ -419,7 +386,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			assertEquals(800, measurementRowList.size());
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -443,15 +409,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        param.setNclatin("2");
 			
 			//number of replicates should be 2 or more
-	        List<MeasurementVariable> trialVariables = new ArrayList();
+	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
 	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);
@@ -466,7 +432,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			assertEquals(1200, measurementRowList.size());
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -479,7 +444,7 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 200);
 			
-			List<TreatmentVariable> treatmentVarList = new ArrayList();
+			List<TreatmentVariable> treatmentVarList = new ArrayList<TreatmentVariable>();
 			
 			TreatmentVariable treatmentVar1 = new TreatmentVariable();
 			treatmentVar1.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8284), Operation.ADD));
@@ -498,8 +463,8 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        param.setNoOfEnvironments("2");
 	        
 	        
-	        Map<String, Map<String, List>> treatmentFactorValues = new HashMap<String, Map<String, List>>(); //Key - CVTerm ID , List of values
-			Map<String, List> treatmentData = new HashMap();
+	        Map<String, Map<String, List<String>>> treatmentFactorValues = new HashMap<String, Map<String, List<String>>>(); //Key - CVTerm ID , List of values
+			Map<String, List<String>> treatmentData = new HashMap<String, List<String>>();
 			treatmentData.put("labels",  Arrays.asList("100", "200", "300"));
 			
 	        treatmentFactorValues.put("8284", treatmentData);
@@ -510,15 +475,15 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 	        
 			
 			//number of replicates should be 2 or more
-	        List<MeasurementVariable> trialVariables = new ArrayList();
+	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
 			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
 			
-			List<MeasurementVariable> factors = new ArrayList();		
+			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
 	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
 	        
-	        List<MeasurementVariable> variates = new ArrayList();		
+	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
 	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
         		
 	        ExpDesignValidationOutput output = randomizeBlockDesign.validate(param, germplasmList);	        	       
@@ -533,7 +498,6 @@ public class ExpDesignTest extends AbstractJUnit4SpringContextTests{
 			assertEquals(7200, measurementRowList.size());
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

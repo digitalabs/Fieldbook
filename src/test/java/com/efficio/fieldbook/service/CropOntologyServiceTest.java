@@ -19,34 +19,22 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpClientErrorException;
 
 import com.efficio.fieldbook.service.api.CropOntologyService;
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.pojos.cropontology.CropTerm;
 import com.efficio.pojos.cropontology.Ontology;
 
-/**
- * The Class CropOntologyServiceTest.
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
+public class CropOntologyServiceTest extends AbstractBaseControllerTest {
     
-    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(CropOntologyServiceTest.class);
     
-	/** The crop ontology service. */
 	@Autowired
 	private CropOntologyService cropOntologyService;
-	
-	/* =========== search terms =========== */
 	
 	/**
 	 * Test search terms.
@@ -61,9 +49,6 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 			LOG.debug(cropTerm.toString());
 		}
 	}
-	
-	
-	/* =========== get ontology id by name =========== */
 	
 	/**
 	 * Test get ontology id by name.
@@ -95,8 +80,6 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 		assertNull(cropId);
 	}
 
-	/* =========== get ontologies by category =========== */
-	
 	/**
 	 * Test get ontologies by category.
 	 */

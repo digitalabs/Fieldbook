@@ -22,14 +22,11 @@ import java.util.Map;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -38,20 +35,11 @@ import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLay
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 
-/**
- * The Class TestExportExcelService.
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
-    
-    
-	/** The export excel service. */
+public class TestExportExcelService extends AbstractBaseControllerTest {
+       
 	@Autowired
 	private ExportExcelService exportExcelService;
 	
-	//@Autowired
-	/** The field map service. */
 	private FieldMapService fieldMapService = new FieldMapServiceImpl();
 	
 	

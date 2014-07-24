@@ -26,32 +26,23 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.common.bean.PropertyTree;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 
-/**
- * The Class OntologyDetailsControllerTest.
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextTests {
+public class OntologyDetailsControllerTest  extends AbstractBaseControllerTest {
 	
 	public static final Logger log = LoggerFactory.getLogger(OntologyDetailsControllerTest.class);
 
-    /** The controller. */
     @Autowired
     private OntologyDetailsController controller;
     

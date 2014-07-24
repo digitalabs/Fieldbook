@@ -36,28 +36,18 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
-/**
- * The Class OntologyControllerTest.
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
+public class OntologyControllerTest extends AbstractBaseControllerTest {
     
-    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);
     
-    /** The ontology service. */
     @Autowired
     OntologyService ontologyService;
     

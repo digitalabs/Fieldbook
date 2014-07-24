@@ -11,7 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.controller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,22 +31,18 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 
 /**
  * The Class OntologyManagerControllerTest.
  *
  * @author Chezka Camille Arevalo
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTests{
+public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);

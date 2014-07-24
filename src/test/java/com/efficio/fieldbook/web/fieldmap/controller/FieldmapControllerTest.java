@@ -11,48 +11,30 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 
-/**
- * The Class FieldmapControllerTest.
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class FieldmapControllerTest extends AbstractJUnit4SpringContextTests {
+public class FieldmapControllerTest extends AbstractBaseControllerTest {
 	
-    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(FieldmapControllerTest.class);
     
-    /** The fieldbook middleware service. */
     @Autowired
     FieldbookService fieldbookMiddlewareService;
 
+	//TODO this test has nothing to do with FieldmapController. Refactor out the pagination test similar to ManageTrialFormTest..
     /**
-     * Sets the up.
-     */
-    @Before
-    public void setUp() {
-
-    }
-	
-	/**
 	 * Test manage nurseries pagination.
 	 */
 	@Test

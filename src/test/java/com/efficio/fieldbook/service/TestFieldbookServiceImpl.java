@@ -1,30 +1,15 @@
 package com.efficio.fieldbook.service;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
-import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.manager.DatabaseConnectionParameters;
-import org.generationcp.middleware.manager.ManagerFactory;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class TestFieldbookServiceImpl{
+public class TestFieldbookServiceImpl extends AbstractBaseControllerTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(TestFieldbookServiceImpl.class);
     

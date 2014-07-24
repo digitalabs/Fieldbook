@@ -6,15 +6,11 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class TestMergeCheckServiceImpl {
+public class TestMergeCheckServiceImpl extends AbstractBaseControllerTest {
 
 	@Resource
 	private MergeCheckService mergeCheckService;

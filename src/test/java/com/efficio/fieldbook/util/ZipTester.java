@@ -25,30 +25,17 @@ import java.util.zip.ZipFile;
 import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.efficio.fieldbook.web.util.ZipUtil;
 
-/**
- * The Class CropOntologyServiceTest.
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
-public class ZipTester extends AbstractJUnit4SpringContextTests {
+public class ZipTester {
     
-    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ZipTester.class);
     List<String> filenameList;
     String zipFilename = "test.zip";
-  
-    /**
-     * Sets the up.
-     */
+
     @Before
     public void setUp() {
     	filenameList = new ArrayList<String>();
@@ -65,6 +52,7 @@ public class ZipTester extends AbstractJUnit4SpringContextTests {
 			LOG.error(e.getMessage(), e);
 		}
     }
+    
     private void deleteFiles(){
     	for(String fName : filenameList){
     		File f = new File(fName);
@@ -73,8 +61,6 @@ public class ZipTester extends AbstractJUnit4SpringContextTests {
     	File zipFile = new File(zipFilename);
     	zipFile.deleteOnExit();
     }
-	
-   
 	
 	/**
 	 * Test file zipping.
@@ -85,8 +71,6 @@ public class ZipTester extends AbstractJUnit4SpringContextTests {
 		ZipFile zipFile;
 		try {
 			zipFile = new ZipFile(zipFilename);
-		
-
 		    Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		    int size = 0;
 		    while(entries.hasMoreElements()){

@@ -32,7 +32,7 @@
             $scope.replicationsArrangementGroupsOpts = {};
             $scope.replicationsArrangementGroupsOpts[1] = 'In a single column';
             $scope.replicationsArrangementGroupsOpts[2] = 'In a single row';
-            $scope.replicationsArrangementGroupsOpts[3] = 'In a adjacent columns';
+            $scope.replicationsArrangementGroupsOpts[3] = 'In adjacent columns';
 
             $scope.designTypes = [
             {

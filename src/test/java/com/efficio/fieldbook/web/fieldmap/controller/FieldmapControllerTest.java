@@ -11,9 +11,17 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import junit.framework.Assert;
+
+import org.junit.Test;
+
 import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 
 public class FieldmapControllerTest extends AbstractBaseControllerTest {
 	
-	
+	@Test
+	public void testGetReturnsCorrectModelAndView() {
+		//TODO add tests for the core URLs that this controller handles.
+		Assert.assertTrue(true);
+	}
 }

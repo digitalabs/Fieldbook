@@ -106,8 +106,12 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerTest {
     @Test
     public void testExpandGermplasmTreeLocal() throws Exception {
         GermplasmListManager germplasmListManager = EasyMock.createMock(GermplasmListManager.class);
+        
         EasyMock.expect(germplasmListManager.getAllTopLevelListsBatched(50, Database.LOCAL))
-                            .andReturn(LOCAL_GERMPLASM_LIST_TEST_DATA);
+                .andReturn(LOCAL_GERMPLASM_LIST_TEST_DATA);
+        EasyMock.expect(germplasmListManager.getGermplasmListByParentFolderIdBatched(EasyMock.anyInt(), EasyMock.anyInt()))
+				.andReturn(new ArrayList<GermplasmList>()).times(LOCAL_GERMPLASM_LIST_TEST_DATA.size());
+
         EasyMock.replay(germplasmListManager);
         
         ReflectionTestUtils.setField(controller, "germplasmListManager"
@@ -134,6 +138,9 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerTest {
         GermplasmListManager germplasmListManager = EasyMock.createMock(GermplasmListManager.class);
         EasyMock.expect(germplasmListManager.getAllTopLevelListsBatched(50, Database.CENTRAL))
                                     .andReturn(CENTRAL_GERMPLASM_LIST_TEST_DATA);
+        EasyMock.expect(germplasmListManager.getGermplasmListByParentFolderIdBatched(EasyMock.anyInt(), EasyMock.anyInt()))
+				.andReturn(new ArrayList<GermplasmList>()).times(CENTRAL_GERMPLASM_LIST_TEST_DATA.size());
+
         EasyMock.replay(germplasmListManager);
         
         ReflectionTestUtils.setField(controller, "germplasmListManager"

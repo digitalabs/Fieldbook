@@ -15,6 +15,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,6 +30,7 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
+@Ignore
 public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	
 	@Autowired

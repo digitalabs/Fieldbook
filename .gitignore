@@ -1,8 +1,8 @@
 # PROJECT SPECIFIC IGNORES
-/src/main/resources/*.properties
-/src/main/resources/logback.xml
 /src/main/resources/fieldbook.properties
 /src/main/resources/workbench.properties
+/src/test/resources/database.properties
+/src/test/resources/test.properties
 bin/
 *.xls
 *.doc

@@ -289,8 +289,8 @@
 								<phase>generate-resources</phase> 
 								<configuration>
 									<tasks>
-										<!-- Please do not change this : run mvn as mvn clean install -DenvConfig=dev
-										and make a folder under pipeline/config that meets your needs -->
+										<!-- Please do not change this, run mvn clean install -DenvConfig={your pilpeline folder name}
+										and make a folder under pipeline/config with property overrides as per your environment. -->
 										<copy todir="src/main/resources" overwrite="true">
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
 												<include name="fieldbook.properties" />
@@ -302,6 +302,23 @@
 								<goals>
 									<goal>run</goal>
 								</goals>
+							</execution>
+							<execution>
+								<id>test-properties-override</id>
+								<phase>generate-test-resources</phase>
+								<goals>
+				                	<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<echo message="Overriding test environment properties from pipeline/config/${envConfig}" />
+										<copy todir="src/test/resources" overwrite="true">
+											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
+                                                <include name="test.properties"/>
+											</fileset>
+										</copy>
+									</tasks>
+								</configuration>			
 							</execution>
 						</executions>
 					</plugin>
@@ -338,6 +355,23 @@
 									<goal>run</goal>
 								</goals>
 							</execution>
+							<execution>
+								<id>test-properties-override</id>
+								<phase>generate-test-resources</phase>
+								<goals>
+				                	<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<echo message="Overriding test environment properties from pipeline/config/${envConfig}" />
+										<copy todir="src/test/resources" overwrite="true">
+											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
+                                                <include name="test.properties"/>
+											</fileset>
+										</copy>
+									</tasks>
+								</configuration>			
+							</execution>							
 						</executions>
 					</plugin>
 				</plugins>

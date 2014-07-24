@@ -80,13 +80,13 @@
                     data.treatmentFactors = $scope.currentDesignType.data.treatmentFactors.vals();
                 }
 
-                TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
-
                 TrialManagerDataService.generateExpDesign(data).then(
                     function (response) {
                         if(response.valid === true){
                             //we show the preview
                             showSuccessfulMessage('', 'Experimental Design generated successfully, please check the measurements tab');
+                            TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
+                            TrialManagerDataService.applicationData.unsavedGeneratedDesign= true;
 
                             if (TrialManagerDataService.isOpenTrial()) {
                                 $state.go("editMeasurements");

@@ -184,6 +184,10 @@
                 TrialManagerDataService.currentData.basicDetails.folderId = folderID;
             };
 
+            $scope.disableOptionsFromUnsavedDesign = function () {
+                return TrialManagerDataService.applicationData.unsavedGeneratedDesign;
+            };
+
             $scope.useExistingTrial = function (existingTrialID) {
                 $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
                     // update data and settings

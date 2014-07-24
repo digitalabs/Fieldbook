@@ -174,7 +174,8 @@
                     basicDetails: extractSettings(BASIC_DETAILS_DATA)
                 },
                 applicationData: {
-                    unappliedChangesAvailable: false
+                    unappliedChangesAvailable: false,
+                    unsavedGeneratedDesign : false
                 },
 
                 // settings that has special data structure
@@ -260,6 +261,7 @@
 
                                         displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                             service.trialMeasurement.count);
+                                        service.applicationData.unsavedGeneratedDesign = false;
                                     });
                                 });
                         } else {
@@ -274,6 +276,7 @@
                                     service.updateSettings('measurements', extractSettings(data.measurementsData));
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
+                                    service.applicationData.unsavedGeneratedDesign = false;
                                   });
 							}
                             else if (service.trialMeasurement.count >  0 && parseInt($('.germplasm-list-items tbody tr').length) === 0) {
@@ -284,6 +287,7 @@
                                     service.trialMeasurement.count = data.measurementRowCount;
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
+                                    service.applicationData.unsavedGeneratedDesign = false;
                                 });
                             }
                             else {
@@ -296,6 +300,7 @@
 
                                             displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                                                     service.trialMeasurement.count);
+                                            service.applicationData.unsavedGeneratedDesign = false;
                                         });
                                     });
                             }

@@ -259,7 +259,7 @@
         filter('filterFactors',function(){
             return function(factorList,designTypeIndex) {
 
-                var excludes = [[8230,8210],[],[8210]];
+                var excludes = [[8230,8210,8581,8582],[8581,8582],[8210]];
 
                 var copyList = angular.copy(factorList);
 

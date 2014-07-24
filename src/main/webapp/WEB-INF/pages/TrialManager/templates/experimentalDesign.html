@@ -6,8 +6,8 @@
                     <label class="control-label" style="vertical-align: top; position: relative; top: 6px;"><strong>Select the design type you would like to use for this trial:</strong></label>
 
                     <div style="display:inline-block">
-                        <div>
-                            <select ui-select2="{minimumResultsForSearch: -1}" style="width: 350px !important;" class="form-control" ng-model="currentDesignType" ng-change="onSwitchDesignTypes(currentDesignType)" ng-options="item.name for item in designTypes">
+                        <div  style="width: 350px !important;">
+                            <select ui-select2="{minimumResultsForSearch: -1}" class="form-control" ng-model="currentDesignType" ng-change="onSwitchDesignTypes(currentDesignType)" ng-options="item.name for item in designTypes">
                             </select>
                         </div>
                         <div ng-show="currentDesignType.withResolvable &amp;&amp; false">

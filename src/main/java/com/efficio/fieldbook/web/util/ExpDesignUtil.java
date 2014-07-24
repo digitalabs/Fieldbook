@@ -394,7 +394,9 @@ public class ExpDesignUtil {
 			if(WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null){
 				MeasurementVariable measureVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD);
 				varList.add(measureVar);
-				factors.add(measureVar);
+				if(WorkbookUtil.getMeasurementVariable(factors, var.getId()) == null){
+					factors.add(measureVar);
+				}
 			}		
 		}
 		

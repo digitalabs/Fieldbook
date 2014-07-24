@@ -684,13 +684,13 @@ function showFieldMap(tableName) {
 
 	if (idVal != null) {
 		if (count > 1) {
-			showMessage(fieldMapOneStudyErrorMsg);
+			showMessage(isNursery() ? fieldMapOneStudyErrorMsg : fieldMapOneStudyErrorMsgTrial);
 		} else {
 			$('#page-message').html('');
 			showFieldMapPopUp(tableName, idVal);
 		}
 	} else {
-		showMessage(fieldMapStudyRequired);
+		showMessage(isNursery() ? fieldMapStudyRequired : fieldMapStudyRequiredTrial);
 	}
 }
 
@@ -739,7 +739,7 @@ function showFieldMapPopUp(tableName, id) {
 				}
 				selectTrialInstance(tableName);
 			} else if (data.nav == '1') {
-				showMessage(noFieldMapExists);
+				showMessage(isNursery() ? noFieldMapExists : noFieldMapExistsTrial);
 			}
 		}
 	});

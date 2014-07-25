@@ -2453,6 +2453,7 @@ function addUpdateCheckType(operation) {
 							// reload dropdown
 							reloadCheckTypeList(data.checkTypes, operation);
 							showCheckTypeMessage(data.successMessage);
+							$('#manageCheckTypesModal').modal('hide');
 						} else {
 							showCheckTypeErrorMessage(data.error);
 						}

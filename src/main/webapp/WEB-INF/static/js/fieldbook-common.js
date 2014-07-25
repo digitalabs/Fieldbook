@@ -2281,17 +2281,21 @@ function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 
 function editExperiment(tableIdentifier, expId, rowIndex) {
 	'use strict';
-
-	// We show the ajax page here
-	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
-		type: 'GET',
-		cache: false,
-		success: function(dataResp) {
-			$('.edit-experiment-section').html(dataResp);
-			$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
-		}
-	});
+	var canEdit = $('body').data('needGenerateExperimentalDesign') === '1' ? false : true;
+	if(isNursery() || canEdit){
+		// We show the ajax page here
+		$.ajax({
+			url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
+			type: 'GET',
+			cache: false,
+			success: function(dataResp) {
+				$('.edit-experiment-section').html(dataResp);
+				$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
+			}
+		});
+	}else{
+		showAlertMessage('', measurementWarningNeedGenExpDesign);
+	}
 }
 
 function showListTreeToolTip(node, nodeSpan) {

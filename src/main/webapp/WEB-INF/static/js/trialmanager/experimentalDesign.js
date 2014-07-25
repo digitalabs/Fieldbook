@@ -159,8 +159,13 @@
                                 return false;
                             }
 
-                            if (TrialManagerDataService.treatmentFactorDataInvalid()) {
+                            var errorCode = TrialManagerDataService.treatmentFactorDataInvalid();
+
+                            if (errorCode === 1) {
                                 showErrorMessage('page-message', EXP_DESIGN_MSGS[24]);
+                                return false;
+                            } else if (errorCode === 2) {
+                                showErrorMessage('page-message', EXP_DESIGN_MSGS[25]);
                                 return false;
                             }
 

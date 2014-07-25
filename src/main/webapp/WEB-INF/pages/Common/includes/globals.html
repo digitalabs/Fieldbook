@@ -98,6 +98,8 @@
         idCodeNameCombination = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).ID_CODE_NAME_COMBINATION_STUDY.getString()+","+T(com.efficio.fieldbook.web.util.AppConstants).ID_CODE_NAME_COMBINATION_VARIATE.getString()}]]*/ '',
 		saveSuccessMessage = /*[[#{common.form.save.successful.text}]]*/ '',
 		measurementWarningNeedGenExpDesign = /*[[#{experiment.design.measurements.warning}]]*/ '',
+        unpairedTreatmentFactor = /*[[#{treatment.factor.invalid.unpaired}]]*/ '',
+        invalidTreatmentFactorPair = /*[[#{treatment.factor.invalid.usedpair}]]*/ '',
 		
 		expDesignMsgs = {
             0 : /*[[#{experiment.design.invalid.generic.error}]]*/ '',
@@ -124,7 +126,8 @@
             21: /*[[#{experiment.design.select.field.arrangement}]]*/ '',
             22: /*[[#{experiment.design.replatinGroups.invalid}]]*/ '',
             23: /*[[#{experiment.design.nblatin.should.not.be.greater.than.the.replication.count}]]*/ '',
-            24: /*[[#{treatment.factor.data.invalid}]]*/ ''
+            24: invalidTreatmentFactorPair,
+            25: unpairedTreatmentFactor
         };
 
 

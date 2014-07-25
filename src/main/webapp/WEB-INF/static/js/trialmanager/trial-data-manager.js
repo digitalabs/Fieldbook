@@ -379,16 +379,22 @@
                 },
 
                 treatmentFactorDataInvalid : function() {
-                    var hasError = false;
+                    var errorCode = 0;
 
-                    angular.forEach(service.currentData.treatmentFactors, function(value, key) {
-                        if (service.currentData.treatmentFactors[value.variableId]) {
-                            hasError = true;
+                    angular.forEach(service.currentData.treatmentFactors.currentData, function(value, key) {
+                        // check if a factor selected as a pair is also used as
+                        if (!value.variableId || value.variableId === 0) {
+                            errorCode = 2;
+                            return false;
+                        }
+
+                        if (service.currentData.treatmentFactors.currentData[value.variableId]) {
+                            errorCode = 1;
                             return false;
                         }
                     });
 
-                    return hasError;
+                    return errorCode;
                 },
 
                 getSettingsArray: function () {
@@ -418,7 +424,7 @@
                         isEdit = false;
                     }
 
-                    var hasError = false, name = '', customMessage = '';
+                    var hasError = false, name = '', customMessage = '', errorCode = 0;
 
                     if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
                         hasError = true;
@@ -439,9 +445,18 @@
                     } else if (service.currentData.environments.noOfEnvironments <= 0) {
                         hasError = true;
                         customMessage = 'Trials should have at least one environment';
-                    } else if (service.treatmentFactorDataInvalid()) {
-                        hasError = true;
-                        customMessage = 'You cannot use a treatment factor as a treatment level factor';
+                    }
+
+                    if (!hasError) {
+                        errorCode = service.treatmentFactorDataInvalid();
+                        if (errorCode === 1) {
+                            hasError = true;
+                            customMessage = invalidTreatmentFactorPair;
+                        } else if (errorCode === 2) {
+                            hasError = true;
+                            customMessage = unpairedTreatmentFactor;
+                        }
+
                     }
 
                     if (hasError) {

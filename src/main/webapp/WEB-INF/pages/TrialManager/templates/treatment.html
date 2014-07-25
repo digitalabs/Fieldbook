@@ -13,8 +13,9 @@
                                 <th>&nbsp;</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
-                                <th>Treatment Level Factors</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
+                                <th>Treatment Level Factors</th>
+
                             </tr>
                             </thead>
 
@@ -100,7 +101,7 @@
                                     </td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">{{settings.details.val(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <show-setting-form-element settings="settings.details" targetkey="{{$index}}" settingkey="{{key}}" changefunction="onLabelChange"
+                                        <show-setting-form-element settings="settings.details" targetkey="{{$index}}" settingkey="{{key}}" changefunction="onLabelChange()"
                                                                    valuecontainer="data.currentData[key].labels" use-exact-properties="true"></show-setting-form-element>
                                     </td>
                                 </tr>

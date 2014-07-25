@@ -164,6 +164,7 @@
             $http.post('/Fieldbook/manageSettings/deleteVariable/5/' + key).then(function () {
                 $scope.settings.details.remove(key);
                 delete $scope.data.currentData[key];
+                TrialManagerDataService.indicateUnappliedChangesAvailable();
             });
         };
 

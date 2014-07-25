@@ -53,7 +53,7 @@ public class ExpDesignUtil {
 	private static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
 	private static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
 	private static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
-	public static String TREATMENT_PREFIX = "_";
+	
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 	
@@ -354,7 +354,7 @@ public class ExpDesignUtil {
 					
 				} else if (var.getTreatmentLabel() != null && !"".equals(var.getTreatmentLabel())) {
 					if (treatmentLevelData == null){
-						measurementData = new MeasurementData(var.getName(), bvEntryMap.get(TREATMENT_PREFIX+Integer.toString(var.getTermId())), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(), bvEntryMap.get(cleanBVDesingKey(Integer.toString(var.getTermId()))), false, var.getDataType(), var);
 						treatmentLevelData = measurementData;
 					} else {
 						String level = treatmentLevelData.getValue();
@@ -431,5 +431,12 @@ public class ExpDesignUtil {
 			
 		}
 		return measurementRowList;
+	}
+	
+	public static String cleanBVDesingKey(String key){
+		if(key != null){
+			return "_"+key.replace("-", "_");			
+		}
+		return key;
 	}
 }

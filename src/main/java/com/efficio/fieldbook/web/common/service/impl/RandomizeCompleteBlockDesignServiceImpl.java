@@ -107,7 +107,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				Set<String> keySet = treatmentFactorValues.keySet();
 				for(String key : keySet){
 					int level = treatmentFactorValues.get(key).size();
-					treatmentFactor.add(ExpDesignUtil.TREATMENT_PREFIX + key);										
+					treatmentFactor.add(ExpDesignUtil.cleanBVDesingKey(key));										
 					levels.add(Integer.toString(level));
 				}
 			}
@@ -149,6 +149,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		
 		return measurementRowList;
 	}
+		
 	
 	@Override
 	public List<StandardVariable> getRequiredVariable() {

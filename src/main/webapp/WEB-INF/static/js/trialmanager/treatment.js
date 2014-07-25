@@ -13,12 +13,6 @@
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
 
-        if ($scope.settings && $scope.settings.keys() > 0) {
-            angular.forEach($scope.settings.keys(), function(value) {
-                $scope.generateTreatmentLevelPair(value);
-            });
-        }
-
         $scope.data = TrialManagerDataService.currentData.treatmentFactors;
 
         // watch $scope.settings, since we are sure that $scope.settings is an orderedhash even empty, we could just

@@ -86,6 +86,7 @@
                             //we show the preview
                             showSuccessfulMessage('', 'Experimental Design generated successfully, please check the measurements tab');
                             TrialManagerDataService.applicationData.unappliedChangesAvailable = false;
+                            $('body').data('needGenerateExperimentalDesign', '0');
                             TrialManagerDataService.applicationData.unsavedGeneratedDesign= true;
 
                             if (TrialManagerDataService.isOpenTrial()) {

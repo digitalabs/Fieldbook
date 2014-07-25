@@ -253,6 +253,7 @@
 // README IMPORTANT: Code unmanaged by angular should go here
     document.onInitManageTrial = function () {
         // do nothing for now
+        $('body').data('needGenerateExperimentalDesign', '0');
     };
 
 })

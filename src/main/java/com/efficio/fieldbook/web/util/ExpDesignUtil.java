@@ -62,7 +62,7 @@ public class ExpDesignUtil {
 		String bvDesignLocation = getBreedingViewExeLocation(workbenchService);
 		int returnCode = -1;
 		if(bvDesignLocation != null && design != null && design.getDesign() != null){
-			 String outputFilePath =  generateBVFilePath(CSV_EXTENSION, fieldbookProperties);
+			 String outputFilePath = System.currentTimeMillis()+BV_PREFIX+CSV_EXTENSION; //generateBVFilePath(CSV_EXTENSION, fieldbookProperties);
 			 
 			 design.getDesign().setParameterValue(OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
 			 String xml = getXmlStringForSetting(design);

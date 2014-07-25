@@ -187,7 +187,7 @@ public abstract class BaseTrialController extends SettingsController {
         treatmentFactorSettings.put("details", detailList);
         treatmentFactorSettings.put("treatmentLevelPairs", treatmentFactorPairs);
 
-
+        userSelection.setTreatmentFactors(detailList);
         info.setSettingMap(treatmentFactorSettings);
 
         return info;

@@ -460,6 +460,11 @@
 
                     var valid = validateStartEndDateBasic(service.currentData.basicDetails.basicDetails[8050],service.currentData.basicDetails.basicDetails[8060]);
 
+                    if (valid !== true) {
+                        showInvalidInputMessage(valid);
+                        return false;
+                    }
+
                     return valid;
 
                 }

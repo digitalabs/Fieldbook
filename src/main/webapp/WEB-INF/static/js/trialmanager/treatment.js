@@ -111,22 +111,18 @@
             return !($scope.currentData[key] && $scope.currentData[key].variableId);
         }
 
-        // note for some reasons this gets called twice :( , might be the diff function causing the watchCollection t
-        $scope.$watchCollection(function () {
-            return $scope.settings.m_keys;
-        }, function (newArr, oldArr) {
-            // delete
-            if (newArr.length < oldArr.length) {
-                angular.forEach(_(oldArr).difference(newArr), function (val, key) {
-                    delete $scope.currentData[val];
-                });
-            }
 
-        });
+
+        $scope.deleteTreatmentFactor = function(key) {
+            delete $scope.currentData[key];
+            $scope.settings.remove(Number(key));
+        };
 
         $scope.onLabelChange = function () {
             TrialManagerDataService.indicateUnappliedChangesAvailable();
         };
+
+
 
         $scope.onLevelChange = function (key, levels) {
 

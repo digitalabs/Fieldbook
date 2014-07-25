@@ -13,18 +13,21 @@
         OrderedHash.prototype.addList = function (list, keyExtract) {
             if (list) {
                 for (var i = 0; i < list.length; i++) {
-                    this.m_keys.push(keyExtract(list[i]));
-                    this.m_vals[keyExtract(list[i])] = list[i];
+                    var _key = !isNaN(keyExtract(list[i])) ? Number(keyExtract(list[i])) : keyExtract(list[i]);
+
+                    this.m_keys.push(_key);
+                    this.m_vals[_key] = list[i];
                 }
             }
         };
 
 
         OrderedHash.prototype.push = function (k, v) {
+            var _key = !isNaN(k) ? Number(k) : k;
             if (!this.m_vals[k]) {
-                this.m_keys.push(k);
+                this.m_keys.push(_key);
             }
-            this.m_vals[k] = v;
+            this.m_vals[_key] = v;
             return v;
         };
 
@@ -37,7 +40,9 @@
         };
 
         OrderedHash.prototype.val = function (k) {
-            return this.m_vals[k];
+            var _key = !isNaN(k) ? Number(k) : k;
+
+            return this.m_vals[_key];
         };
 
         OrderedHash.prototype.vals = function () {
@@ -45,8 +50,10 @@
         };
 
         OrderedHash.prototype.remove = function(key) {
-            this.m_keys.splice(this.m_keys.indexOf(key),1);
-            delete this.m_vals[key];
+            var _key = !isNaN(key) ? Number(key) : key;
+
+            this.m_keys.splice(this.m_keys.indexOf(_key),1);
+            delete this.m_vals[_key];
 
         };
 

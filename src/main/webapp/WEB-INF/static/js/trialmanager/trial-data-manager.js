@@ -282,6 +282,7 @@
 
                 extractData: extractData,
                 extractSettings: extractSettings,
+                extractTreatmentFactorSettings : extractTreatmentFactorSettings,
                 saveCurrentData: function () {
                     if (service.applicationData.unappliedChangesAvailable) {
                         showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +

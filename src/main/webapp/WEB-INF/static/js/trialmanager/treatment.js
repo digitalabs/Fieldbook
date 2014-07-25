@@ -20,6 +20,15 @@
         // store to $scope.currentData for the variable levels.
         
         $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
+
+        TrialManagerDataService.registerData('treatmentFactors', function(newValue) {
+            angular.copy(newValue, $scope.data);
+        });
+
+        TrialManagerDataService.registerSetting('treatmentFactors', function(newValue) {
+            angular.copy(newValue, $scope.settings);
+            TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
+        });
         
 
         // map containing the treatment factor level pairs

@@ -134,6 +134,8 @@ public class CreateTrialController extends BaseTrialController {
             tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
             tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
             tabDetails.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
+            fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
+            tabDetails.put("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
         }
 
         return tabDetails;

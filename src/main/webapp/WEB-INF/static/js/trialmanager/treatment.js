@@ -9,8 +9,8 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q',
-        function ($scope, TrialManagerDataService, _, $q) {
+    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q', '$http',
+        function ($scope, TrialManagerDataService, _, $q, $http) {
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
         $scope.data = TrialManagerDataService.currentData.treatmentFactors;
@@ -161,9 +161,10 @@
         };
 
         $scope.performDelete = function(key) {
-            // TODO : make a server side call to also remove the setting detail from the session
-            $scope.settings.details.remove(key);
-            delete $scope.data.currentData[key];
+            $http.post('/Fieldbook/manageSettings/deleteVariable/5/' + key).then(function () {
+                $scope.settings.details.remove(key);
+                delete $scope.data.currentData[key];
+            });
         };
 
         $scope.onLabelChange = function () {

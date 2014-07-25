@@ -27,7 +27,7 @@
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">{{settings.details.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
-                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-disabled="isDisableLevel(key)" ng-model='data.currentData[key].levels'
+                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='data.currentData[key].levels'
                                            ng-change='onLevelChange(key,data.currentData[key].levels)'/>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">

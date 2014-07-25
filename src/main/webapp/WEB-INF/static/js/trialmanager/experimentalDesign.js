@@ -118,6 +118,12 @@
                             return false;
                         }
 
+                        if (TrialManagerDataService.treatmentFactorDataInvalid()) {
+                            showErrorMessage('page-message',EXP_DESIGN_MSGS[24]);
+                            return false;
+                        }
+
+
                         break;
                     }
                     case 1: {

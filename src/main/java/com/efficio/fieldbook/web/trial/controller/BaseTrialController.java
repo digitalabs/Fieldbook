@@ -218,7 +218,7 @@ public abstract class BaseTrialController extends SettingsController {
 
     protected TabInfo prepareEnvironmentsTabInfo(Workbook workbook, boolean isUsePrevious) throws MiddlewareQueryException {
         TabInfo info = new TabInfo();
-        Map<String, List<SettingDetail>> settingMap = new HashMap<String, List<SettingDetail>>();
+        Map settingMap = new HashMap();
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
         List<SettingDetail> trialConditionsList = new ArrayList<SettingDetail>();
         List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());

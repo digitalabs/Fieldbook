@@ -38,8 +38,8 @@
         <div class="add_top_padding">
             <label class=" control-label"><strong style="display: inline-block; width: 180px;">How are the replications to be arranged in the field?</strong></label>
             <span style="display: inline-block; width: 210px !important;">
-                <select name="replicationsArrangement" ng-disabled="!currentDesignType.data.useLatenized" ui-select2="{minimumResultsForSearch: 10}" class="form-control" ng-model="currentDesignType.data.replicationsArrangement" ng-options="key as name for (key,name) in replicationsArrangementGroupsOpts">
-                    <option value="">Please Choose</option>
+                <select name="replicationsArrangement" ng-disabled="!currentDesignType.data.useLatenized" ui-select2="{minimumResultsForSearch: 10}" data-placeholder="Please Choose" class="form-control" ng-model="currentDesignType.data.replicationsArrangement">
+                    <option ng-repeat="(key,name) in replicationsArrangementGroupsOpts" value="{{key}}">{{name}}</option>
                 </select>
             </span>
         </div>
@@ -47,7 +47,7 @@
         <div class="add_top_padding">
             <label class=" control-label"><strong style="display: inline-block; width: 270px;">Please enter the number of reps in each column, running from left to right:</strong></label>
             <div style="display: inline-block; vertical-align: top">
-                <input name="replatinGroups" ng-pattern="/^[1-9]+(,[1-9]+)*$/gm" ng-disabled="!currentDesignType.data.useLatenized || currentDesignType.data.replicationsArrangement != 3" ng-model="currentDesignType.data.replatinGroups" style="width: 100px" type="text" class="form-control"/>
+                <input name="replatinGroups" ng-pattern="/^[1-9][0-9]*(,[1-9][0-9]*)*$/" ng-disabled="!currentDesignType.data.useLatenized || currentDesignType.data.replicationsArrangement != 3" ng-model="$parent.currentDesignType.data.replatinGroups" style="width: 100px" type="text" class="form-control"/>
                 <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-append-to-body="true" tooltip="The number of reps in each column should be noted as numbers separated by columns, e.g. 1,1,1"></span>
             </div>
         </div>

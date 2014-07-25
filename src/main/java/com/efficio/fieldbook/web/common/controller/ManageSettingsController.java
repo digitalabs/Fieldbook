@@ -271,6 +271,9 @@ public class ManageSettingsController extends SettingsController{
         } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
             addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId);
             deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
+        } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+            addVariableInDeletedList(userSelection.getTreatmentFactors(), mode, variableId);
+            deleteVariableInSession(userSelection.getTreatmentFactors(), variableId);
         } else {
             addVariableInDeletedList(userSelection.getTrialLevelVariableList(), mode, variableId);
             deleteVariableInSession(userSelection.getTrialLevelVariableList(), variableId);

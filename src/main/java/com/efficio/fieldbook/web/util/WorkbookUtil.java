@@ -359,13 +359,19 @@ public class WorkbookUtil {
         //create map of factors in tempWorkbook and factors in workbook
         HashMap<Integer, MeasurementVariable> tempFactorsMap = new HashMap<Integer, MeasurementVariable>();
         HashMap<Integer, MeasurementVariable> factorsMap = new HashMap<Integer, MeasurementVariable>();
-        for (MeasurementVariable var: tempWorkbook.getFactors()) {
-            tempFactorsMap.put(Integer.valueOf(var.getTermId()), var);
+
+        if (tempWorkbook.getFactors() != null) {
+            for (MeasurementVariable var : tempWorkbook.getFactors()) {
+                tempFactorsMap.put(Integer.valueOf(var.getTermId()), var);
+            }
         }
-        for (MeasurementVariable var: workbook.getFactors()) {
-            factorsMap.put(Integer.valueOf(var.getTermId()), var);
+
+        if (workbook.getFactors() != null) {
+            for (MeasurementVariable var : workbook.getFactors()) {
+                factorsMap.put(Integer.valueOf(var.getTermId()), var);
+            }
         }
-        
+
         for (MeasurementVariable var: tempWorkbook.getFactors()) {
             if (factorsMap.get(Integer.valueOf(var.getTermId())) == null) {
                 var.setOperation(Operation.ADD);

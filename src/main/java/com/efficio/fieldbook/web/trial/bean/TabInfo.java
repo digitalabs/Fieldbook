@@ -16,7 +16,7 @@ import java.util.Map;
 public class TabInfo {
     private TabInfoBean data;
     private List<SettingDetail> settings;
-    private Map<String, List<SettingDetail>> settingMap;
+    private Map<String, Object> settingMap;
 
     public TabInfo() {
     }
@@ -37,11 +37,11 @@ public class TabInfo {
         this.settings = settings;
     }
 
-    public Map<String, List<SettingDetail>> getSettingMap() {
+    public Map<String, Object> getSettingMap() {
         return settingMap;
     }
 
-    public void setSettingMap(Map<String, List<SettingDetail>> settingMap) {
+    public void setSettingMap(Map<String, Object> settingMap) {
         this.settingMap = settingMap;
     }
 }

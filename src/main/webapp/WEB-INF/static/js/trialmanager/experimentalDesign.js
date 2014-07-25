@@ -9,7 +9,8 @@
     angular.module('manageTrialApp')
         .constant('EXP_DESIGN_MSGS',expDesignMsgs)
         .constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
-        .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC','TrialManagerDataService','EXP_DESIGN_MSGS',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC,TrialManagerDataService,EXP_DESIGN_MSGS){
+        .controller('ExperimentalDesignCtrl',['$scope','$state','EXPERIMENTAL_DESIGN_PARTIALS_LOC','TrialManagerDataService',
+            'EXP_DESIGN_MSGS',function($scope,$state,EXPERIMENTAL_DESIGN_PARTIALS_LOC,TrialManagerDataService,EXP_DESIGN_MSGS){
 
             //TODO: temporarily hide features that are not implemented in this release
             //$scope.hideFeatures = true;
@@ -20,13 +21,15 @@
 
             $scope.settings = {
                 factors: TrialManagerDataService.specialSettings.experimentalDesign.factors,
-                treatmentFactors : TrialManagerDataService.settings.treatmentFactors
+                treatmentFactors : TrialManagerDataService.settings.treatmentFactors.details
             };
 
             // initialize some data not in currentData
-            TrialManagerDataService.specialSettings.experimentalDesign.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
-            TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactors = $scope.settings.treatmentFactors;
-            TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors;
+            TrialManagerDataService.specialSettings.experimentalDesign.data.noOfEnvironments =
+                TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
+            TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactors = $scope.settings.treatmentFactors.details;
+            TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactorsData =
+                TrialManagerDataService.currentData.treatmentFactors.currentData;
             TrialManagerDataService.specialSettings.experimentalDesign.data.totalGermplasmListCount = $scope.totalGermplasmEntryListCount;
 
             $scope.replicationsArrangementGroupsOpts = {};
@@ -112,7 +115,7 @@
                             return false;
                         }
 
-                        if (!$scope.settings.treatmentFactors || !TrialManagerDataService.currentData.treatmentFactors) {
+                        if (!$scope.settings.treatmentFactors || !TrialManagerDataService.currentData.treatmentFactors.currentData) {
                             showErrorMessage('page-message',EXP_DESIGN_MSGS[18]);
                             return false;
                         }

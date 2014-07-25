@@ -158,6 +158,7 @@ public class OpenTrialController extends
             model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                     SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             model.addAttribute("measurementRowCount", trialWorkbook.getObservations().size());
+            fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
             model.addAttribute("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
             userSelection.setMeasurementRowList(trialWorkbook.getObservations());
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
@@ -228,7 +229,7 @@ public class OpenTrialController extends
 
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
-                data.getTreatmentFactors().getCurrentData(), null, userSelection.getNurseryConditions(), false);
+                userSelection.getTreatmentFactors(), data.getTreatmentFactors().getCurrentData(), null, userSelection.getNurseryConditions(), false);
 
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
         

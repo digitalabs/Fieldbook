@@ -116,7 +116,7 @@ public class SettingsUtil {
      */
     public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions,
                                                         List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection, List<SettingDetail> nurseryConditions) {
-        return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, baselineTraitsList, userSelection, null, null, nurseryConditions, null, true);
+        return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, baselineTraitsList, userSelection, null, null, null, nurseryConditions, null, true);
     }
 
     protected static List<Condition> convertDetailsToConditions(List<SettingDetail> details, UserSelection userSelection,
@@ -252,32 +252,41 @@ public class SettingsUtil {
         }
     }
 
-    protected static List<TreatmentFactor> processTreatmentFactorItems(Map<Integer, TreatmentFactorData> treatmentFactorItems, List<Factor> factorList,
+    protected static List<TreatmentFactor> processTreatmentFactorItems(List<SettingDetail> treatmentFactorDetails, Map<Integer, TreatmentFactorData> treatmentFactorItems, List<Factor> factorList,
                                                                        UserSelection userSelection, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
         List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
+        if (treatmentFactorItems != null && treatmentFactorDetails != null) {
 
-        for (Map.Entry<Integer, TreatmentFactorData> entry : treatmentFactorItems.entrySet()) {
-            StandardVariable levelVariable = getStandardVariable(entry.getKey(), userSelection, fieldbookMiddlewareService);
-            Factor levelFactor = convertStandardVariableToFactor(levelVariable);
-            levelFactor.setTreatmentLabel(levelVariable.getName());
+            for (SettingDetail detail : treatmentFactorDetails) {
+                Integer termId = detail.getVariable().getCvTermId();
+                StandardVariable valueVariable = getStandardVariable(termId, userSelection, fieldbookMiddlewareService);
+                Factor valueFactor = convertStandardVariableToFactor(valueVariable);
+                valueFactor.setOperation(detail.getVariable().getOperation());
 
-            TreatmentFactorData data = entry.getValue();
-            /*StandardVariable valueVariable = getStandardVariable(data.getPairVariable().get(TreatmentFactorData.PAIR_VARIABLE_ID_KEY),
-                    userSelection, fieldbookMiddlewareService);*/
+                TreatmentFactorData data = treatmentFactorItems.get(termId);
+                                        /*StandardVariable valueVariable = getStandardVariable(data.getPairVariable().get(TreatmentFactorData.PAIR_VARIABLE_ID_KEY),
+                                                userSelection, fieldbookMiddlewareService);*/
 
-            StandardVariable valueVariable = getStandardVariable(data.getPairCvTermId(),
-                                userSelection, fieldbookMiddlewareService);
+                StandardVariable levelVariable = getStandardVariable(data.getVariableId(),
+                        userSelection, fieldbookMiddlewareService);
 
-            Factor valueFactor = convertStandardVariableToFactor(valueVariable);
-            valueFactor.setTreatmentLabel(valueVariable.getName());
-            for (String labelValue : entry.getValue().getLabels()) {
-                TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, data.getLevels(), labelValue);
-                treatmentFactors.add(treatmentFactor);
+                Factor levelFactor = convertStandardVariableToFactor(levelVariable);
+                levelFactor.setOperation(detail.getVariable().getOperation());
+                levelFactor.setTreatmentLabel(levelVariable.getName());
+                valueFactor.setTreatmentLabel(levelVariable.getName());
+                int index = 1;
+                for (String labelValue : data.getLabels()) {
+                    TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, index, labelValue);
+                    treatmentFactors.add(treatmentFactor);
+                    index++;
+                }
+
+                factorList.add(levelFactor);
+                factorList.add(valueFactor);
             }
 
-            factorList.add(levelFactor);
-            factorList.add(valueFactor);
         }
+
 
         return treatmentFactors;
     }
@@ -296,7 +305,8 @@ public class SettingsUtil {
      */
     public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                         String name, List<SettingDetail> studyLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList,
-                                                        UserSelection userSelection, List<SettingDetail> trialLevelVariablesList, Map<Integer, TreatmentFactorData> treatmentFactorItems,
+                                                        UserSelection userSelection, List<SettingDetail> trialLevelVariablesList, List<SettingDetail> treatmentFactorDetails,
+                                                        Map<Integer, TreatmentFactorData> treatmentFactorItems,
                                                         List<SettingDetail> nurseryConditions, List<SettingDetail> trialLevelConditions, boolean fromNursery) {
 
         // this block is necessary for the previous nursery code because the setting details passed in from nursery are mostly empty except for properties
@@ -318,7 +328,7 @@ public class SettingsUtil {
         List<Constant> constants = convertConditionsToConstants(nurseryConditions, userSelection, fieldbookMiddlewareService, false);
         List<Factor> trialLevelVariables = convertDetailsToFactors(trialLevelVariablesList, userSelection, fieldbookMiddlewareService);
 
-        List<TreatmentFactor> treatmentFactors = processTreatmentFactorItems(treatmentFactorItems, factors, userSelection, fieldbookMiddlewareService);
+        List<TreatmentFactor> treatmentFactors = processTreatmentFactorItems(treatmentFactorDetails, treatmentFactorItems, factors, userSelection, fieldbookMiddlewareService);
 
         constants.addAll(convertConditionsToConstants(trialLevelConditions, userSelection, fieldbookMiddlewareService, true));
 

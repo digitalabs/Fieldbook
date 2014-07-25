@@ -145,11 +145,12 @@ public abstract class BaseTrialController extends SettingsController {
     protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables, boolean isUsePrevious) throws MiddlewareQueryException {
         Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
         Map<Integer, TreatmentFactorData> currentData = new HashMap<Integer, TreatmentFactorData>();
+        Map<Integer, List<SettingDetail>> treatmentFactorPairs = new HashMap<Integer, List<SettingDetail>>();
 
         for (TreatmentVariable treatmentVariable : treatmentVariables) {
-            Integer levelFactorId = treatmentVariable.getLevelVariable().getTermId();
-            if (!levelDetails.containsKey(levelFactorId)) {
-                SettingDetail detail = createSettingDetail(levelFactorId, null);
+            Integer valueFactorID = treatmentVariable.getValueVariable().getTermId();
+            if (!levelDetails.containsKey(valueFactorID)) {
+                SettingDetail detail = createSettingDetail(valueFactorID, null);
 
                 if (!isUsePrevious) {
                     detail.getVariable().setOperation(Operation.UPDATE);
@@ -157,29 +158,37 @@ public abstract class BaseTrialController extends SettingsController {
                     detail.getVariable().setOperation(Operation.ADD);
                 }
 
-                levelDetails.put(levelFactorId, detail);
+                levelDetails.put(valueFactorID, detail);
             }
 
             TreatmentFactorData treatmentFactorData;
-            if (! currentData.containsKey(levelFactorId)) {
+            if (! currentData.containsKey(valueFactorID)) {
                 treatmentFactorData = new TreatmentFactorData();
-                treatmentFactorData.setLevels(Integer.parseInt(treatmentVariable.getLevelVariable().getValue()));
-                treatmentFactorData.setPairCvTermId(treatmentVariable.getValueVariable().getTermId());
-                currentData.put(levelFactorId, treatmentFactorData);
+                /*treatmentFactorData.setLevels(Integer.parseInt(treatmentVariable.getLevelVariable().getValue()));*/
+                treatmentFactorData.setVariableId(treatmentVariable.getLevelVariable().getTermId());
+                currentData.put(valueFactorID, treatmentFactorData);
             } else {
-                treatmentFactorData = currentData.get(levelFactorId);
+                treatmentFactorData = currentData.get(valueFactorID);
             }
+            treatmentFactorData.setLabels(treatmentVariable.getValues());
+            treatmentFactorData.setLevels(treatmentVariable.getValues().size());
+            treatmentFactorPairs.put(valueFactorID, retrieveVariablePairs(valueFactorID));
 
-            treatmentFactorData.getLabels().add(treatmentVariable.getValueVariable().getValue());
         }
 
         TabInfo info = new TabInfo();
         TreatmentFactorTabBean tabBean = new TreatmentFactorTabBean();
         tabBean.setCurrentData(currentData);
-
         info.setData(tabBean);
+
+
         List<SettingDetail> detailList = new ArrayList<SettingDetail>(levelDetails.values());
-        info.setSettings(detailList);
+        Map<String, Object> treatmentFactorSettings = new HashMap<String, Object>();
+        treatmentFactorSettings.put("details", detailList);
+        treatmentFactorSettings.put("treatmentLevelPairs", treatmentFactorPairs);
+
+
+        info.setSettingMap(treatmentFactorSettings);
 
         return info;
     }
@@ -213,7 +222,7 @@ public abstract class BaseTrialController extends SettingsController {
 
     protected TabInfo prepareEnvironmentsTabInfo(Workbook workbook, boolean isUsePrevious) throws MiddlewareQueryException {
         TabInfo info = new TabInfo();
-        Map<String, List<SettingDetail>> settingMap = new HashMap<String, List<SettingDetail>>();
+        Map settingMap = new HashMap();
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
         List<SettingDetail> trialConditionsList = new ArrayList<SettingDetail>();
         List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());

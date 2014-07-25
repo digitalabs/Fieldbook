@@ -71,7 +71,14 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					Map treatmentData = (Map) treatmentFactorsData.get(key);						
 					treatmentFactorValues.put(key, (List)treatmentData.get("labels"));
 					//add the treatment variables
-					String pairVar = (String)treatmentData.get("variableId");
+					Object pairVarObj = (Object)treatmentData.get("variableId");
+							
+					String pairVar = "";
+					if(pairVarObj instanceof String){
+						pairVar = (String) pairVarObj;
+					}else{
+						pairVar = ((Integer) pairVarObj).toString();
+					}
 					if(key != null && NumberUtils.isNumber(key) && pairVar != null && NumberUtils.isNumber(pairVar)){
 						int treatmentPair1 = Integer.parseInt(key);
 						int treatmentPair2 = Integer.parseInt(pairVar);
@@ -93,7 +100,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 
 				}
 			}
-			treatmentFactorValues.put(Integer.toString(TermId.ENTRY_NO.getId()), Arrays.asList(Integer.toString(germplasmList.size())));
+			
 			
 			
 			if(treatmentFactorValues != null){
@@ -101,15 +108,16 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				for(String key : keySet){
 					int level = treatmentFactorValues.get(key).size();
 					treatmentFactor.add(ExpDesignUtil.TREATMENT_PREFIX + key);										
-					if(key != null && key.equalsIgnoreCase(Integer.toString(TermId.ENTRY_NO.getId()))){
-						levels.add(treatmentFactorValues.get(key).get(0));	
-					}else{
-						levels.add(Integer.toString(level));
-					}
+					levels.add(Integer.toString(level));
 				}
 			}
-				
+			
 			StandardVariable stdvarTreatment = fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
+			
+			treatmentFactorValues.put(stdvarTreatment.getName(), Arrays.asList(Integer.toString(germplasmList.size())));
+			treatmentFactor.add(stdvarTreatment.getName());
+			levels.add(Integer.toString(germplasmList.size()));
+			
 			StandardVariable stdvarRep = null;				
 			StandardVariable stdvarPlot = null;
 			
@@ -130,7 +138,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			
 			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, trialVariables, factors,
 					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
-					mainDesign, workbenchService, fieldbookProperties, (ExpDesignUtil.TREATMENT_PREFIX + stdvarTreatment.getId()), treatmentFactorValues);					
+					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues);					
 			
 		}catch(BVDesignException e){
 			throw e;

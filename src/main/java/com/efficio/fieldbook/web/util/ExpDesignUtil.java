@@ -404,6 +404,12 @@ public class ExpDesignUtil {
 			for(int i = 0 ; i < treatmentVariables.size() ; i++){
 				varList.add(treatmentVariables.get(i).getLevelVariable());
 				varList.add(treatmentVariables.get(i).getValueVariable());
+				if(WorkbookUtil.getMeasurementVariable(factors, treatmentVariables.get(i).getLevelVariable().getTermId()) == null){
+					factors.add(treatmentVariables.get(i).getLevelVariable());
+				}
+				if(WorkbookUtil.getMeasurementVariable(factors, treatmentVariables.get(i).getValueVariable().getTermId()) == null){
+					factors.add(treatmentVariables.get(i).getValueVariable());
+				}
 			}
 		}
 		varList.addAll(variates);

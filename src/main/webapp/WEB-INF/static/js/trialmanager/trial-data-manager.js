@@ -10,9 +10,14 @@
         function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager) {
 
             // TODO : clean up data service, at the very least arrange the functions in alphabetical order
-            var extractData = function (initialData) {
+            var extractData = function (initialData, initializeProperty) {
                 if (!initialData) {
-                    return null;
+                    var data = {};
+                    if (initializeProperty) {
+                        data[initializeProperty] = {};
+                    }
+
+                    return data;
                 } else {
                     return initialData.data;
                 }
@@ -192,7 +197,7 @@
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
                     basicDetails: extractData(BASIC_DETAILS_DATA),
-                    treatmentFactors : extractData(TREATMENT_FACTORS_INITIAL_DATA)
+                    treatmentFactors : extractData(TREATMENT_FACTORS_INITIAL_DATA, 'currentData')
                 },
                 // standard variable [meta-data] information or a particular tab settings information
                 // what I get is an instance of OrderedHash containing an array of keys with the map

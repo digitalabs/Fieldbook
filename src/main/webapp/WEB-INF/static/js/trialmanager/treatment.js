@@ -9,7 +9,8 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q', function ($scope, TrialManagerDataService, _, $q) {
+    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q',
+        function ($scope, TrialManagerDataService, _, $q) {
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
         $scope.data = TrialManagerDataService.currentData.treatmentFactors;
@@ -20,10 +21,6 @@
         
         $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
         
-        // initialize currentData if has no values yet
-        if (!$scope.data) {
-            $scope.data = TrialManagerDataService.currentData.treatmentFactors = {currentData : {}};
-        }
 
         // map containing the treatment factor level pairs
         TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;

@@ -170,10 +170,10 @@ public abstract class BaseTrialController extends SettingsController {
             } else {
                 treatmentFactorData = currentData.get(valueFactorID);
             }
-
+            treatmentFactorData.setLabels(treatmentVariable.getValues());
+            treatmentFactorData.setLevels(treatmentVariable.getValues().size());
             treatmentFactorPairs.put(valueFactorID, retrieveVariablePairs(valueFactorID));
 
-            /*treatmentFactorData.getLabels().add(treatmentVariable.getValueVariable().getValue());*/
         }
 
         TabInfo info = new TabInfo();

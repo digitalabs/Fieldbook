@@ -302,7 +302,7 @@ public class CreateTrialController extends BaseTrialController {
             data.getEnvironments().add(new Environment());
         }
 
-        Map<String, List<SettingDetail>> settingMap = new HashMap<String, List<SettingDetail>>();
+        Map<String, Object> settingMap = new HashMap<String, Object>();
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
         List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
 

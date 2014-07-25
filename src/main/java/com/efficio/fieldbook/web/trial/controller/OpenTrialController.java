@@ -158,6 +158,7 @@ public class OpenTrialController extends
             model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                     SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             model.addAttribute("measurementRowCount", trialWorkbook.getObservations().size());
+            fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
             model.addAttribute("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
             userSelection.setMeasurementRowList(trialWorkbook.getObservations());
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));

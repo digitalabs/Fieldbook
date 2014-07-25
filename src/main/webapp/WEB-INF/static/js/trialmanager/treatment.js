@@ -39,7 +39,7 @@
                 deferred.resolve();
             });
 
-            return deferred;
+            return deferred.promise;
         };
         
         $scope.onAddVariable = function(result) {
@@ -88,6 +88,9 @@
                         } else if (value.variableId == entry.variable.cvTermId) {
                             found = true;
                             return false;
+                        } else if (value.variableId.variable && value.variableId.variable.cvTermId == entry.variable.cvTermId) {
+                            found = true;
+                            return false;
                         }
                     });
                     return !found;
@@ -98,11 +101,11 @@
         };
 
         $scope.generateDropdownOption = function (key) {
-            var dropdownList = $scope.generateDropdownList(key);
+
             var options = {
                 data: function () {
                     return {
-                        results : dropdownList
+                        results : $scope.generateDropdownList(key)
                     };
                 },
 
@@ -117,12 +120,14 @@
                 minimumResultsForSearch: 20,
                 id: function (value) {
                     return value.variable.cvTermId;
-                }
+                },
+                idAsValue : true
             };
 
             if ($scope.data.currentData[key] && $scope.data.currentData[key].variableId) {
                 options.initSelection = function(element, callback) {
-                    angular.forEach(dropdownList, function(value) {
+                    /*callback($scope.data.currentData[key].variableId);*/
+                    angular.forEach($scope.generateDropdownList(key), function(value) {
                         if (value.variable.cvTermId === $scope.data.currentData[key].variableId) {
                             callback(value);
                         }
@@ -131,6 +136,27 @@
             }
 
             return options;
+        };
+
+        // TODO : fix the select2 initial selection so that this is no longer necessary
+        $scope.retrievePairDetail = function(key) {
+            if ($scope.data.currentData[key]) {
+                var current = $scope.data.currentData[key];
+                var pairId;
+                if (current.variableId) {
+                    if (current.variableId.variable) {
+                        pairId = current.variableId.variable.cvTermId;
+                        $scope.data.currentData[key].variableId = current.variableId.variable.cvTermId;
+                    } else if (! isNaN(current.variableId)){
+                        pairId = current.variableId;
+                    }
+                }
+
+                if (pairId) {
+                    return $scope.settings.treatmentLevelPairs[key].val(pairId);
+                }
+
+            }
         };
 
         $scope.isDisableLevel = function(key) {

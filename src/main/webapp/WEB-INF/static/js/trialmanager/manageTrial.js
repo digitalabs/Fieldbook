@@ -117,8 +117,8 @@
     });
 
     manageTrialApp.run(
-        [          '$rootScope', '$state', '$stateParams',
-            function ($rootScope, $state, $stateParams) {
+        [          '$rootScope', '$state', '$stateParams','uiSelect2Config',
+            function ($rootScope, $state, $stateParams,uiSelect2Config) {
 
                 // It's very handy to add references to $state and $stateParams to the $rootScope
                 // so that you can access them from any scope within your applications.For example,
@@ -126,6 +126,10 @@
                 // 'contacts.list' or one of its decendents is active.
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
+
+                uiSelect2Config.placeholder = "Please Choose";
+                uiSelect2Config.minimumResultsForSearch = 20;
+                uiSelect2Config.allowClear = false;
             }
         ]
     );

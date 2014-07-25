@@ -114,7 +114,7 @@
                     return value.variable.name;
                 },
 
-                minimumResultsForSearch: 20,
+                minimumResultsForSearch: -1,
                 id: function (value) {
                     return value.variable.cvTermId;
                 },

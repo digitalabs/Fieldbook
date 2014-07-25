@@ -38,7 +38,8 @@
         <div class="add_top_padding">
             <label class=" control-label"><strong style="display: inline-block; width: 180px;">How are the replications to be arranged in the field?</strong></label>
             <span style="display: inline-block; width: 210px !important;">
-                <select name="replicationsArrangement" ng-disabled="!currentDesignType.data.useLatenized" ui-select2="{minimumResultsForSearch: 10}" data-placeholder="Please Choose" class="form-control" ng-model="currentDesignType.data.replicationsArrangement">
+                <select name="replicationsArrangement" ng-disabled="!currentDesignType.data.useLatenized" ui-select2="{minimumResultsForSearch: 10}" class="form-control" ng-model="currentDesignType.data.replicationsArrangement">
+                    <option value=""></option>
                     <option ng-repeat="(key,name) in replicationsArrangementGroupsOpts" value="{{key}}">{{name}}</option>
                 </select>
             </span>

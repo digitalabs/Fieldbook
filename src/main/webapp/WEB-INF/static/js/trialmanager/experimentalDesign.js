@@ -56,16 +56,15 @@
             }];
 
             $scope.currentDesignType = $scope.designTypes[TrialManagerDataService.specialSettings.experimentalDesign.data.designType];
-
+            $scope.currentDesignTypeId = TrialManagerDataService.specialSettings.experimentalDesign.data.designType;
             //$scope.noOfBlocks = ($scope.currentDesignType.data.blockSize > 0) ? $scope.totalGermplasmEntryListCount / $scope.currentDesignType.data.blockSize : 0;
 
 
             $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
-
-            $scope.onSwitchDesignTypes = function(selectedDesignType) {
-               $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + selectedDesignType.params;
-               $scope.currentDesignType = selectedDesignType;
-               $scope.currentDesignType.data.designType = selectedDesignType.id;
+            $scope.onSwitchDesignTypes = function(newId) {
+               $scope.currentDesignType = $scope.designTypes[newId];
+               $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+               $scope.currentDesignType.data.designType = $scope.currentDesignType.id;
             };
 
             // on click generate design button

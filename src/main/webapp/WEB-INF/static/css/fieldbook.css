@@ -1220,8 +1220,8 @@ input::-ms-clear {
 }
 
 
-.fbk-hide.ng-scope{
-    display: inherit !important;
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
 }
 
 .fbk-hide-opacity{

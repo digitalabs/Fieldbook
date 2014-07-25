@@ -420,7 +420,7 @@
                         return false;
                     }
 
-                    var valid = validateStartEndDateBasic();
+                    var valid = validateStartEndDateBasic(service.currentData.basicDetails.basicDetails[8050],service.currentData.basicDetails.basicDetails[8060]);
 
                     return valid;
 

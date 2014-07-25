@@ -7,9 +7,8 @@
 
                     <div style="display:inline-block">
                         <div  style="width: 350px !important;">
-                            <select ui-select2="{minimumResultsForSearch: -1}" class="form-control" ng-model="currentDesignTypeId" ng-change="onSwitchDesignTypes(currentDesignTypeId)">
-                                <option ng-repeat="item in designTypes" value="{{item.id}}">{{item.name}}</option>
-                            </select>
+                            <input type="hidden" ui-select2="designTypeOptions()" class="form-control" ng-model="currentDesignTypeId" ng-change="onSwitchDesignTypes(currentDesignTypeId)">
+                            </input>
                         </div>
                         <div ng-show="currentDesignType.withResolvable &amp;&amp; false">
                             <label class="checkbox-inline">

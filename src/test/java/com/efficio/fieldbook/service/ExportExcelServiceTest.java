@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;

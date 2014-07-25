@@ -23,22 +23,26 @@ public abstract class AbstractBaseControllerTest extends AbstractBaseIntegration
 	@Autowired
 	protected RequestMappingHandlerMapping handlerMapping;
 	
+	protected MockHttpServletRequest request;
+	protected MockHttpServletResponse response;
+	protected MockHttpSession session;
+	
 	@Before
 	public void beforeEachTest() {
 		// This is required for Spring to create and manage session scoped beans.
 		((GenericApplicationContext) applicationContext).getBeanFactory().registerScope("session", new SessionScope());
-	}
-	
-	protected ModelAndView request(String url, String method) throws Exception {
 		
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockHttpSession session = new MockHttpSession();
+		request = new MockHttpServletRequest();
+		response = new MockHttpServletResponse();
+		session = new MockHttpSession();
 		request.setSession(session);
 		
 		// This is required for binding the request to current thread in Spring context.
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-		
+	}
+	
+	protected ModelAndView request(String url, String method) throws Exception {
+	
 		request.setRequestURI(url);
 		request.setMethod(method);
 

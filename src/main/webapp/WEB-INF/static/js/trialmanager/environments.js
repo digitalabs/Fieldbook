@@ -36,6 +36,10 @@
                 noOfEnvironments : $scope.data.noOfEnvironments
             };
 
+            $scope.shouldDisableEnvironmentCountUpdate = function() {
+                return TrialManagerDataService.trialMeasurement.hasMeasurement;
+            };
+
             $scope.updateEnvironmentCount = function() {
                 if ($scope.temp.noOfEnvironments > $scope.data.environments.length) {
                     $scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;

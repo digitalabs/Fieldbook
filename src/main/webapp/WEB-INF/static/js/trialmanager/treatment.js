@@ -9,7 +9,7 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$http', function ($scope, TrialManagerDataService, _) {
+    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q', function ($scope, TrialManagerDataService, _, $q) {
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
         $scope.data = TrialManagerDataService.currentData.treatmentFactors;
@@ -26,35 +26,28 @@
         }
 
         // map containing the treatment factor level pairs
-        $scope.treatmentLevelPairs = TrialManagerDataService.specialSettings.treatmentLevelPairs;
-        
-        $scope.generateTreatmentLevelPair = function (key) {
-                    TrialManagerDataService.retrieveVariablePairs(key).then(function (data) {
-                        $scope.treatmentLevelPairs[key] = new angular.OrderedHash();
-                        angular.forEach(data, function (val1) {
-                            $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
-                        });
-                    });
-                };
-        
-                /*if ($scope.settings && $scope.settings.keys() > 0) {
-                    angular.forEach($scope.settings.keys(), function (value) {
-                        $scope.generateTreatmentLevelPair(value);
-                    });
-                }*/
+        TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
 
+        $scope.generateTreatmentLevelPair = function (key) {
+            var deferred = $q.defer();
+            TrialManagerDataService.retrieveVariablePairs(key).then(function (data) {
+                $scope.settings.treatmentLevelPairs[key] = new angular.OrderedHash();
+                angular.forEach(data, function (val1) {
+                    $scope.settings.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
+                });
+
+                deferred.resolve();
+            });
+
+            return deferred;
+        };
+        
         $scope.onAddVariable = function(result) {
 
             angular.forEach(result, function (val, key) {
                 // there's no existing treatmentLevelPair
-                if (!$scope.treatmentLevelPairs[key]) {
-                    TrialManagerDataService.retrieveVariablePairs(key).then(function (data) {
-                        $scope.treatmentLevelPairs[key] = new angular.OrderedHash();
-
-                        angular.forEach(data, function (val1) {
-                            $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
-                        });
-
+                if (!$scope.settings.treatmentLevelPairs[key]) {
+                    $scope.generateTreatmentLevelPair(key).then(function() {
                         $scope.data.currentData[key] = {
                             levels: 0,
                             labels: [],
@@ -71,8 +64,6 @@
             });
 
             TrialManagerDataService.indicateUnappliedChangesAvailable();
-
-
         };
 
         $scope.invalidBlockSizeMsg = '<b class="text-danger">Invalid Block Size</b>';
@@ -80,73 +71,83 @@
             return !TrialManagerDataService.trialMeasurement.hasMeasurement;
         };
 
+        $scope.generateDropdownList = function(key) {
+            if (!$scope.settings.treatmentLevelPairs[key]) {
+                return [];
+            } else {
+                /*var arrayCopy = angular.copy($scope.settings.treatmentLevelPairs[key].vals());*/
+                var options = _.filter($scope.settings.treatmentLevelPairs[key].vals(), function (entry) {
+                    var found = false;
+                    angular.forEach($scope.data.currentData, function (value, key2) {
+                        if (key === key2) {
+                            return true;
+                        }
+
+                        if (!value) {
+                            return true;
+                        } else if (value.variableId == entry.variable.cvTermId) {
+                            found = true;
+                            return false;
+                        }
+                    });
+                    return !found;
+                });
+
+                return options;
+            }
+        };
+
         $scope.generateDropdownOption = function (key) {
+            var dropdownList = $scope.generateDropdownList(key);
             var options = {
                 data: function () {
-                    if (!$scope.treatmentLevelPairs[key]) {
-                        return {
-                            results: []
-                        };
-                    } else {
-                        var options = _.filter($scope.treatmentLevelPairs[key].vals(), function (entry) {
-                            var found = false;
-                            angular.forEach($scope.currentData, function (value, key2) {
-                                if (key === key2) {
-                                    return true;
-                                }
-
-                                if (! value) {
-                                    return true;
-                                } else if (value.variableId == entry.variable.cvTermId) {
-                                    found = true;
-                                    return false;
-                                }
-                            });
-                            return !found;
-                        });
-
-                        return {
-                            results: options
-                        };
-                    }
-
-
+                    return {
+                        results : dropdownList
+                    };
                 },
+
                 formatSelection: function (value) {
                     return value.variable.name;
                 },
+
                 formatResult: function (value) {
                     return value.variable.name;
                 },
+
                 minimumResultsForSearch: 20,
                 id: function (value) {
                     return value.variable.cvTermId;
                 }
             };
 
+            if ($scope.data.currentData[key] && $scope.data.currentData[key].variableId) {
+                options.initSelection = function(element, callback) {
+                    angular.forEach(dropdownList, function(value) {
+                        if (value.variable.cvTermId === $scope.data.currentData[key].variableId) {
+                            callback(value);
+                        }
+                    });
+                };
+            }
+
             return options;
         };
 
         $scope.isDisableLevel = function(key) {
-            return !($scope.currentData[key] && $scope.currentData[key].variableId);
-        }
+            return !($scope.data.currentData[key] && $scope.data.currentData[key].variableId);
+        };
 
-
-
-        $scope.deleteTreatmentFactor = function(key) {
-            delete $scope.currentData[key];
-            $scope.settings.remove(Number(key));
+        $scope.performDelete = function(key) {
+            // TODO : make a server side call to also remove the setting detail from the session
+            $scope.settings.details.remove(key);
+            delete $scope.data.currentData[key];
         };
 
         $scope.onLabelChange = function () {
             TrialManagerDataService.indicateUnappliedChangesAvailable();
         };
 
-
-
-        $scope.onLevelChange = function (key, levels) {
-
-
+        $scope.onLevelChange = function(key,levels) {
             if (isNaN(levels)) {
                 return;
             }

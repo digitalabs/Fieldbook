@@ -86,7 +86,7 @@
                 if (initialData) {
                     if (initialData.settingMap && initialData.settingMap.details) {
                         var data = new angular.OrderedHash();
-                        data.addList(initialData.settings, function (item) {
+                        data.addList(initialData.settingMap.details, function (item) {
                             return item.variable.cvTermId;
                         });
 
@@ -95,6 +95,14 @@
 
                     if (initialData.settingMap && initialData.settingMap.treatmentLevelPairs) {
                         settingMap.treatmentLevelPairs = initialData.settingMap.treatmentLevelPairs;
+                        angular.forEach(settingMap.treatmentLevelPairs, function(value, key) {
+                            var data = new angular.OrderedHash();
+                            data.addList(value, function (item) {
+                                return item.variable.cvTermId;
+                            });
+
+                            settingMap.treatmentLevelPairs[key] = data;
+                        });
                     }
                 } else {
                     settingMap.details = new angular.OrderedHash();

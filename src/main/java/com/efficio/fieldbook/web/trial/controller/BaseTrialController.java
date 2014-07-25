@@ -145,6 +145,7 @@ public abstract class BaseTrialController extends SettingsController {
     protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables, boolean isUsePrevious) throws MiddlewareQueryException {
         Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
         Map<Integer, TreatmentFactorData> currentData = new HashMap<Integer, TreatmentFactorData>();
+        Map<Integer, List<SettingDetail>> treatmentFactorPairs = new HashMap<Integer, List<SettingDetail>>();
 
         for (TreatmentVariable treatmentVariable : treatmentVariables) {
             Integer valueFactorID = treatmentVariable.getValueVariable().getTermId();
@@ -170,6 +171,8 @@ public abstract class BaseTrialController extends SettingsController {
                 treatmentFactorData = currentData.get(valueFactorID);
             }
 
+            treatmentFactorPairs.put(valueFactorID, retrieveVariablePairs(valueFactorID));
+
             /*treatmentFactorData.getLabels().add(treatmentVariable.getValueVariable().getValue());*/
         }
 
@@ -182,9 +185,10 @@ public abstract class BaseTrialController extends SettingsController {
         List<SettingDetail> detailList = new ArrayList<SettingDetail>(levelDetails.values());
         Map<String, Object> treatmentFactorSettings = new HashMap<String, Object>();
         treatmentFactorSettings.put("details", detailList);
+        treatmentFactorSettings.put("treatmentLevelPairs", treatmentFactorPairs);
 
-        Map<Integer, List<SettingDetail>> treatmentFactorPairs = new HashMap<Integer, List<SettingDetail>>();
-        info.setSettings(detailList);
+
+        info.setSettingMap(treatmentFactorSettings);
 
         return info;
     }

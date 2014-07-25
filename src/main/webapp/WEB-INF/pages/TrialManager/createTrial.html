@@ -1,4 +1,4 @@
-<div class="fbk-hide" ng-app="manageTrialApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
+<div ng-cloak="" ng-app="manageTrialApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
 <!-- header -->
 <div class="row col-xs-12">
     <h1 class="page-header col-xs-12 edit-trial-page-identifier">
@@ -15,7 +15,7 @@
                 <div class="pull-left">
                     <img class="image-padding image-padding-with-text" height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
                     <span class="heading" ng-hide="isOpenTrial()">Create Trial</span>
-                    <span class="heading" ng-show="isOpenTrial()" ng-bind="'Trial : ' + data.basicDetails[8005]"></span>
+                    <span class="heading" ng-show="isOpenTrial()">Trial : <span truncate-and-tooltip="data.basicDetails[8005]"></span></span>
                     <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
                     <input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
                 </div>
@@ -93,7 +93,7 @@
                                 <input class="form-control character-input" type="text" ng-model="data.basicDetails[8005]"/>
                             </div>
 
-                            <div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()" ng-bind="data.basicDetails[8005]"></div>
+                            <div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()"><span truncate-and-tooltip="data.basicDetails[8005]"></span></div>
                         </div>
 
                         <div class="row form-group">

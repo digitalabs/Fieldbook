@@ -2435,6 +2435,7 @@ function showManageCheckTypePopup() {
 		backdrop : 'static',
 		keyboard : false
 	});
+	
 }
 function addUpdateCheckType(operation) {
 	'use strict';
@@ -2453,6 +2454,9 @@ function addUpdateCheckType(operation) {
 							// reload dropdown
 							reloadCheckTypeList(data.checkTypes, operation);
 							showCheckTypeMessage(data.successMessage);
+							$('#comboCheckCode').select2('data', [{id:'', text:'',description:'' }]);
+							$('#comboCheckCode').select2('val', '');
+							$('#manageCheckValue').val('');
 							$('#manageCheckTypesModal').modal('hide');
 						} else {
 							showCheckTypeErrorMessage(data.error);
@@ -2552,6 +2556,10 @@ function deleteCheckType() {
 							reloadCheckTypeList(data.checkTypes, 3);
 							showCheckTypeMessage(data.successMessage);
 							resetButtonsAndFields();
+							$('#comboCheckCode').select2('data', [{id:'', text:'',description:'' }]);
+							$('#comboCheckCode').select2('val', '');
+							$('#manageCheckValue').val('');
+							$('#manageCheckTypesModal').modal('hide');
 						} else {
 							showCheckTypeErrorMessage(data.error);
 						}

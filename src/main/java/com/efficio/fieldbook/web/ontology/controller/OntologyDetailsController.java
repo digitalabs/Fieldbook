@@ -172,9 +172,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		// Create a Property Tree, check if SVs are in the filtered list and add if so.
     		List<TraitClassReference> tree = ontologyService.getAllTraitGroupsHierarchy(true);
     		for (TraitClassReference root : tree) {
-    			for (TraitClassReference traitClassReference : root.getTraitClassChildren()) {
-    				propertyTrees = processTreeTraitClasses(classId, svMap, stdVars, propertyTrees, traitClassReference);
-				}
+   				propertyTrees = processTreeTraitClasses(classId, svMap, stdVars, propertyTrees, root);
 			}
 			return propertyTrees;
 		} catch (MiddlewareQueryException e) {

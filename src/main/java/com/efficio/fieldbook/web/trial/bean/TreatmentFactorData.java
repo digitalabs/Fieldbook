@@ -14,7 +14,7 @@ import java.util.Map;
 public class TreatmentFactorData {
     private int levels;
     private List<String> labels;
-    private Integer pairCvTermId;
+    private Integer variableId;
     /*private Map<String, Integer> pairVariable;*/
 
     public static final String PAIR_VARIABLE_ID_KEY = "variableId";
@@ -40,12 +40,12 @@ public class TreatmentFactorData {
         this.labels = labels;
     }
 
-    public Integer getPairCvTermId() {
-        return pairCvTermId;
+    public Integer getVariableId() {
+        return variableId;
     }
 
-    public void setPairCvTermId(Integer pairCvTermId) {
-        this.pairCvTermId = pairCvTermId;
+    public void setVariableId(Integer variableId) {
+        this.variableId = variableId;
     }
 
     /*public Map<String, Integer> getPairVariable() {

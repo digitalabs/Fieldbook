@@ -96,6 +96,9 @@
                     if (initialData.settingMap && initialData.settingMap.treatmentLevelPairs) {
                         settingMap.treatmentLevelPairs = initialData.settingMap.treatmentLevelPairs;
                     }
+                } else {
+                    settingMap.details = new angular.OrderedHash();
+                    settingMap.treatmentLevelPairs = {};
                 }
 
                 return settingMap;
@@ -181,7 +184,7 @@
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
                     basicDetails: extractData(BASIC_DETAILS_DATA),
-                    treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA)
+                    treatmentFactors : extractData(TREATMENT_FACTORS_INITIAL_DATA)
                 },
                 // standard variable [meta-data] information or a particular tab settings information
                 // what I get is an instance of OrderedHash containing an array of keys with the map
@@ -378,15 +381,17 @@
                 getSettingsArray: function () {
                     if (settingsArray.length === 0) {
                         angular.forEach(service.settings, function (value, key) {
-                            if (key !== 'environments') {
+                            if (key === 'environments') {
+                                settingsArray.push(value.managementDetails);
+                                settingsArray.push(value.trialConditionDetails);
+                            } else if (key === 'experimentalDesign') {
+                                return true;
+                            } else if (key === 'treatmentFactors') {
+                                settingsArray.push(value.details);
+                            } else {
                                 if (value) {
                                     settingsArray.push(value);
                                 }
-                            } else if (key === 'experimentalDesign') {
-                                return true;
-                            } else {
-                                settingsArray.push(value.managementDetails);
-                                settingsArray.push(value.trialConditionDetails);
 
                             }
                         });

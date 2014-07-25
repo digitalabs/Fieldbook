@@ -93,7 +93,7 @@ public class ExpDesignController extends
          
     	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
-                null, null, userSelection.getNurseryConditions(), false);
+                userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
 
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
         StudyDetails details = new StudyDetails();

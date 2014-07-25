@@ -215,7 +215,7 @@ public class CreateTrialController extends BaseTrialController {
         
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection,
-                userSelection.getTrialLevelVariableList(), data.getTreatmentFactors().getCurrentData(),
+                userSelection.getTrialLevelVariableList(), userSelection.getTreatmentFactors(), data.getTreatmentFactors().getCurrentData(),
                 null, userSelection.getNurseryConditions(), false);
 
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);

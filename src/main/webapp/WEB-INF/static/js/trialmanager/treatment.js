@@ -9,32 +9,41 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl',['$scope','TrialManagerDataService','_',function($scope,TrialManagerDataService,_) {
+    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$http', function ($scope, TrialManagerDataService, _) {
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
-
         $scope.data = TrialManagerDataService.currentData.treatmentFactors;
 
         // watch $scope.settings, since we are sure that $scope.settings is an orderedhash even empty, we could just
         // use $watchCollection, for every added change we retrieve the 'AMOUNT ' pairs dynamically. also creat a
         // store to $scope.currentData for the variable levels.
-
+        
         $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
+        
+        // initialize currentData if has no values yet
+        if (!$scope.data) {
+            $scope.data = TrialManagerDataService.currentData.treatmentFactors = {currentData : {}};
+        }
 
         // map containing the treatment factor level pairs
         $scope.treatmentLevelPairs = TrialManagerDataService.specialSettings.treatmentLevelPairs;
-
+        
         $scope.generateTreatmentLevelPair = function (key) {
-            TrialManagerDataService.retrieveVariablePairs(key).then(function (data) {
-                $scope.treatmentLevelPairs[key] = new angular.OrderedHash();
-                angular.forEach(data, function (val1) {
-                    $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
-                });
-            });
-        };
+                    TrialManagerDataService.retrieveVariablePairs(key).then(function (data) {
+                        $scope.treatmentLevelPairs[key] = new angular.OrderedHash();
+                        angular.forEach(data, function (val1) {
+                            $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
+                        });
+                    });
+                };
+        
+                /*if ($scope.settings && $scope.settings.keys() > 0) {
+                    angular.forEach($scope.settings.keys(), function (value) {
+                        $scope.generateTreatmentLevelPair(value);
+                    });
+                }*/
 
-
-        $scope.onAddVariable = function (result) {
+        $scope.onAddVariable = function(result) {
 
             angular.forEach(result, function (val, key) {
                 // there's no existing treatmentLevelPair
@@ -46,14 +55,14 @@
                             $scope.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
                         });
 
-                        $scope.currentData[key] = {
+                        $scope.data.currentData[key] = {
                             levels: 0,
                             labels: [],
                             variableId: 0
                         };
                     });
                 } else {
-                    $scope.currentData[key] = {
+                    $scope.data.currentData[key] = {
                         levels: 0,
                         labels: [],
                         variableId: 0

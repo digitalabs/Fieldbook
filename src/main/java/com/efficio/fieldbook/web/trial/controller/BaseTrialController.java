@@ -143,14 +143,14 @@ public abstract class BaseTrialController extends SettingsController {
     }
 
     protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables, boolean isUsePrevious) throws MiddlewareQueryException {
-        Map<Integer, SettingDetail> valueDetails = new HashMap<Integer, SettingDetail>();
+        Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
         Map<Integer, TreatmentFactorData> currentData = new HashMap<Integer, TreatmentFactorData>();
         Map<Integer, List<SettingDetail>> treatmentFactorPairs = new HashMap<Integer, List<SettingDetail>>();
 
         for (TreatmentVariable treatmentVariable : treatmentVariables) {
-            Integer valueFactorID = treatmentVariable.getValueVariable().getTermId();
-            if (!valueDetails.containsKey(valueFactorID)) {
-                SettingDetail detail = createSettingDetail(valueFactorID, null);
+            Integer levelFactorID = treatmentVariable.getLevelVariable().getTermId();
+            if (!levelDetails.containsKey(levelFactorID)) {
+                SettingDetail detail = createSettingDetail(levelFactorID, null);
 
                 if (!isUsePrevious) {
                     detail.getVariable().setOperation(Operation.UPDATE);
@@ -158,21 +158,21 @@ public abstract class BaseTrialController extends SettingsController {
                     detail.getVariable().setOperation(Operation.ADD);
                 }
 
-                valueDetails.put(valueFactorID, detail);
+                levelDetails.put(levelFactorID, detail);
             }
 
             TreatmentFactorData treatmentFactorData;
-            if (! currentData.containsKey(valueFactorID)) {
+            if (! currentData.containsKey(levelFactorID)) {
                 treatmentFactorData = new TreatmentFactorData();
                 /*treatmentFactorData.setLevels(Integer.parseInt(treatmentVariable.getLevelVariable().getValue()));*/
-                treatmentFactorData.setVariableId(treatmentVariable.getLevelVariable().getTermId());
-                currentData.put(valueFactorID, treatmentFactorData);
+                treatmentFactorData.setVariableId(treatmentVariable.getValueVariable().getTermId());
+                currentData.put(levelFactorID, treatmentFactorData);
             } else {
-                treatmentFactorData = currentData.get(valueFactorID);
+                treatmentFactorData = currentData.get(levelFactorID);
             }
             treatmentFactorData.setLabels(treatmentVariable.getValues());
             treatmentFactorData.setLevels(treatmentVariable.getValues().size());
-            treatmentFactorPairs.put(valueFactorID, retrieveVariablePairs(valueFactorID));
+            treatmentFactorPairs.put(levelFactorID, retrieveVariablePairs(levelFactorID));
 
         }
 
@@ -182,7 +182,7 @@ public abstract class BaseTrialController extends SettingsController {
         info.setData(tabBean);
 
 
-        List<SettingDetail> detailList = new ArrayList<SettingDetail>(valueDetails.values());
+        List<SettingDetail> detailList = new ArrayList<SettingDetail>(levelDetails.values());
         Map<String, Object> treatmentFactorSettings = new HashMap<String, Object>();
         treatmentFactorSettings.put("details", detailList);
         treatmentFactorSettings.put("treatmentLevelPairs", treatmentFactorPairs);

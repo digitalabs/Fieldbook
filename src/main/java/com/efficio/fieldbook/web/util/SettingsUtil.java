@@ -259,19 +259,19 @@ public class SettingsUtil {
 
             for (SettingDetail detail : treatmentFactorDetails) {
                 Integer termId = detail.getVariable().getCvTermId();
-                StandardVariable valueVariable = getStandardVariable(termId, userSelection, fieldbookMiddlewareService);
-                Factor valueFactor = convertStandardVariableToFactor(valueVariable);
-                valueFactor.setOperation(detail.getVariable().getOperation());
+                StandardVariable levelVariable = getStandardVariable(termId, userSelection, fieldbookMiddlewareService);
+                Factor levelFactor = convertStandardVariableToFactor(levelVariable);
+                levelFactor.setOperation(detail.getVariable().getOperation());
 
                 TreatmentFactorData data = treatmentFactorItems.get(termId);
                                         /*StandardVariable valueVariable = getStandardVariable(data.getPairVariable().get(TreatmentFactorData.PAIR_VARIABLE_ID_KEY),
                                                 userSelection, fieldbookMiddlewareService);*/
 
-                StandardVariable levelVariable = getStandardVariable(data.getVariableId(),
+                StandardVariable valueVariable = getStandardVariable(data.getVariableId(),
                         userSelection, fieldbookMiddlewareService);
 
-                Factor levelFactor = convertStandardVariableToFactor(levelVariable);
-                levelFactor.setOperation(detail.getVariable().getOperation());
+                Factor valueFactor = convertStandardVariableToFactor(valueVariable);
+                valueFactor.setOperation(detail.getVariable().getOperation());
 
                 levelFactor.setTreatmentLabel(levelVariable.getName());
                 valueFactor.setTreatmentLabel(levelVariable.getName());

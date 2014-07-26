@@ -101,9 +101,16 @@ public class ExpDesignUtil {
 		}
 		BVDesignOutput output = new BVDesignOutput(returnCode);
 		if(returnCode == 0){
-			 CSVReader reader = new CSVReader(new FileReader(design.getDesign().getParameterValue(OUTPUT_FILE_PARAMETER_NAME)));
+			 
+			 File outputFile = new File(design.getDesign().getParameterValue(OUTPUT_FILE_PARAMETER_NAME));
+			 FileReader fileReader = new FileReader(outputFile);
+			 CSVReader reader = new CSVReader(fileReader);
 			 List myEntries = reader.readAll();			 			 
-			 output.setResults(myEntries);			
+			 output.setResults(myEntries);	
+			 fileReader.close();
+			 reader.close();
+			 outputFile.delete();
+			 
 		}
 		return output;
 	}

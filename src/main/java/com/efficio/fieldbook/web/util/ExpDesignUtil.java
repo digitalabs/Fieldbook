@@ -424,9 +424,13 @@ public class ExpDesignUtil {
 		
 		for(int i = 1 ; i <= environments ; i++){
 			int trialNo = i;
-			BVDesignOutput bvOutput = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
-			
-			if(bvOutput.isSuccess()){
+			BVDesignOutput bvOutput = null;
+			try{
+				bvOutput = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			}catch(Exception e){
+				throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
+			}
+			if(bvOutput != null && bvOutput.isSuccess()){
 				for(int counter = 0 ; counter < bvOutput.getBvResultList().size() ; counter++){
 					String entryNo = bvOutput.getEntryValue(entryNumberIdentifier, counter);
 					if(NumberUtils.isNumber(entryNo)){

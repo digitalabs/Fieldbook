@@ -537,6 +537,19 @@
 
                 return keys;
             };
+        })
+
+        .filter('filterExperimentalDesignType', function(TrialManagerDataService) {
+            return function(designTypes) {
+                var result = [];
+                if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
+                    result.push(designTypes[0]);
+                } else {
+                    result = designTypes;
+                }
+
+                return result;
+            };
         });
 
 })();

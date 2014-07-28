@@ -231,6 +231,8 @@
                         })(),
                         germplasmTotalListCount: 0,
 
+                        showAdvancedOptions : [false,false,false],
+
                         data: {
                             'noOfEnvironments': 0,
                             'designType': 0,

@@ -13,11 +13,11 @@
     </div>
 
 <div ng-show="currentDesignType.data.isResolvable &amp;&amp; !hideFeatures">
-    <div ng-hide="currentDesignType.showAdvancedOptions" class="add_top_padding">
-        <a ng-click="currentDesignType.showAdvancedOptions = true">Show Advanced Options</a>
+    <div ng-hide="settings.showAdvancedOptions[currentDesignType.id]" class="add_top_padding">
+        <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = true">Show Advanced Options</a>
     </div>
 
-    <div ng-show="currentDesignType.showAdvancedOptions">
+    <div ng-show="settings.showAdvancedOptions[currentDesignType.id]">
 
 
         <div class="add_top_padding">
@@ -54,7 +54,7 @@
         </div>
 
         <div class="add_top_padding ">
-            <a ng-click="currentDesignType.showAdvancedOptions = false">Hide Advanced Options</a>
+            <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = false">Hide Advanced Options</a>
         </div>
 
     </div>

@@ -19,12 +19,11 @@
                 //FIXME: cheating a bit for the meantime.
                 $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
 
-                $scope.settings = {
-                    factors: TrialManagerDataService.specialSettings.experimentalDesign.factors,
-                    treatmentFactors: TrialManagerDataService.settings.treatmentFactors.details
-                };
+                $scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
+                $scope.settings.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
 
-                // initialize some data not in currentData
+
+                    // initialize some data not in currentData
                 TrialManagerDataService.specialSettings.experimentalDesign.data.noOfEnvironments =
                     TrialManagerDataService.currentData.environments.noOfEnvironments ? TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
                 TrialManagerDataService.specialSettings.experimentalDesign.data.treatmentFactors = $scope.settings.treatmentFactors.details;
@@ -37,6 +36,12 @@
                 $scope.replicationsArrangementGroupsOpts[2] = 'In a single row';
                 $scope.replicationsArrangementGroupsOpts[3] = 'In adjacent columns';
 
+
+
+                $scope.$watchCollection('settings.datae',function(newArr,oldArr) {
+                   console.log(newArr);
+                });
+
                 $scope.designTypes = [
                     {
                         id: 0,
@@ -47,20 +52,18 @@
                         id: 1,
                         name: 'Incomplete Block Design', params: 'incompleteBlockParams.html',
                         withResolvable: true,
-                        showAdvancedOptions: false,
                         data: TrialManagerDataService.specialSettings.experimentalDesign.data
                     },
                     {
                         id: 2,
                         name: 'Row-and-Column', params: 'rowAndColumnParams.html',
                         withResolvable: true,
-                        showAdvancedOptions: false,
                         data: TrialManagerDataService.specialSettings.experimentalDesign.data
                     }
                 ];
 
                 $scope.currentDesignType = $scope.designTypes[TrialManagerDataService.specialSettings.experimentalDesign.data.designType];
-                $scope.currentDesignTypeId = TrialManagerDataService.specialSettings.experimentalDesign.data.designType;
+                $scope.currentDesignTypeId = $scope.currentDesignType.id;
                 //$scope.noOfBlocks = ($scope.currentDesignType.data.blockSize > 0) ? $scope.totalGermplasmEntryListCount / $scope.currentDesignType.data.blockSize : 0;
 
 
@@ -68,7 +71,7 @@
                 $scope.onSwitchDesignTypes = function (newId) {
                     $scope.currentDesignType = $scope.designTypes[newId];
                     $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
-                    $scope.currentDesignType.data.designType = $scope.currentDesignType.id;
+                    TrialManagerDataService.specialSettings.experimentalDesign.data.designType = $scope.currentDesignType.id;
                 };
 
                 // on click generate design button

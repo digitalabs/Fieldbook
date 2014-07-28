@@ -21,11 +21,8 @@
 
             
             
-            $scope.trialMeasurement = TrialManagerDataService.trialMeasurement
-            
+            $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
 
-            
-            
             displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement,
                 TrialManagerDataService.trialMeasurement.count);
 
@@ -48,11 +45,16 @@
             // function called whenever the user has successfully selected a germplasm list
             $scope.germplasmListSelected = function() {
                 TrialManagerDataService.indicateUnappliedChangesAvailable(true);
+                var entryHtml = $('#numberOfEntries').html();
+
+                TrialManagerDataService.trialMeasurement.count = parseInt(entryHtml,10);
+
             };
 
             $scope.germplasmListCleared = function() {
                 TrialManagerDataService.indicateUnappliedChangesAvailable(false);
-            }
+                TrialManagerDataService.trialMeasurement.count = 0;
+            };
 
             $scope.openGermplasmTree = function() {
                 openListTree(1, $scope.germplasmListSelected);

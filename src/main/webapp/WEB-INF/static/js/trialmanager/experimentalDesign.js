@@ -317,7 +317,7 @@
                 var excludes = [
                     [8230, 8210, 8581, 8582],
                     [8581, 8582],
-                    [8210]
+                    [8210,8220,8200]
                 ];
 
                 var copyList = angular.copy(factorList);

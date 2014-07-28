@@ -1,7 +1,7 @@
 /*global angular*/
 /*global showBaselineTraitDetailsModal */
 /* global openManageLocations*/
-(function() {
+(function () {
     'use strict';
 
     angular.OrderedHash = (function () {
@@ -49,10 +49,10 @@
             return this.m_vals;
         };
 
-        OrderedHash.prototype.remove = function(key) {
+        OrderedHash.prototype.remove = function (key) {
             var _key = !isNaN(key) ? Number(key) : key;
 
-            this.m_keys.splice(this.m_keys.indexOf(_key),1);
+            this.m_keys.splice(this.m_keys.indexOf(_key), 1);
             delete this.m_vals[_key];
 
         };
@@ -64,79 +64,85 @@
     angular.module('fieldbook-utils', ['ui.select2'])
         .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
         .constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
-        .directive('displaySettings', function() {
+        .directive('displaySettings', function () {
             return {
-                restrict : 'E',
-                scope : {
-                    settings : '=',
-                    hideDelete : '=',
-                    predeleteFunction : '&'
+                restrict: 'E',
+                scope: {
+                    settings: '=',
+                    hideDelete: '=',
+                    predeleteFunction: '&'
                 },
-                templateUrl : '/Fieldbook/static/angular-templates/displaySettings.html',
-                controller : function($scope, $element, $attrs) {
-                    $scope.removeSetting = function(key) {
-                        var shouldContinue = true;
-                        var value = $scope.predeleteFunction({
-                        	variableType : $attrs.variableType, 
-                        	key : key});
+                templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
+                controller: function ($scope, $element, $attrs) {
+                    $scope.removeSetting = function (key) {
 
-                        if (value !== undefined && value === false) {
-                            shouldContinue = false;
-                        }
+                        var promise = $scope.predeleteFunction({
+                            variableType: $attrs.variableType,
+                            key: key});
 
-                        if (shouldContinue) {
-                            $scope.settings.remove(key);
-                            $.ajax({
-                                url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + key,
-                                type: 'POST',
-                                cache: false,
-                                data: '',
-                                contentType: 'application/json',
-                                success: function () {
+                        if (promise !== undefined) {
+                            promise.then(function (shouldContinue) {
+                                if (shouldContinue) {
+                                    $scope.performDelete(key);
                                 }
                             });
-
-                            $scope.$emit('deleteOccurred');
+                        } else {
+                            $scope.performDelete(key);
                         }
                     };
 
-                    $scope.showDetailsModal = function(setting) {
+                    $scope.performDelete = function (key) {
+                        $scope.settings.remove(key);
+                        $.ajax({
+                            url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + key,
+                            type: 'POST',
+                            cache: false,
+                            data: '',
+                            contentType: 'application/json',
+                            success: function () {
+                            }
+                        });
+
+                        $scope.$emit('deleteOccurred');
+                    };
+
+                    $scope.showDetailsModal = function (setting) {
                         // this function is currently defined in the fieldbook-common.js, loaded globally for the page
                         // TODO : move away from global function definitions
                         showBaselineTraitDetailsModal(setting.variable.cvTermId);
                     };
 
-                    $scope.size = function() {
+                    $scope.size = function () {
                         return Object.keys($scope.settings).length;
                     };
                 }
             };
         })
-        .directive('showDetailsModal',function() {
+        .directive('showDetailsModal', function () {
             return {
                 scope: {
-                     showDetailsModal : '='
+                    showDetailsModal: '='
                 },
 
-                link : function(scope,elem,attrs) {
-                    elem.css({ cursor : "pointer" });
-                    elem.on('click',function(){
+                link: function (scope, elem, attrs) {
+                    elem.css({ cursor: "pointer" });
+                    elem.on('click', function () {
                         showBaselineTraitDetailsModal(scope.showDetailsModal);
                     });
                 }
             };
         })
-        .directive('validNumber', function() {
+        .directive('validNumber', function () {
 
             return {
                 require: '?ngModel',
-                link: function(scope, element, attrs, ngModelCtrl) {
-                    if(!ngModelCtrl) {
+                link: function (scope, element, attrs, ngModelCtrl) {
+                    if (!ngModelCtrl) {
                         return;
                     }
 
-                    ngModelCtrl.$parsers.push(function(val) {
-                        var clean = val.replace( /[^0-9]+/g, '');
+                    ngModelCtrl.$parsers.push(function (val) {
+                        var clean = val.replace(/[^0-9]+/g, '');
                         if (val !== clean) {
                             ngModelCtrl.$setViewValue(clean);
                             ngModelCtrl.$render();
@@ -144,8 +150,8 @@
                         return clean;
                     });
 
-                    element.bind('keypress', function(event) {
-                        if(event.keyCode === 32) {
+                    element.bind('keypress', function (event) {
+                        if (event.keyCode === 32) {
                             event.preventDefault();
                         }
                     });
@@ -178,19 +184,19 @@
                 }
             };
         })
-        .directive('selectStandardVariable',['VARIABLE_SELECTION_MODAL_SELECTOR', 'VARIABLE_SELECTED_EVENT_TYPE', 'TrialSettingsManager', 'TrialManagerDataService',
-            function(VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, TrialSettingsManager, TrialManagerDataService) {
-               return {
-                    restrict : 'A',
-                    scope : {
-                        modeldata : '=',
-                        callback : '&'
+        .directive('selectStandardVariable', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'VARIABLE_SELECTED_EVENT_TYPE', 'TrialSettingsManager', 'TrialManagerDataService',
+            function (VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, TrialSettingsManager, TrialManagerDataService) {
+                return {
+                    restrict: 'A',
+                    scope: {
+                        modeldata: '=',
+                        callback: '&'
                     },
 
-                    link : function(scope,elem,attrs) {
+                    link: function (scope, elem, attrs) {
 
-                        scope.processData = function(data) {
-                            scope.$apply(function(){
+                        scope.processData = function (data) {
+                            scope.$apply(function () {
                                 if (data.responseData) {
                                     data = data.responseData;
                                 }
@@ -217,16 +223,16 @@
                             });
                         };
 
-                        elem.on('click',  function() {
+                        elem.on('click', function () {
 
                             var params = {
-                                variableType : attrs.variableType,
+                                variableType: attrs.variableType,
                                 retrieveSelectedVariableFunction: function () {
                                     var allSettings = TrialManagerDataService.getSettingsArray();
                                     var selected = {};
 
-                                    angular.forEach(allSettings, function(tabSettings) {
-                                        angular.forEach(tabSettings.vals(), function(value) {
+                                    angular.forEach(allSettings, function (tabSettings) {
+                                        angular.forEach(tabSettings.vals(), function (value) {
                                             selected[value.variable.cvTermId] = value.variable.name;
                                         });
                                     });
@@ -236,39 +242,40 @@
                             };
 
                             $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
-                            $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE,scope.processData);
+                            $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, scope.processData);
 
                             TrialSettingsManager.openVariableSelectionDialog(params);
                         });
                     }
-               };
-        }])
-        .directive('showSettingFormElement', function() {
+                };
+            }])
+        .directive('showSettingFormElement', function () {
             return {
                 require: '?uiSelect2, ?ngModel',
-                restrict : 'E',
-                scope : {
-                    settings : '=',
-                    targetkey : '@targetkey',
-                    settingkey : '@',
-                    valuecontainer : '=',
-                    changefunction : '&',
-                    disabled : '='
+                restrict: 'E',
+                scope: {
+                    settings: '=',
+                    targetkey: '@targetkey',
+                    settingkey: '@',
+                    valuecontainer: '=',
+                    changefunction: '&',
+                    disabled: '='
                 },
 
-                templateUrl:  '/Fieldbook/static/angular-templates/showSettingFormElement.html',
-                compile : function(tElement, tAttrs, transclude, uiSelect2) {
+                templateUrl: '/Fieldbook/static/angular-templates/showSettingFormElement.html',
+                compile: function (tElement, tAttrs, transclude, uiSelect2) {
                     if (uiSelect2) {
                         uiSelect2.compile(tElement, tAttrs);
                     }
                 },
-                controller : function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
+                controller: function ($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
                     if ($scope.settingkey === undefined) {
                         $scope.settingkey = $scope.targetkey;
                     }
 
                     if (!$scope.changefunction) {
-                        $scope.changefunction = function() {};
+                        $scope.changefunction = function () {
+                        };
                     }
 
                     $scope.variableDefinition = $scope.settings.val($scope.settingkey);
@@ -285,7 +292,7 @@
                     $scope.localData = {};
                     $scope.localData.useFavorites = false;
 
-                    $scope.updateDropdownValues = function() {
+                    $scope.updateDropdownValues = function () {
                         if ($scope.localData.useFavorites) {
                             $scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
                         } else {
@@ -297,7 +304,7 @@
                         // TODO : add code that will recognize categorical variable dropdowns and change the displayed text accordingly
                         $scope.dropdownValues = $scope.variableDefinition.possibleValues;
 
-                        $scope.computeMinimumSearchResults = function() {
+                        $scope.computeMinimumSearchResults = function () {
                             return ($scope.dropdownValues.length > 0) ? 20 : -1;
                         };
 
@@ -313,8 +320,8 @@
                                 // TODO : add code that can handle display of methods
                                 return value.description;
                             },
-                            minimumResultsForSearch : $scope.computeMinimumSearchResults(),
-                            query : function (query) {
+                            minimumResultsForSearch: $scope.computeMinimumSearchResults(),
+                            query: function (query) {
                                 var data = {
                                     results: $scope.dropdownValues
                                 };
@@ -339,11 +346,11 @@
                                 $scope.valuecontainer[$scope.targetkey] = currentVal.id;
                             }
 
-                            $scope.dropdownOptions.initSelection = function(element, callback) {
-                                angular.forEach($scope.dropdownValues, function(value) {
+                            $scope.dropdownOptions.initSelection = function (element, callback) {
+                                angular.forEach($scope.dropdownValues, function (value) {
                                     var idNumber;
 
-                                    if (! isNaN($scope.valuecontainer[$scope.targetkey])) {
+                                    if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
                                         idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
                                     }
 
@@ -410,13 +417,13 @@
             };
         })
 
-        .directive('sectionContainer',['$parse',function($parse){
+        .directive('sectionContainer', ['$parse', function ($parse) {
             return {
                 restrict: 'E',
-                scope : {
-                    heading : '@',
-                    reminder : '@',
-                    helpTooltip : '@',
+                scope: {
+                    heading: '@',
+                    reminder: '@',
+                    helpTooltip: '@',
                     icon: '@',
                     iconImg: '@',
                     modelData: '=',
@@ -425,18 +432,18 @@
                     enableUpdate: '=',
                     onUpdate: '&',
                     callback: '&',
-                    hideVariable : '=',
+                    hideVariable: '=',
                     useExactProperties: '@',
-                    collapsible : '='
+                    collapsible: '='
 
                 },
-                transclude : true,
+                transclude: true,
                 templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
-                link : function (scope,elem,attrs) {
-                    scope.addVariable =  $parse(attrs.addVariable)();
+                link: function (scope, elem, attrs) {
+                    scope.addVariable = $parse(attrs.addVariable)();
 
 
-                    attrs.$observe('helpTooltip',function(value){
+                    attrs.$observe('helpTooltip', function (value) {
                         if (value) {
                             scope.hasHelpTooltip = true;
                         }
@@ -444,39 +451,39 @@
 
 
                 },
-                controller : ['$scope','$attrs',function($scope,$attrs) {
+                controller: ['$scope', '$attrs', function ($scope, $attrs) {
                     $scope.toggleCollapse = false;
                     $scope.toggleSection = $attrs.startCollapsed && $attrs.startCollapsed === 'true';
-                    $scope.doCollapse = function() {
+                    $scope.doCollapse = function () {
                         if ($scope.collapsible) {
                             $scope.toggleSection = !$scope.toggleSection;
                         }
                     };
 
-                    $scope.doClick = function() {
+                    $scope.doClick = function () {
                         $scope.onUpdate({});
                     };
 
 
-                    $scope.onAdd = function(result) {
-                        $scope.callback({ result : result });
+                    $scope.onAdd = function (result) {
+                        $scope.callback({ result: result });
                     };
                 }]
 
             };
         }])
 
-        .directive('truncateAndTooltip',['$compile',function($compile){
+        .directive('truncateAndTooltip', ['$compile', function ($compile) {
             return {
                 restrict: 'A',
-                link: function(scope,element,attrs) {
+                link: function (scope, element, attrs) {
                     var length = 30;
-                    scope.$watch(attrs.truncateAndTooltip, function(newValue, oldValue) {
+                    scope.$watch(attrs.truncateAndTooltip, function (newValue, oldValue) {
                         if (newValue.length > length) {
-                            element.attr('tooltip',newValue);
-                            element.attr('tooltip-placement','right');
-                            element.attr('tooltip-append-to-body',true);
-                            element.html(newValue.substring(0,length) + '...');
+                            element.attr('tooltip', newValue);
+                            element.attr('tooltip-placement', 'right');
+                            element.attr('tooltip-append-to-body', true);
+                            element.html(newValue.substring(0, length) + '...');
 
                         } else {
                             element.html(newValue);
@@ -492,13 +499,13 @@
         }])
 
 
-        .directive('showBaselineTraitDetailsModalLink',function(){
+        .directive('showBaselineTraitDetailsModalLink', function () {
             return {
-                 scope: {
-                     showBaselineTraitDetailsModalLink : '@'
-                 },
-                link: function (scope,elem,attrs) {
-                    elem.click(function(e) {
+                scope: {
+                    showBaselineTraitDetailsModalLink: '@'
+                },
+                link: function (scope, elem, attrs) {
+                    elem.click(function (e) {
                         showBaselineTraitDetailsModal(scope.cvTermId);
                     });
                 }
@@ -507,20 +514,22 @@
 
 
         // filters
-        .filter('range', function() {
-            return function(input, total) {
+        .filter('range', function () {
+            return function (input, total) {
                 total = parseInt(total);
-                for (var i=0; i<total; i++) { input.push(i); }
+                for (var i = 0; i < total; i++) {
+                    input.push(i);
+                }
 
                 return input;
             };
         })
 
-        .filter('removeHiddenVariableFilter', function() {
-            return function(settingKeys,settingVals) {
+        .filter('removeHiddenVariableFilter', function () {
+            return function (settingKeys, settingVals) {
                 var keys = [];
 
-                angular.forEach(settingKeys,function(val,key) {
+                angular.forEach(settingKeys, function (val, key) {
                     if (!settingVals[val].hidden) {
                         keys.push(val);
                     }

@@ -10,25 +10,25 @@
     var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils', 'fieldbook-utils',
         'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource']);
 
-    manageTrialApp.factory('spinnerHttpInterceptor', function($q) {
+    manageTrialApp.factory('spinnerHttpInterceptor', function ($q) {
         return {
-            'request' : function(config) {
+            'request': function (config) {
                 SpinnerManager.addActive();
 
                 return config || $q.when(config);
             },
-            'requestError' : function(config) {
+            'requestError': function (config) {
                 SpinnerManager.resolveActive();
                 showErrorMessage('', ajaxGenericErrorMsg);
 
                 return config || $q.when(config);
             },
-            'response' : function(config) {
+            'response': function (config) {
                 SpinnerManager.resolveActive();
 
                 return config || $q.when(config);
             },
-            'responseError' : function(config) {
+            'responseError': function (config) {
                 SpinnerManager.resolveActive();
                 showErrorMessage('', ajaxGenericErrorMsg);
 
@@ -37,8 +37,8 @@
         };
     });
 
-    manageTrialApp.config(['$httpProvider',function($httpProvider) {
-      $httpProvider.interceptors.push('spinnerHttpInterceptor');
+    manageTrialApp.config(['$httpProvider', function ($httpProvider) {
+        $httpProvider.interceptors.push('spinnerHttpInterceptor');
     }]);
 
     // routing configuration
@@ -71,7 +71,7 @@
             .state('experimentalDesign', {
                 url: '/experimentalDesign',
                 templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign',
-                controller : 'ExperimentalDesignCtrl'
+                controller: 'ExperimentalDesignCtrl'
             })
 
             .state('germplasm', {
@@ -122,8 +122,8 @@
     });
 
     manageTrialApp.run(
-        [          '$rootScope', '$state', '$stateParams','uiSelect2Config',
-            function ($rootScope, $state, $stateParams,uiSelect2Config) {
+        [          '$rootScope', '$state', '$stateParams', 'uiSelect2Config',
+            function ($rootScope, $state, $stateParams, uiSelect2Config) {
 
                 // It's very handy to add references to $state and $stateParams to the $rootScope
                 // so that you can access them from any scope within your applications.For example,
@@ -215,10 +215,10 @@
                     TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign;
             };
 
-            $scope.performFunctionOnTabChange = function(targetState) {
+            $scope.performFunctionOnTabChange = function (targetState) {
                 if (targetState === 'editMeasurements') {
                     if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
-                        $timeout(function() {
+                        $timeout(function () {
                             $('#measurement-table').dataTable().fnAdjustColumnSizing();
                         }, 1);
                     }
@@ -259,6 +259,20 @@
             }
 
             return filtered;
+        };
+    });
+
+    manageTrialApp.controller('ConfirmModalController', function ($scope, $modalInstance, MODAL_TITLE, MODAL_TEXT, CONFIRM_BUTTON_LABEL) {
+        $scope.title = MODAL_TITLE;
+        $scope.text = MODAL_TEXT;
+        $scope.confirmButtonLabel = CONFIRM_BUTTON_LABEL;
+
+        $scope.confirm = function () {
+            $modalInstance.close(true);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.close(false);
         };
     });
 

@@ -2,7 +2,8 @@
  * Created by cyrus on 7/2/14.
  */
 
-/*global angular*/
+/*global angular, modalConfirmationTitle,
+environmentModalConfirmationText,environmentConfirmLabel*/
 
 (function () {
     'use strict';
@@ -45,9 +46,18 @@
                     $scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
                 } else if ($scope.temp.noOfEnvironments < $scope.data.environments.length) {
                     var modalInstance = $modal.open({
-                        templateUrl: 'confirmModal.html',
+                        templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
                         controller: 'ConfirmModalController',
                         resolve: {
+                            MODAL_TITLE : function() {
+                                return modalConfirmationTitle;
+                            },
+                            MODAL_TEXT : function() {
+                                return environmentModalConfirmationText;
+                            },
+                            CONFIRM_BUTTON_LABEL : function() {
+                                return environmentConfirmLabel;
+                            }
                         }
                     });
 
@@ -152,14 +162,4 @@
                 return returnVal;
             };
         }]);
-
-    angular.module('manageTrialApp').controller('ConfirmModalController', function($scope, $modalInstance) {
-        $scope.confirm = function() {
-            $modalInstance.close(true);
-        };
-
-        $scope.cancel = function() {
-            $modalInstance.close(false);
-        };
-    });
 })();

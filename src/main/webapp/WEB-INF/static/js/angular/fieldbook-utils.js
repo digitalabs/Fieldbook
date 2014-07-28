@@ -69,24 +69,33 @@
                 restrict : 'E',
                 scope : {
                     settings : '=',
-                    hideDelete : '='
+                    hideDelete : '=',
+                    predeleteFunction : '&'
                 },
                 templateUrl : '/Fieldbook/static/angular-templates/displaySettings.html',
                 controller : function($scope, $element, $attrs) {
                     $scope.removeSetting = function(key) {
-                        $scope.settings.remove(key);
-                        $.ajax({
-                            url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + key,
-                            type: 'POST',
-                            cache: false,
-                            data: '',
-                            contentType: 'application/json',
-                            success: function () {
-                            }
-                        });
+                        var shouldContinue = true;
+                        var value = $scope.predeleteFunction(key);
 
-                        $scope.$emit('deleteOccurred');
+                        if (value !== undefined) {
+                            shouldContinue = false;
+                        }
 
+                        if (shouldContinue) {
+                            $scope.settings.remove(key);
+                            $.ajax({
+                                url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + key,
+                                type: 'POST',
+                                cache: false,
+                                data: '',
+                                contentType: 'application/json',
+                                success: function () {
+                                }
+                            });
+
+                            $scope.$emit('deleteOccurred');
+                        }
                     };
 
                     $scope.showDetailsModal = function(setting) {

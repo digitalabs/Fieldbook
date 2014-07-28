@@ -42,7 +42,7 @@
                 // if still needed to ask for confirmation, return value of modal popup
                 // else return false
             	var modalInstance = null;
-            	if (hasData) {
+            	if (hasData === '1') {
             		modalInstance = $modal.open({
 	                    templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
 	                    controller: 'ConfirmModalController',

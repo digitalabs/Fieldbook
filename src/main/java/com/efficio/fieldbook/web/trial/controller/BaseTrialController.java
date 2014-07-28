@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -473,6 +474,28 @@ public abstract class BaseTrialController extends SettingsController {
         TrialSettingsBean trialSettingsBean = new TrialSettingsBean();
         trialSettingsBean.setUserInput(trialValues);
         info.setData(trialSettingsBean);
+        return info;
+    }
+
+    protected TabInfo prepareExpDesignTabInfo() throws MiddlewareQueryException{
+        TabInfo info = new TabInfo();
+        ExpDesignData data = new ExpDesignData();
+        List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();
+
+        List<Integer> ids = buildVariableIDList(AppConstants.CREATE_TRIAL_EXP_DESIGN_DEFAULT_FIELDS.getString());
+        for(Integer id : ids){
+            //PLOT, REP, BLOCK, ENTRY NO
+            StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(id);
+            SettingVariable svar = new SettingVariable();
+            svar.setCvTermId(id);
+            svar.setName(stdvar.getName());
+            ExpDesignDataDetail dataDetail = new ExpDesignDataDetail(AppConstants.getString(id+AppConstants.LABEL.getString()), svar);
+            detailList.add(dataDetail);
+
+        }
+        data.setExpDesignDetailList(detailList);
+        info.setData(data);
+
         return info;
     }
 }

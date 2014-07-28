@@ -76,9 +76,11 @@
                 controller : function($scope, $element, $attrs) {
                     $scope.removeSetting = function(key) {
                         var shouldContinue = true;
-                        var value = $scope.predeleteFunction(key);
+                        var value = $scope.predeleteFunction({
+                        	variableType : $attrs.variableType, 
+                        	key : key});
 
-                        if (value !== undefined) {
+                        if (value !== undefined && value === false) {
                             shouldContinue = false;
                         }
 

@@ -26,25 +26,44 @@
                 }
             });
 
-            $scope.predeleteFunction = function(key) {
+            $scope.predeleteFunction = function(variableType, key) {
+            	var hasData = false;
                 // do AJAX stuff here
+            	$.ajax({
+            		url : "/Fieldbook/manageSettings/checkMeasurementData/" + variableType + "/" + key,
+	        		cache : false,
+	        		type : "GET",
+	        		async : false,
+	        		success : function(data) {
+	        			hasData = data.hasMeasurementData;
+	        		}
+                });
+            	
                 // if still needed to ask for confirmation, return value of modal popup
                 // else return false
-                var modalInstance = $modal.open({
-                    templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
-                    controller: 'ConfirmModalController',
-                    resolve: {
-                        MODAL_TITLE: function () {
-                            return modalConfirmationTitle;
-                        },
-                        MODAL_TEXT: function () {
-                            return environmentModalConfirmationText;
-                        },
-                        BUTTON_CONFIRM_LABEL : function() {
-                            return environmentConfirmLabel;
-                        }
-                    }
-                });
+            	var modalInstance = null;
+            	if (hasData) {
+            		modalInstance = $modal.open({
+	                    templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
+	                    controller: 'ConfirmModalController',
+	                    resolve: {
+	                        MODAL_TITLE: function () {
+	                            return modalConfirmationTitle;
+	                        },
+	                        MODAL_TEXT: function () {
+	                            return environmentModalConfirmationText;
+	                        },
+	                        CONFIRM_BUTTON_LABEL : function() {
+	                            return environmentConfirmLabel;
+	                        }
+	                    }
+            		});
+            		modalInstance.result.then(function(shouldContinue) {
+                        return shouldContinue;
+                    });
+            	} else {
+            		return true;
+            	}                
             };
 
             $scope.isHideDelete = false;

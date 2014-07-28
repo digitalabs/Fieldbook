@@ -10,6 +10,8 @@ import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
@@ -19,6 +21,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -370,6 +373,36 @@ public class ManageSettingsController extends SettingsController{
                 iter.remove();
             }
         }
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/checkMeasurementData/{mode}/{variableId}", method = RequestMethod.GET)
+    public Map<String, String> checkMeasurementData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
+            @PathVariable int mode, @PathVariable int variableId) {
+        Map<String, String> resultMap = new HashMap<String, String>();
+        boolean hasData = false;
+        
+        //if there are measurement rows, check if values are already entered
+        if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+            if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
+                for (MeasurementRow row: userSelection.getMeasurementRowList()) {
+                    for (MeasurementData data: row.getDataList()) {
+                        if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
+                            hasData = true;
+                            break;
+                        }
+                    }
+                    if (hasData) break;
+                }
+            }
+        }
+
+        if (hasData)
+            resultMap.put("hasMeasurementData", "1");
+        else 
+            resultMap.put("hasMeasurementData", "0");
+        
+        return resultMap;
     }
 
     @Override

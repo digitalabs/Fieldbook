@@ -214,6 +214,9 @@ public class OpenTrialController extends
         if (userSelection.getTrialLevelVariableList() == null) {
             userSelection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
         }
+        if (userSelection.getTreatmentFactors() == null) {
+            userSelection.setTreatmentFactors(new ArrayList<SettingDetail>());
+        }
         
         //include deleted list if measurements are available
         SettingsUtil.addDeletedSettingsList(combinedList, userSelection.getDeletedStudyLevelConditions(), 
@@ -226,6 +229,7 @@ public class OpenTrialController extends
             userSelection.getNurseryConditions());
         SettingsUtil.addDeletedSettingsList(null, userSelection.getDeletedTrialLevelVariables(), 
             userSelection.getTrialLevelVariableList());
+        SettingsUtil.addDeletedSettingsList(null, userSelection.getDeletedTreatmentFactors(), userSelection.getTreatmentFactors());
 
         String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
         

@@ -115,6 +115,9 @@ public class UserSelection implements Serializable {
     /** The deleted trial level variables. */
     private List<SettingDetail> deletedTrialLevelVariables;
     
+    /** The deleted treatment factors. */
+    private List<SettingDetail> deletedTreatmentFactors;
+    
     /** The change details. */
     private List<GermplasmChangeDetail> changeDetails;
     
@@ -828,4 +831,21 @@ public class UserSelection implements Serializable {
 			this.measurementDatasetVariable = measurementDatasetVariable;
 		}
         
+        /**
+         * Gets the deleted treatment factors.
+         *
+         * @return the deleted treatment factors
+         */
+        public List<SettingDetail> getDeletedTreatmentFactors() {
+            return deletedTreatmentFactors;
+        }
+
+        /**
+         * Sets the deleted treatment factors.
+         *
+         * @param deletedTreatmentFactors the new deleted treatment factors
+         */
+        public void setDeletedTreatmentFactors(List<SettingDetail> deletedTreatmentFactors) {
+            this.deletedTreatmentFactors = deletedTreatmentFactors;
+        }
  }

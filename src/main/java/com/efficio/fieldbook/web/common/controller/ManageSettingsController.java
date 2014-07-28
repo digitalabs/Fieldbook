@@ -5,10 +5,15 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
+
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -17,6 +22,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -188,12 +196,16 @@ public class ManageSettingsController extends SettingsController{
             List<SettingDetail> settingsList = new ArrayList<SettingDetail>();
             if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
                 settingsList = userSelection.getDeletedStudyLevelConditions();
-            } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            } else if (mode == AppConstants.SEGMENT_PLOT.getInt() || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
                 settingsList = userSelection.getDeletedPlotLevelList();
             } else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()){
                 settingsList = userSelection.getDeletedBaselineTraitsList();
             } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()){
                 settingsList = userSelection.getDeletedNurseryConditions();
+            } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+                settingsList = userSelection.getDeletedTreatmentFactors();
+            } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+                settingsList = userSelection.getDeletedTrialLevelVariables();
             }
 
             Operation operation = Operation.ADD;
@@ -225,14 +237,14 @@ public class ManageSettingsController extends SettingsController{
             List<SettingDetail> newList = new ArrayList<SettingDetail>();
 
             if(userSelection.getBaselineTraitsList() != null){
-	            for (SettingDetail setting : userSelection.getBaselineTraitsList()) {
-	                newList.add(setting);
-	            }
+                for (SettingDetail setting : userSelection.getBaselineTraitsList()) {
+                    newList.add(setting);
+                }
             }
             if(userSelection.getNurseryConditions() != null){
-	            for (SettingDetail setting : userSelection.getNurseryConditions()) {
-	                newList.add(setting);
-	            }
+                for (SettingDetail setting : userSelection.getNurseryConditions()) {
+                    newList.add(setting);
+                }
             }
             return newList;
         } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
@@ -295,12 +307,21 @@ public class ManageSettingsController extends SettingsController{
 
         return "";
     }
-
+    
     private void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId) {
         SettingDetail newSetting = null;
         for (SettingDetail setting : currentList) {
             if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
                 newSetting = setting;
+            }
+        }
+        
+        if (newSetting == null) {
+            try {
+                newSetting = createSettingDetail(variableId, "");
+                newSetting.getVariable().setOperation(Operation.UPDATE);
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage());
             }
         }
 
@@ -334,6 +355,11 @@ public class ManageSettingsController extends SettingsController{
                 userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
             }
             userSelection.getDeletedTrialLevelVariables().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+            if (userSelection.getDeletedTreatmentFactors() == null) {
+                userSelection.setDeletedTreatmentFactors(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedTreatmentFactors().add(newSetting);
         }
     }
 

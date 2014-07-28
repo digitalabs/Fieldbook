@@ -14,7 +14,6 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -278,6 +277,22 @@ public class ManageSettingsController extends SettingsController{
             addVariableInDeletedList(userSelection.getTrialLevelVariableList(), mode, variableId);
             deleteVariableInSession(userSelection.getTrialLevelVariableList(), variableId);
         }
+        return "";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteTreatmentFactorVariable", method = RequestMethod.POST)
+    public String deleteTreatmentFactorVariable(@RequestBody Map<String, Integer> ids){
+        Integer levelID = ids.get("levelID");
+        Integer valueID = ids.get("valueID");
+        if (levelID != null && levelID != 0) {
+            deleteVariable(AppConstants.SEGMENT_TREATMENT_FACTORS.getInt(), levelID);
+        }
+
+        if (valueID != null && valueID != 0) {
+            deleteVariable(AppConstants.SEGMENT_TREATMENT_FACTORS.getInt(), valueID);
+        }
+
         return "";
     }
 

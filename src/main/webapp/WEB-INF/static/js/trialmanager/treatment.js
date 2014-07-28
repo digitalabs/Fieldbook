@@ -173,7 +173,11 @@
         };
 
         $scope.performDelete = function(key) {
-            $http.post('/Fieldbook/manageSettings/deleteVariable/5/' + key).then(function () {
+            var numericKey = parseInt(key, 10);
+            $http.post('/Fieldbook/manageSettings/deleteTreatmentFactorVariable', {
+                levelID : numericKey,
+                valueID : $scope.data.currentData[key].variableId ? $scope.data.currentData[key].variableId : 0
+            }).then(function () {
                 $scope.settings.details.remove(key);
                 delete $scope.data.currentData[key];
                 TrialManagerDataService.indicateUnappliedChangesAvailable();

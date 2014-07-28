@@ -21,7 +21,7 @@
 
                             <tbody>
                             <tr ng-repeat="(key,value) in data.currentData track by key">
-                                <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' style="cursor: pointer" ng-click="disableTreatment || performDelete(key)"></span>
+                                <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' style="cursor: pointer" ng-click="disableTreatment || performDelete(key)" ng-hide="disableTreatment"></span>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}"><a show-details-modal="key" >{{settings.details.val(key).variable.name}}</a>
                                 </td>

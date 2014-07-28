@@ -50,6 +50,10 @@
                 TrialManagerDataService.indicateUnappliedChangesAvailable(true);
             };
 
+            $scope.germplasmListCleared = function() {
+                TrialManagerDataService.indicateUnappliedChangesAvailable(false);
+            }
+
             $scope.openGermplasmTree = function() {
                 openListTree(1, $scope.germplasmListSelected);
             };

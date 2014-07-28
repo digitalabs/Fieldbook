@@ -1232,6 +1232,10 @@ input::-ms-clear {
     padding-right: 10px;
 }
 
+[ng-multi-transclude-controller] [collapse] {
+    width: 100%;
+}
+
 .reduce-padding {
     padding: 0 6px;
 }

@@ -399,11 +399,11 @@ public class OpenTrialController extends
         	workbook = userSelection.getTemporaryWorkbook();
         }
         List<MeasurementVariable> variates = workbook.getVariates();
-        List<MeasurementVariable> measurementDatasetVariables = new ArrayList();
+        List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
         measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariables());  
         //we show only traits that are being passed by the frontend
         String traitsListCsv = request.getParameter("traitsList");
-    	List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList();
+    	List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
     	if(traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)){    		    		
     		if(measurementDatasetVariables != null && !measurementDatasetVariables.isEmpty()){
 				for(MeasurementVariable var : measurementDatasetVariables){
@@ -418,7 +418,9 @@ public class OpenTrialController extends
 	    			MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
 	    			if(currentVar == null){
 		    			StandardVariable var = fieldbookMiddlewareService.getStandardVariable(id);
-		    			newMeasurementDatasetVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD));
+		    			MeasurementVariable newVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD);
+		    			newVar.setFactor(false);
+		    			newMeasurementDatasetVariables.add(newVar);
 	    			}else{
 	    				newMeasurementDatasetVariables.add(currentVar);
 	    			}

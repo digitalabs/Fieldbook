@@ -159,7 +159,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					if(replicationCount <= 1 || replicationCount >= 13){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.replication.count.resolvable.error", null, locale));
-					}else if( blockSize < 1 ){
+					}else if( blockSize <= 1 ){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.block.size.should.be.a.greater.than.1", null, locale));
 					}else if( treatmentSize % blockSize != 0 ){

@@ -10,7 +10,7 @@ import java.util.Map;
  * Time: 5:14 PM
  */
 public class BasicDetails implements TabInfoBean{
-    private Map<Integer, String> basicDetails;
+    private Map<String, String> basicDetails;
 
     private Integer folderId;
     private String folderName;
@@ -20,14 +20,14 @@ public class BasicDetails implements TabInfoBean{
     private Integer studyID;
 
     public BasicDetails() {
-        basicDetails = new HashMap<Integer, String>();
+        basicDetails = new HashMap<String, String>();
     }
 
-    public Map<Integer, String> getBasicDetails() {
+    public Map<String, String> getBasicDetails() {
         return basicDetails;
     }
 
-    public void setBasicDetails(Map<Integer, String> basicDetails) {
+    public void setBasicDetails(Map<String, String> basicDetails) {
         this.basicDetails = basicDetails;
     }
 

@@ -252,7 +252,7 @@ public class SettingsUtil {
         }
     }
 
-    protected static List<TreatmentFactor> processTreatmentFactorItems(List<SettingDetail> treatmentFactorDetails, Map<Integer, TreatmentFactorData> treatmentFactorItems, List<Factor> factorList,
+    protected static List<TreatmentFactor> processTreatmentFactorItems(List<SettingDetail> treatmentFactorDetails, Map<String, TreatmentFactorData> treatmentFactorItems, List<Factor> factorList,
                                                                        UserSelection userSelection, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
         List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
         if (treatmentFactorItems != null && treatmentFactorDetails != null) {
@@ -265,7 +265,7 @@ public class SettingsUtil {
                 levelFactor.setOperation(detail.getVariable().getOperation());
                 levelFactor.setTreatmentLabel(levelVariable.getName());
 
-                TreatmentFactorData data = treatmentFactorItems.get(termId);
+                TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
                                         /*StandardVariable valueVariable = getStandardVariable(data.getPairVariable().get(TreatmentFactorData.PAIR_VARIABLE_ID_KEY),
                                                 userSelection, fieldbookMiddlewareService);*/
                 
@@ -309,7 +309,7 @@ public class SettingsUtil {
     public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                         String name, List<SettingDetail> studyLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList,
                                                         UserSelection userSelection, List<SettingDetail> trialLevelVariablesList, List<SettingDetail> treatmentFactorDetails,
-                                                        Map<Integer, TreatmentFactorData> treatmentFactorItems,
+                                                        Map<String, TreatmentFactorData> treatmentFactorItems,
                                                         List<SettingDetail> nurseryConditions, List<SettingDetail> trialLevelConditions, boolean fromNursery) {
 
         // this block is necessary for the previous nursery code because the setting details passed in from nursery are mostly empty except for properties

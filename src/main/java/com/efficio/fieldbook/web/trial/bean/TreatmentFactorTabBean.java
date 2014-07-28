@@ -10,17 +10,17 @@ import java.util.Map;
  * Time: 6:04 PM
  */
 public class TreatmentFactorTabBean implements TabInfoBean{
-    public Map<Integer, TreatmentFactorData> currentData;
+    public Map<String, TreatmentFactorData> currentData;
 
     public TreatmentFactorTabBean() {
-        currentData = new HashMap<Integer, TreatmentFactorData>();
+        currentData = new HashMap<String, TreatmentFactorData>();
     }
 
-    public Map<Integer, TreatmentFactorData> getCurrentData() {
+    public Map<String, TreatmentFactorData> getCurrentData() {
         return currentData;
     }
 
-    public void setCurrentData(Map<Integer, TreatmentFactorData> currentData) {
+    public void setCurrentData(Map<String, TreatmentFactorData> currentData) {
         this.currentData = currentData;
     }
 }

@@ -300,7 +300,7 @@
                     }
 
                     if ($scope.totalGermplasmEntryListCount <= 0) {
-                        showErrorMessage('page-message', 'No germplasm list found');
+                        showErrorMessage('page-message', EXP_DESIGN_MSGS[26]);
                         return false;
                     }
 

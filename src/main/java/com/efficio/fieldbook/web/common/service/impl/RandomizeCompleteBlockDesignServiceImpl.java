@@ -118,14 +118,14 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			treatmentFactor.add(stdvarTreatment.getName());
 			levels.add(Integer.toString(germplasmList.size()));
 			
-			StandardVariable stdvarRep = null;				
+			StandardVariable stdvarBlock = null;				
 			StandardVariable stdvarPlot = null;
 			
 			List<StandardVariable> reqVarList = getRequiredVariable();
 			
 			for(StandardVariable var : reqVarList){
-				if(var.getId() == TermId.REP_NO.getId()){
-					stdvarRep = var;
+				if(var.getId() == TermId.BLOCK_NO.getId()){
+					stdvarBlock = var;
 				}else if(var.getId() == TermId.PLOT_NO.getId()){
 					stdvarPlot = var;
 				}
@@ -133,7 +133,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			
 			
 			MainDesign mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign(block, 
-					stdvarRep.getName(), stdvarPlot.getName(),
+					stdvarBlock.getName(), stdvarPlot.getName(),
 				treatmentFactor, levels, "1", "");
 			
 			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, trialVariables, factors,
@@ -156,7 +156,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {		
 			//StandardVariable stdvarTreatment = fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
-			StandardVariable stdvarRep = fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());				
+			StandardVariable stdvarRep = fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId());				
 			StandardVariable stdvarPlot = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
 			
 			varList.add(stdvarRep);

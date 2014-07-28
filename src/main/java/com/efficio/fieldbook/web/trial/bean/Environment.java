@@ -14,29 +14,29 @@ public class Environment{
     private long locationId;
     private long experimentId;
 
-    private Map<Integer, String> managementDetailValues;
-    private Map<Integer, String> trialDetailValues;
-    private Map<Integer, Integer> phenotypeIDMap;
+    private Map<String, String> managementDetailValues;
+    private Map<String, String> trialDetailValues;
+    private Map<String, Integer> phenotypeIDMap;
 
     public Environment() {
-        managementDetailValues = new HashMap<Integer, String>();
-        trialDetailValues = new HashMap<Integer, String>();
-        phenotypeIDMap = new HashMap<Integer, Integer>();
+        managementDetailValues = new HashMap<String, String>();
+        trialDetailValues = new HashMap<String, String>();
+        phenotypeIDMap = new HashMap<String, Integer>();
     }
 
-    public Map<Integer, String> getManagementDetailValues() {
+    public Map<String, String> getManagementDetailValues() {
         return managementDetailValues;
     }
 
-    public void setManagementDetailValues(Map<Integer, String> managementDetailValues) {
+    public void setManagementDetailValues(Map<String, String> managementDetailValues) {
         this.managementDetailValues = managementDetailValues;
     }
 
-    public Map<Integer, String> getTrialDetailValues() {
+    public Map<String, String> getTrialDetailValues() {
         return trialDetailValues;
     }
 
-    public void setTrialDetailValues(Map<Integer, String> trialDetailValues) {
+    public void setTrialDetailValues(Map<String, String> trialDetailValues) {
         this.trialDetailValues = trialDetailValues;
     }
 
@@ -64,11 +64,11 @@ public class Environment{
         this.experimentId = experimentId;
     }
 
-    public Map<Integer, Integer> getPhenotypeIDMap() {
+    public Map<String, Integer> getPhenotypeIDMap() {
         return phenotypeIDMap;
     }
 
-    public void setPhenotypeIDMap(Map<Integer, Integer> phenotypeIDMap) {
+    public void setPhenotypeIDMap(Map<String, Integer> phenotypeIDMap) {
         this.phenotypeIDMap = phenotypeIDMap;
     }
 }

@@ -85,7 +85,7 @@
                 var options = _.filter($scope.settings.treatmentLevelPairs[key].vals(), function (entry) {
                     var found = false;
                     angular.forEach($scope.data.currentData, function (value, key2) {
-                        if (key === key2) {
+                        if (key == key2) {
                             return true;
                         }
 

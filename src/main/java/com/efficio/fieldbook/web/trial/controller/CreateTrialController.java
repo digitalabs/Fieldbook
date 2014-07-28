@@ -353,13 +353,13 @@ public class CreateTrialController extends BaseTrialController {
     }
 
     protected TabInfo prepareBasicDetailsTabInfo() throws MiddlewareQueryException{
-        Map<Integer, String> basicDetails = new HashMap<Integer, String>();
+        Map<String, String> basicDetails = new HashMap<String, String>();
         List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
         List<Integer> initialSettingIDs = buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
 
         for (Integer initialSettingID : initialSettingIDs) {
             try {
-                basicDetails.put(initialSettingID, "");
+                basicDetails.put(initialSettingID.toString(), "");
                 SettingDetail detail = createSettingDetail(initialSettingID, null);
                 initialDetailList.add(detail);
             } catch (MiddlewareQueryException e) {

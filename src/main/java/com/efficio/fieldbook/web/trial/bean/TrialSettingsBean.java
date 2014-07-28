@@ -10,17 +10,17 @@ import java.util.Map;
  * Time: 5:32 PM
  */
 public class TrialSettingsBean implements TabInfoBean{
-    private Map<Integer, String> userInput;
+    private Map<String, String> userInput;
 
     public TrialSettingsBean() {
-        userInput = new HashMap<Integer, String>();
+        userInput = new HashMap<String, String>();
     }
 
-    public Map<Integer, String> getUserInput() {
+    public Map<String, String> getUserInput() {
         return userInput;
     }
 
-    public void setUserInput(Map<Integer, String> userInput) {
+    public void setUserInput(Map<String, String> userInput) {
         this.userInput = userInput;
     }
 }

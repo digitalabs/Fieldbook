@@ -21,17 +21,17 @@
 
                             <tbody>
                             <tr ng-repeat="(key,value) in data.currentData track by key">
-                                <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' style="cursor: pointer" ng-click="performDelete(key)"></span>
+                                <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' style="cursor: pointer" ng-click="disableTreatment || performDelete(key)"></span>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}"><a show-details-modal="key" >{{settings.details.val(key).variable.name}}</a>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">{{settings.details.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
                                     <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='data.currentData[key].levels'
-                                           ng-change='onLevelChange(key,data.currentData[key].levels)'/>
+                                           ng-change='onLevelChange(key,data.currentData[key].levels)' ng-disabled="disableTreatment"/>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">
-                                    <input type="hidden" ui-select2="generateDropdownOption(key)" class="form-control" ng-model="data.currentData[key].variableId"/>
+                                    <input type="hidden" ui-select2="generateDropdownOption(key)" class="form-control" ng-model="data.currentData[key].variableId" ng-disabled="disableTreatment"/>
                                 </td>
                             </tr>
 
@@ -102,7 +102,7 @@
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">{{settings.details.val(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
                                         <show-setting-form-element settings="settings.details" targetkey="{{$index}}" settingkey="{{key}}" changefunction="onLabelChange()"
-                                                                   valuecontainer="data.currentData[key].labels" use-exact-properties="true"></show-setting-form-element>
+                                                                   valuecontainer="data.currentData[key].labels" use-exact-properties="true" disabled="disableTreatment"></show-setting-form-element>
                                     </td>
                                 </tr>
 

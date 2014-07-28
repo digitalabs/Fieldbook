@@ -241,7 +241,8 @@
                     targetkey : '@targetkey',
                     settingkey : '@',
                     valuecontainer : '=',
-                    changefunction : '&'
+                    changefunction : '&',
+                    disabled : '='
                 },
 
                 templateUrl:  '/Fieldbook/static/angular-templates/showSettingFormElement.html',

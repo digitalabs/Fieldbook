@@ -12,6 +12,9 @@
     manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q', '$http',
         function ($scope, TrialManagerDataService, _, $q, $http) {
 
+
+        $scope.disableTreatment = TrialManagerDataService.trialMeasurement.hasMeasurement;
+
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
         $scope.data = TrialManagerDataService.currentData.treatmentFactors;
 

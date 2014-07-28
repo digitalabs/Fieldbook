@@ -2,18 +2,23 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -32,9 +37,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -382,6 +389,54 @@ public class OpenTrialController extends
         model.addAttribute("isExpDesignPreview", "1");
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
     }
+    @RequestMapping(value="/load/dynamic/change/measurement", method = RequestMethod.POST)
+    public String loadDynamicChangeMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
+    		Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    	boolean isInPreviewMode = false;
+        Workbook workbook = userSelection.getWorkbook();
+        if(userSelection.getTemporaryWorkbook() != null){
+        	isInPreviewMode = true;
+        	workbook = userSelection.getTemporaryWorkbook();
+        }
+        List<MeasurementVariable> variates = workbook.getVariates();
+        List<MeasurementVariable> measurementDatasetVariables = new ArrayList();
+        measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariables());  
+        //we show only traits that are being passed by the frontend
+        String traitsListCsv = request.getParameter("traitsList");
+    	List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList();
+    	if(traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)){    		    		
+    		if(measurementDatasetVariables != null && !measurementDatasetVariables.isEmpty()){
+				for(MeasurementVariable var : measurementDatasetVariables){
+					if(var.isFactor()){
+						newMeasurementDatasetVariables.add(var);
+					}
+				}
+				
+				StringTokenizer token = new StringTokenizer(traitsListCsv, ",");        		
+	    		while(token.hasMoreTokens()){
+	    			int id = Integer.valueOf(token.nextToken());
+	    			MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
+	    			if(currentVar == null){
+		    			StandardVariable var = fieldbookMiddlewareService.getStandardVariable(id);
+		    			newMeasurementDatasetVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD));
+	    			}else{
+	    				newMeasurementDatasetVariables.add(currentVar);
+	    			}
+	    		}
+	    		measurementDatasetVariables = newMeasurementDatasetVariables;
+    		}
+    	}        	
+        	
+        
+        List<MeasurementRow> observations = workbook.getObservations();
+        Integer measurementDatasetId = workbook.getMeasurementDatesetId();
+        userSelection.setMeasurementRowList(workbook.getObservations());
+        if(isInPreviewMode){
+        	model.addAttribute("isExpDesignPreview", "1");
+        }
+        
+        return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
+    }
     
     
     private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, List<MeasurementVariable> measurementDatasetVariables, List<MeasurementRow> observations, Integer measurementDatasetId,  List<MeasurementVariable> variates, Model model) throws MiddlewareQueryException{
@@ -396,7 +451,8 @@ public class OpenTrialController extends
         	form.setMeasurementDataExisting(false);
         }
         
-        form.setMeasurementVariables(measurementDatasetVariables);        
+        form.setMeasurementVariables(measurementDatasetVariables);     
+        userSelection.setMeasurementDatasetVariable(measurementDatasetVariables);
         
         model.addAttribute("createNurseryForm", form);
         

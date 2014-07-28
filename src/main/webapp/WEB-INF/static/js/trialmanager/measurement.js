@@ -33,10 +33,29 @@
             
             $scope.$on('deleteOccurred', function() {
                 $scope.updateOccurred = true;
+                $scope.reloadMeasurementPage();
             });
 
             $scope.$on('variableAdded', function() {
                 $scope.updateOccurred = true;
+                $scope.reloadMeasurementPage();
             });
+            
+            $scope.reloadMeasurementPage = function(){
+            	
+            	if($('#measurement-table').length !== 0){
+            		//we reload            	
+            		$.ajax({
+            	        url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
+            	        type: 'POST',
+            	        data: 'traitsList='+TrialManagerDataService.settings.measurements.m_keys,
+            	        cache: false,
+            	        success: function (html) {
+            	            $('#measurementsDiv').html(html);
+            	            $('body').data('needToSave', '1');
+            	        }
+            	    });	
+            	}
+            };
         }]);
 })();

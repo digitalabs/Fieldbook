@@ -300,6 +300,7 @@
                                         displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                             service.trialMeasurement.count);
                                         service.applicationData.unsavedGeneratedDesign = false;
+                                        $('body').data('needToSave', '0');
                                     });
                                 });
                         } else {
@@ -315,6 +316,7 @@
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
                                     service.applicationData.unsavedGeneratedDesign = false;
+                                    $('body').data('needToSave', '0');
                                   });
 							}
                             else if (service.trialMeasurement.count >  0 && parseInt($('.germplasm-list-items tbody tr').length) === 0) {
@@ -326,6 +328,7 @@
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
                                     service.applicationData.unsavedGeneratedDesign = false;
+                                    $('body').data('needToSave', '0');
                                 });
                             }
                             else {
@@ -339,6 +342,7 @@
                                             displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                                                     service.trialMeasurement.count);
                                             service.applicationData.unsavedGeneratedDesign = false;
+                                            $('body').data('needToSave', '0');
                                         });
                                     });
                             }

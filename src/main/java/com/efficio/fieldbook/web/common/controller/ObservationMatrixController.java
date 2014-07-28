@@ -265,6 +265,14 @@ public class ObservationMatrixController extends
 				displayVal += suffix;
 			dataMap.put(data.getMeasurementVariable().getName(), displayVal);
 		}
+		UserSelection userSelection = getUserSelection(false);
+		if(userSelection != null && userSelection.getMeasurementDatasetVariable() != null && !userSelection.getMeasurementDatasetVariable().isEmpty()){
+			for(MeasurementVariable var : userSelection.getMeasurementDatasetVariable()){
+				if(!dataMap.containsKey(var.getName())){
+					dataMap.put(var.getName(), "");
+				}
+			}
+		}
 		return dataMap;
     }
 }

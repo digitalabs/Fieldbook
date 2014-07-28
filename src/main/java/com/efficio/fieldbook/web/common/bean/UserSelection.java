@@ -19,6 +19,7 @@ import java.util.Map;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
@@ -140,6 +141,7 @@ public class UserSelection implements Serializable {
     
     /** The measurement row list. */
     private List<MeasurementRow> measurementRowList;
+    private List<MeasurementVariable> measurementDatasetVariable;
     
 	
 	/**
@@ -816,4 +818,14 @@ public class UserSelection implements Serializable {
         public void setDeletedTrialLevelVariables(List<SettingDetail> deletedTrialLevelVariables) {
             this.deletedTrialLevelVariables = deletedTrialLevelVariables;
         }
+
+		public List<MeasurementVariable> getMeasurementDatasetVariable() {
+			return measurementDatasetVariable;
+		}
+
+		public void setMeasurementDatasetVariable(
+				List<MeasurementVariable> measurementDatasetVariable) {
+			this.measurementDatasetVariable = measurementDatasetVariable;
+		}
+        
  }

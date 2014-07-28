@@ -87,8 +87,13 @@
 
             .state('createMeasurements', {
                 url: '/createMeasurements',
-                templateUrl: '/Fieldbook/TrialManager/createTrial/measurements',
-                controller: 'MeasurementsCtrl'
+                views: {
+                    'createMeasurements': {
+                        controller: 'MeasurementsCtrl',
+                        templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
+                    }
+                },
+                deepStateRedirect: true, sticky: true
             })
 
             .state('editMeasurements', {

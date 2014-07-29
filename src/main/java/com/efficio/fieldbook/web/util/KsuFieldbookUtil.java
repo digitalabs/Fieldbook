@@ -17,11 +17,15 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvWriter;
 
 public class KsuFieldbookUtil {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KsuFieldbookUtil.class);
+	
 	private static final String PLOT_ID = "plot_id";
 	private static final String RANGE = "range";
 	private static final String PLOT = "plot";
@@ -130,8 +134,7 @@ public class KsuFieldbookUtil {
 		return labels;
 	}
 	
-	public static void writeTraits(List<MeasurementVariable> traits, String filenamePath, FieldbookService fieldbookMiddlewareService, OntologyService ontologyService)
-	throws IOException {
+	public static void writeTraits(List<MeasurementVariable> traits, String filenamePath, FieldbookService fieldbookMiddlewareService, OntologyService ontologyService) {
 		
         new File(filenamePath).exists();
         CsvWriter csvWriter = null;
@@ -146,7 +149,10 @@ public class KsuFieldbookUtil {
             	csvWriter.endRecord();
             }
 
-        } finally {
+		} catch (IOException e) {
+            LOG.error("ERROR in KSU CSV Export Study", e);
+
+		} finally {
         	if (csvWriter != null) {
         		csvWriter.close();
         	}

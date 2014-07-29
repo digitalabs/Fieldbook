@@ -100,7 +100,7 @@ public class OpenTrialController extends
     }
 
     @RequestMapping(value = "/treatment", method = RequestMethod.GET)
-    public String showTreatmentFactors(Model model, HttpSession session, HttpServletRequest req) {
+    public String showTreatmentFactors(Model model) {
         return showAjaxPage(model, URL_TREATMENT);
     }
 
@@ -118,7 +118,7 @@ public class OpenTrialController extends
 	    Integer measurementDatasetId = null;
         if (workbook != null) {
         	
-        	if(workbook != null && workbook.getMeasurementDatesetId() != null){
+        	if(workbook.getMeasurementDatesetId() != null){
         		measurementDatasetId = workbook.getMeasurementDatesetId(); 
         	}
         	
@@ -333,9 +333,7 @@ public class OpenTrialController extends
     @ModelAttribute("nameTypes")
     public List<UserDefinedField> getNameTypes(){
         try {
-            List<UserDefinedField> nameTypes = fieldbookMiddlewareService.getGermplasmNameTypes();
-            
-            return nameTypes;
+            return fieldbookMiddlewareService.getGermplasmNameTypes();
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -348,13 +346,11 @@ public class OpenTrialController extends
      *
      * @param form the form
      * @param model the model
-     * @param session the session
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(value="/recreate/session/variables", method = RequestMethod.GET)
-    public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
-            HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException{
         Workbook workbook = userSelection.getWorkbook();
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
         
@@ -367,13 +363,11 @@ public class OpenTrialController extends
      *
      * @param form the form
      * @param model the model
-     * @param session the session
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(value="/load/measurement", method = RequestMethod.GET)
-    public String loadMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
-            HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    public String loadMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException{
         Workbook workbook = userSelection.getWorkbook();
         List<MeasurementVariable> variates = workbook.getVariates();
         List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariablesView();
@@ -384,8 +378,7 @@ public class OpenTrialController extends
     }
     
     @RequestMapping(value="/load/preview/measurement", method = RequestMethod.GET)
-    public String loadPreviewMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
-            HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    public String loadPreviewMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException{
         Workbook workbook = userSelection.getTemporaryWorkbook();
         List<MeasurementVariable> variates = workbook.getVariates();
         List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariables();        
@@ -397,7 +390,7 @@ public class OpenTrialController extends
     }
     @RequestMapping(value="/load/dynamic/change/measurement", method = RequestMethod.POST)
     public String loadDynamicChangeMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
-    		Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    		Model model, HttpServletRequest request) throws MiddlewareQueryException{
     	boolean isInPreviewMode = false;
         Workbook workbook = userSelection.getWorkbook();
         if(userSelection.getTemporaryWorkbook() != null){
@@ -411,7 +404,7 @@ public class OpenTrialController extends
         String traitsListCsv = request.getParameter("traitsList");
     	List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
     	    		    		
-    		if(measurementDatasetVariables != null && !measurementDatasetVariables.isEmpty()){
+    		if(!measurementDatasetVariables.isEmpty()){
 				for(MeasurementVariable var : measurementDatasetVariables){
 					if(var.isFactor()){
 						newMeasurementDatasetVariables.add(var);

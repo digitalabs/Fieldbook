@@ -163,6 +163,12 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		// fill the StandardVariableMap - keyed by svId
     		for (StandardVariableSummary standardVariable : standardVariables) {
 				svMap.put(Integer.valueOf(standardVariable.getId()), standardVariable);
+				for (StandardVariableReference ref : stdVars) {
+					if (ref.getId().equals(standardVariable.getId())) {
+						standardVariable.setHasPair(ref.isHasPair());
+						break;
+					}
+				}
 			}
     		
     		// property trees are designed to facade a PropertyReference, a TraitClassReference and a list of StandardVariables

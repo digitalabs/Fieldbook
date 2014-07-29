@@ -211,7 +211,8 @@
                 },
                 applicationData: {
                     unappliedChangesAvailable: false,
-                    unsavedGeneratedDesign : false
+                    unsavedGeneratedDesign : false,
+                    unsavedTraitsAvailable : false
                 },
 
                 // settings that has special data structure
@@ -307,6 +308,7 @@
                                         displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                             service.trialMeasurement.count);
                                         service.applicationData.unsavedGeneratedDesign = false;
+                                        service.applicationData.unsavedTraitsAvailable = false;
                                         $('body').data('needToSave', '0');
                                     });
                                 });
@@ -323,6 +325,7 @@
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
                                     service.applicationData.unsavedGeneratedDesign = false;
+                                    service.applicationData.unsavedTraitsAvailable = false;
                                     $('body').data('needToSave', '0');
                                   });
 							}
@@ -335,6 +338,7 @@
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
                                     service.applicationData.unsavedGeneratedDesign = false;
+                                    service.applicationData.unsavedTraitsAvailable = false;
                                     $('body').data('needToSave', '0');
                                 });
                             }
@@ -349,6 +353,7 @@
                                             displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                                                     service.trialMeasurement.count);
                                             service.applicationData.unsavedGeneratedDesign = false;
+                                            service.applicationData.unsavedTraitsAvailable = false;
                                             $('body').data('needToSave', '0');
                                         });
                                     });

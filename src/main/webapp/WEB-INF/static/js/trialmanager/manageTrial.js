@@ -212,7 +212,8 @@
 
             $scope.displayMeasurementOnlyActions = function () {
                 return TrialManagerDataService.trialMeasurement.count &&
-                    TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign;
+                    TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&
+                    !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
             };
 
             $scope.performFunctionOnTabChange = function (targetState) {

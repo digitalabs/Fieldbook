@@ -78,11 +78,13 @@
                 $scope.$on('deleteOccurred', function () {
                     $scope.updateOccurred = true;
                     $scope.reloadMeasurementPage();
+                    TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
                 });
 
                 $scope.$on('variableAdded', function () {
                     $scope.updateOccurred = true;
                     $scope.reloadMeasurementPage();
+                    TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
                 });
 
                 $scope.reloadMeasurementPage = function () {

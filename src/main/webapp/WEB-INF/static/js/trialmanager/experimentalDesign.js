@@ -189,7 +189,7 @@
                             }
 
                             if ($scope.totalGermplasmEntryListCount % $scope.currentDesignType.data.blockSize > 0) {
-                                showErrorMessage('page-message', EXP_DESIGN_MSGS[19]);
+                                showErrorMessage('page-message', EXP_DESIGN_MSGS[13]);
                                 return false;
                             }
 

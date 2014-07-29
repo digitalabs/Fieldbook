@@ -49,7 +49,7 @@
                             controller: 'ConfirmModalController',
                             resolve: {
                                 MODAL_TITLE: function () {
-                                    return '';
+                                    return modalConfirmationTitle;
                                 },
                                 MODAL_TEXT: function () {
                                     return measurementModalConfirmationText;

@@ -115,11 +115,11 @@ public class WorkbookUtil {
             for (Environment environment : environments) {
                 List<MeasurementData> dataList = new ArrayList<MeasurementData>();
                 for (MeasurementVariable var : variables) {
-                    String value = environment.getManagementDetailValues().get(var.getTermId());
+                    String value = environment.getManagementDetailValues().get(Integer.toString(var.getTermId()));
                     Integer phenotypeId = null;
                     if (value == null) {
-                        value = environment.getTrialDetailValues().get(var.getTermId());
-                        phenotypeId = environment.getPhenotypeIDMap().get(var.getTermId());
+                        value = environment.getTrialDetailValues().get(Integer.toString(var.getTermId()));
+                        phenotypeId = environment.getPhenotypeIDMap().get(Integer.toString(var.getTermId()));
                     }
 
                     boolean isEditable = ! (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());

@@ -409,30 +409,31 @@ public class OpenTrialController extends
         //we show only traits that are being passed by the frontend
         String traitsListCsv = request.getParameter("traitsList");
     	List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
-    	if(traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)){    		    		
+    	    		    		
     		if(measurementDatasetVariables != null && !measurementDatasetVariables.isEmpty()){
 				for(MeasurementVariable var : measurementDatasetVariables){
 					if(var.isFactor()){
 						newMeasurementDatasetVariables.add(var);
 					}
 				}
-				
-				StringTokenizer token = new StringTokenizer(traitsListCsv, ",");        		
-	    		while(token.hasMoreTokens()){
-	    			int id = Integer.valueOf(token.nextToken());
-	    			MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
-	    			if(currentVar == null){
-		    			StandardVariable var = fieldbookMiddlewareService.getStandardVariable(id);
-		    			MeasurementVariable newVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD);
-		    			newVar.setFactor(false);
-		    			newMeasurementDatasetVariables.add(newVar);
-	    			}else{
-	    				newMeasurementDatasetVariables.add(currentVar);
-	    			}
-	    		}
+				if(traitsListCsv != null && !"".equalsIgnoreCase(traitsListCsv)){
+					StringTokenizer token = new StringTokenizer(traitsListCsv, ",");        		
+		    		while(token.hasMoreTokens()){
+		    			int id = Integer.valueOf(token.nextToken());
+		    			MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
+		    			if(currentVar == null){
+			    			StandardVariable var = fieldbookMiddlewareService.getStandardVariable(id);
+			    			MeasurementVariable newVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD);
+			    			newVar.setFactor(false);
+			    			newMeasurementDatasetVariables.add(newVar);
+		    			}else{
+		    				newMeasurementDatasetVariables.add(currentVar);
+		    			}
+		    		}
+				}
 	    		measurementDatasetVariables = newMeasurementDatasetVariables;
     		}
-    	}        	
+    	
         	
         
         List<MeasurementRow> observations = workbook.getObservations();

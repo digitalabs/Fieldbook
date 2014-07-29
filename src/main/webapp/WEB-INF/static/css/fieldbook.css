@@ -1104,6 +1104,8 @@ a.fbk-edit-experiment{
 }
 .mdt-header .dataTables_info {
     padding: 0;
+    position: relative;
+	top: 5px;
 }
 
 .mdt-header .mdt-filtering-label,
@@ -1116,6 +1118,11 @@ a.fbk-edit-experiment{
 .mdt-header .dataTables_length,
 .mdt-header .mdt-filtering-label {
     margin-right: 15px;
+}
+
+.mdt-header .dataTables_length{
+	position: relative;
+	top: 5px;
 }
 
 .mdt-header .dataTables_filter {

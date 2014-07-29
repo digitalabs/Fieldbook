@@ -611,21 +611,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     private void removeDeletedVariablesInMeasurements(List<SettingDetail> deletedList, Workbook workbook, UserSelection userSelection) {
         if (deletedList != null) {
             for (SettingDetail setting : deletedList) {
-                //remove from measurement rows
-                int index = 0;
-                int varIndex = 0;
-                for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-                    if (index == 0) {
-                        for (MeasurementData var : row.getDataList()) {
-                            if (var.getMeasurementVariable().getTermId() == setting.getVariable().getCvTermId()) {
-                                break;
-                            }
-                            varIndex++;
-                        }
-                    }
-                    row.getDataList().remove(varIndex);
-                    index++;
-                }
                 //remove from header
                 if (workbook.getMeasurementDatasetVariables() != null) {
                     Iterator<MeasurementVariable> iter = workbook.getMeasurementDatasetVariables().iterator();

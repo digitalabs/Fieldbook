@@ -49,10 +49,10 @@
                             controller: 'ConfirmModalController',
                             resolve: {
                                 MODAL_TITLE: function () {
-                                    return modalConfirmationTitle;
+                                    return '';
                                 },
                                 MODAL_TEXT: function () {
-                                    return environmentModalConfirmationText;
+                                    return measurementModalConfirmationText;
                                 },
                                 CONFIRM_BUTTON_LABEL: function () {
                                     return environmentConfirmLabel;

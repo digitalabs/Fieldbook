@@ -194,6 +194,7 @@ public class SettingsUtil {
                     factor.setPossibleValues(settingDetail.getPossibleValues());
                     factor.setMinRange(variable.getMinRange());
                     factor.setMaxRange(variable.getMaxRange());
+                    factor.setName(variable.getName());
                     factors.add(factor);
                 }
             }
@@ -261,6 +262,7 @@ public class SettingsUtil {
                 Integer termId = detail.getVariable().getCvTermId();
                 StandardVariable levelVariable = getStandardVariable(termId, userSelection, fieldbookMiddlewareService);
                 Factor levelFactor = convertStandardVariableToFactor(levelVariable);
+                levelFactor.setName(detail.getVariable().getName());
                 Factor valueFactor = null;
                 levelFactor.setOperation(detail.getVariable().getOperation());
                 levelFactor.setTreatmentLabel(levelVariable.getName());

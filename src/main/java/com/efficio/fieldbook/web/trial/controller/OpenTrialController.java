@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -458,6 +459,19 @@ public class OpenTrialController extends
         }else{
         	form.setMeasurementDataExisting(false);
         }
+        //we do a matching of the name here so there won't be a problem in the data table
+        if(observations != null && !observations.isEmpty()){
+        	List<MeasurementData> dataList =  observations.get(0).getDataList();
+        	for(MeasurementData data : dataList){
+        		if(data.getMeasurementVariable() != null){
+        			MeasurementVariable var = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, data.getMeasurementVariable().getTermId());
+        			if(var != null && data.getMeasurementVariable().getName() != null){
+        				var.setName(data.getMeasurementVariable().getName());
+        			}
+        		}
+        	}
+        }
+        
         
         form.setMeasurementVariables(measurementDatasetVariables);     
         userSelection.setMeasurementDatasetVariable(measurementDatasetVariables);

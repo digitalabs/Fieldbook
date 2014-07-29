@@ -279,10 +279,12 @@
                         showAlertMessage('', 'These changes have not yet been applied to the Measurements table. To update the Measurements table, ' +
                             'please review your settings and regenerate the Experimental Design on the next tab', 10000);
                         $('body').data('needGenerateExperimentalDesign', '1');
-                    } else {
-                        service.applicationData.unappliedChangesAvailable = false;
-                        $('body').data('needGenerateExperimentalDesign',null);
                     }
+                },
+
+                clearUnappliedChangesFlag : function() {
+                    service.applicationData.unappliedChangesAvailable = false;
+                    $('body').data('needGenerateExperimentalDesign', '0');
                 },
 
                 extractData: extractData,

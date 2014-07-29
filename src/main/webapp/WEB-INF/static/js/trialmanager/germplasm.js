@@ -54,7 +54,7 @@
             });
 
             $scope.germplasmListCleared = function() {
-                TrialManagerDataService.indicateUnappliedChangesAvailable(false);
+                TrialManagerDataService.clearUnappliedChangesFlag();
                 TrialManagerDataService.trialMeasurement.count = 0;
             };
 

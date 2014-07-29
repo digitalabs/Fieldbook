@@ -45,10 +45,16 @@ be empty. -->
 						<span class="glyphicon glyphicon-ok"></span>
 					</button>
 				{{else}}
+                    {{#if showTreatmentFactorValidationMessage}}
+                        <button type="button" class="btn btn-default btn-xs vs-variable-select icon-btn icon-btn" disabled="disabled" th:attr="data-tooltip=#{trial.validation.treatmentfactor.nopair}">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    {{else}}
 					<button type="button" class="btn btn-default btn-xs vs-variable-select icon-btn icon-btn">
 						<span class="glyphicon glyphicon-plus"></span>
 						<span class="vs-variable-select-label" th:text="#{common.form.add.text}">Add</span>
 					</button>
+                    {{/if}}
 				{{/if}}
 			</span>
 			<div class="vs-variable-description">

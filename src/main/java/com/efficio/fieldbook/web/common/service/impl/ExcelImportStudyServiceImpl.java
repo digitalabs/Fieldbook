@@ -256,16 +256,18 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	
 	private String getRealNumericValue(Cell cell){
 		String realValue = "";
-		if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
-			Double doubleVal = Double.valueOf(cell.getNumericCellValue());
-			Integer intVal = Integer.valueOf(doubleVal.intValue());
-			if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
-				realValue = intVal.toString();
+		if (cell != null) {
+			if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+				Double doubleVal = Double.valueOf(cell.getNumericCellValue());
+				Integer intVal = Integer.valueOf(doubleVal.intValue());
+				if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
+					realValue = intVal.toString();
+				}else{
+					realValue = doubleVal.toString();	
+				}
 			}else{
-				realValue = doubleVal.toString();	
+				realValue = cell.getStringCellValue();
 			}
-		}else{
-			realValue = cell.getStringCellValue();
 		}
 		return realValue;
 	}

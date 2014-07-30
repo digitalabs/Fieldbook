@@ -43,7 +43,7 @@
                 var data = extractData(initialData, initializeProperty);
 
                 if (data.basicDetails[8050] === null || data.basicDetails[8050] === '') {
-                    data.basicDetails[8050] = $.datepicker.formatDate('yyyy-mm-dd', new Date());
+                    data.basicDetails[8050] = $.datepicker.formatDate('yy-mm-dd', new Date());
                 }
 
                 return data;

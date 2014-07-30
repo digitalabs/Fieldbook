@@ -104,7 +104,7 @@ public abstract class BaseTrialController extends SettingsController {
     protected TabInfo prepareGermplasmTabInfo(List<MeasurementVariable> measurementVariables, boolean isUsePrevious) throws MiddlewareQueryException {
         List<SettingDetail> detailList = new ArrayList<SettingDetail>();
         List<Integer> requiredIDList = buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
-        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString());
+        //List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString());
 
         for (MeasurementVariable var : measurementVariables) {
             // this condition is required so that treatment factors are not included in the list of factors for the germplasm tab
@@ -119,8 +119,9 @@ public abstract class BaseTrialController extends SettingsController {
             } else {
                 detail.setDeletable(true);
             }
-
-            if (hiddenFields.contains(var.getTermId())) {
+            
+            //set all variables with trial design role to hidden
+            if (var.getStoredIn() == TermId.TRIAL_DESIGN_INFO_STORAGE.getId()) {
                 detail.setHidden(true);
             } else {
                 detail.setHidden(false);

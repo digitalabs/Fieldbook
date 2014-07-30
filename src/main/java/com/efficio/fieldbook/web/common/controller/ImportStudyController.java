@@ -370,7 +370,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	userSelection.getWorkbook().getVariates().addAll(traits);
     	fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook());
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
+    	    
     	userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
     	List<SettingDetail> newTraits = new ArrayList<SettingDetail>();
     	List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
@@ -380,6 +380,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	if(workbook.isNursery()){
     		userSelection.getSelectionVariates().addAll(selectedVariates);
     		userSelection.setNewSelectionVariates(selectedVariates);
+    		form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	}else{
+    		form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
     	}
     	userSelection.getBaselineTraitsList().addAll(newTraits);
     	userSelection.setNewTraits(newTraits);

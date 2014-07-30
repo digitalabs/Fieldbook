@@ -6,8 +6,11 @@
 
     angular.module('manageTrialApp').service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q','TrialSettingsManager',
-        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource, TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager) {
+        'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
+        'TrialSettingsManager',
+        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
+                  MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
+                  TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager) {
 
             // TODO : clean up data service, at the very least arrange the functions in alphabetical order
             var extractData = function (initialData, initializeProperty) {
@@ -34,6 +37,16 @@
                         updateFunction(newValue);
                     });
                 }
+            };
+
+            var extractBasicDetailsData = function(initialData, initializeProperty) {
+                var data = extractData(initialData, initializeProperty);
+
+                if (data.basicDetails[8050] === null || data.basicDetails[8050] === '') {
+                    data.basicDetails[8050] = $.datepicker.formatDate('yy-mm-dd', new Date());
+                }
+
+                return data;
             };
 
             var updateTrialDataAfterCreation = function (trialID, updateFunction) {
@@ -196,7 +209,7 @@
                 currentData: {
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
-                    basicDetails: extractData(BASIC_DETAILS_DATA),
+                    basicDetails: extractBasicDetailsData(BASIC_DETAILS_DATA),
                     treatmentFactors : extractData(TREATMENT_FACTORS_INITIAL_DATA, 'currentData')
                 },
                 // standard variable [meta-data] information or a particular tab settings information
@@ -211,7 +224,8 @@
                 },
                 applicationData: {
                     unappliedChangesAvailable: false,
-                    unsavedGeneratedDesign : false
+                    unsavedGeneratedDesign : false,
+                    unsavedTraitsAvailable : false
                 },
 
                 // settings that has special data structure
@@ -230,6 +244,8 @@
 
                         })(),
                         germplasmTotalListCount: 0,
+
+                        showAdvancedOptions : [false,false,false],
 
                         data: {
                             'noOfEnvironments': 0,
@@ -280,6 +296,11 @@
                     }
                 },
 
+                clearUnappliedChangesFlag : function() {
+                    service.applicationData.unappliedChangesAvailable = false;
+                    $('body').data('needGenerateExperimentalDesign', '0');
+                },
+
                 extractData: extractData,
                 extractSettings: extractSettings,
                 extractTreatmentFactorSettings : extractTreatmentFactorSettings,
@@ -300,6 +321,8 @@
                                         displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                             service.trialMeasurement.count);
                                         service.applicationData.unsavedGeneratedDesign = false;
+                                        service.applicationData.unsavedTraitsAvailable = false;
+                                        $('body').data('needToSave', '0');
                                     });
                                 });
                         } else {
@@ -315,6 +338,8 @@
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
                                     service.applicationData.unsavedGeneratedDesign = false;
+                                    service.applicationData.unsavedTraitsAvailable = false;
+                                    $('body').data('needToSave', '0');
                                   });
 							}
                             else if (service.trialMeasurement.count >  0 && parseInt($('.germplasm-list-items tbody tr').length) === 0) {
@@ -326,6 +351,8 @@
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
                                     service.applicationData.unsavedGeneratedDesign = false;
+                                    service.applicationData.unsavedTraitsAvailable = false;
+                                    $('body').data('needToSave', '0');
                                 });
                             }
                             else {
@@ -339,6 +366,8 @@
                                             displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                                                     service.trialMeasurement.count);
                                             service.applicationData.unsavedGeneratedDesign = false;
+                                            service.applicationData.unsavedTraitsAvailable = false;
+                                            $('body').data('needToSave', '0');
                                         });
                                     });
                             }

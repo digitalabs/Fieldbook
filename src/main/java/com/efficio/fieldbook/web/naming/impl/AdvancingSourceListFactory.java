@@ -90,7 +90,7 @@ public class AdvancingSourceListFactory {
 	                    	}
 	                    }
                     }
-                    boolean isCheck = check != null && !DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
+                    boolean isCheck = check != null && !"".equals(check) && !DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
 
                     Integer methodId = null;
                     if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {

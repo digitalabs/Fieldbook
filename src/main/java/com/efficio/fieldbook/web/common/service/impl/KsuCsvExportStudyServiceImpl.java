@@ -47,9 +47,9 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 		String studyName = filename.substring(0, fileExtensionIndex);
 
         CsvWriter csvWriter = null;
-        try {
-        	int fileCount = instances.size();
-			for (Integer index : instances) {
+    	int fileCount = instances.size();
+		for (Integer index : instances) {
+			try {
 				String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
 						+ studyName 
 						+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
@@ -67,23 +67,24 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 	            	csvWriter.endRecord();
 	            }
 	            filenameList.add(filenamePath);
-			}
 
-			String traitFilenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
-					+ studyName + "-Traits"
-					+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
-			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, fieldbookMiddlewareService, ontologyService);
-			filenameList.add(traitFilenamePath);
+			} catch (IOException e) {
+	            LOG.error("ERROR in KSU CSV Export Study", e);
+	            
+	        } finally {
+	        	if (csvWriter != null) {
+	        		csvWriter.close();
+	        	}
+	        }
+			
+		}
 
-        } catch (IOException e) {
-            LOG.error("ERROR in KSU CSV Export Study", e);
-            
-        } finally {
-        	if (csvWriter != null) {
-        		csvWriter.close();
-        	}
-        }
-		
+		String traitFilenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
+				+ studyName + "-Traits"
+				+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
+		KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, fieldbookMiddlewareService, ontologyService);
+		filenameList.add(traitFilenamePath);
+
 		String outputFilename = fieldbookProperties.getUploadDirectory() 
 				+ File.separator 
 				+ filename.replaceAll(AppConstants.EXPORT_CSV_SUFFIX.getString(), "") 

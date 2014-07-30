@@ -3,9 +3,9 @@
     'use strict';
 
     angular.module('leafnode-utils', [])
-        .directive('jqDatepicker', function ($compile) {
+        .directive('jqDatepicker', function () {
             return {
-                require: '?ngModel',
+                require: '^?ngModel',
                 link: function (scope, el, attr, ngModel) {
                     if (!ngModel) {
                         $(el).datepicker({
@@ -24,15 +24,8 @@
                     });
 
                     ngModel.$render = function () {
-                        $(el).datepicker('update', ngModel.$viewValue);
+                        $(el).datepicker('setDate', ngModel.$viewValue);
                     };
-
-                    if (attr.setCurrentDateAsDefault === 'true') {
-                        if (! ngModel.$viewValue) {
-                            $(el).datepicker('setDate', new Date());
-                            ngModel.$setViewValue(el.val());
-                        }
-                    }
 
                     if (attr.withImage === 'true') {
                         var labelElement = angular.element('<label class="btn"></label>');

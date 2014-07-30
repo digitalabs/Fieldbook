@@ -19,6 +19,7 @@ import java.util.Map;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
@@ -114,6 +115,9 @@ public class UserSelection implements Serializable {
     /** The deleted trial level variables. */
     private List<SettingDetail> deletedTrialLevelVariables;
     
+    /** The deleted treatment factors. */
+    private List<SettingDetail> deletedTreatmentFactors;
+    
     /** The change details. */
     private List<GermplasmChangeDetail> changeDetails;
     
@@ -140,6 +144,7 @@ public class UserSelection implements Serializable {
     
     /** The measurement row list. */
     private List<MeasurementRow> measurementRowList;
+    private List<MeasurementVariable> measurementDatasetVariable;
     
 	
 	/**
@@ -815,5 +820,32 @@ public class UserSelection implements Serializable {
          */
         public void setDeletedTrialLevelVariables(List<SettingDetail> deletedTrialLevelVariables) {
             this.deletedTrialLevelVariables = deletedTrialLevelVariables;
+        }
+
+		public List<MeasurementVariable> getMeasurementDatasetVariable() {
+			return measurementDatasetVariable;
+		}
+
+		public void setMeasurementDatasetVariable(
+				List<MeasurementVariable> measurementDatasetVariable) {
+			this.measurementDatasetVariable = measurementDatasetVariable;
+		}
+        
+        /**
+         * Gets the deleted treatment factors.
+         *
+         * @return the deleted treatment factors
+         */
+        public List<SettingDetail> getDeletedTreatmentFactors() {
+            return deletedTreatmentFactors;
+        }
+
+        /**
+         * Sets the deleted treatment factors.
+         *
+         * @param deletedTreatmentFactors the new deleted treatment factors
+         */
+        public void setDeletedTreatmentFactors(List<SettingDetail> deletedTreatmentFactors) {
+            this.deletedTreatmentFactors = deletedTreatmentFactors;
         }
  }

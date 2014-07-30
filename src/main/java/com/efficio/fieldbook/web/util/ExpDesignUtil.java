@@ -378,7 +378,7 @@ public class ExpDesignUtil {
 				}else{
 					//meaning non factor
                 	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
-                	var.setFactor(false);
+                	//var.setFactor(false);
 				}
 				
 				
@@ -419,6 +419,10 @@ public class ExpDesignUtil {
 				}
 			}
 		}
+		for(MeasurementVariable var : varList){
+			var.setFactor(true);
+		}
+		
 		varList.addAll(variates);
 		
 		

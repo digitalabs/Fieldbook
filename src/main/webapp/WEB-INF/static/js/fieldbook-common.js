@@ -677,7 +677,11 @@ function showFieldMap(tableName) {
 		idVal = null;
 
 	//edit study
-	if ($('#studyId')) {
+	if($('.review-landing-page').length !== 0){
+		//meaning we are in the landing page
+		idVal = getCurrentStudyIdInTab();
+	}
+	else if ($('#studyId')) {
 		idVal = $('#studyId').val();
 	}
 
@@ -2281,18 +2285,23 @@ function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 
 function editExperiment(tableIdentifier, expId, rowIndex) {
 	'use strict';
-	var canEdit = $('body').data('needGenerateExperimentalDesign') === '1' ? false : true;
+	var canEdit = $('body').data('needGenerateExperimentalDesign') === '1' ? false : true,
+		needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
 	if(isNursery() || canEdit){
-		// We show the ajax page here
-		$.ajax({
-			url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
-			type: 'GET',
-			cache: false,
-			success: function(dataResp) {
-				$('.edit-experiment-section').html(dataResp);
-				$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
-			}
-		});
+		// We show the ajax page here		
+		if(needToSaveFirst){
+			showAlertMessage('', measurementsTraitsChangeWarning);
+		}else{		
+			$.ajax({
+				url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
+				type: 'GET',
+				cache: false,
+				success: function(dataResp) {
+					$('.edit-experiment-section').html(dataResp);
+					$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
+				}
+			});
+		}
 	}else{
 		showAlertMessage('', measurementWarningNeedGenExpDesign);
 	}
@@ -2813,38 +2822,28 @@ function addStudyTreeHighlight(node) {
 }
 
 function initializeStudyTabs() {
-	$('#study-tab-headers li').on('click', function() {
-		$('#study-tab-headers li').removeClass('active');
-		$(this).addClass('active');
-		$('#study-tabs .info').hide();
-		$('.info#' + $(this).attr('id')).show();
-	});
+	'use strict';
+	$('.nav-tabs').tabdrop({position: 'left'});
+	$('.nav-tabs').tabdrop('layout');
 	$('#study-tab-headers .fbk-close-tab').on('click', function() {
-		var studyId = $(this).attr('id');
-		var showFirst = false;
-		if ($(this).parent().parent().hasClass('active')) {
-			// console.log('get the first item');
-			showFirst = true;
-		}
-		$('li#study' + studyId).remove();
+		var studyId = $(this).attr('id');		
+		$('li#li-study' + studyId).remove();
 		$('.info#study' + studyId).remove();
-		if (showFirst && $('#study-tab-headers li').length > 0) {
-			var studyIdString = $('#study-tab-headers li:eq(0)').attr('id');
-			$('li#' + studyIdString).addClass('active');
-			$('.info#' + studyIdString).show();
+		if ($('#study-tab-headers li').length > 1) {
+			var studyIdString = $('#study-tab-headers li:eq(0)').attr('id');			
+			$('li#'+studyIdString + ' a').tab('show');
 		}
 		determineIfShowCloseAllStudyTabs();
+		$('.nav-tabs').tabdrop('layout');
 	});
 	determineIfShowCloseAllStudyTabs();
 }
 function addDetailsTab(studyId, title) {
 	// if the study is already existing, we show that tab
 	'use strict';
-	$('#study-tab-headers li').removeClass('active');
-	$('#study-tabs .info').hide();
-	if ($('li#study' + studyId).length !== 0) {
-		$('li#study' + studyId).addClass('active');
-		$('.info#study' + studyId).show();
+
+	if ($('li#li-study' + studyId).length !== 0) {
+		$('li#li-study'+studyId + ' a').tab('show');
 	} else {
 		var studyType = isNursery() ? 'N' : 'T';
 		$.ajax({
@@ -2854,17 +2853,19 @@ function addDetailsTab(studyId, title) {
 			success : function(data) {
 				var close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+studyId+'"></i>';
 				$('#study-tab-headers').append(
-						"<li id='study" + studyId + "' class='active'><a><span class='review-study-name'>"
+						"<li id='li-study" + studyId + "'><a href='#study"+studyId+"' role='tab' data-toggle='tab'><span class='review-study-name'>"
 								+ title + "</span>"+ close + "</a></li>");
 				$('#study-tabs').append(
-						'<div class="info" id="study' + studyId + '">' + data
+						'<div class="info tab-pane" id="study' + studyId + '">' + data
 								+ '</div>');
-				$('.info#study' + studyId).show();
 				initializeStudyTabs();
+				$('li#li-study'+studyId + ' a').tab('show');			
+				
 				$('.info#study' + studyId + ' select').each(function() {
 					$(this).select2({minimumResultsForSearch: 20});
 				});
 				truncateStudyVariableNames('#study'+studyId+' .review-study-name', 20);
+				reviewLandingSetup();
 			}
 		});
 	}
@@ -2874,7 +2875,7 @@ function addDetailsTab(studyId, title) {
 
 function determineIfShowCloseAllStudyTabs() {
 	'use strict';
-	if ($('#study-tab-headers li').length > 0) {
+	if ($('#study-tab-headers li').length > 1) {
 		$('.review-nursery-details').removeClass('fbk-hide');
 	} else {
 		$('.review-nursery-details').addClass('fbk-hide');

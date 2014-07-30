@@ -18,6 +18,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 	var VARIABLE_SELECT_EVENT = 'variable-select',
 		MODAL_SELECTOR = '.vs-modal',
+        TREATMENT_FACTOR_GROUP = 5,
 
 		modalHeaderSelector = '.modal-header',
 		variableNameContainerSelector = '.vs-variable-name-container',
@@ -298,6 +299,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			filteredProperties;
 
 		// If we know of aliases for any of the variables we're loading, set them now
+        // DMV : leverage existing loop to set property used for displaying treatment factor specific UI
 		for (i = 0; i < variables.length; i++) {
 			variableId = variables[i].id;
 			selectedVariableName = selectedVariables[variableId];
@@ -312,6 +314,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				// been selected
 				variables[i].selected = true;
 			}
+
+            if (this._group === TREATMENT_FACTOR_GROUP && !variables[i].hasPair) {
+                variables[i].showTreatmentFactorValidationMessage = true;
+            }
 		}
 
 		// Update our saved property list to reflect our new knowledge of aliases and which variables are selected

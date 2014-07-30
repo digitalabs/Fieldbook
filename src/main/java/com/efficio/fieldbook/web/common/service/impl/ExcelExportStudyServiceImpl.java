@@ -366,7 +366,12 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 
 		cell = row.createCell(7, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(variable.getLabel());
+		if (variable.getTreatmentLabel() != null && !"".equals(variable.getTreatmentLabel())) {
+			cell.setCellValue(variable.getTreatmentLabel());
+		}
+		else {
+			cell.setCellValue(variable.getLabel());
+		}
 	}
 	
 	private void writeObservationHeader(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> variables) {

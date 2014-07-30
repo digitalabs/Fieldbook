@@ -194,6 +194,7 @@ public class SettingsUtil {
                     factor.setPossibleValues(settingDetail.getPossibleValues());
                     factor.setMinRange(variable.getMinRange());
                     factor.setMaxRange(variable.getMaxRange());
+                    factor.setName(variable.getName());
                     factors.add(factor);
                 }
             }
@@ -261,29 +262,32 @@ public class SettingsUtil {
                 Integer termId = detail.getVariable().getCvTermId();
                 StandardVariable levelVariable = getStandardVariable(termId, userSelection, fieldbookMiddlewareService);
                 Factor levelFactor = convertStandardVariableToFactor(levelVariable);
+                levelFactor.setName(detail.getVariable().getName());
+                Factor valueFactor = null;
                 levelFactor.setOperation(detail.getVariable().getOperation());
+                levelFactor.setTreatmentLabel(levelVariable.getName());
 
                 TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
                                         /*StandardVariable valueVariable = getStandardVariable(data.getPairVariable().get(TreatmentFactorData.PAIR_VARIABLE_ID_KEY),
                                                 userSelection, fieldbookMiddlewareService);*/
-
-                StandardVariable valueVariable = getStandardVariable(data.getVariableId(),
-                        userSelection, fieldbookMiddlewareService);
-
-                Factor valueFactor = convertStandardVariableToFactor(valueVariable);
-                valueFactor.setOperation(detail.getVariable().getOperation());
-
-                levelFactor.setTreatmentLabel(levelVariable.getName());
-                valueFactor.setTreatmentLabel(levelVariable.getName());
-                int index = 1;
-                for (String labelValue : data.getLabels()) {
-                    TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, index, labelValue);
-                    treatmentFactors.add(treatmentFactor);
-                    index++;
+                
+                if (data != null) {
+                    StandardVariable valueVariable = getStandardVariable(data.getVariableId(),
+                            userSelection, fieldbookMiddlewareService);
+        
+                    valueFactor = convertStandardVariableToFactor(valueVariable);
+                    valueFactor.setOperation(detail.getVariable().getOperation());
+                    valueFactor.setTreatmentLabel(levelVariable.getName());
+                    
+                    int index = 1;
+                    for (String labelValue : data.getLabels()) {
+                        TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, index, labelValue);
+                        treatmentFactors.add(treatmentFactor);
+                        index++;
+                    }
+                    factorList.add(valueFactor);
                 }
-
                 factorList.add(levelFactor);
-                factorList.add(valueFactor);
             }
 
         }

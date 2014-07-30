@@ -1,13 +1,13 @@
 <div ng-switch="widgetType">
     <div ng-switch-when="DROPDOWN">
-        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]" value-as-object="false" ng-change="changefunction()"/>
+        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]" value-as-object="false" ng-change="changefunction()" ng-disabled="disabled"/>
         <div ng-if="isLocation">
             <div class="possibleValuesDiv">
-                <input type="checkbox" ng-model="localData.useFavorites" ng-change="updateDropdownValues()"> &nbsp; &nbsp;
+                <input type="checkbox" ng-disabled="disabled" ng-model="localData.useFavorites" ng-change="updateDropdownValues()"> &nbsp; &nbsp;
                 <span th:text="#{show.favorite.location}">Show Favorite Location</span>
             </div>
             <span>
-                <a href="javascript: void(0)" th:text="#{nursery.managesettings.manage.location}" ng-click="initiateManageLocationModal()">Manage Location</a>
+                <a href="javascript: void(0)" th:text="#{nursery.managesettings.manage.location}" ng-click="disabled || initiateManageLocationModal()">Manage Location</a>
             </span>
         </div>
         <div ng-if="isBreedingMethod" class="possibleValuesDiv">
@@ -15,18 +15,18 @@
         </div>
     </div>
     <div ng-switch-when="NTEXT">
-        <input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()"/>
+        <input type="text" ng-disabled="disabled" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()"/>
     </div>
     <div ng-switch-when="SLIDER">
-        <input type="text" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()"/>
+        <input type="text" ng-disabled="disabled" valid-decimal="" class="form-control numeric-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()"/>
     </div>
     <div ng-switch-when="CTEXT">
-        <input type="text" class="form-control character-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()"/>
+        <input type="text" ng-disabled="disabled" class="form-control character-input" ng-model="valuecontainer[targetkey]" ng-change="changefunction()"/>
     </div>
     <div ng-switch-when="TEXTAREA">
-        <textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]" ng-change="changefunction()"/>
+        <textarea ng-disabled="disabled" class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]" ng-change="changefunction()"/>
     </div>
     <div ng-switch-when="DATE">
-        <input type="text" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="valuecontainer[targetkey]" jq-datepicker="true" with-image="true" image-src="/Fieldbook/static/img/calendar.png" ng-change="changefunction()"/>
+        <input type="text" ng-disabled="disabled" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="valuecontainer[targetkey]" jq-datepicker="true" with-image="true" image-src="/Fieldbook/static/img/calendar.png" ng-change="changefunction()"/>
     </div>
 </div>

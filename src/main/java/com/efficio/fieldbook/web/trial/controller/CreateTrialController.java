@@ -11,16 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.*;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -31,30 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class CreateTrialController.
@@ -173,7 +154,7 @@ public class CreateTrialController extends BaseTrialController {
     }
 
     @RequestMapping(value = "/treatment", method = RequestMethod.GET)
-    public String showTreatmentFactors(Model model, HttpSession session, HttpServletRequest req) {
+    public String showTreatmentFactors(Model model) {
         return showAjaxPage(model, URL_TREATMENT);
     }
 
@@ -201,7 +182,7 @@ public class CreateTrialController extends BaseTrialController {
         processEnvironmentData(data.getEnvironments());
         List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
         List<SettingDetail> basicDetails = userSelection.getBasicDetails();
-        addUserIdIfNecessary(basicDetails, data.getBasicDetails());
+        addUserIdIfNecessary(basicDetails);
         // transfer over data from user input into the list of setting details stored in the session
         populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
@@ -213,7 +194,7 @@ public class CreateTrialController extends BaseTrialController {
             combinedList.addAll(studyLevelConditions);
         }
 
-        String name = data.getBasicDetails().getBasicDetails().get(TermId.STUDY_NAME.getId());
+        String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
         
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection,
@@ -239,36 +220,6 @@ public class CreateTrialController extends BaseTrialController {
         return "success";
     }
     
-    private void addDefaultTrialPlotFields() throws MiddlewareQueryException{
-    	List<Integer> ids = buildVariableIDList(AppConstants.CREATE_TRIAL_DEFAULT_PLOT_FIELDS.getString());
-    	for(Integer id : ids){
-    		//we always add plot no, rep , block
-	    	StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(id);
-	        SettingVariable svar = new SettingVariable();
-	        svar.setCvTermId(id);
-	        svar.setName(stdvar.getName());
-	        SettingDetail settingDetail = new SettingDetail(svar, null, null, false);
-	        userSelection.getPlotsLevelList().add(settingDetail); 
-    	}
-    }
-
-    protected void extractDataFromMetadata(List<SettingDetail> details, Map<Integer, String> values) {
-        if (details == null || details.isEmpty()) {
-            return;
-        }
-
-        for (SettingDetail detail : details) {
-            if (! values.containsKey(detail.getVariable().getCvTermId()) && (detail.getValue() != null || detail.getValue().isEmpty())) {
-                values.put(detail.getVariable().getCvTermId(), detail.getValue());
-            }
-        }
-    }
-
-    /*@ModelAttribute("experimentalDesignValues")*/
-    public List<ValueReference> getExperimentalDesignValues() throws MiddlewareQueryException {
-        return fieldbookService.getAllPossibleValues(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-    }
-
     protected TabInfo prepareGermplasmTabInfo() {
         List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
         List<Integer> initialSettingIDs = buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
@@ -330,27 +281,7 @@ public class CreateTrialController extends BaseTrialController {
         return info;
     }
     
-    protected TabInfo prepareExpDesignTabInfo() throws MiddlewareQueryException{
-        TabInfo info = new TabInfo();        
-        ExpDesignData data = new ExpDesignData();
-        List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();
-        
-        List<Integer> ids = buildVariableIDList(AppConstants.CREATE_TRIAL_EXP_DESIGN_DEFAULT_FIELDS.getString());
-    	for(Integer id : ids){
-    		//PLOT, REP, BLOCK, ENTRY NO
-	    	StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(id);
-	        SettingVariable svar = new SettingVariable();
-	        svar.setCvTermId(id);
-	        svar.setName(stdvar.getName());	        
-	        ExpDesignDataDetail dataDetail = new ExpDesignDataDetail(AppConstants.getString(id+AppConstants.LABEL.getString()), svar);
-	        detailList.add(dataDetail);
-	        
-    	}
-    	data.setExpDesignDetailList(detailList);
-        info.setData(data);
 
-        return info;
-    }
 
     protected TabInfo prepareBasicDetailsTabInfo() throws MiddlewareQueryException{
         Map<String, String> basicDetails = new HashMap<String, String>();
@@ -393,7 +324,7 @@ public class CreateTrialController extends BaseTrialController {
         return info;
     }
     
-    private List<SettingDetail> addUserIdIfNecessary(List<SettingDetail> basicDetails, BasicDetails details)
+    private List<SettingDetail> addUserIdIfNecessary(List<SettingDetail> basicDetails)
     throws MiddlewareQueryException {
 		boolean found = false;
     	if (basicDetails == null) {

@@ -181,7 +181,6 @@
 			<div class="row form-group clearfix breedingMethodDetails">
 				<div class="col-xs-8 1st">
 					<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
-
 					<input style="width: 70%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
 						   type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="select2 form-control study-level-method" />
 
@@ -229,11 +228,10 @@
 				<div class="col-xs-5 col-md-5 1st">
 								<span style="font-size: 16px;" th:if="${nurseryCondition.deletable}" class="delete-icon"
 									  th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
-					<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
+					<input class="cvTermIds nurseryConditionVariableIdClass" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
 					<span style="word-wrap: break-word" class="control-label nursery-condition-label label-bold var-names" th:text="${nurseryCondition.variable.name}"></span>:&nbsp;
 				</div>
 				<div class="col-xs-7 col-md-7 2nd">
-					<input class="cvTermIds nurseryConditionVariableIdClass" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />
 					<input style="width: 30%" th:if="${nurseryCondition.variable.widgetType.type == 'DROPDOWN'}"
 						   type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control select2" />
 
@@ -458,7 +456,7 @@ $(document).ready(function() {
 	});
 
 	// re apply the behaviors using modified functions
-	$('#createNurseryForm').on('click', 'span.delete-icon', function() {
+	$(document).on('click', 'span.delete-icon', function() {
 
 		if (document.disableActions !== undefined) {
 			if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass('disabled')) {
@@ -472,6 +470,14 @@ $(document).ready(function() {
 
 		}
 	});
+
+    $('.vs-modal').on('variable-select',function(event){
+        if (document.disableActions !== undefined) {
+            document.disableActions();
+        }
+    });
+
+
     // remove any other listeners for the location update
     $(document).off('location-update');
     $(document).on('location-update', recreateLocationCombo);
@@ -488,11 +494,6 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#createNurseryForm').on('click', '#addVariables', function() {
-		if (document.disableActions !== undefined) {
-			document.disableActions();
-		}
-	});
 
 	document.disableActions = function() {
 		var actionBtn = $('.fbk-action-btn');

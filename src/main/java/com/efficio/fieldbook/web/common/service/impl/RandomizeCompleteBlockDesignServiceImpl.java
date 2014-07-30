@@ -155,7 +155,6 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	public List<StandardVariable> getRequiredVariable() {
 		List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {		
-			//StandardVariable stdvarTreatment = fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
 			StandardVariable stdvarBlock = fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId());				
 			StandardVariable stdvarPlot = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
 			

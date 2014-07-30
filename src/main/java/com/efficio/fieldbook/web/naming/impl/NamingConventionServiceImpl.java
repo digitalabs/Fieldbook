@@ -152,23 +152,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         
         Name name = new Name();
         name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
-        name.setTypeId(0);
-        if (source.getGermplasm().getBreedingMethodId().equals(
-                AppConstants.METHOD_UNKNOWN_DERIVATIVE_METHOD_SF.getInt())) {
-            name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
-        }
-        else {
-            if (source.getGermplasm().getBreedingMethodId().equals(
-                    AppConstants.METHOD_UNKNOWN_GENERATIVE_METHOD_SF.getInt())) {
-                    
-                if (source.getGermplasm().getDesig().contains(AppConstants.NAME_SEPARATOR.getString())) {
-                	name.setTypeId(GermplasmNameType.CROSS_NAME.getUserDefinedFieldID());
-                }
-                else {
-                	name.setTypeId(GermplasmNameType.UNNAMED_CROSS.getUserDefinedFieldID());
-                }
-            }
-        }
+        name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
         name.setNval(germplasm.getDesig());
         name.setNstat(1);
         names.add(name);

@@ -388,6 +388,7 @@ public class EditNurseryController extends SettingsController {
     	workbook.setTrialDatasetId(trialDatasetId);
     	workbook.setMeasurementDatesetId(measurementDatasetId);
     	workbook.setTrialObservations(userSelection.getWorkbook().getTrialObservations());
+    	setTrialObservationsFromVariables(workbook);
     	    	
     	this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);
@@ -403,7 +404,6 @@ public class EditNurseryController extends SettingsController {
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
                 form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
                 workbook.setObservations(form.getMeasurementRowList());
-                setTrialObservationsFromVariables(workbook);
                 
                 userSelection.setWorkbook(workbook);
                 //validationService.validateObservationValues(workbook);

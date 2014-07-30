@@ -677,7 +677,11 @@ function showFieldMap(tableName) {
 		idVal = null;
 
 	//edit study
-	if ($('#studyId')) {
+	if($('.review-landing-page').length !== 0){
+		//meaning we are in the landing page
+		idVal = getCurrentStudyIdInTab();
+	}
+	else if ($('#studyId')) {
 		idVal = $('#studyId').val();
 	}
 

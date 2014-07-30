@@ -43,6 +43,10 @@ public class ValidationServiceImpl implements ValidationService {
 	
 	@Override
 	public boolean isValidValue(MeasurementVariable var, String value, boolean validateDateForDB) {
+		return isValidValue(var, value, null, validateDateForDB);
+	}
+	
+	public boolean isValidValue(MeasurementVariable var, String value, String cValueId, boolean validateDateForDB) {
 		if (value == null || "".equals(value.trim())) {
 			return true;
 		}
@@ -60,18 +64,25 @@ public class ValidationServiceImpl implements ValidationService {
 			return NumberUtils.isNumber(value.trim());
 			
 		}  else if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()) {
+			Integer valueToCompare = null;
+			try{
+				valueToCompare = Integer.valueOf(value);
+			}catch(NumberFormatException e){
+				if (cValueId != null && NumberUtils.isNumber(cValueId)) {
+					valueToCompare = Integer.parseInt(cValueId);
+				}
+				else {
+					return false;
+				}
+			}
+
+			if (valueToCompare == null) {
+				return false;
+			}
+			
 			for (ValueReference ref : var.getPossibleValues()) {
-				
-				if (value != null && !value.equalsIgnoreCase("")){
-					int valueToCompare = 0;
-					try{
-						valueToCompare = Integer.valueOf(value);
-					}catch(NumberFormatException e){
-						return false;
-					}
-					if(ref.getId().intValue()  == valueToCompare) {
-						return true;
-					}
+				if(ref.getId().intValue()  == valueToCompare) {
+					return true;
 				}
 			}
 		} else {
@@ -95,7 +106,7 @@ public class ValidationServiceImpl implements ValidationService {
 			for (MeasurementRow row : observations) {
 				for (MeasurementData data : row.getDataList()) {
 					MeasurementVariable variate = data.getMeasurementVariable();
-					if (!isValidValue(variate, data.getValue(), true)) {
+					if (!isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
 						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
 						
 					}
@@ -109,7 +120,7 @@ public class ValidationServiceImpl implements ValidationService {
 		if (workbook.getObservations() != null) {			
 			for (MeasurementData data : row.getDataList()) {
 				MeasurementVariable variate = data.getMeasurementVariable();
-				if (!isValidValue(variate, data.getValue(), false)) {
+				if (!isValidValue(variate, data.getValue(), data.getcValueId(), false)) {
 						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
 					}
 				}			

@@ -470,6 +470,14 @@ $(document).ready(function() {
 
 		}
 	});
+
+    $('.vs-modal').on('variable-select',function(event){
+        if (document.disableActions !== undefined) {
+            document.disableActions();
+        }
+    });
+
+
     // remove any other listeners for the location update
     $(document).off('location-update');
     $(document).on('location-update', recreateLocationCombo);
@@ -486,11 +494,6 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#createNurseryForm').on('click', '#addVariables', function() {
-		if (document.disableActions !== undefined) {
-			document.disableActions();
-		}
-	});
 
 	document.disableActions = function() {
 		var actionBtn = $('.fbk-action-btn');

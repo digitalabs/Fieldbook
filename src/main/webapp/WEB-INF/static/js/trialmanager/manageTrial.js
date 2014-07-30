@@ -144,7 +144,7 @@
     manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout',
         function ($scope, $rootScope, TrialManagerDataService, $http, $timeout) {
             $scope.trialTabs = [
-                {   'name': 'Trial Settings',
+                {   'name': 'Settings',
                     'state': 'trialSettings'
                 },
                 {   'name': 'Germplasm',

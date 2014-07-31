@@ -829,6 +829,8 @@ public class FieldbookServiceImpl implements FieldbookService{
     					MeasurementData newData = new MeasurementData(variable.getName(), actualNameVal);
     					newData.setMeasurementVariable(variable);
     					row.getDataList().add(index, newData);
+    				} else if (nameIdMap.get(String.valueOf(variable.getTermId())) != null) {
+    				    data.setValue(row.getMeasurementDataValue(Integer.parseInt(nameIdMap.get(String.valueOf(variable.getTermId())))));
     				}
     			}
     			index++;

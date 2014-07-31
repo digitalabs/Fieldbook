@@ -85,7 +85,7 @@ $(document).ready(function () {
 function openStudyFieldmapTree(id, name){
 	'use strict';
 	$("#selectStudyFieldMapTree").dynatree("getTree").reload();
-	$('#studyTreeFieldmapModal').modal('show');
+	$('#studyTreeFieldmapModal').modal({ backdrop: 'static', keyboard: true });
 	$('table.selected-study-fieldmap-table tbody').html('');
 	if(isNursery()){
 		$('.fbk-study-tree-title.nursery').removeClass('fbk-hide');

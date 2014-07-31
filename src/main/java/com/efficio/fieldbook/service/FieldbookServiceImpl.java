@@ -830,7 +830,19 @@ public class FieldbookServiceImpl implements FieldbookService{
     					newData.setMeasurementVariable(variable);
     					row.getDataList().add(index, newData);
     				} else if (nameIdMap.get(String.valueOf(variable.getTermId())) != null) {
-    				    data.setValue(row.getMeasurementDataValue(variable.getTermId()));
+    					Integer idTerm = Integer.valueOf(nameIdMap.get(String.valueOf(variable.getTermId())));
+    					MeasurementData idData = row.getMeasurementData(idTerm);
+    					if (idData != null) {
+    						List<ValueReference> possibleValues = idData.getMeasurementVariable().getPossibleValues();
+    						if (possibleValues != null) {
+    							for (ValueReference ref : possibleValues) {
+    								if (ref.getId() != null && ref.getId().toString().equals(idData.getValue())) {
+    									data.setValue(ref.getName());
+    									break;
+    								}
+    							}
+    						}
+    					}
     				}
     			}
     			index++;

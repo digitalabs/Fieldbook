@@ -312,19 +312,21 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	ObjectMapper objectMapper = new ObjectMapper();
     	GermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
     	List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
+    	Map<String, Map<String, String>> changeMap = new HashMap<String, Map<String,String>>();
     	for (GermplasmChangeDetail responseDetail : responseDetails) {
     		if (responseDetail.getIndex() < observations.size()) {
     			MeasurementRow row = observations.get(responseDetail.getIndex());
 				int userId = this.getCurrentIbdbUserId();
 				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
 				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+				MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
     			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
     				String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
 					Integer dateInteger = Integer.valueOf(gDate); 
     				fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), 
     						Integer.valueOf(responseDetail.getOriginalGid()), userId, responseDetail.getNameType(), responseDetail.getImportLocationId(), dateInteger);
     				desigData.setValue(responseDetail.getNewDesig());
-    				gidData.setValue(responseDetail.getOriginalGid());
+    				gidData.setValue(responseDetail.getOriginalGid());    				
     			}
     			else if (responseDetail.getStatus() == 2) { //create new germlasm
 					String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
@@ -340,6 +342,29 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(String.valueOf(responseDetail.getSelectedGid()));
     				
+    			}
+    			
+    			if (responseDetail.getStatus() > 0) {
+	    			if(entryNumData != null && entryNumData.getValue() != null){
+	    				Map<String, String> tempMap = new HashMap<String,String>();
+	    				tempMap.put(Integer.toString(TermId.GID.getId()), gidData.getValue());
+	    				tempMap.put(Integer.toString(TermId.DESIG.getId()), desigData.getValue());
+						changeMap.put(entryNumData.getValue(), tempMap);
+					}
+    			}
+    		}
+    	}
+    	
+    	//we need to set the gid and desig for the trial with the same entry number
+    	if(!userSelection.getWorkbook().isNursery()){
+    		for(MeasurementRow row : observations){
+    			MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
+    			if(entryNumData != null && entryNumData.getValue() != null && changeMap.containsKey(entryNumData.getValue())){
+    				Map<String, String> tempMap = changeMap.get(entryNumData.getValue());
+    				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
+    				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+    				desigData.setValue(tempMap.get(Integer.toString(TermId.DESIG.getId())));
+    				gidData.setValue(tempMap.get(Integer.toString(TermId.GID.getId())));
     			}
     		}
     	}

@@ -277,33 +277,23 @@ function triggerFieldMapTableSelection(tableName) {
 
 function createFieldMap(tableName) {
 
-	var ids = [],
-		index,
-		idVal,
-		idList;
-
 	if($('.import-study-data').data('data-import') === '1'){
 		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
-
-	if ($('#' + tableName + ' .field-map-highlight').attr('id') != null || tableName == 'nursery-table' || tableName == 'trial-table') {
-		// Get selected studies
-		if ($('#createNurseryMainForm #studyId').length  === 1) {
-			ids.push($('#createNurseryMainForm #studyId').val());
-		}else if ($('#createTrialMainForm #studyId').length  === 1) {
-			ids.push($('#createTrialMainForm #studyId').val());
-		} else {
-			ids.push(getCurrentStudyIdInTab());
-		}
-		idList = ids.join(',');
-		$('#page-message').html('');
-
-		// Show pop up to select instances/dataset for field map creation
-		showFieldMapPopUpCreate(tableName, idList);
+	var id = '',
+	name = '';
+	if ($('#createNurseryMainForm #studyId').length  === 1) {
+		id = $('#createNurseryMainForm #studyId').val();
+		name = $('.fieldmap-study-name').html();
+	}else if ($('#createTrialMainForm #studyId').length  === 1) {
+		id = $('#createTrialMainForm #studyId').val();
+		name = $('.fieldmap-study-name').html();
 	} else {
-		showErrorMessage('', fieldMapStudyRequired);
+		id = getCurrentStudyIdInTab();
+		name = $('#div-study-tab-' + getCurrentStudyIdInTab() + ' .fieldmap-study-name').html();
 	}
+	openStudyFieldmapTree(id, name);	
 }
 
 // FIXME obsolete
@@ -397,8 +387,8 @@ function isFloatNumber(val) {
 	}
 }
 
-function selectTrialInstance(tableName) {
-	if (tableName == 'trial-table') {
+function selectTrialInstance() {
+	if (!isNursery()) {
 		$.ajax({
 			url: '/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance',
 			type: 'GET',
@@ -410,7 +400,7 @@ function selectTrialInstance(tableName) {
 						// Show popup to select fieldmap to display
 						clearStudyTree();
 						isViewFieldmap = true;
-						createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap, tableName);
+						createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap);
 						$('#selectTrialInstanceModal').modal('toggle');
 					} else {
 						// Redirect to step 3
@@ -430,7 +420,7 @@ function selectTrialInstance(tableName) {
 	}
 }
 
-function selectTrialInstanceCreate(tableName) {
+function selectTrialInstanceCreate() {
 	$.ajax({
 		url: '/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance',
 		type: 'GET',
@@ -442,21 +432,21 @@ function selectTrialInstanceCreate(tableName) {
 				// Show popup to select instances to create field map
 				clearStudyTree();
 				isViewFieldmap = false;
-				createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap, tableName);
+				createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap);
 				$('#selectTrialInstanceModal').modal('toggle');
 			}
 		}
 	});
 }
 
-function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
+function createStudyTree(fieldMapInfoList, hasFieldMap) {
 	var hasOneInstance = false;
 	createHeader(hasFieldMap);
 	$.each(fieldMapInfoList, function(index, fieldMapInfo) {
 		createRow(getPrefixName('study', fieldMapInfo.fieldbookId), '', fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, hasFieldMap, hasOneInstance);
 		$.each(fieldMapInfo.datasets, function(index, value) {
 			hasOneInstance = fieldMapInfoList.length === 1 && fieldMapInfoList[0].datasets.length === 1 && fieldMapInfoList[0].datasets[0].trialInstances.length === 1;
-			if (tableName == 'trial-table') {
+			if (!isNursery()) {
 				// Create trial study tree up to instance level
 				createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap, hasOneInstance);
 				$.each(value.trialInstances, function(index, childValue) {
@@ -699,9 +689,9 @@ function showFieldMap(tableName) {
 }
 
 // Show popup to select instances for field map creation
-function showFieldMapPopUpCreate(tableName, ids) {
+function showFieldMapPopUpCreate(ids) {
 	var link = '';
-	if (tableName === 'trial-table') {
+	if (!isNursery()) {
 		link = '/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/';
 		trial = true;
 	} else {
@@ -713,7 +703,7 @@ function showFieldMapPopUpCreate(tableName, ids) {
 		type: 'GET',
 		data: '',
 		success: function(data) {
-			selectTrialInstanceCreate(tableName);
+			selectTrialInstanceCreate();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus, errorThrown);

@@ -233,7 +233,7 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
     margin-top: 8pt !important; margin-bottom: 8pt !important;
 }
 
-#studyTree{
+#studyTree, .study-field-map-tree{
     height:350px;
     overflow:auto;
     padding-left: 15px;
@@ -1596,4 +1596,6 @@ table.dataTable th, table.dataTable td {
 .fbk-show-inline{
     display: inline-block;
 }
-
+.fbk-center{
+	text-align: center;
+}

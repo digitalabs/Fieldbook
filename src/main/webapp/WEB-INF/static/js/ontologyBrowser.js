@@ -51,102 +51,104 @@ function searchOntologyTreeNodeWithName(treeName, name) {
     return match;
 }
 
-function formatResult(myItem) {
+var displayOntologyTree = (function() {
 	'use strict';
-    return myItem.text;
- }
 
-function format(myItem) {
-	'use strict';
-	return '<p><strong>'+myItem.text+'</strong> ('+myItem.type+') <br /> '+myItem.parentTitle+'</p>';
-}
+	var formatResult = function(myItem) {
+			return myItem.text;
+		},
 
-function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId) {
-    'use strict';
-    //for triggering the start of search type ahead
-    if (treeData == null) {
-        return;
-    }
+		format = function(myItem) {
+			return '<p><strong>' + myItem.text + '</strong> (' + myItem.type + ') <br /> ' + myItem.parentTitle + '</p>';
+		};
 
-    var termSuggestions = $.parseJSON(searchTreeData),
-        termSuggestionsObj = [],
-        termSuggestionsMap = {};
-    //initialize the arrays that would contain json data for the combos
-    $.each(termSuggestions, function (index, value) {
-        var obj = {
+	return function(treeName, treeData, searchTreeData, searchDivId) {
 
-            'text': value.value,
-            'parentTitle': value.parentTitle,
-            'type': value.type,
-            'key': value.key,
-            'id': value.key
-        };
-        termSuggestionsObj.push(obj);
-        termSuggestionsMap[obj.key] = obj;
-    });
+		// For triggering the start of search type ahead
+		if (treeData == null) {
+			return;
+		}
 
-    //getOntologySuffix(id)
-    $('#' + searchDivId).select2('destroy');
-    $('#' + searchDivId).select2({
-        minimumResultsForSearch: 20,
-        query: function (query) {
-            var data = {results: sortByKey(termSuggestionsObj, 'text')}, i, j, s;
-            //return the array that matches
-            data.results = $.grep(data.results, function (item, index) {
-                return ($.fn.select2.defaults.matcher(query.term, item.text));
-            });
-            /*
-             if (data.results.length === 0){
-             data.results.unshift({id:query.term,text:query.term});
-             }
-             */
-            query.callback(data);
-        },
-        escapeMarkup: function (m) {
-            // Do not escape HTML in the select options text
-            return m;
-        },
-        formatResult: format,
-        formatSelection: formatResult
+		var termSuggestions = $.parseJSON(searchTreeData),
+			termSuggestionsObj = [],
+			termSuggestionsMap = {},
+			$searchInput = $('#' + searchDivId);
 
-    });
+		// Initialize the arrays that would contain json data for the combos
+		$.each(termSuggestions, function(index, value) {
+			var obj = {
+				text: value.value,
+				parentTitle: value.parentTitle,
+				type: value.type,
+				key: value.key,
+				id: value.key
+			};
+			termSuggestionsObj.push(obj);
+			termSuggestionsMap[obj.key] = obj;
+		});
 
-    var json = $.parseJSON(treeData);
+		$searchInput.select2('destroy');
 
-    $('#' + treeName).dynatree({
-        checkbox: false,
-        // Override class name for checkbox icon:
-        classNames: {
-            container: 'fbtree-container',
-            expander: 'fbtree-expander',
-            nodeIcon: 'fbtree-icon',
-            combinedIconPrefix: 'fbtree-ico-',
-            focused: 'fbtree-focused',
-            active: 'fbtree-active'
-        },
-        selectMode: 1,
-        children: json,
-        onActivate: function (node) {
-            // Display list of selected nodes
-            var selNodes = node.tree.getSelectedNodes();
-            // convert to title/key array
-            var selKeys = $.map(selNodes, function (node) {
-                return "[" + node.data.key + "]: '" + node.data.title + "'";
-            });
-            doOntologyTreeHighlight(treeName, node.data.key);
-        },
-        onSelect: function (select, node) {
-            // Display list of selected nodes
-            doOntologyTreeHighlight(treeName, node.data.key);
-        },
-        onKeydown: function (node, event) {
-            if (event.which === 32) {
-                return false;
-            }
-        }
-    });
+		$searchInput.select2({
 
-}
+			minimumResultsForSearch: 20,
+
+			query: function(query) {
+
+				var data = {results: sortByKey(termSuggestionsObj, 'text')}, i, j, s;
+
+				// Return the array that matches
+				data.results = $.grep(data.results, function(item, index) {
+					return ($.fn.select2.defaults.matcher(query.term, item.text));
+				});
+				query.callback(data);
+			},
+			escapeMarkup: function(m) {
+				// Do not escape HTML in the select options text
+				return m;
+			},
+			formatResult: format,
+			formatSelection: formatResult
+
+		});
+
+		$('#' + treeName).dynatree({
+			checkbox: false,
+			// Override class name for checkbox icon:
+			classNames: {
+				container: 'fbtree-container',
+				expander: 'fbtree-expander',
+				nodeIcon: 'fbtree-icon',
+				combinedIconPrefix: 'fbtree-ico-',
+				focused: 'fbtree-focused',
+				active: 'fbtree-active'
+			},
+			selectMode: 1,
+			children: $.parseJSON(treeData),
+			onActivate: function(node) {
+
+				// Display list of selected nodes
+				var selNodes = node.tree.getSelectedNodes(),
+					// Convert to title/key array
+					selKeys = $.map(selNodes, function(node) {
+						return '[' + node.data.key + ']: \'' + node.data.title + '\'';
+					});
+
+				doOntologyTreeHighlight(treeName, node.data.key);
+			},
+			onSelect: function(select, node) {
+				// Display list of selected nodes
+				doOntologyTreeHighlight(treeName, node.data.key);
+			},
+			onKeydown: function(node, event) {
+				if (event.which === 32) {
+					return false;
+				}
+			}
+		});
+	};
+
+}());
 
 //Tab functions
 function processTab(variableName, variableId) {

@@ -162,7 +162,7 @@
                             }
 
                             var isValidTreatmentVars = TrialManagerDataService.validateAllTreatmentFactorLabels({});
-                            if (isValidTreatmentVars.hasError) {
+                            if (!!isValidTreatmentVars && isValidTreatmentVars.hasError) {
                                 showErrorMessage(isValidTreatmentVars.customHeader,isValidTreatmentVars.customMessage);
                                 return false;
                             }

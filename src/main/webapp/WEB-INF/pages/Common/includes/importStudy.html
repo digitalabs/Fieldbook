@@ -167,7 +167,7 @@
 									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" id="importFavoriteMethod" />
 									&nbsp;&nbsp;
 									<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<a href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+									<a class='import-manage-method' href="javascript: void(0)" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 							</div>
 							<!-- store possible values of variable -->
 							<div id="possibleValuesJsonMethod"
@@ -202,7 +202,7 @@
 									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" />
 									&nbsp;&nbsp;
 									<span th:text="#{show.favorite.location}">Show Favorite Location</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<a href="javascript: openManageLocation();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+									<a class='import-manage-location' href="javascript: void(0)"  th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
 							</div>
 							<!-- store possible values of variable -->
 							<div id="possibleValuesJsonLocation"
@@ -357,6 +357,22 @@
 				})
 			});
 			$('#importType').change();
+			
+			 $('.import-manage-location').on('click', function(){
+				$('#importStudyDesigConfirmationModal').modal('hide');
+				$('#importStudyDesigConfirmationModal').data('open', '1');
+				setTimeout(openManageLocations, 500);
+			});
+			
+			$('.import-manage-method').on('click', function(){
+				$('#importStudyDesigConfirmationModal').modal('hide');
+				$('#importStudyDesigConfirmationModal').data('open', '1');
+				setTimeout(openManageMethods, 500);
+			});
+			$('#importStudyDesigConfirmationModal').data('open', '0');
+			
+			$(document).off('location-update');
+		    $(document).on('location-update', recreateLocationCombo);
 		});
 		function doRefreshNurserySettings() {
 			'use strict';

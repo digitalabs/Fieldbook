@@ -1727,7 +1727,7 @@ function recreateMethodCombo() {
 
 	if ($('#importStudyDesigConfirmationModal').length !== 0){
 		createGermplasm = true;
-		if ($('#importStudyDesigConfirmationModal').hasClass('in')) {
+		if ($('#importStudyDesigConfirmationModal').hasClass('in') || $('#importStudyDesigConfirmationModal').data('open') === '1') {
 			createGermplasmOpened = true;
 		}
 	}
@@ -1834,7 +1834,7 @@ function recreateLocationCombo() {
 
 	if ($('#importStudyDesigConfirmationModal').length !== 0){
 		createGermplasm = true;
-		if ($('#importStudyDesigConfirmationModal').hasClass('in')) {
+		if ($('#importStudyDesigConfirmationModal').hasClass('in') || $('#importStudyDesigConfirmationModal').data('open') === '1' ) {
 			createGermplasmOpened = true;
 		}
 	}

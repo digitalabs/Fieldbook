@@ -41,8 +41,10 @@
 			}else if($('#addLotsModal').length !== 0 && $('#addLotsModal').data('open') == '1'){
 				//we show the advance nursery modal
 				setTimeout(function(){$('#addLotsModal').modal('show');}, 200);
-				setTimeout(function(){$('#addLotsModal').data('open', '0');}, 500);
-				
+				setTimeout(function(){$('#addLotsModal').data('open', '0');}, 500);				
+			}else if($('#importStudyDesigConfirmationModal').length !== 0 && $('#importStudyDesigConfirmationModal').data('open') == '1'){
+				setTimeout(function(){$('#importStudyDesigConfirmationModal').modal('show');}, 200);
+				setTimeout(function(){$('#importStudyDesigConfirmationModal').data('open', '0');}, 500);
 			}
 	    });
 	});
@@ -53,6 +55,7 @@
 	}
 
     function propagateLocationUpdateEvent() {
+    	'use strict'
         $.event.trigger({
             type : 'location-update'
         });        

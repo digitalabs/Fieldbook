@@ -72,6 +72,11 @@ public class OpenTrialController extends
     public String getProgramID() {
         return getCurrentProjectId();
     }
+    
+    @ModelAttribute("programMethodURL")
+    public String getProgramMethod() {
+        return fieldbookProperties.getProgramBreedingMethodsUrl();
+    }
 
     @ModelAttribute("trialEnvironmentHiddenFields")
     public List<Integer> getTrialEnvironmentHiddenFields() {

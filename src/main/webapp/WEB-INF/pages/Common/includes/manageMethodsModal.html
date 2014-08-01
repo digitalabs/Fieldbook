@@ -38,6 +38,9 @@
 				setTimeout(function(){$('#advanceNurseryModal').modal('show');}, 200);
 				setTimeout(function(){$('#advanceNurseryModal').data('open', '0');}, 200);
 				
+			}else if($('#importStudyDesigConfirmationModal').length !== 0 && $('#importStudyDesigConfirmationModal').data('open') == '1'){
+				setTimeout(function(){$('#importStudyDesigConfirmationModal').modal('show');}, 200);
+				setTimeout(function(){$('#importStudyDesigConfirmationModal').data('open', '0');}, 500);
 			}
 	    });
 	});

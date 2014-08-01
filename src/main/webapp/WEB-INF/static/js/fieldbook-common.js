@@ -1600,15 +1600,17 @@ function doAdvanceNursery() {
 				showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
 			} else {
 				$('#advanceNurseryModal').modal('hide');
-				$('#create-nursery-tab-headers li').removeClass('active');
-				$('#create-nursery-tabs .info').hide();
+				//$('#create-nursery-tab-headers li').removeClass('active');
+				//$('#create-nursery-tabs .info').hide();
 
 				uniqueId = $(html).find('.uniqueId').attr('id');
 				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
-				aHtml = '<a id="advanceHref' + uniqueId + '" href="javascript: showSelectedAdvanceTab(' + uniqueId + ')">Advance List' + close + '</a>';
-				$('#create-nursery-tab-headers').append('<li class="active" id="advance-list' + uniqueId + '-li">' + aHtml + '</li>');
-				$('#create-nursery-tabs').append('<div class="info" id="advance-list' + uniqueId + '">' + html + '</div>');
-				showSelectedTab('advance-list' + uniqueId);
+				aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + uniqueId + '" href="#advance-list' + uniqueId + '">Advance List' + close + '</a>';
+				$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li">' + aHtml + '</li>');
+				$('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + uniqueId + '">' + html + '</div>');
+				//showSelectedTab('advance-list' + uniqueId);
+				$('a#advanceHref'+uniqueId).tab('show');
+				$('.nav-tabs').tabdrop('layout');
 			}
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
@@ -1627,10 +1629,12 @@ function closeAdvanceListTab(uniqueId) {
 	$('.info#advance-list' + uniqueId).remove();
 
 	setTimeout(function() {
-		$('#create-nursery-tab-headers li').removeClass('active');
-		$('#create-nursery-tabs .info').hide();
-		$('#create-nursery-tab-headers li:eq(0)').addClass('active');
-		$('#create-nursery-tabs .info:eq(0)').css('display', 'block');
+		//$('#create-nursery-tab-headers li').removeClass('active');
+		//$('#create-nursery-tabs .info').hide();
+		//$('#create-nursery-tab-headers li:eq(0)').addClass('active');
+		//$('#create-nursery-tabs .info:eq(0)').css('display', 'block');
+		$('#create-nursery-tab-headers li:eq(0) a').tab('show');
+		$('.nav-tabs').tabdrop('layout');
 	}, 100);
 }
 

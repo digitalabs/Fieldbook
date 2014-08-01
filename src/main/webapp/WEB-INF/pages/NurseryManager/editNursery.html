@@ -188,25 +188,25 @@
 	</div>
 </form>
 </div>
-<ul id="create-nursery-tab-headers" class="nav nav-tabs row">
-	<li id="nursery-settings-li" class="active">
-		<a href="javascript:showSelectedTab('nursery-settings');" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a>
+<ul id="create-nursery-tab-headers" class="nav nav-tabs row" role="tablist">
+	<li id="nursery-settings-li">
+		<a href="#nursery-settings" role="tab" data-toggle="tab" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a>
 	</li>
 	<li id="nursery-germplasm-list-li">
-		<a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
+		<a href="#nursery-germplasm-list" role="tab" class="germplasm" data-toggle="tab" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
 	</li>
 	<li id="nursery-measurements-li">
-		<a href="javascript:showSelectedTab('nursery-measurements');" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
+		<a href="#nursery-measurements" role="tab" class="measurements" data-toggle="tab" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
 	</li>
 </ul>
 
-<div id="create-nursery-tabs" style="padding-top: 15px;" class="row">
-	<div id="nursery-settings" class="info">
+<div class="tab-content row" id="create-nursery-tabs" style="padding-top: 15px;">
+	<div id="nursery-settings" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
 			<div id="chooseSettingsDiv" th:include="/NurseryManager/chooseSettings"></div>
 		</div>
 	</div>
-	<div id="nursery-germplasm-list" class="info" style="display: none;">
+	<div id="nursery-germplasm-list" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
 			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList"></div>
 			<div class="row form-group overwrite-germplasm-list">
@@ -226,7 +226,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="nursery-measurements" class="info" style="display: none;">
+	<div id="nursery-measurements" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
 			<div id="measurementsDiv" th:include="/NurseryManager/addOrRemoveTraits" th:if="${createNurseryForm.measurementRowList.size() != 0}"></div>
 			<div class="row form-group no-measurements-message" th:if="${createNurseryForm.measurementRowList.size() == 0}">
@@ -465,6 +465,24 @@
 				$('.nursery-name').tooltip();
 			}
 			truncateStudyVariableNames('.fbk-variable', 30);
+			$('.nav-tabs').tabdrop({position: 'left'});
+			$('.nav-tabs').tabdrop('layout');
+			$('li#nursery-settings-li a').tab('show');
+			
+			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+			    if($(this).hasClass('germplasm')){
+			    	if(germplasmDataTable != null){
+			    		germplasmDataTable.getDataTable().fnAdjustColumnSizing();
+			    	}
+			    	if(selectedCheckListDataTable != null){
+			    		selectedCheckListDataTable.getDataTable().fnAdjustColumnSizing();
+			    	}
+			    }else if($(this).hasClass('measurements')){
+			    	if($('#measurement-table').length !== 0 && $('#measurement-table').dataTable()){
+			    		$('#measurement-table').dataTable().fnAdjustColumnSizing()
+			    	}
+			    }
+			});
 		});
 
 	//]]>

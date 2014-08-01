@@ -12,10 +12,10 @@
         .controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService',
             'EXP_DESIGN_MSGS', '_',function ($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, EXP_DESIGN_MSGS, _) {
 
-                //TODO: temporarily hide features that are not implemented in this release
                 //$scope.hideFeatures = true;
                 $scope.Math = Math;
                 $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
+                $scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement;
                 //FIXME: cheating a bit for the meantime.
                 $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
 

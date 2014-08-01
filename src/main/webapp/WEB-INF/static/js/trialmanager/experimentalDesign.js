@@ -161,6 +161,12 @@
                                 return false;
                             }
 
+                            var isValidTreatmentVars = TrialManagerDataService.validateAllTreatmentFactorLabels({});
+                            if (isValidTreatmentVars.hasError) {
+                                showErrorMessage(isValidTreatmentVars.customHeader,isValidTreatmentVars.customMessage);
+                                return false;
+                            }
+
                             var errorCode = TrialManagerDataService.treatmentFactorDataInvalid();
 
                             if (errorCode === 1) {

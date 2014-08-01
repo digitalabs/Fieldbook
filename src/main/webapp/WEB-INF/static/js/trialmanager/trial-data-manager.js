@@ -7,10 +7,10 @@
     angular.module('manageTrialApp').service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-        'TrialSettingsManager',
+        'TrialSettingsManager','_',
         function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
                   MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-                  TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager) {
+                  TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager,_) {
 
             // TODO : clean up data service, at the very least arrange the functions in alphabetical order
             var extractData = function (initialData, initializeProperty) {
@@ -510,10 +510,137 @@
                         return false;
                     }
 
+                    // Validate all variables
+                    var isValidVariables = service.validateAllVariablesInput();
+
+                    if (isValidVariables && isValidVariables.hasError) {
+                        valid = valid && !isValidVariables.hasError;
+                        createErrorNotification(isValidVariables.customHeader,isValidVariables.customMessage);
+                    }
+
+                    //valid = false;    // remove later
+
+
+
                     return valid;
 
+                },
+
+                validateAllVariablesInput : function() {
+                    var results = {
+                        hasError : false,
+                        customMessage : '',
+                        customHeader : 'Invalid Input '
+                    }
+
+                    // perform validation on all settings.currentData, (min / max) if any
+                    // Validate all Trial Settings
+                    _.each(service.settings.trialSettings.vals(),function(item,key){
+                        if (!(!item.variable.maxRange && !item.variable.minRange) ) {
+                            _.find(service.currentData.trialSettings,function(val,index) {
+                                if (!!val[key]) {
+                                    if (item.variable.maxRange < Number(val[key])) {
+                                        results.customMessage = "Invalid maximum range on variable " + item.variable.name;
+                                        results.hasError = true;
+                                        return results.hasError;
+                                    } else if (item.variable.minRange > Number(val[key])) {
+                                        results.customMessage = "Invalid minimum range on variable " + item.variable.name;
+                                        results.hasError = true;
+                                        return results.hasError;
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    if (results.hasError) {
+                        return function(tab) { results.customHeader += tab; return results;  }("on Trial Settings");
+                    }
+
+                    // validate environments
+                    _.each(service.settings.environments.managementDetails.vals(),function(item,key){
+                        if (!(!item.variable.maxRange && !item.variable.minRange) ) {
+                            // letz validate each environment
+                            _.find(service.currentData.environments.environments,function(val,index) {
+                                if (!!val.managementDetailValues[key]) {
+                                    if (item.variable.maxRange < Number(val.managementDetailValues[key])) {
+                                        results.customMessage = "Invalid maximum range on management detail variable " + item.variable.name + " at environment " + (Number(index) + Number(1));
+                                        results.hasError = true;
+                                        return results.hasError;
+                                    } else if (item.variable.minRange > Number(val.managementDetailValues[key])) {
+                                        results.customMessage = "Invalid minimum range on management detail variable" + item.variable.name + " at environment " + (Number(index) + Number(1));
+                                        results.hasError = true;
+                                        return results.hasError;
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    if (results.hasError) {
+                        return function(tab) { results.customHeader += tab; return results;  }("on Environments");
+                    }
+
+                    _.each(service.settings.environments.trialConditionDetails.vals(),function(item,key){
+                        if (!(!item.variable.maxRange && !item.variable.minRange) ) {
+                            // letz validate each environment
+                            _.find(service.currentData.environments.environments,function(val,index) {
+                                if (!!val.trialDetailValues[key]) {
+                                    if (item.variable.maxRange < Number(val.trialDetailValues[key])) {
+                                        results.customMessage = "Invalid maximum range on trial details variable " + item.variable.name + " at environment " + (Number(index) + Number(1));
+                                        results.hasError = true;
+                                        return results.hasError;
+                                    } else if (item.variable.minRange > Number(val.trialDetailValues[key])) {
+                                        results.customMessage = "Invalid minimum range on trial details variable" + item.variable.name + " at environment " + (Number(index) + Number(1));
+                                        results.hasError = true;
+                                        return results.hasError;
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+
+                    if (results.hasError) {
+                        return function(tab) { results.customHeader += tab; return results;  }("on Environments");
+                    }
+
+                    //  validate all treatments variable inputs
+                    return service.validateAllTreatmentFactorLabels(results);
+                },
+
+                validateAllTreatmentFactorLabels : function(results) {
+                    //  validate all treatments variable inputs
+                    _.find(document.service.currentData.treatmentFactors.currentData,function(item,key) {
+                        var settings_var = document.service.settings.treatmentFactors.details.val(key).variable;
+                        if (!(!settings_var.maxRange && !settings_var.minRange) ) {
+                            _.find(item.labels,function(val,index) {
+
+                                if (!!val) {
+                                    if (settings_var.maxRange < Number(val)) {
+                                        results.customMessage = "Invalid maximum range on variable " + settings_var.name + " at level " + (Number(index) + Number(1));
+                                        results.hasError = true;
+                                        return results.hasError;
+                                    } else if (settings_var.minRange > Number(val)) {
+                                        results.customMessage = "Invalid minimum range on variable " + settings_var.name + " at level " + (Number(index) + Number(1));
+                                        results.hasError = true;
+                                        return results.hasError;
+                                    }
+                                }
+
+                            });
+                        }
+                    });
+
+                    if (results.hasError) {
+                        return function(tab) { results.customHeader += tab; return results;  }("on Treatment Factors");
+                    }
                 }
+
             };
+
+            // TODO: remove this later
+            document.service = service;
 
             // 5 is the group no of treatment factors
             TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors,5);

@@ -35,6 +35,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -178,6 +179,16 @@ public class EditNurseryController extends SettingsController {
         }
         setFormStaticData(form, contextParams, workbook);
         model.addAttribute("createNurseryForm", form);
+        
+        List<GermplasmList> germplasmList = new ArrayList();
+        for(int i = -4 ; i < 0 ; i++){
+        	GermplasmList temp = new GermplasmList();
+        	temp.setId(i);
+        	temp.setName("Temp " + i);
+        	germplasmList.add(temp);
+        }
+        model.addAttribute("advancedList", germplasmList);
+        
         if(isAjax != null && isAjax.equalsIgnoreCase("1")) {
         	return super.showAjaxPage(model, getContentName());
         }

@@ -1624,22 +1624,24 @@ function showSelectedAdvanceTab(uniqueId) {
 }
 
 function closeAdvanceListTab(uniqueId) {
-
+	'use strict';
 	$('li#advance-list' + uniqueId + '-li').remove();
 	$('.info#advance-list' + uniqueId).remove();
+	if($('#list'+uniqueId).length === 1){
+		$('#list' + uniqueId).remove();
+	}
 
 	setTimeout(function() {
-		//$('#create-nursery-tab-headers li').removeClass('active');
-		//$('#create-nursery-tabs .info').hide();
-		//$('#create-nursery-tab-headers li:eq(0)').addClass('active');
-		//$('#create-nursery-tabs .info:eq(0)').css('display', 'block');
 		$('#create-nursery-tab-headers li:eq(0) a').tab('show');
 		$('.nav-tabs').tabdrop('layout');
 	}, 100);
 }
 
-function displayAdvanceList(uniqueId, germplasmListId, listName) {
-	$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
+function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault) {
+	'use script';
+	if(!isDefault){
+		$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
+	}
 	$.ajax({
 		url: '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId,
 		type: 'GET',

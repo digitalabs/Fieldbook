@@ -49,16 +49,21 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
-	public String loadInitialTree(@PathVariable String isFolderOnly, @PathVariable String type) {
+	public String loadInitialTree(@PathVariable String isFolderOnly, @PathVariable String type, HttpServletRequest req) {
 		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
 		boolean isNursery = (type != null && type.equalsIgnoreCase("N")) ? true : false;
+		boolean showCentral = true;
+		String hasCentral = req.getParameter("hasCentral");
+		if(hasCentral != null && hasCentral.equalsIgnoreCase("0")){
+			showCentral = false;
+		}
 		try {
 			List<TreeNode> rootNodes = new ArrayList<TreeNode>();
 			String localName = isNursery ? AppConstants.PROGRAM_NURSERIES.getString() : AppConstants.PROGRAM_TRIALS.getString();
 			String centralName = isNursery ? AppConstants.PUBLIC_NURSERIES.getString() : AppConstants.PUBLIC_TRIALS.getString();
 			TreeNode localTreeNode = new TreeNode("LOCAL", localName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString());			
 			rootNodes.add(localTreeNode);
-			if(isFolderOnlyBool == false){
+			if(showCentral && isFolderOnlyBool == false){
 				TreeNode centralTreeNode = new TreeNode("CENTRAL", centralName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
 				rootNodes.add(centralTreeNode);
 			}
@@ -174,6 +179,30 @@ public class StudyTreeController {
 		}
 
 		return "[]";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/has/observations/{studyId}/{studyName}", method = RequestMethod.GET)
+	public Map<String, String> hasObservations(@PathVariable int studyId, @PathVariable String studyName) {
+		Map<String, String> dataResults = new HashMap();
+		
+		int datasetId;
+		try {
+			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
+			long observationCount = fieldbookMiddlewareService.countObservations(datasetId);
+			if(observationCount > 0){
+				dataResults.put("hasObservations", "1");
+			}else{
+				dataResults.put("hasObservations", "0");
+			}
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			dataResults.put("hasObservations", "0");
+		}
+		
+		
+		return dataResults;
 	}
 
 	@ResponseBody

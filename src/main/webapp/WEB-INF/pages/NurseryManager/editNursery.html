@@ -23,6 +23,7 @@
                 <img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
                 <span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
                 <span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
+                <span class="heading fieldmap-study-name fbk-hide" th:text="*{basicDetails[0].value}"></span>
                 <span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
                 <input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
                 <input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>				
@@ -307,6 +308,10 @@
 
 <div class="row">
 	<div th:include="/NurseryManager/includes/deleteStudyConfirmation"></div>
+</div>
+
+<div class="row">
+	<div id="study-fieldmap" th:include="/Common/selectStudyFieldmap"></div>
 </div>
 
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">

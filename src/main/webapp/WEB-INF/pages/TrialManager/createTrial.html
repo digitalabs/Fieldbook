@@ -93,7 +93,10 @@
                                 <input class="form-control character-input" type="text" ng-model="data.basicDetails[8005]"/>
                             </div>
 
-                            <div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()"><span truncate-and-tooltip="data.basicDetails[8005]"></span></div>
+                            <div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()">
+                            <span truncate-and-tooltip="data.basicDetails[8005]"></span>
+                            <span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
+                            </div>
                         </div>
 
                         <div class="row form-group">
@@ -252,6 +255,9 @@
 </div>
 <div class="row">
 	<div th:include="/NurseryManager/includes/deleteStudyConfirmation"></div>
+</div>
+<div class="row">
+	<div id="study-fieldmap" th:include="/Common/selectStudyFieldmap"></div>
 </div>
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">

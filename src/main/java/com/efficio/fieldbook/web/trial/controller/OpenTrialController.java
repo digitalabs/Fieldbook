@@ -173,6 +173,7 @@ public class OpenTrialController extends
             form.setStudyId(trialId);
             model.addAttribute("createNurseryForm", form); //so that we can reuse the same age being use for nursery
             model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
+            model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
         }
 
 

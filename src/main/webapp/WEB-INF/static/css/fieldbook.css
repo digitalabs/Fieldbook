@@ -233,7 +233,7 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
     margin-top: 8pt !important; margin-bottom: 8pt !important;
 }
 
-#studyTree{
+#studyTree, .study-field-map-tree{
     height:350px;
     overflow:auto;
     padding-left: 15px;
@@ -331,6 +331,9 @@ div.dataTables_scrollBody table.table-curved {
 }
 .modal-large {
     width: 800px;
+}
+.modal-extra-medium {
+    width: 700px;
 }
 .modal-medium {
     width: 650px;
@@ -1596,7 +1599,11 @@ table.dataTable th, table.dataTable td {
 .fbk-show-inline{
     display: inline-block;
 }
+
 .label-error-bold{
 	color:#e08989; 
 	font-weight:bold;
+}
+.fbk-center{
+	text-align: center;
 }

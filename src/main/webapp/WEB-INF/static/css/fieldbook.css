@@ -332,6 +332,9 @@ div.dataTables_scrollBody table.table-curved {
 .modal-large {
     width: 800px;
 }
+.modal-extra-medium {
+    width: 700px;
+}
 .modal-medium {
     width: 650px;
 }

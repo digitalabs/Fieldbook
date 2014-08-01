@@ -1351,7 +1351,7 @@ function showImportOptions(){
 	$('#fileupload').val('');
 	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
 	if(isNursery()){
-		showSelectedTab('nursery-measurements');
+		$('li#nursery-measurements-li a').tab('show');
 	}else{
 		window.location.hash = '#/editMeasurements';
 	}

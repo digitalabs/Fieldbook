@@ -386,6 +386,7 @@
 						success: function(html) {
 							$('#measurementsDiv').html(html);							
 							$('.import-study-data').data('data-import', '0');
+							$('.import-study-data').data('measurement-show-already', '0');
 							$('.fbk-discard-imported-data').addClass('fbk-hide');
 							if(isNursery()){
 								doRefreshNurserySettings();

@@ -611,8 +611,8 @@
 
                 validateAllTreatmentFactorLabels : function(results) {
                     //  validate all treatments variable inputs
-                    _.find(document.service.currentData.treatmentFactors.currentData,function(item,key) {
-                        var settings_var = document.service.settings.treatmentFactors.details.val(key).variable;
+                    _.find(service.currentData.treatmentFactors.currentData,function(item,key) {
+                        var settings_var = service.settings.treatmentFactors.treatmentLevelPairs[key].val(service.currentData.treatmentFactors.currentData[key].variableId).variable;
                         if (!(!settings_var.maxRange && !settings_var.minRange) ) {
                             _.find(item.labels,function(val,index) {
 

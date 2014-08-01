@@ -13,8 +13,8 @@
                                 <th>&nbsp;</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
                                 <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
-                                <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
                                 <th>Treatment Level Factors</th>
+                                <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
 
                             </tr>
                             </thead>
@@ -27,11 +27,12 @@
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">{{settings.details.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
-                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='data.currentData[key].levels'
-                                           ng-change='onLevelChange(key,data.currentData[key].levels)' ng-disabled="disableTreatment"/>
-                                </td>
-                                <td ng-class="{even : $even, odd : $odd}">
                                     <input type="hidden" ui-select2="generateDropdownOption(key)" class="form-control" ng-model="data.currentData[key].variableId" ng-disabled="disableTreatment"/>
+                                </td>
+
+                                <td ng-class="{even : $even, odd : $odd}">
+                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='data.currentData[key].levels'
+                                           ng-change='onLevelChange(key,data.currentData[key].levels)' ng-disabled="disableTreatment || !data.currentData[key].variableId"/>
                                 </td>
                             </tr>
 
@@ -97,11 +98,11 @@
                                 <tbody>
                                 <tr ng-show="data.currentData[key].variableId" ng-repeat="n in data.currentData[key].labels track by $index">
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <a show-details-modal="key">{{settings.details.val(key).variable.name}} {{$index + 1}}</a>
+                                        <a show-details-modal="retrievePairDetail(key).variable.cvTermId">{{retrievePairDetail(key).variable.name}} {{$index + 1}}</a>
                                     </td>
-                                    <td ng-class-odd="'odd'" ng-class-even="'even'">{{settings.details.val(key).variable.scale}}</td>
+                                    <td ng-class-odd="'odd'" ng-class-even="'even'">{{retrievePairDetail(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <show-setting-form-element settings="settings.details" targetkey="{{$index}}" settingkey="{{key}}" changefunction="onLabelChange()"
+                                        <show-setting-form-element settings="settings.treatmentLevelPairs[key]" targetkey="{{$index}}" settingkey="{{retrievePairDetail(key).variable.cvTermId}}" changefunction="onLabelChange()"
                                                                    valuecontainer="data.currentData[key].labels" use-exact-properties="true" disabled="disableTreatment"></show-setting-form-element>
                                     </td>
                                 </tr>

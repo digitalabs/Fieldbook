@@ -297,7 +297,8 @@ public class ExpDesignUtil {
         mvar.setFactor(true);
         mvar.setOperation(operation);
         mvar.setStoredIn(var.getStoredIn().getId());
-        mvar.setTermId(var.getId());        
+        mvar.setTermId(var.getId());       
+        mvar.setDataTypeId(var.getDataType().getId());
         return mvar;
     }
 
@@ -369,6 +370,9 @@ public class ExpDesignUtil {
 							int index = Integer.valueOf(level) - 1;
 							if (treatmentFactorValues != null && treatmentFactorValues.containsKey(String.valueOf(treatmentLevelData.getMeasurementVariable().getTermId()))) {
 								String value = treatmentFactorValues.get(String.valueOf(treatmentLevelData.getMeasurementVariable().getTermId())).get(index);
+								if(var.getDataTypeId() != null && var.getDataTypeId().intValue() == TermId.DATE_VARIABLE.getId()){
+									value = DateUtil.convertToDBDateFormat(var.getDataTypeId(), value);
+								}
 								measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), var);
 							}
 						}

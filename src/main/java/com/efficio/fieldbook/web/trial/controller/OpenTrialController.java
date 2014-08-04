@@ -423,7 +423,7 @@ public class OpenTrialController extends
 		    			MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
 		    			if(currentVar == null){
 			    			StandardVariable var = fieldbookMiddlewareService.getStandardVariable(id);
-			    			MeasurementVariable newVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD);
+			    			MeasurementVariable newVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
 			    			newVar.setFactor(false);
 			    			newMeasurementDatasetVariables.add(newVar);
 		    			}else{

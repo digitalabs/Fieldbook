@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
@@ -45,6 +46,8 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
     private RandomizeCompleteBlockDesignService randomizeBlockDesign;
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	@Resource
+	public FieldbookService fieldbookService;
 		
 	@Test
 	public void testResolvableIncompleteBlockExpDesignRunToBvDesign() {
@@ -107,15 +110,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
 			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
         		
 	        ExpDesignParameterUi param = new ExpDesignParameterUi();
 	        param.setBlockSize("6");
@@ -143,15 +146,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
 			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
         		
 	        ExpDesignParameterUi param = new ExpDesignParameterUi();
 	        param.setBlockSize("4");
@@ -183,15 +186,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
 			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
         		
 	        ExpDesignParameterUi param = new ExpDesignParameterUi();
 	        param.setBlockSize("4");
@@ -222,15 +225,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 		try {
 			List<ImportedGermplasm> germplasmList = createGermplasmList("Test", 24);
 			List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
         		
 	        ExpDesignParameterUi param = new ExpDesignParameterUi();
 	        param.setBlockSize("4");
@@ -272,15 +275,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			
 			//number of replicates should be 2 or more
 	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
 	        
 	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);	        	        
 	        assertEquals(true, output.isValid());	
@@ -319,15 +322,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			
 			//number of replicates should be 2 or more
 	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
         		
 	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);
 	        assertEquals(true, output.isValid());
@@ -366,15 +369,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			
 			//number of replicates should be 2 or more
 	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
         		
 	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);	        
 	        assertEquals(true, output.isValid());
@@ -412,15 +415,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			
 			//number of replicates should be 2 or more
 	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
         		
 	        ExpDesignValidationOutput output = resolveRowColumn.validate(param, germplasmList);
 	        assertEquals(true, output.isValid());
@@ -449,13 +452,13 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			List<TreatmentVariable> treatmentVarList = new ArrayList<TreatmentVariable>();
 			
 			TreatmentVariable treatmentVar1 = new TreatmentVariable();
-			treatmentVar1.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8284), Operation.ADD));
-			treatmentVar1.setValueVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8282), Operation.ADD));
+			treatmentVar1.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8284), Operation.ADD, fieldbookService));
+			treatmentVar1.setValueVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8282), Operation.ADD, fieldbookService));
 
 			
 			TreatmentVariable treatmentVar2 = new TreatmentVariable();
-			treatmentVar2.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8377), Operation.ADD));
-			treatmentVar2.setValueVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8263), Operation.ADD));
+			treatmentVar2.setLevelVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8377), Operation.ADD, fieldbookService));
+			treatmentVar2.setValueVariable(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(8263), Operation.ADD, fieldbookService));
 
 			treatmentVarList.add(treatmentVar2);
 
@@ -478,15 +481,15 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 			
 			//number of replicates should be 2 or more
 	        List<MeasurementVariable> trialVariables = new ArrayList<MeasurementVariable>();
-			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD));
+			trialVariables.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId()), Operation.ADD, fieldbookService));
 			
 			List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();		
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD));
-	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()), Operation.ADD, fieldbookService));
+	        factors.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()), Operation.ADD, fieldbookService));
 	        
 	        List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();		
-	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD));        
+	        variates.add(ExpDesignUtil.convertStandardVariableToMeasurementVariable(fieldbookMiddlewareService.getStandardVariable(20368), Operation.ADD, fieldbookService));        
         		
 	        ExpDesignValidationOutput output = randomizeBlockDesign.validate(param, germplasmList);	        	       
 	        assertEquals(true, output.isValid());

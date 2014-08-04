@@ -186,27 +186,6 @@ window.TrialSettingsManager = (function () {
 
             studyLevelBreedingMethodPropertyId = 2670,
 
-            managementDetailExclusions = {
-
-                // Don't allow user to select PI_NAME from the Person property if PI_ID is present
-                8110: {
-                    variableId: 8100,
-                    propertyId: 2080
-                },
-
-                // Don't allow user to select COOPERATOR from the PERSON property if COOPERATOR_ID is present
-                8372: {
-                    variableId: 8373,
-                    propertyId: 2080
-                },
-
-                // Don't allow user to select LOCATION_NAME from the Location property if LOCATION_ID is present
-                8190: {
-                    variableId: 8180,
-                    propertyId: 2110
-                }
-            },
-
         // There are a basic set of details hard coded into the page that should not be presented as variables
             basicDetails = [
                 {
@@ -267,7 +246,6 @@ window.TrialSettingsManager = (function () {
                 }
 
                 // Remove variables and properties as necessary
-                exclusions = exclusions.concat(_performExclusions(managementDetailExclusions, selectedVariables, filteredProperties));
                 exclusions = exclusions.concat(_removeVariables(basicDetails, filteredProperties));
                 break;
 
@@ -307,6 +285,34 @@ window.TrialSettingsManager = (function () {
         this._dynamicExclusion[_group] = _list;
     };
 
+    TrialSettingsManager.prototype._updateSelectedVariableList = function(selectedVariableList) {
+        var idNameCombinationList = {
+
+            // Mark PI_NAME as selected if PI_ID is present
+            8110: {
+                8100 : 'PI_NAME'
+            },
+
+            // Mark COOPERATOR as selected if COOPERATOR_ID is present
+            8372: {
+                8373 : 'COOPERATOR'
+            },
+
+            // Mark LOCATION_NAME as selected if LOCATION_ID is present
+            8190: {
+                8180 : 'LOCATION_NAME'
+            }
+        };
+
+        $.each(selectedVariableList, function(index, selectedVariable) {
+            if (idNameCombinationList.hasOwnProperty(index)) {
+                $.extend(selectedVariableList, idNameCombinationList[index]);
+            }
+        });
+
+        return selectedVariableList;
+    };
+
     TrialSettingsManager.prototype._openVariableSelectionDialog = function (params) {
         var groupId = parseInt(params.variableType, 10),
             group = variableSelectionGroups[groupId],
@@ -324,7 +330,7 @@ window.TrialSettingsManager = (function () {
         }
 
         selectedVariables = params.retrieveSelectedVariableFunction();
-
+        selectedVariables = thisInstance._updateSelectedVariableList(selectedVariables);
 
         // If we haven't loaded data for this group before, then load it
         if (!group.data) {
@@ -339,7 +345,7 @@ window.TrialSettingsManager = (function () {
                     propertyData: properties.inclusions,
                     excludedProperties: properties.exclusions,
                     variableUsageData: [],
-                    selectedVariables: params.retrieveSelectedVariableFunction()
+                    selectedVariables: selectedVariables
                 });
             });
 
@@ -352,7 +358,7 @@ window.TrialSettingsManager = (function () {
                 propertyData: properties.inclusions,
                 excludedProperties: properties.exclusions,
                 variableUsageData: [],
-                selectedVariables: params.retrieveSelectedVariableFunction()
+                selectedVariables: selectedVariables
             });
         }
     };

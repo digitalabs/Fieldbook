@@ -1461,6 +1461,10 @@ label[data-toggle="collapse"],
 	height: 45px;
 }
 
+.select2-container .select2-choice .ps-item-property-info {
+	border-left: none;
+}
+
 .ps-results .ps-item-prop-name,
 .ps-results .ps-item-property-search-term {
 	font-weight: bold;

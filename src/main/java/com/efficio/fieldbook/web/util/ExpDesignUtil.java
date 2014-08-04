@@ -386,8 +386,12 @@ public class ExpDesignUtil {
 								}
 								if(var.getDataTypeId() != null && var.getDataTypeId().intValue() == TermId.DATE_VARIABLE.getId()){
 									value = DateUtil.convertToDBDateFormat(var.getDataTypeId(), value);
+									measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), var);
+								}else if(var.getPossibleValues() != null && !var.getPossibleValues().isEmpty() && NumberUtils.isNumber(value)){
+									measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), Integer.parseInt(value), var);	
+								}else{
+									measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), var);
 								}
-								measurementData = new MeasurementData(var.getName(), value, false, var.getDataType(), var);
 							}
 						}
 						treatmentLevelData = null;

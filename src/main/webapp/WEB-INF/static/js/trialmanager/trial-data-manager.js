@@ -248,18 +248,18 @@
                         showAdvancedOptions : [false,false,false],
 
                         data: {
-                            'noOfEnvironments': 0,
+                            'noOfEnvironments': null,
                             'designType': 0,
-                            'replicationsCount' : 0,
+                            'replicationsCount' : null,
                             'isResolvable' : true,
-                            'blockSize' : 0,
+                            'blockSize' : null,
                             'useLatenized' : false,
-                            'nblatin' : 0,
-                            'replicationsArrangement' : 0,
-                            'rowsPerReplications' : 0,
-                            'colsPerReplications' : 0,
-                            'nrlatin':0,
-                            'nclatin': 0,
+                            'nblatin' : null,
+                            'replicationsArrangement' : null,
+                            'rowsPerReplications' : null,
+                            'colsPerReplications' : null,
+                            'nrlatin': null,
+                            'nclatin': null,
                             'replatinGroups': ''
                         }
                     },

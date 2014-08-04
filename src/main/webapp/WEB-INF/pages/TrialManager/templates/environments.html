@@ -30,13 +30,13 @@
                 <div class="row">
                     <div class="col-xs-6 col-md-6">
 
-                        <section-container th:attr="heading=#{trial.managesettings.trial.environment.management.details},help-tooltip=#{trial.managesettings.environment.management.details.tooltip}" add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails" variable-type="4">
+                        <section-container icon="bms-mgt-details" th:attr="heading=#{trial.managesettings.trial.environment.management.details},help-tooltip=#{trial.managesettings.environment.management.details.tooltip}" add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails" variable-type="4">
                             <display-settings hide-delete="isHideDelete" name="content" settings="settings.managementDetails" variable-type="4"></display-settings>
                         </section-container>
 
                     </div>
                     <div class="col-xs-6 col-md-6">
-                        <section-container th:attr="heading=#{trial.managesettings.trial.environment.trial.condition.details},help-tooltip=#{trial.managesettings.trial.conditions.tooltip}" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails" variable-type="7">
+                        <section-container th:attr="heading=#{trial.managesettings.trial.environment.trial.condition.details},help-tooltip=#{trial.managesettings.trial.conditions.tooltip},icon-img=@{/static/svg/conditions.svg}" icon-width="22px" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails" variable-type="7">
                             <display-settings hide-delete="isHideDelete" name="content" settings="settings.trialConditionDetails" variable-type="7"></display-settings>
                         </section-container>
                     </div>
@@ -53,6 +53,7 @@
         <div class="horizontal-level-item" ng-repeat="environment in data.environments">
             <div class="row">
                 <label class="control-label col-md-12" style="text-transform: uppercase">
+                    <span class="bms-environments" style="font-size: 20px"></span>
                     <strong class="sub-content-heading add-bottom-padding"><span th:text="#{trial.managesettings.trial.environment.label}">Environment</span> {{$index + 1}}</strong>
                 </label>
             </div>

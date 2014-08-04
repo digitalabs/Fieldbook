@@ -177,6 +177,7 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+
 .bms-add:before {
     content: "\e000";
 }
@@ -221,9 +222,6 @@
 }
 .bms-trial-icon:before {
     content: "\e00f";
-}
-.bms-variates:before {
-    content: "\e010";
 }
 .bms-view-more-details:before {
     content: "\e011";
@@ -449,4 +447,28 @@
 }
 .bms-fa-ellipsis-v:before {
     content: "\e05d";
+}
+.bms-exp-design:before {
+    content: "\e053";
+}
+.bms-conditions:before {
+    content: "\e054";
+}
+.bms-environments:before {
+    content: "\e057";
+}
+.bms-measurements:before {
+    content: "\e05e";
+}
+.bms-mgt-details:before {
+    content: "\e05f";
+}
+.bms-treatment-factors:before {
+    content: "\e060";
+}
+.bms-variables:before {
+    content: "\e061";
+}
+.bms-variates:before {
+    content: "\e062";
 }

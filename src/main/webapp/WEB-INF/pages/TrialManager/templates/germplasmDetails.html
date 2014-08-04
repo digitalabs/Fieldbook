@@ -2,7 +2,7 @@
 <div class="row" >
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
-        <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
+        <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
                            collapsible="true">
 
             <span name="action-buttons">
@@ -13,7 +13,7 @@
                 <span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="8" class="btn btn-info" >Add</span>
             </span>
 
-            <section-container name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
+            <section-container icon="bms-factors" name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
                 <display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="8" name="content"></display-settings>
             </section-container>
 

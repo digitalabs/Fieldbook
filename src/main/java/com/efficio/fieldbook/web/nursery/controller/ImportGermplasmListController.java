@@ -298,7 +298,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	Integer listId = getUserSelection().getImportedGermplasmMainInfo().getListId();
         	
         	List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-        	fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject);
+        	fieldbookMiddlewareService.saveOrUpdateListDataProject(Integer.valueOf(getCurrentProjectId()), isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject);
         }
         if(getUserSelection().getImportedCheckGermplasmMainInfo() != null){
         	if(getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null){

@@ -306,20 +306,20 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	Integer listId = getUserSelection().getImportedGermplasmMainInfo().getListId();
         	List<ImportedGermplasm> importedGermplasmList = isNursery ? getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() : getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
         	List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(importedGermplasmList);
-        	fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject);
+        	fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject, getCurrentIbdbUserId());
         }
         if(getUserSelection().getImportedCheckGermplasmMainInfo() != null){
         	if(getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null){
         		//came from a list
         		Integer listId = getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
         		List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-        		fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, listId, listDataProject);
+        		fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, listId, listDataProject,getCurrentIbdbUserId());
         		
         	}else if(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null &&
         			getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null
         			&& !getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().isEmpty()){
                 List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-                fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, null, listDataProject);
+                fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, null, listDataProject, getCurrentIbdbUserId());
                 
         	}else{
             	//we delete it

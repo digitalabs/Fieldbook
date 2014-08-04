@@ -22,6 +22,8 @@ public class ListDataProjectUtil {
             	listDataProj.setGermplasmId(Integer.valueOf(aData.getGid()));
             	if(aData.getCheckId() != null){
             		listDataProj.setCheckType(aData.getCheckId());
+            	}else{
+            		listDataProj.setCheckType(Integer.valueOf(0));
             	}
             	listDataProj.setDesignation(aData.getDesig());
             	listDataProj.setEntryId(aData.getEntryId());

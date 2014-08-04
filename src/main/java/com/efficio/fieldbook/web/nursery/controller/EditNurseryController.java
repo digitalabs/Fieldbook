@@ -177,30 +177,23 @@ public class EditNurseryController extends SettingsController {
             }
             
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            
+            List<GermplasmList> germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.ADVANCED);
+            
+            List<GermplasmList> germplasmListNursery = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.NURSERY);
+            List<GermplasmList> germplasmListCheck = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.CHECK);
+            if(germplasmListNursery != null && !germplasmListNursery.isEmpty()){
+            	GermplasmList nurseryList = germplasmListNursery.get(0);
+            	fieldbookMiddlewareService.getListDataProject(nurseryList.getId());
+            }
+            if(germplasmListCheck != null && !germplasmListCheck.isEmpty()){
+            	GermplasmList checkList = germplasmListCheck.get(0);
+            	fieldbookMiddlewareService.getListDataProject(checkList.getId());
+            }
+            model.addAttribute("advancedList", germplasmList);
         }
         setFormStaticData(form, contextParams, workbook);
-        model.addAttribute("createNurseryForm", form);
-        
-        List<GermplasmList> germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.ADVANCED);
-        /*
-        for(int i = -4 ; i < 0 ; i++){
-        	GermplasmList temp = new GermplasmList();
-        	temp.setId(i);
-        	temp.setName("Temp " + i);
-        	germplasmList.add(temp);
-        }
-        */
-        List<GermplasmList> germplasmListNursery = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.NURSERY);
-        List<GermplasmList> germplasmListCheck = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK);
-        if(germplasmListNursery != null && !germplasmListNursery.isEmpty()){
-        	GermplasmList nurseryList = germplasmListNursery.get(0);
-        	fieldbookMiddlewareService.getListDataProject(nurseryList.getId());
-        }
-        if(germplasmListCheck != null && !germplasmListCheck.isEmpty()){
-        	GermplasmList checkList = germplasmListCheck.get(0);
-        	fieldbookMiddlewareService.getListDataProject(checkList.getId());
-        }
-        model.addAttribute("advancedList", germplasmList);
+        model.addAttribute("createNurseryForm", form);               
         
         if(isAjax != null && isAjax.equalsIgnoreCase("1")) {
         	return super.showAjaxPage(model, getContentName());

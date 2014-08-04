@@ -21,6 +21,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.expression.Lists;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -49,6 +50,8 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	protected FieldbookProperties fieldbookProperties;
 	@Resource
     private ResourceBundleMessageSource messageSource;
+	@Resource
+	public FieldbookService fieldbookService;
 	
 	
 	@Override
@@ -109,7 +112,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			
 			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
 					trialVariables, factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
-					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null);					
+					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null, fieldbookService);					
 			
 		}catch(BVDesignException e){
 			throw e;

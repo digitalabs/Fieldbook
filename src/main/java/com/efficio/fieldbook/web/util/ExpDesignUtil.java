@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -290,7 +291,7 @@ public class ExpDesignUtil {
 		return mainDesign;
 	}
 	
-	public static MeasurementVariable convertStandardVariableToMeasurementVariable(StandardVariable var, Operation operation) {
+	public static MeasurementVariable convertStandardVariableToMeasurementVariable(StandardVariable var, Operation operation, FieldbookService fieldbookService) {
         MeasurementVariable mvar = new MeasurementVariable(
         		var.getName(), var.getDescription(), var.getScale().getName(), var.getMethod().getName(), var.getProperty().getName(), var.getDataType().getName(), null,
         		var.getPhenotypicType().getLabelList().get(0));
@@ -299,6 +300,13 @@ public class ExpDesignUtil {
         mvar.setStoredIn(var.getStoredIn().getId());
         mvar.setTermId(var.getId());       
         mvar.setDataTypeId(var.getDataType().getId());
+
+        try {
+			mvar.setPossibleValues(fieldbookService.getAllPossibleValues(var.getId()));
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return mvar;
     }
 
@@ -402,14 +410,14 @@ public class ExpDesignUtil {
 			List<MeasurementVariable> trialVariables, List<MeasurementVariable> factors, List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables, List<StandardVariable> requiredExpDesignVariable, 
 			List<ImportedGermplasm> germplasmList, MainDesign mainDesign, WorkbenchService workbenchService, 
-			FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues) 
+			FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues, FieldbookService fieldbookService) 
 					throws JAXBException, IOException, MiddlewareQueryException, BVDesignException{
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();			
 		varList.addAll(nonTrialFactors);
 		for(StandardVariable var : requiredExpDesignVariable){
 			if(WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null){
-				MeasurementVariable measureVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD);
+				MeasurementVariable measureVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
 				varList.add(measureVar);
 				if(WorkbookUtil.getMeasurementVariable(factors, var.getId()) == null){
 					factors.add(measureVar);

@@ -23,6 +23,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
@@ -44,6 +45,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	protected FieldbookProperties fieldbookProperties;
 	@Resource
     private ResourceBundleMessageSource messageSource;
+	@Resource
+	public FieldbookService fieldbookService;
 	
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
@@ -85,8 +88,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 						StandardVariable stdVar1 = fieldbookMiddlewareService.getStandardVariable(treatmentPair1);
 						StandardVariable stdVar2 =  fieldbookMiddlewareService.getStandardVariable(treatmentPair2);
 						TreatmentVariable treatmentVar = new TreatmentVariable();
-						MeasurementVariable measureVar1 = ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar1, Operation.ADD);
-						MeasurementVariable measureVar2 = ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar2, Operation.ADD);
+						MeasurementVariable measureVar1 = ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar1, Operation.ADD, fieldbookService);
+						MeasurementVariable measureVar2 = ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar2, Operation.ADD, fieldbookService);
 						measureVar1.setFactor(true);
 						measureVar2.setFactor(true);
 						
@@ -138,7 +141,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			
 			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, trialVariables, factors,
 					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
-					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues);					
+					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, fieldbookService);					
 			
 		}catch(BVDesignException e){
 			throw e;

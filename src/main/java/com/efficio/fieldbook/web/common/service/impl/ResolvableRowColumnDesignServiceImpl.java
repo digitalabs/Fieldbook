@@ -19,6 +19,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.ResolvableRowColumnDesignService;
@@ -39,9 +40,10 @@ public class ResolvableRowColumnDesignServiceImpl implements
 	protected WorkbenchService workbenchService;
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
-
 	@Resource
     private ResourceBundleMessageSource messageSource;
+	@Resource
+	public FieldbookService fieldbookService;
 	 
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
@@ -103,7 +105,7 @@ public class ResolvableRowColumnDesignServiceImpl implements
 				
 				measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
 						trialVariables, factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
-						mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null);					
+						mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null, fieldbookService);					
 				
 			}catch(BVDesignException e){
 				throw e;

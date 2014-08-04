@@ -426,6 +426,7 @@
                     helpTooltip: '@',
                     icon: '@',
                     iconImg: '@',
+                    iconWidth: '@',
                     modelData: '=',
                     variableType: '@',
                     showReminder: '=',

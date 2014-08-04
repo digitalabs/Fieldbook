@@ -1,8 +1,8 @@
 <div ng-multi-transclude-controller>
     <div>
         <label class="control-label section-toggle toggle-icon" ng-click="doCollapse()" >
-            <span ng-show="icon" class="{{icon}}" style="font-size: 20px; color: #C4A01B;"></span>
-            <img ng-src="{{iconImg}}" ng-show="iconImg" />
+            <span ng-show="icon" class="{{icon}}" style="font-size: 20px;"></span>
+            <img ng-src="{{iconImg}}" ng-show="iconImg" width="{{iconWidth}}" />
             <img class="icn section-expanded" ng-show="!toggleSection && collapsible" src="/Fieldbook/static/img/expanded-arrow.png" />
             <img style="margin-left: 7px" class="icn section-collapsed" ng-show="toggleSection && collapsible" src="/Fieldbook/static/img/collapsed-arrow.png" />
             <strong class="sub-content-heading">{{heading}}</strong>

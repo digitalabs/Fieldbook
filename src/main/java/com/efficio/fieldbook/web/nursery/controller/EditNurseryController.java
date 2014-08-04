@@ -33,6 +33,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -180,12 +181,24 @@ public class EditNurseryController extends SettingsController {
         setFormStaticData(form, contextParams, workbook);
         model.addAttribute("createNurseryForm", form);
         
-        List<GermplasmList> germplasmList = new ArrayList();
+        List<GermplasmList> germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.ADVANCED);
+        /*
         for(int i = -4 ; i < 0 ; i++){
         	GermplasmList temp = new GermplasmList();
         	temp.setId(i);
         	temp.setName("Temp " + i);
         	germplasmList.add(temp);
+        }
+        */
+        List<GermplasmList> germplasmListNursery = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.NURSERY);
+        List<GermplasmList> germplasmListCheck = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK);
+        if(germplasmListNursery != null && !germplasmListNursery.isEmpty()){
+        	GermplasmList nurseryList = germplasmListNursery.get(0);
+        	fieldbookMiddlewareService.getListDataProject(nurseryList.getId());
+        }
+        if(germplasmListCheck != null && !germplasmListCheck.isEmpty()){
+        	GermplasmList checkList = germplasmListCheck.get(0);
+        	fieldbookMiddlewareService.getListDataProject(checkList.getId());
         }
         model.addAttribute("advancedList", germplasmList);
         

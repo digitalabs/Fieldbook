@@ -67,7 +67,8 @@
 
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".managementDetails">
-				<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<span class="bms-mgt-details fbk-trial-summary-icons"></span>
+                <img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="margin-left: -7px; display:none;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{fb.study.trialmanagementdetails}">TRIAL MANAGEMENT DETAILS</strong>
 			</label>
@@ -89,8 +90,8 @@
 
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".germplasmDescriptors">
-				<img heigth="16" th:src="@{/static/img/factors.png}" class="lbl-img" />
-				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+                <span class="bms-factors fbk-trial-summary-icons"></span>
+                <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{trial.trialdetails.germplasm.descriptors}">GERMPLASM DESCRIPTORS</strong>
 			</label>
@@ -120,7 +121,8 @@
 		<br/>
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".treatmentFactors">
-				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+                <span class="bms-treatment-factors fbk-trial-summary-icons"></span>
+                <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{trial.trialdetails.treatment.factors}">TREATMENT FACTORS</strong>
 			</label>
@@ -154,7 +156,8 @@
 		<br/>
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".trialEnvironments">
-				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+                <span class="bms-environments fbk-trial-summary-icons"></span>
+                <img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{trial.trialdetails.environments}">ENVIRONMENTS</strong>
 			</label>
@@ -168,7 +171,8 @@
 			<div class="col-md-6">
 	            <div>
 	                <label  class="control-label">
-	                    <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.management.details}">ENVIRONMENT MANAGEMENT DETAILS</strong>
+                        <span class="bms-mgt-details fbk-trial-summary-icons"></span>
+                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.management.details}">ENVIRONMENT MANAGEMENT DETAILS</strong>
 	                </label>
 	            </div>
 	            <div>
@@ -195,6 +199,7 @@
 			<div class="col-md-6">
             <div>
                 <label  class="control-label">
+                    <img th:src="@{/static/svg/conditions.svg}" width="22px" style="margin: 3px 4px" />
                     <strong class="sub-content-heading" th:text="#{trial.trialdetails.trial.conditions}">TRIAL CONDITIONS</strong>
                 </label>
             </div>
@@ -229,30 +234,27 @@
 
 		</div>
 		<div class="col-md-12 sectionContainer collapse traitDetails col-xs-12 col-md-12" style="padding-top: 10px;">
-			<div class="row">
-				<div class="col-sm-6">
-					<div>
-						<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="variateDetails">
-							<thead>
-								<tr>
-									<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-									<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="variateDetail, rowStat : *{variateDetails}">
-									<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
-										<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+            <div class="col-sm-6">
+                <div>
+                    <table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="variateDetails">
+                        <thead>
+                        <tr>
+                            <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+                            <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="variateDetail, rowStat : *{variateDetails}">
+                            <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+                                <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 										*{variateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${variateDetail.variable.name}"></a>
-									</td>
-									<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.description}"></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-			</div>
+                            </td>
+                            <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.description}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 		</div> <!-- section container -->
 
         <div class="col-xs-12 col-md-12">

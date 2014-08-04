@@ -71,6 +71,8 @@ public class ImportedGermplasmMainInfo implements Serializable {
     /** The is advance import type. */
     private boolean isAdvanceImportType;
     
+    private Integer listId;
+    
 	/**
 	 * Checks if is advance import type.
 	 *
@@ -322,5 +324,14 @@ public class ImportedGermplasmMainInfo implements Serializable {
 	public void setServerFilename(String serverFilename) {
 		this.serverFilename = serverFilename;
 	}
+
+	public Integer getListId() {
+		return listId;
+	}
+
+	public void setListId(Integer listId) {
+		this.listId = listId;
+	}
     
+	
 }

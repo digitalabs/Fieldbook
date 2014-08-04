@@ -17,9 +17,11 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -96,6 +98,16 @@ public class OpenTrialController extends
 
     @RequestMapping(value = "/germplasm", method = RequestMethod.GET)
     public String showGermplasm(Model model, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
+    	try {
+    		List<GermplasmList> germplasmListTrial = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.TRIAL);
+	        if(germplasmListTrial != null && !germplasmListTrial.isEmpty()){
+	        	GermplasmList trialList = germplasmListTrial.get(0);        	
+				fieldbookMiddlewareService.getListDataProject(trialList.getId());		
+	        }
+    	} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return showAjaxPage(model, URL_GERMPLASM);
     }
 

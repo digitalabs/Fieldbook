@@ -1237,6 +1237,48 @@ input::-ms-clear {
 .fbk-hide-opacity{
     opacity: 0;
 }
+
+.fbk-font-icon:before {
+   font-size: 17pt;
+}
+.fbk-font-icon{
+    position: relative;
+    top: 8px;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.fbk-trial-summary-icons {
+    font-size: 20px;
+    display:inline-block;
+    margin-right: 5px;
+    margin-left: 5px
+}
+
+.bms-exp-design {
+    color: #9E8376;
+}
+
+.bms-environments {
+    color: #0074AC;
+}
+
+.bms-treatment-factors {
+    color: #C95B05;
+}
+
+.bms-variates {
+  color: #A9DD28;
+}
+
+.bms-mgt-details {
+  color: #263798;
+}
+
+.bms-factors {
+  color: #C4A01B;
+}
+
 .fbk-icon-header{
     padding-bottom:5px;
     padding-right: 10px;

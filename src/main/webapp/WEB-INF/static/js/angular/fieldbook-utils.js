@@ -268,7 +268,7 @@
                         uiSelect2.compile(tElement, tAttrs);
                     }
                 },
-                controller: function ($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
+                controller: function ($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
                     if ($scope.settingkey === undefined) {
                         $scope.settingkey = $scope.targetkey;
                     }
@@ -368,26 +368,18 @@
                     if ($scope.isLocation) {
                         $scope.updateLocationValues = function () {
                             if (!$scope.variableDefinition.locationUpdated) {
-                                $.ajax({
-                                    url: '/Fieldbook/NurseryManager/advance/nursery/getLocations',
-                                    type: 'GET',
-                                    cache: false,
-                                    data: '',
-                                    success: function (data) {
-                                        if (data.success === '1') {
-                                            $scope.variableDefinition.locationUpdated = true;
-                                            $scope.variableDefinition.possibleValues = $scope.convertLocationsToPossibleValues(
-                                                $.parseJSON(data.allBreedingLocations));
-                                            $scope.variableDefinition.possibleValuesFavorite = $scope.convertLocationsToPossibleValues(
-                                                $.parseJSON(data.favoriteLocations));
+                                $http.get('/Fieldbook/NurseryManager/advance/nursery/getLocations').then(function (returnVal) {
+                                    if (returnVal.data.success === '1') {
+                                        $scope.variableDefinition.locationUpdated = true;
+                                        $scope.variableDefinition.possibleValues = $scope.convertLocationsToPossibleValues(
+                                            $.parseJSON(returnVal.data.allBreedingLocations));
+                                        $scope.variableDefinition.possibleValuesFavorite = $scope.convertLocationsToPossibleValues(
+                                            $.parseJSON(returnVal.data.favoriteLocations));
 
-                                            if (!$scope.$$phase) {
-                                                $scope.$apply();
-                                            }
-                                        }
+                                        $scope.updateDropdownValues();
                                     }
-
                                 });
+
                             }
                         };
 

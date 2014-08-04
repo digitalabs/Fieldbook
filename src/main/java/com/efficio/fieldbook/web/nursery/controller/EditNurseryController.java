@@ -194,11 +194,11 @@ public class EditNurseryController extends SettingsController {
         List<GermplasmList> germplasmListCheck = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK);
         if(germplasmListNursery != null && !germplasmListNursery.isEmpty()){
         	GermplasmList nurseryList = germplasmListNursery.get(0);
-        	fieldbookMiddlewareService.getSnapshot(nurseryList.getId());
+        	fieldbookMiddlewareService.getListDataProject(nurseryList.getId());
         }
         if(germplasmListCheck != null && !germplasmListCheck.isEmpty()){
         	GermplasmList checkList = germplasmListCheck.get(0);
-        	fieldbookMiddlewareService.getSnapshot(checkList.getId());
+        	fieldbookMiddlewareService.getListDataProject(checkList.getId());
         }
         model.addAttribute("advancedList", germplasmList);
         

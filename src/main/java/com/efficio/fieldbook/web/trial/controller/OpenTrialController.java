@@ -102,7 +102,7 @@ public class OpenTrialController extends
     		List<GermplasmList> germplasmListTrial = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(getCurrentProjectId()), GermplasmListType.TRIAL);
 	        if(germplasmListTrial != null && !germplasmListTrial.isEmpty()){
 	        	GermplasmList trialList = germplasmListTrial.get(0);        	
-				fieldbookMiddlewareService.getSnapshot(trialList.getId());		
+				fieldbookMiddlewareService.getListDataProject(trialList.getId());		
 	        }
     	} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block

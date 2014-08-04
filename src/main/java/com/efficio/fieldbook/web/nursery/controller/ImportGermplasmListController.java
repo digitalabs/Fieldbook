@@ -74,7 +74,7 @@ import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.SnapShotUtil;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 // TODO: Auto-generated Javadoc
@@ -297,34 +297,22 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	//we need to create a new germplasm list
         	Integer listId = getUserSelection().getImportedGermplasmMainInfo().getListId();
         	
-        	List<ListDataProject> listDataProject = SnapShotUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        	List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
         	fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject);
         }
         if(getUserSelection().getImportedCheckGermplasmMainInfo() != null){
         	if(getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null){
         		//came from a list
         		Integer listId = getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
-        		List<ListDataProject> listDataProject = SnapShotUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-        		fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK, listId, listDataProject);
+        		List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        		fieldbookMiddlewareService.saveOrUpdateListDataProject(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK, listId, listDataProject);
         	}else if(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null &&
         			getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null){
-        		//we need to create a new list        		           
-            	Long dateLong = Long.valueOf(System.currentTimeMillis());
-            	String listName = GermplasmListType.CHECK.toString() + "-" + dateLong;
-            	GermplasmList parent = null;
-            	String description = "Selected Checks";
-            	Integer status = 1; 
-                GermplasmList germplasmList = new GermplasmList(null, listName, dateLong, GermplasmListType.CHECK.toString(), getCurrentIbdbUserId(),
-                        description, parent, status, "");
-                germplasmList.setListData(null);
-                germplasmList.setListRef(null);
-                germplasmList.setProjectId(Integer.valueOf(getCurrentProjectId()));
-                //
-                List<ListDataProject> listDataProject = SnapShotUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-                fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK, germplasmList, listDataProject);
+                List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+                fieldbookMiddlewareService.saveOrUpdateListDataProject(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK, null, listDataProject);
         	}else{
             	//we delete it
-            	fieldbookMiddlewareService.deleteSnapshots(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK);
+            	fieldbookMiddlewareService.deleteListDataProjects(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK);
             }
         }
     }   

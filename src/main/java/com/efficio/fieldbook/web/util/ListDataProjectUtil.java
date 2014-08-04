@@ -8,7 +8,7 @@ import org.generationcp.middleware.pojos.ListDataProject;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
-public class SnapShotUtil {
+public class ListDataProjectUtil {
 	
 	  public static List<ListDataProject> createListDataProject(List<ImportedGermplasm> importedGermplasmList){
 	    	

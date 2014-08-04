@@ -58,7 +58,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
-import com.efficio.fieldbook.web.util.SnapShotUtil;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
@@ -139,8 +139,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
                 List<GermplasmListData> data = new ArrayList<GermplasmListData>();
                 data.addAll(germplasmListManager.getGermplasmListDataByListId(germplasmListId, 0, Integer.MAX_VALUE));                
-                List<ListDataProject> listDataProject = SnapShotUtil.createListDataProjectFromGermplasmListData(data);
-            	fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), GermplasmListType.ADVANCED, germplasmListId, listDataProject);
+                List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
+            	fieldbookMiddlewareService.saveOrUpdateListDataProject(Integer.valueOf(getCurrentProjectId()), GermplasmListType.ADVANCED, germplasmListId, listDataProject);
                 
         		results.put("isSuccess", 1);
         		results.put("germplasmListId", germplasmListId);

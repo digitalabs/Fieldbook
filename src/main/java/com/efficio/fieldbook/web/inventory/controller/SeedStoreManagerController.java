@@ -141,11 +141,19 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     }
         
     @RequestMapping(value="/advance/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
-    public String displayAdvanceGermplasmDetails(@PathVariable Integer listId,  @ModelAttribute("seedStoreForm") SeedStoreForm form,
+    public String displayAdvanceGermplasmDetails(@PathVariable Integer listId,  
+    		@ModelAttribute("seedStoreForm") SeedStoreForm form, HttpServletRequest req,
             Model model) {
         
         try {
-                        
+            String snapshot = req.getParameter("isSnapshot");
+            boolean isSnapshot = false;
+            
+            if(snapshot != null && snapshot.equalsIgnoreCase("1")){
+            	isSnapshot = true;
+            }
+            //TODO: need to get it in the snapshot table
+            
             List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId);
             this.getPaginationListSelection().addFinalAdvancedList(listId.toString(), inventoryDetailList);
             

@@ -66,6 +66,8 @@ public class ImportedGermplasm implements Serializable {
     
     private Integer index;
     
+    private String groupName;
+    
     public Integer getIndex() {
 		return index;
 	}
@@ -375,6 +377,14 @@ public class ImportedGermplasm implements Serializable {
 
     	return rec;
     }
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
 
     
 }

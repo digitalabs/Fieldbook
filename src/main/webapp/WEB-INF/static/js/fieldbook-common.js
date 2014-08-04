@@ -1639,11 +1639,15 @@ function closeAdvanceListTab(uniqueId) {
 
 function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault) {
 	'use script';
+	var url = '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId; 
 	if(!isDefault){
 		$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
+		url += '?isSnapshot=0';
+	}else{
+		url += '?isSnapshot=1';
 	}
 	$.ajax({
-		url: '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId,
+		url: url,
 		type: 'GET',
 		cache: false,
 		success: function(html) {

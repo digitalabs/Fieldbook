@@ -24,6 +24,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.ContextUtil;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
@@ -33,6 +34,7 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -56,6 +58,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
+import com.efficio.fieldbook.web.util.SnapShotUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
@@ -133,7 +136,11 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
                 Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
                 GermplasmList germplasmList = createNurseryAdvanceGermplasmList(advancingNurseryForm, form, germplasms, listDataItems);
                 Integer germplasmListId = fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
-            	
+
+                List<GermplasmListData> data = new ArrayList<GermplasmListData>();
+                data.addAll(germplasmListManager.getGermplasmListDataByListId(germplasmListId, 0, Integer.MAX_VALUE));                
+                List<ListDataProject> listDataProject = SnapShotUtil.createListDataProjectFromGermplasmListData(data);
+            	fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), GermplasmListType.ADVANCED, germplasmListId, listDataProject);
                 
         		results.put("isSuccess", 1);
         		results.put("germplasmListId", germplasmListId);

@@ -19,20 +19,30 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +72,9 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.SnapShotUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 // TODO: Auto-generated Javadoc
@@ -197,6 +209,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     		//start: section for taking note of the check germplasm
         boolean isDeleteObservations = false;
 		 String selectedCheck[] = form.getSelectedCheck();
+		 boolean isNursery = true;
 	    if (userSelection.getTemporaryWorkbook() != null) {
             WorkbookUtil.manageExpDesignVariablesAndObs(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
             WorkbookUtil.addMeasurementDataToRowsExp(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getObservations(), 
@@ -206,8 +219,10 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
             userSelection.setTemporaryWorkbook(null);
             isDeleteObservations = true;
+            isNursery = false;
         } else {
             if (selectedCheck != null && selectedCheck.length != 0) {
+            	isNursery = true;
             	ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = getUserSelection().getImportedCheckGermplasmMainInfo();
             	if(importedGermplasmMainInfoToUse == null){
             		//since for trial, we are using only the original info
@@ -268,11 +283,51 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
         
         fieldbookService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
-        fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
+        fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);        
         int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true, isDeleteObservations);
-		
+        //for saving the snapshots
+        saveListSnapshots(isNursery);
         return Integer.toString(studyId);
     }
+    
+    private void saveListSnapshots(boolean isNursery) throws NumberFormatException, MiddlewareQueryException{
+    	//we call here to have
+        if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getListId() != null){
+        	//we save the list
+        	//we need to create a new germplasm list
+        	Integer listId = getUserSelection().getImportedGermplasmMainInfo().getListId();
+        	
+        	List<ListDataProject> listDataProject = SnapShotUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        	fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject);
+        }
+        if(getUserSelection().getImportedCheckGermplasmMainInfo() != null){
+        	if(getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null){
+        		//came from a list
+        		Integer listId = getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
+        		List<ListDataProject> listDataProject = SnapShotUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        		fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK, listId, listDataProject);
+        	}else if(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null &&
+        			getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null){
+        		//we need to create a new list        		           
+            	Long dateLong = Long.valueOf(System.currentTimeMillis());
+            	String listName = GermplasmListType.CHECK.toString() + "-" + dateLong;
+            	GermplasmList parent = null;
+            	String description = "Selected Checks";
+            	Integer status = 1; 
+                GermplasmList germplasmList = new GermplasmList(null, listName, dateLong, GermplasmListType.CHECK.toString(), getCurrentIbdbUserId(),
+                        description, parent, status, "");
+                germplasmList.setListData(null);
+                germplasmList.setListRef(null);
+                germplasmList.setProjectId(Integer.valueOf(getCurrentProjectId()));
+                //
+                List<ListDataProject> listDataProject = SnapShotUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+                fieldbookMiddlewareService.saveOrUpdateSnapshot(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK, germplasmList, listDataProject);
+        	}else{
+            	//we delete it
+            	fieldbookMiddlewareService.deleteSnapshots(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK);
+            }
+        }
+    }   
     
     private List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList, 
 			List<ImportedGermplasm> checkList){
@@ -309,10 +364,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             mainInfo.setAdvanceImportType(true);
             form.setImportedGermplasmMainInfo(mainInfo);
             int count = (int) germplasmListManager.countGermplasmListDataByListId(listId);
-            
+            mainInfo.setListId(listId);
             List<GermplasmListData> data = new ArrayList<GermplasmListData>();
-            //for(int i = 0 ; i < 20 ; i++)
-            	data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
+            data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data, null);
             String defaultTestCheckId = getCheckId(DEFAULT_TEST_VALUE, fieldbookService.getCheckList());
             form.setImportedGermplasm(list);
@@ -503,6 +557,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             mainInfo.setAdvanceImportType(true);
             form.setImportedCheckGermplasmMainInfo(mainInfo);
             int count = (int) germplasmListManager.countGermplasmListDataByListId(listId);
+            mainInfo.setListId(listId);
             
             List<Enumeration> checksList = fieldbookService.getCheckList();
             String checkId =  getCheckId(DEFAULT_CHECK_VALUE, checksList);
@@ -873,6 +928,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
                 germplasm.setEntryId(aData.getEntryId());
                 germplasm.setGid(aData.getGid().toString());
                 germplasm.setSource(aData.getSeedSource());
+                germplasm.setGroupName(aData.getGroupName());
                 germplasm.setIndex(index++);
                 
                 list.add(germplasm);

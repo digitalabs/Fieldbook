@@ -208,8 +208,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             , BindingResult result, Model model, HttpServletRequest req) throws MiddlewareQueryException {
     		//start: section for taking note of the check germplasm
         boolean isDeleteObservations = false;
-		 String selectedCheck[] = form.getSelectedCheck();
-		 boolean isNursery = true;
+		String selectedCheck[] = form.getSelectedCheck();
+		boolean isNursery = userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N ? true : false;
 	    if (userSelection.getTemporaryWorkbook() != null) {
             WorkbookUtil.manageExpDesignVariablesAndObs(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
             WorkbookUtil.addMeasurementDataToRowsExp(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getObservations(), 
@@ -219,10 +219,10 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
             userSelection.setTemporaryWorkbook(null);
             isDeleteObservations = true;
-            isNursery = false;
+        
         } else {
             if (selectedCheck != null && selectedCheck.length != 0) {
-            	isNursery = true;
+            	
             	ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = getUserSelection().getImportedCheckGermplasmMainInfo();
             	if(importedGermplasmMainInfoToUse == null){
             		//since for trial, we are using only the original info
@@ -239,6 +239,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             	}
             }
 
+            //for saving the snapshots
+           // saveListSnapshots(true);
+            
             //end: section for taking note of the check germplasm
             if (getUserSelection().getImportedGermplasmMainInfo() != null) {
             	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
@@ -247,7 +250,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
             		form.setImportedCheckGermplasm(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
             	}
-                
+            	if(getUserSelection().getImportedGermplasmMainInfo() != null && 
+            			getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
+            		//this is to keep track of the original list before merging with the checks
+            		getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().copyImportedGermplasms();
+            	}
             	//merge primary and check germplasm list
             	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null && form.getStartIndex() != null
             			&& form.getInterval() != null && form.getMannerOfInsertion() != null) {
@@ -286,34 +293,43 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);        
         int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true, isDeleteObservations);
         //for saving the snapshots
-        saveListSnapshots(isNursery);
+        saveListDataProject(isNursery, studyId);
         return Integer.toString(studyId);
     }
     
-    private void saveListSnapshots(boolean isNursery) throws NumberFormatException, MiddlewareQueryException{
+    private void saveListDataProject(boolean isNursery, int studyId) throws NumberFormatException, MiddlewareQueryException{
     	//we call here to have
+    	
         if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getListId() != null){
         	//we save the list
         	//we need to create a new germplasm list
         	Integer listId = getUserSelection().getImportedGermplasmMainInfo().getListId();
-        	
-        	List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-        	fieldbookMiddlewareService.saveOrUpdateListDataProject(Integer.valueOf(getCurrentProjectId()), isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject);
+        	List<ImportedGermplasm> importedGermplasmList = isNursery ? getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() : getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+        	List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(importedGermplasmList);
+        	fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject);
         }
         if(getUserSelection().getImportedCheckGermplasmMainInfo() != null){
         	if(getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null){
         		//came from a list
         		Integer listId = getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
-        		List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-        		fieldbookMiddlewareService.saveOrUpdateListDataProject(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK, listId, listDataProject);
+        		List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        		fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, listId, listDataProject);
+        		
         	}else if(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null &&
-        			getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null){
-                List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-                fieldbookMiddlewareService.saveOrUpdateListDataProject(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK, null, listDataProject);
+        			getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null
+        			&& !getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().isEmpty()){
+                List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+                fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, null, listDataProject);
+                
         	}else{
             	//we delete it
-            	fieldbookMiddlewareService.deleteListDataProjects(Integer.valueOf(getCurrentProjectId()), GermplasmListType.CHECK);
+            	fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.CHECK);
             }
+        }else{
+        	if(isNursery){
+        		//we delete it
+        		fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.CHECK);
+        	}
         }
     }   
     

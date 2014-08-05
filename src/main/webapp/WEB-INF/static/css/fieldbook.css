@@ -1316,7 +1316,7 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 }
 
 .select2-default {
-    color: #000 !important;
+    color: #333333 !important;
 }
 
 /* move the search icon to the fron and set the starting caret position after the icon */

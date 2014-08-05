@@ -1298,7 +1298,6 @@ textarea.form-control {
 }
 
 /* SELECT 2 overrides */
-
 input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input,
 .select2-container .select2-choices .select2-search-field input, .select2-container .select2-choice, .select2-container .select2-choices {
     color: #333333;
@@ -1316,6 +1315,9 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
     background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
 }
 
+.select2-default {
+    color: #000 !important;
+}
 
 /* move the search icon to the fron and set the starting caret position after the icon */
 .select2-search input {
@@ -1648,4 +1650,12 @@ table.dataTable th, table.dataTable td {
 }
 .fbk-center{
 	text-align: center;
+}
+
+a[ng-click] {
+    cursor:pointer;
+}
+
+.germplasm-list-data-table tr > td:nth-child(1) {
+    cursor: pointer;
 }

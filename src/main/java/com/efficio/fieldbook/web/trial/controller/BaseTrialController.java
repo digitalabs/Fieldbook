@@ -152,7 +152,7 @@ public abstract class BaseTrialController extends SettingsController {
         for (TreatmentVariable treatmentVariable : treatmentVariables) {
             Integer levelFactorID = treatmentVariable.getLevelVariable().getTermId();
             if (!levelDetails.containsKey(levelFactorID)) {
-                SettingDetail detail = createSettingDetail(levelFactorID, null);
+                SettingDetail detail = createSettingDetail(levelFactorID, treatmentVariable.getLevelVariable().getName());
 
                 if (!isUsePrevious) {
                     detail.getVariable().setOperation(Operation.UPDATE);

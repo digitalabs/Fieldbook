@@ -51,8 +51,6 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
-import com.vaadin.data.Property.ConversionException;
-import com.vaadin.data.Property.ReadOnlyException;
 
 /**
  * The Class ImportGermplasmFileServiceImpl.
@@ -172,10 +170,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             LOG.error("File not found");
         } catch (IOException e) {
             showInvalidFileError(e.getMessage());
-        } catch (ReadOnlyException e) {
-            showInvalidFileTypeError();
-        } catch (ConversionException e) {
-            showInvalidFileTypeError();
         } catch (OfficeXmlFileException e) {
             showInvalidFileError(e.getMessage());
         } catch (Exception e) {

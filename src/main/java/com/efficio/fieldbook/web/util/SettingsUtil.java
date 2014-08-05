@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.vaadin.terminal.VariableOwner;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Enumeration;

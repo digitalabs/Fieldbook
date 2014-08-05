@@ -2,17 +2,17 @@
 
 	<form id="usageTabForm" class="form-horizontal"  th:object="${ontologyDetailsForm}">
 		<div class="form-group">
-			<label class="col-xs-8 col-lg-8 control-label label-bold" th:text="#{ontology.browser.usagetab.projectCount} + ':'">Number of studies where this variable is involved:</label>
-			<div class="col-xs-2 col-lg-2">
+			<label class="col-xs-7 col-lg-5 control-label label-bold" th:text="#{ontology.browser.usagetab.projectCount} + ':'">Number of studies where this variable is involved:</label>
+			<div class="col-xs-5 col-lg-7">
 				<p class="form-control-static" th:text="*{projectCount}">.0</p>
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-xs-8 col-lg-8 control-label label-bold" th:text="#{ontology.browser.usagetab.observationCount} + ':'">Number of observations for this variable:</label>
-			<div class="col-xs-2 col-lg-2">
+			<label class="col-xs-7 col-lg-5 control-label label-bold" th:text="#{ontology.browser.usagetab.observationCount} + ':'">Number of observations for this variable:</label>
+			<div class="col-xs-5 col-lg-7">
 				<p  class="form-control-static" th:text="*{observationCount}">.0</p>
 			</div>
 		</div>
 	</form>
-	
+
 </div>

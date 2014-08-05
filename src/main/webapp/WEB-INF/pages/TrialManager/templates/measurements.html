@@ -3,7 +3,7 @@
         <section-container th:attr="heading=#{trial.managesettings.measurement.title}"
                            collapsible="true" add-variable="true" hide-variable="addVariable" model-data="settings" variable-type="3">
 
-            <section-container name="content" th:attr="heading=#{trial.managesettings.baseline.traits},help-tooltip=#{trial.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}">
+            <section-container name="content" th:attr="heading=#{trial.managesettings.baseline.traits},help-tooltip=#{trial.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}" icon-style="width: 22px">
                 <display-settings hide-delete="isHideDelete" name="content" settings="settings" variable-type="3" predelete-function="predeleteFunction(variableType, key)"></display-settings>
             </section-container>
         </section-container>

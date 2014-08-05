@@ -45,45 +45,40 @@
         </div>
     </section-container>
 
-    <div class="col-md-12" style="padding-top: 20px">
-        <strong class="sub-content-heading" th:text="#{trial.managesettings.trial.environment.specify.level}">Specify Environment-Level Details</strong>
-    </div>
-
-    <div class="col-md-12">
-        <div class="horizontal-level-item" ng-repeat="environment in data.environments">
-            <div class="row">
-                <label class="control-label col-md-12" style="text-transform: uppercase">
-                    <span class="bms-environments" style="font-size: 20px"></span>
-                    <strong class="sub-content-heading add-bottom-padding"><span th:text="#{trial.managesettings.trial.environment.label}">Environment</span> {{$index + 1}}</strong>
-                </label>
-            </div>
-            <div class="row form-horizontal">
-                <div class="col-xs-6 col-md-6">
-                    <div class="form-group" ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">
-                        <div class="col-xs-5 1st">
+    <section-container th:attr="heading=#{trial.managesettings.trial.environment.specify.level}">
+        <div name="content">
+            <div class="horizontal-level-item" ng-repeat="environment in data.environments">
+                <section-container heading="ENVIRONMENT {{$index + 1}}" icon="bms-environments">
+                    <div name="content" class="row form-horizontal">
+                        <div class="col-xs-6 col-md-6">
+                            <div class="form-group" ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">
+                                <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
                         label-bold var-names">{{settings.managementDetails.val(key).variable.name}}:</span>
+                                </div>
+                                <div class="col-xs-7 2nd">
+                                    <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
+                                                               valuecontainer="environment.managementDetailValues"></show-setting-form-element>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-xs-7 2nd">
-                            <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
-                                                       valuecontainer="environment.managementDetailValues"></show-setting-form-element>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-6 col-md-6">
-                    <div class="form-group" ng-repeat="key in settings.trialConditionDetails.keys()">
-                        <div class="col-xs-5 1st">
+                        <div class="col-xs-6 col-md-6">
+                            <div class="form-group" ng-repeat="key in settings.trialConditionDetails.keys()">
+                                <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
                         label-bold var-names">{{settings.trialConditionDetails.val(key).variable.name}}:</span>
-                        </div>
-                        <div class="col-xs-7 2nd">
-                            <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
-                                                       valuecontainer="environment.trialDetailValues"></show-setting-form-element>
+                                </div>
+                                <div class="col-xs-7 2nd">
+                                    <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
+                                                               valuecontainer="environment.trialDetailValues"></show-setting-form-element>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section-container>
             </div>
-
         </div>
-    </div>
+    </section-container>
+
+
 </div>

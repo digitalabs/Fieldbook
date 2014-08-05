@@ -419,7 +419,9 @@ public class OpenTrialController extends
         //we show only traits that are being passed by the frontend
         String traitsListCsv = request.getParameter("traitsList");
     	List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
-    	    		    		
+    	 	
+    		List<SettingDetail> traitList = userSelection.getBaselineTraitsList();
+    	 	
     		if(!measurementDatasetVariables.isEmpty()){
 				for(MeasurementVariable var : measurementDatasetVariables){
 					if(var.isFactor()){
@@ -436,8 +438,10 @@ public class OpenTrialController extends
 			    			MeasurementVariable newVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD);
 			    			newVar.setFactor(false);
 			    			newMeasurementDatasetVariables.add(newVar);
+			    			SettingsUtil.findAndUpdateVariableName(traitList, newVar);
 		    			}else{
 		    				newMeasurementDatasetVariables.add(currentVar);
+		    				SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
 		    			}
 		    		}
 				}
@@ -455,8 +459,7 @@ public class OpenTrialController extends
         
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
     }
-    
-    
+  
     private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, List<MeasurementVariable> measurementDatasetVariables, List<MeasurementRow> observations, Integer measurementDatasetId,  List<MeasurementVariable> variates, Model model) throws MiddlewareQueryException{
     	 //set measurements data
         userSelection.setMeasurementRowList(observations);

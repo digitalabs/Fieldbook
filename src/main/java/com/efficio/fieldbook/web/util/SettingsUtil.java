@@ -2025,4 +2025,18 @@ public class SettingsUtil {
 		}
 		return newMeasureList;
     }
+    
+    public static void findAndUpdateVariableName(List<SettingDetail> traitList, MeasurementVariable currentVar){
+    	if(traitList != null && !traitList.isEmpty()){
+    		for(SettingDetail detail : traitList){
+    			if(detail != null && detail.getVariable() != null && detail.getVariable().getName() != null && detail.getVariable().getCvTermId() != null && 
+    					detail.getVariable().getCvTermId().intValue() == currentVar.getTermId()){
+    				
+    				currentVar.setName(detail.getVariable().getName());
+    				break;
+    			}
+    		}
+    	}
+    }
+    
 }

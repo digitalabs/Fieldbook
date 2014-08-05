@@ -24,6 +24,8 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -32,6 +34,7 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Service
 public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeCompleteBlockDesignService{
@@ -44,6 +47,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	protected FieldbookProperties fieldbookProperties;
 	@Resource
     private ResourceBundleMessageSource messageSource;
+	@Resource
+    private UserSelection userSelection;
 	
 	@Override
 	public  List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
@@ -64,6 +69,9 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>(); //Key - CVTerm ID , List of values
 			List<TreatmentVariable> treatmentVarList = new ArrayList<TreatmentVariable>();
 			Map treatmentFactorsData = parameter.getTreatmentFactorsData();
+			
+			List<SettingDetail> treatmentFactorList = userSelection.getTreatmentFactors();
+			
 			if(treatmentFactorsData != null){
 				Iterator keySetIter = treatmentFactorsData.keySet().iterator();
 				while(keySetIter.hasNext()){
@@ -89,6 +97,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 						MeasurementVariable measureVar2 = ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar2, Operation.ADD);
 						measureVar1.setFactor(true);
 						measureVar2.setFactor(true);
+						
+						SettingsUtil.findAndUpdateVariableName(treatmentFactorList, measureVar1);
 						
 						measureVar1.setTreatmentLabel(measureVar1.getName());
 						measureVar2.setTreatmentLabel(measureVar1.getName());

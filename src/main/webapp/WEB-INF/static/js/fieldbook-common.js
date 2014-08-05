@@ -2816,6 +2816,12 @@ function isNursery(){
 	}
 }
 
+function isOpenTrial() {
+    'use strict';
+    var trialStatus = $('body').data('trialStatus');
+    return (trialStatus && trialStatus === 'OPEN');
+}
+
 
 function addStudyTreeHighlight(node) {
 	$(node.span).addClass('fbtree-focused');

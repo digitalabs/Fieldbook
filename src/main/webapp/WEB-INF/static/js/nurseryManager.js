@@ -933,6 +933,19 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		sortVariableIdsAndNames(variableType);
 		inputChange = true;
 
+
+        // disable actions if applicable
+        if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass('disabled')) {
+            document.initialEnabledStat = true;
+        } else {
+            document.initialEnabledStat = false;
+        }
+
+        if (document.disableActions !== undefined) {
+            document.disableActions();
+            eval($(this).attr('onclick'));
+        }
+
 		return true;
 	} else {
 		// show confirmation popup

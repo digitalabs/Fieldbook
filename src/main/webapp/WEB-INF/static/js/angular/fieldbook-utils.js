@@ -366,16 +366,26 @@
 
                     // TODO : add code that can handle display of favorite methods, as well as update of possible values in case of click of manage methods
                     if ($scope.isLocation) {
+                        $scope.clearArray = function (targetArray) {
+                            // current internet research suggests that this is the fastest way of clearing an array
+                            while (targetArray.length > 0) {
+                                targetArray.pop();
+                            }
+                        };
+
                         $scope.updateLocationValues = function () {
                             if (!$scope.variableDefinition.locationUpdated) {
                                 $http.get('/Fieldbook/NurseryManager/advance/nursery/getLocations').then(function (returnVal) {
                                     if (returnVal.data.success === '1') {
                                         $scope.variableDefinition.locationUpdated = true;
-                                        $scope.variableDefinition.possibleValues = $scope.convertLocationsToPossibleValues(
-                                            $.parseJSON(returnVal.data.allBreedingLocations));
-                                        $scope.variableDefinition.possibleValuesFavorite = $scope.convertLocationsToPossibleValues(
-                                            $.parseJSON(returnVal.data.favoriteLocations));
+                                        // clear and copy of array is performed so as to preserve previous reference and have changes applied to all components with a copy of the previous reference
+                                        $scope.clearArray($scope.variableDefinition.possibleValues);
+                                        $scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
 
+                                        $scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
+                                            $scope.convertLocationsToPossibleValues($.parseJSON(returnVal.data.allBreedingLocations)));
+                                        $scope.variableDefinition.possibleValuesFavorite.push.apply($scope.variableDefinition.possibleValuesFavorite,
+                                            $scope.convertLocationsToPossibleValues($.parseJSON(returnVal.data.favoriteLocations)));
                                         $scope.updateDropdownValues();
                                     }
                                 });

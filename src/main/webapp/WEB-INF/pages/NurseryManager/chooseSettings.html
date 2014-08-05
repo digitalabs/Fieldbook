@@ -449,30 +449,6 @@ $(document).ready(function() {
 		doOntologyTreeHighlight(treeDivId, data.key);
 	});
 
-	/* GCP-8880 (tag change event to a var) */
-    /*
-	$.each($('span.delete-icon'), function() {
-		this.onclick = null;
-	});
-
-	// re apply the behaviors using modified functions
-	$(document).on('click', 'span.delete-icon', function() {
-
-		if (document.disableActions !== undefined) {
-			if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass('disabled')) {
-				document.initialEnabledStat = true;
-			} else {
-				document.initialEnabledStat = false;
-			}
-
-			document.disableActions();
-			eval($(this).attr('onclick'));
-
-		}
-	});
-     */
-
-
     $('.vs-modal').on('variable-select',function(event){
         if (document.disableActions !== undefined) {
             document.disableActions();

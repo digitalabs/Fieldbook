@@ -214,10 +214,10 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
     padding: 5px 10px;
     position: relative;
 }
-#ontology-tabs{
+#ontology-tabs {
     background-color: #f6f6f6;
-    border:1px solid #e4e4e4;
-    min-height: 320px;
+    border: 1px solid #e4e4e4;
+    min-height: 370px;
     border-top: 0px;
 }
 
@@ -711,7 +711,7 @@ div.possibleValuesDiv{
     display: block;
 }
 #ontologyBrowserTree{
-    height: 350px;
+    height: 400px;
 }
 /*
 #addVariablesSettingBody #ontologyBrowserTree{

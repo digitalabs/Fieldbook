@@ -43,7 +43,11 @@
      <div class="col-xs-7 col-md-7 variable-detail-info" style="display:none">
 	<!-- Tab Navigation section -->
 				<ul class="nav nav-tabs" id="ontology-tab-headers">
-					<li class="active" id="ontology-details-tab-li"><a href="javascript:showSelectedTab('ontology-details-tab');">Details</a></li>
+					<li class="active" id="ontology-details-tab-li">
+						<a href="javascript:showSelectedTab('ontology-details-tab');" th:text="#{ontology.browser.tab.details}">
+							Details
+						</a>
+					</li>
 				</ul>
 				<!-- details section -->
 				<div style="padding-top: 15px;" id="ontology-tabs">

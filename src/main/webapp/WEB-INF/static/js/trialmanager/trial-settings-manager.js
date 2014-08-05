@@ -289,24 +289,21 @@ window.TrialSettingsManager = (function () {
         var idNameCombinationList = {
 
             // Mark PI_NAME as selected if PI_ID is present
-            8110: {
-                8100 : 'PI_NAME'
-            },
+            8110: 8100,
+
 
             // Mark COOPERATOR as selected if COOPERATOR_ID is present
-            8372: {
-                8373 : 'COOPERATOR'
-            },
+            8372: 8373,
 
             // Mark LOCATION_NAME as selected if LOCATION_ID is present
-            8190: {
-                8180 : 'LOCATION_NAME'
-            }
+            8190: 8180
         };
 
-        $.each(selectedVariableList, function(index, selectedVariable) {
-            if (idNameCombinationList.hasOwnProperty(index)) {
-                $.extend(selectedVariableList, idNameCombinationList[index]);
+        $.each(selectedVariableList, function(termID, nameAlias) {
+            if (idNameCombinationList.hasOwnProperty(termID)) {
+
+                selectedVariableList[idNameCombinationList[termID]] = nameAlias;
+
             }
         });
 

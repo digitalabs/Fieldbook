@@ -6,11 +6,15 @@
 	        </span>
         </div>
 
-		<div class="col-xs-7 col-md-7">
+		<div class="col-xs-5 col-md-5">
 			<div class="form-group"></div>
-			<h4 id="variable-details">
-	        </h4>
+			<span id="variable-details" class="h4"></span>
         </div>
+        <div class="col-xs-2 col-md-2">
+			<div class="ob-manage-variables-btn">
+				 <a th:if="${isPopup == false}" href="/OntologyManageVariable/" class="btn btn-info" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
+			</div>
+		</div>
     </div>
 	<div class="row">
 		<div class="col-xs-5 col-md-5">
@@ -42,22 +46,22 @@
      <a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
      <div class="col-xs-7 col-md-7 variable-detail-info" style="display:none">
 	<!-- Tab Navigation section -->
-				<ul class="nav nav-tabs" id="ontology-tab-headers">
-					<li class="active" id="ontology-details-tab-li">
-						<a href="javascript:showSelectedTab('ontology-details-tab');" th:text="#{ontology.browser.tab.details}">
-							Details
-						</a>
-					</li>
-				</ul>
-				<!-- details section -->
-				<div style="padding-top: 15px;" id="ontology-tabs">
-					<div id="ontology-details-tab">
-						<div class="col-xs-12 col-md-12" id="reminder-placeholder" th:text="#{ontology.browser.details.tab.reminder}">
-						 Select a Standard Variable to view
-						</div>
-					</div>
+		<ul class="nav nav-tabs" id="ontology-tab-headers">
+			<li class="active" id="ontology-details-tab-li">
+				<a href="javascript:showSelectedTab('ontology-details-tab');" th:text="#{ontology.browser.tab.details}">
+					Details
+				</a>
+			</li>
+		</ul>
+		<!-- details section -->
+		<div style="padding-top: 15px;" id="ontology-tabs">
+			<div id="ontology-details-tab">
+				<div class="col-xs-12 col-md-12" id="reminder-placeholder" th:text="#{ontology.browser.details.tab.reminder}">
+				 Select a Standard Variable to view
 				</div>
 			</div>
+		</div>
+	</div>
 <div layout:fragment="page-script">
 	<!-- Property / Variable Selection Result Template-->
 	<script id="ob-select-result-template" type="text/x-handlebars-template">

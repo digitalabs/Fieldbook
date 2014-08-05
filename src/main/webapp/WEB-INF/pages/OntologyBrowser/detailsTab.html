@@ -5,6 +5,12 @@
         <input type="hidden" id="selectedName" value=""/>
         <input type="hidden" th:field="*{possiblePairsJson}" />
 		<div class="form-group">
+			<label class="col-xs-4 col-lg-4 control-label label-bold" th:text="#{ontology.browser.detailstab.description} + ':'">Description:</label>
+			<div class="col-xs-6 col-lg-6">
+				<p class="form-control-static" th:text="*{variable.description}">.description</p>
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-xs-4 col-lg-4 control-label label-bold" th:text="#{ontology.browser.detailstab.traitClass} + ':'">Trait Class:</label>
 			<div class="col-xs-6 col-lg-6">
 				<p class="form-control-static" th:text="*{traitClassName}">.trait Class</p>

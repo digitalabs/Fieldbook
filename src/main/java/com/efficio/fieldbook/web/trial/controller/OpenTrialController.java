@@ -22,6 +22,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -176,6 +177,17 @@ public class OpenTrialController extends
             model.addAttribute("createNurseryForm", form); //so that we can reuse the same age being use for nursery
             model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
             model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
+            
+            model.addAttribute("germplasmListSize", 0);
+            List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
+            
+            if(germplasmLists != null && !germplasmLists.isEmpty()){
+                GermplasmList germplasmList = germplasmLists.get(0);
+                List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
+                if(data != null && !data.isEmpty()){
+                	model.addAttribute("germplasmListSize", data.size());
+                }
+            }
         }
 
 

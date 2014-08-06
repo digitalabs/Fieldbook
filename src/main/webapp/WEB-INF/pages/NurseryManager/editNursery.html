@@ -215,22 +215,7 @@
 	</div>
 	<div id="nursery-germplasm-list" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
-			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList"></div>
-			<div class="row form-group overwrite-germplasm-list">
-				<div class="col-xs-12 col-md-12">
-					<label class="control-label" th:text="#{nursery.edit.nursery.overwrite.germplasm.list.message}">						
-					</label>
-					&nbsp;&nbsp;&nbsp;
-					<button class="btn btn-primary" onclick="showGermplasmDetailsSection();" th:text="#{germplasm.replace}">Overwrite</button>
-				</div>
-			</div>
-			<div class="row form-group observation-exists-notif">
-				<div class="col-xs-12 col-md-12">
-					<label class="control-label">
-						<strong class="sub-content-heading" th:text="#{nursery.edit.nursery.cannot.modify.germplasm.list.message}">This Nursery has saved observations, germplasm list cannot be modified.</strong>
-					</label>
-				</div>
-			</div>
+			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList" data-replace="0"></div>
 		</div>
 	</div>
 	<div id="nursery-measurements" class="tab-pane info">
@@ -392,7 +377,8 @@
 				success: function(data) {
                     if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);                        
-                    } else if ($('.germplasm-list-items tbody tr').length > 0 || measurementRowCount === 0) {
+                    } else if ($('#chooseGermplasmAndChecks').data('replace') !== undefined 
+    						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 || measurementRowCount === 0) {
                     	submitGermplasmAndCheck();
 					} else if (data.status === '1') {
 						recreateSessionVariables();
@@ -433,7 +419,8 @@
 					moveToTopScreen();
 					return false;
 				}
-				if ($('.germplasm-list-items tbody tr').length > 0 && measurementRowCount > 0) {
+				if ($('#chooseGermplasmAndChecks').data('replace') !== undefined 
+						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 && measurementRowCount > 0) {
 					deleteMeasurementRows();
 				} else {
 					if($('.import-study-data').data('data-import') === '1'){
@@ -456,7 +443,7 @@
 
 		$(document).ready(function() {
 			'use strict';
-
+		
 			$('#basicDetails.toggle-icon').click(function(){
 				var expandedImg = $(this).find('.section-expanded'),
 					collapsedImg = $(this).find('.section-collapsed'),

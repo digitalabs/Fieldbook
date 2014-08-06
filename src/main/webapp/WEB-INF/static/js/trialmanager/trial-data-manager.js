@@ -342,8 +342,9 @@
                                     $('body').data('needToSave', '0');
                                   });
 							}
-                            else if (service.trialMeasurement.count >  0 && parseInt($('.germplasm-list-items tbody tr').length) === 0) {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
+                            else if (service.trialMeasurement.count >  0 && $('#chooseGermplasmAndChecks').data('replace') !== undefined 
+            						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0) {
+                                $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function (data) {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
                                     service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
@@ -356,7 +357,7 @@
                                 });
                             }
                             else {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
+                                $http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
                                     success(function () {
                                         submitGermplasmList().then(function (trialID) {
                                             showSuccessfulMessage('', saveSuccessMessage);

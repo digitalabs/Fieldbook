@@ -146,57 +146,61 @@
 		
 		function showPopoverCheck(index, sectionContainer, bodyContainer){
 			'use strict';
-			var currentCheckVal = $(sectionContainer + ' #selectedCheck'+index).val(),
-				realIndex = index,
-				suffix = '/N',
-				popoverOptions = {},
-				listDataTable = selectedCheckListDataTable;
-	    		if(!isNursery()){
-	    			suffix = '/T'; 
-	    			listDataTable = germplasmDataTable;
-	    		}
-	    	
-			//we need to get the real index of the check
-			
-			if(listDataTable != null){
-				listDataTable.getDataTable().$('.check-hidden').each(function(indexCount){
-					if($(this).attr('id') === 'selectedCheck'+index){
-						realIndex = indexCount;
-						return;
-					}
-				})
-			}
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex + suffix,
-				type: 'GET',
-				data: 'currentVal='+currentCheckVal,
-				cache: false,
-				success: function(data) {		
-					
+			//if replace has been clicked or if new nursery/trial
+			if (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1) 
+					|| ($('#studyId').length === 0 && isNursery()) || (!isOpenTrial() && !isNursery())) {
+				var currentCheckVal = $(sectionContainer + ' #selectedCheck'+index).val(),
+					realIndex = index,
+					suffix = '/N',
+					popoverOptions = {},
+					listDataTable = selectedCheckListDataTable;
 		    		if(!isNursery()){
-		    			popoverOptions = {
-		    					html: true,
-		    					title: 'Edit Check',
-		    					content: data,
-		    					trigger: 'manual',
-		    					placement: 'right',
-		    					container:  bodyContainer
-		    				};
-		    		}else{
-		    			popoverOptions = {
-								html: true,
-								title: 'Edit Check',
-								content: data,
-								trigger: 'manual',
-								placement: 'left'
-						};
+		    			suffix = '/T'; 
+		    			listDataTable = germplasmDataTable;
 		    		}
-					$(sectionContainer +' .popover').remove();
-					$(sectionContainer +' .edit-check'+index).popover('destroy');				
-					$(sectionContainer +' .edit-check'+index).popover(popoverOptions);
-					$(sectionContainer +' .edit-check'+index).popover('show');
+		    	
+				//we need to get the real index of the check
+				
+				if(listDataTable != null){
+					listDataTable.getDataTable().$('.check-hidden').each(function(indexCount){
+						if($(this).attr('id') === 'selectedCheck'+index){
+							realIndex = indexCount;
+							return;
+						}
+					})
 				}
-			});
+				$.ajax({
+					url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex + suffix,
+					type: 'GET',
+					data: 'currentVal='+currentCheckVal,
+					cache: false,
+					success: function(data) {		
+						
+			    		if(!isNursery()){
+			    			popoverOptions = {
+			    					html: true,
+			    					title: 'Edit Check',
+			    					content: data,
+			    					trigger: 'manual',
+			    					placement: 'right',
+			    					container:  bodyContainer
+			    				};
+			    		}else{
+			    			popoverOptions = {
+									html: true,
+									title: 'Edit Check',
+									content: data,
+									trigger: 'manual',
+									placement: 'left'
+							};
+			    		}
+						$(sectionContainer +' .popover').remove();
+						$(sectionContainer +' .edit-check'+index).popover('destroy');				
+						$(sectionContainer +' .edit-check'+index).popover(popoverOptions);
+						$(sectionContainer +' .edit-check'+index).popover('show');
+					}
+				});
+			}
 		}
 
 	//]]>

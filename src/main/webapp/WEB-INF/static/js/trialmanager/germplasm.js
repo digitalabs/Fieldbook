@@ -2,7 +2,7 @@
  * Created by cyrus on 7/2/14.
  */
 
-/*global angular, displayStudyGermplasmSection, openListTree*/
+/*global angular, displayStudyGermplasmSection, openListTree, displaySelectedGermplasmDetails*/
 
 
 (function () {
@@ -13,6 +13,11 @@
 
             $scope.settings = TrialManagerDataService.settings.germplasm;
 
+            if (TrialManagerDataService.isOpenTrial()) {
+                displaySelectedGermplasmDetails();
+            }
+            
+            
             $scope.labels = {};
             $scope.labels.germplasmFactors = {
                 label: 'Temp label here',
@@ -156,10 +161,6 @@
         // this is the handler for when user clicks on the Replace button
         $('.show-germplasm-details').on('click', function() {
             showGermplasmDetailsSection();
-
-            $('#imported-germplasm-list').html('<H3></H3>');
-            $('#imported-germplasm-list').show();
-            $('#entries-details').hide();
         });
         //displayEditFactorsAndGermplasmSection();
     };

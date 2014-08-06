@@ -1520,7 +1520,9 @@ function validateCreateNursery() {
 	 * Validate Position is less than the total germplasm Validate the Interval
 	 * should be less than the total germplasm
 	 */
-	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+	if ($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null 
+			&& (($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1) 
+					|| ($('#studyId').length === 0 ))) {
 
 		selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 
@@ -1713,7 +1715,6 @@ function refreshStudyAfterSave(studyId){
 		success: function(html) {
 			$('.container .row:eq(0)').html(html);
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
-
 		}
 	});
 }

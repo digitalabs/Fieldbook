@@ -203,7 +203,7 @@ public class OpenTrialController extends
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public Map<String, Object> submit(@RequestBody TrialData data) throws MiddlewareQueryException {
+    public Map<String, Object> submit(@RequestParam("replace")int replace, @RequestBody TrialData data) throws MiddlewareQueryException {
         
         processEnvironmentData(data.getEnvironments());
         List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
@@ -291,8 +291,9 @@ public class OpenTrialController extends
         returnVal.put("environmentData", prepareEnvironmentsTabInfo(workbook, false));
         returnVal.put("measurementDataExisting", false);
         returnVal.put("measurementRowCount", 0);
+        
         //saving of measurement rows
-        if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+        if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0 && replace == 0) {
             try {                                
                 WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, userSelection, ontologyService, fieldbookService);
                 WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, userSelection, ontologyService, fieldbookService);

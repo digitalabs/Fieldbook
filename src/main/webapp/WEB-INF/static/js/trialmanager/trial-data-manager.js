@@ -300,7 +300,7 @@
                     service.applicationData.unappliedChangesAvailable = false;
                     $('body').data('needGenerateExperimentalDesign', '0');
                 },
-
+                germplasmListCleared: false,
                 extractData: extractData,
                 extractSettings: extractSettings,
                 extractTreatmentFactorSettings : extractTreatmentFactorSettings,

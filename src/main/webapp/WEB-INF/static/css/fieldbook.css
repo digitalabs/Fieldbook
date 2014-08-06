@@ -1300,7 +1300,7 @@ textarea.form-control {
 /* SELECT 2 overrides */
 input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input,
 .select2-container .select2-choices .select2-search-field input, .select2-container .select2-choice, .select2-container .select2-choices {
-    color: #333333;
+    color: #333333 !important;
     font-size: 13px;
     font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }

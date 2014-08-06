@@ -670,7 +670,9 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 			scrollX: '100%',
 			scrollCollapse: true,
 			aoColumns: aoColumnsDef,
-		  dom: 'R<t><"fbk-page-div"p>',
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+		  dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
+
 		  iDisplayLength: 100,
 		  fnDrawCallback: function( oSettings ) {
 			  $(parentDiv + ' #selectAllAdvance').prop('checked', false)
@@ -694,7 +696,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 				$(parentDiv).removeClass('fbk-hide-opacity');		
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-								
+				$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});				
 			}
 		});
 		

@@ -10,7 +10,7 @@
 
 		<!-- case 1: no data means no table -->
 		<div th:if="*{importedCheckGermplasm == null or #lists.isEmpty(importedCheckGermplasm)}">
-			<span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
+			<span class="noGermplasmListIndicator" th:text="#{nursery.import.no.selected.check.germplasm.list}">No Selected Check list</span>
 		</div>
 
 		<!-- case 3: basic view of the importedGermplasm -->

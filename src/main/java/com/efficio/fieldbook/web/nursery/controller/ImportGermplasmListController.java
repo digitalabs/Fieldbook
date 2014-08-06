@@ -229,6 +229,17 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	                }
     	            }
             	}
+            }else{
+            	//we set the check to null
+            	if(getUserSelection().getImportedGermplasmMainInfo() != null && 
+            			getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null
+            			&& getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null){
+            		//this is to keep track of the original list before merging with the checks
+            		for(ImportedGermplasm germplasm : getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()){
+            			germplasm.setCheckId(null);
+            			germplasm.setCheck("");
+            		}
+            	}
             }
             
             //end: section for taking note of the check germplasm

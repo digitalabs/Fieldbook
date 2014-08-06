@@ -104,8 +104,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public List<Location> getFavoriteLocationList() {
         try {
             
-            List<Long> locationsIds = workbenchService
-                            .getFavoriteProjectLocationIds(getCurrentProjectId());
+            List<Long> locationsIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds();
             List<Location> dataTypes = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
             
@@ -508,9 +507,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         Map<String, String> result = new HashMap<String, String>();
         
         try {
-            List<Long> locationsIds = workbenchService
-                                .getFavoriteProjectLocationIds(getCurrentProjectId());
-    
             List<Location> allFields = fieldbookMiddlewareService.getAllFieldLocations(locationId);
             result.put("success", "1");
             
@@ -535,10 +531,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         Map<String, String> result = new HashMap<String, String>();
         
         try {
-        	/*
-            List<Long> locationsIds = workbenchService
-                                .getFavoriteProjectLocationIds(getCurrentProjectId());
-    	 	*/
+        	
             List<Location> allBlocks = fieldbookMiddlewareService.getAllBlockLocations(fieldId);
             result.put("success", "1");
             result.put("allBlocks", convertObjectToJson(allBlocks));
@@ -563,10 +556,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         Map<String, String> result = new HashMap<String, String>();
         
         try {
-        	/*
-            List<Long> locationsIds = workbenchService
-                                .getFavoriteProjectLocationIds(getCurrentProjectId());
-			*/
+        	
             FieldmapBlockInfo blockInfo = fieldbookMiddlewareService.getBlockInformation(blockId);
             result.put("success", "1");
             result.put("blockInfo", convertObjectToJson(blockInfo));

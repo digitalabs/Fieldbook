@@ -24,25 +24,7 @@ import org.generationcp.middleware.pojos.workbench.Tool;
  * @author Joyce Avestro
  * 
  */
-public interface WorkbenchService {
-	
-    /**
-     * Gets the favorite project location ids.
-     *
-     * @param projectId the project id
-     * @return the favorite project location ids
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    List<Long> getFavoriteProjectLocationIds(String projectId) throws MiddlewareQueryException;
-    
-    /**
-     * Gets the favorite project methods.
-     *
-     * @param projectId the project id
-     * @return the favorite project methods
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    List<Integer> getFavoriteProjectMethods(String projectId) throws MiddlewareQueryException;
+public interface WorkbenchService {	    
 
     /**
      * Gets the tool with name.

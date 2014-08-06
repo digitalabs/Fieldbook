@@ -328,14 +328,14 @@ public class FieldbookServiceImpl implements FieldbookService{
         List<ValueReference> possibleValuesFavorite = null;
         if (possibleValuesFavorite == null) {
             if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
-                List<Integer> methodIds = workbenchService.getFavoriteProjectMethods(projectId);
+                List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods();
                 List<ValueReference> list = new ArrayList<ValueReference>();
                 list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
                 possibleValuesFavorite = list;
                 possibleValuesFavorite.addAll(getFavoriteBreedingMethods(methodIds, false));
                 
-            } else if (TermId.LOCATION_ID.getId() == id) {
-                List<Long> locationIds = workbenchService.getFavoriteProjectLocationIds(projectId);
+            } else if (TermId.LOCATION_ID.getId() == id) {            	
+                List<Long> locationIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds();
                 possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService
                         .getFavoriteLocationByProjectId(locationIds));
             }

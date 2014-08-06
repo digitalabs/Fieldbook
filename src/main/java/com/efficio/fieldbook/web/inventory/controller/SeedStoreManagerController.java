@@ -98,8 +98,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     public List<Location> getFavoriteLocationList() {
         try {
             
-            List<Long> locationsIds = workbenchService
-                            .getFavoriteProjectLocationIds(getCurrentProjectId());
+            List<Long> locationsIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds();
             List<Location> dataTypes = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
             

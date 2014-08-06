@@ -34,22 +34,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
 	
     /** The workbench data manager. */
     @Resource
-    private WorkbenchDataManager workbenchDataManager;
-
-    @Override
-    public List<Long> getFavoriteProjectLocationIds(String projectId) throws MiddlewareQueryException{
-        return workbenchDataManager.getFavoriteProjectLocationIds(
-                Long.valueOf(projectId), 0,  Integer.MAX_VALUE);
-    }
-    
-    @Override
-    public List<Integer> getFavoriteProjectMethods(String projectId) throws MiddlewareQueryException{
-        Project project = new Project();
-        project.setProjectId(Long.valueOf(projectId));
-        
-        return workbenchDataManager.getFavoriteProjectMethods(
-                project, 0,  Integer.MAX_VALUE);
-    }
+    private WorkbenchDataManager workbenchDataManager;    
     
     @Override
     public Tool getToolWithName(String toolName) throws MiddlewareQueryException{    	

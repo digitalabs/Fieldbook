@@ -2,7 +2,7 @@
  * Created by cyrus on 7/1/14.
  */
 
-/*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage*/
+/*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage, operationMode*/
 
 (function () {
     'use strict';
@@ -281,6 +281,7 @@
     document.onInitManageTrial = function () {
         // do nothing for now
         $('body').data('needGenerateExperimentalDesign', '0');
+        $('body').data('trialStatus', operationMode);
     };
 
 })

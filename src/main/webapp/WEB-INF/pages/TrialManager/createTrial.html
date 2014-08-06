@@ -271,10 +271,10 @@
 <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/trial-settings-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/fieldbook-common.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/trial-settings-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
 
@@ -330,7 +330,8 @@
     var ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '';
     var modalConfirmationTitle = /*[[#{common.form.confirmation.text}]]*/ '',
         environmentModalConfirmationText = /*[[#{trial.change.environment.confirmation}]]*/ '',
-        environmentConfirmLabel = /*[[#{common.form.ok.text}]]*/ ''
+        environmentConfirmLabel = /*[[#{common.form.ok.text}]]*/ '',
+        operationMode = /*[[${operationMode}]]*/ '';
 
     var translations = {
         /*TRIAL SETTINGS*/
@@ -374,6 +375,7 @@
         ).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
         ).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
         ).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
+        ).constant('GERMPLASM_LIST_SIZE',/*[[${germplasmListSize}]]*/ ''
         ).constant('TREATMENT_FACTORS_INITIAL_DATA', /*[[${treatmentFactorsData}]]*/ ''
         ).constant('EXPERIMENTAL_DESIGN_INITIAL_DATA', /*[[${experimentalDesignData}]]*/ ''
         ).constant('MEASUREMENTS_INITIAL_DATA', /*[[${measurementsData}]]*/ ''

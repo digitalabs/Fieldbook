@@ -1,5 +1,5 @@
 <form name="expDesignForm" novalidate="" ng-submit="generateDesign()" ng-cloak="">
-    <section-container heading="Experimental Design">
+    <section-container icon="bms-exp-design" heading="Experimental Design">
         <section-container name="content" heading="CHOOSE A DESIGN TYPE">
             <div class="row" name="content">
                 <div class="col-md-12 add-bottom-padding">
@@ -37,13 +37,13 @@
             <section-container heading="SUMMARY OF DESIGN DETAILS">
                 <div name="content">
                     <div class="add-bottom-padding" ng-show="currentDesignType.data.noOfEnvironments &gt;= 0"><b>Number of trial environments:</b> <span>{{currentDesignType.data.noOfEnvironments}}</span></div>
-                    <div class="add-bottom-padding" ng-show="currentDesignType.id > 0"><b>Number of Treatments:</b> <span>{{totalGermplasmEntryListCount}}</span></div>
-                    <div class="add-bottom-padding" ng-show="currentDesignType.id == 1"><b>Number of Blocks:</b> <span>{{(currentDesignType.data.blockSize > 0) ? ((totalGermplasmEntryListCount % currentDesignType.data.blockSize === 0) ? totalGermplasmEntryListCount / currentDesignType.data.blockSize : '') : 0}} <b class="text-danger" ng-show="currentDesignType.data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % currentDesignType.data.blockSize > 0">Invalid Block Size</b></span></div>
+                    <div class="add-bottom-padding" ng-show="currentDesignType.id > 0"><b>Number of treatments:</b> <span>{{totalGermplasmEntryListCount}}</span></div>
+                    <div class="add-bottom-padding" ng-show="currentDesignType.id == 1"><b>Number of blocks:</b> <span>{{(currentDesignType.data.blockSize > 0) ? ((totalGermplasmEntryListCount % currentDesignType.data.blockSize === 0) ? totalGermplasmEntryListCount / currentDesignType.data.blockSize : '') : 0}} <b class="text-danger" ng-show="currentDesignType.data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % currentDesignType.data.blockSize > 0">Invalid block size</b></span></div>
                     <div class="add-bottom-padding" ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id" >
                         <b>{{settings.factors.val(key).label}}</b> - <a show-details-modal="key">{{settings.factors.val(key).variable.name}}</a>
                     </div>
                     <div ng-show="currentDesignType.id == 0">
-                        <div class="sub-content-heading"><b>Treatment Factors:</b></div>
+                        <div class="sub-content-heading"><b>Treatment factors:</b></div>
                         <table class="table table-curved">
                             <thead>
                                 <tr>

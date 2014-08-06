@@ -17,7 +17,13 @@
                 $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
                 $scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement;
                 //FIXME: cheating a bit for the meantime.
-                $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
+
+                if (!TrialManagerDataService.germplasmListCleared) {
+                    $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount);
+                }
+                else {
+                    $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
+                }
 
                 $scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
                 $scope.settings.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;

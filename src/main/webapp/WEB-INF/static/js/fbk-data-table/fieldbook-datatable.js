@@ -510,6 +510,11 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
 				setTimeout(function(){oSettings.oInstance.fnAdjustColumnSizing();}, 1);
+				//hide delete icon for read only view
+				if ($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0) {
+					oSettings.oInstance.$('.delete-check').hide();
+				}
+				
 		  	}
 		});
 		$(parentDiv + ' div.dataTables_scrollBody').scroll( 
@@ -670,7 +675,9 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 			scrollX: '100%',
 			scrollCollapse: true,
 			aoColumns: aoColumnsDef,
-		  dom: 'R<t><"fbk-page-div"p>',
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+		  dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
+
 		  iDisplayLength: 100,
 		  fnDrawCallback: function( oSettings ) {
 			  $(parentDiv + ' #selectAllAdvance').prop('checked', false)
@@ -694,7 +701,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 				$(parentDiv).removeClass('fbk-hide-opacity');		
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-								
+				$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});				
 			}
 		});
 		

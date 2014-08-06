@@ -17,7 +17,8 @@
 
 		<div class="form-group chs-management-details">
 			<label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
-				<strong class="sub-content-heading" th:text="#{nursery.managesettings.management.details}">MANAGEMENT DETAILS</strong>
+                <span class="bms-mgt-details fbk-trial-summary-icons"></span>
+                <strong class="sub-content-heading" th:text="#{nursery.managesettings.management.details}">MANAGEMENT DETAILS</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.nursery.level.notes}"></span>
 
 			</label>
@@ -132,8 +133,8 @@
 
 		<!-- selection variates -->
 		<div class="form-group chs-selection-variates">
-			<img width="23" height="23" th:src="@{/static/img/variates.png}" class="image-padding" /> &nbsp;
-			<label class="control-label" data-toggle="collapse" data-target=".selectionVariatesDetails">
+			<span class="fbk-font-icon bms-variates"></span>
+            <label class="control-label" data-toggle="collapse" data-target=".selectionVariatesDetails">
 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.selection.variates}">SELECTION VARIATES</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.create.nursery.selection.variates.notes}"></span>
 			</label>
@@ -150,7 +151,7 @@
 				</tr>
 				</thead>
 				<tbody>
-                <tr class="dummy-row">
+                <tr class="dummy-row" th:if="${#lists.isEmpty(selectionVariatesVariables)}">
                 	<td class="even dummy-col">&nbsp;</td>
                 	<td class="even">&nbsp;</td>
                 	<td class="even">&nbsp;</td>
@@ -214,7 +215,8 @@
 
 		<div class="form-group chs-nursery-conditions">
 			<label class="control-label" data-toggle="collapse" data-target=".nurseryConditionsDetails">
-				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.conditions}">NURSERY CONDITIONS</strong>
+                <img th:src="@{/static/svg/conditions.svg}" style="margin: 0px 4px;" width="22" height="22" />
+                <strong class="sub-content-heading" th:text="#{nursery.create.nursery.conditions}">NURSERY CONDITIONS</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.create.nursery.conditions.notes}"></span>
 			</label>
 
@@ -447,28 +449,6 @@ $(document).ready(function() {
 	$('#srch-term').on('change', function() {
 		var data = $('#srch-term').select2('data');
 		doOntologyTreeHighlight(treeDivId, data.key);
-	});
-
-	/* GCP-8880 (tag change event to a var) */
-
-	$.each($('span.delete-icon'), function() {
-		this.onclick = null;
-	});
-
-	// re apply the behaviors using modified functions
-	$(document).on('click', 'span.delete-icon', function() {
-
-		if (document.disableActions !== undefined) {
-			if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass('disabled')) {
-				document.initialEnabledStat = true;
-			} else {
-				document.initialEnabledStat = false;
-			}
-
-			document.disableActions();
-			eval($(this).attr('onclick'));
-
-		}
 	});
 
     $('.vs-modal').on('variable-select',function(event){

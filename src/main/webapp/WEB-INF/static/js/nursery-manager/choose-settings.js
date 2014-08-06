@@ -161,27 +161,6 @@ window.ChooseSettings = (function() {
 
 			studyLevelBreedingMethodPropertyId = 2670,
 
-			managementDetailExclusions = {
-
-				// Don't allow user to select PI_NAME from the Person property if PI_ID is present
-				8110: {
-					variableId: 8100,
-					propertyId: 2080
-				},
-
-				// Don't allow user to select COOPERATOR from the PERSON property if COOPERATOR_ID is present
-				8372: {
-					variableId: 8373,
-					propertyId: 2080
-				},
-
-				// Don't allow user to select LOCATION_NAME from the Location property if LOCATION_ID is present
-				8190: {
-					variableId: 8180,
-					propertyId: 2110
-				}
-			},
-
 			// There are a basic set of details hard coded into the page that should not be presented as variables
 			basicDetails = [
 				{
@@ -242,7 +221,6 @@ window.ChooseSettings = (function() {
 				}
 
 				// Remove variables and properties as necessary
-				exclusions = exclusions.concat(_performExclusions(managementDetailExclusions, selectedVariables, filteredProperties));
 				exclusions = exclusions.concat(_removeVariables(basicDetails, filteredProperties));
 				break;
 			case 6:
@@ -280,7 +258,6 @@ window.ChooseSettings = (function() {
 			for (i = allMatches.length - 1; i >= 0; i--) {
 				variableElement = allMatches.filter(findElement);
 
-
 				if (variableElement.length > 0) {
 
 					// Find the name of the variable
@@ -316,6 +293,46 @@ window.ChooseSettings = (function() {
 		});
 
 		return variables;
+	}
+
+	/* FIXME - this logic should be in the back end
+	 *
+	 * If certain legacy variable IDs are found in the list of selected variables, we need to select their modern alternatives, so that the
+	 * user can't select the same variable twice. This method will alter the list of variables passed to it to contain any necessary
+	 * additions.
+	 *
+	 * @param {object} currentlySelectedVariables the currently selected variables
+	 * @returns {number[]} a list of added variable IDs
+	 */
+	function _performVariableSelectionConversion(currentlySelectedVariables) {
+
+		var variableConversions = {
+
+			// Mark PI_NAME as selected if PI_ID is present
+			8110: 8100,
+
+			// Mark COOPERATOR as selected if COOPERATOR_ID is present
+			8372: 8373,
+
+			// Mark LOCATION_NAME as selected if LOCATION_ID is present
+			8190: 8180
+		},
+
+		addedVariables = [];
+
+		$.each(variableConversions, function(key, val) {
+			if (variableConversions.hasOwnProperty(key)) {
+
+				// If we find one of the legacy variables in the list of currently selected variables, add it's modern equivalent to the
+				// list, and set it's alias (if it has one) to be equal to that of the existing variable
+				if (currentlySelectedVariables[key]) {
+					currentlySelectedVariables[val] = currentlySelectedVariables[key];
+					addedVariables.push(val);
+				}
+			}
+		});
+
+		return addedVariables;
 	}
 
 	function addSelectedVariables(e) {
@@ -437,6 +454,7 @@ window.ChooseSettings = (function() {
 		}
 
 		selectedVariables = _findVariables(variableMarkupSelectors);
+		_performVariableSelectionConversion(selectedVariables);
 
 		// If we haven't loaded data for this group before, then load it
 		if (!group.data) {

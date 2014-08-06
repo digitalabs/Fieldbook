@@ -3,14 +3,14 @@
         <section-container th:attr="heading=#{trial.managesettings.measurement.title}"
                            collapsible="true" add-variable="true" hide-variable="addVariable" model-data="settings" variable-type="3">
 
-            <section-container name="content" th:attr="heading=#{trial.managesettings.baseline.traits},help-tooltip=#{trial.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}">
+            <section-container name="content" th:attr="heading=#{trial.managesettings.baseline.traits},help-tooltip=#{trial.managesettings.trait.notes},icon-img=@{/static/img/baseline-traits.png}" icon-size="22">
                 <display-settings hide-delete="isHideDelete" name="content" settings="settings" variable-type="3" predelete-function="predeleteFunction(variableType, key)"></display-settings>
             </section-container>
         </section-container>
     </div>
 </div>
 
-
+<br />
 <div id="measurementsDiv" ng-cloak="">	
 	<div th:if="${createTrialForm != null and measurementRowCount != 0}" th:include="/Common/showAddOrRemoveTraitsPagination"></div>
 </div>

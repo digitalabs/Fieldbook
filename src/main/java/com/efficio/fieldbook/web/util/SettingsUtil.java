@@ -264,7 +264,7 @@ public class SettingsUtil {
                 levelFactor.setName(detail.getVariable().getName());
                 Factor valueFactor = null;
                 levelFactor.setOperation(detail.getVariable().getOperation());
-                levelFactor.setTreatmentLabel(levelVariable.getName());
+                levelFactor.setTreatmentLabel(detail.getVariable().getName());
 
                 TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
                                         /*StandardVariable valueVariable = getStandardVariable(data.getPairVariable().get(TreatmentFactorData.PAIR_VARIABLE_ID_KEY),
@@ -276,7 +276,7 @@ public class SettingsUtil {
         
                     valueFactor = convertStandardVariableToFactor(valueVariable);
                     valueFactor.setOperation(detail.getVariable().getOperation());
-                    valueFactor.setTreatmentLabel(levelVariable.getName());
+                    valueFactor.setTreatmentLabel(detail.getVariable().getName());
                     
                     int index = 1;
                     for (String labelValue : data.getLabels()) {
@@ -2024,4 +2024,18 @@ public class SettingsUtil {
 		}
 		return newMeasureList;
     }
+    
+    public static void findAndUpdateVariableName(List<SettingDetail> traitList, MeasurementVariable currentVar){
+    	if(traitList != null && !traitList.isEmpty()){
+    		for(SettingDetail detail : traitList){
+    			if(detail != null && detail.getVariable() != null && detail.getVariable().getName() != null && detail.getVariable().getCvTermId() != null && 
+    					detail.getVariable().getCvTermId().intValue() == currentVar.getTermId()){
+    				
+    				currentVar.setName(detail.getVariable().getName());
+    				break;
+    			}
+    		}
+    	}
+    }
+    
 }

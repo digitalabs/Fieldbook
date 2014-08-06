@@ -68,7 +68,7 @@ public class ValidationServiceImpl implements ValidationService {
 			try{
 				valueToCompare = Integer.valueOf(value);
 			}catch(NumberFormatException e){
-				if (cValueId != null && NumberUtils.isNumber(cValueId)) {
+				if (cValueId != null && NumberUtils.isNumber(cValueId) && isValidInteger(cValueId)) {
 					valueToCompare = Integer.parseInt(cValueId);
 				}
 				else {
@@ -89,6 +89,16 @@ public class ValidationServiceImpl implements ValidationService {
 			return true;
 		}
 		return false;
+	}
+	
+	private boolean isValidInteger(String val){
+		boolean valid = true;
+		try {
+		    Integer.parseInt(val);
+		} catch (NumberFormatException e) {
+			valid = false;
+		}
+		return valid;
 	}
 	
 	@Override

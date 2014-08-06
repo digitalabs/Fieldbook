@@ -17,9 +17,12 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -179,6 +182,17 @@ public class OpenTrialController extends
             model.addAttribute("createNurseryForm", form); //so that we can reuse the same age being use for nursery
             model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
             model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
+            
+            model.addAttribute("germplasmListSize", 0);
+            List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
+            
+            if(germplasmLists != null && !germplasmLists.isEmpty()){
+                GermplasmList germplasmList = germplasmLists.get(0);
+                List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
+                if(data != null && !data.isEmpty()){
+                	model.addAttribute("germplasmListSize", data.size());
+                }
+            }
         }
 
 
@@ -193,7 +207,7 @@ public class OpenTrialController extends
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public Map<String, Object> submit(@RequestBody TrialData data) throws MiddlewareQueryException {
+    public Map<String, Object> submit(@RequestParam("replace")int replace, @RequestBody TrialData data) throws MiddlewareQueryException {
         
         processEnvironmentData(data.getEnvironments());
         List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
@@ -281,8 +295,9 @@ public class OpenTrialController extends
         returnVal.put("environmentData", prepareEnvironmentsTabInfo(workbook, false));
         returnVal.put("measurementDataExisting", false);
         returnVal.put("measurementRowCount", 0);
+        
         //saving of measurement rows
-        if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+        if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0 && replace == 0) {
             try {                                
                 WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, userSelection, ontologyService, fieldbookService);
                 WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, userSelection, ontologyService, fieldbookService);
@@ -409,7 +424,9 @@ public class OpenTrialController extends
         //we show only traits that are being passed by the frontend
         String traitsListCsv = request.getParameter("traitsList");
     	List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
-    	    		    		
+    	 	
+    		List<SettingDetail> traitList = userSelection.getBaselineTraitsList();
+    	 	
     		if(!measurementDatasetVariables.isEmpty()){
 				for(MeasurementVariable var : measurementDatasetVariables){
 					if(var.isFactor()){
@@ -426,8 +443,10 @@ public class OpenTrialController extends
 			    			MeasurementVariable newVar = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
 			    			newVar.setFactor(false);
 			    			newMeasurementDatasetVariables.add(newVar);
+			    			SettingsUtil.findAndUpdateVariableName(traitList, newVar);
 		    			}else{
 		    				newMeasurementDatasetVariables.add(currentVar);
+		    				SettingsUtil.findAndUpdateVariableName(traitList, currentVar);
 		    			}
 		    		}
 				}
@@ -445,8 +464,7 @@ public class OpenTrialController extends
         
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
     }
-    
-    
+  
     private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, List<MeasurementVariable> measurementDatasetVariables, List<MeasurementRow> observations, Integer measurementDatasetId,  List<MeasurementVariable> variates, Model model) throws MiddlewareQueryException{
     	 //set measurements data
         userSelection.setMeasurementRowList(observations);

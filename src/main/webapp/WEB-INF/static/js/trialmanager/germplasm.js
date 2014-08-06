@@ -2,7 +2,7 @@
  * Created by cyrus on 7/2/14.
  */
 
-/*global angular, displayStudyGermplasmSection, openListTree*/
+/*global angular, displayStudyGermplasmSection, openListTree, displaySelectedGermplasmDetails*/
 
 
 (function () {
@@ -13,6 +13,11 @@
 
             $scope.settings = TrialManagerDataService.settings.germplasm;
 
+            if (TrialManagerDataService.isOpenTrial()) {
+                displaySelectedGermplasmDetails();
+            }
+            
+            
             $scope.labels = {};
             $scope.labels.germplasmFactors = {
                 label: 'Temp label here',
@@ -44,7 +49,8 @@
 
             // function called whenever the user has successfully selected a germplasm list
             $scope.germplasmListSelected = function() {
-                TrialManagerDataService.indicateUnappliedChangesAvailable(true);
+                // validation requiring user to re-generate experimental design after selecting new germplasm list is removed as per new maintain germplasm list functionality
+                // TrialManagerDataService.indicateUnappliedChangesAvailable(true);
             };
 
             $(document).on('germplasmListUpdated', function() {
@@ -56,6 +62,7 @@
             $scope.germplasmListCleared = function() {
                 TrialManagerDataService.clearUnappliedChangesFlag();
                 TrialManagerDataService.trialMeasurement.count = 0;
+                TrialManagerDataService.germplasmListCleared = true;
             };
 
             $scope.openGermplasmTree = function() {
@@ -155,10 +162,6 @@
         // this is the handler for when user clicks on the Replace button
         $('.show-germplasm-details').on('click', function() {
             showGermplasmDetailsSection();
-
-            $('#imported-germplasm-list').html('<H3></H3>');
-            $('#imported-germplasm-list').show();
-            $('#entries-details').hide();
         });
         //displayEditFactorsAndGermplasmSection();
     };

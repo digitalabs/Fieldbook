@@ -17,12 +17,14 @@
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
 		$( document ).ready(function() {
+			setTimeout(setupAdvanceListForReview, 150);									
+		});
+		function setupAdvanceListForReview(){
 			var advanceDataList = /*[[${advanceDataList}]]*/ [];
 			var listDivIdentifier = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
 			var sectionContainerDiv = 'advance-list'+listDivIdentifier;
 			new BMS.Fieldbook.AdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .advance-germplasm-items', '#'+sectionContainerDiv, advanceDataList);
-						
-		});
+		}
 	//]]>
 	</script>
 </div>

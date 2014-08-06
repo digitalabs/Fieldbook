@@ -10,10 +10,10 @@
 			<option th:each="checkType : ${allCheckTypes}"  th:attr="data-code=${checkType.name}" th:value="${checkType.id}" th:text="${checkType.description}"></option>
 		</select>
         <span class="input-group-btn">        
-            <a href="javascript: void(0)" class="btn btn-success submit-edit-check">
+            <a href="javascript: void(0);" class="btn btn-success submit-edit-check">
                 <span class="glyphicon glyphicon-ok"></span>
             </a>
-            <a href="javascript: void()" class="btn btn-danger cancel-edit-check">
+            <a href="javascript: void(0);" class="btn btn-danger cancel-edit-check">
                 <span class="glyphicon glyphicon-remove"></span>
             </a>
         </span>

@@ -44,6 +44,7 @@ public abstract class BaseTrialController extends SettingsController {
         if (workbook.getStudyDetails() == null) {
             workbook.setStudyDetails(new StudyDetails());
         }
+
         StudyDetails studyDetails = workbook.getStudyDetails();
 
         studyDetails.setId(detailBean.getStudyID());
@@ -151,7 +152,7 @@ public abstract class BaseTrialController extends SettingsController {
         for (TreatmentVariable treatmentVariable : treatmentVariables) {
             Integer levelFactorID = treatmentVariable.getLevelVariable().getTermId();
             if (!levelDetails.containsKey(levelFactorID)) {
-                SettingDetail detail = createSettingDetail(levelFactorID, null);
+                SettingDetail detail = createSettingDetail(levelFactorID, treatmentVariable.getLevelVariable().getName());
 
                 if (!isUsePrevious) {
                     detail.getVariable().setOperation(Operation.UPDATE);
@@ -282,9 +283,12 @@ public abstract class BaseTrialController extends SettingsController {
         List<Environment> environments = new ArrayList<Environment>();
         for (MeasurementRow row : trialObservations) {
             Environment environment = new Environment();
-            environment.setExperimentId(row.getExperimentId());
-            environment.setLocationId(row.getLocationId());
-            environment.setStockId(row.getStockId());
+            if (!isUsePrevious) {
+                environment.setExperimentId(row.getExperimentId());
+                environment.setLocationId(row.getLocationId());
+                environment.setStockId(row.getStockId());
+            }
+
 
             Map<String, String> managementDetailValues = new HashMap<String, String>();
             for (SettingDetail detail : managementDetailList) {
@@ -313,7 +317,11 @@ public abstract class BaseTrialController extends SettingsController {
                     } else {
                         value = mData.getValue();
                     }
-                    phenotypeIDMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getPhenotypeId());
+
+                    if (!isUsePrevious) {
+                        phenotypeIDMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getPhenotypeId());
+                    }
+
                     trialConditionValues.put(Integer.toString(mData.getMeasurementVariable().getTermId()), value);
                 }
             }

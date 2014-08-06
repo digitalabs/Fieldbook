@@ -188,45 +188,37 @@
 	</div>
 </form>
 </div>
-<ul id="create-nursery-tab-headers" class="nav nav-tabs row">
-	<li id="nursery-settings-li" class="active">
-		<a href="javascript:showSelectedTab('nursery-settings');" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a>
+<ul id="create-nursery-tab-headers" class="nav nav-tabs row" role="tablist">
+	<li id="nursery-settings-li">
+		<a href="#nursery-settings" role="tab" data-toggle="tab" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a>
 	</li>
 	<li id="nursery-germplasm-list-li">
-		<a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
+		<a href="#nursery-germplasm-list" role="tab" class="germplasm" data-toggle="tab" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
 	</li>
 	<li id="nursery-measurements-li">
-		<a href="javascript:showSelectedTab('nursery-measurements');" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
+		<a href="#nursery-measurements" role="tab" class="measurements" data-toggle="tab" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
+	</li>
+	<li th:id="${'advance-list' + advanceItem.id + '-li'}" th:each="advanceItem : ${advancedList}">
+		<a th:attr="data-list-id=${advanceItem.id}" th:href="${'#list' + advanceItem.id}" role="tab" class="advanceList" data-toggle="tab">
+			<span th:text="${'Advance List: [' + advanceItem.name + ']'}"></span>
+			<i class="glyphicon glyphicon-remove fbk-close-tab" th:id="${advanceItem.id}" th:onclick="'javascript:closeAdvanceListTab(\'' + ${advanceItem.id} + '\');'"></i>
+		</a>
+		
 	</li>
 </ul>
 
-<div id="create-nursery-tabs" style="padding-top: 15px;" class="row">
-	<div id="nursery-settings" class="info">
+<div class="tab-content row" id="create-nursery-tabs" style="padding-top: 15px;">
+	<div id="nursery-settings" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
 			<div id="chooseSettingsDiv" th:include="/NurseryManager/chooseSettings"></div>
 		</div>
 	</div>
-	<div id="nursery-germplasm-list" class="info" style="display: none;">
+	<div id="nursery-germplasm-list" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
-			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList"></div>
-			<div class="row form-group overwrite-germplasm-list">
-				<div class="col-xs-12 col-md-12">
-					<label class="control-label" th:text="#{nursery.edit.nursery.overwrite.germplasm.list.message}">						
-					</label>
-					&nbsp;&nbsp;&nbsp;
-					<button class="btn btn-primary" onclick="showGermplasmDetailsSection();" th:text="#{germplasm.replace}">Overwrite</button>
-				</div>
-			</div>
-			<div class="row form-group observation-exists-notif">
-				<div class="col-xs-12 col-md-12">
-					<label class="control-label">
-						<strong class="sub-content-heading" th:text="#{nursery.edit.nursery.cannot.modify.germplasm.list.message}">This Nursery has saved observations, germplasm list cannot be modified.</strong>
-					</label>
-				</div>
-			</div>
+			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList" data-replace="0"></div>
 		</div>
 	</div>
-	<div id="nursery-measurements" class="info" style="display: none;">
+	<div id="nursery-measurements" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
 			<div id="measurementsDiv" th:include="/NurseryManager/addOrRemoveTraits" th:if="${createNurseryForm.measurementRowList.size() != 0}"></div>
 			<div class="row form-group no-measurements-message" th:if="${createNurseryForm.measurementRowList.size() == 0}">
@@ -238,6 +230,11 @@
 			</div>
 		</div>
 	</div>
+	<div th:id="${'list' + advanceItem.id}" class="tab-pane info" th:each="advanceItem : ${advancedList}">
+		<div th:id="${'advance-list' + advanceItem.id}">
+			
+		</div>
+	</div>	
 </div>
 
 <!-- Modal Dialog for Choosing Folder Location -->
@@ -380,7 +377,8 @@
 				success: function(data) {
                     if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);                        
-                    } else if ($('.germplasm-list-items tbody tr').length > 0 || measurementRowCount === 0) {
+                    } else if ($('#chooseGermplasmAndChecks').data('replace') !== undefined 
+    						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 || measurementRowCount === 0) {
                     	submitGermplasmAndCheck();
 					} else if (data.status === '1') {
 						recreateSessionVariables();
@@ -421,7 +419,8 @@
 					moveToTopScreen();
 					return false;
 				}
-				if ($('.germplasm-list-items tbody tr').length > 0 && measurementRowCount > 0) {
+				if ($('#chooseGermplasmAndChecks').data('replace') !== undefined 
+						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 && measurementRowCount > 0) {
 					deleteMeasurementRows();
 				} else {
 					if($('.import-study-data').data('data-import') === '1'){
@@ -444,7 +443,7 @@
 
 		$(document).ready(function() {
 			'use strict';
-
+		
 			$('#basicDetails.toggle-icon').click(function(){
 				var expandedImg = $(this).find('.section-expanded'),
 					collapsedImg = $(this).find('.section-collapsed'),
@@ -465,7 +464,35 @@
 				$('.nursery-name').tooltip();
 			}
 			truncateStudyVariableNames('.fbk-variable', 30);
-		});
+			$('.nav-tabs').tabdrop({position: 'left'});
+			$('.nav-tabs').tabdrop('layout');
+			$('li#nursery-settings-li a').tab('show');
+			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+				if($('.import-study-data').data('data-import') === '1'){
+					if($('.import-study-data').data('measurement-show-already') !== '1'){						
+						showAlertMessage('', importSaveDataWarningMessage);
+						$('.import-study-data').data('measurement-show-already', '1');
+						$('li#nursery-measurements-li a').tab('show');
+					}else{
+						$('.import-study-data').data('measurement-show-already', '0');	
+					}																			
+				}else if($(this).hasClass('germplasm')){
+			    	if(germplasmDataTable != null){
+			    		germplasmDataTable.getDataTable().fnAdjustColumnSizing();
+			    	}
+			    	if(selectedCheckListDataTable != null){
+			    		selectedCheckListDataTable.getDataTable().fnAdjustColumnSizing();
+			    	}
+			    }else if($(this).hasClass('measurements')){
+			    	if($('#measurement-table').length !== 0 && $('#measurement-table').dataTable()){
+			    		$('#measurement-table').dataTable().fnAdjustColumnSizing()
+			    	}
+			    }else if($(this).hasClass('advanceList') && $(this).data('has-loaded') !== '1'){
+			    	$(this).data('has-loaded', '1');
+			    	displayAdvanceList($(this).data('list-id'), $(this).data('list-id'), '', true);
+			    }
+			});
+		});		
 
 	//]]>
 	</script>

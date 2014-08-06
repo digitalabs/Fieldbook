@@ -4,11 +4,12 @@
 (function () {
     'use strict';
 
-    angular.module('manageTrialApp').service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
+    angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
+
         'TrialSettingsManager','_',
-        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
+        function (GERMPLASM_LIST_SIZE,TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
                   MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
                   TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager,_) {
 
@@ -243,23 +244,23 @@
                             return hardFactors;
 
                         })(),
-                        germplasmTotalListCount: 0,
+                        germplasmTotalListCount: GERMPLASM_LIST_SIZE,
 
                         showAdvancedOptions : [false,false,false],
 
                         data: {
-                            'noOfEnvironments': 0,
+                            'noOfEnvironments': null,
                             'designType': 0,
-                            'replicationsCount' : 0,
+                            'replicationsCount' : null,
                             'isResolvable' : true,
-                            'blockSize' : 0,
+                            'blockSize' : null,
                             'useLatenized' : false,
-                            'nblatin' : 0,
-                            'replicationsArrangement' : 0,
-                            'rowsPerReplications' : 0,
-                            'colsPerReplications' : 0,
-                            'nrlatin':0,
-                            'nclatin': 0,
+                            'nblatin' : null,
+                            'replicationsArrangement' : null,
+                            'rowsPerReplications' : null,
+                            'colsPerReplications' : null,
+                            'nrlatin': null,
+                            'nclatin': null,
                             'replatinGroups': ''
                         }
                     },
@@ -300,7 +301,7 @@
                     service.applicationData.unappliedChangesAvailable = false;
                     $('body').data('needGenerateExperimentalDesign', '0');
                 },
-
+                germplasmListCleared: false,
                 extractData: extractData,
                 extractSettings: extractSettings,
                 extractTreatmentFactorSettings : extractTreatmentFactorSettings,
@@ -342,8 +343,9 @@
                                     $('body').data('needToSave', '0');
                                   });
 							}
-                            else if (service.trialMeasurement.count >  0 && parseInt($('.germplasm-list-items tbody tr').length) === 0) {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).success(function (data) {
+                            else if (service.trialMeasurement.count >  0 && $('#chooseGermplasmAndChecks').data('replace') !== undefined 
+            						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0) {
+                                $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function (data) {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
                                     service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
@@ -356,7 +358,7 @@
                                 });
                             }
                             else {
-                                $http.post('/Fieldbook/TrialManager/openTrial', service.currentData).
+                                $http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
                                     success(function () {
                                         submitGermplasmList().then(function (trialID) {
                                             showSuccessfulMessage('', saveSuccessMessage);

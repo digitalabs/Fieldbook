@@ -1351,7 +1351,7 @@ function showImportOptions(){
 	$('#fileupload').val('');
 	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
 	if(isNursery()){
-		showSelectedTab('nursery-measurements');
+		$('li#nursery-measurements-li a').tab('show');
 	}else{
 		window.location.hash = '#/editMeasurements';
 	}
@@ -1600,15 +1600,17 @@ function doAdvanceNursery() {
 				showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
 			} else {
 				$('#advanceNurseryModal').modal('hide');
-				$('#create-nursery-tab-headers li').removeClass('active');
-				$('#create-nursery-tabs .info').hide();
+				//$('#create-nursery-tab-headers li').removeClass('active');
+				//$('#create-nursery-tabs .info').hide();
 
 				uniqueId = $(html).find('.uniqueId').attr('id');
 				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
-				aHtml = '<a id="advanceHref' + uniqueId + '" href="javascript: showSelectedAdvanceTab(' + uniqueId + ')">Advance List' + close + '</a>';
-				$('#create-nursery-tab-headers').append('<li class="active" id="advance-list' + uniqueId + '-li">' + aHtml + '</li>');
-				$('#create-nursery-tabs').append('<div class="info" id="advance-list' + uniqueId + '">' + html + '</div>');
-				showSelectedTab('advance-list' + uniqueId);
+				aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + uniqueId + '" href="#advance-list' + uniqueId + '">Advance List' + close + '</a>';
+				$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li">' + aHtml + '</li>');
+				$('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + uniqueId + '">' + html + '</div>');
+				//showSelectedTab('advance-list' + uniqueId);
+				$('a#advanceHref'+uniqueId).tab('show');
+				$('.nav-tabs').tabdrop('layout');
 			}
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
@@ -1622,22 +1624,30 @@ function showSelectedAdvanceTab(uniqueId) {
 }
 
 function closeAdvanceListTab(uniqueId) {
-
+	'use strict';
 	$('li#advance-list' + uniqueId + '-li').remove();
 	$('.info#advance-list' + uniqueId).remove();
+	if($('#list'+uniqueId).length === 1){
+		$('#list' + uniqueId).remove();
+	}
 
 	setTimeout(function() {
-		$('#create-nursery-tab-headers li').removeClass('active');
-		$('#create-nursery-tabs .info').hide();
-		$('#create-nursery-tab-headers li:eq(0)').addClass('active');
-		$('#create-nursery-tabs .info:eq(0)').css('display', 'block');
+		$('#create-nursery-tab-headers li:eq(0) a').tab('show');
+		$('.nav-tabs').tabdrop('layout');
 	}, 100);
 }
 
-function displayAdvanceList(uniqueId, germplasmListId, listName) {
-	$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
+function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault) {
+	'use script';
+	var url = '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId; 
+	if(!isDefault){
+		$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
+		url += '?isSnapshot=0';
+	}else{
+		url += '?isSnapshot=1';
+	}
 	$.ajax({
-		url: '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId,
+		url: url,
 		type: 'GET',
 		cache: false,
 		success: function(html) {
@@ -2806,6 +2816,12 @@ function isNursery(){
 	}
 }
 
+function isOpenTrial() {
+    'use strict';
+    var trialStatus = $('body').data('trialStatus');
+    return (trialStatus && trialStatus === 'OPEN');
+}
+
 
 function addStudyTreeHighlight(node) {
 	$(node.span).addClass('fbtree-focused');
@@ -3020,9 +3036,30 @@ function displayEditFactorsAndGermplasmSection() {
 }
 function showGermplasmDetailsSection() {
 	'use strict';
-	$('#chooseGermplasmAndChecks').show();
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
+	$('.browse-import-link').show();
+	$('#imported-germplasm-list-reset-button').show();
+	
+	//flag to determine if existing measurements should be deleted
+	$('#chooseGermplasmAndChecks').data('replace', '1');
+	
+	if (isNursery()) {
+		//enable drag and drop
+        makeDraggable(true);
+        makeCheckDraggable(true);
+        
+        if ($('.check-germplasm-list-items tbody tr').length > 0) {
+			//show clear button and specify checks section
+			$('#check-germplasm-list-reset-button').show();
+	        $('#specifyCheckSection').show();
+	        
+	        //enable deletion of checks
+	        if (selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null) {
+	        	selectedCheckListDataTable.getDataTable().$('.delete-check').show();
+	        }
+        }
+	}
 }
 
 function displayCorrespondingGermplasmSections() {
@@ -3030,20 +3067,25 @@ function displayCorrespondingGermplasmSections() {
 	var hasData = $('#measurementDataExisting').val() === 'true' ? true : false;
 	displayStudyGermplasmSection(hasData, measurementRowCount);
 }
+
 function displayStudyGermplasmSection(hasData, observationCount){
 	'use strict';
 	if (hasData) {
-		$('#chooseGermplasmAndChecks').hide();
 		$('.overwrite-germplasm-list').hide();
 		$('.observation-exists-notif').show();
+		$('.browse-import-link').hide();
+		if (isNursery()) {
+			$('#specifyCheckSection').hide();
+		}
 	} else if (observationCount > 0) {
-		$('#chooseGermplasmAndChecks').hide();
-        $('#imported-germplasm-list').hide();
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').show();
-		$('.germplasm-list-items tbody').remove();
+		$('#imported-germplasm-list').show();
+		$('.browse-import-link').hide();
+		if (isNursery()) {
+			$('#specifyCheckSection').hide();
+		}
 	} else {
-		$('#chooseGermplasmAndChecks').show();
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').hide();
 	}
@@ -3061,4 +3103,61 @@ function showMeasurementsPreview(){
             $(domElemId).html(html);
         }
     });	   	
+}
+
+function displaySelectedCheckGermplasmDetails() {
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/importGermplasmList/displaySelectedCheckGermplasmDetails',
+		type: 'GET',
+		cache: false,
+		async: false,
+		success: function(html) {
+			$('#check-germplasm-list').html(html);
+			setSpinnerMaxValue();
+			itemsIndexAdded = [];
+			$('#check-details').removeClass('fbk-hide');
+			
+			//hide clear button, set list id used fror checks if from list, and set checksFromPrimary value based on checks
+			$('#check-germplasm-list-reset-button').hide();
+			lastDraggedChecksList = $('#lastDraggedPrimaryList').val();
+			if (lastDraggedChecksList.toString() === '' || lastDraggedChecksList.toString() === '0') {
+				checksFromPrimary = $('.check-germplasm-list-items tbody tr').length;
+			} else {
+				checksFromPrimary = 0;
+			}
+		}
+	});
+}
+
+function displaySelectedGermplasmDetails() {
+	var url = '/Fieldbook/NurseryManager/importGermplasmList/displaySelectedGermplasmDetails';
+	if(isNursery()){
+		url = url + '/N';
+	} else {
+		url = url + '/T';
+	}
+	$.ajax({ 
+		url: url,
+		type: 'GET',
+		data: '',
+		cache: false,
+		async: false,
+		success: function(html) {
+				$('#imported-germplasm-list').css('display', 'block');
+				$('#imported-germplasm-list').html(html);
+				$('#entries-details').css('display', 'block');
+				$('#numberOfEntries').html($('#totalGermplasms').val());
+				$('#imported-germplasm-list-reset-button').css('opacity', '1');
+				if(isNursery()){
+					itemsIndexAdded = [];
+					setSpinnerMaxValue();
+					makeDraggable(false);
+					lastDraggedPrimaryList = $('#lastDraggedPrimaryList').val();
+					listId = lastDraggedPrimaryList; 
+				} else {
+                    $(document).trigger('germplasmListUpdated');
+                } 
+				$('#imported-germplasm-list-reset-button').hide();
+			}					
+	});	
 }

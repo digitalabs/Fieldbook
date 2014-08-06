@@ -2,7 +2,7 @@
 <div class="row" >
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
-        <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
+        <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
                            collapsible="true">
 
             <span name="action-buttons">
@@ -13,7 +13,7 @@
                 <span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="8" class="btn btn-info" >Add</span>
             </span>
 
-            <section-container name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
+            <section-container icon="bms-factors" name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
                 <display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="8" name="content"></display-settings>
             </section-container>
 
@@ -28,7 +28,7 @@
 		<label class="control-label" th:text="#{trial.edit.trial.overwrite.germplasm.list.message}">
 		</label>
 		&nbsp;&nbsp;&nbsp;
-		<button class="btn btn-primary show-germplasm-details"  th:text="#{germplasm.replace}">Overwrite</button>
+		<button class="btn btn-primary show-germplasm-details"  th:text="#{trial.germplasm.replace}">Overwrite</button>
 	</div>
 </div>
 <div class="row form-group observation-exists-notif">
@@ -41,7 +41,7 @@
 
 
 
-<div class="collapse in germplasmListDetails germplasmAndCheckSection" id="chooseGermplasmAndChecks">
+<div class="collapse in germplasmListDetails germplasmAndCheckSection" id="chooseGermplasmAndChecks" data-replace="0">
 	<!-- Germplasm List Table View -->
     <div id="primary-section">
         <div>
@@ -63,7 +63,7 @@
             </div>
 
         </div>
-        <div>
+        <div class="browse-import-link">
             <label class="control-label"><a href="javascript: void(0)" ng-click="openGermplasmTree()">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
         </div>
     </div>

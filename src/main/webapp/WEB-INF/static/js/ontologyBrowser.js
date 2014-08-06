@@ -106,7 +106,7 @@ function viewTabs(variableName, variableId) {
 		return;
 	isSearchTab = true;
 	$.ajax({
-		url: ontologyUrl + 'details/' + variableId,
+		url: '/Fieldbook/OntologyBrowser/details/' + variableId,
 		type: 'GET',
 		async: true,
 		success: function(html) {

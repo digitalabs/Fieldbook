@@ -1237,6 +1237,48 @@ input::-ms-clear {
 .fbk-hide-opacity{
     opacity: 0;
 }
+
+.fbk-font-icon:before {
+   font-size: 17pt;
+}
+.fbk-font-icon{
+    position: relative;
+    top: 8px;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.fbk-trial-summary-icons {
+    font-size: 20px;
+    display:inline-block;
+    margin-right: 5px;
+    margin-left: 5px
+}
+
+.bms-exp-design {
+    color: #9E8376;
+}
+
+.bms-environments {
+    color: #0074AC;
+}
+
+.bms-treatment-factors {
+    color: #C95B05;
+}
+
+.bms-variates {
+  color: #A9DD28;
+}
+
+.bms-mgt-details {
+  color: #263798;
+}
+
+.bms-factors {
+  color: #C4A01B;
+}
+
 .fbk-icon-header{
     padding-bottom:5px;
     padding-right: 10px;
@@ -1256,7 +1298,6 @@ textarea.form-control {
 }
 
 /* SELECT 2 overrides */
-
 input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input,
 .select2-container .select2-choices .select2-search-field input, .select2-container .select2-choice, .select2-container .select2-choices {
     color: #333333;
@@ -1274,6 +1315,9 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
     background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
 }
 
+.select2-default {
+    color: #333333 !important;
+}
 
 /* move the search icon to the fron and set the starting caret position after the icon */
 .select2-search input {
@@ -1616,4 +1660,12 @@ table.dataTable th, table.dataTable td {
 }
 .fbk-center{
 	text-align: center;
+}
+
+a[ng-click] {
+    cursor:pointer;
+}
+
+.germplasm-list-data-table tr > td:nth-child(1) {
+    cursor: pointer;
 }

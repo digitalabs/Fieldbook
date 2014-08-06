@@ -52,6 +52,8 @@ public class ImportedGermplasmList implements Serializable {
     
     /** The imported germplasms. */
     private List<ImportedGermplasm> importedGermplasms;
+    /** The imported germplasms. */
+    private List<ImportedGermplasm> originalImportedGermplasms;
     
     public ImportedGermplasmList() {
     }
@@ -332,4 +334,17 @@ public class ImportedGermplasmList implements Serializable {
     public void addImportedGermplasm(ImportedGermplasm importedGermplasm){
         this.importedGermplasms.add(importedGermplasm);
     }
+
+	public List<ImportedGermplasm> getOriginalImportedGermplasms() {
+		return originalImportedGermplasms;
+	}
+
+	public void setOriginalImportedGermplasms(
+			List<ImportedGermplasm> originalImportedGermplasms) {
+		this.originalImportedGermplasms = originalImportedGermplasms;
+	}
+	
+	public void copyImportedGermplasms(){
+		this.originalImportedGermplasms = this.importedGermplasms;
+	}
 }

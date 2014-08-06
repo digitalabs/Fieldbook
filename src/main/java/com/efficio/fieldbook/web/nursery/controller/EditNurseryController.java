@@ -33,8 +33,10 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -175,9 +177,14 @@ public class EditNurseryController extends SettingsController {
             }
             
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            
+            List<GermplasmList> germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.ADVANCED);
+            
+            model.addAttribute("advancedList", germplasmList);
         }
         setFormStaticData(form, contextParams, workbook);
-        model.addAttribute("createNurseryForm", form);
+        model.addAttribute("createNurseryForm", form);               
+        
         if(isAjax != null && isAjax.equalsIgnoreCase("1")) {
         	return super.showAjaxPage(model, getContentName());
         }

@@ -218,7 +218,18 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 												&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 											
 											if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-												xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue()), 
+												double doubleVal = Double.valueOf(cell.getNumericCellValue());
+												double intVal = Double.valueOf(cell.getNumericCellValue()).intValue();
+												boolean getDoubleVal = false;
+												if((doubleVal - intVal) > 0){
+													getDoubleVal = true;
+												}
+												
+												String tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue());
+												if(getDoubleVal){
+													tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()));
+												}
+												xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(tempVal, 
 														wData.getMeasurementVariable().getPossibleValues(), true);
 											}
 											else {

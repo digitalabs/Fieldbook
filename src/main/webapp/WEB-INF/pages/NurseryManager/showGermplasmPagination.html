@@ -6,7 +6,7 @@
 	<input type="hidden" th:field="*{startIndex}"/>
 	<input type="hidden" th:field="*{interval}"/>
 	<input type="hidden" th:field="*{mannerOfInsertion}"/>
-	<input type="hidden" th:field="*{lastDraggedChecksList}"/>
+	<input type="hidden" th:field="*{lastDraggedPrimaryList}"/>
 
 	<!-- case 1: no data means no table -->
 	<div th:if="*{importedGermplasm == null or #lists.isEmpty(importedGermplasm)}">
@@ -64,10 +64,8 @@
 			germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
 			setSpinnerMaxValue();
 		}else{
-			germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);	
+			germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
 		}
-		
-		
 
 	});
 	//]]>

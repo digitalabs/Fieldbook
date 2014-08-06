@@ -368,7 +368,7 @@ function checkIfEmpty(value) {
 function hideDummyRow(tableId) {
 	'use strict';
 	if($('#'+tableId).find('.dummy-col').parent().length !== 0){
-		$('#'+tableId).find('.dummy-col').parent().remove()
+		$('#'+tableId).find('.dummy-col').parent().remove();
 	}
 }
 
@@ -932,6 +932,19 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		// reinstantiate counters of ids and names
 		sortVariableIdsAndNames(variableType);
 		inputChange = true;
+
+
+        // disable actions if applicable
+        if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass('disabled')) {
+            document.initialEnabledStat = true;
+        } else {
+            document.initialEnabledStat = false;
+        }
+
+        if (document.disableActions !== undefined) {
+            document.disableActions();
+            eval($(this).attr('onclick'));
+        }
 
 		return true;
 	} else {
@@ -1507,7 +1520,9 @@ function validateCreateNursery() {
 	 * Validate Position is less than the total germplasm Validate the Interval
 	 * should be less than the total germplasm
 	 */
-	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+	if ($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null 
+			&& (($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1) 
+					|| ($('#studyId').length === 0 ))) {
 
 		selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 
@@ -1700,7 +1715,6 @@ function refreshStudyAfterSave(studyId){
 		success: function(html) {
 			$('.container .row:eq(0)').html(html);
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
-
 		}
 	});
 }

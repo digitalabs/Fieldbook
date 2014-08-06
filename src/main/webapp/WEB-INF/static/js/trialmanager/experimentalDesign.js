@@ -99,7 +99,8 @@
                                 showSuccessfulMessage('', 'Experimental Design generated successfully, please check the measurements tab');
                                 TrialManagerDataService.clearUnappliedChangesFlag();
                                 TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-
+                                $('#chooseGermplasmAndChecks').data('replace', '1');
+                                
                                 if (TrialManagerDataService.isOpenTrial()) {
                                     $state.go("editMeasurements");
                                 } else {

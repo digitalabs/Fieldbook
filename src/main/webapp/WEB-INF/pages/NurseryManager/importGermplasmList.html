@@ -207,12 +207,17 @@
 			'use strict';
 
 			makeCheckDraggableBool = isDraggable;
+			
+			isDraggable = isDraggable 
+				&& (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 
+				|| ($('#studyId').length === 0 && isNursery())) 
+				|| $('#studyId').length > 0 && isNursery() && measurementRowCount === 0) 
+				&& (lastDraggedChecksList.toString() === '' || lastDraggedChecksList.toString() === '0');			
 
-			//enable drag and drop if replace is clicked and checks are from a list 
-			if (isDraggable 
-					&& ($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 
-					&& ($('#studyId').length === 0 && isNursery())) 
-					&& (lastDraggedChecksList.toString() === '' || lastDraggedChecksList.toString() === '0')){
+			//enable drag and drop if replace is clicked and checks are from a list, 
+			//or if update but no measurements yet, 
+			//or if it is in create nursery 
+			if (isDraggable){
 				$('.check-germplasm-list-items tbody tr').draggable({
 
 					helper: function(/*event, ui*/) {
@@ -264,9 +269,11 @@
 
 		function makeDraggable(isDraggable) {
 			'use strict';
-
-			if (isDraggable && (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1) 
-					|| ($('#studyId').length === 0 && isNursery()))) {
+			isDraggable = isDraggable 
+					&& (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 
+					|| ($('#studyId').length === 0 && isNursery())) 
+					|| $('#studyId').length > 0 && isNursery() && measurementRowCount === 0);
+			if (isDraggable) {
 				$('.germplasm-list-items tbody  tr').draggable({
 
 					helper: function(/*event, ui*/) {
@@ -598,7 +605,6 @@
 
 					 	// If not all items are dragged to the checks list
 					 	if (ui.helper.find('tr').length !== $('.germplasm-list-items tbody tr').length - ui.helper.find('tr').length) {
-
 							// Adds the dragged germplasms to the check list
 							if (lastDraggedChecksList != 0) {
 								itemsToAdd = [];

@@ -3119,7 +3119,7 @@ function displaySelectedCheckGermplasmDetails() {
 			
 			//hide clear button, set list id used fror checks if from list, and set checksFromPrimary value based on checks
 			$('#check-germplasm-list-reset-button').hide();
-			lastDraggedChecksList = $('#lastDraggedPrimaryList').val();
+			lastDraggedChecksList = $('#lastDraggedChecksList').val();
 			if (lastDraggedChecksList.toString() === '' || lastDraggedChecksList.toString() === '0') {
 				checksFromPrimary = $('.check-germplasm-list-items tbody tr').length;
 			} else {

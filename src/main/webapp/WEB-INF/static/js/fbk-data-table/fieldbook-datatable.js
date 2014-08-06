@@ -511,7 +511,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				}
 				setTimeout(function(){oSettings.oInstance.fnAdjustColumnSizing();}, 1);
 				//hide delete icon for read only view
-				if ($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0) {
+				if ($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0 && measurementRowCount > 0) {
 					oSettings.oInstance.$('.delete-check').hide();
 				}
 				

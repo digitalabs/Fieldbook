@@ -25,6 +25,10 @@
                     $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
                 }
 
+                if (isNaN($scope.totalGermplasmEntryListCount)) {
+                    $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = 0;
+                }
+
                 $scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
                 $scope.settings.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
 

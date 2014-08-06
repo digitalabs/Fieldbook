@@ -79,7 +79,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		String outputFilename = null;
 		
 			for (Integer index : instances) {
-	    		List<Integer> indexes = new ArrayList();
+	    		List<Integer> indexes = new ArrayList<Integer>();
 	    		indexes.add(index);
         		
 	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
@@ -170,7 +170,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 		
 		for (MeasurementRow dataRow : observations) {
-			writeObservationRow(currentRowNum++, xlsSheet, dataRow, xlsBook, propertyName);
+			writeObservationRow(currentRowNum++, xlsSheet, dataRow, workbook.getMeasurementDatasetVariables(), xlsBook, propertyName);
 		}
 	}
 	
@@ -199,7 +199,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
 	private int writeConditions(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> conditions,
 			MeasurementRow trialObservation) {
-		List<MeasurementVariable> arrangedConditions = new ArrayList();
+		List<MeasurementVariable> arrangedConditions = new ArrayList<MeasurementVariable>();
 		List<MeasurementVariable> filteredConditions = new ArrayList<MeasurementVariable>();
 		if(conditions != null){
 			arrangedConditions.addAll(conditions);
@@ -392,41 +392,45 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 	}
 	
-	private void writeObservationRow(int currentRowNum, HSSFSheet xlsSheet, MeasurementRow dataRow, HSSFWorkbook xlsBook, String propertyName) {
+	private void writeObservationRow(int currentRowNum, HSSFSheet xlsSheet, MeasurementRow dataRow, List<MeasurementVariable> variables, 
+			HSSFWorkbook xlsBook, String propertyName) {
+		
 		HSSFRow row = xlsSheet.createRow(currentRowNum);
 		int currentColNum = 0;
 		CellStyle style =  xlsBook.createCellStyle();
 		DataFormat format = xlsBook.createDataFormat();
 		style.setDataFormat(format.getFormat("0.#"));
-		
-		for (MeasurementData dataCell : dataRow.getDataList()) {		    
-			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-				continue;
-			}
-			HSSFCell cell = row.createCell(currentColNum++);
-									
-			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
-					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty() 
-					&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
-					&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
-					&& !dataCell.getMeasurementVariable().getProperty().equals(propertyName)) {
 
-				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
-			}
-			else {
-				
-				if(AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())){					
-					if(dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())){
-						cell.setCellType(Cell.CELL_TYPE_BLANK);
-						cell.setCellType(Cell.CELL_TYPE_NUMERIC);		
-						cell.setCellValue(Double.valueOf(dataCell.getValue()));
-						
-					}
-				}else{
-					cell.setCellValue(dataCell.getValue());	
+		for (MeasurementVariable variable : variables) {
+			MeasurementData dataCell = dataRow.getMeasurementData(variable.getTermId());
+			if (dataCell != null) {
+				if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+					continue;
 				}
-			}
-			
+				HSSFCell cell = row.createCell(currentColNum++);
+										
+				if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
+						&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty() 
+						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
+						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
+						&& !dataCell.getMeasurementVariable().getProperty().equals(propertyName)) {
+	
+					cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
+				}
+				else {
+					
+					if(AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())){					
+						if(dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())){
+							cell.setCellType(Cell.CELL_TYPE_BLANK);
+							cell.setCellType(Cell.CELL_TYPE_NUMERIC);		
+							cell.setCellValue(Double.valueOf(dataCell.getValue()));
+							
+						}
+					}else{
+						cell.setCellValue(dataCell.getValue());	
+					}
+				}
+			}			
 		}
 	}
 	

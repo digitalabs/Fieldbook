@@ -457,6 +457,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             if(germplasmLists != null && !germplasmLists.isEmpty()){
                 GermplasmList germplasmList = germplasmLists.get(0);
+                if (germplasmList != null && germplasmList.getListRef() != null) {
+                    form.setLastDraggedPrimaryList(germplasmList.getListRef().toString());
+                }
                 List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
                 list = transformListDataProjectToImportedGermplasm(data);
             }
@@ -542,6 +545,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             if(germplasmListCheck != null && !germplasmListCheck.isEmpty()){
                 GermplasmList checkList = germplasmListCheck.get(0);
+                if (checkList != null & checkList.getListRef() != null && !checkList.getListRef().equals(0)) {
+                    form.setKeyForOverwrite(checkList.getListRef());
+                    form.setLastCheckSourcePrimary(0);
+                    form.setLastDraggedChecksList(checkList.getListRef().toString());
+                } else {
+                    form.setLastCheckSourcePrimary(1);
+                }
+                
                 List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(checkList.getId());
                 list = transformListDataProjectToImportedGermplasm(data);
             }

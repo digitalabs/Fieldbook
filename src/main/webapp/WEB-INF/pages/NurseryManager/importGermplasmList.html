@@ -208,8 +208,11 @@
 
 			makeCheckDraggableBool = isDraggable;
 
-			if (isDraggable && (($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1) 
-					|| ($('#studyId').length === 0 && isNursery()))){
+			//enable drag and drop if replace is clicked and checks are from a list 
+			if (isDraggable 
+					&& ($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 
+					&& ($('#studyId').length === 0 && isNursery())) 
+					&& (lastDraggedChecksList.toString() === '' || lastDraggedChecksList.toString() === '0')){
 				$('.check-germplasm-list-items tbody tr').draggable({
 
 					helper: function(/*event, ui*/) {

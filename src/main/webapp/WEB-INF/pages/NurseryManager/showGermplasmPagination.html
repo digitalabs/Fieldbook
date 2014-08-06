@@ -6,7 +6,7 @@
 	<input type="hidden" th:field="*{startIndex}"/>
 	<input type="hidden" th:field="*{interval}"/>
 	<input type="hidden" th:field="*{mannerOfInsertion}"/>
-	<input type="hidden" th:field="*{lastDraggedChecksList}"/>
+	<input type="hidden" th:field="*{lastDraggedPrimaryList}"/>
 
 	<!-- case 1: no data means no table -->
 	<div th:if="*{importedGermplasm == null or #lists.isEmpty(importedGermplasm)}">

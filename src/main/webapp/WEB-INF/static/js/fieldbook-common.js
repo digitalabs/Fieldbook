@@ -3113,11 +3113,18 @@ function displaySelectedCheckGermplasmDetails() {
 		async: false,
 		success: function(html) {
 			$('#check-germplasm-list').html(html);
-			checksFromPrimary = 0;
 			setSpinnerMaxValue();
 			itemsIndexAdded = [];
 			$('#check-details').removeClass('fbk-hide');
+			
+			//hide clear button, set list id used fror checks if from list, and set checksFromPrimary value based on checks
 			$('#check-germplasm-list-reset-button').hide();
+			lastDraggedChecksList = $('#lastDraggedPrimaryList').val();
+			if (lastDraggedChecksList.toString() === '' || lastDraggedChecksList.toString() === '0') {
+				checksFromPrimary = $('.check-germplasm-list-items tbody tr').length;
+			} else {
+				checksFromPrimary = 0;
+			}
 		}
 	});
 }
@@ -3145,6 +3152,8 @@ function displaySelectedGermplasmDetails() {
 					itemsIndexAdded = [];
 					setSpinnerMaxValue();
 					makeDraggable(false);
+					lastDraggedPrimaryList = $('#lastDraggedPrimaryList').val();
+					listId = lastDraggedPrimaryList; 
 				} else {
                     $(document).trigger('germplasmListUpdated');
                 } 

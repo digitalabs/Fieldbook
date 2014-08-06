@@ -53,12 +53,6 @@
                 // TrialManagerDataService.indicateUnappliedChangesAvailable(true);
             };
 
-            $(document).on('germplasmListUpdated', function() {
-                var entryHtml = $('#numberOfEntries').html();
-
-                TrialManagerDataService.updateTrialMeasurementRowCount(parseInt(entryHtml, 10));
-            });
-
             $scope.germplasmListCleared = function() {
                 TrialManagerDataService.clearUnappliedChangesFlag();
                 TrialManagerDataService.updateTrialMeasurementRowCount(0);

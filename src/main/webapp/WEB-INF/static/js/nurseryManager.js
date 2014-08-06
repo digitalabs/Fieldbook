@@ -368,7 +368,7 @@ function checkIfEmpty(value) {
 function hideDummyRow(tableId) {
 	'use strict';
 	if($('#'+tableId).find('.dummy-col').parent().length !== 0){
-		$('#'+tableId).find('.dummy-col').parent().remove()
+		$('#'+tableId).find('.dummy-col').parent().remove();
 	}
 }
 

@@ -62,7 +62,7 @@
 
                         service.currentData.basicDetails.studyID = trialID;
                         service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
-                        service.trialMeasurement.count = data.measurementRowCount;
+                        service.updateTrialMeasurementRowCount(data.measurementRowCount);
 
                         // TODO : change from global function call
                         displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
@@ -334,7 +334,7 @@
                                 notifySaveEventListeners();
                                 updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
                                     service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-                                    service.trialMeasurement.count = data.measurementRowCount;
+                                    service.updateTrialMeasurementRowCount(data.measurementRowCount);
                                     service.updateSettings('measurements', extractSettings(data.measurementsData));
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
@@ -349,7 +349,7 @@
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
                                     service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-                                    service.trialMeasurement.count = data.measurementRowCount;
+                                    service.updateTrialMeasurementRowCount(data.measurementRowCount);
                                     displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                                         service.trialMeasurement.count);
                                     service.applicationData.unsavedGeneratedDesign = false;
@@ -395,6 +395,11 @@
                     service.settings[key] = newValue;
                     propagateChange(settingRegistry, key, newValue);
                     settingsArray = [];
+                },
+
+                updateTrialMeasurementRowCount : function (newCountValue) {
+                    service.trialMeasurement.count = newCountValue;
+                    $('body').data('service.trialMeasurement.count', newCountValue);
                 },
 
                 registerSetting: function (key, updateFunction) {

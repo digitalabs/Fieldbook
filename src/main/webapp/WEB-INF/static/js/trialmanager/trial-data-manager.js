@@ -343,8 +343,8 @@
                                     $('body').data('needToSave', '0');
                                   });
 							}
-                            else if (service.trialMeasurement.count >  0 && $('#chooseGermplasmAndChecks').data('replace') !== undefined 
-            						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0) {
+                            else if (service.trialMeasurement.count > 0 && $('#chooseGermplasmAndChecks').data('replace') !== undefined 
+            						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) {
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function (data) {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();

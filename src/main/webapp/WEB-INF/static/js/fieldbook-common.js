@@ -3153,10 +3153,10 @@ function displaySelectedGermplasmDetails() {
 					setSpinnerMaxValue();
 					makeDraggable(false);
 					lastDraggedPrimaryList = $('#lastDraggedPrimaryList').val();
-					listId = lastDraggedPrimaryList; 
 				} else {
                     $(document).trigger('germplasmListUpdated');
-                } 
+                }
+				listId = $('#lastDraggedPrimaryList').val();
 				$('#imported-germplasm-list-reset-button').hide();
 			}					
 	});	

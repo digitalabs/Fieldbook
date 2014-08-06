@@ -98,19 +98,6 @@ public class OpenTrialController extends
 
     @RequestMapping(value = "/germplasm", method = RequestMethod.GET)
     public String showGermplasm(Model model, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
-    	try {
-    		Workbook workbook = userSelection.getWorkbook();
-            if (workbook != null) {
-	    		List<GermplasmList> germplasmListTrial = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(workbook.getStudyId()), GermplasmListType.TRIAL);
-		        if(germplasmListTrial != null && !germplasmListTrial.isEmpty()){
-		        	GermplasmList trialList = germplasmListTrial.get(0);        	
-					fieldbookMiddlewareService.getListDataProject(trialList.getId());		
-		        }
-            }
-    	} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         return showAjaxPage(model, URL_GERMPLASM);
     }
 

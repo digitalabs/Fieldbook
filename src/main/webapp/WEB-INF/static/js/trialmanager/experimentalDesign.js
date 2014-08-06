@@ -17,7 +17,7 @@
                 $scope.Math = Math;
                 $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
                 //FIXME: cheating a bit for the meantime.
-                $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
+                $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount);
 
                 $scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
                 $scope.settings.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;

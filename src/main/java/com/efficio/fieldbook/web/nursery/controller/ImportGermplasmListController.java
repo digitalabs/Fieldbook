@@ -445,6 +445,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         
         try {
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            
             mainInfo.setAdvanceImportType(true);
             form.setImportedGermplasmMainInfo(mainInfo);
             
@@ -465,11 +466,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             if(germplasmLists != null && !germplasmLists.isEmpty()){
                 GermplasmList germplasmList = germplasmLists.get(0);
+                
                 if (germplasmList != null && germplasmList.getListRef() != null) {
                     form.setLastDraggedPrimaryList(germplasmList.getListRef().toString());
+                    mainInfo.setListId(germplasmList.getListRef());
                 }
                 List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
-                list = transformListDataProjectToImportedGermplasm(data);
+                list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
             }
             
             String defaultTestCheckId = getCheckId(DEFAULT_TEST_VALUE, fieldbookService.getCheckList());
@@ -562,7 +565,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
                 }
                 
                 List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(checkList.getId());
-                list = transformListDataProjectToImportedGermplasm(data);
+                list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
             }
                         
             generateCheckListModel(model, list, checksList);    
@@ -1089,38 +1092,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             }
         }
         return list;
-    }
-    
-    /**
-     * Transform germplasm list data to imported germplasm.
-     *
-     * @param data the data
-     * @param defaultCheckId the default check id
-     * @return the list
-     */
-    private List<ImportedGermplasm> transformListDataProjectToImportedGermplasm(List<ListDataProject> data) {
-        List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
-        int index = 1;
-        if (data != null && data.size() > 0) {
-            for (ListDataProject aData : data) {
-                ImportedGermplasm germplasm = new ImportedGermplasm();
-                germplasm.setCheck(aData.getCheckType().toString());
-                germplasm.setCheckId(aData.getCheckType());
-                germplasm.setCross(aData.getGroupName());
-                germplasm.setDesig(aData.getDesignation());
-                germplasm.setEntryCode(aData.getEntryCode());
-                germplasm.setEntryId(aData.getEntryId());
-                germplasm.setGid(aData.getGermplasmId().toString());
-                germplasm.setSource(aData.getSeedSource());
-                germplasm.setGroupName(aData.getGroupName());
-                germplasm.setIndex(index++);
-                
-                list.add(germplasm);
-            }
-        }
-        return list;
-    }
-    
+    }            
    
     /**
      * Gets the all check types.

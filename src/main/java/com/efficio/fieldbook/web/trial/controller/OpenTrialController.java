@@ -39,6 +39,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
@@ -46,6 +49,7 @@ import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -185,12 +189,20 @@ public class OpenTrialController extends
             
             model.addAttribute("germplasmListSize", 0);
             List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
-            
+            List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
             if(germplasmLists != null && !germplasmLists.isEmpty()){
                 GermplasmList germplasmList = germplasmLists.get(0);
                 List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
                 if(data != null && !data.isEmpty()){
-                	model.addAttribute("germplasmListSize", data.size());
+                	model.addAttribute("germplasmListSize", data.size());                	
+                    list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
+                    ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+                    importedGermplasmList.setImportedGermplasms(list);
+                    ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+                    mainInfo.setAdvanceImportType(true);
+                    mainInfo.setImportedGermplasmList(importedGermplasmList);                    
+                    userSelection.setImportedGermplasmMainInfo(mainInfo);
+                    userSelection.setImportValid(true);
                 }
             }
         }
@@ -487,6 +499,7 @@ public class OpenTrialController extends
         			}
         		}
         	}
+        	userSelection.setMeasurementRowList(observations);
         }
         
         

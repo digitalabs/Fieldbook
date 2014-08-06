@@ -60,5 +60,34 @@ public class ListDataProjectUtil {
 	        return listDataProject;
 	        
 	    }
-	    
+	  
+  /**
+     * Transform germplasm list data to imported germplasm.
+     *
+     * @param data the data
+     * @param defaultCheckId the default check id
+     * @return the list
+     */
+    public static List<ImportedGermplasm> transformListDataProjectToImportedGermplasm(List<ListDataProject> data) {
+        List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+        int index = 1;
+        if (data != null && data.size() > 0) {
+            for (ListDataProject aData : data) {
+                ImportedGermplasm germplasm = new ImportedGermplasm();
+                germplasm.setCheck(aData.getCheckType().toString());
+                germplasm.setCheckId(aData.getCheckType());
+                germplasm.setCross(aData.getGroupName());
+                germplasm.setDesig(aData.getDesignation());
+                germplasm.setEntryCode(aData.getEntryCode());
+                germplasm.setEntryId(aData.getEntryId());
+                germplasm.setGid(aData.getGermplasmId().toString());
+                germplasm.setSource(aData.getSeedSource());
+                germplasm.setGroupName(aData.getGroupName());
+                germplasm.setIndex(index++);
+                
+                list.add(germplasm);
+            }
+        }
+        return list;
+    }
 }

@@ -10,7 +10,7 @@
 
 	<!-- case 1: no data means no table -->
 	<div th:if="*{importedGermplasm == null or #lists.isEmpty(importedGermplasm)}">
-		<span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
+		<span class="noGermplasmListIndicator"></span>
 	</div>
 
 	<!-- case 2: advanced view of the importedGermplasm -->
@@ -63,8 +63,14 @@
 		if(isNursery()){
 			germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
 			setSpinnerMaxValue();
+			if($('.noGermplasmListIndicator').length !== 0){
+				$('.noGermplasmListIndicator').html(noNurseryGermplasmList);	
+			}
 		}else{
 			germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
+			if($('.noGermplasmListIndicator').length !== 0){
+				$('.noGermplasmListIndicator').html(noTrialGermplasmList);
+			}
 		}
 
 	});

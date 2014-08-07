@@ -10,7 +10,7 @@
 
 		<!-- case 1: no data means no table -->
 		<div th:if="*{importedCheckGermplasm == null or #lists.isEmpty(importedCheckGermplasm)}">
-			<span class="noGermplasmListIndicator" th:text="#{nursery.import.no.selected.check.germplasm.list}">No Selected Check list</span>
+			<span class="noSelectedGermplasmListIndicator" th:text="#{nursery.import.no.selected.check.germplasm.list}">No Selected Check list</span>
 		</div>
 
 		<!-- case 3: basic view of the importedGermplasm -->
@@ -62,7 +62,9 @@
 	var dataSelectedCheckGermplasmList = /*[[${checkListDataTable}]]*/ [];
 	$( document ).ready(function() {
 		'use strict';		
-		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);				
+		if(dataSelectedCheckGermplasmList !== null && dataSelectedCheckGermplasmList.length !== 0){
+			selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);
+		}
 	});	
 	
 	//]]>

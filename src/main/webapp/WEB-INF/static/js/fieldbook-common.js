@@ -3039,7 +3039,10 @@ function showGermplasmDetailsSection() {
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
 	$('.browse-import-link').show();
-	$('#imported-germplasm-list-reset-button').show();
+	
+	if ($('.germplasm-list-items tbody tr').length > 0) {
+		$('#imported-germplasm-list-reset-button').show();
+	}
 	
 	//flag to determine if existing measurements should be deleted
 	$('#chooseGermplasmAndChecks').data('replace', '1');

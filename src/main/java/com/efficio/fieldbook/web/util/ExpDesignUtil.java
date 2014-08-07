@@ -379,10 +379,12 @@ public class ExpDesignUtil {
 							if (treatmentFactorValues != null && treatmentFactorValues.containsKey(String.valueOf(treatmentLevelData.getMeasurementVariable().getTermId()))) {
 								Object tempObj = treatmentFactorValues.get(String.valueOf(treatmentLevelData.getMeasurementVariable().getTermId())).get(index);
 								String value = "";
-								if(tempObj instanceof String){
-									value = (String)tempObj;
-								}else{
-									value = Integer.toString((Integer)tempObj);
+								if(tempObj != null){
+									if(tempObj instanceof String){
+										value = (String)tempObj;
+									}else{
+										value = Integer.toString((Integer)tempObj);
+									}
 								}
 								if(var.getDataTypeId() != null && var.getDataTypeId().intValue() == TermId.DATE_VARIABLE.getId()){
 									value = DateUtil.convertToDBDateFormat(var.getDataTypeId(), value);

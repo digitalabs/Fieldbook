@@ -56,8 +56,13 @@
             $scope.germplasmListCleared = function() {
                 TrialManagerDataService.clearUnappliedChangesFlag();
                 TrialManagerDataService.updateTrialMeasurementRowCount(0);
-                TrialManagerDataService.germplasmListCleared = true;
+                TrialManagerDataService.applicationData.germplasmListCleared = true;
+                TrialManagerDataService.applicationData.germplasmListSelected = false;
             };
+
+            $(document).on('germplasmListUpdated', function () {
+                TrialManagerDataService.applicationData.germplasmListSelected = true;
+            });
 
             $scope.openGermplasmTree = function() {
                 openListTree(1, $scope.germplasmListSelected);

@@ -18,7 +18,7 @@
                 $scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement;
                 //FIXME: cheating a bit for the meantime.
 
-                if (!TrialManagerDataService.germplasmListCleared) {
+                if (!TrialManagerDataService.applicationData.germplasmListCleared) {
                     $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount);
                 }
                 else {

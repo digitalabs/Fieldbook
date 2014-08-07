@@ -7,7 +7,6 @@
     angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-
         'TrialSettingsManager','_',
         function (GERMPLASM_LIST_SIZE,TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
                   MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
@@ -226,7 +225,9 @@
                 applicationData: {
                     unappliedChangesAvailable: false,
                     unsavedGeneratedDesign : false,
-                    unsavedTraitsAvailable : false
+                    unsavedTraitsAvailable : false,
+                    germplasmListCleared: false,
+                    germplasmListSelected : GERMPLASM_LIST_SIZE > 0
                 },
 
                 // settings that has special data structure
@@ -288,8 +289,8 @@
                         service.currentData.basicDetails.studyID !== 0;
                 },
 
-                indicateUnappliedChangesAvailable: function (fromGermplasm) {
-                    if (!service.applicationData.unappliedChangesAvailable && (fromGermplasm || service.trialMeasurement.count > 0)) {
+                indicateUnappliedChangesAvailable: function () {
+                    if (!service.applicationData.unappliedChangesAvailable && service.applicationData.germplasmListSelected) {
                         service.applicationData.unappliedChangesAvailable = true;
                         showAlertMessage('', 'These changes have not yet been applied to the Measurements table. To update the Measurements table, ' +
                             'please review your settings and regenerate the Experimental Design on the next tab', 10000);
@@ -301,7 +302,6 @@
                     service.applicationData.unappliedChangesAvailable = false;
                     $('body').data('needGenerateExperimentalDesign', '0');
                 },
-                germplasmListCleared: false,
                 extractData: extractData,
                 extractSettings: extractSettings,
                 extractTreatmentFactorSettings : extractTreatmentFactorSettings,

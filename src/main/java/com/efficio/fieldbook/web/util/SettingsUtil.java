@@ -1300,6 +1300,9 @@ public class SettingsUtil {
         if (constant.getOperation() == Operation.ADD) {
         	label = PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0);
         }
+        else {
+        	label = constant.getLabel();
+        }
 
         MeasurementVariable mvar = new MeasurementVariable(
                 constant.getName(), constant.getDescription(), constant.getScale(), constant.getMethod(), constant.getProperty(), constant.getDatatype(),
@@ -1311,6 +1314,7 @@ public class SettingsUtil {
         mvar.setStoredIn(constant.getStoredIn());
         mvar.setFactor(false);
         mvar.setDataTypeId(constant.getDataTypeId());
+        mvar.setPossibleValues(constant.getPossibleValues());
         return mvar;
     }
 
@@ -2031,6 +2035,24 @@ public class SettingsUtil {
     				
     				currentVar.setName(detail.getVariable().getName());
     				break;
+    			}
+    		}
+    	}
+    }
+    
+    public static void setConstantLabels(Dataset dataset, List<MeasurementVariable> constants) throws MiddlewareQueryException {
+    	if (constants != null && !constants.isEmpty() && dataset != null && dataset.getConstants() != null && !dataset.getConstants().isEmpty()) { 
+    		for (Constant constant : dataset.getConstants()) {
+    			for (MeasurementVariable mvar : constants) {
+    				if (constant.getId() == mvar.getTermId()) {
+    					if (constant.getOperation() != Operation.ADD) {
+    						constant.setLabel(mvar.getLabel());
+    					}
+    					if (mvar.getPossibleValues() != null) {
+    						constant.setPossibleValues(mvar.getPossibleValues());
+    					}
+    					break;
+    				}
     			}
     		}
     	}

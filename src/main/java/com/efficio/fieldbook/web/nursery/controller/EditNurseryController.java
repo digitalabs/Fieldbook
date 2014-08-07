@@ -122,7 +122,8 @@ public class EditNurseryController extends SettingsController {
         if(nurseryId != 0){     
             //settings part
             workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
-
+            userSelection.setConstantsWithLabels(workbook.getConstants());
+            
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
@@ -390,6 +391,9 @@ public class EditNurseryController extends SettingsController {
 
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
+    	
+    	SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
+    	
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
     	workbook.setOriginalObservations(userSelection.getWorkbook().getOriginalObservations());
     	workbook.setTrialDatasetId(trialDatasetId);
@@ -448,10 +452,14 @@ public class EditNurseryController extends SettingsController {
     				}
     			}
     		}
-    		if (workbook.getTrialConstants() != null && !workbook.getTrialConditions().isEmpty()) {
+    		if (workbook.getTrialConstants() != null && !workbook.getTrialConstants().isEmpty()) {
     			for (MeasurementVariable constant : workbook.getTrialConstants()) {
     				for (MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
     					if (data.getMeasurementVariable().getTermId() == constant.getTermId()) {
+    						if (constant.getStoredIn() == TermId.CATEGORICAL_VARIATE.getId() && constant.getValue() != null
+    								&& NumberUtils.isNumber(constant.getValue())) {
+    							data.setcValueId(constant.getValue());
+    						}
     						data.setValue(constant.getValue());
     					}
     				}

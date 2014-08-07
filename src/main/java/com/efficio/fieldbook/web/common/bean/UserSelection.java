@@ -146,6 +146,8 @@ public class UserSelection implements Serializable {
     private List<MeasurementRow> measurementRowList;
     private List<MeasurementVariable> measurementDatasetVariable;
     
+    private List<MeasurementVariable> constantsWithLabels;
+    
 	
 	/**
      * Gets the current page germplasm list.
@@ -848,4 +850,18 @@ public class UserSelection implements Serializable {
         public void setDeletedTreatmentFactors(List<SettingDetail> deletedTreatmentFactors) {
             this.deletedTreatmentFactors = deletedTreatmentFactors;
         }
+
+		/**
+		 * @return the constantsWithLabels
+		 */
+		public List<MeasurementVariable> getConstantsWithLabels() {
+			return constantsWithLabels;
+		}
+
+		/**
+		 * @param constantsWithLabels the constantsWithLabels to set
+		 */
+		public void setConstantsWithLabels(List<MeasurementVariable> constantsWithLabels) {
+			this.constantsWithLabels = constantsWithLabels;
+		}
  }

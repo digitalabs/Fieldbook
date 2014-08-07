@@ -853,6 +853,11 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						$('.breeding-method-tooltip').attr('title', $(name).select2('data').description);
 						$('.help-tooltip-nursery').tooltip('destroy');
 						$('.help-tooltip-nursery').tooltip();
+						if($(name).select2('data') != null && $(name).select2('data').id === '0'){
+							$('.breeding-method-tooltip').addClass('fbk-hide');
+						}else{
+							$('.breeding-method-tooltip').removeClass('fbk-hide');
+						}
 					}
 				});
 	} else {

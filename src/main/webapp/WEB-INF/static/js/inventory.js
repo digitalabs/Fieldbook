@@ -95,6 +95,7 @@ function initializePossibleValuesComboScale(possibleValues, name, isLocation, de
 
 	
 		$(name).select2({
+			minimumResultsForSearch: possibleValuesObj.length == 0 ? -1 : 20,
 			query: function (query) {	
 		      var data = {results: possibleValuesObj};
 		      // return the array that matches

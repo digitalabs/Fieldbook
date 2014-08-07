@@ -1296,11 +1296,9 @@ public class SettingsUtil {
     private static MeasurementVariable convertConstantToMeasurementVariable(Constant constant) {
         String label = null;
 
-        if (constant.isTrial()) {
+        //currently if operation is add, then it's always a trial constant
+        if (constant.getOperation() == Operation.ADD) {
         	label = PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0);
-        }
-        else {
-        	label = PhenotypicType.valueOf(constant.getRole()).getLabelList().get(0);
         }
 
         MeasurementVariable mvar = new MeasurementVariable(

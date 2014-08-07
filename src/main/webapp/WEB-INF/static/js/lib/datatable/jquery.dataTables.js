@@ -4854,7 +4854,8 @@
 			var type = ext.sErrMode || ext.errMode;
 	
 			if ( type == 'alert' ) {
-				alert( msg );
+				//prevent alert from data table
+				;//alert( msg );				
 			}
 			else {
 				throw new Error(msg);

@@ -3157,6 +3157,11 @@ function displaySelectedGermplasmDetails() {
                     $(document).trigger('germplasmListUpdated');
                 }
 				listId = $('#lastDraggedPrimaryList').val();
+				if (listId === "") {
+					$('.view-header').hide();
+				} else {
+					$('.view-header').show();
+				}
 				$('#imported-germplasm-list-reset-button').hide();
 			}					
 	});	

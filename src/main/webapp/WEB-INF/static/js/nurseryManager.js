@@ -1058,7 +1058,7 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 }
 
 function resetIdsOfTables(name, tableId) {
-	console.log(name + " " + tableId);
+	
 	var reg = new RegExp(name + '[0-9]+', 'g');
 	var reg2 = new RegExp(name + '\[[0-9]+\]', 'g');
 	var bodyContent = '', rowContent = '';

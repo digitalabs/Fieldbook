@@ -51,6 +51,7 @@
             $scope.germplasmListSelected = function() {
                 // validation requiring user to re-generate experimental design after selecting new germplasm list is removed as per new maintain germplasm list functionality
                 // TrialManagerDataService.indicateUnappliedChangesAvailable(true);
+                $scope.updateOccurred = false;
             };
 
             $scope.germplasmListCleared = function() {
@@ -89,15 +90,6 @@
             };
 
             TrialManagerDataService.registerSetting('germplasm', $scope.updateSettings);
-
-            /*$scope.$watch(function () {
-                return TrialManagerDataService.settings.germplasm;
-            }, function (newValue) {
-                if ($scope.settings !== newValue) {
-                    angular.copy(newValue, $scope.settings);
-                    $scope.updateOccurred = true;
-                }
-            });*/
 
             $scope.updateDataTable = function () {
                 $.ajax({

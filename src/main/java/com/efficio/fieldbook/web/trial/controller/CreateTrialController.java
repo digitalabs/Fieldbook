@@ -300,10 +300,7 @@ public class CreateTrialController extends BaseTrialController {
 
         BasicDetails basic = new BasicDetails();
         basic.setBasicDetails(basicDetails);
-
-        basic.setFolderId(1);
-        basic.setFolderName(AppConstants.PROGRAM_TRIALS.getString());
-        basic.setFolderNameLabel(AppConstants.PROGRAM_TRIALS.getString());
+        
         basic.setUserID(getCurrentIbdbUserId());
         basic.setUserName(fieldbookService.getPersonById(basic.getUserID()));
 

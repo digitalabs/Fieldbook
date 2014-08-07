@@ -187,10 +187,7 @@ public class CreateNurseryController extends SettingsController {
     	setFormStaticData(form, contextParams);
     	assignDefaultValues(form);
     	form.setMeasurementRowList(new ArrayList<MeasurementRow>());
-    	//setting the default folder
-    	form.setFolderId(1);
-    	form.setFolderName(AppConstants.PROGRAM_NURSERIES.getString());
-    	form.setFolderNameLabel(AppConstants.PROGRAM_NURSERIES.getString());
+    	
     	return super.show(model);
     }
     

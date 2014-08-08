@@ -277,6 +277,8 @@ public class OpenTrialController extends
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
                 userSelection.getTreatmentFactors(), data.getTreatmentFactors().getCurrentData(), null, userSelection.getNurseryConditions(), false);
 
+        SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
+        
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
         
         if (userSelection.getTemporaryWorkbook() != null) {

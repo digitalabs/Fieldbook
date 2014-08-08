@@ -1,5 +1,6 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
- showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData*/
+ showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
+ invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification*/
 
 (function () {
     'use strict';
@@ -158,20 +159,6 @@
                 });
             };
 
-            var loadMeasurementScreen = function () {
-                if ($('.germplasm-list-data-table tr.primaryRow').length !== 0) {
-                    $.ajax({
-                        url: '/Fieldbook/TrialManager/openTrial/load/measurement',
-                        type: 'GET',
-                        data: '',
-                        cache: false,
-                        success: function (html) {
-                            $('#measurementsDiv').html(html);
-                        }
-                    });
-                }
-            };
-
             var notifySaveEventListeners = function () {
                 angular.forEach(saveEventListeners, function (saveListenerFunction) {
                     saveListenerFunction();
@@ -292,8 +279,9 @@
                 indicateUnappliedChangesAvailable: function () {
                     if (!service.applicationData.unappliedChangesAvailable && service.applicationData.germplasmListSelected) {
                         service.applicationData.unappliedChangesAvailable = true;
-                        showAlertMessage('', 'These changes have not yet been applied to the Measurements table. To update the Measurements table, ' +
-                            'please review your settings and regenerate the Experimental Design on the next tab', 10000);
+                        showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
+                            'To update the Measurements table, please review your settings and regenerate ' +
+                            'the Experimental Design on the next tab', 10000);
                         $('body').data('needGenerateExperimentalDesign', '1');
                     }
                 },
@@ -343,12 +331,12 @@
                                     $('body').data('needToSave', '0');
                                   });
 							}
-                            else if (service.trialMeasurement.count > 0 && 
-                            		(($('#chooseGermplasmAndChecks').length !== 0 
-                				&& $('#chooseGermplasmAndChecks').data('replace') !== undefined 
-                				&& parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1)
-                            		|| service.applicationData.unsavedGeneratedDesign == false)
-                            		) {
+                            else if (service.trialMeasurement.count > 0 &&
+                                (($('#chooseGermplasmAndChecks').length !== 0 &&
+                                    $('#chooseGermplasmAndChecks').data('replace') !== undefined &&
+                                    parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
+                                    service.applicationData.unsavedGeneratedDesign == false)
+                                ) {
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function (data) {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
@@ -422,7 +410,7 @@
                 treatmentFactorDataInvalid : function() {
                     var errorCode = 0;
 
-                    angular.forEach(service.currentData.treatmentFactors.currentData, function(value, key) {
+                    angular.forEach(service.currentData.treatmentFactors.currentData, function(value) {
                         // check if a factor selected as a pair is also used as
                         if (!value.variableId || value.variableId === 0) {
                             errorCode = 2;
@@ -514,7 +502,8 @@
                         return false;
                     }
 
-                    var valid = validateStartEndDateBasic(service.currentData.basicDetails.basicDetails[8050],service.currentData.basicDetails.basicDetails[8060]);
+                    var valid = validateStartEndDateBasic(service.currentData.basicDetails.basicDetails[8050],
+                        service.currentData.basicDetails.basicDetails[8060]);
 
                     if (valid !== true) {
                         showInvalidInputMessage(valid);
@@ -542,20 +531,20 @@
                         hasError : false,
                         customMessage : '',
                         customHeader : 'Invalid Input '
-                    }
+                    };
 
                     // perform validation on all settings.currentData, (min / max) if any
                     // Validate all Trial Settings
                     _.each(service.settings.trialSettings.vals(),function(item,key){
                         if (!(!item.variable.maxRange && !item.variable.minRange) ) {
-                            _.find(service.currentData.trialSettings,function(val,index) {
+                            _.find(service.currentData.trialSettings,function(val) {
                                 if (!!val[key]) {
                                     if (item.variable.maxRange < Number(val[key])) {
-                                        results.customMessage = "Invalid maximum range on variable " + item.variable.name;
+                                        results.customMessage = 'Invalid maximum range on variable ' + item.variable.name;
                                         results.hasError = true;
                                         return results.hasError;
                                     } else if (item.variable.minRange > Number(val[key])) {
-                                        results.customMessage = "Invalid minimum range on variable " + item.variable.name;
+                                        results.customMessage = 'Invalid minimum range on variable ' + item.variable.name;
                                         results.hasError = true;
                                         return results.hasError;
                                     }
@@ -565,7 +554,7 @@
                     });
 
                     if (results.hasError) {
-                        return function(tab) { results.customHeader += tab; return results;  }("on Trial Settings");
+                        return function(tab) { results.customHeader += tab; return results;  }('on Trial Settings');
                     }
 
                     // validate environments
@@ -575,11 +564,13 @@
                             _.find(service.currentData.environments.environments,function(val,index) {
                                 if (!!val.managementDetailValues[key]) {
                                     if (item.variable.maxRange < Number(val.managementDetailValues[key])) {
-                                        results.customMessage = "Invalid maximum range on management detail variable " + item.variable.name + " at environment " + (Number(index) + Number(1));
+                                        results.customMessage = 'Invalid maximum range on management detail variable ' +
+                                            item.variable.name + ' at environment ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     } else if (item.variable.minRange > Number(val.managementDetailValues[key])) {
-                                        results.customMessage = "Invalid minimum range on management detail variable" + item.variable.name + " at environment " + (Number(index) + Number(1));
+                                        results.customMessage = 'Invalid minimum range on management detail variable' +
+                                            item.variable.name + ' at environment ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     }
@@ -589,7 +580,7 @@
                     });
 
                     if (results.hasError) {
-                        return function(tab) { results.customHeader += tab; return results;  }("on Environments");
+                        return function(tab) { results.customHeader += tab; return results;  }('on Environments');
                     }
 
                     _.each(service.settings.environments.trialConditionDetails.vals(),function(item,key){
@@ -598,11 +589,13 @@
                             _.find(service.currentData.environments.environments,function(val,index) {
                                 if (!!val.trialDetailValues[key]) {
                                     if (item.variable.maxRange < Number(val.trialDetailValues[key])) {
-                                        results.customMessage = "Invalid maximum range on trial details variable " + item.variable.name + " at environment " + (Number(index) + Number(1));
+                                        results.customMessage = 'Invalid maximum range on trial details variable ' +
+                                            item.variable.name + ' at environment ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     } else if (item.variable.minRange > Number(val.trialDetailValues[key])) {
-                                        results.customMessage = "Invalid minimum range on trial details variable" + item.variable.name + " at environment " + (Number(index) + Number(1));
+                                        results.customMessage = 'Invalid minimum range on trial details variable' +
+                                            item.variable.name + ' at environment ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     }
@@ -613,7 +606,7 @@
 
 
                     if (results.hasError) {
-                        return function(tab) { results.customHeader += tab; return results;  }("on Environments");
+                        return function(tab) { results.customHeader += tab; return results;  }('on Environments');
                     }
 
                     //  validate all treatments variable inputs
@@ -622,18 +615,21 @@
 
                 validateAllTreatmentFactorLabels : function(results) {
                     //  validate all treatments variable inputs
-                    _.find(service.currentData.treatmentFactors.currentData,function(item,key) {
-                        var settings_var = service.settings.treatmentFactors.treatmentLevelPairs[key].val(service.currentData.treatmentFactors.currentData[key].variableId).variable;
-                        if (!(!settings_var.maxRange && !settings_var.minRange) ) {
-                            _.find(item.labels,function(val,index) {
+                    _.find(service.currentData.treatmentFactors.currentData, function (item, key) {
+                        var settings_var = service.settings.treatmentFactors.treatmentLevelPairs[key].
+                            val(service.currentData.treatmentFactors.currentData[key].variableId).variable;
+                        if (!(!settings_var.maxRange && !settings_var.minRange)) {
+                            _.find(item.labels, function (val, index) {
 
                                 if (!!val) {
                                     if (settings_var.maxRange < Number(val)) {
-                                        results.customMessage = "Invalid maximum range on variable " + settings_var.name + " at level " + (Number(index) + Number(1));
+                                        results.customMessage = 'Invalid maximum range on variable ' +
+                                            settings_var.name + ' at level ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     } else if (settings_var.minRange > Number(val)) {
-                                        results.customMessage = "Invalid minimum range on variable " + settings_var.name + " at level " + (Number(index) + Number(1));
+                                        results.customMessage = 'Invalid minimum range on variable ' +
+                                            settings_var.name + ' at level ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     }
@@ -644,7 +640,7 @@
                     });
 
                     if (results.hasError) {
-                        return function(tab) { results.customHeader += tab; return results;  }("on Treatment Factors");
+                        return function(tab) { results.customHeader += tab; return results;  }('on Treatment Factors');
                     }
                 }
 

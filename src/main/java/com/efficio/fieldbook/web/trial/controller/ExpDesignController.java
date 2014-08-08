@@ -150,7 +150,7 @@ public class ExpDesignController extends
 			    				oldFactors.remove(var);
 			    			}
 		    			}
-		    			
+		    			workbook.setExpDesignVariables(designService.getRequiredVariable());
 		    		}
 		    	}
 	    	}

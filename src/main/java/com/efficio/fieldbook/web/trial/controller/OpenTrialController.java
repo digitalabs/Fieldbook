@@ -200,6 +200,7 @@ public class OpenTrialController extends
                     ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
                     importedGermplasmList.setImportedGermplasms(list);
                     ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+                    mainInfo.setListId(germplasmList.getId());
                     mainInfo.setAdvanceImportType(true);
                     mainInfo.setImportedGermplasmList(importedGermplasmList);                    
                     userSelection.setImportedGermplasmMainInfo(mainInfo);
@@ -473,6 +474,7 @@ public class OpenTrialController extends
         List<MeasurementRow> observations = workbook.getObservations();
         Integer measurementDatasetId = workbook.getMeasurementDatesetId();
         userSelection.setMeasurementRowList(workbook.getObservations());
+        //we do a cleanup here
         if(isInPreviewMode){
         	model.addAttribute("isExpDesignPreview", "1");
         }

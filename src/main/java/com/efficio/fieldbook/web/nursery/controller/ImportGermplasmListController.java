@@ -65,8 +65,8 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 // TODO: Auto-generated Javadoc
@@ -294,11 +294,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         
         fieldbookService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
         fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);        
-        int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true, isDeleteObservations);
-        //for saving the snapshots
+        int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true, isDeleteObservations);        
+        //for saving the list data project        
         saveListDataProject(isNursery, studyId);
         return Integer.toString(studyId);
-    }
+    }       
     
     private void saveListDataProject(boolean isNursery, int studyId) throws NumberFormatException, MiddlewareQueryException{
     	//we call here to have
@@ -472,7 +472,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
                 
                 if (germplasmList != null && germplasmList.getListRef() != null) {
                     form.setLastDraggedPrimaryList(germplasmList.getListRef().toString());
-                    mainInfo.setListId(germplasmList.getListRef());
+                    mainInfo.setListId(germplasmList.getId());
                 }
                 List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
                 list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);

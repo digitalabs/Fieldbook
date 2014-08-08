@@ -372,8 +372,8 @@ public class WorkbookUtil {
             }
         }
         
-        if (workbook.getExpDesignVariables() != null) {
-            for (StandardVariable var : workbook.getExpDesignVariables()) {
+        if (tempWorkbook.getExpDesignVariables() != null) {
+            for (StandardVariable var : tempWorkbook.getExpDesignVariables()) {
                 expDesignVariablesMap.put(Integer.valueOf(var.getId()), var);
             }
         }
@@ -418,7 +418,8 @@ public class WorkbookUtil {
         List<Integer> deletedList = new ArrayList<Integer>();
         if (observations != null && observations.size() > 0) {
             for (MeasurementData data : observations.get(0).getDataList()) {
-                if (measurementDatasetVariables.get(Integer.valueOf(data.getMeasurementVariable().getTermId())) == null) {
+                if (measurementDatasetVariables.get(Integer.valueOf(data.getMeasurementVariable().getTermId())) == null
+                        && data.getMeasurementVariable().getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
                     deletedList.add(Integer.valueOf(data.getMeasurementVariable().getTermId()));
                 }
             }

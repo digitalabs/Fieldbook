@@ -110,6 +110,7 @@ public class CreateTrialController extends BaseTrialController {
         Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
         if (trialID != null && trialID != 0) {
             Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialID);
+            userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
 
             tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
             tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
@@ -201,6 +202,7 @@ public class CreateTrialController extends BaseTrialController {
                 userSelection.getTrialLevelVariableList(), userSelection.getTreatmentFactors(), data.getTreatmentFactors().getCurrentData(),
                 null, userSelection.getNurseryConditions(), false);
 
+        SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
         Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
         
         List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();

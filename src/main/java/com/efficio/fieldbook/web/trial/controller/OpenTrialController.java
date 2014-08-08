@@ -168,6 +168,7 @@ public class OpenTrialController extends
         if (trialId != null && trialId != 0) {
 
             Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
+            userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
             userSelection.setWorkbook(trialWorkbook);
             userSelection.setTemporaryWorkbook(null);
             model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));

@@ -104,6 +104,7 @@ public class CreateNurseryController extends SettingsController {
 
     	if(nurseryId != 0){     
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
+            userSelection.setConstantsWithLabels(workbook.getConstants());
             fieldbookService.createIdNameVariablePairs(workbook, new ArrayList(),AppConstants.ID_NAME_COMBINATION.getString(), false);
 
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);

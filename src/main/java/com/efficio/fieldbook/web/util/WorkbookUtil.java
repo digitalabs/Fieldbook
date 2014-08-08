@@ -387,5 +387,62 @@ public class WorkbookUtil {
         
         //copy observations generated from experimental design
         workbook.setObservations(tempWorkbook.getObservations());
-    } 
+    }
+    
+    public static HashMap<Integer, MeasurementVariable> createVariableList(
+            List<MeasurementVariable> factors, List<MeasurementVariable> variates) {
+        HashMap<Integer, MeasurementVariable> observationVariables = new HashMap<Integer, MeasurementVariable>();
+        if (factors != null) {            
+            for (MeasurementVariable var : factors) {
+                observationVariables.put(Integer.valueOf(var.getTermId()), var);
+            }
+        }
+        if (variates != null) {            
+            for (MeasurementVariable var : variates) {
+                observationVariables.put(Integer.valueOf(var.getTermId()), var);
+            }
+        }
+        return observationVariables;
+    }
+    
+    public static void deleteDeletedVariablesInObservations(HashMap<Integer, MeasurementVariable> measurementDatasetVariables
+            , List<MeasurementRow> observations) {
+         
+        List<Integer> deletedList = new ArrayList<Integer>();
+        if (observations != null && observations.size() > 0) {
+            for (MeasurementData data : observations.get(0).getDataList()) {
+                if (measurementDatasetVariables.get(Integer.valueOf(data.getMeasurementVariable().getTermId())) == null) {
+                    deletedList.add(Integer.valueOf(data.getMeasurementVariable().getTermId()));
+                }
+            }
+        }
+        if (deletedList != null) {
+            for (Integer termId : deletedList) {
+                //remove from measurement rows
+                int index = 0;
+                int varIndex = 0;
+                boolean found = false;
+                if (observations != null) {
+                    for (MeasurementRow row : observations) {
+                        if (index == 0) {
+                            for (MeasurementData var : row.getDataList()) {
+                                if (var.getMeasurementVariable().getTermId() == termId.intValue()) {
+                                    found = true;
+                                    break;
+                                }
+                                varIndex++;
+                            }
+                        }
+                        if (found) {
+                            row.getDataList().remove(varIndex);
+                        }
+                        else {
+                            break;
+                        }
+                        index++;
+                    }
+                }
+            }
+        }
+    }
 }

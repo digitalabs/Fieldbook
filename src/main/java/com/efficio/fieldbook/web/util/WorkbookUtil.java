@@ -2,7 +2,6 @@ package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -359,6 +358,7 @@ public class WorkbookUtil {
         //create map of factors in tempWorkbook and factors in workbook
         HashMap<Integer, MeasurementVariable> tempFactorsMap = new HashMap<Integer, MeasurementVariable>();
         HashMap<Integer, MeasurementVariable> factorsMap = new HashMap<Integer, MeasurementVariable>();
+        HashMap<Integer, StandardVariable> expDesignVariablesMap = new HashMap<Integer, StandardVariable>();  
 
         if (tempWorkbook.getFactors() != null) {
             for (MeasurementVariable var : tempWorkbook.getFactors()) {
@@ -371,9 +371,16 @@ public class WorkbookUtil {
                 factorsMap.put(Integer.valueOf(var.getTermId()), var);
             }
         }
+        
+        if (workbook.getExpDesignVariables() != null) {
+            for (StandardVariable var : workbook.getExpDesignVariables()) {
+                expDesignVariablesMap.put(Integer.valueOf(var.getId()), var);
+            }
+        }
 
         for (MeasurementVariable var: tempWorkbook.getFactors()) {
-            if (factorsMap.get(Integer.valueOf(var.getTermId())) == null) {
+            if (factorsMap.get(Integer.valueOf(var.getTermId())) == null 
+                    && expDesignVariablesMap.get(Integer.valueOf(var.getTermId())) != null) {
                 var.setOperation(Operation.ADD);
                 workbook.getFactors().add(var);
             }

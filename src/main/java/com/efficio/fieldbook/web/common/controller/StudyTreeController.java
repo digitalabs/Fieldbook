@@ -257,8 +257,9 @@ public class StudyTreeController {
 				}
 				parentFolderId = project.getProjectId();
 			}
-			studyDataManager.addSubFolder(parentFolderId, folderName, folderName);
+			int newFolderId = studyDataManager.addSubFolder(parentFolderId, folderName, folderName);
 			resultsMap.put("isSuccess", "1");
+			resultsMap.put("newFolderId", Integer.toString(newFolderId));
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultsMap.put("isSuccess", "0");

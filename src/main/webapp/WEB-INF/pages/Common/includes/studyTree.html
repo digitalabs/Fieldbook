@@ -209,7 +209,7 @@ function openStudyNode(){
 	chooseStudy();
 }
 
-function doStudyLazyLoad(node) {
+function doStudyLazyLoad(node, preSelectId) {
     'use strict';
     var additionalUrl = '/0';
     if (choosingType === 2) {
@@ -252,6 +252,14 @@ function doStudyLazyLoad(node) {
                     if (nodeCentral !== null) {
                         nodeCentral.remove();
                     }
+                }
+                if(preSelectId !== null){                	
+                	var newNode = $('#studyTree').dynatree('getTree').getNodeByKey(preSelectId);
+                	if(newNode !== null){
+                		newNode.activate();
+                		newNode.focus();
+                	}
+
                 }
             },
             error: function (node, XMLHttpRequest, textStatus, errorThrown) {

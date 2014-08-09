@@ -2072,7 +2072,7 @@ function createFolder() {
 
 				if (data.isSuccess == 1) {
 					node = $('#studyTree').dynatree('getTree').getActiveNode();
-					doStudyLazyLoad(node);
+					doStudyLazyLoad(node, data.newFolderId);
 					node.focus();
 					node.expand();
 					$('#addFolderDiv').slideUp();

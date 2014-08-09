@@ -186,11 +186,7 @@
             };
 
             $scope.changeFolderLocation = function () {
-                openStudyTree(2, $scope.updateSelectedFolder);
-            };
-
-            $scope.updateSelectedFolder = function (folderID) {
-                TrialManagerDataService.currentData.basicDetails.folderId = folderID;
+                openStudyTree(2, TrialManagerDataService.updateSelectedFolder);
             };
 
             $scope.useExistingTrial = function (existingTrialID) {

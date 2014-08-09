@@ -186,7 +186,7 @@
                     });
                 }
             };
-
+            
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
                 {id: '@id'}, { 'get': {method: 'get', isArray: true} });
             var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, { });
@@ -255,12 +255,15 @@
                     treatmentLevelPairs: {}
 
                 },
-
+             
                 // returns a promise object to be resolved later
                 retrieveVariablePairs: function (cvTermId) {
                     return VariablePairService.get({id: cvTermId}).$promise;
                 },
-
+             // returns a promise object to be resolved later
+                updateSelectedFolder: function (folderID) {
+                	service.currentData.basicDetails.folderId = folderID;
+                },
                 // the data param structures
                 generateExpDesign: function (data) {
                     return GenerateExpDesignService.save(data).$promise;
@@ -454,8 +457,12 @@
                     }
 
                     var hasError = false, name = '', customMessage = '', errorCode = 0;
-
-                    if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
+                    if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
+                        hasError = true;
+                        name = $('#folderLabel').text();
+                        openStudyTree(2, service.updateSelectedFolder);
+                        return false;
+                    } else if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
                         hasError = true;
                         name = 'Name';
                     } else if ($.trim(service.currentData.basicDetails.basicDetails[8007]) === '') {
@@ -464,9 +471,6 @@
                     } else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {
                         hasError = true;
                         customMessage = 'Name should be unique';
-                    } else if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
-                        hasError = true;
-                        name = $('#folderLabel').text();
                     } else if (service.currentData.basicDetails.basicDetails[8050] === '') {
                         // validate creation date
                         hasError = true;

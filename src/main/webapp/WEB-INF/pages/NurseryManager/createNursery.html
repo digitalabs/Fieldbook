@@ -232,8 +232,10 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		// FIXME This should not be global
 		function submitCreateForm() {
 			'use strict';
-
-			if (validateCreateNursery()) {
+			
+			if ($('#folderId').val() === '') {
+				openStudyTree(2);
+			}else if (validateCreateNursery()) {
 				if (!validateStartEndDate('nurseryLevelSettings')) {
 					return false;
 				}

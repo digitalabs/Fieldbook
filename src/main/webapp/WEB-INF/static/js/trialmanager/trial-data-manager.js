@@ -1,6 +1,6 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
- invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification*/
+ invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree*/
 
 (function () {
     'use strict';
@@ -260,9 +260,9 @@
                 retrieveVariablePairs: function (cvTermId) {
                     return VariablePairService.get({id: cvTermId}).$promise;
                 },
-             // returns a promise object to be resolved later
+
                 updateSelectedFolder: function (folderID) {
-                	service.currentData.basicDetails.folderId = folderID;
+                    service.currentData.basicDetails.folderId = folderID;
                 },
                 // the data param structures
                 generateExpDesign: function (data) {
@@ -338,7 +338,7 @@
                                 (($('#chooseGermplasmAndChecks').length !== 0 &&
                                     $('#chooseGermplasmAndChecks').data('replace') !== undefined &&
                                     parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
-                                    service.applicationData.unsavedGeneratedDesign == false)
+                                    service.applicationData.unsavedGeneratedDesign === false)
                                 ) {
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function (data) {
                                     recreateSessionVariablesTrial();

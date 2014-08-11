@@ -313,7 +313,7 @@ public class ExpDesignUtil {
 	
 	public static MeasurementRow createMeasurementRow(List<MeasurementVariable> headerVariable, 
 			ImportedGermplasm germplasm, Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues, 
-			List<MeasurementVariable> trialVariables, int trialNo, List<MeasurementVariable> factors)
+			List<MeasurementVariable> trialVariables, int trialNo, List<MeasurementVariable> factors, String entryNo)
 	throws MiddlewareQueryException {
 		MeasurementRow measurementRow = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
@@ -335,7 +335,7 @@ public class ExpDesignUtil {
 				Integer termId = var.getTermId();											
 				
 				if(termId.intValue() == TermId.ENTRY_NO.getId())
-					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
+					measurementData = new MeasurementData(var.getName(), entryNo, false, var.getDataType(), var);
 				else if(termId.intValue() == TermId.SOURCE.getId())
 					measurementData = new MeasurementData(var.getName(), "", false, var.getDataType(), var);
 				else if(termId.intValue() == TermId.CROSS.getId())	
@@ -465,7 +465,7 @@ public class ExpDesignUtil {
 						int germplasmIndex = Integer.valueOf(entryNo) - 1;
 						if(germplasmIndex >= 0 && germplasmIndex < germplasmList.size()){
 							ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
-							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo, factors);
+							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo, factors, entryNo);
 							measurementRowList.add(row);
 						}
 					}

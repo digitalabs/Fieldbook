@@ -317,12 +317,10 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 												
 				$(nRow).addClass('primaryRow');
 				$('td', nRow).attr('nowrap','nowrap');
-				var rowIndex = $(nRow).find('td:eq(0)').find('.check-href').data('index');
 				
-				$(nRow).find('td:eq(0)').off('click');
-				
-				
-				$(nRow).find('td:eq(0)').on('click', function(){					
+				var rowIndex = $(nRow).find('.check-href').data('index');				
+				$(nRow).find('.check-href').parent('td').off('click');								
+				$(nRow).find('.check-href').parent('td').on('click', function(){					
 					showPopoverCheck(''+rowIndex,'.germplasm-list-items', '.edit-check'+rowIndex);
 				});
 				

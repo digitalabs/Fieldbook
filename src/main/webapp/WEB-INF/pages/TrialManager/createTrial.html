@@ -13,180 +13,197 @@
         <div class="row add-top-bottom-padding">
             <div class="col-md-12">
                 <div class="pull-left">
-                    <img class="image-padding image-padding-with-text" height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
-                    <span class="heading" ng-hide="isOpenTrial()">Create Trial</span>
-                    <span class="heading" ng-show="isOpenTrial()">Trial : <span truncate-and-tooltip="data.basicDetails[8005]"></span></span>
-                    <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
-                    <input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
+                    <img height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
+
+                    <span class="fbk-nursery-heading">
+                        <span class="heading" ng-hide="isOpenTrial()">Create Trial</span>
+                        <span class="heading" ng-show="isOpenTrial()">Trial : <span truncate-and-tooltip="data.basicDetails[8005]"></span></span>
+                    </span>
+
+                    <div class="fbk-nursery-heading-btns">
+                        <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
+                        <input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
+                    </div>
                 </div>
-                <a class="pull-right" href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
+
+                <div class="pull-right fbk-nursery-heading-right">
+                    <div style="padding-right: 24px">
+                        <a href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <section-container heading="BASIC DETAILS" collapsible="isOpenTrial()" start-collapsed="true">
+        <div class="col-md-12 nopadding-right">
+            <section-container heading="BASIC DETAILS" collapsible="isOpenTrial()" start-collapsed="true">
                 <span name="action-buttons" ng-show="isOpenTrial()">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-                                        <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-                                    </button>
-                                    <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-                                        <li ng-show="displayMeasurementOnlyActions()">
+                    <div class="btn-group" style="padding-right: 36px">
+                        <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+                            <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+                        </button>
+                        <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+                            <li ng-show="displayMeasurementOnlyActions()">
 
-                                                <a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
+                                <a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
 
-                                        </li>
-                                        <li ng-show="displayMeasurementOnlyActions()">
+                            </li>
+                            <li ng-show="displayMeasurementOnlyActions()">
 
-                                                <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-                                                <a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Maoke Field Map</a>
+                                <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+                                <a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Maoke Field Map</a>
 
-                                        </li>
-                                        <li ng-show="displayMeasurementOnlyActions()">
+                            </li>
+                            <li ng-show="displayMeasurementOnlyActions()">
 
-                                                <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
+                                <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
 
-                                        </li>
-                                        <li ng-show="displayMeasurementOnlyActions()">
+                            </li>
+                            <li ng-show="displayMeasurementOnlyActions()">
 
-                                                <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
-                                                <a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+                                <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
+                                <a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
 
-                                        </li>
-                                       <li ng-show="displayMeasurementOnlyActions()">
+                            </li>
+                            <li ng-show="displayMeasurementOnlyActions()">
 
-                                               <a href="" style="display: none" id="open-study-url"></a>
-                                               <a href="javascript: showImportOptions();" id="open-study-url-link"
-                                                  th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
+                                <a href="" style="display: none" id="open-study-url"></a>
+                                <a href="javascript: showImportOptions();" id="open-study-url-link"
+                                   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
 
-                                        </li>
+                            </li>
 
-                                        <li>
-                                            <!--// TODO : replace this with actual saving of nursery-->
-                                            <a href="javascript: void(0);" ng-click="saveCurrentTrialData()" th:text="#{trial.option.save}">Save Trial</a>
-                                        </li>
-                                        <li>
-                                            <a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
-                                            <a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
-                                        </li>
-                                        <li>
-                                            <!--TODO : replace with URL for manage trial-->
-                                            <a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </span>
-
-            <div name="content">
-                <div class="row fbk-mandatory">
-                    <div class="col-md-12 ">
-                        <label class=""><em><span class="required">*</span> indicates a mandatory field</em></label>
+                            <li>
+                                <!--// TODO : replace this with actual saving of nursery-->
+                                <a href="javascript: void(0);" ng-click="saveCurrentTrialData()" th:text="#{trial.option.save}">Save Trial</a>
+                            </li>
+                            <li>
+                                <a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
+                                <a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
+                            </li>
+                            <li>
+                                <!--TODO : replace with URL for manage trial-->
+                                <a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
+                            </li>
+                        </ul>
                     </div>
-                </div>
+                </span>
 
-                <!-- basic details -->
-                <div class="row">
-                    <div class="col-xs-6">
-                        <div class="row form-group">
-                            <label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
-
-                            <div class="col-sm-8" ng-hide="isOpenTrial()">
-                                <input class="form-control character-input" type="text" ng-model="data.basicDetails[8005]"/>
-                            </div>
-
-                            <div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()">
-                            <span truncate-and-tooltip="data.basicDetails[8005]"></span>
-                            <span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
+                <div name="content">
+                    <div ng-class="isOpenTrial() ? 'fbk-basic-details-section-content' : ''" style="padding-right: 12px">
+                        <div class="row fbk-mandatory">
+                            <div class="col-md-12 ">
+                                <label class=""><em><span class="required">*</span> indicates a mandatory field</em></label>
                             </div>
                         </div>
 
-                        <div class="row form-group">
-                            <label class="control-label col-sm-4"><b>Description</b>: <span class="required">*</span></label>
+                        <!-- basic details -->
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="row form-group">
+                                    <label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
 
-                            <div class="col-sm-8">
-                                <input class="form-control character-input" type="text" ng-model="data.basicDetails[8007]"/>
-                            </div>
+                                    <div class="col-sm-8" ng-hide="isOpenTrial()">
+                                        <input class="form-control character-input" type="text" ng-model="data.basicDetails[8005]"/>
+                                    </div>
 
-
-                        </div>
-
-                        <div class="row form-group">
-                            <label class="control-label col-sm-4"><b>Objective</b>:</label>
-
-                            <div class="col-sm-8">
-                                <textarea class="form-control character-input" rows="3" ng-model="data.basicDetails[8030]"></textarea>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- second col -->
-                    <div class="col-xs-6">
-                        <div class="row form-group">
-                            <label class="control-label col-sm-4" id="folderLabel"><b>Save in</b>: <span class="required">*</span></label>
-
-                            <div class="col-sm-8">
-                                <input type="hidden" id="folderId" ng-model="data.folderId"/>
-                                <input type="hidden" id="folderName" ng-model="data.folderName"/>
-
-                                <div class="pull-left">
-                                    <label class="control-label" id="folderNameLabel" ng-bind="data.folderNameLabel"></label>
+                                    <div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()">
+                                        <span truncate-and-tooltip="data.basicDetails[8005]"></span>
+                                        <span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
+                                    </div>
                                 </div>
 
-                                <a class="pull-right" href="javascript: void(0)" id="chooseLocation" ng-click="changeFolderLocation()">Change Folder</a>
+                                <div class="row form-group">
+                                    <label class="control-label col-sm-4"><b>Description</b>: <span class="required">*</span></label>
+
+                                    <div class="col-sm-8">
+                                        <input class="form-control character-input" type="text" ng-model="data.basicDetails[8007]"/>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="row form-group">
+                                    <label class="control-label col-sm-4"><b>Objective</b>:</label>
+
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control character-input" rows="3" ng-model="data.basicDetails[8030]"></textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- second col -->
+                            <div class="col-xs-6">
+                                <div class="row form-group">
+                                    <label class="control-label col-sm-4" id="folderLabel"><b>Save in</b>: <span class="required">*</span></label>
+
+                                    <div class="col-sm-8">
+                                        <input type="hidden" id="folderId" ng-model="data.folderId"/>
+                                        <input type="hidden" id="folderName" ng-model="data.folderName"/>
+
+                                        <div class="pull-left">
+                                            <label class="control-label" id="folderNameLabel" ng-bind="data.folderNameLabel"></label>
+                                        </div>
+
+                                        <a class="pull-right" href="javascript: void(0)" id="chooseLocation" ng-click="changeFolderLocation()">Change Folder</a>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <label class="control-label col-sm-4"><b>Created by</b>: <span class="required">*</span></label>
+
+                                    <div class="col-sm-8">
+
+                                        <label ng-bind="data.userName"></label>
+                                    </div>
+
+                                </div>
+
+                                <div class="row form-group">
+                                    <label class="control-label col-sm-4"><b>Creation date</b>: <span class="required">*</span></label>
+
+                                    <div class="col-sm-8">
+                                        <input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker=""
+                                               set-current-date-as-default="true" data-date-format="yyyy-mm-dd"
+                                               with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
+
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <label class="control-label col-sm-4"><b>Completion date</b>:</label>
+
+                                    <div class="col-sm-8">
+                                        <input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px"
+                                               type="text" ng-model="data.basicDetails[8060]" data-date-format="yyyy-mm-dd" jq-datepicker=""
+                                               with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row form-group">
-                            <label class="control-label col-sm-4"><b>Created by</b>: <span class="required">*</span></label>
-
-                            <div class="col-sm-8">
-
-                                <label ng-bind="data.userName"></label>
-                            </div>
-
-                        </div>
-
-                        <div class="row form-group">
-                            <label class="control-label col-sm-4"><b>Creation date</b>: <span class="required">*</span></label>
-
-                            <div class="col-sm-8">
-                                <input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker=""
-                                       set-current-date-as-default="true" data-date-format="yyyy-mm-dd"
-                                       with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
-
+                        <div class="row form-group add_top_padding" ng-hide="isOpenTrial()">
+                            <div class="col-xs-12 col-md-12">
+                                <input type="checkbox" name="studyBuildOption" ng-click="toggleChoosePreviousTrial()"/>
+                                <label class="" th:text="#{trial.managesettings.create.trial.label}">Use a previously created trial as a template</label>
+                                &nbsp;&nbsp;
+                                <input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
+                                       th:value="#{common.form.choose.text}"
+                                       class="btn btn-info" id="choosePreviousStudy"/>
                             </div>
                         </div>
 
-                        <div class="row form-group">
-                            <label class="control-label col-sm-4"><b>Completion date</b>:</label>
-
-                            <div class="col-sm-8">
-                                <input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px"
-                                       type="text" ng-model="data.basicDetails[8060]" data-date-format="yyyy-mm-dd" jq-datepicker=""
-                                       with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                &nbsp;
                             </div>
                         </div>
                     </div>
                 </div>
+            </section-container>
+        </div>
 
-                <div class="row form-group add_top_padding" ng-hide="isOpenTrial()">
-                    <div class="col-xs-12 col-md-12">
-                        <input type="checkbox" name="studyBuildOption" ng-click="toggleChoosePreviousTrial()"/>
-                        <label class="" th:text="#{trial.managesettings.create.trial.label}">Use a previously created trial as a template</label>
-                        &nbsp;&nbsp;
-                        <input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
-                               th:value="#{common.form.choose.text}"
-                               class="btn btn-info" id="choosePreviousStudy"/>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-12 col-md-12">
-                        &nbsp;
-                    </div>
-                </div>
-            </div>
-        </section-container>
     </form>
 </div>
 <div class="form-group" id="create-trial">

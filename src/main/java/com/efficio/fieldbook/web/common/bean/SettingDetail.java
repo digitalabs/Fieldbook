@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.common.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 
@@ -151,4 +152,20 @@ public class SettingDetail implements Serializable {
     public void setHidden(boolean isHidden) {
         this.isHidden = isHidden;
     }
+    
+    public String getDisplayValue() {
+		if (this.getPossibleValues() != null
+				&& !this.getPossibleValues().isEmpty() 
+				&& this.value != null) {
+			
+			List<ValueReference> possibleValues = this.getPossibleValues();
+			for (ValueReference possibleValue : possibleValues) {
+				if (possibleValue.getName().equalsIgnoreCase(this.value)) {
+					return possibleValue.getDescription();
+				}
+			}
+			return this.value; //this would return the value from the db
+		}
+		return this.value;
+	}
 }

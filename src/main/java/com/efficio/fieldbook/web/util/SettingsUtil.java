@@ -1600,6 +1600,7 @@ public class SettingsUtil {
                     String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()),
                             condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
                     SettingDetail settingDetail = new SettingDetail(variable, null, HtmlUtils.htmlUnescape(value), false);
+                    settingDetail.setPossibleValues(fieldbookService.getAllPossibleValues(condition.getTermId()));
                     index = addToList(details, settingDetail, index, null, null);
                 }
             }

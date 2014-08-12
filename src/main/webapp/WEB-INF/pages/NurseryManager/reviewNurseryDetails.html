@@ -76,7 +76,7 @@
                             : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
 
                         <strong th:text="${managementDetail.variable.name} + ':'" class="">:</strong>
-                        <span th:text="${managementDetail.value}" class="div-select-val "></span>
+                        <span th:text="${managementDetail.displayValue}" class="div-select-val "></span>
 
                 </div>
             </div>
@@ -100,7 +100,7 @@
                                 'col-md-' + ${4*(4-(rowStat.size % 3))}
                             : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
                         <strong th:text="${nurseryConditionDetail.variable.name} + ':'" class="">:</strong>
-                        <span th:text="${nurseryConditionDetail.value}" class="div-select-val "></span>
+                        <span th:text="${nurseryConditionDetail.displayValue}" class="div-select-val "></span>
                 </div>
             </div>
 			<div th:if="*{nurseryConditionDetails == null or #lists.isEmpty(nurseryConditionDetails)}">

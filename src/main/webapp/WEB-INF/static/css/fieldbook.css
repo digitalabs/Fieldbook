@@ -233,6 +233,24 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
     margin-top: 8pt !important; margin-bottom: 8pt !important;
 }
 
+
+.fbk-nursery-heading, .fbk-nursery-heading span {
+    vertical-align: bottom;
+}
+
+.fbk-nursery-heading-btns {
+    display: inline-block;
+    margin-left: 40pt;
+    position: relative;
+    top: 5pt;
+}
+
+.fbk-nursery-heading-right {
+    position: relative;
+    top: 5pt;
+}
+
+
 #studyTree, .study-field-map-tree{
     height:350px;
     overflow:auto;
@@ -1377,6 +1395,14 @@ label[data-toggle="collapse"],
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.fbk-basic-details.section-expanded {
+    margin-left: -5px; display: none;
+}
+
+.fbk-basic-details.section-collapsed {
+    margin-left: -2px; padding-right: 5px; padding-top: 4px; padding-bottom: 4px;
 }
 
 .input-group-btn > .btn {

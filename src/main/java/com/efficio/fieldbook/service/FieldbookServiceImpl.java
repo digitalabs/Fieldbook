@@ -211,7 +211,8 @@ public class FieldbookServiceImpl implements FieldbookService{
 		                     continue;
 		                 }
 			         } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
-		                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString()) || inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getString())) {
+		                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString()) || inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getString())
+		                		 || inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_VARIABLES.getString())) {
 		                     continue;
 		                 }
 			         } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {

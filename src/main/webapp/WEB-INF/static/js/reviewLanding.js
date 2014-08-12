@@ -92,5 +92,4 @@ function reviewLandingSetup(){
 		$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #fieldmap-url-link').hide();
 	}
 	truncateStudyVariableNames('.fbk-variable', 10);
-	checkTraitsAndSelectionVariateTable('#study'+getCurrentStudyIdInTab(), true);
 }

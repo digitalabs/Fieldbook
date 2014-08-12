@@ -158,6 +158,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					int blockSize = Integer.valueOf(expDesignParameter.getBlockSize());
 					int replicationCount = Integer.valueOf(expDesignParameter.getReplicationsCount());
 					int treatmentSize = germplasmList.size();
+					int blockLevel = treatmentSize / blockSize;
 					
 					if(replicationCount <= 1 || replicationCount >= 13){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
@@ -165,6 +166,9 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 					}else if( blockSize <= 1 ){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.block.size.should.be.a.greater.than.1", null, locale));
+					}else if(blockLevel == 1){
+						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
+			                    "experiment.design.block.level.should.be.greater.than.one", null, locale));
 					}else if( treatmentSize % blockSize != 0 ){
 						output = new ExpDesignValidationOutput(false, messageSource.getMessage(
 			                    "experiment.design.block.size.not.a.factor.of.treatment.size", null, locale));
@@ -175,7 +179,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 The value set for "nblatin" xml parameter cannot be value higher than or equal the block level value. To get the block levels, we just need to divide the "ntreatments" value by the "blocksize" value. This means the BVDesign tool works to any value you specify in the "nblatin" parameter as long as it does not exceed the computed block levels value. As mentioned in the requirements, an "nblatin" parameter with value 0 means there is no latinization that will take place.
 The sum of the values set for "replatingroups" should always be equal to the "nreplicates" value specified by the plant breeder.
 						 */
-						int blockLevel = treatmentSize / blockSize;						
+												
 						//nbLatin should be less than the block level
 						if(nbLatin >= blockLevel){
 							output = new ExpDesignValidationOutput(false, messageSource.getMessage(

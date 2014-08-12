@@ -26,6 +26,7 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -148,6 +149,8 @@ public class UserSelection implements Serializable {
     
     private List<MeasurementVariable> constantsWithLabels;
     
+    private ExpDesignParameterUi expDesignParams;
+    private List<Integer> expDesignVariables;
 	
 	/**
      * Gets the current page germplasm list.
@@ -864,4 +867,33 @@ public class UserSelection implements Serializable {
 		public void setConstantsWithLabels(List<MeasurementVariable> constantsWithLabels) {
 			this.constantsWithLabels = constantsWithLabels;
 		}
- }
+
+		/**
+		 * @return the expDesignParams
+		 */
+		public ExpDesignParameterUi getExpDesignParams() {
+			return expDesignParams;
+		}
+
+		/**
+		 * @param expDesignParams the expDesignParams to set
+		 */
+		public void setExpDesignParams(ExpDesignParameterUi expDesignParams) {
+			this.expDesignParams = expDesignParams;
+		}
+
+		/**
+		 * @return the expDesignVariables
+		 */
+		public List<Integer> getExpDesignVariables() {
+			return expDesignVariables;
+		}
+
+		/**
+		 * @param expDesignVariables the expDesignVariables to set
+		 */
+		public void setExpDesignVariables(List<Integer> expDesignVariables) {
+			this.expDesignVariables = expDesignVariables;
+		}
+
+}

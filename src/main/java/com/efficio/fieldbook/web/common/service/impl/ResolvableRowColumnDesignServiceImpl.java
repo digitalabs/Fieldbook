@@ -1,9 +1,9 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -214,6 +214,15 @@ nrlatin somehow cannot exceed the nreplicates value specified.  A technical erro
 		
 		return output;
 	}
-
+	
+	public List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params) {
+		if (params.getUseLatenized() != null && params.getUseLatenized()) {
+			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.BLOCK_SIZE.getId(), TermId.NO_OF_REPS_IN_COLS.getId(),
+				TermId.REPLICATIONS_MAP.getId(), TermId.NO_OF_CBLKS_LATINIZE.getId(), TermId.NO_OF_ROWS_IN_REPS.getId(), TermId.NO_OF_COLS_IN_REPS.getId());
+		}
+		else {
+			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.BLOCK_SIZE.getId(), TermId.NO_OF_REPS_IN_COLS.getId());
+		}
+	}
 
 }

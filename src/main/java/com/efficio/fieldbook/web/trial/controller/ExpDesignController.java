@@ -121,6 +121,9 @@ public class ExpDesignController extends
 		    		//we call the actual process
 		    		if(expParameterOutput.isValid()){
 		    			List<MeasurementRow> measurementRows = designService.generateDesign(germplasmList, expDesign,workbook.getConditions(), workbook.getFactors(), workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
+
+		    			userSelection.setExpDesignParams(expDesign);
+		    			userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
 		    			
 		    			workbook.setObservations(measurementRows);
 		    			//should have at least 1 record

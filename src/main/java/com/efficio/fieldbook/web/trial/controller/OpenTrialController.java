@@ -280,7 +280,7 @@ public class OpenTrialController extends
 
         SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
         
-        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService);
         
         if (userSelection.getTemporaryWorkbook() != null) {
             userSelection.setMeasurementRowList(null);
@@ -296,7 +296,7 @@ public class OpenTrialController extends
         List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
         variablesForEnvironment.addAll(workbook.getTrialVariables());
 
-        List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment) ;
+        List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment, userSelection.getExpDesignParams()) ;
         workbook.setTrialObservations(trialEnvironmentValues);
 
         createStudyDetails(workbook, data.getBasicDetails());

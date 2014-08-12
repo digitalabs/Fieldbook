@@ -1,9 +1,9 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -15,29 +15,20 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Operation;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.expression.Lists;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
 import com.efficio.fieldbook.web.common.service.ResolvableIncompleteBlockDesignService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignValidationOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
 public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableIncompleteBlockDesignService{
@@ -52,7 +43,6 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
     private ResourceBundleMessageSource messageSource;
 	@Resource
 	public FieldbookService fieldbookService;
-	
 	
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList,
@@ -205,5 +195,15 @@ The sum of the values set for "replatingroups" should always be equal to the "nr
 		}
 		
 		return output;
+	}
+	
+	public List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params) {
+		if (params.getUseLatenized() != null && params.getUseLatenized()) {
+			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.BLOCK_SIZE.getId(), TermId.NO_OF_REPS_IN_COLS.getId(),
+					TermId.REPLICATIONS_MAP.getId(), TermId.NO_OF_CBLKS_LATINIZE.getId());
+		}
+		else {
+			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.BLOCK_SIZE.getId(), TermId.NO_OF_REPS_IN_COLS.getId());
+		}
 	}
 }

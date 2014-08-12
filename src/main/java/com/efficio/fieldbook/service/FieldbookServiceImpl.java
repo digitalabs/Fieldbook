@@ -149,6 +149,10 @@ public class FieldbookServiceImpl implements FieldbookService{
                         if (inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString())) {
                             continue;
                         }
+                    } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+                    	if (inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_VARIABLES.getString())) {
+                    		continue;
+                    	}
                     }
 
                     result.add(ref);

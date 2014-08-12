@@ -1707,3 +1707,7 @@ a[ng-click] {
 div.variable-details-popup {
 	width: 750px;
 }
+.fbk-use-previous-study{
+	padding-top: 4px;
+	padding-bottom: 4px;
+}

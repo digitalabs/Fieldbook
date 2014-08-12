@@ -250,6 +250,7 @@ this.element.trigger({
 type: 'show',
 date: this.date
 });
+$('body').css('padding-right', '0px');
 },
 
 hide: function(e){

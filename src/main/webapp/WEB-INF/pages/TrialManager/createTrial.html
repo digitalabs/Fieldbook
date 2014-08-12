@@ -172,7 +172,7 @@
                 <div class="row form-group add_top_padding" ng-hide="isOpenTrial()">
                     <div class="col-xs-12 col-md-12">
                         <input type="checkbox" name="studyBuildOption" ng-click="toggleChoosePreviousTrial()"/>
-                        <label class="" th:text="#{trial.managesettings.create.trial.label}">Use a previously created trial as a template</label>
+                        <label class="fbk-use-previous-study" th:text="#{trial.managesettings.create.trial.label}">Use a previously created trial as a template</label>
                         &nbsp;&nbsp;
                         <input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
                                th:value="#{common.form.choose.text}"

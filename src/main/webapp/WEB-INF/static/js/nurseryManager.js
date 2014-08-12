@@ -423,12 +423,14 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 								+ name + '[' + ctr
 								+ '].variable.cvTermId" value="'
 								+ settingDetail.variable.cvTermId
-								+ '" />&nbsp;&nbsp;&nbsp;&nbsp;';
+								+ '" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
 						newRow = newRow
-								+ '<span style="word-wrap: break-word"  class="var-names control-label label-bold">'
+								+ '<a href="javascript: void(0);" onclick="javascript:showBaselineTraitDetailsModal('
+								+ settingDetail.variable.cvTermId
+								+ ');" ><span style="word-wrap: break-word"  class="var-names control-label label-bold">'
 								+ settingDetail.variable.name
-								+ '</span>: &nbsp;</div>';
+								+ '</span></a>: &nbsp;</div>';
 
 						newRow = newRow
 									+ '<div class="col-xs-7 col-md-7 2nd">';

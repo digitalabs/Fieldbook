@@ -91,6 +91,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				
 			},
 			language: {
 				search: '<span class="mdt-filtering-label">Search:</span>'
@@ -218,6 +219,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				$(parentDiv).removeClass('fbk-hide-opacity');		
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				oSettings.oInstance.fnAdjustColumnSizing();
 			}
 		});
 		
@@ -335,7 +337,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				$(parentDiv).removeClass('fbk-hide-opacity');		
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-				
+				oSettings.oInstance.fnAdjustColumnSizing();
 			}
 		});
 		
@@ -599,6 +601,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 				$(parentDiv).removeClass('fbk-hide-opacity');		
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				oSettings.oInstance.fnAdjustColumnSizing();
 			}
 		});
 		
@@ -699,7 +702,8 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 				$(parentDiv).removeClass('fbk-hide-opacity');		
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-				$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});				
+				$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});
+				oSettings.oInstance.fnAdjustColumnSizing();
 			}
 		});
 		

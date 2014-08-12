@@ -37,6 +37,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -51,10 +52,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -287,10 +291,11 @@ public class AdvancingController extends AbstractBaseFieldbookController{
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
+    @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
+    public Map<String, Object>  postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , BindingResult result, Model model) throws MiddlewareQueryException{
-        
+        Map<String, Object> results = new HashMap();
         advancingNursery.setMethodChoice(form.getMethodChoice());
         advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
         advancingNursery.setLineChoice(form.getLineChoice());
@@ -304,14 +309,95 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setMethodVariateId(form.getMethodVariateId());
         
         try {
-        	importedGermplasmList = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
+        	AdvanceResult advanceResult = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
+        	List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
+        	long id = (new Date()).getTime();
+            getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
             userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
             form.setGermplasmList(importedGermplasmList);
             form.setEntries(importedGermplasmList.size());
             form.changePage(1);
-            long id = (new Date()).getTime();
-            getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
             form.setUniqueId(id);
+                                   
+            List<AdvanceGermplasmChangeDetail> advanceGermplasmChangeDetails = advanceResult.getChangeDetails();
+            
+            results.put("isSuccess", "1");
+            results.put("listSize", importedGermplasmList.size());
+        	results.put("advanceGermplasmChangeDetails", advanceGermplasmChangeDetails);
+        	results.put("uniqueId", id);
+        	
+        } catch (MiddlewareQueryException e) {
+        	form.setErrorInAdvance(e.getMessage());
+        	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
+        	form.setEntries(0);
+        	results.put("isSuccess", "0");
+        	results.put("listSize", 0);
+        	results.put("message", e.getMessage());
+        }
+        
+        return results;
+    	//return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/apply/change/details", method=RequestMethod.POST)
+    public Map<String, Object> applyChangeDetails(@RequestParam(value="data") String userResponses) throws Exception {
+    	Map<String, Object> results = new HashMap();
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	AdvanceGermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, AdvanceGermplasmChangeDetail[].class);
+    	List<ImportedGermplasm> importedGermplasmListTemp = userSelection.getImportedAdvancedGermplasmList();
+    	List<Integer> deletedIndex = new ArrayList();
+    	for (AdvanceGermplasmChangeDetail responseDetail : responseDetails) {
+    		if (responseDetail.getIndex() < importedGermplasmListTemp.size()) {
+    			ImportedGermplasm importedGermplasm = importedGermplasmListTemp.get(responseDetail.getIndex());
+    			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
+    				//we need to delete
+    				deletedIndex.add(responseDetail.getIndex());
+    			}
+    			/*
+    			else if (responseDetail.getStatus() == 2) { //create new germlasm
+					//maintain germplasm
+    			}
+    			*/
+    			else if (responseDetail.getStatus() == 3) { //choose gids
+    				importedGermplasm.setDesig(responseDetail.getNewAdvanceName());
+    				List<Name> names = importedGermplasm.getNames();
+    				if (names != null) {
+    					//set the first value, for now, we're expecting only 1 records. 
+    					//this was a list because in the past, we can have more than 1 names, but this was changed
+    					names.get(0).setNval(responseDetail.getNewAdvanceName());
+    				}
+    				
+    			}
+    		}
+    	}
+    	//now we need to delete all marked deleted
+    	for(Integer deleteIndex : deletedIndex){
+    		importedGermplasmListTemp.remove(deleteIndex.intValue());
+    	}
+    	int index = 1;
+    	for (ImportedGermplasm germplasm : importedGermplasmListTemp) {
+    		germplasm.setEntryId(index++);
+    	}
+    	userSelection.setImportedAdvancedGermplasmList(importedGermplasmListTemp);
+    	results.put("isSuccess", "1");
+    	results.put("listSize", importedGermplasmListTemp.size());
+    	return results;
+    }
+    
+    @RequestMapping(value="/info", method = RequestMethod.GET)
+    public String showAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, 
+    		BindingResult result, Model model, HttpServletRequest req) throws MiddlewareQueryException{
+        
+       
+        try {
+        	importedGermplasmList = userSelection.getImportedAdvancedGermplasmList();
+            form.setGermplasmList(importedGermplasmList);
+            form.setEntries(importedGermplasmList.size());
+            form.changePage(1);
+            String uniqueId = req.getParameter("uniqueId");
+            form.setUniqueId(Long.valueOf(uniqueId));
+            
             
             List<Map<String, Object>> dataTableDataList = new ArrayList<Map<String, Object>>();
         	if(importedGermplasmList != null){
@@ -328,7 +414,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		
             model.addAttribute("advanceDataList", dataTableDataList);
             
-        } catch (MiddlewareQueryException e) {
+        } catch (Exception e) {
         	form.setErrorInAdvance(e.getMessage());
         	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
         	form.setEntries(0);

@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.naming.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -12,6 +13,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -19,6 +21,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
@@ -26,6 +30,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
@@ -33,6 +38,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private GermplasmDataManager germplasmDataManger;
     
     @Resource
     private AdvancingSourceListFactory factory;
@@ -44,7 +52,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 	
     @Override
-	public List<ImportedGermplasm> advanceNursery(AdvancingNursery info,
+	public AdvanceResult advanceNursery(AdvancingNursery info,
 			Workbook workbook) throws MiddlewareQueryException {
 		
         Map<Integer, Method> breedingMethodMap = new HashMap<Integer, Method>();
@@ -59,7 +67,19 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         AdvancingSourceList list = createAdvancingSourceList(info, workbook, breedingMethodMap, breedingMethodCodeMap);
         updatePlantsSelectedIfNecessary(list, info);
         List<ImportedGermplasm> importedGermplasmList = generateGermplasmList(list);
-        return importedGermplasmList;
+
+        List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<AdvanceGermplasmChangeDetail>();
+        for (AdvancingSource source : list.getRows()) {
+        	if (source.getChangeDetail() != null) {
+        		changeDetails.add(source.getChangeDetail());
+        	}
+        }
+        
+        AdvanceResult result = new AdvanceResult();
+        result.setAdvanceList(importedGermplasmList);
+        result.setChangeDetails(changeDetails);
+        
+        return result;
 	}
 
     private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook, 
@@ -169,14 +189,39 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             	
             	Method method = row.getBreedingMethod();
             	String germplasmName = getGermplasmRootName(method.getSnametype(), row);
-            	String expression = germplasmName 
-            						+ getNonNullValue(method.getSeparator()) 
-            						+ getNonNullValue(method.getPrefix()) 
-            						+ getNonNullValue(method.getCount()) 
-            						+ getNonNullValue(method.getSuffix());
+            	String countPrefixExpression = germplasmName 
+									+ getNonNullValue(method.getSeparator()) 
+									+ getNonNullValue(method.getPrefix());
+            	String countExpression = getNonNullValue(method.getCount());
+            	String countSuffixExpression = getNonNullValue(method.getSuffix());
             	row.setRootName(germplasmName);
-            	List<String> names = processCodeService.applyToName(expression, row);
-            	for (String name : names) {
+            	
+            	//prefix and suffix to count expects only 1 row
+            	String countPrefix = processCodeService.applyToName(countPrefixExpression, row).get(0);
+            	String countSuffix = processCodeService.applyToName(countSuffixExpression, row).get(0);
+            	
+            	int max = germplasmDataManger.getMaximumSequence(row.isBulk(), countPrefix, countSuffix, row.getPlantsSelected().intValue());
+            	row.setCurrentMaxSequence(max);
+            	
+            	//may return more than 1 record, esp if sequence is used.
+            	List<String> names = processCodeService.applyToName(countExpression, row);
+            	
+            	for (String evaluatedCount : names) {
+            		String name = countPrefix + evaluatedCount + countSuffix;
+                	if (countExpression.isEmpty() && max > -1) {
+                		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
+                	}
+            		if (row.getChangeDetail() != null) {
+            			row.getChangeDetail().setIndex(index-1); //index in java (starts at 0)
+            			row.getChangeDetail().setOldAdvanceName(name);
+            			int nextSequence = row.getCurrentMaxSequence() + 1;
+            			row.getChangeDetail().setNewAdvanceName(name + "(" + nextSequence + ")");
+            			Locale locale = LocaleContextHolder.getLocale();
+            			row.getChangeDetail().setQuestionText(messageSource.getMessage("advance.nursery.duplicate.question.text", 
+            					new String[] {name}, locale));
+            			row.getChangeDetail().setAddSequenceText(messageSource.getMessage("advance.nursery.duplicate.add.sequence.text", 
+            					new String[] {row.getChangeDetail().getNewAdvanceName()}, locale));
+            		}
             		addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
             	}
             }

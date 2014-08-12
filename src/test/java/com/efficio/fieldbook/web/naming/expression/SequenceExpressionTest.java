@@ -45,4 +45,17 @@ public class SequenceExpressionTest extends TestExpression {
 		printResult(values, source);
 	}
 
+	@Test
+	public void testWithStartCount() throws Exception {
+		SequenceExpression expression = new SequenceExpression();
+		AdvancingSource source = createAdvancingSourceTestData(
+				"GERMPLASM_TEST", 
+				"-", null, "[sequence]", null, true);
+		source.setPlantsSelected(5);
+		source.setCurrentMaxSequence(5);
+		List<StringBuilder> values = createInitialValues(source);
+		expression.apply(values, source);
+		System.out.println("process code is in lower case");
+		printResult(values, source);
+	}
 }

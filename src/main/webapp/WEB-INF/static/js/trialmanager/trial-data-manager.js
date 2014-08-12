@@ -564,7 +564,7 @@
                     // validate environments
                     _.each(service.settings.environments.managementDetails.vals(),function(item,key){
                         if (!(!item.variable.maxRange && !item.variable.minRange) ) {
-                            // letz validate each environment
+                            // let's validate each environment
                             _.find(service.currentData.environments.environments,function(val,index) {
                                 if (!!val.managementDetailValues[key]) {
                                     if (item.variable.maxRange < Number(val.managementDetailValues[key])) {

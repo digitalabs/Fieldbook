@@ -16,6 +16,8 @@ import java.util.List;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+
 /**
  * 
  * The POJO containing information needed for Advancing.
@@ -34,6 +36,8 @@ public class AdvancingSource {
     private String locationAbbreviation;
     private String rootName;
     private Method sourceMethod;
+    private int currentMaxSequence;
+    private AdvanceGermplasmChangeDetail changeDetail;
 
     public AdvancingSource(ImportedGermplasm germplasm, List<Name> names,
 			Integer plantsSelected, Method breedingMethod, boolean isCheck,
@@ -203,6 +207,33 @@ public class AdvancingSource {
 	public void setSourceMethod(Method sourceMethod) {
 		this.sourceMethod = sourceMethod;
 	}
-    
+
+	/**
+	 * @return the currentMaxSequence
+	 */
+	public int getCurrentMaxSequence() {
+		return currentMaxSequence;
+	}
+
+	/**
+	 * @param currentMaxSequence the currentMaxSequence to set
+	 */
+	public void setCurrentMaxSequence(int currentMaxSequence) {
+		this.currentMaxSequence = currentMaxSequence;
+	}
+
+	/**
+	 * @return the changeDetail
+	 */
+	public AdvanceGermplasmChangeDetail getChangeDetail() {
+		return changeDetail;
+	}
+
+	/**
+	 * @param changeDetail the changeDetail to set
+	 */
+	public void setChangeDetail(AdvanceGermplasmChangeDetail changeDetail) {
+		this.changeDetail = changeDetail;
+	}
     
 }

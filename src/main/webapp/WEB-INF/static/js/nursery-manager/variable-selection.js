@@ -1,4 +1,4 @@
-/* global Handlebars, showErrorMessage */
+/* global Handlebars, showErrorMessage,showAlertMessage */
 
 /**
  * @module variable-selection
@@ -393,6 +393,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		var container = selectButton.parent('.vs-variable-select-container'),
 			iconContainer = selectButton.children('.glyphicon'),
 			generalErrorMessage = this._translations.generalAjaxError,
+            variableSelectedMessage = this._translations.variableSelectedMessage,
 			variableName,
 			selectedVariable,
 			variableId;
@@ -414,8 +415,15 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			}
 		}
 
-		// Disable the select button to prevent clicking twice
-		selectButton.attr('disabled', 'disabled');
+		// remove the click functionality to avoid selecting twice
+        selectButton.off('click');
+        selectButton.on('click', function() {
+            showAlertMessage('', variableSelectedMessage);
+        });
+        selectButton.attr('title', variableSelectedMessage);
+        selectButton.removeClass('vs-variable-select');
+        selectButton.addClass('vs-variable-button');
+
 
 		variableId = _convertVariableId(selectedVariable.id);
 

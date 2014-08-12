@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public abstract class NumberSequenceExpression implements Expression {
@@ -23,9 +24,16 @@ public abstract class NumberSequenceExpression implements Expression {
 	                value.replace(startIndex, endIndex, "");
 	            }
 	        }
+            if (source.getCurrentMaxSequence() > -1) {
+            	source.setChangeDetail(new AdvanceGermplasmChangeDetail());
+            }
     	}
     	else {
 			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
+			int startCount = 1;
+			if (source.getCurrentMaxSequence() > -1) {
+				startCount = source.getCurrentMaxSequence() + 1;
+			}
 			for (StringBuilder value : values) {
 				int startIndex = value.toString().toUpperCase().indexOf(getExpressionKey());
 				int endIndex = startIndex + getExpressionKey().length();
@@ -33,7 +41,7 @@ public abstract class NumberSequenceExpression implements Expression {
 				if (source.getPlantsSelected() != null &&
 		                source.getPlantsSelected() > 0) {
 					
-					for (int i = 1; i <= source.getPlantsSelected(); i++) {
+					for (int i = startCount; i < startCount + source.getPlantsSelected(); i++) {
 						StringBuilder newName = new StringBuilder(value);
 						newName.replace(startIndex, endIndex, String.valueOf(i));
 						newNames.add(newName);

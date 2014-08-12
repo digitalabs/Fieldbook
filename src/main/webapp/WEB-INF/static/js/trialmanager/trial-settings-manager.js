@@ -143,7 +143,7 @@ window.TrialSettingsManager = (function () {
         var removedProperties = [];
 
         $.each(variableList,function(i,variable) {
-            $.each(properties,function(key,val) {
+            $.each(properties,function(key) {
                 _removeById(parseInt(variable.variableId),properties[key].standardVariables,'id');
 
                 // If the property has no more variables, remove it too
@@ -274,7 +274,8 @@ window.TrialSettingsManager = (function () {
     TrialSettingsManager.prototype._initialiseVariableSelectionDialog = function () {
         this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
             // FIXME pass in translated value with key variable.selection.unique.variable.error from html
-            uniqueVariableError: 'This name has been used before, please enter a different name.'
+            uniqueVariableError: 'This name has been used before, please enter a different name.',
+            variableSelectedMessage : 'This variable is already in use in the study'
         });
         //this._variableSelection.getModal().on('variable-select', addSelectedVariables);
 

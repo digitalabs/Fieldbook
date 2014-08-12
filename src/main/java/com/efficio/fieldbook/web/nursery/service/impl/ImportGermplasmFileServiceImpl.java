@@ -695,7 +695,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		for(int i = 0 ; i < formImportedGermplasmsm.size() ; i++){
 			ImportedGermplasm germplasm = formImportedGermplasmsm.get(i);
 			String checkVal = "";
-			if(germplasm.getCheck() != null){
+			if(germplasm.getCheck() != null && !germplasm.getCheck().equalsIgnoreCase("")){
 				checkVal = germplasm.getCheck();
 				hasCheck = true;
 			}

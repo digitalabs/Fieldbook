@@ -49,11 +49,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -103,7 +103,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 	/**
 	 * Advance Nursery
 	 */
-	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo, Workbook workbook)
+	public AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook)
 	        throws MiddlewareQueryException {
 
 		return namingConventionService.advanceNursery(advanceInfo, workbook);
@@ -126,7 +126,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 		List<Integer> propertyIds = getPropertyIdsByMode(mode);
 
         List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, propertyIds,
-                mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt() ? true : false);
+                mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt());
 
         if (dbList != null && !dbList.isEmpty()) {
 
@@ -135,9 +135,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 
                     if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
                         if (inHideVariableFields(ref.getId(), AppConstants.FILTER_NURSERY_FIELDS.getString())
-                                || ref.getId().intValue() == TermId.DATASET_NAME.getId()
-                                || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
-                                || ref.getId().intValue() == TermId.DATASET_TYPE.getId()
+                                || ref.getId() == TermId.DATASET_NAME.getId()
+                                || ref.getId() == TermId.DATASET_TITLE.getId()
+                                || ref.getId() == TermId.DATASET_TYPE.getId()
                                 || inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString()))
                             continue;
 
@@ -174,7 +174,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 			}
 		}
 
-		List<StandardVariableReference> dbList = null;
+		List<StandardVariableReference> dbList;
 		if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
 			dbList = fieldbookMiddlewareService.getAllTreatmentLevels(AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 		}
@@ -182,7 +182,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 			List<Integer> storedInIds = getStoredInIdsByMode(mode, false);
 			List<Integer> propertyIds = getPropertyIdsByMode(mode);
 			dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, propertyIds,
-					 mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt() ? true : false);
+                    mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt());
 		}
 		
 		if (dbList != null && !dbList.isEmpty()) {
@@ -191,12 +191,12 @@ public class FieldbookServiceImpl implements FieldbookService{
 				if (!selectedIds.contains(ref.getId())) {
 					
 					 if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-						 if(ref.getId().intValue() == TermId.STUDY_TYPE.getId()
-								 || ref.getId().intValue() == TermId.PM_KEY.getId()
-								 || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-								 || ref.getId().intValue() == TermId.DATASET_NAME.getId()
-								 || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
-								 || ref.getId().intValue() == TermId.DATASET_TYPE.getId()){
+						 if(ref.getId() == TermId.STUDY_TYPE.getId()
+								 || ref.getId() == TermId.PM_KEY.getId()
+								 || ref.getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+								 || ref.getId() == TermId.DATASET_NAME.getId()
+								 || ref.getId() == TermId.DATASET_TITLE.getId()
+								 || ref.getId() == TermId.DATASET_TYPE.getId()){
 							 continue;
 						 }else if(inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_MANAGEMENT_SETTINGS_FIELDS.getString())){
 							 continue;
@@ -326,19 +326,17 @@ public class FieldbookServiceImpl implements FieldbookService{
     @Override
     public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {
         List<ValueReference> possibleValuesFavorite = null;
-        if (possibleValuesFavorite == null) {
-            if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
-                List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods();
-                List<ValueReference> list = new ArrayList<ValueReference>();
-                list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
-                possibleValuesFavorite = list;
-                possibleValuesFavorite.addAll(getFavoriteBreedingMethods(methodIds, false));
-                
-            } else if (TermId.LOCATION_ID.getId() == id) {            	
-                List<Long> locationIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds();
-                possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService
-                        .getFavoriteLocationByProjectId(locationIds));
-            }
+        if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
+            List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods();
+            List<ValueReference> list = new ArrayList<ValueReference>();
+            list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
+            possibleValuesFavorite = list;
+            possibleValuesFavorite.addAll(getFavoriteBreedingMethods(methodIds, false));
+
+        } else if (TermId.LOCATION_ID.getId() == id) {
+            List<Long> locationIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds();
+            possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService
+                    .getFavoriteLocationByProjectId(locationIds));
         }
         return possibleValuesFavorite;
     }
@@ -412,6 +410,8 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (!NumberUtils.isNumber(valueOrId) && TermId.BREEDING_METHOD_CODE.getId() != id && TermId.BREEDING_METHOD.getId() != id) {
         	return valueOrId;
         }
+
+        // TODO : for investigation, check for best fix, since ValueReference object should NOT be compared to a String
         if (possibleValues != null && !possibleValues.isEmpty()) {
         	for (ValueReference possibleValue : possibleValues) {
         		if (possibleValue.equals(valueOrId)) {
@@ -519,8 +519,7 @@ public class FieldbookServiceImpl implements FieldbookService{
     
     @Override
     public List<Enumeration> getCheckList() throws MiddlewareQueryException{
-    	List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
-    	return allEnumerations;
+        return ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
     }
     
     @Override
@@ -602,7 +601,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                             }
                         }
                     } else {
-                        Method method = null;
+                        Method method;
                         if (studyConditionMap.get(idTermId) != null) {
                             method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
                         } else {

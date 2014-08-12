@@ -11,13 +11,11 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.naming.service;
 
-import java.util.List;
-
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
 /**
  * 
@@ -33,5 +31,5 @@ public interface NamingConventionService {
      * @return
      * @throws MiddlewareQueryException
      */
-    List<ImportedGermplasm> advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException;
+    AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException;
 }

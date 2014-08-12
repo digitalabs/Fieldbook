@@ -1615,6 +1615,10 @@ label[data-toggle="collapse"],
 	float: right;
 }
 
+.vs-property-container .vs-variable-button {
+	float: right;
+}
+
 .vs-variable-name-container .vs-alias-input {
 	padding: 2px;
 }

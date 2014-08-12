@@ -25,6 +25,7 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -53,7 +54,7 @@ public interface FieldbookService {
      * @return the list
      * @throws MiddlewareQueryException the middleware query exception
      */
-    List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException;
+    AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException;
     
     /**
      * Filters the variables based on the current setting mode and excludes the selected ones.

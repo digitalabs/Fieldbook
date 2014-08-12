@@ -41,7 +41,8 @@ be empty. -->
 					{{> variable-name}}
 				</span>
 				{{#if selected}}
-					<button type="button" class="btn btn-default btn-xs vs-variable-select icon-btn icon-btn" disabled="disabled">
+					<button type="button" class="btn btn-default btn-xs icon-btn icon-btn vs-variable-button"
+                            th:attr="title=#{common.warning.variable.in.use},onclick='showAlertMessage(\'\', \'' + #{common.warning.variable.in.use} + '\')'">
 						<span class="glyphicon glyphicon-ok"></span>
 					</button>
 				{{else}}

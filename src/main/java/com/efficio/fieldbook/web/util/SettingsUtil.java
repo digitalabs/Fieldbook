@@ -2109,6 +2109,8 @@ public class SettingsUtil {
 		    			, stdvar.getConstraints() != null ? stdvar.getConstraints().getMaxValue() : null
 		    			);
 		    	mvar.setOperation(Operation.ADD);
+		    	mvar.setStoredIn(stdvar.getStoredIn().getId());
+		    	mvar.setDataTypeId(stdvar.getDataType().getId());
 		    	workbook.getTrialConditions().add(mvar);
 		    	workbook.getConditions().add(mvar);
 	    	}

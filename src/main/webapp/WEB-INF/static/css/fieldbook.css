@@ -1405,6 +1405,10 @@ label[data-toggle="collapse"],
     margin-left: -2px; padding-right: 5px; padding-top: 4px; padding-bottom: 4px;
 }
 
+.fbk-basic-details-section-content {
+    padding-left: 17pt;
+}
+
 .input-group-btn > .btn {
     font-size: 14px;
 }

@@ -3,6 +3,7 @@
 	<form class="form-horizontal" th:object="${ontologyDetailsForm}">
 		<input type="hidden" id="selectedStdVarId" value="" />
         <input type="hidden" id="selectedName" value=""/>
+        <input type="hidden" th:field="*{variable.name}" />
         <input type="hidden" th:field="*{possiblePairsJson}" />
 		<div class="form-group">
 			<label class="col-xs-4 col-lg-2 control-label label-bold" th:text="#{ontology.browser.detailstab.description} + ':'">Description:</label>

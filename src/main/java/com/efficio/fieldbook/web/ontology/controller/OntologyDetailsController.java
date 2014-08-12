@@ -61,6 +61,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     
     /** The Constant DETAILS_TEMPLATE. */
     public static final String DETAILS_TEMPLATE = "/OntologyBrowser/detailTab";
+    
+    public static final String USAGE_DETAILS_TEMPLATE = "/OntologyBrowser/usageTab";
 
     /** The ontology service. */
     @Resource
@@ -91,11 +93,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
                 resultMap.put("variable", variable);
                 
                 NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-                form.setProjectCount(numberFormat.format(
-                                ontologyService.countProjectsByVariable(variableId)));
-                form.setObservationCount(numberFormat.format(
-                                ontologyService.countExperimentsByVariable(
-                                        variableId, variable.getStoredIn().getId())));
+                
                 form.setVariable(variable);
                 
                 if (variable.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN 
@@ -114,6 +112,35 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
             resultMap.put("status", "fail");
         }
         return super.showAjaxPage(model, DETAILS_TEMPLATE);
+    }
+    
+    @RequestMapping(value = "/OntologyBrowser/details/usage/{variableId}", method = RequestMethod.GET)
+    public String getOntologyUsageDetails(@PathVariable int variableId,  
+            @ModelAttribute("ontologyDetailsForm") OntologyDetailsForm form, Model model) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            StandardVariable variable = ontologyService.getStandardVariable(variableId);
+            if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
+                resultMap.put("status", "success");
+                resultMap.put("variable", variable);
+                
+                NumberFormat numberFormat = NumberFormat.getIntegerInstance();
+                
+                form.setProjectCount(numberFormat.format(
+                                ontologyService.countProjectsByVariable(variableId)));
+                form.setObservationCount(numberFormat.format(
+                                ontologyService.countExperimentsByVariable(
+                                        variableId, variable.getStoredIn().getId())));
+                
+                form.setVariable(variable);
+            } else {
+                resultMap.put("status", "notfound");
+            }
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            resultMap.put("status", "fail");
+        }
+        return super.showAjaxPage(model, USAGE_DETAILS_TEMPLATE);
     }
     
     /**

@@ -1715,8 +1715,14 @@ function showBaselineTraitDetailsModal(id) {
 			cache: false,
 			success: function(html) {
 				$('.variable-details-section').empty().append(html);
+				if($('#selectedStdVarId').length != 0){
+					$('#selectedStdVarId').val(id);
+				}
 				$('#variableDetailsModal').modal('toggle');
-				
+				if ($('#variableDetailsModal')) {
+					var variableName = $('#' + getJquerySafeId('variable.name')).val();
+					$('#variableDetailsModal .modal-title').html(variableDetailsHeader + ' ' + variableName);
+				}
 			}
 		});
 	}
@@ -2990,13 +2996,37 @@ function showSelectedTab(selectedTabName) {
 	var tabs = $('#ontology-tabs').children();
 	for (var i = 0; i < tabs.length; i++) {
 		if (tabs[i].id === selectedTabName) {
-			$('#' + tabs[i].id + '-li').addClass('active');
-			$('#' + tabs[i].id).show();
+			if (selectedTabName === 'ontology-usage-tab' && parseInt($('#ontology-usage-tab').data('usageloaded')) === 0) {
+				getUsageDetails(tabs[i].id);
+				$('#ontology-usage-tab').data('usageloaded', '1');
+			} else {
+				$('#' + tabs[i].id + '-li').addClass('active');
+				$('#' + tabs[i].id).show();
+			}
 		} else {
 			$('#' + tabs[i].id + '-li').removeClass('active');
 			$('#' + tabs[i].id).hide();
 		}
 	}
+}
+
+function getUsageDetails(tabId) {
+	var id = $('#selectedStdVarId').val();
+	$.ajax({
+		url: '/Fieldbook/OntologyBrowser/details/usage/' + id,
+		type: 'GET',
+		async: true,
+		success: function(html) {
+			$('#ontology-usage-tab').html(html);
+			$('#' + tabId + '-li').addClass('active');
+			$('#' + tabId).show();
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown);
+		},
+		complete: function() {
+		}
+	});
 }
 
 function showSelectedTabNursery(selectedTabName) {

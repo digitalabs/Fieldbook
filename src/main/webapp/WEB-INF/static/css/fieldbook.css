@@ -1703,3 +1703,7 @@ a[ng-click] {
 .germplasm-list-data-table tr > td:nth-child(1) {
     cursor: pointer;
 }
+
+div.variable-details-popup {
+	width: 750px;
+}

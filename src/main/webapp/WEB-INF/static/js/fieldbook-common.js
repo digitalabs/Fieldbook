@@ -1710,12 +1710,13 @@ function showBaselineTraitDetailsModal(id) {
 
 	if (id !== '') {
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/createNursery/showVariableDetails/' + id,
+			url: '/Fieldbook/OntologyBrowser/details/' + id,
 			type: 'GET',
 			cache: false,
-			success: function(data) {
-				populateVariableDetails($.parseJSON(data));
+			success: function(html) {
+				$('.variable-details-section').empty().append(html);
 				$('#variableDetailsModal').modal('toggle');
+				
 			}
 		});
 	}
@@ -2981,7 +2982,23 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 		}
 	});
 }
+
 function showSelectedTab(selectedTabName) {
+	'use strict';
+	$('#ontology-tab-headers').show();
+	var tabs = $('#ontology-tabs').children();
+	for (var i = 0; i < tabs.length; i++) {
+		if (tabs[i].id === selectedTabName) {
+			$('#' + tabs[i].id + '-li').addClass('active');
+			$('#' + tabs[i].id).show();
+		} else {
+			$('#' + tabs[i].id + '-li').removeClass('active');
+			$('#' + tabs[i].id).hide();
+		}
+	}
+}
+
+function showSelectedTabNursery(selectedTabName) {
 	'use strict';
 	if($('.import-study-data').data('data-import') === '1'){
 		showAlertMessage('', importSaveDataWarningMessage);

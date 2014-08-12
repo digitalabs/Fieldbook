@@ -57,21 +57,6 @@ function processTab(variableName, variableId) {
 	viewTabs(variableName, variableId);
 }
 
-function showSelectedTab(selectedTabName) {
-	'use strict';
-	$('#ontology-tab-headers').show();
-	var tabs = $('#ontology-tabs').children();
-	for (var i = 0; i < tabs.length; i++) {
-		if (tabs[i].id === selectedTabName) {
-			$('#' + tabs[i].id + '-li').addClass('active');
-			$('#' + tabs[i].id).show();
-		} else {
-			$('#' + tabs[i].id + '-li').removeClass('active');
-			$('#' + tabs[i].id).hide();
-		}
-	}
-}
-
 function clearAndAppendOntologyDetailsTab(variableName, html){
 	'use strict';
 	if(html !== ''){

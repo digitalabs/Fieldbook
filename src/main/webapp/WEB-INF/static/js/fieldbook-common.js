@@ -2996,12 +2996,11 @@ function showSelectedTab(selectedTabName) {
 	var tabs = $('#ontology-tabs').children();
 	for (var i = 0; i < tabs.length; i++) {
 		if (tabs[i].id === selectedTabName) {
+			$('#' + tabs[i].id + '-li').addClass('active');
+			$('#' + tabs[i].id).show();
 			if (selectedTabName === 'ontology-usage-tab' && parseInt($('#ontology-usage-tab').data('usageloaded')) === 0) {
-				getUsageDetails(tabs[i].id);
+				getUsageDetails();
 				$('#ontology-usage-tab').data('usageloaded', '1');
-			} else {
-				$('#' + tabs[i].id + '-li').addClass('active');
-				$('#' + tabs[i].id).show();
 			}
 		} else {
 			$('#' + tabs[i].id + '-li').removeClass('active');
@@ -3010,16 +3009,15 @@ function showSelectedTab(selectedTabName) {
 	}
 }
 
-function getUsageDetails(tabId) {
+function getUsageDetails() {
 	var id = $('#selectedStdVarId').val();
+	$('#ontology-usage-tab').html('');
 	$.ajax({
 		url: '/Fieldbook/OntologyBrowser/details/usage/' + id,
 		type: 'GET',
 		async: true,
 		success: function(html) {
 			$('#ontology-usage-tab').html(html);
-			$('#' + tabId + '-li').addClass('active');
-			$('#' + tabId).show();
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown);

@@ -1711,3 +1711,12 @@ div.variable-details-popup {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
+
+/* hide the browse button when a file is selected */
+.fileupload-exists .btn-file {
+    display: none;
+}
+
+.fileupload-new .fileupload-preview-wrap {
+    display: none;
+}

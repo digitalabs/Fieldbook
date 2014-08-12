@@ -47,23 +47,17 @@
 						<div class='row form-group add_top_padding'>
 
 							<div class="col-md-12">
-								<span class="pull-left fbk-import-upload-file">
-									<label for="fileupload" class="control-label add_top_padding label-bold" th:text="#{nursery.import.germplasm.select.file}">Select a file</label><span class="required">*</span>
-								</span>
 								<div class="fileupload fileupload-new fbk-import-upload-file" data-provides="fileupload">
-									<div class="input-group">
-										<div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i>
-											<span class="fileupload-preview"></span>
-										</div>
-										<div class="input-group-btn">
-											<span class="btn btn-info btn-file">
-											<span class="fileupload-new" th:text="#{nursery.import.germplasm.browse.file}">Browse</span>
-											<span class="fileupload-exists" th:text="#{nursery.import.germplasm.change}">Change</span>
-											<input id="fileupload" th:field="*{file}" type="file" class="file-input"/></span>
-											<a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.import.germplasm.remove}">Remove</a>										
-										</div>
-									</div>
-								</div>
+                                    		<span class="btn btn-info btn-file ">
+                                                <span class="fileupload-new" th:text="#{nursery.import.germplasm.browse.file}">Browse</span>
+                                                <input id="fileupload" th:field="*{file}" type="file" class="file-input"/>
+                                            </span>
+                                    <span class="fileupload-preview-wrap"><b><span th:text="#{selected.import.file}">Selected import file</span>:</b> <i class="fileupload-preview"></i></span>
+                                    <span style="display: inline-block; margin-left: 15px">
+                                        <a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.managesettings.clear.settings}">Clear</a>
+                                    </span>
+
+                                </div>
 							</div>
 						</div>
 					</div>

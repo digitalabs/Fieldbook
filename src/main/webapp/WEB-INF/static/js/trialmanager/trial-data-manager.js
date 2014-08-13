@@ -1,6 +1,6 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
- invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree*/
+ invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,resetGermplasmList*/
 
 (function () {
     'use strict';
@@ -8,10 +8,10 @@
     angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-        'TrialSettingsManager','_',
+        'TrialSettingsManager','_','$localStorage',
         function (GERMPLASM_LIST_SIZE,TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
                   MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-                  TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager,_) {
+                  TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager,_,$localStorage) {
 
             // TODO : clean up data service, at the very least arrange the functions in alphabetical order
             var extractData = function (initialData, initializeProperty) {
@@ -255,7 +255,12 @@
                     treatmentLevelPairs: {}
 
                 },
-             
+
+                trialMeasurement: {
+                    hasMeasurement: TRIAL_HAS_MEASUREMENT,
+                    count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
+                },
+
                 // returns a promise object to be resolved later
                 retrieveVariablePairs: function (cvTermId) {
                     return VariablePairService.get({id: cvTermId}).$promise;
@@ -269,10 +274,6 @@
                     return GenerateExpDesignService.save(data).$promise;
                 },
 
-                trialMeasurement: {
-                    hasMeasurement: TRIAL_HAS_MEASUREMENT,
-                    count: parseInt(TRIAL_MEASUREMENT_COUNT, 10)
-                },
 
                 isOpenTrial: function () {
                     return service.currentData.basicDetails.studyID !== null &&
@@ -656,11 +657,16 @@
                         return function(tab) { results.customHeader += tab; return results;  }('on Treatment Factors');
                     }
                 }
-
             };
 
-            // TODO: remove this later
-            document.service = service;
+            // store the initial values on some service properties so that we can revert to it later
+            $localStorage.serviceBackup = {
+                settings : angular.copy(service.settings),
+                currentData : angular.copy(service.currentData),
+                specialSettings : angular.copy(service.specialSettings),
+                applicationData : angular.copy(service.applicationData),
+                trialMeasurement : angular.copy(service.trialMeasurement)
+            };
 
             // 5 is the group no of treatment factors
             TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors,5);

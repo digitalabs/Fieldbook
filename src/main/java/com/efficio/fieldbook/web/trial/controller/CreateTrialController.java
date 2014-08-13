@@ -356,10 +356,10 @@ public class CreateTrialController extends BaseTrialController {
 		return basicDetails;
     }
     
-    
+
+    @ResponseBody
     @RequestMapping(value = "/clearSettings", method = RequestMethod.GET)
-    public String clearSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
-                Model model, HttpSession session, HttpServletRequest request) {
+    public String clearSettings() {
     	 try {
     		 prepareGermplasmTabInfo();
     		 prepareEnvironmentsTabInfo();

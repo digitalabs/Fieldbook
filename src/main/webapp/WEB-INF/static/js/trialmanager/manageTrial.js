@@ -2,13 +2,13 @@
  * Created by cyrus on 7/1/14.
  */
 
-/*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage, operationMode*/
+/*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage, operationMode, resetGermplasmList,showAlertMessage*/
 
 (function () {
     'use strict';
 
     var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils', 'fieldbook-utils',
-        'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource']);
+        'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource','ngStorage']);
 
     manageTrialApp.factory('spinnerHttpInterceptor', function ($q) {
         return {
@@ -141,8 +141,8 @@
 
 
     // THE parent controller for the manageTrial (create/edit) page
-    manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout',
-        function ($scope, $rootScope, TrialManagerDataService, $http, $timeout) {
+    manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout','_','$localStorage',
+        function ($scope, $rootScope, TrialManagerDataService, $http, $timeout,_,$localStorage) {
             $scope.trialTabs = [
                 {   'name': 'Settings',
                     'state': 'trialSettings'
@@ -175,7 +175,34 @@
 
             $scope.toggleChoosePreviousTrial = function () {
                 $scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
+
+                if (!$scope.isChoosePreviousTrial) {
+                    // reset the service data to initial state (for untick of user previous trial)
+                    _.each(_.keys($localStorage.serviceBackup.settings),function(key) {
+                        TrialManagerDataService.updateSettings(key,angular.copy($localStorage.serviceBackup.settings[key]));
+                    });
+
+                    _.each(_.keys($localStorage.serviceBackup.currentData),function(key) {
+                        TrialManagerDataService.updateCurrentData(key,angular.copy($localStorage.serviceBackup.currentData[key]));
+                    });
+
+                    TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
+                    TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
+
+                    // perform other cleanup tasks
+                    $http.get('/Fieldbook/TrialManager/createTrial/clearSettings');
+
+                    if(typeof resetGermplasmList !== 'undefined'){
+                        resetGermplasmList();
+                    }
+                    if($('#measurementsDiv').length !== 0){
+                        $('#measurementsDiv').html('');
+                    }
+
+                }
+
             };
+
 
             $scope.data = TrialManagerDataService.currentData.basicDetails;
 
@@ -250,8 +277,8 @@
             };
             
             $('body').on('DO_AUTO_SAVE', function(){
-            	TrialManagerDataService.saveCurrentData();
-    		});
+                TrialManagerDataService.saveCurrentData();
+            });
         }]);
 
     manageTrialApp.filter('filterMeasurementState', function () {

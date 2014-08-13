@@ -105,8 +105,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                     // if new environment count is greater than old value, add new element to environments array
                     while ($scope.data.environments.length < newVal) {
                         $scope.data.environments.push({
-                            managementDetailValues: $scope.constructDataStructureFromDetails($scope.settings.managementDetails),
-                            trialDetailValues: $scope.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
+                            managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.managementDetails),
+                            trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
                         });
                     }
                     TrialManagerDataService.indicateUnappliedChangesAvailable();

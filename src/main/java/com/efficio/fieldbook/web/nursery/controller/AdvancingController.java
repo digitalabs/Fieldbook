@@ -372,13 +372,15 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		}
     	}
     	//now we need to delete all marked deleted
-    	for(Integer deleteIndex : deletedIndex){
-    		importedGermplasmListTemp.remove(deleteIndex.intValue());
-    	}
+    	List<ImportedGermplasm> newList = new ArrayList<ImportedGermplasm>();
     	int index = 1;
     	for (ImportedGermplasm germplasm : importedGermplasmListTemp) {
-    		germplasm.setEntryId(index++);
+    		if (!deletedIndex.contains(importedGermplasmListTemp.indexOf(germplasm))) {
+        		germplasm.setEntryId(index++);
+    			newList.add(germplasm);
+    		}
     	}
+    	importedGermplasmListTemp = newList;
     	userSelection.setImportedAdvancedGermplasmList(importedGermplasmListTemp);
     	results.put("isSuccess", "1");
     	results.put("listSize", importedGermplasmListTemp.size());

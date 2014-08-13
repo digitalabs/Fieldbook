@@ -3,21 +3,21 @@
     <span><input class="form-control" input-type="number" name="replicationsCount" valid-number="" min-val="2" max-val="12" ng-model="currentDesignType.data.replicationsCount" style="width: 100px"/></span>
 </div>
 <div class="add_top_padding">
-    <label class=" control-label"><strong>Block Size:</strong></label>
+    <label class=" control-label"><strong>Block size:</strong></label>
     <span class=""><input name="blockSize" min-val="2" ng-model="currentDesignType.data.blockSize" input-type="number" valid-number="" class="form-control" style="width: 100px"/></span>
 </div>
 
 <div ng-show="currentDesignType.data.isResolvable &amp;&amp; !hideFeatures">
 
     <div ng-hide="settings.showAdvancedOptions[currentDesignType.id]" class="add_top_padding">
-        <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = true">Show Advanced Options</a>
+        <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = true">Show advanced options</a>
     </div>
 
     <div ng-show="settings.showAdvancedOptions[currentDesignType.id]">
 
         <div class="add_top_padding">
             <label class="checkbox-inline">
-                <input name="useLatenized" ng-model="currentDesignType.data.useLatenized" type="checkbox" id="inlineCheckbox2" value="option2"/> <span>Use Latinized Design</span>
+                <input name="useLatenized" ng-model="currentDesignType.data.useLatenized" type="checkbox" id="inlineCheckbox2" value="option2"/> <span>Use latinized design</span>
             </label>
         </div>
 
@@ -45,7 +45,7 @@
         </div>
 
         <div class="add_top_padding">
-            <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = false">Hide Advanced Options</a>
+            <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = false">Hide advanced options</a>
         </div>
 
     </div>

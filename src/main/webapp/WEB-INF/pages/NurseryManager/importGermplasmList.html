@@ -18,7 +18,7 @@
 		</div>
         <div id="primary-section" class="col-xs-8 col-md-8">
             <div><img th:src="@{/static/img/review-list-details.png}" />
-                <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>
+                <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading" th:text="#{germplasm.list.nursery.list}">Nursery List</strong></label>
             </div>
             <div class="browse-import-link">
                 <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
@@ -28,10 +28,10 @@
             <div class="col-xs-10 nopadding">
                 <div>
                     <div style="display:inline-block; width: 30px; padding: 4px 0 5px 0"><img th:src="@{/static/img/build-new-list.png}" /></div>
-                    <label class="control-label"><strong class="sub-content-heading">Selected Checks</strong></label>
+                    <label class="control-label"><strong class="sub-content-heading" th:text="#{germplasm.list.selected.check.list}">Selected Checks</strong></label>
                 </div>
                 <div class="browse-import-link">
-                    <label class="control-label"><a href="javascript: openListTree(2)">Browse</a> or <a href="javascript: openImportGermplasmList('2')">Import</a> a list to work with.</label>
+                    <label class="control-label"><a href="javascript: openListTree(2)">Browse</a> or <a href="javascript: openImportGermplasmList('2')">Import</a> a list to work with, <span th:text="#{germplasm.list.selected.check.added.reminder}"> or drag germplasm from your nursery list.</span></label>
                 </div>
 
             </div>

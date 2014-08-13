@@ -286,6 +286,12 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			$('.nav-tabs').tabdrop({position: 'left'});
 			$('.nav-tabs').tabdrop('layout');
 			$('li#nursery-settings-li a').tab('show');
+			
+			$('body').on('DO_AUTO_SAVE', function(){
+				submitCreateForm();
+			});
+				
+        	$('body').data('doAutoSave', '0'); 
 		});
 	//]]>
 	</script>

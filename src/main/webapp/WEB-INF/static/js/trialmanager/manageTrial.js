@@ -235,6 +235,10 @@
                     }
                 }
             };
+            
+            $('body').on('DO_AUTO_SAVE', function(){
+            	TrialManagerDataService.saveCurrentData();
+    		});
         }]);
 
     manageTrialApp.filter('filterMeasurementState', function () {
@@ -277,7 +281,7 @@
     document.onInitManageTrial = function () {
         // do nothing for now
         $('body').data('needGenerateExperimentalDesign', '0');
-        $('body').data('trialStatus', operationMode);
+        $('body').data('trialStatus', operationMode);       
     };
 
 })

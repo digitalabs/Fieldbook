@@ -188,6 +188,12 @@ function chooseStudyNode(node, fromEnterKey) {
                 $('#folderNameLabel').html(node.data.title);
 
                 $('#studyTreeModal').modal('hide');
+                if($('body').data('doAutoSave') === '1'){
+                	$('body').trigger({
+    					type: 'DO_AUTO_SAVE'
+    				});
+                	$('body').data('doAutoSave', '0'); 
+                }
             }
         } else {
             if (fromEnterKey === false) {

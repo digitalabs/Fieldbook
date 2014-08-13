@@ -2822,6 +2822,13 @@ function reloadCheckListTable(){
 }
 function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	'use strict';
+	
+	if(isPreSelect){
+		$('body').data('doAutoSave', '1');
+	}else{
+		$('body').data('doAutoSave', '0');
+	}
+	
 	$('#page-study-tree-message-modal').html('');
 	  $('#addFolderDiv').hide();
 	  $('#renameFolderDiv').hide();

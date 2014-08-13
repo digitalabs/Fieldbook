@@ -86,7 +86,6 @@
 
             $scope.updateSettings = function(newValue) {
                 angular.copy(newValue, $scope.settings);
-                $scope.updateOccurred = true;
             };
 
             TrialManagerDataService.registerSetting('germplasm', $scope.updateSettings);

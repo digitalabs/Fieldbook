@@ -179,11 +179,15 @@
                 if (!$scope.isChoosePreviousTrial) {
                     // reset the service data to initial state (for untick of user previous trial)
                     _.each(_.keys($localStorage.serviceBackup.settings),function(key) {
-                        TrialManagerDataService.updateSettings(key,angular.copy($localStorage.serviceBackup.settings[key]));
+                        if ("basicDetails" !== key) {
+                            TrialManagerDataService.updateSettings(key,angular.copy($localStorage.serviceBackup.settings[key]));
+                        }
                     });
 
                     _.each(_.keys($localStorage.serviceBackup.currentData),function(key) {
-                        TrialManagerDataService.updateCurrentData(key,angular.copy($localStorage.serviceBackup.currentData[key]));
+                        if ("basicDetails" !== key) {
+                            TrialManagerDataService.updateCurrentData(key,angular.copy($localStorage.serviceBackup.currentData[key]));
+                        }
                     });
 
                     TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
@@ -192,16 +196,17 @@
                     // perform other cleanup tasks
                     $http.get('/Fieldbook/TrialManager/createTrial/clearSettings');
 
-                    if(typeof resetGermplasmList !== 'undefined'){
-                        resetGermplasmList();
-                    }
                     if($('#measurementsDiv').length !== 0){
                         $('#measurementsDiv').html('');
                     }
 
-                }
+                    if (typeof resetGermplasmList !== 'undefined') {
+                        resetGermplasmList();
+                    }
 
+                }
             };
+
 
 
             $scope.data = TrialManagerDataService.currentData.basicDetails;

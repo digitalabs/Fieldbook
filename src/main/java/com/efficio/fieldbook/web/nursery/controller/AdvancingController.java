@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -346,13 +347,15 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	ObjectMapper objectMapper = new ObjectMapper();
     	AdvanceGermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, AdvanceGermplasmChangeDetail[].class);
     	List<ImportedGermplasm> importedGermplasmListTemp = userSelection.getImportedAdvancedGermplasmList();
-    	List<Integer> deletedIndex = new ArrayList();
+//    	List<Integer> deletedIndex = new ArrayList();
+    	List<Integer> deletedEntryIds = new ArrayList<Integer>();
     	for (AdvanceGermplasmChangeDetail responseDetail : responseDetails) {
     		if (responseDetail.getIndex() < importedGermplasmListTemp.size()) {
     			ImportedGermplasm importedGermplasm = importedGermplasmListTemp.get(responseDetail.getIndex());
     			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
     				//we need to delete
-    				deletedIndex.add(responseDetail.getIndex());
+//    				deletedIndex.add(responseDetail.getIndex());
+    				deletedEntryIds.add(importedGermplasm.getEntryId());
     			}
     			/*
     			else if (responseDetail.getStatus() == 2) { //create new germlasm
@@ -372,15 +375,16 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		}
     	}
     	//now we need to delete all marked deleted
-    	List<ImportedGermplasm> newList = new ArrayList<ImportedGermplasm>();
     	int index = 1;
-    	for (ImportedGermplasm germplasm : importedGermplasmListTemp) {
-    		if (!deletedIndex.contains(importedGermplasmListTemp.indexOf(germplasm))) {
-        		germplasm.setEntryId(index++);
-    			newList.add(germplasm);
+    	for (Iterator<ImportedGermplasm> iterator = importedGermplasmListTemp.iterator(); iterator.hasNext();) {
+    		ImportedGermplasm germplasm = iterator.next();
+    		if (deletedEntryIds.contains(germplasm.getEntryId())) {
+    			iterator.remove();
+    		}
+    		else {
+    			germplasm.setEntryId(index++);
     		}
     	}
-    	importedGermplasmListTemp = newList;
     	userSelection.setImportedAdvancedGermplasmList(importedGermplasmListTemp);
     	results.put("isSuccess", "1");
     	results.put("listSize", importedGermplasmListTemp.size());

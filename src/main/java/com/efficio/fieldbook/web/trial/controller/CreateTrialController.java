@@ -368,6 +368,8 @@ public class CreateTrialController extends BaseTrialController {
     		 prepareExpDesignTabInfo();
 		     List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 		     userSelection.setBaselineTraitsList(detailList);
+		     userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
+		     userSelection.setNurseryConditions(new ArrayList<SettingDetail>());
 		     detailList = new ArrayList<SettingDetail>();
 		     userSelection.setTreatmentFactors(detailList);
 		     if(userSelection.getTemporaryWorkbook() != null){

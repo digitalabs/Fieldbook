@@ -583,7 +583,7 @@
                                         results.hasError = true;
                                         return results.hasError;
                                     } else if (item.variable.minRange > Number(val.managementDetailValues[key])) {
-                                        results.customMessage = 'Invalid minimum range on management detail variable' +
+                                        results.customMessage = 'Invalid minimum range on management detail variable ' +
                                             item.variable.name + ' at environment ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
@@ -608,7 +608,7 @@
                                         results.hasError = true;
                                         return results.hasError;
                                     } else if (item.variable.minRange > Number(val.trialDetailValues[key])) {
-                                        results.customMessage = 'Invalid minimum range on trial details variable' +
+                                        results.customMessage = 'Invalid minimum range on trial details variable ' +
                                             item.variable.name + ' at environment ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;

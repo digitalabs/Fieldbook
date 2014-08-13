@@ -22,15 +22,6 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                 $scope.settings.trialConditionDetails = [];
             }
 
-            if ($scope.data.noOfEnvironments > 0 && $scope.data.environments.length === 0) {
-                while ($scope.data.environments.length !== $scope.data.noOfEnvironments) {
-                    $scope.data.environments.push({
-                        managementDetailValues: $scope.constructDataStructureFromDetails($scope.settings.managementDetails),
-                        trialDetailValues: $scope.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
-                    });
-                }
-            }
-
             TrialManagerDataService.registerData('environments', function(newValue) {
                 angular.copy(newValue, $scope.data);
                 $scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
@@ -39,6 +30,17 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 
             TrialManagerDataService.registerSetting('environments', function (newValue) {
                 angular.copy(newValue, $scope.settings);
+
+                // this piece of code relies on the fact that, during use previous trial functionality
+                // settings data is updated last
+                if ($scope.data.noOfEnvironments > 0 && $scope.data.environments.length === 0) {
+                    while ($scope.data.environments.length !== $scope.data.noOfEnvironments) {
+                        $scope.data.environments.push({
+                            managementDetailValues: $scope.constructDataStructureFromDetails($scope.settings.managementDetails),
+                            trialDetailValues: $scope.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
+                        });
+                    }
+                }
             });
 
             $scope.temp = {

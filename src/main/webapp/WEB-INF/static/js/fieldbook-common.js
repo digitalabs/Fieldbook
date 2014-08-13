@@ -2820,18 +2820,18 @@ function reloadCheckListTable(){
          });
 	}
 }
-function openStudyTree(type, selectStudyFunction) {
+function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	'use strict';
 	$('#page-study-tree-message-modal').html('');
 	  $('#addFolderDiv').hide();
 	  $('#renameFolderDiv').hide();
 	if( $('#create-nursery #studyTree').length !== 0){
 			$('#studyTree').dynatree('destroy');
-			displayStudyListTree('studyTree', 'N', type, selectStudyFunction);
+			displayStudyListTree('studyTree', 'N', type, selectStudyFunction, isPreSelect);
 			changeBrowseNurseryButtonBehavior(false);
 	}else if( $('#create-trial #studyTree').length !== 0){
 		$('#studyTree').dynatree('destroy');
-		displayStudyListTree('studyTree', 'T', type, selectStudyFunction);
+		displayStudyListTree('studyTree', 'T', type, selectStudyFunction, isPreSelect);
 		changeBrowseNurseryButtonBehavior(false);
 	}
 

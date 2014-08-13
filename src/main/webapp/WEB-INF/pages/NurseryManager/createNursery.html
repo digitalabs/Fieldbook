@@ -247,7 +247,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			'use strict';
 			
 			if ($('#folderId').val() === '') {
-				openStudyTree(2);
+				openStudyTree(2, null, true);
 			}else if (validateCreateNursery()) {
 				if (!validateStartEndDate('nurseryLevelSettings')) {
 					return false;

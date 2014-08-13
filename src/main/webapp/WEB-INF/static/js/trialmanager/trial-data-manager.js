@@ -459,8 +459,8 @@
                     var hasError = false, name = '', customMessage = '', errorCode = 0;
                     if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
                         hasError = true;
-                        name = $('#folderLabel').text();
-                        openStudyTree(2, service.updateSelectedFolder);
+                        name = $('#folderLabel').text();                        
+                        openStudyTree(2, service.updateSelectedFolder, true);
                         return false;
                     } else if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
                         hasError = true;

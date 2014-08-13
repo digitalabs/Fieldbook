@@ -272,7 +272,7 @@ function doStudyLazyLoad(node, preSelectId) {
     }
 }
 /** Germplasm Tree **/
-function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStudyFunctionParam) {
+function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStudyFunctionParam, isPreSelect) {
     'use strict';
 
     if (selectStudyFunctionParam) {
@@ -287,7 +287,7 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStud
     if (choosingType === 2) {
         additionalUrl = '/1';
     }
-
+	
     url = url + additionalUrl + '/' + studyType;
 
     $('#' + treeName).dynatree({
@@ -320,6 +320,13 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStud
                 var nodeCentral = $(prefixContainer + ' #studyTree').dynatree('getTree').getNodeByKey('CENTRAL');
                 if (nodeCentral !== null) {
                     nodeCentral.remove();
+                }
+                if(isPreSelect){
+                	var programLocal = $(prefixContainer + ' #studyTree').dynatree('getTree').getNodeByKey('LOCAL');
+                	if(programLocal != null){
+                		programLocal.activate();
+                		programLocal.focus();
+                	}
                 }
             }
 

@@ -429,6 +429,15 @@
                     return errorCode;
                 },
 
+                constructDataStructureFromDetails: function (details) {
+                    var returnVal = {};
+                    $.each(details.vals(), function (key, value) {
+                        returnVal[value.variable.cvTermId] = null;
+                    });
+
+                    return returnVal;
+                },
+
                 getSettingsArray: function () {
                     if (settingsArray.length === 0) {
                         angular.forEach(service.settings, function (value, key) {

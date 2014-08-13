@@ -192,13 +192,26 @@
             $scope.useExistingTrial = function (existingTrialID) {
                 $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
                     // update data and settings
+
+                    var environmentData = TrialManagerDataService.extractData(data.environmentData);
+                    var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
+
+                    if (environmentData.noOfEnvironments > 0 && environmentData.environments.length === 0) {
+                        while (environmentData.environments.length !== environmentData.noOfEnvironments) {
+                            environmentData.environments.push({
+                                managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(environmentSettings.managementDetails),
+                                trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(environmentSettings.trialConditionDetails)
+                            });
+                        }
+                    }
+
                     TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
-                    TrialManagerDataService.updateCurrentData('environments', TrialManagerDataService.extractData(data.environmentData));
+                    TrialManagerDataService.updateCurrentData('environments', environmentData);
                     TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(data.treatmentFactorsData));
                     // TODO : treatment factor here
 
                     TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(data.trialSettingsData));
-                    TrialManagerDataService.updateSettings('environments', TrialManagerDataService.extractSettings(data.environmentData));
+                    TrialManagerDataService.updateSettings('environments', environmentSettings);
                     TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
                     TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(data.treatmentFactorsData));
                     TrialManagerDataService.updateSettings('measurements', TrialManagerDataService.extractSettings(data.measurementsData));

@@ -30,17 +30,6 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 
             TrialManagerDataService.registerSetting('environments', function (newValue) {
                 angular.copy(newValue, $scope.settings);
-
-                // this piece of code relies on the fact that, during use previous trial functionality
-                // settings data is updated last
-                if ($scope.data.noOfEnvironments > 0 && $scope.data.environments.length === 0) {
-                    while ($scope.data.environments.length !== $scope.data.noOfEnvironments) {
-                        $scope.data.environments.push({
-                            managementDetailValues: $scope.constructDataStructureFromDetails($scope.settings.managementDetails),
-                            trialDetailValues: $scope.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
-                        });
-                    }
-                }
             });
 
             $scope.temp = {
@@ -162,15 +151,6 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                         });
                     }
                 });
-            };
-
-            $scope.constructDataStructureFromDetails = function (details) {
-                var returnVal = {};
-                $.each(details.vals(), function (key, value) {
-                    returnVal[value.variable.cvTermId] = null;
-                });
-
-                return returnVal;
             };
         }]);
 })();

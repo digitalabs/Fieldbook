@@ -217,11 +217,14 @@ nrlatin somehow cannot exceed the nreplicates value specified.  A technical erro
 	
 	public List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params) {
 		if (params.getUseLatenized() != null && params.getUseLatenized()) {
-			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.BLOCK_SIZE.getId(), TermId.NO_OF_REPS_IN_COLS.getId(),
-				TermId.REPLICATIONS_MAP.getId(), TermId.NO_OF_CBLKS_LATINIZE.getId(), TermId.NO_OF_ROWS_IN_REPS.getId(), TermId.NO_OF_COLS_IN_REPS.getId());
+			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId(), 
+				TermId.NO_OF_ROWS_IN_REPS.getId(), TermId.NO_OF_COLS_IN_REPS.getId(),
+				TermId.NO_OF_CROWS_LATINIZE.getId(), TermId.NO_OF_CBLKS_LATINIZE.getId(), TermId.REPLICATIONS_MAP.getId(),   
+				TermId.NO_OF_REPS_IN_COLS.getId());
 		}
 		else {
-			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.BLOCK_SIZE.getId(), TermId.NO_OF_REPS_IN_COLS.getId());
+			return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.BLOCK_SIZE.getId(), 
+					TermId.NO_OF_ROWS_IN_REPS.getId(), TermId.NO_OF_COLS_IN_REPS.getId());
 		}
 	}
 

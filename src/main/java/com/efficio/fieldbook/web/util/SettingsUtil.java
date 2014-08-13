@@ -2152,12 +2152,15 @@ public class SettingsUtil {
 	public static String getExperimentalDesignValue(ExpDesignParameterUi param, TermId termId) {
     	switch (termId) {
     		case EXPERIMENT_DESIGN_FACTOR : return String.valueOf(param.getDesignType()); 
+    		case NUMBER_OF_REPLICATES : return String.valueOf(param.getReplicationsCount());
     		case BLOCK_SIZE : return String.valueOf(param.getBlockSize());
-    		case NO_OF_REPS_IN_COLS : return String.valueOf(param.getReplicationsCount());
-    		case REPLICATIONS_MAP : return param.getReplatinGroups();
+    		case REPLICATIONS_MAP : return String.valueOf(param.getReplicationsArrangement());
+    		case NO_OF_REPS_IN_COLS : return param.getReplatinGroups();
     		case NO_OF_CBLKS_LATINIZE : return String.valueOf(param.getNblatin());
     		case NO_OF_ROWS_IN_REPS : return String.valueOf(param.getRowsPerReplications());
     		case NO_OF_COLS_IN_REPS : return String.valueOf(param.getColsPerReplications());
+    		case NO_OF_CCOLS_LATINIZE : return param.getNclatin();
+    		case NO_OF_CROWS_LATINIZE : return param.getNrlatin();
     	}
     	return "";
     }

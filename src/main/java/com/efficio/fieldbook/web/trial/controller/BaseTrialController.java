@@ -280,6 +280,11 @@ public abstract class BaseTrialController extends SettingsController {
 
         data.setNoOfEnvironments(trialObservations.size());
 
+        // minimum number of environments is 1
+        if (data.getNoOfEnvironments() == 0) {
+            data.setNoOfEnvironments(1);
+        }
+
         List<Environment> environments = new ArrayList<Environment>();
         for (MeasurementRow row : trialObservations) {
             Environment environment = new Environment();

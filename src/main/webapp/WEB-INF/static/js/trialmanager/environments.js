@@ -22,6 +22,15 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                 $scope.settings.trialConditionDetails = [];
             }
 
+            if ($scope.data.noOfEnvironments > 0 && $scope.data.environments.length === 0) {
+                while ($scope.data.environments.length !== $scope.data.noOfEnvironments) {
+                    $scope.data.environments.push({
+                        managementDetailValues: $scope.constructDataStructureFromDetails($scope.settings.managementDetails),
+                        trialDetailValues: $scope.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
+                    });
+                }
+            }
+
             TrialManagerDataService.registerData('environments', function(newValue) {
                 angular.copy(newValue, $scope.data);
                 $scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;

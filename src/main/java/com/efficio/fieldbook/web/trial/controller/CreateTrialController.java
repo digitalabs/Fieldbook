@@ -109,8 +109,8 @@ public class CreateTrialController extends BaseTrialController {
         SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 
         model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo());
-        model.addAttribute("germplasmData", prepareGermplasmTabInfo());
-        model.addAttribute("environmentData", prepareEnvironmentsTabInfo());
+        model.addAttribute("germplasmData", prepareGermplasmTabInfo(false));
+        model.addAttribute("environmentData", prepareEnvironmentsTabInfo(false));
         model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo());
         model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
         model.addAttribute("measurementRowCount", 0);
@@ -237,7 +237,7 @@ public class CreateTrialController extends BaseTrialController {
         return "success";
     }
     
-    protected TabInfo prepareGermplasmTabInfo() {
+    protected TabInfo prepareGermplasmTabInfo(boolean isClearSettings) {
         List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
         List<Integer> initialSettingIDs = buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
@@ -254,14 +254,14 @@ public class CreateTrialController extends BaseTrialController {
         TabInfo info = new TabInfo();
         info.setSettings(initialDetailList);
 
-        if (userSelection.getPlotsLevelList() == null) {
+        if (isClearSettings || userSelection.getPlotsLevelList() == null) {
             userSelection.setPlotsLevelList(initialDetailList);
         }
 
         return info;
     }
 
-    protected TabInfo prepareEnvironmentsTabInfo() throws MiddlewareQueryException{
+    protected TabInfo prepareEnvironmentsTabInfo(boolean isClearSettings) throws MiddlewareQueryException{
         TabInfo info = new TabInfo();
         EnvironmentData data = new EnvironmentData();
         int noOfEnvironments = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
@@ -290,7 +290,7 @@ public class CreateTrialController extends BaseTrialController {
         settingMap.put("managementDetails", managementDetailList);
         settingMap.put("trialConditionDetails", new ArrayList<SettingDetail>());
 
-        if (userSelection.getTrialLevelVariableList() == null || userSelection.getBasicDetails().isEmpty()) {
+        if (isClearSettings || userSelection.getTrialLevelVariableList() == null || userSelection.getBasicDetails().isEmpty()) {
             userSelection.setTrialLevelVariableList(managementDetailList);
         }
 
@@ -361,8 +361,8 @@ public class CreateTrialController extends BaseTrialController {
     @RequestMapping(value = "/clearSettings", method = RequestMethod.GET)
     public String clearSettings() {
     	 try {
-    		 prepareGermplasmTabInfo();
-    		 prepareEnvironmentsTabInfo();
+    		 prepareGermplasmTabInfo(true);
+    		 prepareEnvironmentsTabInfo(true);
 
     		 prepareTrialSettingsTabInfo();
     		 prepareExpDesignTabInfo();

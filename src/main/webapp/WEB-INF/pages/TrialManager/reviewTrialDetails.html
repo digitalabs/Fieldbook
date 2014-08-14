@@ -179,7 +179,7 @@
 	            <div>
 	                <label  class="control-label">
                         <span class="bms-mgt-details fbk-trial-summary-icons"></span>
-                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.level.details}">ENVIRONMENT LEVEL DETAILS</strong>
+                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.level.details}">ENVIRONMENT DETAILS</strong>
 	                </label>
 	            </div>
 	            <div th:if="*{environmentManagementDetails != null and not #lists.isEmpty(environmentManagementDetails)}">
@@ -202,7 +202,7 @@
 					</table>
 				</div>
 				<div th:if="*{environmentManagementDetails == null or #lists.isEmpty(environmentManagementDetails)}">
-					<div class="add_top_padding" th:text="#{no.available.environment.level.details}">No available Environment Level Details</div>
+					<div class="add_top_padding" th:text="#{no.available.environment.level.details}">No available environment details</div>
 				</div>
 			</div>
 

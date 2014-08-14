@@ -2177,7 +2177,15 @@ public class SettingsUtil {
     			break;
     		case NUMBER_OF_REPLICATES : return String.valueOf(param.getReplicationsCount());
     		case BLOCK_SIZE : return String.valueOf(param.getBlockSize());
-    		case REPLICATIONS_MAP : return String.valueOf(param.getReplicationsArrangement());
+    		case REPLICATIONS_MAP : 
+    			if (param.getReplicationsArrangement() != null) {
+    				switch (param.getReplicationsArrangement()) {
+    				case 1 : return String.valueOf(TermId.REPS_IN_SINGLE_COL.getId());
+    				case 2 : return String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId());
+    				case 3 : return String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId());
+    				}
+    			}
+    			break;
     		case NO_OF_REPS_IN_COLS : return param.getReplatinGroups();
     		case NO_OF_CBLKS_LATINIZE : return String.valueOf(param.getNblatin());
     		case NO_OF_ROWS_IN_REPS : return String.valueOf(param.getRowsPerReplications());

@@ -50,6 +50,7 @@
                             : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
                     <strong th:text="${basicDetail.variable.name} + ':'" class="">:</strong>
                     <span th:if="${basicDetail.variable.cvTermId == 8005}" th:text="${basicDetail.value}" class="fieldmap-study-name fbk-hide"></span>
+                    <span th:if="${basicDetail.variable.name == '# of Entries'}" th:text="${basicDetail.value}" class="review-stocks-count fbk-hide"></span>
                     <span th:text="${basicDetail.value}" class="div-select-val "></span>
                     <span th:if="${basicDetail.variable.name == 'Field Map Created' and basicDetail.value == 'Yes'}">
                         <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
@@ -247,10 +248,12 @@
 
 		</div>
 		<div class="col-md-12 sectionContainer collapse expDesignDetails">
-			<div class="col-md-6 add_top_padding">
+			<div th:if="*{experimentalDesignDetails.experimentalDesign eq null}">
+				<span>No available experimental design details.</span>
+			</div>
+			<div th:if="*{experimentalDesignDetails.experimentalDesign ne null}" class="col-md-6">
 	            <div>
 	                <label  class="control-label">
-                        <span class="bms-mgt-details fbk-trial-summary-icons"></span>
                         <strong class="sub-content-heading" th:text="#{review.trial.design.parameters}">Design Parameters</strong>
 	                </label>
 	            </div>
@@ -264,40 +267,42 @@
                     		<strong th:text="#{review.trial.number.of.replications}"></strong>
                     		<span th:if="*{experimentalDesignDetails.numberOfReplicates ne null}" th:text="*{experimentalDesignDetails.numberOfReplicates.value}"></span>
                     	</td></tr>
-                    	<tr><td>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166'}"><td>
                     		<strong th:text="#{review.trial.block.size}"></strong>
-                    		<span th:if="*{experimentalDesignDetails.blockSize ne null}" th:text="*{experimentalDesignDetails.blockSize.value}"></span>
+                    		<span id="review-block-size" th:if="*{experimentalDesignDetails.blockSize ne null}" th:text="*{experimentalDesignDetails.blockSize.value}"></span>
                     	</td></tr>
-                    	<tr><td>
-                    		<strong th:text="#{review.trial.number.contiguous.blocks.latinize}"></strong>
-                    		<span th:if="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize ne null}" 
-                    			th:text="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize.value}"></span>
-                    	</td></tr>
-                    	<tr><td>
-                    		<strong th:text="#{review.trial.replication.arrangement}"></strong>
-                    		<span th:text="*{experimentalDesignDetails.replicationsMapDisplay}"></span>
-                    	</td></tr>
-                    	<tr><td>
-                    		<strong th:text="#{review.trial.reps.in.column}"></strong>
-                    		<span th:if="*{experimentalDesignDetails.numberOfRepsInCols ne null}" 
-                    			th:text="*{experimentalDesignDetails.numberOfRepsInCols.value}"></span>
-                    	</td></tr>
-                    	<tr><td>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
                     		<strong th:text="#{review.trial.rows.in.reps}"></strong>
                     		<span th:if="*{experimentalDesignDetails.numberOfRowsInReps ne null}" 
                     			th:text="*{experimentalDesignDetails.numberOfRowsInReps.value}"></span>
                     	</td></tr>
-                    	<tr><td>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
                     		<strong th:text="#{review.trial.cols.in.reps}"></strong>
                     		<span th:if="*{experimentalDesignDetails.numberOfColsInReps ne null}" 
                     			th:text="*{experimentalDesignDetails.numberOfColsInReps.value}"></span>
                     	</td></tr>
-                    	<tr><td>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166' 
+                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
+                    		<strong th:text="#{review.trial.replication.arrangement}"></strong>
+                    		<span th:text="*{experimentalDesignDetails.replicationsMapDisplay}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166' 
+                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
+                    		<strong th:text="#{review.trial.reps.in.column}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfRepsInCols ne null}" 
+                    			th:text="*{experimentalDesignDetails.numberOfRepsInCols.value}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166'}"><td>
+                    		<strong th:text="#{review.trial.number.contiguous.blocks.latinize}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize ne null}" 
+                    			th:text="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize.value}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
                     		<strong th:text="#{review.trial.number.contiguous.rows.latinize}"></strong>
                     		<span th:if="*{experimentalDesignDetails.numberOfContiguousRowsLatinize ne null}" 
                     			th:text="*{experimentalDesignDetails.numberOfContiguousRowsLatinize.value}"></span>
                     	</td></tr>
-                    	<tr><td>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
                     		<strong th:text="#{review.trial.number.contiguous.cols.latinize}"></strong>
                     		<span th:if="*{experimentalDesignDetails.numberOfContiguousColsLatinize ne null}" 
                     			th:text="*{experimentalDesignDetails.numberOfContiguousColsLatinize.value}"></span>
@@ -305,6 +310,57 @@
                     </table>
 	            </div>
 	        </div>
+			<div th:if="*{experimentalDesignDetails.experimentalDesign ne null}" class="col-md-6">
+	            <div>
+	                <label  class="control-label">
+                        <strong class="sub-content-heading" th:text="#{review.trial.design.summary}">Summary of Design Details</strong>
+	                </label>
+	            </div>
+	            <div>
+                    <table>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.number.of.environments}">Number of trial environments:</strong>
+                    		<span th:text="*{numberOfEnvironments}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166' 
+                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
+                    		<strong th:text="#{review.trial.number.of.treatments}"></strong>
+                    		<span id="review-treatment-count"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166'}"><td>
+                    		<strong th:text="#{review.trial.number.of.blocks}"></strong>
+                    		<span id="review-number-of-blocks"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.treatment.factor}"></strong>
+                    		<span th:if="*{factorsMap[8230] ne null}" th:text="*{factorsMap[8230].variable.name}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166' 
+                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
+                    		<strong th:text="#{review.trial.replicate.factor}"></strong>
+                    		<span th:if="*{factorsMap[8210] ne null}" th:text="*{factorsMap[8210].variable.name}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166' 
+                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10110'}"><td>
+                    		<strong th:text="#{review.trial.block.factor}"></strong>
+                    		<span th:if="*{factorsMap[8220] ne null}" th:text="*{factorsMap[8220].variable.name}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166' 
+                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10110'}"><td>
+                    		<strong th:text="#{review.trial.plot.factor}"></strong>
+                    		<span th:if="*{factorsMap[8200] ne null}" th:text="*{factorsMap[8200].variable.name}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
+                    		<strong th:text="#{review.trial.row.factor}"></strong>
+                    		<span th:if="*{factorsMap[8581] ne null}" th:text="*{factorsMap[8581].variable.name}"></span>
+                    	</td></tr>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
+                    		<strong th:text="#{review.trial.col.factor}"></strong>
+                    		<span th:if="*{factorsMap[8582] ne null}" th:text="*{factorsMap[8582].variable.name}"></span>
+                    	</td></tr>
+                    </table>
+	            </div>
+	    	</div>
 	    </div>
 		
 		

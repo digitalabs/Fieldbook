@@ -11,7 +11,9 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.common.bean;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 
@@ -68,6 +70,8 @@ public class StudyDetails{
     private int numberOfEnvironments;
     
     private ExperimentalDesignVariable experimentalDesignDetails;
+    
+    private Map<Integer, SettingDetail> factorsMap;
 
     /**
      * Instantiates a new study details.
@@ -409,6 +413,27 @@ public class StudyDetails{
 	public void setExperimentalDesignDetails(
 			ExperimentalDesignVariable experimentalDesignDetails) {
 		this.experimentalDesignDetails = experimentalDesignDetails;
+	}
+	
+	public Map<Integer, SettingDetail> getFactorsMap() {
+		if (this.factorsMap == null) {
+			this.factorsMap = new HashMap<Integer, SettingDetail>();
+			if (factorDetails != null) {
+				for (SettingDetail factorDetail : factorDetails) {
+					if (factorDetail.getVariable() != null) {
+						this.factorsMap.put(factorDetail.getVariable().getCvTermId(), factorDetail);
+					}
+				}
+			}
+			if (germplasmDescriptors != null) {
+				for (SettingDetail factorDetail : germplasmDescriptors) {
+					if (factorDetail.getVariable() != null) {
+						this.factorsMap.put(factorDetail.getVariable().getCvTermId(), factorDetail);
+					}
+				}
+			}
+		}
+		return this.factorsMap;
 	}
 
 }

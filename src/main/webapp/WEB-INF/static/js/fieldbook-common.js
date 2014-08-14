@@ -994,8 +994,12 @@ function advanceNursery(tableName) {
 		return;
 	}
 
+	if($('.btn-save-advance-list').length > 0){
+		showAlertMessage('', errorAdvancingStudyMutipleTimes);
+		return;
+	}
 
-	var advanceStudyHref = $('#advance-study-url').attr('href');
+	var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
 
 	if (tableName == 'nursery-table') {
 		if (idVal != null) {

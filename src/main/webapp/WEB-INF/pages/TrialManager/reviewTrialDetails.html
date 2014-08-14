@@ -9,9 +9,9 @@
 				<img th:src="@{/static/img/basic-details.png}" />
 				<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="display:none; margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-				<strong class="sub-content-heading" th:text="#{trial.trialdetails.header}">BASIC DETAILS</strong>				
+				<strong class="sub-content-heading" th:text="#{trial.trialdetails.header}">BASIC DETAILS</strong>
 			</label>
-			<a class="btn btn-info fbk-open-button-left-margin" th:if="*{id lt 0}" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>			
+			<a class="btn btn-info fbk-open-button-left-margin" th:if="*{id lt 0}" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>
 			<div style="float:right;" th:if="*{id lt 0}" >
 				<div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
@@ -70,7 +70,7 @@
 				<span class="bms-mgt-details fbk-trial-summary-icons"></span>
                 <img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="margin-left: -7px; display:none;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-				<strong class="sub-content-heading" th:text="#{fb.study.trialmanagementdetails}">TRIAL MANAGEMENT DETAILS</strong>
+				<strong class="sub-content-heading" th:text="#{fb.study.trialsettings}">TRIAL SETTINGS</strong>
 			</label>
 		</div>
 		<div class="col-md-12 sectionContainer collapse in managementDetails">
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <div th:if="*{managementDetails == null or #lists.isEmpty(managementDetails)}">
-				<div class="col-xs-12 col-md-12" th:text="#{no.available.trial.management.detail}">No available Trial Management Details</div>
+				<div class="col-xs-12 col-md-12" th:text="#{no.available.trial.settings}">No Trial Settings</div>
 			</div>
 		</div>
 		<br/>
@@ -134,7 +134,7 @@
 		   	<div class="col-md-6" th:if="*{treatmentFactorDetails == null or #lists.isEmpty(treatmentFactorDetails)}">
 				<div class="" th:text="#{no.available.treatment.factors}">No available Treatment Factors</div>
 			</div>
-		
+
 			<div class="col-md-6" th:if="*{treatmentFactorDetails != null and not #lists.isEmpty(treatmentFactorDetails)}">
 				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="treatmentFactors">
 				<thead>
@@ -174,12 +174,12 @@
 				<strong class="" th:text="#{trial.trialdetails.environment.count}">Number of environments for this trial:</strong>
 				<span th:text="*{numberOfEnvironments}" ></span>
 			</div>
-			
+
 			<div class="col-md-6 add_top_padding">
 	            <div>
 	                <label  class="control-label">
                         <span class="bms-mgt-details fbk-trial-summary-icons"></span>
-                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.management.details}">ENVIRONMENT MANAGEMENT DETAILS</strong>
+                        <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.level.details}">ENVIRONMENT LEVEL DETAILS</strong>
 	                </label>
 	            </div>
 	            <div th:if="*{environmentManagementDetails != null and not #lists.isEmpty(environmentManagementDetails)}">
@@ -202,7 +202,7 @@
 					</table>
 				</div>
 				<div th:if="*{environmentManagementDetails == null or #lists.isEmpty(environmentManagementDetails)}">
-					<div class="add_top_padding" th:text="#{no.available.environment.management.details}">No available Treatment Factors</div>
+					<div class="add_top_padding" th:text="#{no.available.environment.level.details}">No available Environment Level Details</div>
 				</div>
 			</div>
 
@@ -230,12 +230,12 @@
 					</tr>
 				</tbody>
 				</table>
-				
+
 				<div th:if="*{nurseryConditionDetails == null or #lists.isEmpty(nurseryConditionDetails)}">
 					<div class="add_top_padding" th:text="#{no.available.trial.conditions}">No available traits</div>
 				</div>
 			</div>
-			
+
 		</div>
 		<br />
 		<div class="form-group col-xs-12 col-md-12">

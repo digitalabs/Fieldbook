@@ -1315,6 +1315,11 @@ textarea.form-control {
     padding: 4px;
 }
 
+.form-control.placeholder
+{
+    color: #777 !important;
+}
+
 /* SELECT 2 overrides */
 input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input,
 .select2-container .select2-choices .select2-search-field input, .select2-container .select2-choice, .select2-container .select2-choices {

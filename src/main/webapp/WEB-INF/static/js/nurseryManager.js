@@ -1327,7 +1327,7 @@ function createCharacterTextInput(ctr, name) {
 
 function initializeDateAndSliderInputs() {
 	if ($('.date-input').length > 0) {
-		$('.date-input').each(function() {
+		$('.date-input').placeholder().each(function() {
 			$(this).datepicker({
 				'format' : 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {

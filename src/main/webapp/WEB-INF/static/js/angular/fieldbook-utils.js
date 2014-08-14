@@ -419,6 +419,12 @@
             };
         })
 
+        .directive('jqDatepicker',function() {
+            return function(scope,element,attrs) {
+                $(element).placeholder();
+            }
+        })
+
         .directive('sectionContainer', ['$parse', function ($parse) {
             return {
                 restrict: 'E',

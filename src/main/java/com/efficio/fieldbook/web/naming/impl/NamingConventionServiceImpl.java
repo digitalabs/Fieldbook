@@ -17,6 +17,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.util.TimerWatch;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
+import com.efficio.fieldbook.web.naming.expression.SequenceExpression;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -183,6 +185,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows) throws MiddlewareQueryException {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         int index = 1;
+        TimerWatch timer = new TimerWatch("advance");
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
             		&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
@@ -200,33 +203,55 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             	String countPrefix = processCodeService.applyToName(countPrefixExpression, row).get(0);
             	String countSuffix = processCodeService.applyToName(countSuffixExpression, row).get(0);
             	
-            	int max = germplasmDataManger.getMaximumSequence(row.isBulk(), countPrefix, countSuffix, row.getPlantsSelected().intValue());
-            	row.setCurrentMaxSequence(max);
+//            	int max = germplasmDataManger.getMaximumSequence(row.isBulk(), countPrefix, countSuffix, row.getPlantsSelected().intValue());
+//            	row.setCurrentMaxSequence(max);
             	
             	//may return more than 1 record, esp if sequence is used.
             	List<String> names = processCodeService.applyToName(countExpression, row);
-            	
+
+            	int lastCount = -1;
             	for (String evaluatedCount : names) {
             		String name = countPrefix + evaluatedCount + countSuffix;
-                	if (countExpression.isEmpty() && max > -1) {
-                		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
-                	}
-            		if (row.getChangeDetail() != null) {
-            			row.getChangeDetail().setIndex(index-1); //index in java (starts at 0)
-            			row.getChangeDetail().setOldAdvanceName(name);
-            			int nextSequence = row.getCurrentMaxSequence() + 1;
-            			row.getChangeDetail().setNewAdvanceName(name + "(" + nextSequence + ")");
-            			Locale locale = LocaleContextHolder.getLocale();
-            			row.getChangeDetail().setQuestionText(messageSource.getMessage("advance.nursery.duplicate.question.text", 
-            					new String[] {name}, locale));
-            			row.getChangeDetail().setAddSequenceText(messageSource.getMessage("advance.nursery.duplicate.add.sequence.text", 
-            					new String[] {row.getChangeDetail().getNewAdvanceName()}, locale));
+            		Integer currentCount = getCount(evaluatedCount);
+            		if (currentCount != null) {
+            			if (currentCount <= lastCount) {
+            				currentCount = lastCount + 1;
+            				name = countPrefix + currentCount + countSuffix;
+            			}
+	        			boolean isMatch, isExit = false;
+	        			do {
+	            			isMatch = germplasmDataManger.checkIfMatches(name);
+		            		isExit = false;
+		            		if (isMatch) {
+		            			if (countExpression.equalsIgnoreCase(SequenceExpression.KEY)) {
+		            				currentCount++;
+		            				name = countPrefix + currentCount + countSuffix;
+		            			}
+		            			else {
+		                    		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
+		                			row.getChangeDetail().setIndex(index-1); //index in java (starts at 0)
+		                			row.getChangeDetail().setOldAdvanceName(name);
+		                			int nextSequence = currentCount + 1;
+		                			row.getChangeDetail().setNewAdvanceName(name + "(" + nextSequence + ")");
+		                			Locale locale = LocaleContextHolder.getLocale();
+		                			row.getChangeDetail().setQuestionText(messageSource.getMessage("advance.nursery.duplicate.question.text", 
+		                					new String[] {name}, locale));
+		                			row.getChangeDetail().setAddSequenceText(messageSource.getMessage("advance.nursery.duplicate.add.sequence.text", 
+		                					new String[] {row.getChangeDetail().getNewAdvanceName()}, locale));
+		            				
+		            				isExit = true;
+		            			}
+		            		}
+	        			} while (isMatch && !isExit);
+
+	        			addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
+	        			lastCount = currentCount;
             		}
-            		addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
             	}
             }
         }
             
+        timer.stop();
         return list;
     }
     
@@ -247,5 +272,22 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     				new Object[] {row.getGermplasm().getDesig()}, LocaleContextHolder.getLocale())); 
     	}
     	return name;
+    }
+    
+    private Integer getCount(String countStr) {
+    	if (countStr.equals("")) {
+    		return 1;
+    	}
+    	String[] countArray = countStr.split("\\D");
+    	if (countArray.length > 0) {
+	    	String count = countArray[countArray.length-1];
+	    	if (count.equals("")) {
+	    		return 1;
+	    	}
+	    	if (NumberUtils.isNumber(count)) {
+	    		return Integer.valueOf(count);
+	    	}
+    	}
+   		return null;
     }
 }

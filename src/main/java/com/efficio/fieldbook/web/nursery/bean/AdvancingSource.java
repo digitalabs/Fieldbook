@@ -38,6 +38,8 @@ public class AdvancingSource {
     private Method sourceMethod;
     private int currentMaxSequence;
     private AdvanceGermplasmChangeDetail changeDetail;
+    private String prefix;
+    private String suffix;
 
     public AdvancingSource(ImportedGermplasm germplasm, List<Name> names,
 			Integer plantsSelected, Method breedingMethod, boolean isCheck,
@@ -234,6 +236,34 @@ public class AdvancingSource {
 	 */
 	public void setChangeDetail(AdvanceGermplasmChangeDetail changeDetail) {
 		this.changeDetail = changeDetail;
+	}
+
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
+
+	/**
+	 * @param prefix the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	/**
+	 * @return the suffix
+	 */
+	public String getSuffix() {
+		return suffix;
+	}
+
+	/**
+	 * @param suffix the suffix to set
+	 */
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
 	}
     
 }

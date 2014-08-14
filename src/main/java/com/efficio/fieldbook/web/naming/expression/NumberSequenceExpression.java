@@ -3,9 +3,11 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import org.springframework.stereotype.Service;
+
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
+@Service
 public abstract class NumberSequenceExpression implements Expression {
 
 	protected void applyNumberSequence(List<StringBuilder> values, AdvancingSource source) {
@@ -18,15 +20,12 @@ public abstract class NumberSequenceExpression implements Expression {
 	                    source.getPlantsSelected() > 1) {
 	
 	                Integer newValue = source.getPlantsSelected();
-	                value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
+                	value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
 	            }
 	            else {
 	                value.replace(startIndex, endIndex, "");
 	            }
 	        }
-            if (source.getCurrentMaxSequence() > -1) {
-            	source.setChangeDetail(new AdvanceGermplasmChangeDetail());
-            }
     	}
     	else {
 			List<StringBuilder> newNames = new ArrayList<StringBuilder>();

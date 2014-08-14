@@ -239,6 +239,78 @@
 		</div>
 		<br />
 		<div class="form-group col-xs-12 col-md-12">
+			<label  class="control-label section-toggle toggle-icon" data-target=".expDesignDetails">
+				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+				<strong class="sub-content-heading" th:text="#{review.trial.experimental.design}">EXPERIMENTAL DESIGN</strong>
+			</label>
+
+		</div>
+		<div class="col-md-12 sectionContainer collapse expDesignDetails">
+			<div class="col-md-6 add_top_padding">
+	            <div>
+	                <label  class="control-label">
+                        <span class="bms-mgt-details fbk-trial-summary-icons"></span>
+                        <strong class="sub-content-heading" th:text="#{review.trial.design.parameters}">Design Parameters</strong>
+	                </label>
+	            </div>
+	            <div>
+                    <table>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.design.type}">Design type:</strong>
+                    		<span th:text="*{experimentalDesignDetails.experimentalDesignDisplay}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.number.of.replications}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfReplicates ne null}" th:text="*{experimentalDesignDetails.numberOfReplicates.value}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.block.size}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.blockSize ne null}" th:text="*{experimentalDesignDetails.blockSize.value}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.number.contiguous.blocks.latinize}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize ne null}" 
+                    			th:text="*{experimentalDesignDetails.numberOfContiguousBlocksLatinize.value}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.replication.arrangement}"></strong>
+                    		<span th:text="*{experimentalDesignDetails.replicationsMapDisplay}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.reps.in.column}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfRepsInCols ne null}" 
+                    			th:text="*{experimentalDesignDetails.numberOfRepsInCols.value}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.rows.in.reps}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfRowsInReps ne null}" 
+                    			th:text="*{experimentalDesignDetails.numberOfRowsInReps.value}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.cols.in.reps}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfColsInReps ne null}" 
+                    			th:text="*{experimentalDesignDetails.numberOfColsInReps.value}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.number.contiguous.rows.latinize}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfContiguousRowsLatinize ne null}" 
+                    			th:text="*{experimentalDesignDetails.numberOfContiguousRowsLatinize.value}"></span>
+                    	</td></tr>
+                    	<tr><td>
+                    		<strong th:text="#{review.trial.number.contiguous.cols.latinize}"></strong>
+                    		<span th:if="*{experimentalDesignDetails.numberOfContiguousColsLatinize ne null}" 
+                    			th:text="*{experimentalDesignDetails.numberOfContiguousColsLatinize.value}"></span>
+                    	</td></tr>
+                    </table>
+	            </div>
+	        </div>
+	    </div>
+		
+		
+		
+		<br />
+		<div class="form-group col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".traitDetails">
 				<img height="25" th:src="@{/static/img/baseline-traits.png}" class="lbl-img" />
 				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />

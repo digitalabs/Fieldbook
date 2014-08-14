@@ -13,6 +13,8 @@ package com.efficio.fieldbook.web.common.bean;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
+
 /**
  * The Class StudyDetails.
  *
@@ -65,6 +67,7 @@ public class StudyDetails{
     
     private int numberOfEnvironments;
     
+    private ExperimentalDesignVariable experimentalDesignDetails;
 
     /**
      * Instantiates a new study details.
@@ -391,6 +394,21 @@ public class StudyDetails{
 	 */
 	public void setNumberOfEnvironments(int numberOfEnvironments) {
 		this.numberOfEnvironments = numberOfEnvironments;
+	}
+
+	/**
+	 * @return the experimentalDesignDetails
+	 */
+	public ExperimentalDesignVariable getExperimentalDesignDetails() {
+		return experimentalDesignDetails;
+	}
+
+	/**
+	 * @param experimentalDesignDetails the experimentalDesignDetails to set
+	 */
+	public void setExperimentalDesignDetails(
+			ExperimentalDesignVariable experimentalDesignDetails) {
+		this.experimentalDesignDetails = experimentalDesignDetails;
 	}
 
 }

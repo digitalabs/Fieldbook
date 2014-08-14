@@ -1524,6 +1524,7 @@ public class SettingsUtil {
         convertWorkbookVariatesToSettingDetails(workbook.getVariates(), fieldbookMiddlewareService, fieldbookService, traits, selectionVariateDetails);
         studyDetails.setVariateDetails(traits);
         studyDetails.setSelectionVariateDetails(selectionVariateDetails);
+        studyDetails.setExperimentalDesignDetails(workbook.getExperimentalDesignVariables());
 
         return studyDetails;
     }
@@ -2151,7 +2152,29 @@ public class SettingsUtil {
     @SuppressWarnings("incomplete-switch")
 	public static String getExperimentalDesignValue(ExpDesignParameterUi param, TermId termId) {
     	switch (termId) {
-    		case EXPERIMENT_DESIGN_FACTOR : return String.valueOf(param.getDesignType()); 
+    		case EXPERIMENT_DESIGN_FACTOR : 
+    			if (param.getDesignType() != null) {
+    				if (param.getDesignType().equals(0)) {
+    					return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId());
+    				}
+    				else if (param.getDesignType().equals(1)) {
+    					if (param.getUseLatenized() != null && param.getUseLatenized()) {
+    						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
+    					}
+    					else {
+    						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId());
+    					}
+    				}
+    				else if (param.getDesignType().equals(2)) {
+    					if (param.getUseLatenized() != null && param.getUseLatenized()) {
+    						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId());
+    					}
+    					else {
+    						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId());
+    					}
+    				}
+    			}
+    			break;
     		case NUMBER_OF_REPLICATES : return String.valueOf(param.getReplicationsCount());
     		case BLOCK_SIZE : return String.valueOf(param.getBlockSize());
     		case REPLICATIONS_MAP : return String.valueOf(param.getReplicationsArrangement());

@@ -93,13 +93,14 @@ function reviewLandingSetup(){
 	}
 	truncateStudyVariableNames('.fbk-variable', 10);
 	
-	$("#review-treatment-count").text($(".review-stocks-count").text());
+	$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-treatment-count').text($('#div-study-tab-' + getCurrentStudyIdInTab() + ' .review-stocks-count').text());
 	
-	if ($("#review-block-size") && $(".review-stocks-count"))
-	var blockSize = parseInt($("#review-block-size").text(), 10);
-	var entrySize = parseInt($(".review-stocks-count").text(), 10);
-	if (blockSize > 0) {
-		var blockCount = entrySize / blockSize;
-		$("#review-number-of-blocks").text(blockCount);
+	if ($('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-block-size') && $('#div-study-tab-' + getCurrentStudyIdInTab() + ' .review-stocks-count')) {
+		var blockSize = parseInt($('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-block-size').text(), 10);
+		var entrySize = parseInt($('#div-study-tab-' + getCurrentStudyIdInTab() + ' .review-stocks-count').text(), 10);
+		if (blockSize > 0) {
+			var blockCount = entrySize / blockSize;
+			$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #review-number-of-blocks').text(blockCount);
+		}
 	}
 }

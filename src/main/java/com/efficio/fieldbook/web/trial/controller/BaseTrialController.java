@@ -295,11 +295,16 @@ public abstract class BaseTrialController extends SettingsController {
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
         List<SettingDetail> trialConditionsList = new ArrayList<SettingDetail>();
         List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," +
-                AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString() + "," + AppConstants.EXP_DESIGN_VARIABLES.getString());
+                AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
         List<Integer> requiredFields = buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
+        List<Integer> filterFields = buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
         HashMap<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
         for (MeasurementVariable var : workbook.getTrialConditions()) {
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
+
+            if (filterFields.contains(var.getTermId())) {
+                continue;
+            }
 
             if (hiddenFields.contains(var.getTermId())) {
                 detail.setHidden(true);

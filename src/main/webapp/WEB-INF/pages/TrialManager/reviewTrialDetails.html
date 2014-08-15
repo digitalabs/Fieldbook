@@ -258,8 +258,8 @@
                         <strong class="sub-content-heading" th:text="#{review.trial.design.parameters}">Design Parameters</strong>
 	                </label>
 	            </div>
-	            <div>
-                    <table>
+	            <div class="add_top_padding">
+                    <table class="fbk-trial-summary-exp-design-section">
                     	<tr><td>
                     		<strong th:text="#{review.trial.design.type}">Design type:</strong>
                     		<span th:text="*{experimentalDesignDetails.experimentalDesignDisplay}"></span>
@@ -317,8 +317,8 @@
                         <strong class="sub-content-heading" th:text="#{review.trial.design.summary}">Summary of Design Details</strong>
 	                </label>
 	            </div>
-	            <div>
-                    <table>
+	            <div class="add_top_padding">
+                    <table class="fbk-trial-summary-exp-design-section">
                     	<tr><td>
                     		<strong th:text="#{review.trial.number.of.environments}">Number of trial environments:</strong>
                     		<span th:text="*{numberOfEnvironments}"></span>

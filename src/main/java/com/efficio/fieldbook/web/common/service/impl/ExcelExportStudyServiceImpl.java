@@ -373,7 +373,12 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		cell = row.createCell(6, HSSFCell.CELL_TYPE_STRING);
 		cleanupValue(variable);
 		
-		
+		try {
+			variable.setPossibleValues(fieldbookService.getAllPossibleValues(variable.getTermId()));
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (variable != null && variable.getPossibleValues() != null
 				&& !variable.getPossibleValues().isEmpty() 
 				&& variable.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()

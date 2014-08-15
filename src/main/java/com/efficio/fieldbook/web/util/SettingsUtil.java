@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -55,6 +54,8 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 
 /**
  * The Class SettingsUtil.
@@ -1028,13 +1029,18 @@ public class SettingsUtil {
     }
 
 
+    public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset, boolean isNursery) {
+    	return convertXmlDatasetToWorkbook(dataset, isNursery, null, null, null);
+    }
     /**
      * Convert xml dataset to workbook.
      *
      * @param dataset the dataset
      * @return the workbook
      */
-    public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset, boolean isNursery) {
+    public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset, boolean isNursery,
+    		ExpDesignParameterUi param, List<Integer> variables, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+    	
         Workbook workbook = new Workbook();
 
         if (isNursery) {
@@ -1054,6 +1060,13 @@ public class SettingsUtil {
                 workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
             }
             workbook.getTreatmentFactors().addAll(convertTreatmentFactorsToTreatmentVariables(trialDataset.getTreatmentFactors()));
+            if (param != null && variables != null) {
+            	try {
+            		setExperimentalDesignToWorkbook(param, variables, workbook, fieldbookMiddlewareService);
+            	} catch (MiddlewareQueryException e) {
+            		//do nothing
+            	}
+            }
         }
 
         return workbook;
@@ -1515,6 +1528,7 @@ public class SettingsUtil {
         convertWorkbookVariatesToSettingDetails(workbook.getVariates(), fieldbookMiddlewareService, fieldbookService, traits, selectionVariateDetails);
         studyDetails.setVariateDetails(traits);
         studyDetails.setSelectionVariateDetails(selectionVariateDetails);
+        studyDetails.setExperimentalDesignDetails(workbook.getExperimentalDesignVariables());
 
         return studyDetails;
     }
@@ -2068,4 +2082,121 @@ public class SettingsUtil {
     	}
     }
     
+    public static void addTrialCondition(TermId termId, ExpDesignParameterUi param, Workbook workbook,
+    		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
+    	
+    	String value = getExperimentalDesignValue(param, termId);
+    	MeasurementVariable mvar = null;
+    	if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+    		for (MeasurementVariable var : workbook.getTrialConditions()) {
+    			if (var.getTermId() == termId.getId()) {
+    				mvar = var;
+    	        	mvar.setValue(value);
+    	        	mvar.setOperation(Operation.UPDATE);
+    	        	mvar.setLabel(PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0));
+    				break;
+    			}
+    		}
+    	}
+    	if (mvar == null) {
+	    	StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(termId.getId());
+	    	if (stdvar != null) {
+		    	mvar = new MeasurementVariable(stdvar.getId()
+		    			, stdvar.getName()
+		    			, stdvar.getDescription()
+		    			, stdvar.getScale().getName()
+		    			, stdvar.getMethod().getName()
+		    			, stdvar.getProperty().getName()
+		    			, stdvar.getDataType().getName()
+		    			, value
+		    			, PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0)
+		    			, stdvar.getConstraints() != null ? stdvar.getConstraints().getMinValue() : null
+		    			, stdvar.getConstraints() != null ? stdvar.getConstraints().getMaxValue() : null
+		    			);
+		    	mvar.setOperation(Operation.ADD);
+		    	mvar.setStoredIn(stdvar.getStoredIn().getId());
+		    	mvar.setDataTypeId(stdvar.getDataType().getId());
+		    	workbook.getTrialConditions().add(mvar);
+		    	workbook.getConditions().add(mvar);
+	    	}
+    	}
+    }
+    
+    public static void removeTrialConditions(List<Integer> ids,Workbook workbook) throws MiddlewareQueryException {
+    	
+    	if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+    		for (MeasurementVariable var : workbook.getConditions()) {
+    			if (ids.contains(var.getTermId())) {
+    				var.setOperation(Operation.DELETE);
+    			}
+    		}
+    	}
+    }
+
+    private static void setExperimentalDesignToWorkbook(ExpDesignParameterUi param, List<Integer> included, Workbook workbook,
+    		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) 
+    				throws MiddlewareQueryException {
+    	
+    	for (Integer id : included) {
+    		TermId termId = TermId.getById(id);
+    		addTrialCondition(termId, param, workbook, fieldbookMiddlewareService);
+    	}
+    	
+		List<Integer> excluded = new ArrayList<Integer>();
+		if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+			for (MeasurementVariable var : workbook.getTrialConditions()) {
+				if (!included.contains(var.getTermId()) && AppConstants.EXP_DESIGN_VARIABLES.getIntegerList().contains(var.getTermId())) {
+					excluded.add(var.getTermId());
+				}
+			}
+		}
+		SettingsUtil.removeTrialConditions(excluded, workbook);
+    }
+    
+    @SuppressWarnings("incomplete-switch")
+	public static String getExperimentalDesignValue(ExpDesignParameterUi param, TermId termId) {
+    	switch (termId) {
+    		case EXPERIMENT_DESIGN_FACTOR : 
+    			if (param.getDesignType() != null) {
+    				if (param.getDesignType().equals(0)) {
+    					return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
+    				}
+    				else if (param.getDesignType().equals(1)) {
+    					if (param.getUseLatenized() != null && param.getUseLatenized()) {
+    						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
+    					}
+    					else {
+    						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId());
+    					}
+    				}
+    				else if (param.getDesignType().equals(2)) {
+    					if (param.getUseLatenized() != null && param.getUseLatenized()) {
+    						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId());
+    					}
+    					else {
+    						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId());
+    					}
+    				}
+    			}
+    			break;
+    		case NUMBER_OF_REPLICATES : return String.valueOf(param.getReplicationsCount());
+    		case BLOCK_SIZE : return String.valueOf(param.getBlockSize());
+    		case REPLICATIONS_MAP : 
+    			if (param.getReplicationsArrangement() != null) {
+    				switch (param.getReplicationsArrangement()) {
+    				case 1 : return String.valueOf(TermId.REPS_IN_SINGLE_COL.getId());
+    				case 2 : return String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId());
+    				case 3 : return String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId());
+    				}
+    			}
+    			break;
+    		case NO_OF_REPS_IN_COLS : return param.getReplatinGroups();
+    		case NO_OF_CBLKS_LATINIZE : return String.valueOf(param.getNblatin());
+    		case NO_OF_ROWS_IN_REPS : return String.valueOf(param.getRowsPerReplications());
+    		case NO_OF_COLS_IN_REPS : return String.valueOf(param.getColsPerReplications());
+    		case NO_OF_CCOLS_LATINIZE : return param.getNclatin();
+    		case NO_OF_CROWS_LATINIZE : return param.getNrlatin();
+    	}
+    	return "";
+    }
 }

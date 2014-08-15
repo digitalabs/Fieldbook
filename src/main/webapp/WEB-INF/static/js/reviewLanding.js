@@ -92,4 +92,14 @@ function reviewLandingSetup(){
 		$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #fieldmap-url-link').hide();
 	}
 	truncateStudyVariableNames('.fbk-variable', 10);
+	
+	$("#review-treatment-count").text($(".review-stocks-count").text());
+	
+	if ($("#review-block-size") && $(".review-stocks-count"))
+	var blockSize = parseInt($("#review-block-size").text(), 10);
+	var entrySize = parseInt($(".review-stocks-count").text(), 10);
+	if (blockSize > 0) {
+		var blockCount = entrySize / blockSize;
+		$("#review-number-of-blocks").text(blockCount);
+	}
 }

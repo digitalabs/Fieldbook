@@ -7,6 +7,7 @@ import java.util.List;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -108,6 +109,11 @@ public class WorkbookUtil {
 	}
 
     public static List<MeasurementRow> createMeasurementRowsFromEnvironments(List<Environment> environments, List<MeasurementVariable> variables) {
+    	return createMeasurementRowsFromEnvironments(environments, variables, null);
+    }
+    public static List<MeasurementRow> createMeasurementRowsFromEnvironments(List<Environment> environments, List<MeasurementVariable> variables,
+    		ExpDesignParameterUi params) {
+    	
         List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 
         if (environments != null) {
@@ -119,6 +125,12 @@ public class WorkbookUtil {
                     if (value == null) {
                         value = environment.getTrialDetailValues().get(Integer.toString(var.getTermId()));
                         phenotypeId = environment.getPhenotypeIDMap().get(Integer.toString(var.getTermId()));
+                    }
+                    if (params != null && value == null) {
+                    	TermId termId = TermId.getById(var.getTermId());
+                    	if (termId != null) {
+                    		value = SettingsUtil.getExperimentalDesignValue(params, termId);
+                    	}
                     }
 
                     boolean isEditable = ! (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());

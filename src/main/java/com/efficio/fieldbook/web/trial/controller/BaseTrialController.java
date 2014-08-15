@@ -14,7 +14,6 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.service.api.OntologyService;
 
 import javax.annotation.Resource;
@@ -100,6 +99,80 @@ public abstract class BaseTrialController extends SettingsController {
         }
 
         return returnVal;
+    }
+
+    protected TabInfo prepareExperimentalDesignTabInfo(ExperimentalDesignVariable xpDesignVariable, boolean isUsePrevious) throws MiddlewareQueryException {
+        TabInfo tabInfo = new TabInfo();
+        // currently, the saved experimental design information is not loaded up when choosing a previous trial as template
+        if (!isUsePrevious && xpDesignVariable != null) {
+            ExpDesignParameterUi data = new ExpDesignParameterUi();
+
+            // as per discussion, resolvable is always set to true currently
+            data.setIsResolvable(true);
+
+            // default values
+            data.setDesignType(0);
+            data.setUseLatenized(false);
+
+            data.setBlockSize(getExperimentalDesignData(xpDesignVariable.getBlockSize()));
+
+            // set cols per replication
+            data.setColsPerReplications(getExperimentalDesignData(xpDesignVariable.getNumberOfColsInReps()));
+            data.setRowsPerReplications(getExperimentalDesignData(xpDesignVariable.getNumberOfRowsInReps()));
+
+            data.setNclatin(getExperimentalDesignData(xpDesignVariable.getNumberOfContiguousColsLatinize()));
+            data.setNblatin(getExperimentalDesignData(xpDesignVariable.getNumberOfContiguousBlocksLatinize()));
+            data.setNrlatin(getExperimentalDesignData(xpDesignVariable.getNumberOfContiguousRowsLatinize()));
+
+            data.setReplatinGroups(getExperimentalDesignData(xpDesignVariable.getNumberOfRepsInCols()));
+            String replicationsMap = getExperimentalDesignData(xpDesignVariable.getReplicationsMap());
+
+            if (replicationsMap != null) {
+                Integer repArrangementID = Integer.parseInt(replicationsMap);
+                if (TermId.REPS_IN_SINGLE_COL.getId() == repArrangementID) {
+                    data.setReplicationsArrangement(1);
+                } else if (TermId.REPS_IN_SINGLE_ROW.getId() == repArrangementID) {
+                    data.setReplicationsArrangement(2);
+                } else if (TermId.REPS_IN_ADJACENT_COLS.getId() == repArrangementID) {
+                    data.setReplicationsArrangement(3);
+                }
+            }
+
+            data.setReplicationsCount(getExperimentalDesignData(xpDesignVariable.getNumberOfReplicates()));
+            String designTypeString = xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
+            if (designTypeString != null) {
+                Integer designTypeTermID = Integer.parseInt(designTypeString);
+
+                if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {
+                    data.setDesignType(0);
+                    data.setUseLatenized(false);
+                } else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId() == designTypeTermID) {
+                    data.setDesignType(1);
+                    data.setUseLatenized(true);
+                } else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
+                    data.setDesignType(1);
+                    data.setUseLatenized(false);
+                } else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId() == designTypeTermID) {
+                    data.setDesignType(2);
+                    data.setUseLatenized(true);
+                } else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
+                    data.setDesignType(2);
+                    data.setUseLatenized(false);
+                }
+            }
+
+            tabInfo.setData(data);
+        }
+
+        return tabInfo;
+    }
+
+    protected String getExperimentalDesignData(MeasurementVariable var) {
+        if (var != null) {
+            return var.getValue();
+        } else {
+            return null;
+        }
     }
 
     protected TabInfo prepareGermplasmTabInfo(List<MeasurementVariable> measurementVariables, boolean isUsePrevious) throws MiddlewareQueryException {
@@ -227,11 +300,17 @@ public abstract class BaseTrialController extends SettingsController {
         Map settingMap = new HashMap();
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
         List<SettingDetail> trialConditionsList = new ArrayList<SettingDetail>();
-        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
+        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," +
+                AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
         List<Integer> requiredFields = buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
+        List<Integer> filterFields = buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
         HashMap<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
         for (MeasurementVariable var : workbook.getTrialConditions()) {
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
+
+            if (filterFields.contains(var.getTermId())) {
+                continue;
+            }
 
             if (hiddenFields.contains(var.getTermId())) {
                 detail.setHidden(true);
@@ -303,8 +382,12 @@ public abstract class BaseTrialController extends SettingsController {
                     String value;
                     if (detail.getVariable().getWidgetType().getType().equals("DATE")) {
                         value = convertDateStringForUI(mData.getValue());
+                    } else if (mData.getcValueId() != null) {
+                        value = mData.getcValueId();
                     } else {
+
                         value = mData.getValue();
+
                     }
                     managementDetailValues.put(Integer.toString(mData.getMeasurementVariable().getTermId()), value);
                 }
@@ -489,7 +572,7 @@ public abstract class BaseTrialController extends SettingsController {
         return info;
     }
 
-    protected TabInfo prepareExpDesignTabInfo() throws MiddlewareQueryException{
+    protected TabInfo prepareExperimentalDesignSpecialData() throws MiddlewareQueryException{
         TabInfo info = new TabInfo();
         ExpDesignData data = new ExpDesignData();
         List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();

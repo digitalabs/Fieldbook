@@ -13,7 +13,7 @@
                         </div>
                         <div ng-show="currentDesignType.withResolvable &amp;&amp; false">
                             <label class="checkbox-inline">
-                                <input type="checkbox" ng-model="currentDesignType.data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
+                                <input type="checkbox" ng-model="data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
                             </label>
                         </div>
 
@@ -36,9 +36,9 @@
         <div class="col-md-6 col-sm-5">
             <section-container heading="SUMMARY OF DESIGN DETAILS">
                 <div name="content">
-                    <div class="add-bottom-padding" ng-show="currentDesignType.data.noOfEnvironments &gt;= 0"><b>Number of trial environments:</b> <span>{{currentDesignType.data.noOfEnvironments}}</span></div>
+                    <div class="add-bottom-padding" ng-show="data.noOfEnvironments &gt;= 0"><b>Number of trial environments:</b> <span>{{data.noOfEnvironments}}</span></div>
                     <div class="add-bottom-padding" ng-show="currentDesignType.id > 0"><b>Number of treatments:</b> <span>{{totalGermplasmEntryListCount}}</span></div>
-                    <div class="add-bottom-padding" ng-show="currentDesignType.id == 1"><b>Number of blocks:</b> <span>{{(currentDesignType.data.blockSize > 0) ? ((totalGermplasmEntryListCount % currentDesignType.data.blockSize === 0) ? totalGermplasmEntryListCount / currentDesignType.data.blockSize : '') : 0}} <b class="text-danger" ng-show="currentDesignType.data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % currentDesignType.data.blockSize > 0">Invalid block size</b></span></div>
+                    <div class="add-bottom-padding" ng-show="currentDesignType.id == 1"><b>Number of blocks:</b> <span>{{(data.blockSize > 0) ? ((totalGermplasmEntryListCount % data.blockSize === 0) ? totalGermplasmEntryListCount / data.blockSize : '') : 0}} <b class="text-danger" ng-show="data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % data.blockSize > 0">Invalid block size</b></span></div>
                     <div class="add-bottom-padding" ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id" >
                         <b>{{settings.factors.val(key).label}}</b> - <a show-details-modal="key">{{settings.factors.val(key).variable.name}}</a>
                     </div>
@@ -63,7 +63,7 @@
                             <tr ng-repeat="treatmentKey in settings.treatmentFactors.keys()">
                                     <td  ng-class="{odd : $even, even : $odd}"><a show-details-modal="treatmentKey">{{settings.treatmentFactors.val(treatmentKey).variable.name}}</a></td>
                                     <td  ng-class="{odd : $even, even : $odd}">{{settings.treatmentFactors.val(treatmentKey).variable.description}}</td>
-                                    <td  ng-class="{odd : $even, even : $odd}">{{currentDesignType.data.treatmentFactorsData[treatmentKey].levels}}</td>
+                                    <td  ng-class="{odd : $even, even : $odd}">{{data.treatmentFactorsData[treatmentKey].levels}}</td>
                                 </tr>
 
                             </tbody>

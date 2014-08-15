@@ -6,10 +6,10 @@
     'use strict';
 
     angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
-        'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
+        'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
         'TrialSettingsManager','_','$localStorage',
-        function (GERMPLASM_LIST_SIZE,TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
+        function (GERMPLASM_LIST_SIZE,TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA,
                   MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
                   TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager,_,$localStorage) {
 
@@ -197,7 +197,8 @@
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
                     basicDetails: extractBasicDetailsData(BASIC_DETAILS_DATA),
-                    treatmentFactors : extractData(TREATMENT_FACTORS_INITIAL_DATA, 'currentData')
+                    treatmentFactors : extractData(TREATMENT_FACTORS_INITIAL_DATA, 'currentData'),
+                    experimentalDesign : extractData(EXPERIMENTAL_DESIGN_INITIAL_DATA)
                 },
                 // standard variable [meta-data] information or a particular tab settings information
                 // what I get is an instance of OrderedHash containing an array of keys with the map
@@ -222,8 +223,8 @@
                     experimentalDesign: {
                         factors: (function () {
                             var hardFactors = new angular.OrderedHash();
-                            if (EXPERIMENTAL_DESIGN_INITIAL_DATA && EXPERIMENTAL_DESIGN_INITIAL_DATA.data) {
-                                hardFactors.addList(EXPERIMENTAL_DESIGN_INITIAL_DATA.data.expDesignDetailList, function (item) {
+                            if (EXPERIMENTAL_DESIGN_SPECIAL_DATA && EXPERIMENTAL_DESIGN_SPECIAL_DATA.data) {
+                                hardFactors.addList(EXPERIMENTAL_DESIGN_SPECIAL_DATA.data.expDesignDetailList, function (item) {
                                     return item.variable.cvTermId;
                                 });
                             }
@@ -235,22 +236,6 @@
                         germplasmTotalListCount: GERMPLASM_LIST_SIZE,
 
                         showAdvancedOptions : [false,false,false],
-
-                        data: {
-                            'noOfEnvironments': null,
-                            'designType': 0,
-                            'replicationsCount' : null,
-                            'isResolvable' : true,
-                            'blockSize' : null,
-                            'useLatenized' : false,
-                            'nblatin' : null,
-                            'replicationsArrangement' : null,
-                            'rowsPerReplications' : null,
-                            'colsPerReplications' : null,
-                            'nrlatin': null,
-                            'nclatin': null,
-                            'replatinGroups': ''
-                        }
                     },
                     treatmentLevelPairs: {}
 

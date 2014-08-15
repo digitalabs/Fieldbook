@@ -1,13 +1,13 @@
-<div class="add_top_padding" ng-show="currentDesignType.data.isResolvable">
+<div class="add_top_padding" ng-show="data.isResolvable">
     <label class=" control-label"><strong>Number of replications:</strong></label>
-    <span><input class="form-control" input-type="number" name="replicationsCount" valid-number="" min-val="2" max-val="12" ng-model="currentDesignType.data.replicationsCount" style="width: 100px"/></span>
+    <span><input class="form-control" input-type="number" name="replicationsCount" valid-number="" min-val="2" max-val="12" ng-model="data.replicationsCount" style="width: 100px"/></span>
 </div>
 <div class="add_top_padding">
     <label class=" control-label"><strong>Block size:</strong></label>
-    <span class=""><input name="blockSize" min-val="2" ng-model="currentDesignType.data.blockSize" input-type="number" valid-number="" class="form-control" style="width: 100px"/></span>
+    <span class=""><input name="blockSize" min-val="2" ng-model="data.blockSize" input-type="number" valid-number="" class="form-control" style="width: 100px"/></span>
 </div>
 
-<div ng-show="currentDesignType.data.isResolvable &amp;&amp; !hideFeatures">
+<div ng-show="data.isResolvable &amp;&amp; !hideFeatures">
 
     <div ng-hide="settings.showAdvancedOptions[currentDesignType.id]" class="add_top_padding">
         <a ng-click="settings.showAdvancedOptions[currentDesignType.id] = true">Show advanced options</a>
@@ -17,19 +17,19 @@
 
         <div class="add_top_padding">
             <label class="checkbox-inline">
-                <input name="useLatenized" ng-model="currentDesignType.data.useLatenized" type="checkbox" id="inlineCheckbox2" value="option2"/> <span>Use latinized design</span>
+                <input name="useLatenized" ng-model="data.useLatenized" type="checkbox" id="inlineCheckbox2" value="option2"/> <span>Use Latinized Design</span>
             </label>
         </div>
 
         <div class="add_top_padding">
             <label class=" control-label"><strong>Number of contiguous blocks to latinize:</strong></label>
-            <span class=""><input ng-disabled="!currentDesignType.data.useLatenized" ng-model="currentDesignType.data.nblatin" type="text" valid-number="" name="nblatin" class="form-control" style="width: 100px"/> </span>
+            <span class=""><input ng-disabled="!data.useLatenized" ng-model="data.nblatin" type="text" valid-number="" name="nblatin" class="form-control" style="width: 100px"/> </span>
         </div>
 
         <div class="add_top_padding">
             <label class=" control-label"><strong style="display: inline-block; width: 180px;">How are the replications to be arranged in the field?</strong></label>
             <span style="display: inline-block; width: 210px !important;">
-                <select name="replicationsArrangement" ng-disabled="!currentDesignType.data.useLatenized" ui-select2="{minimumResultsForSearch: 10}" class="form-control" ng-model="currentDesignType.data.replicationsArrangement">
+                <select name="replicationsArrangement" ng-disabled="!data.useLatenized" ui-select2="{minimumResultsForSearch: 10}" class="form-control" ng-model="data.replicationsArrangement">
                     <option value=""></option>
                     <option ng-repeat="(key,name) in replicationsArrangementGroupsOpts" value="{{key}}">{{name}}</option>
                 </select>
@@ -39,7 +39,7 @@
         <div class="add_top_padding">
             <label class=" control-label"><strong style="display: inline-block; width: 270px;">Please enter the number of reps in each column, running from left to right:</strong></label>
             <div style="display: inline-block; vertical-align: top">
-                <input name="replatinGroups" ng-pattern="/^[1-9][0-9]*(,[1-9][0-9]*)*$/" ng-disabled="!currentDesignType.data.useLatenized || currentDesignType.data.replicationsArrangement != 3" ng-model="$parent.currentDesignType.data.replatinGroups" style="width: 100px" type="text" class="form-control"/>
+                <input name="replatinGroups" ng-pattern="/^[1-9][0-9]*(,[1-9][0-9]*)*$/" ng-disabled="!data.useLatenized || data.replicationsArrangement != 3" ng-model="$parent.data.replatinGroups" style="width: 100px" type="text" class="form-control"/>
                 <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-append-to-body="true" tooltip="The number of reps in each column should be noted as numbers separated by columns, e.g. 1,1,1"></span>
             </div>
         </div>

@@ -2,10 +2,8 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -44,7 +42,6 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -176,6 +173,7 @@ public class OpenTrialController extends
             model.addAttribute("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
             model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
             model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
+            model.addAttribute("experimentalDesignData", prepareExperimentalDesignTabInfo(trialWorkbook.getExperimentalDesignVariables(), false));
             model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                     SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             model.addAttribute("measurementRowCount", trialWorkbook.getObservations().size());
@@ -185,7 +183,7 @@ public class OpenTrialController extends
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             form.setStudyId(trialId);
             model.addAttribute("createNurseryForm", form); //so that we can reuse the same age being use for nursery
-            model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
+            model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
             model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
             
             model.addAttribute("germplasmListSize", 0);
@@ -280,7 +278,7 @@ public class OpenTrialController extends
 
         SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
         
-        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService);
         
         if (userSelection.getTemporaryWorkbook() != null) {
             userSelection.setMeasurementRowList(null);
@@ -296,7 +294,7 @@ public class OpenTrialController extends
         List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
         variablesForEnvironment.addAll(workbook.getTrialVariables());
 
-        List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment) ;
+        List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment, userSelection.getExpDesignParams()) ;
         workbook.setTrialObservations(trialEnvironmentValues);
 
         createStudyDetails(workbook, data.getBasicDetails());

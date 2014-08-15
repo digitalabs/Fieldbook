@@ -13,15 +13,13 @@ package com.efficio.fieldbook.web.common.service;
 
 
 import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -62,4 +60,10 @@ public interface ExperimentDesignService {
 	 * @return the exp design validation output
 	 */
 	ExpDesignValidationOutput validate(ExpDesignParameterUi expDesignParameter, List<ImportedGermplasm> germplasmList);
+	
+	/**
+	 * Return the list of variables in exp design used by this design.
+	 * @return
+	 */
+	List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params);
 }

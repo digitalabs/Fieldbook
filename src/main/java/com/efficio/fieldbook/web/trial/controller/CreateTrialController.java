@@ -112,7 +112,7 @@ public class CreateTrialController extends BaseTrialController {
         model.addAttribute("germplasmData", prepareGermplasmTabInfo(false));
         model.addAttribute("environmentData", prepareEnvironmentsTabInfo(false));
         model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo());
-        model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
+        model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
         model.addAttribute("measurementRowCount", 0);
 
         model.addAttribute("createNurseryForm", form); //so that we can reuse the same page being use for nursery
@@ -218,12 +218,12 @@ public class CreateTrialController extends BaseTrialController {
                 null, userSelection.getNurseryConditions(), false);
 
         SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
-        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService);
         
         List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
         variablesForEnvironment.addAll(workbook.getTrialVariables());
 
-        List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment) ;
+        List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment, userSelection.getExpDesignParams()) ;
         workbook.setTrialObservations(trialEnvironmentValues);
 
         createStudyDetails(workbook, data.getBasicDetails());

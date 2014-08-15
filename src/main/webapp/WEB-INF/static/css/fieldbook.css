@@ -1273,6 +1273,10 @@ input::-ms-clear {
     margin-left: 5px
 }
 
+.fbk-trial-summary-exp-design-section tr td {
+    padding-bottom: 8px;
+}
+
 .bms-exp-design {
     color: #9E8376;
 }

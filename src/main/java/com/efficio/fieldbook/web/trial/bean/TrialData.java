@@ -13,6 +13,7 @@ public class TrialData {
     private TrialSettingsBean trialSettings;
     private EnvironmentData environments;
     private TreatmentFactorTabBean treatmentFactors;
+    private ExpDesignParameterUi experimentalDesign;
 
     public TrialData() {
     }
@@ -47,5 +48,13 @@ public class TrialData {
 
     public void setTreatmentFactors(TreatmentFactorTabBean treatmentFactors) {
         this.treatmentFactors = treatmentFactors;
+    }
+
+    public ExpDesignParameterUi getExperimentalDesign() {
+        return experimentalDesign;
+    }
+
+    public void setExperimentalDesign(ExpDesignParameterUi experimentalDesign) {
+        this.experimentalDesign = experimentalDesign;
     }
 }

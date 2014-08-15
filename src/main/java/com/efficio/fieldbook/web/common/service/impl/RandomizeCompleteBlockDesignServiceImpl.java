@@ -208,5 +208,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		return output;
 	}
 
-	
+	public List<Integer> getExperimentalDesignVariables(ExpDesignParameterUi params) {
+		return Arrays.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId());
+	}
+
 }

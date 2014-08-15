@@ -51,6 +51,7 @@ import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
@@ -379,15 +380,16 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		if (variable != null && variable.getPossibleValues() != null
 				&& !variable.getPossibleValues().isEmpty() 
 				&& variable.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
 				&& variable.getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
 				&& !variable.getProperty().equals(breedingMethodPropertyName)
 				&& variable.getTermId() != TermId.PI_ID.getId()
-				&& variable.getTermId() != TermId.LOCATION_ID.getId()) {
-
-			cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(variable.getValue(), variable.getPossibleValues()));
+				&& variable.getTermId() != Integer.parseInt(AppConstants.COOPERATOR_ID.getString())
+				&& variable.getTermId() != TermId.LOCATION_ID.getId()) {		
+				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(variable.getValue(), variable.getPossibleValues()));
 		}else if(variable.getDataTypeId() != null && variable.getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())){
 			if(variable.getValue() != null && !"".equalsIgnoreCase(variable.getValue())){
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
@@ -436,7 +438,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		CellStyle style =  xlsBook.createCellStyle();
 		DataFormat format = xlsBook.createDataFormat();
 		style.setDataFormat(format.getFormat("0.#"));
-
+		
+		
+		
 		for (MeasurementVariable variable : variables) {
 			MeasurementData dataCell = dataRow.getMeasurementData(variable.getTermId());
 			if (dataCell != null) {
@@ -450,8 +454,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
 						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
 						&& !dataCell.getMeasurementVariable().getProperty().equals(propertyName)) {
-	
-					cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
+					
+						cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
+					
 				}
 				else {
 					

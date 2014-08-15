@@ -790,6 +790,7 @@ public class FieldbookServiceImpl implements FieldbookService{
   			if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()
   	    			&& workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
   				MeasurementVariable locationNameVar = WorkbookUtil.getMeasurementVariable(workbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
+  				MeasurementVariable cooperatorNameVar = WorkbookUtil.getMeasurementVariable(workbook.getTrialConditions(), AppConstants.COOPERATOR_NAME.getInt());
   				if(locationNameVar != null){
   					//we set it to the trial observation level
   					
@@ -800,7 +801,19 @@ public class FieldbookServiceImpl implements FieldbookService{
 	    				}
 	    			}
   					
-  				}  				
+  				}  
+  				
+  				if(cooperatorNameVar != null){
+  					//we set it to the trial observation level
+  					
+	    			for (MeasurementRow row : workbook.getTrialObservations()) {
+	    				MeasurementData data = row.getMeasurementData(cooperatorNameVar.getTermId());
+	    				if(data != null){
+	    					data.setValue(cooperatorNameVar.getValue());
+	    				}
+	    			}
+  					
+  				}  
   			}
   		}
   	}

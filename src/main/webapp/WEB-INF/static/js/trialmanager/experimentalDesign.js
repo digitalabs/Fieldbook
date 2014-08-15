@@ -235,12 +235,12 @@
                                     return false;
                                 }
 
-                                if ($scope.data.nblatin >= $scope.data.replicationsCount) {
+                                if ($scope.data.nblatin >= Number($scope.data.replicationsCount)) {
                                     showErrorMessage('page-message', EXP_DESIGN_MSGS[23]);
                                     return false;
                                 }
 
-                                if ($scope.data.replicationsArrangement <= 0) {
+                                if (Number($scope.data.replicationsArrangement) <= 0) {
                                     showErrorMessage('page-message', EXP_DESIGN_MSGS[21]);
                                     return false;
 
@@ -259,7 +259,7 @@
                                         sum += Number(arrGroups[i]);
                                     }
 
-                                    if (sum !== $scope.data.replicationsCount) {
+                                    if (sum !== Number($scope.data.replicationsCount)) {
                                         showErrorMessage('page-message', EXP_DESIGN_MSGS[12]);
                                         return false;
                                     }
@@ -323,7 +323,7 @@
                                         _sum += Number(_arrGroups[j]);
                                     }
 
-                                    if (_sum !== $scope.data.replicationsCount) {
+                                    if (_sum !== Number($scope.data.replicationsCount)) {
                                         showErrorMessage('page-message', EXP_DESIGN_MSGS[12]);
                                         return false;
                                     }

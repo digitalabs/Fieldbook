@@ -365,7 +365,7 @@ public class CreateTrialController extends BaseTrialController {
     		 prepareEnvironmentsTabInfo(true);
 
     		 prepareTrialSettingsTabInfo();
-    		 prepareExpDesignTabInfo();
+    		 prepareExperimentalDesignSpecialData();
 		     List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 		     userSelection.setBaselineTraitsList(detailList);
 		     userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());

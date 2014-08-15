@@ -154,8 +154,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					}else if(tempObj instanceof MeasurementData){
 						MeasurementData tempVar = (MeasurementData) tempObj;
 						tempVar.setValue(tempVal);	
+						
 						if(tempVar.getMeasurementVariable() != null){
 							tempVar.getMeasurementVariable().setValue(tempVal);
+							if (tempVar.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+								tempVar.setcValueId(tempVal);
+							}
 						}
 					}
 				}

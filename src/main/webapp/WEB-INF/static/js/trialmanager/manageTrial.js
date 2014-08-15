@@ -125,6 +125,18 @@
         [          '$rootScope', '$state', '$stateParams', 'uiSelect2Config',
             function ($rootScope, $state, $stateParams, uiSelect2Config) {
 
+                //$('.import-study-data').data('data-import', '0');
+                $rootScope.$on('$stateChangeStart',
+                    function(event, toState, toParams, fromState, fromParams){
+                        if ($('.import-study-data').data('data-import') === 1) {
+                            showAlertMessage('',importSaveDataWarningMessage);
+
+                            event.preventDefault();
+                        }
+
+                        // a 'transition prevented' error
+                    });
+
                 // It's very handy to add references to $state and $stateParams to the $rootScope
                 // so that you can access them from any scope within your applications.For example,
                 // <li ui-sref-active="active }"> will set the <li> // to active whenever

@@ -128,7 +128,7 @@
                 //$('.import-study-data').data('data-import', '0');
                 $rootScope.$on('$stateChangeStart',
                     function(event, toState, toParams, fromState, fromParams){
-                        if ($('.import-study-data').data('data-import') === 1) {
+                        if ($('.import-study-data').data('data-import') === '1') {
                             showAlertMessage('',importSaveDataWarningMessage);
 
                             event.preventDefault();

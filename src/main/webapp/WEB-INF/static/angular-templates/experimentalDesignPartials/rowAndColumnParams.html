@@ -21,7 +21,8 @@
 
         <div class="add_top_padding">
             <label class="checkbox-inline">
-                <input name="useLatenized" ng-model="data.useLatenized" type="checkbox" id="inlineCheckbox2" value="option2"/> <span>Use Latinized Design</span>
+                <input name="useLatenized" ng-model="data.useLatenized" type="checkbox" id="inlineCheckbox2" value="true"
+                       ng-click="settings.showAdvancedOptions[currentDesignType.id] = !data.useLatenized"/> <span>Use Latinized Design</span>
             </label>
         </div>
 

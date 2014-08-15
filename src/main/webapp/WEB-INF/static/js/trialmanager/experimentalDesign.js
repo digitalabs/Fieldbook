@@ -46,6 +46,9 @@
                     $scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
 
                     $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+                    if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
+                        $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
+                    }
                 };
                 //FIXME: cheating a bit for the meantime.
 

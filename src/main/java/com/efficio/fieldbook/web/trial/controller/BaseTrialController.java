@@ -111,6 +111,10 @@ public abstract class BaseTrialController extends SettingsController {
             // as per discussion, resolvable is always set to true currently
             data.setIsResolvable(true);
 
+            // default values
+            data.setDesignType(0);
+            data.setUseLatenized(false);
+
             data.setBlockSize(getExperimentalDesignData(xpDesignVariable.getBlockSize()));
 
             // set cols per replication
@@ -147,10 +151,6 @@ public abstract class BaseTrialController extends SettingsController {
                     data.setUseLatenized(true);
                 } else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
                     data.setDesignType(2);
-                    data.setUseLatenized(false);
-                } else {
-                    // display default value
-                    data.setDesignType(0);
                     data.setUseLatenized(false);
                 }
             }

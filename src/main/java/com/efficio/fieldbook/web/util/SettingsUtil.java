@@ -2155,7 +2155,7 @@ public class SettingsUtil {
     		case EXPERIMENT_DESIGN_FACTOR : 
     			if (param.getDesignType() != null) {
     				if (param.getDesignType().equals(0)) {
-    					return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId());
+    					return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
     				}
     				else if (param.getDesignType().equals(1)) {
     					if (param.getUseLatenized() != null && param.getUseLatenized()) {

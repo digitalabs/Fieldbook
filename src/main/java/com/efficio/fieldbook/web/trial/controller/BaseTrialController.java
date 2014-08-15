@@ -14,7 +14,6 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.service.api.OntologyService;
 
 import javax.annotation.Resource;
@@ -129,7 +128,14 @@ public abstract class BaseTrialController extends SettingsController {
             String replicationsMap = getExperimentalDesignData(xpDesignVariable.getReplicationsMap());
 
             if (replicationsMap != null) {
-                data.setReplicationsArrangement(Integer.parseInt(replicationsMap));
+                Integer repArrangementID = Integer.parseInt(replicationsMap);
+                if (TermId.REPS_IN_SINGLE_COL.getId() == repArrangementID) {
+                    data.setReplicationsArrangement(1);
+                } else if (TermId.REPS_IN_SINGLE_ROW.getId() == repArrangementID) {
+                    data.setReplicationsArrangement(2);
+                } else if (TermId.REPS_IN_ADJACENT_COLS.getId() == repArrangementID) {
+                    data.setReplicationsArrangement(3);
+                }
             }
 
             data.setReplicationsCount(getExperimentalDesignData(xpDesignVariable.getNumberOfReplicates()));
@@ -137,7 +143,7 @@ public abstract class BaseTrialController extends SettingsController {
             if (designTypeString != null) {
                 Integer designTypeTermID = Integer.parseInt(designTypeString);
 
-                if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
+                if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {
                     data.setDesignType(0);
                     data.setUseLatenized(false);
                 } else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId() == designTypeTermID) {

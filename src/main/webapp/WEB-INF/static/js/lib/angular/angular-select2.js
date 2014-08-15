@@ -51,7 +51,12 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                             model.push(!isNaN(value.id) ? Number(value.id) : value.id);
                         });
                     } else {
-                        model = !isNaN(select2_data) ? Number(select2_data) : select2_data;
+
+                        if (select2_data === null || select2_data === '') {
+                            model = select2_data;
+                        } else {
+                            model = !isNaN(select2_data) ? Number(select2_data) : select2_data;
+                        }
                     }
                     return model;
                 };

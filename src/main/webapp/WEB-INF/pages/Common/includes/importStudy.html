@@ -369,22 +369,18 @@
 		    $(document).on('location-update', recreateLocationCombo);
 		});
 		function doRefreshNurserySettings() {
-			'use strict';
+			'use strict';			
 			$.ajax(
-				{ 
-					url: '/Fieldbook/ImportManager/retrieve/new/import/variables',
-					type: 'GET',
-					cache: false,
-					success: function(data) {
-						createTableSettingVariables($.parseJSON(data.newTraits),
-								'baselineTraitVariables', 'baselineTraitSettings',
-								3);
-						createTableSettingVariables($.parseJSON(data.newSelectionVariates),
-								'selectionVariatesVariables',
-								'selectionVariatesSettings', 6);
-						displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
-					}
-			});
+					{ 
+						url: '/Fieldbook/NurseryManager/createNursery/refresh/settings/tab',
+						type: 'GET',
+						cache: false,
+						async: false,
+						success: function(data) {
+							$('#chooseSettingsDiv').html(data);
+							displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
+						}
+				});
 		}
 		function doSaveImportedData(){
 			'use strict';
@@ -398,6 +394,11 @@
 							$('.import-study-data').data('data-import', '0');
 							$('.import-study-data').data('measurement-show-already', '0');
 							$('.fbk-discard-imported-data').addClass('fbk-hide');
+							
+							$('body').trigger({
+								type: 'REFRESH_AFTER_IMPORT_SAVE'
+							});
+							
 							if(isNursery()){
 								doRefreshNurserySettings();
 								displayEditFactorsAndGermplasmSection();
@@ -451,6 +452,9 @@
 				
 			}
 			if(resp.isSuccess === 1){
+				if(resp.conditionConstantsImportErrorMessage !== null && resp.conditionConstantsImportErrorMessage !== ''){
+					showAlertMessage('', resp.conditionConstantsImportErrorMessage);	
+				}
 				if(resp.modes != null && resp.modes.length === 0){
 					confirmStudyImport();
 				}else{

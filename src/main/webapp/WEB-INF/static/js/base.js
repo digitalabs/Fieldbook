@@ -17,7 +17,7 @@ function createSuccessNotification( titleDisplay, textDisplay){
 	//we remove all error
 	'use strict';
 	$('.error-notify').remove();
-	$('.warning-notify').remove();
+	//$('.warning-notify').remove();
 	createNotification('default-notification',titleDisplay,textDisplay, 3000, '');
 }
 function createWarningNotification( titleDisplay, textDisplay, duration){

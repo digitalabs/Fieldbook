@@ -453,4 +453,11 @@ public class WorkbookUtil {
             }
         }
     }
+    //we would validate all conditions except for name and the study type
+    public static boolean isConditionValidate(Integer cvTermId){
+    	if(cvTermId != null && cvTermId.intValue() != TermId.STUDY_TYPE.getId() && cvTermId.intValue() != TermId.STUDY_NAME.getId()){
+    		return true;
+    	}
+    	return false;
+    }
 }

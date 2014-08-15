@@ -28,12 +28,14 @@ import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -50,12 +52,14 @@ import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class CreateNurseryController.
@@ -142,7 +146,6 @@ public class CreateNurseryController extends SettingsController {
         }
         setFormStaticData(form, contextParams);
         model.addAttribute("createNurseryForm", form);
-        model.addAttribute("nurseryList", getNurseryList());
         //setupFormData(form);
         return super.showAjaxPage(model, URL_SETTINGS);
     }
@@ -664,4 +667,58 @@ public class CreateNurseryController extends SettingsController {
     public String getProgramID() {
         return getCurrentProjectId();
     }
+    
+    @RequestMapping(value="/refresh/settings/tab", method = RequestMethod.GET)
+	    public String refreshSettingsTab(@ModelAttribute("createNurseryForm") CreateNurseryForm form
+	            , Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    	    	
+    	    	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
+    	    	String contextParams = ContextUtil.getContextParameterString(contextInfo);
+
+    	    	Workbook workbook = userSelection.getWorkbook();
+                userSelection.setConstantsWithLabels(workbook.getConstants());                
+                
+                
+                if(userSelection.getStudyLevelConditions() != null){
+                	for(SettingDetail detail : userSelection.getStudyLevelConditions()){
+                		MeasurementVariable var = WorkbookUtil.getMeasurementVariable(workbook.getConditions(), detail.getVariable().getCvTermId());
+                		
+                		if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId()
+                                && var.getValue() != null && !var.getValue().isEmpty()) {
+                            //set the value of code to ID for it to be selected in the popup
+                        	Method method = fieldbookMiddlewareService.getMethodByCode(var.getValue());
+                        	if(method != null){
+                        		detail.setValue(String.valueOf(method.getMid()));
+                        	}else{
+                        		detail.setValue("");
+                        	}
+                        }else if(var != null){
+                			detail.setValue(var.getValue());
+                		}
+                	}
+                }
+                
+                if(userSelection.getNurseryConditions() != null){
+                	for(SettingDetail detail : userSelection.getNurseryConditions()){
+                		MeasurementVariable var = WorkbookUtil.getMeasurementVariable(workbook.getConstants(), detail.getVariable().getCvTermId());
+                		if(var != null){
+                			detail.setValue(var.getValue());
+                		}
+                	}
+                }
+                
+                form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
+                form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+                form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
+                form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+                form.setNurseryConditions(userSelection.getNurseryConditions());
+                form.setLoadSettings("1");            
+                form.setProjectId(this.getCurrentProjectId());
+                
+                form.setMeasurementRowList(new ArrayList<MeasurementRow>());
+    	            
+    	        model.addAttribute("createNurseryForm", form);
+    	        setFormStaticData(form, contextParams);
+    	        return super.showAjaxPage(model, URL_SETTINGS);
+    	    }
 }

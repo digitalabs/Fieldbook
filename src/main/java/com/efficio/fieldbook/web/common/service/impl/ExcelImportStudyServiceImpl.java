@@ -41,6 +41,10 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.operation.parser.WorkbookParser;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -82,11 +86,24 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 	
+	@Resource
+	private DataImportService dataImportService;
+	
+	private static String STUDY = "STUDY";
+	private static String TRIAL = "TRIAL";
+	
+	@Resource
+	private  com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
 	@Override
 	public ImportResult importWorkbook(Workbook workbook, String filename, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) throws WorkbookParserException {
 		
 		try {
 			org.apache.poi.ss.usermodel.Workbook xlsBook = parseFile(filename);
+			
+			WorkbookParser parser = new WorkbookParser();
+	        // partially parse the file to parse the description sheet only at first
+	        Workbook descriptionWorkbook = parser.parseFile(new File(filename), false, false);
 			
 			validateNumberOfSheets(xlsBook);
 			Sheet descriptionSheet = xlsBook.getSheetAt(0);
@@ -112,7 +129,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			Set<ChangeType> modes = new HashSet<ChangeType>();
 			checkForAddedAndDeletedTraits(modes, xlsBook, workbook);
 			Map<String, MeasurementRow> rowsMap = createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
-			
+			Map<Object, String> originalValueMap = new HashMap<Object, String>();
+			importDescriptionSheetToWorkbook(workbook, trialInstanceNumber, descriptionWorkbook, trialObservations, originalValueMap);
 			importDataToWorkbook(modes, xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations(), changeDetailsList);
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
 
@@ -122,9 +140,31 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				WorkbookUtil.resetWorkbookObservations(workbook);
 				return new ImportResult(e.getMessage());
 			}
+			String conditionsAndConstantsErrorMessage = "";
+			try {
+				validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);
+			} catch (MiddlewareQueryException e) {
+				conditionsAndConstantsErrorMessage = e.getMessage();
+				//we need to revert all data
+				for(Object tempObj : originalValueMap.keySet()){
+					String tempVal = originalValueMap.get(tempObj);
+					if(tempObj instanceof MeasurementVariable){
+						MeasurementVariable tempVar = (MeasurementVariable) tempObj;
+						tempVar.setValue(tempVal);
+					}else if(tempObj instanceof MeasurementData){
+						MeasurementData tempVar = (MeasurementData) tempObj;
+						tempVar.setValue(tempVal);	
+						if(tempVar.getMeasurementVariable() != null){
+							tempVar.getMeasurementVariable().setValue(tempVal);
+						}
+					}
+				}
+			}
 			
-			importTrialToWorkbook(xlsBook, trialObservations);
-			return new ImportResult(modes, changeDetailsList);
+			//importTrialToWorkbook(xlsBook, trialObservations);
+			ImportResult res = new ImportResult(modes, changeDetailsList);
+			res.setConditionsAndConstantsErrorMessage(conditionsAndConstantsErrorMessage);
+			return res;
 			
 			
 		} catch (WorkbookParserException e) {
@@ -156,6 +196,224 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			throw e;
 		}
 		return readWorkbook;
+	}
+	private void importDescriptionSheetToWorkbook(Workbook originalWorkbook, String trialInstanceNumber, Workbook descriptionWorkbook, 
+			List<MeasurementRow> trialObservations, Map<Object, String> originalValueMap){
+		 Map<String, Object> variableMap = new HashMap();
+		if(originalWorkbook != null && descriptionWorkbook != null){
+			for(MeasurementVariable var : descriptionWorkbook.getConditions()){
+				
+				
+				if(var.getLabel() != null && var.getLabel().equalsIgnoreCase(STUDY)){
+					//study conditions
+					//we get from the conditions
+					setDataToMatchingMeasurementVariable(originalWorkbook.getConditions(), var, originalValueMap, variableMap);
+					
+				}else if(var.getLabel() != null && var.getLabel().equalsIgnoreCase(TRIAL)){
+					//trial level conditions
+					setDataToMatchingMeasurementData(trialObservations, var,  originalWorkbook.isNursery(), originalValueMap, variableMap);
+				}
+				
+			}
+			
+			for(MeasurementVariable var : descriptionWorkbook.getConstants()){
+				
+				if(var.getLabel() != null && var.getLabel().equalsIgnoreCase(STUDY)){
+					//study conditions
+					//we get from the conditions
+					setDataToMatchingMeasurementVariable(originalWorkbook.getConstants(), var, originalValueMap, variableMap);
+					
+				}else if(var.getLabel() != null && var.getLabel().equalsIgnoreCase(TRIAL)){
+					//trial level conditions
+					//we check if its in constants but not in trial observations
+					for(MeasurementVariable constantsVar : originalWorkbook.getConstants()){
+						boolean isFound = false;
+						if(trialObservations != null){
+							for(MeasurementRow temp : trialObservations){
+								for(MeasurementData data : temp.getDataList()){
+									if(data.getMeasurementVariable().getTermId() == constantsVar.getTermId()){
+										isFound = true;
+										break;
+									}
+								}
+								if(isFound){
+									break;
+								}else{
+									//we need to add it
+									MeasurementData newData = new MeasurementData(constantsVar.getName(), "", false, constantsVar.getDataType(), constantsVar);
+									temp.getDataList().add(newData);
+								}
+							}
+						}
+					}
+					setDataToMatchingMeasurementData(trialObservations, var, originalWorkbook.isNursery(), originalValueMap, variableMap);
+				}
+			}
+			setCorrectBreedingMethodInfo(variableMap);
+			//this would set info to location (trial level variable)
+			if (originalWorkbook.isNursery() && originalWorkbook.getTrialObservations() != null && !originalWorkbook.getTrialObservations().isEmpty()
+  	    			&& originalWorkbook.getTrialConditions() != null && !originalWorkbook.getTrialConditions().isEmpty()) {
+  				MeasurementVariable locationNameVar = WorkbookUtil.getMeasurementVariable(originalWorkbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
+  				if(locationNameVar != null){
+  					//we set it to the trial observation level
+  					
+	    			for (MeasurementRow row : originalWorkbook.getTrialObservations()) {
+	    				MeasurementData data = row.getMeasurementData(locationNameVar.getTermId());
+	    				if(data != null){
+	    					data.setValue(locationNameVar.getValue());
+	    				}
+	    			}
+  					
+  				}  				
+  			}
+			
+		}		
+	}
+	
+	private void setCorrectBreedingMethodInfo(Map<String, Object> variableMap){
+		//we check for special pair variables here and ensure the name is correct
+		try{
+			//BM_ID, BM_METHOD_CODE			
+			if(variableMap.containsKey(Integer.toString(TermId.BREEDING_METHOD_ID.getId()))){
+				//we set the code and name accordingly
+				Object tempObj = variableMap.get(Integer.toString(TermId.BREEDING_METHOD_ID.getId()));
+				Object tempObjCode = variableMap.get(Integer.toString(TermId.BREEDING_METHOD_CODE.getId()));
+				Object tempObjName = variableMap.get(Integer.toString(TermId.BREEDING_METHOD.getId()));
+				if(tempObj instanceof MeasurementVariable){
+					MeasurementVariable tempVar = (MeasurementVariable) tempObj;
+					MeasurementVariable tempVarCode = tempObjCode != null ? (MeasurementVariable) tempObjCode : null;
+					MeasurementVariable tempVarName = tempObjName != null ? (MeasurementVariable) tempObjName : null;
+					if(tempVar.getValue() != null && !tempVar.getValue().equalsIgnoreCase("") && NumberUtils.isNumber(tempVar.getValue())){
+						Method method = fieldbookMiddlewareService.getMethodById(Integer.parseInt(tempVar.getValue()));
+						if(tempVarCode != null){
+							//we set the proper code
+							tempVarCode.setValue(method != null ? method.getMcode() : "");
+						}
+						if(tempVarName != null){
+							tempVarName.setValue(method != null ? method.getMname() : "");
+						}
+					}else{
+						//we set the bm code and bm to empty string
+						if(tempVarCode != null){
+							//we set the proper code
+							tempVarCode.setValue("");
+						}
+						if(tempVarName != null){
+							tempVarName.setValue("");
+						}
+					}
+				}
+			}else if(variableMap.containsKey(Integer.toString(TermId.BREEDING_METHOD_CODE.getId()))){
+				//we just set the name
+				Object tempObjCode = variableMap.get(Integer.toString(TermId.BREEDING_METHOD_CODE.getId()));
+				Object tempObjName = variableMap.get(Integer.toString(TermId.BREEDING_METHOD.getId()));
+				MeasurementVariable tempVarCode = tempObjCode != null ? (MeasurementVariable) tempObjCode : null;
+				MeasurementVariable tempVarName = tempObjName != null ? (MeasurementVariable) tempObjName : null;
+				if(tempVarCode != null && !tempVarCode.getValue().equalsIgnoreCase("")){
+					Method method = fieldbookMiddlewareService.getMethodByCode(tempVarCode.getValue());
+					if(tempVarName != null){
+						tempVarName.setValue(method != null ? method.getMname() : "");
+					}
+				}
+			}
+		}catch(Exception e){
+			
+		}
+	}
+	
+	private void setDataToMatchingMeasurementVariable(List<MeasurementVariable> measurementVarList, MeasurementVariable var, 
+			Map<Object, String> originalValueMap, Map<String, Object> variableMap){
+		for(MeasurementVariable temp : measurementVarList){
+			if(temp.getProperty().equalsIgnoreCase(var.getProperty()) &&
+					temp.getScale().equalsIgnoreCase(var.getScale()) &&
+					temp.getMethod().equalsIgnoreCase(var.getMethod()) &&
+					temp.getLabel().equalsIgnoreCase(var.getLabel())
+					){				
+				
+				if(WorkbookUtil.isConditionValidate(temp.getTermId())){				
+					
+					if(temp != null && temp.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()){					
+						variableMap.put(Integer.toString(temp.getTermId()), temp);
+						originalValueMap.put(temp, temp.getValue());
+						
+						try {
+							temp.setPossibleValues(fieldbookService.getAllPossibleValues(temp.getTermId()));
+						} catch (MiddlewareQueryException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						String xlsValue = "";
+						if (temp != null && temp.getPossibleValues() != null
+								&& !temp.getPossibleValues().isEmpty()) {													
+							xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(var.getValue(), temp.getPossibleValues(), true);												
+						} 
+						else {
+							xlsValue = var.getValue();
+						}
+						temp.setValue(xlsValue);
+						
+						try{
+							if(validationService.isValidValue(temp, xlsValue, true)){
+								temp.setOperation(Operation.UPDATE);								
+							}							
+						}catch(Exception e){
+							
+						}
+					}
+				}
+			}
+		}
+
+	}
+	
+	private void setDataToMatchingMeasurementData(List<MeasurementRow> trialObservations, MeasurementVariable var, boolean isNursery, 
+			Map<Object, String> originalValueMap, Map<String, Object> variableMap){
+		for(MeasurementRow temp : trialObservations){
+			for(MeasurementData data : temp.getDataList()){
+				MeasurementVariable origVar = data.getMeasurementVariable();
+				
+				if(origVar != null &&  origVar.getProperty().equalsIgnoreCase(var.getProperty()) &&
+						origVar.getScale().equalsIgnoreCase(var.getScale()) &&
+						origVar.getMethod().equalsIgnoreCase(var.getMethod()) &&
+						origVar.getLabel().equalsIgnoreCase(var.getLabel())
+						){				
+					if(data != null && origVar != null && origVar.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()){
+						variableMap.put(Integer.toString(origVar.getTermId()), data);
+						originalValueMap.put(data, data.getValue());
+						
+						try {
+							origVar.setPossibleValues(fieldbookService.getAllPossibleValues(origVar.getTermId()));
+						} catch (MiddlewareQueryException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						String xlsValue = "";
+						if (temp != null && origVar.getPossibleValues() != null
+								&& !origVar.getPossibleValues().isEmpty()) {													
+							xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(var.getValue(), origVar.getPossibleValues(), true);
+							if (origVar.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+								data.setcValueId(xlsValue);
+							}
+						} 
+						else {
+							xlsValue = var.getValue();
+						}
+						data.setValue(xlsValue);
+						if(isNursery){
+							origVar.setValue(xlsValue);
+						}
+						
+						try{
+							if(validationService.isValidValue(origVar, xlsValue, true)){
+								origVar.setOperation(Operation.UPDATE);																						
+							}
+						}catch(Exception e){
+							
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private void importDataToWorkbook(Set<ChangeType> modes, org.apache.poi.ss.usermodel.Workbook xlsBook, Map<String, MeasurementRow> rowsMap, 
@@ -282,18 +540,6 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 		return realValue;
 	}
-
-	private void importTrialToWorkbook(org.apache.poi.ss.usermodel.Workbook xlsBook, List<MeasurementRow> observations) {
-		if (observations != null) {
-			for (MeasurementRow wRow : observations) {
-				for (MeasurementData wData : wRow.getDataList()) {
-					String label = wData.getLabel();
-					String value = findValueFromDescriptionSheet(xlsBook, label);
-					wData.setValue(value);
-				}
-			}
-		}
-	}
 	
 	private void validate(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook, List<MeasurementRow> observations) 
 			throws WorkbookParserException, MiddlewareQueryException {
@@ -393,33 +639,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
         }
         return result;
     }
-
-    private String findValueFromDescriptionSheet(org.apache.poi.ss.usermodel.Workbook workbook, String cellValue) {
-    	Sheet sheet = workbook.getSheetAt(0);
-        if (cellValue != null) {
-	        int lastRow = sheet.getLastRowNum();
-	        for (int i = 0; i < lastRow; i++) {
-	        	Row row = sheet.getRow(i);
-	        	if (row != null) {
-		        	Cell cell = row.getCell(0);
-		        	if (cell != null && row.getCell(6) != null) {
-		        		String value = "";
-		        		if (row.getCell(6).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-		        			value = String.valueOf(Double.valueOf(row.getCell(6).getNumericCellValue()).intValue());
-		        		}
-		        		else {
-		        			value = row.getCell(6).getStringCellValue();
-		        		}
-			        	if (cell.getStringCellValue().equalsIgnoreCase(cellValue)) {
-			        		return value;
-			        	}
-		        	}
-	        	}
-	        }
-        }
-        return "";
-    }
-
+    
     private String getColumnLabel(Workbook workbook, int termId) {
     	List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
     	return getColumnLabel(variables, termId);

@@ -384,4 +384,18 @@ public class CreateTrialController extends BaseTrialController {
  		}
         return "success";
     }
+    
+    @ResponseBody
+    @RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
+    public Map<String, TabInfo> refreshSettingsTab() throws MiddlewareQueryException{
+        Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
+        
+            Workbook trialWorkbook = userSelection.getWorkbook();
+            userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
+            
+            tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
+            tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));                    
+
+        return tabDetails;
+    }
 }

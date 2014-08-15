@@ -57,6 +57,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -784,6 +785,23 @@ public class FieldbookServiceImpl implements FieldbookService{
   		if(workbook != null && !workbook.isNursery()){
   			//to be only done when it is a trial
   			addConditionsToTrialObservationsIfNecessary(workbook);
+  		}else{
+  			//no adding, just setting of data
+  			if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()
+  	    			&& workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+  				MeasurementVariable locationNameVar = WorkbookUtil.getMeasurementVariable(workbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
+  				if(locationNameVar != null){
+  					//we set it to the trial observation level
+  					
+	    			for (MeasurementRow row : workbook.getTrialObservations()) {
+	    				MeasurementData data = row.getMeasurementData(locationNameVar.getTermId());
+	    				if(data != null){
+	    					data.setValue(locationNameVar.getValue());
+	    				}
+	    			}
+  					
+  				}  				
+  			}
   		}
   	}
     

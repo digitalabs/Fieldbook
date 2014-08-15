@@ -250,6 +250,19 @@
                     // TODO : treatment factor here
                 });
             };
+            
+            $scope.refreshTabAfterImport = function () {
+                $http.get('/Fieldbook/TrialManager/createTrial/refresh/settings/tab').success(function (data) {
+                    // update data and settings
+
+                    var environmentData = TrialManagerDataService.extractData(data.environmentData);
+                    
+                    TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
+                    TrialManagerDataService.updateCurrentData('environments', environmentData);
+                    
+                });
+            };
+
 
             $scope.displayMeasurementOnlyActions = function () {
                 return TrialManagerDataService.trialMeasurement.count &&
@@ -283,6 +296,9 @@
             
             $('body').on('DO_AUTO_SAVE', function(){
                 TrialManagerDataService.saveCurrentData();
+            });
+            $('body').on('REFRESH_AFTER_IMPORT_SAVE', function(){
+            	$scope.refreshTabAfterImport();
             });
         }]);
 

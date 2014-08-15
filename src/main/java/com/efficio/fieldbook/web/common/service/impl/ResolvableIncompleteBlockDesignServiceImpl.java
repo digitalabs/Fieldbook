@@ -160,7 +160,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			                    "experiment.design.block.size.not.a.factor.of.treatment.size", null, locale));
 					}else if(expDesignParameter.getUseLatenized() != null && expDesignParameter.getUseLatenized().booleanValue()){
 						//we add validation for latinize
-						Integer nbLatin = Integer.parseInt(expDesignParameter.getNblatin());
+						Integer nbLatin = expDesignParameter.getNblatin() != null ? Integer.parseInt(expDesignParameter.getNblatin()) : 0;
 						/*
 The value set for "nblatin" xml parameter cannot be value higher than or equal the block level value. To get the block levels, we just need to divide the "ntreatments" value by the "blocksize" value. This means the BVDesign tool works to any value you specify in the "nblatin" parameter as long as it does not exceed the computed block levels value. As mentioned in the requirements, an "nblatin" parameter with value 0 means there is no latinization that will take place.
 The sum of the values set for "replatingroups" should always be equal to the "nreplicates" value specified by the plant breeder.

@@ -226,6 +226,10 @@
 
                             // latinized
                             if ($scope.data.useLatenized) {
+                                if ($scope.data.nblatin === null) {
+                                    showErrorMessage('page-message', EXP_DESIGN_MSGS[27]);
+                                    return false;
+                                }
                                 if ($scope.data.nblatin >= ($scope.totalGermplasmEntryListCount / $scope.data.blockSize)) {
                                     showErrorMessage('page-message', EXP_DESIGN_MSGS[11]);
                                     return false;

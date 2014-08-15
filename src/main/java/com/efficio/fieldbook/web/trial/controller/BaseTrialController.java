@@ -102,6 +102,69 @@ public abstract class BaseTrialController extends SettingsController {
         return returnVal;
     }
 
+    protected TabInfo prepareExperimentalDesignTabInfo(ExperimentalDesignVariable xpDesignVariable, boolean isUsePrevious) throws MiddlewareQueryException {
+        TabInfo tabInfo = new TabInfo();
+        // currently, the saved experimental design information is not loaded up when choosing a previous trial as template
+        if (!isUsePrevious && xpDesignVariable != null) {
+            ExpDesignParameterUi data = new ExpDesignParameterUi();
+
+            // as per discussion, resolvable is always set to true currently
+            data.setIsResolvable(true);
+
+            data.setBlockSize(getExperimentalDesignData(xpDesignVariable.getBlockSize()));
+
+            // set cols per replication
+            data.setColsPerReplications(getExperimentalDesignData(xpDesignVariable.getNumberOfColsInReps()));
+            data.setRowsPerReplications(getExperimentalDesignData(xpDesignVariable.getNumberOfRowsInReps()));
+
+            data.setNclatin(getExperimentalDesignData(xpDesignVariable.getNumberOfContiguousColsLatinize()));
+            data.setNblatin(getExperimentalDesignData(xpDesignVariable.getNumberOfContiguousBlocksLatinize()));
+            data.setNrlatin(getExperimentalDesignData(xpDesignVariable.getNumberOfContiguousRowsLatinize()));
+
+            data.setReplatinGroups(getExperimentalDesignData(xpDesignVariable.getNumberOfRepsInCols()));
+            String replicationsMap = getExperimentalDesignData(xpDesignVariable.getReplicationsMap());
+
+            if (replicationsMap != null) {
+                data.setReplicationsArrangement(Integer.parseInt(replicationsMap));
+            }
+
+            data.setReplicationsCount(getExperimentalDesignData(xpDesignVariable.getNumberOfReplicates()));
+            String designTypeString = xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
+            if (designTypeString != null) {
+                Integer designTypeTermID = Integer.parseInt(designTypeString);
+
+                if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
+                    data.setDesignType(0);
+                    data.setUseLatenized(false);
+                } else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId() == designTypeTermID) {
+                    data.setDesignType(1);
+                    data.setUseLatenized(true);
+                } else if (TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId() == designTypeTermID) {
+                    data.setDesignType(1);
+                    data.setUseLatenized(false);
+                } else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId() == designTypeTermID) {
+                    data.setDesignType(2);
+                    data.setUseLatenized(true);
+                } else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
+                    data.setDesignType(2);
+                    data.setUseLatenized(false);
+                }
+            }
+
+            tabInfo.setData(data);
+        }
+
+        return tabInfo;
+    }
+
+    protected String getExperimentalDesignData(MeasurementVariable var) {
+        if (var != null) {
+            return var.getValue();
+        } else {
+            return null;
+        }
+    }
+
     protected TabInfo prepareGermplasmTabInfo(List<MeasurementVariable> measurementVariables, boolean isUsePrevious) throws MiddlewareQueryException {
         List<SettingDetail> detailList = new ArrayList<SettingDetail>();
         List<Integer> requiredIDList = buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
@@ -227,7 +290,8 @@ public abstract class BaseTrialController extends SettingsController {
         Map settingMap = new HashMap();
         List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
         List<SettingDetail> trialConditionsList = new ArrayList<SettingDetail>();
-        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," + AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
+        List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," +
+                AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString() + "," + AppConstants.EXP_DESIGN_VARIABLES.getString());
         List<Integer> requiredFields = buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
         HashMap<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
         for (MeasurementVariable var : workbook.getTrialConditions()) {
@@ -298,8 +362,12 @@ public abstract class BaseTrialController extends SettingsController {
                     String value;
                     if (detail.getVariable().getWidgetType().getType().equals("DATE")) {
                         value = convertDateStringForUI(mData.getValue());
+                    } else if (mData.getcValueId() != null) {
+                        value = mData.getcValueId();
                     } else {
+
                         value = mData.getValue();
+
                     }
                     managementDetailValues.put(Integer.toString(mData.getMeasurementVariable().getTermId()), value);
                 }
@@ -484,7 +552,7 @@ public abstract class BaseTrialController extends SettingsController {
         return info;
     }
 
-    protected TabInfo prepareExpDesignTabInfo() throws MiddlewareQueryException{
+    protected TabInfo prepareExperimentalDesignSpecialData() throws MiddlewareQueryException{
         TabInfo info = new TabInfo();
         ExpDesignData data = new ExpDesignData();
         List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();

@@ -97,7 +97,7 @@ public class CreateTrialController extends BaseTrialController {
         model.addAttribute("germplasmData", prepareGermplasmTabInfo());
         model.addAttribute("environmentData", prepareEnvironmentsTabInfo());
         model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo());
-        model.addAttribute("experimentalDesignData", prepareExpDesignTabInfo());
+        model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
         model.addAttribute("measurementRowCount", 0);
 
         model.addAttribute("createNurseryForm", form); //so that we can reuse the same page being use for nursery

@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.trial.bean;
 import java.io.Serializable;
 import java.util.Map;
 
-public class ExpDesignParameterUi implements Serializable {
+public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String noOfEnvironments;
 	private Integer designType;
 	private String replicationsCount;

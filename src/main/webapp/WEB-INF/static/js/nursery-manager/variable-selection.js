@@ -554,6 +554,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		var input = container.find(aliasVariableInputSelector),
 			alias = input.val(),
+			aliasValidation = new RegExp(/^[a-zA-Z_%]{1}[a-zA-Z_%0-9]{0,31}$/),
 			index = input.data('index'),
 			unique = true,
 			id;
@@ -561,10 +562,18 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// If there is no alias we ignore it
 		if (alias) {
 
-			// Validate alias is unique among selected variables
-
 			alias = alias.trim();
 
+			// Validate alias has no more than 32 characters, starts with a letter, underscore or % sign, and only contains
+			// numbers, letters, _ or %
+			if (!aliasValidation.test(alias)) {
+				showErrorMessage(null, this._translations.invalidAliasError);
+
+				// Don't close the input before returning
+				return null;
+			}
+
+			// Validate alias is unique among selected variables
 			for (id in this._currentlySelectedVariables) {
 				if (this._currentlySelectedVariables.hasOwnProperty(id)) {
 					unique = unique && (alias !== this._currentlySelectedVariables[id]);

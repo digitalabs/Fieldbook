@@ -275,7 +275,9 @@ window.TrialSettingsManager = (function () {
         this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
             // FIXME pass in translated value with key variable.selection.unique.variable.error from html
             uniqueVariableError: 'This name has been used before, please enter a different name.',
-            variableSelectedMessage : 'This variable is already in use in the study'
+            variableSelectedMessage : 'This variable is already in use in the study',
+            invalidAliasError: 'Variable aliases must only contain numbers, letters, _ or %, not begin with a number, ' +
+            	'and not exceed 32 characters.'
         });
         //this._variableSelection.getModal().on('variable-select', addSelectedVariables);
 

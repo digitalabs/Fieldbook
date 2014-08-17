@@ -428,7 +428,8 @@ window.ChooseSettings = (function() {
 		this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
 			uniqueVariableError: this._translations.uniqueVariableError,
 			generalAjaxError: this._translations.generalAjaxError,
-            variableSelectedMessage : this._translations.variableSelectedMessage
+			variableSelectedMessage: this._translations.variableSelectedMessage,
+			invalidAliasError: this._translations.invalidAliasError
 		});
 		this._variableSelection.getModal().on('variable-select', addSelectedVariables);
 

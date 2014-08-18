@@ -171,12 +171,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private void copyConditionsAndConstants(Workbook workbook){
 		
 		if(workbook != null){
+			List<MeasurementVariable> newVarList = new ArrayList<MeasurementVariable>();
 			if(workbook.getConditions() != null){
 				List<MeasurementVariable> conditionsCopy = new ArrayList<MeasurementVariable>();
 				for(MeasurementVariable var : workbook.getConditions()){
 					conditionsCopy.add(var.copy());
 				}
 				workbook.setImportConditionsCopy(conditionsCopy);
+				newVarList.addAll(conditionsCopy);
 			}
 			if(workbook.getConstants() != null){
 				List<MeasurementVariable> constantsCopy = new ArrayList<MeasurementVariable>();
@@ -184,11 +186,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					constantsCopy.add(var.copy());
 				}
 				workbook.setImportConstantsCopy(constantsCopy);
+				newVarList.addAll(constantsCopy);
 			}
 			if(workbook.getTrialObservations() != null){
 				List<MeasurementRow> trialObservationsCopy = new ArrayList<MeasurementRow>();
 				for(MeasurementRow row : workbook.getTrialObservations()){
-					trialObservationsCopy.add(row.copy());
+					trialObservationsCopy.add(row.copy(newVarList));
 				}
 				workbook.setImportTrialObservationsCopy(trialObservationsCopy);
 			}

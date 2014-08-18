@@ -595,7 +595,13 @@ public class SettingsUtil {
 
                         if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString()) && !idCounterPartInList(stdVar, idCodeNameMap, dataset.getConditions())) {
                             if (enumerationByDescription != null) {
-                                settingDetail.setValue(enumerationByDescription.getName());
+                            	if(standardVariable.getId() != TermId.NURSERY_TYPE.getId()){
+                            		settingDetail.setValue(enumerationByDescription.getName());
+                            	}else{
+                            		if(enumerationByDescription.getId() != null && NumberUtils.isNumber(Integer.toString(enumerationByDescription.getId()))){
+                            			settingDetail.setValue(Integer.toString(enumerationByDescription.getId()));
+                            		}
+                            	}
                             }
                             if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId()))
                                     || variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId()))) &&

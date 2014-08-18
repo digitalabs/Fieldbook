@@ -26,6 +26,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -56,6 +58,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -693,7 +696,21 @@ public class CreateNurseryController extends SettingsController {
                         		detail.setValue("");
                         	}
                         }else if(var != null){
-                			detail.setValue(var.getValue());
+                        	String currentVal = var.getValue();
+                        	if(var.getTermId() != TermId.NURSERY_TYPE.getId()){
+                        		detail.setValue(currentVal);
+                        	}else{
+                        		//special case for nursery type
+                        		if(var.getValue() != null && detail.getPossibleValues() != null){
+                        			
+                        			for (ValueReference possibleValue : detail.getPossibleValues()) {
+                        	    		if (var.getValue().equalsIgnoreCase(possibleValue.getDescription())) {
+                        	    			detail.setValue(possibleValue.getId().toString());
+                        	    			break;
+                        	    		}
+                        	    	}
+                        		}                        		
+                        	}
                 		}
                 	}
                 }

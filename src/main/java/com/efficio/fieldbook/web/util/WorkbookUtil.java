@@ -251,7 +251,7 @@ public class WorkbookUtil {
 		    }
 
 			if(workbook.getImportTrialObservationsCopy() != null){
-				workbook.setTrialObservations(workbook.getTrialObservations());
+				workbook.setTrialObservations(workbook.getImportTrialObservationsCopy());
 			}
 		 }
 	 }

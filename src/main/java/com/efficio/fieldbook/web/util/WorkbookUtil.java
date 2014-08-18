@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -238,6 +239,30 @@ public class WorkbookUtil {
 	    	}
     	}
     }
+	 
+	 public static void revertImportedConditionAndConstantsData(Workbook workbook){
+		//we need to revert all data
+		 if(workbook != null && workbook.getOriginalImportConditionAndConstantsData() != null){
+		    Map<Object, String> originalValueMap = workbook.getOriginalImportConditionAndConstantsData();
+			for(Object tempObj : originalValueMap.keySet()){
+				String tempVal = originalValueMap.get(tempObj);
+				if(tempObj instanceof MeasurementVariable){
+					MeasurementVariable tempVar = (MeasurementVariable) tempObj;
+					tempVar.setValue(tempVal);
+				}else if(tempObj instanceof MeasurementData){
+					MeasurementData tempVar = (MeasurementData) tempObj;
+					tempVar.setValue(tempVal);	
+					
+					if(tempVar.getMeasurementVariable() != null){
+						tempVar.getMeasurementVariable().setValue(tempVal);
+						if (tempVar.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+							tempVar.setcValueId(tempVal);
+						}
+					}
+				}
+			}
+		 }
+	 }
 	 
 	 private static boolean inMeasurementDataList(List<MeasurementData> dataList, int termId) {
 	     for (MeasurementData data : dataList) {

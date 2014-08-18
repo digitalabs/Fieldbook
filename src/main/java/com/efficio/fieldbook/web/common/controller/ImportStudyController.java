@@ -312,6 +312,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	userSelection.getWorkbook().setObservations(list);
     	userSelection.setMeasurementRowList(list);
 
+    	WorkbookUtil.revertImportedConditionAndConstantsData(userSelection.getWorkbook());
     }
     
     @ResponseBody

@@ -105,6 +105,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	        // partially parse the file to parse the description sheet only at first
 	        Workbook descriptionWorkbook = parser.parseFile(new File(filename), false, false);
 			
+	        workbook.setOriginalImportConditionAndConstantsData(null);
+	        
 			validateNumberOfSheets(xlsBook);
 			Sheet descriptionSheet = xlsBook.getSheetAt(0);
 			validateDescriptionSheetFirstCell(descriptionSheet);
@@ -143,26 +145,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			String conditionsAndConstantsErrorMessage = "";
 			try {
 				validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);
+				workbook.setOriginalImportConditionAndConstantsData(originalValueMap);
 			} catch (MiddlewareQueryException e) {
 				conditionsAndConstantsErrorMessage = e.getMessage();
-				//we need to revert all data
-				for(Object tempObj : originalValueMap.keySet()){
-					String tempVal = originalValueMap.get(tempObj);
-					if(tempObj instanceof MeasurementVariable){
-						MeasurementVariable tempVar = (MeasurementVariable) tempObj;
-						tempVar.setValue(tempVal);
-					}else if(tempObj instanceof MeasurementData){
-						MeasurementData tempVar = (MeasurementData) tempObj;
-						tempVar.setValue(tempVal);	
-						
-						if(tempVar.getMeasurementVariable() != null){
-							tempVar.getMeasurementVariable().setValue(tempVal);
-							if (tempVar.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-								tempVar.setcValueId(tempVal);
-							}
-						}
-					}
-				}
+				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);
 			}
 			
 			//importTrialToWorkbook(xlsBook, trialObservations);

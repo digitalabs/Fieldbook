@@ -7,8 +7,8 @@
     'use strict';
 
     angular.module('manageTrialApp').controller('MeasurementsCtrl',
-        ['$scope', 'TrialManagerDataService', '$modal', '$q',
-            function ($scope, TrialManagerDataService, $modal, $q) {
+        ['$scope', 'TrialManagerDataService', '$modal', '$q','debounce',
+            function ($scope, TrialManagerDataService, $modal, $q,debounce) {
 
                 $scope.settings = TrialManagerDataService.settings.measurements;
 
@@ -77,13 +77,15 @@
 
                 $scope.$on('deleteOccurred', function () {
                     $scope.updateOccurred = true;
-                    $scope.reloadMeasurementPage();
+                    debounce($scope.reloadMeasurementPage,1000,true);
+
                     TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
                 });
 
                 $scope.$on('variableAdded', function () {
                     $scope.updateOccurred = true;
-                    $scope.reloadMeasurementPage();
+                    debounce($scope.reloadMeasurementPage,1000,true);
+
                     TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
                 });
 

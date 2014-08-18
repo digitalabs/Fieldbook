@@ -10,7 +10,7 @@ window.TrialSettingsManager = (function () {
             TRIAL_CONDITIONS: 7
         },
         variableSelectionGroups = {},
-        TrialSettingsManager, properties, selectedVariables;
+        TrialSettingsManager, properties, selectedVariables,_translations;
 
     /*
      * Finds a property in a list by id.
@@ -168,6 +168,8 @@ window.TrialSettingsManager = (function () {
             };
         });
 
+        this._translations = translations;
+
     };
 
     /* FIXME - this logic should be in the back end
@@ -274,10 +276,9 @@ window.TrialSettingsManager = (function () {
     TrialSettingsManager.prototype._initialiseVariableSelectionDialog = function () {
         this._variableSelection = new window.BMS.NurseryManager.VariableSelection({
             // FIXME pass in translated value with key variable.selection.unique.variable.error from html
-            uniqueVariableError: 'This name has been used before, please enter a different name.',
-            variableSelectedMessage : 'This variable is already in use in the study',
-            invalidAliasError: 'Variable aliases must only contain numbers, letters, _ or %, not begin with a number, ' +
-            	'and not exceed 32 characters.'
+            uniqueVariableError: this._translations.uniqueVariableError,
+            variableSelectedMessage : this._translations.variableSelectedMessage,
+            invalidAliasError: this._translations.invalidAliasError
         });
         //this._variableSelection.getModal().on('variable-select', addSelectedVariables);
 

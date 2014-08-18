@@ -240,14 +240,12 @@
                     TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
                     TrialManagerDataService.updateCurrentData('environments', environmentData);
                     TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(data.treatmentFactorsData));
-                    // TODO : treatment factor here
 
                     TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(data.trialSettingsData));
                     TrialManagerDataService.updateSettings('environments', environmentSettings);
                     TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
                     TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(data.treatmentFactorsData));
                     TrialManagerDataService.updateSettings('measurements', TrialManagerDataService.extractSettings(data.measurementsData));
-                    // TODO : treatment factor here
                 });
             };
 

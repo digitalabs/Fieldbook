@@ -7,8 +7,8 @@
     'use strict';
 
     angular.module('manageTrialApp').controller('MeasurementsCtrl',
-        ['$scope', 'TrialManagerDataService', '$modal', '$q','debounce',
-            function ($scope, TrialManagerDataService, $modal, $q,debounce) {
+        ['$scope', 'TrialManagerDataService', '$modal', '$q','debounce','$timeout',
+            function ($scope, TrialManagerDataService, $modal, $q,debounce,$timeout) {
 
                 $scope.settings = TrialManagerDataService.settings.measurements;
 
@@ -77,16 +77,16 @@
 
                 $scope.$on('deleteOccurred', function () {
                     $scope.updateOccurred = true;
-                    console.log('deleteOccurred');
-                    debounce($scope.reloadMeasurementPage,2000,true)();
+
+                    $scope.reloadOnDebounce();
 
                     TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
                 });
 
                 $scope.$on('variableAdded', function () {
                     $scope.updateOccurred = true;
-                    console.log('variableAdded');
-                    debounce($scope.reloadMeasurementPage,2000,true)();
+
+                    $scope.reloadOnDebounce();
 
                     TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
                 });
@@ -107,5 +107,9 @@
                         });
                     }
                 };
+
+                var DELAY = 1000; // 1 secs
+                $scope.reloadOnDebounce = debounce($scope.reloadMeasurementPage,DELAY,false);
+
             }]);
 })();

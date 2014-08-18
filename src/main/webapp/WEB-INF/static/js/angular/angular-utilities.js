@@ -159,23 +159,21 @@
         }
     ])
 
-        // USAGE: debounce -> delays execution until a user finishes the input
-        // params: func -> the function to execute
-        // wait -> time in millisecs
-        // immediate -> executes the function immediately after the wait if true, else, wait subsequent calls before execution.
+        // USAGE: Returns a function, that, as long as it continues to be invoked, will not
+        // be triggered. The function will be called after it stops being called for
+        // N milliseconds. If `immediate` is passed, trigger the function on the
+        // leading edge, instead of the trailing.
 
         .service('debounce', ['$timeout', function ($timeout) {
             return function (func, wait, immediate) {
                 var timeout, args, context, result;
                 function debounce() {
-                    console.log('debouncing');
                     /* jshint validthis:true */
                     context = this;
                     args = arguments;
                     var later = function () {
                         timeout = null;
                         if (!immediate) {
-                            console.log('finally executing!');
                             result = func.apply(context, args);
                         }
                     };

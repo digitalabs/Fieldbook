@@ -1359,6 +1359,9 @@ function showImportOptions(){
 	}else{
 		window.location.hash = '#/editMeasurements';
 	}
+	if($('.import-study-data').data('data-import') === '1'){
+		showAlertMessage('', importDataWarningNotification);
+	}
 }
 function goBackToImport(){
 	'use strict';

@@ -144,8 +144,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 			String conditionsAndConstantsErrorMessage = "";
 			try {
-				validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);
 				workbook.setOriginalImportConditionAndConstantsData(originalValueMap);
+				validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);				
 			} catch (MiddlewareQueryException e) {
 				conditionsAndConstantsErrorMessage = e.getMessage();
 				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);

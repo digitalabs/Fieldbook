@@ -168,12 +168,14 @@
             return function (func, wait, immediate) {
                 var timeout, args, context, result;
                 function debounce() {
+                    console.log('debouncing');
                     /* jshint validthis:true */
                     context = this;
                     args = arguments;
                     var later = function () {
                         timeout = null;
                         if (!immediate) {
+                            console.log('finally executing!');
                             result = func.apply(context, args);
                         }
                     };

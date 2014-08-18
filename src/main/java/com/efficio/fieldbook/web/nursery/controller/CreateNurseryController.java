@@ -697,7 +697,7 @@ public class CreateNurseryController extends SettingsController {
                         	}
                         }else if(var != null){
                         	String currentVal = var.getValue();
-                        	if(var.getTermId() != TermId.NURSERY_TYPE.getId()){
+                        	if(var.getTermId() != TermId.NURSERY_TYPE.getId() && (detail.getPossibleValues() == null || detail.getPossibleValues().isEmpty())){
                         		detail.setValue(currentVal);
                         	}else{
                         		//special case for nursery type

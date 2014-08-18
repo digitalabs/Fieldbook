@@ -104,8 +104,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			WorkbookParser parser = new WorkbookParser();
 	        // partially parse the file to parse the description sheet only at first
 	        Workbook descriptionWorkbook = parser.parseFile(new File(filename), false, false);
-			
-	        workbook.setOriginalImportConditionAndConstantsData(null);
+	        copyConditionsAndConstants(workbook);
 	        
 			validateNumberOfSheets(xlsBook);
 			Sheet descriptionSheet = xlsBook.getSheetAt(0);
@@ -132,6 +131,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			checkForAddedAndDeletedTraits(modes, xlsBook, workbook);
 			Map<String, MeasurementRow> rowsMap = createMeasurementRowsMap(workbook.getObservations(), trialInstanceNumber, workbook.isNursery());
 			Map<Object, String> originalValueMap = new HashMap<Object, String>();
+			workbook.getConditions();
+			workbook.getConstants();
+			workbook.getTrialObservations();
 			importDescriptionSheetToWorkbook(workbook, trialInstanceNumber, descriptionWorkbook, trialObservations, originalValueMap);
 			importDataToWorkbook(modes, xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations(), changeDetailsList);
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
@@ -144,7 +146,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 			String conditionsAndConstantsErrorMessage = "";
 			try {
-				workbook.setOriginalImportConditionAndConstantsData(originalValueMap);
+				
 				validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);				
 			} catch (MiddlewareQueryException e) {
 				conditionsAndConstantsErrorMessage = e.getMessage();
@@ -163,6 +165,33 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
 		} catch (Exception e) {
 			throw new WorkbookParserException(e.getMessage(), e);
+		}
+	}
+	
+	private void copyConditionsAndConstants(Workbook workbook){
+		
+		if(workbook != null){
+			if(workbook.getConditions() != null){
+				List<MeasurementVariable> conditionsCopy = new ArrayList<MeasurementVariable>();
+				for(MeasurementVariable var : workbook.getConditions()){
+					conditionsCopy.add(var.copy());
+				}
+				workbook.setImportConditionsCopy(conditionsCopy);
+			}
+			if(workbook.getConstants() != null){
+				List<MeasurementVariable> constantsCopy = new ArrayList<MeasurementVariable>();
+				for(MeasurementVariable var : workbook.getConstants()){
+					constantsCopy.add(var.copy());
+				}
+				workbook.setImportConstantsCopy(constantsCopy);
+			}
+			if(workbook.getTrialObservations() != null){
+				List<MeasurementRow> trialObservationsCopy = new ArrayList<MeasurementRow>();
+				for(MeasurementRow row : workbook.getTrialObservations()){
+					trialObservationsCopy.add(row.copy());
+				}
+				workbook.setImportTrialObservationsCopy(trialObservationsCopy);
+			}
 		}
 	}
 	

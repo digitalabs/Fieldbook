@@ -227,7 +227,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				if (!STUDY_DETAILS_IDS.contains(variable.getTermId())) {
 					filteredConditions.add(variable);
 					if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(variable.getLabel())) {
-						variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
+						variable.setValue(trialObservation.getMeasurementDataValue(variable.getTermId()));
 						if(variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()){
 							try {
 								variable.setPossibleValues(fieldbookService.getAllPossibleValues(variable.getTermId()));

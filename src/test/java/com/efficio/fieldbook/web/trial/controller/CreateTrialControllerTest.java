@@ -23,7 +23,6 @@ public class CreateTrialControllerTest extends AbstractBaseControllerTest {
 		ModelAndViewAssert.assertModelAttributeAvailable(mav, "germplasmData");
 		ModelAndViewAssert.assertModelAttributeAvailable(mav, "environmentData");
 		ModelAndViewAssert.assertModelAttributeAvailable(mav, "trialSettingsData");
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "experimentalDesignData");
 		ModelAndViewAssert.assertModelAttributeAvailable(mav, "measurementRowCount");
 		
 	}

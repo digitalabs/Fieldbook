@@ -369,12 +369,39 @@
                 },
 
                 updateCurrentData: function (dataKey, newValue) {
-                    service.currentData[dataKey] = newValue;
+                    _.each(_.keys(newValue),function(nvkey) {
+                        service.currentData[dataKey][nvkey] = newValue[nvkey];
+                    });
+
+                    //service.currentData[dataKey] = newValue;
                     propagateChange(dataRegistry, dataKey, newValue);
                 },
 
                 updateSettings: function (key, newValue) {
-                    service.settings[key] = newValue;
+
+                    if (service.settings[key] instanceof angular.OrderedHash) {
+                        service.settings[key].removeAll();
+
+                        _.each(newValue.vals(),function(val,nvkey) {
+                            service.settings[key].push(nvkey,val);
+                        });
+                    } else {
+                        _.each(_.keys(newValue),function(nvkey) {
+
+                            if (newValue[nvkey] instanceof angular.OrderedHash) {
+
+                                service.settings[key][nvkey].removeAll();
+
+                                _.each(newValue[nvkey].vals(),function(val,ohkey) {
+                                    service.settings[key][nvkey].push(ohkey,val);
+                                });
+                            } else {
+                                service.settings[key][nvkey] = newValue[nvkey];
+                            }
+
+                        });
+                    }
+
                     propagateChange(settingRegistry, key, newValue);
                     settingsArray = [];
                 },

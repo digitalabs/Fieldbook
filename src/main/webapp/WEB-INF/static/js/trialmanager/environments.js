@@ -23,13 +23,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             }
 
             TrialManagerDataService.registerData('environments', function(newValue) {
-                angular.copy(newValue, $scope.data);
                 $scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
-            });
-
-
-            TrialManagerDataService.registerSetting('environments', function (newValue) {
-                angular.copy(newValue, $scope.settings);
             });
 
             $scope.temp = {

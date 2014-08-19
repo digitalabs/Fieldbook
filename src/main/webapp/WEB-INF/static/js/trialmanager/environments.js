@@ -22,7 +22,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                 $scope.settings.trialConditionDetails = [];
             }
 
-            TrialManagerDataService.registerData('environments', function(newValue) {
+            TrialManagerDataService.onUpdateData('environments', function(newValue) {
                 $scope.temp.noOfEnvironments = $scope.data.noOfEnvironments;
             });
 

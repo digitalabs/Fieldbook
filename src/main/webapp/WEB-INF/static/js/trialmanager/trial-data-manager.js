@@ -359,7 +359,7 @@
                         }
                     }
                 },
-                registerData: function (dataKey, updateFunction) {
+                onUpdateData: function (dataKey, updateFunction) {
                     if (!dataRegistry[dataKey]) {
                         dataRegistry[dataKey] = [];
                         dataRegistry[dataKey].push(updateFunction);
@@ -411,7 +411,7 @@
                     $('body').data('service.trialMeasurement.count', newCountValue);
                 },
 
-                registerSetting: function (key, updateFunction) {
+                onUpdateSettings: function (key, updateFunction) {
                     if (!settingRegistry[key]) {
                         settingRegistry[key] = [];
                         settingRegistry[key].push(updateFunction);

@@ -24,10 +24,9 @@
         
         $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
 
-        TrialManagerDataService.registerSetting('treatmentFactors', function(newValue) {
+        TrialManagerDataService.onUpdateSettings('treatmentFactors', function(newValue) {
             TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
         });
-        
 
         // map containing the treatment factor level pairs
         TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;

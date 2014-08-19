@@ -1036,7 +1036,7 @@ public class SettingsUtil {
 
 
     public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset, boolean isNursery) {
-    	return convertXmlDatasetToWorkbook(dataset, isNursery, null, null, null);
+    	return convertXmlDatasetToWorkbook(dataset, isNursery, null, null, null, null);
     }
     /**
      * Convert xml dataset to workbook.
@@ -1045,7 +1045,8 @@ public class SettingsUtil {
      * @return the workbook
      */
     public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset, boolean isNursery,
-    		ExpDesignParameterUi param, List<Integer> variables, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+    		ExpDesignParameterUi param, List<Integer> variables, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+    		Workbook previousWorkbook) {
     	
         Workbook workbook = new Workbook();
 
@@ -1068,7 +1069,7 @@ public class SettingsUtil {
             workbook.getTreatmentFactors().addAll(convertTreatmentFactorsToTreatmentVariables(trialDataset.getTreatmentFactors()));
             if (param != null && variables != null) {
             	try {
-            		setExperimentalDesignToWorkbook(param, variables, workbook, fieldbookMiddlewareService);
+            		setExperimentalDesignToWorkbook(param, variables, workbook, previousWorkbook, fieldbookMiddlewareService);
             	} catch (MiddlewareQueryException e) {
             		//do nothing
             	}
@@ -2088,7 +2089,7 @@ public class SettingsUtil {
     	}
     }
     
-    public static void addTrialCondition(TermId termId, ExpDesignParameterUi param, Workbook workbook,
+    private static void addTrialCondition(TermId termId, ExpDesignParameterUi param, Workbook workbook,
     		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
     	
     	String value = getExperimentalDesignValue(param, termId);
@@ -2128,7 +2129,7 @@ public class SettingsUtil {
     	}
     }
     
-    public static void removeTrialConditions(List<Integer> ids,Workbook workbook) throws MiddlewareQueryException {
+    private static void removeTrialConditions(List<Integer> ids,Workbook workbook) throws MiddlewareQueryException {
     	
     	if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
     		for (MeasurementVariable var : workbook.getConditions()) {
@@ -2139,24 +2140,50 @@ public class SettingsUtil {
     	}
     }
 
-    private static void setExperimentalDesignToWorkbook(ExpDesignParameterUi param, List<Integer> included, Workbook workbook,
+    private static void addOldExperimentalDesignToCurrentWorkbook(Workbook workbook, Workbook previousWorkbook)	{
+    	List<Integer> expDesignConstants = AppConstants.EXP_DESIGN_VARIABLES.getIntegerList();
+    	if (previousWorkbook != null && previousWorkbook.getConditions() != null && !previousWorkbook.getConditions().isEmpty()) {
+    		for (MeasurementVariable condition : previousWorkbook.getConditions()) {
+    			if (expDesignConstants.contains(condition.getTermId())) {
+    				boolean found = false;
+    				if (workbook.getConditions() != null && !workbook.getConditions().isEmpty()) {
+    					for (MeasurementVariable currentCondition : workbook.getConditions()) {
+    						if (currentCondition.getTermId() == condition.getTermId()) {
+    							found = true;
+    							break;
+    						}
+    					}
+    				}
+    				if (!found) { //for deletion
+    					workbook.getConditions().add(condition);
+    					workbook.getTrialConditions().add(condition);
+    				}
+    			}
+    		}
+    	}
+    }
+
+    private static void setExperimentalDesignToWorkbook(ExpDesignParameterUi param, List<Integer> included, Workbook workbook, Workbook previousWorkbook,
     		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) 
     				throws MiddlewareQueryException {
     	
-    	for (Integer id : included) {
-    		TermId termId = TermId.getById(id);
-    		addTrialCondition(termId, param, workbook, fieldbookMiddlewareService);
-    	}
-    	
-		List<Integer> excluded = new ArrayList<Integer>();
-		if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
-			for (MeasurementVariable var : workbook.getTrialConditions()) {
-				if (!included.contains(var.getTermId()) && AppConstants.EXP_DESIGN_VARIABLES.getIntegerList().contains(var.getTermId())) {
-					excluded.add(var.getTermId());
+    	addOldExperimentalDesignToCurrentWorkbook(workbook, previousWorkbook);
+    	if (included != null) {
+	    	for (Integer id : included) {
+	    		TermId termId = TermId.getById(id);
+	    		addTrialCondition(termId, param, workbook, fieldbookMiddlewareService);
+	    	}
+	    	
+			List<Integer> excluded = new ArrayList<Integer>();
+			if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+				for (MeasurementVariable var : workbook.getTrialConditions()) {
+					if (!included.contains(var.getTermId()) && AppConstants.EXP_DESIGN_VARIABLES.getIntegerList().contains(var.getTermId())) {
+						excluded.add(var.getTermId());
+					}
 				}
 			}
-		}
-		SettingsUtil.removeTrialConditions(excluded, workbook);
+			SettingsUtil.removeTrialConditions(excluded, workbook);
+    	}
     }
     
     @SuppressWarnings("incomplete-switch")

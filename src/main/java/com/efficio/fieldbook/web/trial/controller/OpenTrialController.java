@@ -278,7 +278,7 @@ public class OpenTrialController extends
 
         SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
         
-        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService);
+        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService, userSelection.getWorkbook());
         
         if (userSelection.getTemporaryWorkbook() != null) {
             userSelection.setMeasurementRowList(null);

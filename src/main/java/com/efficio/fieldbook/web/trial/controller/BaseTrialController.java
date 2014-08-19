@@ -7,6 +7,8 @@ import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.*;
@@ -17,6 +19,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +130,7 @@ public abstract class BaseTrialController extends SettingsController {
             data.setReplatinGroups(getExperimentalDesignData(xpDesignVariable.getNumberOfRepsInCols()));
             String replicationsMap = getExperimentalDesignData(xpDesignVariable.getReplicationsMap());
 
-            if (replicationsMap != null) {
+            if (replicationsMap != null && NumberUtils.isNumber(replicationsMap)) {
                 Integer repArrangementID = Integer.parseInt(replicationsMap);
                 if (TermId.REPS_IN_SINGLE_COL.getId() == repArrangementID) {
                     data.setReplicationsArrangement(1);
@@ -140,7 +143,7 @@ public abstract class BaseTrialController extends SettingsController {
 
             data.setReplicationsCount(getExperimentalDesignData(xpDesignVariable.getNumberOfReplicates()));
             String designTypeString = xpDesignVariable.getExperimentalDesign() == null ? null : xpDesignVariable.getExperimentalDesign().getValue();
-            if (designTypeString != null) {
+            if (designTypeString != null && NumberUtils.isNumber(designTypeString)) {
                 Integer designTypeTermID = Integer.parseInt(designTypeString);
 
                 if (TermId.RANDOMIZED_COMPLETE_BLOCK.getId() == designTypeTermID) {

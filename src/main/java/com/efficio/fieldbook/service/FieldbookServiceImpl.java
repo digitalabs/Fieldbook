@@ -302,8 +302,6 @@ public class FieldbookServiceImpl implements FieldbookService {
                 possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral());
             } else if (TermId.NURSERY_TYPE.getId() == id) {
                 possibleValues = fieldbookMiddlewareService.getAllNurseryTypes();
-            } else if (TermId.EXPERIMENT_DESIGN_FACTOR.getId() == id) {
-                possibleValues = filterValues(fieldbookMiddlewareService.getDistinctStandardVariableValues(id), AppConstants.EXPERIMENTAL_DESIGN_POSSIBLE_VALUES.getString());
             } else {
                 possibleValues = fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
             }

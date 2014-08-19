@@ -2721,7 +2721,6 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 		$('#' + comboName)
 				.select2(
 						{
-							minimumResultsForSearch: suggestions_obj.length == 0 ? -1 : 20,
 							query : function(query) {
 								var data = {
 									results : sortByKey(suggestions_obj, 'text')

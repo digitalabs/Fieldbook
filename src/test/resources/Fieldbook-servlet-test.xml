@@ -193,11 +193,15 @@
     <bean id="fieldbookMiddlewareService" class="org.generationcp.middleware.service.FieldbookServiceImpl">
         <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+        <constructor-arg name="localDatabaseName" value="${local.db.name}"/>
+        <constructor-arg name="centralDatabaseName" value="${central.db.name}"/>
     </bean>
     
     <bean id="inventoryMiddlewareService" class="org.generationcp.middleware.service.InventoryServiceImpl">
     	<constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+        <constructor-arg name="localDatabaseName" value="${local.db.name}"/>
+        <constructor-arg name="centralDatabaseName" value="${central.db.name}"/>
     </bean>
     
     

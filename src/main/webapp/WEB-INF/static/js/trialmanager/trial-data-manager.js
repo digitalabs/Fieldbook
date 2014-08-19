@@ -267,7 +267,7 @@
                 },
 
                 indicateUnappliedChangesAvailable: function () {
-                    if (!service.applicationData.unappliedChangesAvailable && service.applicationData.germplasmListSelected) {
+                    if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count != 0) {
                         service.applicationData.unappliedChangesAvailable = true;
                         showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
                             'To update the Measurements table, please review your settings and regenerate ' +

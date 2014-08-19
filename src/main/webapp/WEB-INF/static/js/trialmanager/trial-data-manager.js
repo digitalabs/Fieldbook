@@ -43,6 +43,11 @@
             var extractBasicDetailsData = function(initialData, initializeProperty) {
                 var data = extractData(initialData, initializeProperty);
 
+                // data saved from the database is htmlEscaped so we need to un-escape the retrieved data first.
+                _.each(data.basicDetails,function(val,key) {
+                    data.basicDetails[key] = _.unescape(val);
+                });
+
                 if (data.basicDetails[8050] === null || data.basicDetails[8050] === '') {
                     data.basicDetails[8050] = $.datepicker.formatDate('yy-mm-dd', new Date());
                 }

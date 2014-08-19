@@ -374,7 +374,7 @@
                     });
 
                     //service.currentData[dataKey] = newValue;
-                    //propagateChange(dataRegistry, dataKey, newValue);
+                    propagateChange(dataRegistry, dataKey, newValue);
                 },
 
                 updateSettings: function (key, newValue) {
@@ -402,7 +402,7 @@
                         });
                     }
 
-                    //propagateChange(settingRegistry, key, newValue);
+                    propagateChange(settingRegistry, key, newValue);
                     settingsArray = [];
                 },
 

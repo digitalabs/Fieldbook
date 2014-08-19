@@ -84,12 +84,6 @@
                 return (parseInt($('#totalGermplasms').val())) ? parseInt($('#totalGermplasms').val()) : 0;
             };
 
-            $scope.updateSettings = function(newValue) {
-                angular.copy(newValue, $scope.settings);
-            };
-
-            TrialManagerDataService.registerSetting('germplasm', $scope.updateSettings);
-
             $scope.updateDataTable = function () {
                 $.ajax({
                     url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',

@@ -16,14 +16,6 @@
 
         $scope.addVariable = true;
 
-        TrialManagerDataService.registerData('trialSettings', function(newValue) {
-            angular.copy(newValue, $scope.data);
-        });
-
-        TrialManagerDataService.registerSetting('trialSettings', function (newValue) {
-            angular.copy(newValue, $scope.settings);
-        });
-
         $scope.removeVariable = function (cvTermId) {
             // remove the equivalent setting
             $scope.settings.remove(cvTermId);

@@ -393,8 +393,8 @@ public class CreateTrialController extends BaseTrialController {
             Workbook trialWorkbook = userSelection.getWorkbook();
             userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
             
-            tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
-            tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));                    
+            tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
+            tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));                    
 
         return tabDetails;
     }

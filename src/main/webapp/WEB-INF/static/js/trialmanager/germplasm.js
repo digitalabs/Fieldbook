@@ -14,6 +14,7 @@
             $scope.settings = TrialManagerDataService.settings.germplasm;
 
             if (TrialManagerDataService.isOpenTrial()) {
+            	TrialManagerDataService.updateTrialMeasurementRowCount(TrialManagerDataService.trialMeasurement.count);
                 displaySelectedGermplasmDetails();
             }
             

@@ -68,7 +68,7 @@
 			}
 		}else{
 			germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
-			if($('.noGermplasmListIndicator').length !== 0){
+			if($('.noGermplasmListIndicator').length !== 0 && $('body').data('service.trialMeasurement.count') !== 0){
 				$('.noGermplasmListIndicator').html(noTrialGermplasmList);
 			}
 		}

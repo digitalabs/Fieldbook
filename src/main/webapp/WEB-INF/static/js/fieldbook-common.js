@@ -3240,7 +3240,9 @@ function displaySelectedGermplasmDetails() {
 		success: function(html) {
 				$('#imported-germplasm-list').css('display', 'block');
 				$('#imported-germplasm-list').html(html);
-				$('#entries-details').css('display', 'block');
+				if (parseInt($('#totalGermplasms').val()) !== 0) {
+					$('#entries-details').css('display', 'block');
+				}
 				$('#numberOfEntries').html($('#totalGermplasms').val());
 				$('#imported-germplasm-list-reset-button').css('opacity', '1');
 				if(isNursery()){

@@ -2123,8 +2123,8 @@ public class SettingsUtil {
 		    	mvar.setOperation(Operation.ADD);
 		    	mvar.setStoredIn(stdvar.getStoredIn().getId());
 		    	mvar.setDataTypeId(stdvar.getDataType().getId());
-		    	workbook.getTrialConditions().add(mvar);
 		    	workbook.getConditions().add(mvar);
+		    	workbook.resetTrialConditions();
 	    	}
     	}
     }
@@ -2156,7 +2156,7 @@ public class SettingsUtil {
     				}
     				if (!found) { //for deletion
     					workbook.getConditions().add(condition);
-    					workbook.getTrialConditions().add(condition);
+    					workbook.resetTrialConditions();
     				}
     			}
     		}

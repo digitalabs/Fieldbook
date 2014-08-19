@@ -722,7 +722,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                         if (tempVarId.getOperation() != Operation.DELETE) {
                             tempVarName.setOperation(Operation.ADD);
                             workbook.getConditions().add(tempVarName);
-                            workbook.getTrialConditions().add(tempVarName);
+                            workbook.resetTrialConditions();
                             SettingVariable svar = new SettingVariable(
                                     tempVarName.getName(), stdvar.getDescription(), stdvar.getProperty().getName(),
                                     stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getStoredIn().getName(),
@@ -778,7 +778,7 @@ public class FieldbookServiceImpl implements FieldbookService {
   	  						tempVarId.setFactor(false);
   	  						tempVarId.setOperation(Operation.ADD);
   							workbook.getConditions().add(tempVarId);
-  							workbook.getTrialConditions().add(tempVarId);
+  							workbook.resetTrialConditions();
   						}
   					}
   					

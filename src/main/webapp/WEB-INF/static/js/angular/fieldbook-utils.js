@@ -57,6 +57,13 @@
 
         };
 
+        OrderedHash.prototype.removeAll = function() {
+            while(this.m_keys.length > 0) {
+                var _key = this.m_keys.pop();
+                delete this.m_vals[_key];
+            }
+        };
+
         return OrderedHash;
 
     })();

@@ -102,7 +102,7 @@
                     }
                 };
 
-                var DELAY = 1000; // 1 secs
+                var DELAY = 1500; // 1.5 secs
                 $scope.reloadOnDebounce = debounce($scope.reloadMeasurementPage,DELAY,false);
 
             }]);

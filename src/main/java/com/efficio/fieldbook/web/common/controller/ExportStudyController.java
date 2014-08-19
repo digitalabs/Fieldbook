@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -314,7 +315,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	
     	exportDataCollectionService.reorderWorkbook(workbook);
     	
-    	String filename = userSelection.getWorkbook().getStudyDetails().getStudyName();
+    	String filename = HtmlUtils.htmlUnescape(userSelection.getWorkbook().getStudyDetails().getStudyName());
     	String outputFilename = null;
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();

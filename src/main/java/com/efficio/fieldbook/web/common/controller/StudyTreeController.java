@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
+import org.springframework.web.util.HtmlUtils;
 
 @Controller
 @RequestMapping(StudyTreeController.URL)
@@ -211,11 +212,13 @@ public class StudyTreeController {
 		String studyId = req.getParameter("studyId");
 		String studyName = req.getParameter("name");
 		Integer studyIdInt = Integer.valueOf(studyId);
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
+
+
+        Map<String, Object> resultsMap = new HashMap<String, Object>();
 		try {
 
-			int studyIdDb = fieldbookMiddlewareService.getProjectIdByName(studyName);									
-			
+            int studyIdDb = fieldbookMiddlewareService.getProjectIdByName(HtmlUtils.htmlEscape(studyName));
+
 			if (studyIdInt.intValue() == 0 && studyIdDb != 0) {
 				// meaning new
 				resultsMap.put("isSuccess", "0");

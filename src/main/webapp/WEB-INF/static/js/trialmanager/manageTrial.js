@@ -302,6 +302,12 @@
                             'Please regenerate the design on the Experimental Design tab', 10000);
                     }
                 }
+                
+                if(targetState === 'createMeasurements' || targetState === 'editMeasurements'){
+                	if($('body').data('expDesignShowPreview') === '1'){
+                		showMeasurementsPreview();
+                	}
+                }
             };
             
             $('body').on('DO_AUTO_SAVE', function(){

@@ -3196,6 +3196,7 @@ function showMeasurementsPreview(){
         cache: false,
         success: function (html) {
             $(domElemId).html(html);
+            $('body').data('expDesignShowPreview', '0');
         }
     });	   	
 }

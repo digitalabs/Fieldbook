@@ -160,6 +160,7 @@
             };
 
             var notifySaveEventListeners = function () {
+            	$('body').data('expDesignShowPreview', '0');
                 angular.forEach(saveEventListeners, function (saveListenerFunction) {
                     saveListenerFunction();
                 });
@@ -290,7 +291,7 @@
                         performDataCleanup();
                         if (!service.isOpenTrial()) {
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
-                                success(function () {
+                                success(function () {                                	
                                     submitGermplasmList().then(function (generatedID) {
                                         showSuccessfulMessage('', saveSuccessMessage);
                                         notifySaveEventListeners();

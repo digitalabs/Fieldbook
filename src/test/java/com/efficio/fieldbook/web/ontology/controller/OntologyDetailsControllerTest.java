@@ -69,8 +69,6 @@ public class OntologyDetailsControllerTest  extends AbstractBaseControllerTest {
         
         Assert.assertEquals(OntologyDetailsController.DETAILS_TEMPLATE, result);
         Assert.assertEquals(stdvar, form.getVariable());
-        Assert.assertEquals("123,456", form.getProjectCount());
-        Assert.assertEquals("789,000", form.getObservationCount());
     }
     
     public void testGetPropertiesBySettingsMode() {

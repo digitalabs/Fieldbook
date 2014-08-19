@@ -206,6 +206,12 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
     border-color: #e4e4e4;
 }
 
+.nav-tabs > li:not(.active) > a,
+.nav-tabs > li:not(.active) > a:hover,
+.nav-tabs > li:not(.active) > a:focus{    
+    background-color: #CECECE;
+}
+
 .nav-tabs > li > a {
     border: #e4e4e4;
 }

@@ -125,6 +125,18 @@
         [          '$rootScope', '$state', '$stateParams', 'uiSelect2Config',
             function ($rootScope, $state, $stateParams, uiSelect2Config) {
 
+                //$('.import-study-data').data('data-import', '0');
+                $rootScope.$on('$stateChangeStart',
+                    function(event, toState, toParams, fromState, fromParams){
+                        if ($('.import-study-data').data('data-import') === '1') {
+                            showAlertMessage('',importSaveDataWarningMessage);
+
+                            event.preventDefault();
+                        }
+
+                        // a 'transition prevented' error
+                    });
+
                 // It's very handy to add references to $state and $stateParams to the $rootScope
                 // so that you can access them from any scope within your applications.For example,
                 // <li ui-sref-active="active }"> will set the <li> // to active whenever
@@ -248,6 +260,19 @@
                     TrialManagerDataService.updateSettings('measurements', TrialManagerDataService.extractSettings(data.measurementsData));
                 });
             };
+            
+            $scope.refreshTabAfterImport = function () {
+                $http.get('/Fieldbook/TrialManager/createTrial/refresh/settings/tab').success(function (data) {
+                    // update data and settings
+
+                    var environmentData = TrialManagerDataService.extractData(data.environmentData);
+                    
+                    TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
+                    TrialManagerDataService.updateCurrentData('environments', environmentData);
+                    
+                });
+            };
+
 
             $scope.displayMeasurementOnlyActions = function () {
                 return TrialManagerDataService.trialMeasurement.count &&
@@ -281,6 +306,9 @@
             
             $('body').on('DO_AUTO_SAVE', function(){
                 TrialManagerDataService.saveCurrentData();
+            });
+            $('body').on('REFRESH_AFTER_IMPORT_SAVE', function(){
+            	$scope.refreshTabAfterImport();
             });
         }]);
 

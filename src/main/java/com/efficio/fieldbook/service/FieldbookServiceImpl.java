@@ -57,6 +57,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -744,52 +745,84 @@ public class FieldbookServiceImpl implements FieldbookService {
   						/*means only name is existing
   						 * we need to create the variable of the id 
   						 */
-                        MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
-                        String actualIdVal = "";
-                        if (tempVarName.getValue() != null && !tempVarName.getValue().equalsIgnoreCase("")) {
-                            List<ValueReference> possibleValues = this.getAllPossibleValues(Integer.valueOf(idTermId));
 
-                            for (ValueReference ref : possibleValues) {
-
-                                if (ref.getId() != null && ref.getName().equalsIgnoreCase(tempVarName.getValue())) {
-                                    actualIdVal = ref.getId().toString();
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (deleteNameWhenIdNotExist) {
-                            //we need to delete the name
-                            tempVarName.setOperation(Operation.DELETE);
-                            //to be sure, we check all record and mark it as delete
-                            if (studyConditionMapList.get(tempVarName.getTermId()) != null) {
-                                List<MeasurementVariable> varList = studyConditionMapList.get(tempVarName.getTermId());
-                                for (MeasurementVariable var : varList) {
-                                    var.setOperation(Operation.DELETE);
-                                }
-                            }
-                        } else {
-                            StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idTermId));
-                            MeasurementVariable tempVarId = new MeasurementVariable(
-                                    Integer.valueOf(idTermId), tempVarName.getName() + AppConstants.ID_SUFFIX.getString(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
-                                    stdvar.getProperty().getName(), stdvar.getDataType().getName(), actualIdVal, stdvar.getPhenotypicType().getLabelList().get(0));
-                            tempVarId.setStoredIn(stdvar.getStoredIn().getId());
-                            tempVarId.setDataTypeId(stdvar.getDataType().getId());
-                            tempVarId.setFactor(false);
-                            tempVarId.setOperation(Operation.ADD);
-                            workbook.getConditions().add(tempVarId);
-                            workbook.getTrialConditions().add(tempVarId);
-                        }
-                    }
-
-                }
-            }
-        }
-        if (workbook != null && !workbook.isNursery()) {
-            //to be only done when it is a trial
-            addConditionsToTrialObservationsIfNecessary(workbook);
-        }
-    }
+  						MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
+  						String actualIdVal = "";
+  						if(tempVarName.getValue() != null && !tempVarName.getValue().equalsIgnoreCase("")){
+  							List<ValueReference> possibleValues = this.getAllPossibleValues(Integer.valueOf(idTermId));
+  							
+  							for(ValueReference ref : possibleValues){
+  								
+  								if(ref.getId() != null && ref.getName().equalsIgnoreCase(tempVarName.getValue())){
+  									actualIdVal = ref.getId().toString();
+  									break;
+  								}
+  							}
+  						}
+  						
+  						if(deleteNameWhenIdNotExist){
+							//we need to delete the name
+  							tempVarName.setOperation(Operation.DELETE);
+  							//to be sure, we check all record and mark it as delete
+  							if(studyConditionMapList.get(tempVarName.getTermId()) != null){
+  								List<MeasurementVariable> varList  = studyConditionMapList.get(tempVarName.getTermId());
+  								for(MeasurementVariable var : varList){
+  									var.setOperation(Operation.DELETE);
+  								}
+  							}
+  						}else{
+  							StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idTermId));
+  	  						MeasurementVariable tempVarId = new MeasurementVariable(
+  	  								Integer.valueOf(idTermId), tempVarName.getName() + AppConstants.ID_SUFFIX.getString(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+  	  								stdvar.getProperty().getName(), stdvar.getDataType().getName(), actualIdVal, stdvar.getPhenotypicType().getLabelList().get(0));
+  	  						tempVarId.setStoredIn(stdvar.getStoredIn().getId());
+  	  						tempVarId.setDataTypeId(stdvar.getDataType().getId());
+  	  						tempVarId.setFactor(false);
+  	  						tempVarId.setOperation(Operation.ADD);
+  							workbook.getConditions().add(tempVarId);
+  							workbook.getTrialConditions().add(tempVarId);
+  						}
+  					}
+  					
+  				}
+  			}
+  		}
+  		if(workbook != null && !workbook.isNursery()){
+  			//to be only done when it is a trial
+  			addConditionsToTrialObservationsIfNecessary(workbook);
+  		}else{
+  			//no adding, just setting of data
+  			if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()
+  	    			&& workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+  				MeasurementVariable locationNameVar = WorkbookUtil.getMeasurementVariable(workbook.getTrialConditions(), TermId.TRIAL_LOCATION.getId());
+  				MeasurementVariable cooperatorNameVar = WorkbookUtil.getMeasurementVariable(workbook.getTrialConditions(), AppConstants.COOPERATOR_NAME.getInt());
+  				if(locationNameVar != null){
+  					//we set it to the trial observation level
+  					
+	    			for (MeasurementRow row : workbook.getTrialObservations()) {
+	    				MeasurementData data = row.getMeasurementData(locationNameVar.getTermId());
+	    				if(data != null){
+	    					data.setValue(locationNameVar.getValue());
+	    				}
+	    			}
+  					
+  				}  
+  				
+  				if(cooperatorNameVar != null){
+  					//we set it to the trial observation level
+  					
+	    			for (MeasurementRow row : workbook.getTrialObservations()) {
+	    				MeasurementData data = row.getMeasurementData(cooperatorNameVar.getTermId());
+	    				if(data != null){
+	    					data.setValue(cooperatorNameVar.getValue());
+	    				}
+	    			}
+  					
+  				}  
+  			}
+  		}
+  	}
+    
 
     private void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
         if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()

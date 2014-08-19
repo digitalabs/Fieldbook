@@ -37,10 +37,12 @@ public class ExportImportStudyUtil {
     }
     
     public static String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues, boolean isReturnOriginalValue) {
-    	for (ValueReference possibleValue : possibleValues) {
-    		if (description.equalsIgnoreCase(possibleValue.getName())) {
-    			return possibleValue.getId().toString();
-    		}
+    	if(description != null){
+	    	for (ValueReference possibleValue : possibleValues) {
+	    		if (description.equalsIgnoreCase(possibleValue.getName())) {
+	    			return possibleValue.getId().toString();
+	    		}
+	    	}
     	}
     	return isReturnOriginalValue ? description : "";
     }

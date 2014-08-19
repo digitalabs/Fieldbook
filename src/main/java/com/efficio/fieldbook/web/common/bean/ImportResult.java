@@ -8,6 +8,7 @@ public class ImportResult {
 	private Set<ChangeType> modes;
 	private List<GermplasmChangeDetail> changeDetails;
 	private String errorMessage;
+	private String conditionsAndConstantsErrorMessage;
 	
 	public ImportResult(Set<ChangeType> modes, List<GermplasmChangeDetail> changeDetails){
 		this.modes = modes;
@@ -57,6 +58,15 @@ public class ImportResult {
 	 */
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+
+	public String getConditionsAndConstantsErrorMessage() {
+		return conditionsAndConstantsErrorMessage;
+	}
+
+	public void setConditionsAndConstantsErrorMessage(
+			String conditionsAndConstantsErrorMessage) {
+		this.conditionsAndConstantsErrorMessage = conditionsAndConstantsErrorMessage;
 	}
 	
 	

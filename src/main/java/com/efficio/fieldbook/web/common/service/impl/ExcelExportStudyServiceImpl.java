@@ -46,10 +46,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
@@ -68,15 +70,26 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	@Resource
 	private OntologyService ontologyService;
 	
+	@Resource
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
 	private static final List<Integer> STUDY_DETAILS_IDS = Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(), 
 			TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(), TermId.START_DATE.getId(), TermId.END_DATE.getId(), 
 			TermId.STUDY_TYPE.getId(), TermId.STUDY_UID.getId(), TermId.STUDY_STATUS.getId());
+	private String breedingMethodPropertyName = "";  
 	
 	@Override
 	public String export(Workbook workbook, String filename,  List<Integer> instances) {
 		FileOutputStream fos = null;
 		List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
+		
+		
+			try {
+				breedingMethodPropertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
+			} catch (MiddlewareQueryException e) {
+			    e.printStackTrace();
+			}
 		
 			for (Integer index : instances) {
 	    		List<Integer> indexes = new ArrayList<Integer>();
@@ -214,7 +227,15 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				if (!STUDY_DETAILS_IDS.contains(variable.getTermId())) {
 					filteredConditions.add(variable);
 					if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(variable.getLabel())) {
-						variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
+						variable.setValue(trialObservation.getMeasurementDataValue(variable.getTermId()));
+						if(variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()){
+							try {
+								variable.setPossibleValues(fieldbookService.getAllPossibleValues(variable.getTermId()));
+							} catch (MiddlewareQueryException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 			}
@@ -352,7 +373,24 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		cell = row.createCell(6, HSSFCell.CELL_TYPE_STRING);
 		cleanupValue(variable);
-		if(variable.getDataTypeId() != null && variable.getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())){
+		
+		try {
+			variable.setPossibleValues(fieldbookService.getAllPossibleValues(variable.getTermId()));
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (variable != null && variable.getPossibleValues() != null
+				&& !variable.getPossibleValues().isEmpty() 
+				&& variable.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
+				&& variable.getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
+				&& !variable.getProperty().equals(breedingMethodPropertyName)
+				&& variable.getTermId() != TermId.PI_ID.getId()
+				&& variable.getTermId() != Integer.parseInt(AppConstants.COOPERATOR_ID.getString())
+				&& variable.getTermId() != TermId.LOCATION_ID.getId()) {		
+				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(variable.getValue(), variable.getPossibleValues()));
+		}else if(variable.getDataTypeId() != null && variable.getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())){
 			if(variable.getValue() != null && !"".equalsIgnoreCase(variable.getValue())){
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
 				cell.setCellType(Cell.CELL_TYPE_NUMERIC);		
@@ -400,7 +438,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		CellStyle style =  xlsBook.createCellStyle();
 		DataFormat format = xlsBook.createDataFormat();
 		style.setDataFormat(format.getFormat("0.#"));
-
+		
+		
+		
 		for (MeasurementVariable variable : variables) {
 			MeasurementData dataCell = dataRow.getMeasurementData(variable.getTermId());
 			if (dataCell != null) {
@@ -414,8 +454,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
 						&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
 						&& !dataCell.getMeasurementVariable().getProperty().equals(propertyName)) {
-	
-					cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
+					
+						cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
+					
 				}
 				else {
 					

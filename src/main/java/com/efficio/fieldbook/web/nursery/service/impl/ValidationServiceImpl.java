@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +26,9 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -40,6 +44,9 @@ public class ValidationServiceImpl implements ValidationService {
 	
 	@Resource
 	private ResourceBundleMessageSource messageSource;
+	
+	@Resource
+	private FieldbookService fieldbookMiddlewareService;
 	
 	@Override
 	public boolean isValidValue(MeasurementVariable var, String value, boolean validateDateForDB) {
@@ -117,6 +124,59 @@ public class ValidationServiceImpl implements ValidationService {
 				for (MeasurementData data : row.getDataList()) {
 					MeasurementVariable variate = data.getMeasurementVariable();
 					if (!isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
+						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
+						
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void validateConditionAndConstantValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException {
+		Locale locale = LocaleContextHolder.getLocale();		
+		if (workbook.getConditions() != null) {
+			
+			for (MeasurementVariable var : workbook.getConditions()) {
+					
+					if (WorkbookUtil.isConditionValidate(var.getTermId())){
+						if(var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null && !var.getValue().equalsIgnoreCase("")){
+							//we do the validation here
+							 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+				                HashMap<String, Method> methodMap = new HashMap<String, Method>();
+				                //create a map to get method id based on given code
+				                if (methods != null) {
+				                    for (Method method : methods) {
+				                        methodMap.put(method.getMcode(), method);
+				                    }
+				                }
+				                
+				                if(!methodMap.containsKey(var.getValue())){
+				                	//this is an error since there is no matching method code
+				                	var.setOperation(null);
+				                	throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {var.getName(), var.getValue()}, locale));
+				                }else{
+				                	var.setOperation(Operation.UPDATE);
+				                }
+						}
+						else if(!isValidValue(var, var.getValue(), "", true)) {
+							var.setOperation(null);
+							throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {var.getName(), var.getValue()}, locale));
+						}
+					}
+				
+			}
+		}
+		if(workbook.getTrialObservations() != null){
+			List<MeasurementRow> observations = new ArrayList();
+			observations = WorkbookUtil.filterObservationsByTrialInstance(workbook.getTrialObservations(), instanceNumber);
+			
+			
+			for (MeasurementRow row : observations) {
+				for (MeasurementData data : row.getDataList()) {
+					MeasurementVariable variate = data.getMeasurementVariable();
+					if (!isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
+						variate.setOperation(null);
 						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
 						
 					}

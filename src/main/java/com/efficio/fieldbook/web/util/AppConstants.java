@@ -185,6 +185,7 @@ public enum AppConstants {
     ,END_DATE_ID
     ,STUDY_NAME_ID
     ,COOPERATOR_ID
+    ,COOPERATOR_NAME
     
     ,LABEL
     

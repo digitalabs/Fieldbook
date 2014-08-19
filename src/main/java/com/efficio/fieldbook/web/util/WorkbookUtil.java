@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -251,6 +252,22 @@ public class WorkbookUtil {
     	}
     }
 	 
+	 public static void revertImportedConditionAndConstantsData(Workbook workbook){
+		//we need to revert all data
+		 if(workbook != null ){
+		    if(workbook.getImportConditionsCopy() != null){
+		    	workbook.setConditions(workbook.getImportConditionsCopy());
+		    }
+	    	if(workbook.getImportConstantsCopy() != null){
+	    		workbook.setConstants(workbook.getImportConstantsCopy());
+		    }
+
+			if(workbook.getImportTrialObservationsCopy() != null){
+				workbook.setTrialObservations(workbook.getImportTrialObservationsCopy());
+			}
+		 }
+	 }
+	 
 	 private static boolean inMeasurementDataList(List<MeasurementData> dataList, int termId) {
 	     for (MeasurementData data : dataList) {
 	         if (data.getMeasurementVariable().getTermId() == termId) {
@@ -464,5 +481,12 @@ public class WorkbookUtil {
                 }
             }
         }
+    }
+    //we would validate all conditions except for name and the study type
+    public static boolean isConditionValidate(Integer cvTermId){
+    	if(cvTermId != null && cvTermId.intValue() != TermId.STUDY_TYPE.getId() && cvTermId.intValue() != TermId.STUDY_NAME.getId()){
+    		return true;
+    	}
+    	return false;
     }
 }

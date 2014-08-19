@@ -240,11 +240,14 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 		
 		var columns = [],
 		columnsDef = [],
+		defaultOrdering = [],
 		table;				
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
-			
-			if ($(this).data('col-name') == '8240-key') {
+			if($(this).data('col-name') == '8230-key'){
+				defaultOrdering = [columns.length - 1, 'asc'];
+			}
+			else if ($(this).data('col-name') == '8240-key') {
 				// For GID
 				columnsDef.push({
 					targets: columns.length - 1,
@@ -302,7 +305,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,
-			bSort: false,
+			order: defaultOrdering,
 			// Problem with reordering plugin and fixed column for column re-ordering
 			colReorder: {
 				fixedColumns: 1

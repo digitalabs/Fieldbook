@@ -293,7 +293,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 							domElem = '<input data-index="'+meta.row+'" class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full['8255-key']+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
 						}
 						
-						return '<span data-index="'+meta.row+'" class="check-href edit-check'+meta.row+'" data-code="'+actualCode+'">'+actualVal+'</span>' + domElem;
+						return '<a data-index="'+meta.row+'" class="check-href edit-check'+meta.row+'" data-code="'+actualCode+'" href="javascript: showPopoverCheck(&quot;'+(meta.row)+'&quot;, &quot;.germplasm-list-items&quot;, &quot;edit-check'+meta.row+'&quot;)">'+actualVal+'</a>' + domElem;
 					}
 				});
 			}
@@ -322,13 +322,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 												
 				$(nRow).addClass('primaryRow');
 				$('td', nRow).attr('nowrap','nowrap');
-				
-				var rowIndex = $(nRow).find('.check-href').data('index');				
-				$(nRow).find('.check-href').parent('td').off('click');								
-				$(nRow).find('.check-href').parent('td').on('click', function(){					
-					showPopoverCheck(''+rowIndex,'.germplasm-list-items', '.edit-check'+rowIndex);
-				});
-				
+								
 				return nRow;
 			},
 		  fnInitComplete: function(oSettings, json) {

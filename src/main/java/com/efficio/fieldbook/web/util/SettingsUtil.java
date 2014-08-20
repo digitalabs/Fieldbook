@@ -1067,13 +1067,11 @@ public class SettingsUtil {
                 workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
             }
             workbook.getTreatmentFactors().addAll(convertTreatmentFactorsToTreatmentVariables(trialDataset.getTreatmentFactors()));
-            if (param != null && variables != null) {
-            	try {
-            		setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService);
-            	} catch (MiddlewareQueryException e) {
-            		//do nothing
-            	}
-            }
+        	try {
+        		setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService);
+        	} catch (MiddlewareQueryException e) {
+        		//do nothing
+        	}
         }
 
         return workbook;
@@ -2168,7 +2166,7 @@ public class SettingsUtil {
     				throws MiddlewareQueryException {
     	
     	addOldExperimentalDesignToCurrentWorkbook(workbook, allExpDesignVariables);
-    	if (included != null) {
+    	if (param != null && included != null) {
 	    	for (Integer id : included) {
 	    		TermId termId = TermId.getById(id);
 	    		addTrialCondition(termId, param, workbook, fieldbookMiddlewareService);
@@ -2232,4 +2230,5 @@ public class SettingsUtil {
     	}
     	return "";
     }
+
 }

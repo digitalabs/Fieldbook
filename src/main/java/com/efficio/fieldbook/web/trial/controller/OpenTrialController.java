@@ -168,6 +168,7 @@ public class OpenTrialController extends
             userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
             userSelection.setWorkbook(trialWorkbook);
             userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
+            userSelection.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(userSelection.getExperimentalDesignVariables()));
             userSelection.setTemporaryWorkbook(null);
             model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
             model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
@@ -347,6 +348,7 @@ public class OpenTrialController extends
         Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(id);
         userSelection.setWorkbook(trialWorkbook);
         userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
+        userSelection.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(userSelection.getExperimentalDesignVariables()));
         returnVal.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
         returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                             SettingsUtil.buildVariates(trialWorkbook.getVariates())));
@@ -392,6 +394,7 @@ public class OpenTrialController extends
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
         
         resetSessionVariablesAfterSave(workbook, false);
+//        resetExperimentalDesignAfterSave(workbook, userSelection.getExperimentalDesignVariables());
         return loadMeasurementDataPage(false, form, workbook,workbook.getMeasurementDatasetVariablesView(), workbook.getObservations(), workbook.getMeasurementDatesetId(), workbook.getVariates(), model);
     }
 

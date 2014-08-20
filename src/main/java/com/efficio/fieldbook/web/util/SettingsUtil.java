@@ -2231,4 +2231,48 @@ public class SettingsUtil {
     	return "";
     }
 
+    public static ExpDesignParameterUi convertToExpDesignParamsUi(List<MeasurementVariable> expDesigns) {
+    	ExpDesignParameterUi param = new ExpDesignParameterUi();
+    	if (expDesigns != null && !expDesigns.isEmpty()) {
+    		for (MeasurementVariable var : expDesigns) {
+    			if (var.getTermId() == TermId.BLOCK_SIZE.getId()) {
+    				param.setBlockSize(var.getValue());
+    			} else if (var.getTermId() == TermId.NO_OF_COLS_IN_REPS.getId()) {
+    				param.setColsPerReplications(var.getValue());
+    			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
+    				if (var.getValue() != null) {
+    					if (String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).equals(var.getValue())) {
+    						param.setDesignType(0);
+    					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).equals(var.getValue())
+    							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())) {
+    						param.setDesignType(1);
+    					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).equals(var.getValue())
+    							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
+    						param.setDesignType(2);
+    					}
+    				}
+    			} else if (var.getTermId() == TermId.NO_OF_CBLKS_LATINIZE.getId()) {
+    	    		param.setNblatin(var.getValue());
+    			} else if (var.getTermId() == TermId.NO_OF_CCOLS_LATINIZE.getId()) {
+    	    		param.setNclatin(var.getValue());
+    			} else if (var.getTermId() == TermId.NO_OF_CROWS_LATINIZE.getId()) {
+    	    		param.setNrlatin(var.getValue());
+    			} else if (var.getTermId() == TermId.NO_OF_REPS_IN_COLS.getId()) {
+    	    		param.setReplatinGroups(var.getValue());
+    			} else if (var.getTermId() == TermId.REPLICATIONS_MAP.getId()) {
+    				if (String.valueOf(TermId.REPS_IN_SINGLE_COL.getId()).equals(var.getValue())) {
+    					param.setReplicationsArrangement(1);
+    				} else if (String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId()).equals(var.getValue())) {
+    					param.setReplicationsArrangement(2);
+    				} else if (String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId()).equals(var.getValue())) {
+    					param.setReplicationsArrangement(3);
+    				}
+    			} else if (var.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
+    	    		param.setReplicationsCount(var.getValue());
+    			}
+    		}
+    		
+    	}
+    	return param;
+    }
 }

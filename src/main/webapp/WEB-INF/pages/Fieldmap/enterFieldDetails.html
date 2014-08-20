@@ -458,13 +458,13 @@
 					  //$('#'+getJquerySafeId('userFieldmap.fieldId')).select2('data');
 					loadFieldsDropdown(locationId, fieldId);
 					loadBlockDropdown(fieldId, blockId);
-					setTimeout(function(){
+					$('body').data('previousFmapData', '1');
 					var rowsPerPlotData = {'id': prevNumberOfRowsPerPlot , 'text' : prevNumberOfRowsPerPlot};
 					$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
 					$('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(prevNumberOfRowsInBlock);
 					$('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(prevNumberOfRangesInBlock);
 					calculateTotalPlots();
-					}, 100);
+					
 					
 					
 					

@@ -779,6 +779,7 @@ function loadBlockInformation(blockId){
            success: function(data) {	        	   
         		   var blockInfo = $.parseJSON(data.blockInfo);
         		   showBlockDetails(false, blockInfo);
+        		   $('body').data('previousFmapData', '0');
            }
          }
      );
@@ -803,6 +804,18 @@ function showBlockDetails(isHide, blockInfo){
 				rangesInBlock 20	
 				rowsInBlock 20
 			 */
+			if($('body').data('previousFmapData') === '1'){
+				if(blockInfo.newBlock == false){
+					isNewBlock = false;
+					$('.block-details input').attr('disabled', true);
+					$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', false);
+				}else{
+					isNewBlock = true;
+					$('.block-details input').attr('disabled', false);
+					$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
+				}
+				return;
+			}
 			if(blockInfo.newBlock == false){
 				var rowsPerPlotData = {'id': blockInfo.numberOfRowsInPlot , 'text' : blockInfo.numberOfRowsInPlot};
 				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
@@ -811,7 +824,8 @@ function showBlockDetails(isHide, blockInfo){
 				
 				$('.block-details input').attr('disabled', true);
 				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', false);
-				isNewBlock = false;				
+				isNewBlock = false;			
+				
 			}else{
 				//has fieldmap already
 				var rowsPerPlotData = {'id': 1 , 'text' : 1};

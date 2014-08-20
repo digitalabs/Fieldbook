@@ -489,4 +489,17 @@ public class WorkbookUtil {
     	}
     	return false;
     }
+    
+    public static List<MeasurementVariable> getExperimentalDesignVariables(List<MeasurementVariable> conditions) {
+    	List<MeasurementVariable> expDesignVariables = new ArrayList<MeasurementVariable>();
+    	if (conditions != null && !conditions.isEmpty()) {
+    		List<Integer> expDesignConstants = AppConstants.EXP_DESIGN_VARIABLES.getIntegerList();
+    		for (MeasurementVariable condition : conditions) {
+    			if (expDesignConstants.contains(condition.getTermId())) {
+    				expDesignVariables.add(condition);
+    			}
+    		}
+    	}
+    	return expDesignVariables;
+    }
 }

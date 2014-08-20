@@ -1046,7 +1046,7 @@ public class SettingsUtil {
      */
     public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset, boolean isNursery,
     		ExpDesignParameterUi param, List<Integer> variables, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-    		Workbook previousWorkbook) {
+    		List<MeasurementVariable> allExpDesignVariables) {
     	
         Workbook workbook = new Workbook();
 
@@ -1069,7 +1069,7 @@ public class SettingsUtil {
             workbook.getTreatmentFactors().addAll(convertTreatmentFactorsToTreatmentVariables(trialDataset.getTreatmentFactors()));
             if (param != null && variables != null) {
             	try {
-            		setExperimentalDesignToWorkbook(param, variables, workbook, previousWorkbook, fieldbookMiddlewareService);
+            		setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService);
             	} catch (MiddlewareQueryException e) {
             		//do nothing
             	}
@@ -2140,10 +2140,10 @@ public class SettingsUtil {
     	}
     }
 
-    private static void addOldExperimentalDesignToCurrentWorkbook(Workbook workbook, Workbook previousWorkbook)	{
+    private static void addOldExperimentalDesignToCurrentWorkbook(Workbook workbook, List<MeasurementVariable> allExpDesignVariables)	{
     	List<Integer> expDesignConstants = AppConstants.EXP_DESIGN_VARIABLES.getIntegerList();
-    	if (previousWorkbook != null && previousWorkbook.getConditions() != null && !previousWorkbook.getConditions().isEmpty()) {
-    		for (MeasurementVariable condition : previousWorkbook.getConditions()) {
+    	if (allExpDesignVariables != null && !allExpDesignVariables.isEmpty()) {
+    		for (MeasurementVariable condition : allExpDesignVariables) {
     			if (expDesignConstants.contains(condition.getTermId())) {
     				boolean found = false;
     				if (workbook.getConditions() != null && !workbook.getConditions().isEmpty()) {
@@ -2163,11 +2163,11 @@ public class SettingsUtil {
     	}
     }
 
-    private static void setExperimentalDesignToWorkbook(ExpDesignParameterUi param, List<Integer> included, Workbook workbook, Workbook previousWorkbook,
+    private static void setExperimentalDesignToWorkbook(ExpDesignParameterUi param, List<Integer> included, Workbook workbook, List<MeasurementVariable> allExpDesignVariables,
     		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) 
     				throws MiddlewareQueryException {
     	
-    	addOldExperimentalDesignToCurrentWorkbook(workbook, previousWorkbook);
+    	addOldExperimentalDesignToCurrentWorkbook(workbook, allExpDesignVariables);
     	if (included != null) {
 	    	for (Integer id : included) {
 	    		TermId termId = TermId.getById(id);

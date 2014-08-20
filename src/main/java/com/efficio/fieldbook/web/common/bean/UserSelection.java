@@ -151,6 +151,8 @@ public class UserSelection implements Serializable {
     
     private ExpDesignParameterUi expDesignParams;
     private List<Integer> expDesignVariables;
+    /** The List of experimental design variables (new, edit, or deleted) since the workbook was retrieved from the db, will be reset upon save  */
+    private List<MeasurementVariable> experimentalDesignVariables;
 	
 	/**
      * Gets the current page germplasm list.
@@ -894,6 +896,21 @@ public class UserSelection implements Serializable {
 		 */
 		public void setExpDesignVariables(List<Integer> expDesignVariables) {
 			this.expDesignVariables = expDesignVariables;
+		}
+
+		/**
+		 * @return the experimentalDesignVariables
+		 */
+		public List<MeasurementVariable> getExperimentalDesignVariables() {
+			return experimentalDesignVariables;
+		}
+
+		/**
+		 * @param experimentalDesignVariables the experimentalDesignVariables to set
+		 */
+		public void setExperimentalDesignVariables(
+				List<MeasurementVariable> experimentalDesignVariables) {
+			this.experimentalDesignVariables = experimentalDesignVariables;
 		}
 
 }

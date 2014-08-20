@@ -218,7 +218,7 @@ public class CreateTrialController extends BaseTrialController {
                 null, userSelection.getNurseryConditions(), false);
 
         SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
-        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService, userSelection.getWorkbook());
+        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService, userSelection.getExperimentalDesignVariables());
         
         List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
         variablesForEnvironment.addAll(workbook.getTrialVariables());

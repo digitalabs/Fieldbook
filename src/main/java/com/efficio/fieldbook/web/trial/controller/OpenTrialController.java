@@ -167,6 +167,7 @@ public class OpenTrialController extends
             Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
             userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
             userSelection.setWorkbook(trialWorkbook);
+            userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
             userSelection.setTemporaryWorkbook(null);
             model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
             model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
@@ -278,7 +279,7 @@ public class OpenTrialController extends
 
         SettingsUtil.setConstantLabels(dataset, userSelection.getConstantsWithLabels());
         
-        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService, userSelection.getWorkbook());
+        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, userSelection.getExpDesignParams(), userSelection.getExpDesignVariables(), fieldbookMiddlewareService, userSelection.getExperimentalDesignVariables());
         
         if (userSelection.getTemporaryWorkbook() != null) {
             userSelection.setMeasurementRowList(null);
@@ -345,6 +346,7 @@ public class OpenTrialController extends
         Map<String, Object> returnVal = new HashMap<String, Object>();
         Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(id);
         userSelection.setWorkbook(trialWorkbook);
+        userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
         returnVal.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
         returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                             SettingsUtil.buildVariates(trialWorkbook.getVariates())));

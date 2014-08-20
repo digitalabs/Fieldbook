@@ -528,6 +528,58 @@
             };
         })
 
+        .directive('inputType', function () {
+            return {
+                require: 'ngModel',
+                link: function (scope, elem, attrs, ctrl) {
+                    // Custom number validation logic.
+                    if (attrs.inputType === 'number') {
+                        elem.attr('type', 'text');
+
+                        return ctrl.$parsers.push(function (value) {
+                            var valid = value === null || isFinite(value);
+
+                            ctrl.$setValidity('number', valid);
+
+                            return valid && value !== null ? Number(value) : undefined;
+                        });
+                    }
+
+                    // Fallback to setting the default `type` attribute.
+                    return elem.attr('type', attrs.inputType);
+                }
+            };
+        })
+
+        .directive('minVal', function () {
+            return {
+                require: 'ngModel',
+                link: function (scope, elem, attrs, ctrl) {
+                    return ctrl.$parsers.push(function (value) {
+                        var valid = value === null || Number(value) >= Number(attrs.minVal);
+
+                        ctrl.$setValidity('min', valid);
+
+                        return valid ? value : undefined;
+                    });
+                }
+            };
+        })
+
+        .directive('maxVal', function () {
+            return {
+                require: 'ngModel',
+                link: function (scope, elem, attrs, ctrl) {
+                    return ctrl.$parsers.push(function (value) {
+                        var valid = value === null || Number(value) <= Number(attrs.maxVal);
+
+                        ctrl.$setValidity('max', valid);
+
+                        return valid ? value : undefined;
+                    });
+                }
+            };
+        })
 
         // filters
         .filter('range', function () {
@@ -553,19 +605,8 @@
 
                 return keys;
             };
-        })
-
-        .filter('filterExperimentalDesignType', function(TrialManagerDataService) {
-            return function(designTypes) {
-                var result = [];
-                if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-                    result.push(designTypes[0]);
-                } else {
-                    result = designTypes;
-                }
-
-                return result;
-            };
         });
+
+
 
 })();

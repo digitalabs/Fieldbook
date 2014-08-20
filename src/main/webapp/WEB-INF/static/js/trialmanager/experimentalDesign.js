@@ -31,7 +31,6 @@
                     }
                 ];
 
-
                 // TODO : re run computeLocalData after loading of previous trial as template
                 $scope.computeLocalData = function () {
                     $scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
@@ -45,13 +44,21 @@
                     $scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
                     $scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
 
+
+                    // user has a treatment factor, if previous exp design is not RCBD, then set selection to RCBD
+                    // may need to clear non RCBD input
+                    if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
+                        $scope.currentDesignType = $scope.designTypes[0];
+                        $scope.currentDesignTypeId = $scope.designTypes[0].id;
+                    }
+
                     $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
                     if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
                         $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
                     }
                 };
-                //FIXME: cheating a bit for the meantime.
 
+                //FIXME: cheating a bit for the meantime.
                 if (!TrialManagerDataService.applicationData.germplasmListCleared) {
                     $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
                         germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() :
@@ -166,8 +173,6 @@
                     };
                 };
 
-
-                // TODO FIXME Please put the messages in a global list
                 $scope.doValidate = function () {
 
                     switch ($scope.currentDesignType.id) {
@@ -342,7 +347,11 @@
                 };
 
 
-            }]).filter('filterFactors', function () {
+            }])
+
+        // FILTERS USED FOR EXP DESIGN
+
+        .filter('filterFactors', function () {
             return function (factorList, designTypeIndex) {
 
                 var excludes = [
@@ -365,56 +374,18 @@
             };
         })
 
-        .directive('inputType', function () {
-            return {
-                require: 'ngModel',
-                link: function (scope, elem, attrs, ctrl) {
-                    // Custom number validation logic.
-                    if (attrs.inputType === 'number') {
-                        elem.attr('type', 'text');
-
-                        return ctrl.$parsers.push(function (value) {
-                            var valid = value === null || isFinite(value);
-
-                            ctrl.$setValidity('number', valid);
-
-                            return valid && value !== null ? Number(value) : undefined;
-                        });
-                    }
-
-                    // Fallback to setting the default `type` attribute.
-                    return elem.attr('type', attrs.inputType);
+        .filter('filterExperimentalDesignType', function(TrialManagerDataService) {
+            return function(designTypes) {
+                var result = [];
+                if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
+                    result.push(designTypes[0]);
+                } else {
+                    result = designTypes;
                 }
-            };
-        })
 
-        .directive('minVal', function () {
-            return {
-                require: 'ngModel',
-                link: function (scope, elem, attrs, ctrl) {
-                    return ctrl.$parsers.push(function (value) {
-                        var valid = value === null || Number(value) >= Number(attrs.minVal);
-
-                        ctrl.$setValidity('min', valid);
-
-                        return valid ? value : undefined;
-                    });
-                }
-            };
-        })
-
-        .directive('maxVal', function () {
-            return {
-                require: 'ngModel',
-                link: function (scope, elem, attrs, ctrl) {
-                    return ctrl.$parsers.push(function (value) {
-                        var valid = value === null || Number(value) <= Number(attrs.maxVal);
-
-                        ctrl.$setValidity('max', valid);
-
-                        return valid ? value : undefined;
-                    });
-                }
+                return result;
             };
         });
+
+
 })();

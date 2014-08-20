@@ -35,6 +35,13 @@
                 $scope.computeLocalData = function () {
                     $scope.settings = TrialManagerDataService.specialSettings.experimentalDesign;
                     $scope.settings.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
+
+                    // user has a treatment factor, if previous exp design is not RCBD, then set selection to RCBD
+                    // may need to clear non RCBD input
+                    if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
+                        $scope.data.designType = $scope.designTypes[0].id;
+                    }
+
                     $scope.currentDesignType = $scope.designTypes[$scope.data.designType];
                     $scope.currentDesignTypeId = $scope.currentDesignType.id;
                     $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
@@ -43,14 +50,6 @@
                                                 TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
                     $scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
                     $scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
-
-
-                    // user has a treatment factor, if previous exp design is not RCBD, then set selection to RCBD
-                    // may need to clear non RCBD input
-                    if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-                        $scope.currentDesignType = $scope.designTypes[0];
-                        $scope.currentDesignTypeId = $scope.designTypes[0].id;
-                    }
 
                     $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
                     if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {

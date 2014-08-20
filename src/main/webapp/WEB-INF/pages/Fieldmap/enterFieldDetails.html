@@ -294,6 +294,11 @@
 
 
 	$( document ).ready(function() {
+		var prevFieldLocationId = $('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val(),
+			prevFieldId = $('#'+getJquerySafeId('userFieldmap.fieldId')).val(),
+			prevBlockId = $('#'+getJquerySafeId('userFieldmap.blockId')).val();
+		
+		
 		$('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val('');
 		programLocationUrl = $('#programLocationUrl').val();
 		setSelectedTrialsAsDraggable();
@@ -341,9 +346,9 @@
 			}
 			loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
 		})
-var numRowPerPlot = $('#'+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val();
-$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
-if($('#'+getJquerySafeId("userFieldmap.fieldId")).val() != ''){
+			var numRowPerPlot = $('#'+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val();
+			$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
+			if($('#'+getJquerySafeId("userFieldmap.fieldId")).val() != ''){
 			//we preset the fieldlocation id
 			var isChecked = $('#showFavoriteLocation').is(':checked');
 			var locId = $('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val();
@@ -401,9 +406,71 @@ if($('#'+getJquerySafeId("userFieldmap.fieldId")).val() != ''){
 			  	loadBlockDropdown($('#parentFieldId').val(), $('#'+getJquerySafeId('userFieldmap.blockId')).val());
 			  }
 
-			})
+			})		
+			
+			doPreselectValues(prevFieldLocationId, prevFieldId, prevBlockId);
 
 		});
+	
+		function doPreselectValues(locationId, fieldId, blockId){
+			'use strict';
+			var prevNumberOfRowsPerPlot = $('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id,
+				prevNumberOfRowsInBlock = $('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(),
+				prevNumberOfRangesInBlock = $('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val();	
+			
+			if(locationId !== '' && locationId !== '0'){				
+				//we preload it
+				var isFound = false,
+				isFoundInFav = false,
+				locationDefaultData = [];
+				for(var index = 0 ; index < locationSuggestions_obj.length ; index++){
+					if(locationSuggestions_obj[index].id == locationId){
+						isFound = true;	
+						locationDefaultData = locationSuggestions_obj[index];
+						break;
+					}										
+				}
+				if(!isFound){
+					for(var index = 0 ; index < locationSuggestionsFav_obj.length ; index++){
+						if(locationSuggestionsFav_obj[index].id == locationId){
+							isFound = true;	
+							isFoundInFav = true;
+							locationDefaultData = locationSuggestionsFav_obj[index];
+							break;
+						}										
+					}	
+				}
+				//we now pre select it
+				if(isFound){
+					if(isFoundInFav){
+						$('#showFavoriteLocation').prop('checked', true);
+						$('#showFavoriteLocation').change();
+						$('#'+getJquerySafeId('fieldLocationIdFavorite')).select2('data', locationDefaultData);
+						//$('#'+getJquerySafeId('fieldLocationIdFavorite')).change();
+					}else{
+						$('#showFavoriteLocation').prop('checked', false);
+						$('#showFavoriteLocation').change();
+						$('#'+getJquerySafeId('fieldLocationIdAll')).select2('data', locationDefaultData);
+						//$('#'+getJquerySafeId('fieldLocationIdAll')).change();
+					}
+					$('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val(locationDefaultData.id);
+					//we preselect the fieldId
+					  //$('#'+getJquerySafeId('userFieldmap.fieldId')).select2('data');
+					loadFieldsDropdown(locationId, fieldId);
+					loadBlockDropdown(fieldId, blockId);
+					setTimeout(function(){
+					var rowsPerPlotData = {'id': prevNumberOfRowsPerPlot , 'text' : prevNumberOfRowsPerPlot};
+					$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
+					$('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(prevNumberOfRowsInBlock);
+					$('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(prevNumberOfRangesInBlock);
+					calculateTotalPlots();
+					}, 100);
+					
+					
+					
+				}
+			}
+		} 
 	  //]]>
 	</script>
 </div>

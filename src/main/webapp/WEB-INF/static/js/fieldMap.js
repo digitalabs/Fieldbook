@@ -733,6 +733,7 @@ function loadFieldsDropdown(locationId, currentFieldId){
 	           type: 'GET',
 	           cache: false,
 	           data: '',
+	           async: false,
 	           success: function(data) {	        	   
 	        		   //recreate the select2 combos to get updated list of locations
 	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
@@ -757,6 +758,7 @@ function loadBlockDropdown(fieldId, currentBlockId){
            type: 'GET',
            cache: false,
            data: '',
+           async: false,
            success: function(data) {	  
         	   $('#'+getJquerySafeId('userFieldmap.blockId')).select2('destroy');
         		   initializeBlockSelect2($.parseJSON(data.allBlocks), [], false, currentBlockId);
@@ -773,6 +775,7 @@ function loadBlockInformation(blockId){
            type: 'GET',
            cache: false,
            data: '',
+           async: false,
            success: function(data) {	        	   
         		   var blockInfo = $.parseJSON(data.blockInfo);
         		   showBlockDetails(false, blockInfo);

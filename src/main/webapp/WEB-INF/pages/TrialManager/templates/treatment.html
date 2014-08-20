@@ -103,7 +103,7 @@
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">{{retrievePairDetail(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
                                         <show-setting-form-element settings="settings.treatmentLevelPairs[key]" targetkey="{{$index}}" settingkey="{{retrievePairDetail(key).variable.cvTermId}}" changefunction="onLabelChange()"
-                                                                   valuecontainer="data.currentData[key].labels" use-exact-properties="true" disabled="disableTreatment"></show-setting-form-element>
+                                                                   valuecontainer="data.currentData[key].labels" use-exact-properties="true" block-input="disableTreatment"></show-setting-form-element>
                                     </td>
                                 </tr>
 

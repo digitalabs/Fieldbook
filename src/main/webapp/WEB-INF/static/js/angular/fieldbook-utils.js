@@ -266,7 +266,7 @@
                     settingkey: '@',
                     valuecontainer: '=',
                     changefunction: '&',
-                    disabled: '='
+                    blockInput: '='
                 },
 
                 templateUrl: '/Fieldbook/static/angular-templates/showSettingFormElement.html',

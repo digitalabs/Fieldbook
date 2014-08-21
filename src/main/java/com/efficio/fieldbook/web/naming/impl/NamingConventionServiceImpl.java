@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.naming.expression.NumberExpression;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
 import com.efficio.fieldbook.web.naming.expression.SequenceExpression;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
@@ -203,9 +204,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             	String countPrefix = processCodeService.applyToName(countPrefixExpression, row).get(0);
             	String countSuffix = processCodeService.applyToName(countSuffixExpression, row).get(0);
             	
-//            	int max = germplasmDataManger.getMaximumSequence(row.isBulk(), countPrefix, countSuffix, row.getPlantsSelected().intValue());
-//            	row.setCurrentMaxSequence(max);
-            	
             	//may return more than 1 record, esp if sequence is used.
             	List<String> names = processCodeService.applyToName(countExpression, row);
 
@@ -218,31 +216,34 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             				currentCount = lastCount + 1;
             				name = countPrefix + currentCount + countSuffix;
             			}
-	        			boolean isMatch, isExit = false;
+	        			boolean isMatch = false;
 	        			do {
 	            			isMatch = germplasmDataManger.checkIfMatches(name);
-		            		isExit = false;
 		            		if (isMatch) {
 		            			if (countExpression.equalsIgnoreCase(SequenceExpression.KEY)) {
 		            				currentCount++;
 		            				name = countPrefix + currentCount + countSuffix;
 		            			}
 		            			else {
-		                    		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
-		                			row.getChangeDetail().setIndex(index-1); //index in java (starts at 0)
-		                			row.getChangeDetail().setOldAdvanceName(name);
-		                			int nextSequence = currentCount + 1;
-		                			row.getChangeDetail().setNewAdvanceName(name + "(" + nextSequence + ")");
-		                			Locale locale = LocaleContextHolder.getLocale();
-		                			row.getChangeDetail().setQuestionText(messageSource.getMessage("advance.nursery.duplicate.question.text", 
-		                					new String[] {name}, locale));
-		                			row.getChangeDetail().setAddSequenceText(messageSource.getMessage("advance.nursery.duplicate.add.sequence.text", 
-		                					new String[] {row.getChangeDetail().getNewAdvanceName()}, locale));
-		            				
-		            				isExit = true;
+		            				if (row.getChangeDetail() == null) {
+			                    		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
+			                			row.getChangeDetail().setIndex(index-1); //index in java (starts at 0)
+			                			row.getChangeDetail().setOldAdvanceName(name);
+			                			Locale locale = LocaleContextHolder.getLocale();
+			                			row.getChangeDetail().setQuestionText(messageSource.getMessage("advance.nursery.duplicate.question.text", 
+			                					new String[] {name}, locale));
+		            				}
+		            				name = row.getChangeDetail().getOldAdvanceName() + "(" + currentCount + ")"; 
+		            				currentCount++;
 		            			}
 		            		}
-	        			} while (isMatch && !isExit);
+		            		else if (row.getChangeDetail() != null) {
+		            			row.getChangeDetail().setNewAdvanceName(name);
+	                			Locale locale = LocaleContextHolder.getLocale();
+	                			row.getChangeDetail().setAddSequenceText(messageSource.getMessage("advance.nursery.duplicate.add.sequence.text", 
+	                					new String[] {row.getChangeDetail().getNewAdvanceName()}, locale));
+		            		}
+	        			} while (isMatch);
 
 	        			addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
 	        			lastCount = currentCount;

@@ -460,7 +460,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						rowsMap.remove(key);
 						
 						String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
-						String newDesig = xlsRow.getCell(desigColumn).getStringCellValue().trim();
+						Cell desigCell = xlsRow.getCell(desigColumn);
+						if(desigCell == null){
+							//throw an error
+							throw new WorkbookParserException("error.workbook.import.designation.empty.cell");
+						}
+						String newDesig = desigCell.getStringCellValue().trim();
 						String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
 						String entryNumber = wRow.getMeasurementDataValue(TermId.ENTRY_NO.getId());
 						String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
@@ -753,13 +758,21 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	return null;
     }
     
-    private String getKeyIdentifierFromXlsRow(Row xlsRow, String indexes) {
+    private String getKeyIdentifierFromXlsRow(Row xlsRow, String indexes) throws WorkbookParserException{
     	if (indexes != null) {
 	    	String[] indexArray = indexes.split(",");
+	    	Cell plotCell = xlsRow.getCell(Integer.valueOf(indexArray[1])); //plot no
+	    	Cell entryCell = xlsRow.getCell(Integer.valueOf(indexArray[2])); //entry no
+	    	
+	    	if(plotCell == null){
+	    		throw new WorkbookParserException("error.workbook.import.plot.no.empty.cell");
+	    	}else if(entryCell == null){
+	    		throw new WorkbookParserException("error.workbook.import.entry.no.empty.cell");
+	    	}
 	    	
 	    	return indexArray[0] 
-	    			+ "-" + getRealNumericValue(xlsRow.getCell(Integer.valueOf(indexArray[1])))
-	    			+ "-" +getRealNumericValue(xlsRow.getCell(Integer.valueOf(indexArray[2])));
+	    			+ "-" + getRealNumericValue(plotCell) 
+	    			+ "-" +getRealNumericValue(entryCell); 
     	} 
     	return null;
     }

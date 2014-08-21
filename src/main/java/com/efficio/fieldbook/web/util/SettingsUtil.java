@@ -2239,6 +2239,8 @@ public class SettingsUtil {
     				param.setBlockSize(var.getValue());
     			} else if (var.getTermId() == TermId.NO_OF_COLS_IN_REPS.getId()) {
     				param.setColsPerReplications(var.getValue());
+    			} else if (var.getTermId() == TermId.NO_OF_ROWS_IN_REPS.getId()) {
+    				param.setRowsPerReplications(var.getValue());
     			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
     				if (var.getValue() != null) {
     					if (String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).equals(var.getValue())) {

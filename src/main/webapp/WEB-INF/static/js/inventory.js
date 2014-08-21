@@ -21,7 +21,14 @@ function triggerInventoryTableSelection(tableName, sectionContainerDiv, listIden
 	});
 }
 function getCurrentAdvanceTabTempIdentifier(){
-	var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
+	var listDivIdentifier  = '';
+    if($('#create-nursery-tab-headers .tabdrop').hasClass('active')){
+  	  //means the active is in the tab drop
+  	  listDivIdentifier  = $('#create-nursery-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
+    }else{
+  	  listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
+    }
+    
 	return listDivIdentifier;
 }
 function getCurrentAdvanceTabListIdentifier(){
@@ -33,7 +40,7 @@ function getCurrentAdvanceTabListIdentifier(){
 function getSelectedInventoryGids(){
 	'use strict';
 	var ids = [],
-		listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
+		listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
 		sectionContainerDiv = 'advance-list'+listDivIdentifier;
 	$('#'+sectionContainerDiv + ' .advancingListGid:checked').each(function(){
 		ids.push($(this).data('gid'));

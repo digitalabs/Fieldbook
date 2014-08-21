@@ -2974,8 +2974,13 @@ function loadDatasetDropdown(optionTag) {
 }
 
 function getCurrentStudyIdInTab() {
-	'use strict';
-	return $('#study-tab-headers li.active .fbk-close-tab').attr('id');
+	'use strict';	
+    if($('#study-tab-headers .tabdrop').hasClass('active')){
+  	  //means the active is in the tab drop
+  	  return $('#study-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
+    }else{
+  	  return $('#study-tab-headers li.active .fbk-close-tab').attr('id');
+    }    
 }
 
 function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {

@@ -65,8 +65,15 @@
 		
         $( document ).ready(function() {  
           'use strict';
-          var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
-          sectionContainerDiv = 'advance-list'+listDivIdentifier;
+          var listDivIdentifier  = '';
+          if($('#create-nursery-tab-headers .tabdrop').hasClass('active')){
+        	  //means the active is in the tab drop
+        	  listDivIdentifier  = $('#create-nursery-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
+          }else{
+        	  listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
+          }
+          
+          var sectionContainerDiv = 'advance-list'+listDivIdentifier;
       	
     		
   		$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(event){

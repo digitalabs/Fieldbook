@@ -2252,6 +2252,10 @@ public class SettingsUtil {
     							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
     						param.setDesignType(2);
     					}
+    					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
+    							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
+    						param.setUseLatenized(true);
+    					}
     				}
     			} else if (var.getTermId() == TermId.NO_OF_CBLKS_LATINIZE.getId()) {
     	    		param.setNblatin(var.getValue());

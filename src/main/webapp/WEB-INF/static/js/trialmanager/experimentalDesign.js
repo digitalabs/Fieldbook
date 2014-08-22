@@ -45,7 +45,7 @@
                     $scope.currentDesignType = $scope.designTypes[$scope.data.designType];
                     $scope.currentDesignTypeId = $scope.currentDesignType.id;
                     $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
-                    $scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement;
+                    $scope.measurementDetails = TrialManagerDataService.trialMeasurement;
                     $scope.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ?
                                                 TrialManagerDataService.currentData.environments.noOfEnvironments : 0;
                     $scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;

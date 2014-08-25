@@ -696,21 +696,16 @@ public class CreateNurseryController extends SettingsController {
                         		detail.setValue("");
                         	}
                         }else if(var != null){
-                        	String currentVal = var.getValue();
-                        	if(var.getTermId() != TermId.NURSERY_TYPE.getId() && (detail.getPossibleValues() == null || detail.getPossibleValues().isEmpty())){
-                        		detail.setValue(currentVal);
-                        	}else{
-                        		//special case for nursery type
-                        		if(var.getValue() != null && detail.getPossibleValues() != null){
-                        			
-                        			for (ValueReference possibleValue : detail.getPossibleValues()) {
-                        	    		if (var.getValue().equalsIgnoreCase(possibleValue.getDescription())) {
-                        	    			detail.setValue(possibleValue.getId().toString());
-                        	    			break;
-                        	    		}
-                        	    	}
-                        		}                        		
-                        	}
+                        	String currentVal = var.getValue() == null ? "" : var.getValue();
+                        	detail.setValue(currentVal);
+                    		if(var.getValue() != null && detail.getPossibleValues() != null){
+                    			for (ValueReference possibleValue : detail.getPossibleValues()) {
+                    	    		if (var.getValue().equalsIgnoreCase(possibleValue.getDescription()) || var.getValue().equalsIgnoreCase(possibleValue.getKey())) {
+                    	    			detail.setValue(possibleValue.getId().toString());
+                    	    			break;
+                    	    		}
+                    	    	}
+                    		}                        		
                 		}
                 	}
                 }

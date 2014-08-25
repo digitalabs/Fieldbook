@@ -242,13 +242,16 @@ public class SettingsUtil {
     }
 
     protected static void setNameAndOperationFromSession(List<SettingDetail> listWithValue, List<SettingDetail> listFromSession) {
-        int index = 0;
         if (listWithValue != null && listFromSession != null) {
             for (SettingDetail detailWithValue : listWithValue) {
-                SettingVariable variable = detailWithValue.getVariable();
-                detailWithValue.setPossibleValues(listFromSession.get(index).getPossibleValues());
-                variable.setName(listFromSession.get(index).getVariable().getName());
-                variable.setOperation(listFromSession.get(index++).getVariable().getOperation());
+                for (SettingDetail detailFromSession : listFromSession) {
+                    if (detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
+                        SettingVariable variable = detailWithValue.getVariable();
+                        detailWithValue.setPossibleValues(detailFromSession.getPossibleValues());
+                        variable.setName(detailFromSession.getVariable().getName());
+                        variable.setOperation(detailFromSession.getVariable().getOperation());
+                    }
+                }
             }
         }
     }

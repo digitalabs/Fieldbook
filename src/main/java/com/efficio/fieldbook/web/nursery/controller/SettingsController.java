@@ -598,7 +598,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         
         if (isNursery) {
             removeHiddenVariables(userSelection.getStudyLevelConditions(), AppConstants.HIDE_NURSERY_FIELDS.getString());
+            removeRemovedVariablesFromSession(userSelection.getStudyLevelConditions(), userSelection.getRemovedConditions());
             removeHiddenVariables(userSelection.getPlotsLevelList(), AppConstants.HIDE_PLOT_FIELDS.getString());
+            removeRemovedVariablesFromSession(userSelection.getPlotsLevelList(), userSelection.getRemovedFactors());
             addNameVariables(userSelection.getRemovedConditions(), workbook, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
             removeCodeVariablesIfNeeded(userSelection.getStudyLevelConditions(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
             //set value of breeding method code back to code after saving
@@ -606,6 +608,19 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             //remove selection variates from traits list
             removeSelectionVariatesFromTraits(userSelection.getBaselineTraitsList());
         }                 
+    }
+    
+    private void removeRemovedVariablesFromSession(List<SettingDetail> variableList, List<SettingDetail> removedVariableList) {
+        if (removedVariableList != null && variableList != null) {
+            for (SettingDetail setting : removedVariableList) {
+                Iterator<SettingDetail> iter = variableList.iterator();
+                while(iter.hasNext()) {
+                    if (iter.next().getVariable().getCvTermId().equals(setting.getVariable().getCvTermId())) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
     }
     
     private void removeDeletedVariablesInMeasurements(List<SettingDetail> deletedList, Workbook workbook, UserSelection userSelection) {

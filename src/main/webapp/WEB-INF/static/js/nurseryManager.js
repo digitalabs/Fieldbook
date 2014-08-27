@@ -1762,7 +1762,7 @@ function submitGermplasmAndCheck() {
 	$('#lastDraggedChecksList').val(lastDraggedChecksList);
 
 	var $form = $('#germplasm-list-form'),
-		serializedData = $form.serialize();
+		serializedData = $form.serialize() + '&lastDraggedChecksList='+lastDraggedChecksList;
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
 		serializedData += "&" + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}

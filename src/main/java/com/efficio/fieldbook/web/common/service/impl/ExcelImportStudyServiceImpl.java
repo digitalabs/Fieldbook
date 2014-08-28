@@ -112,7 +112,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			validateSections(descriptionSheet);
 
 			String trialInstanceNumber = (workbook != null && workbook.isNursery()) ? "1" : getTrialInstanceNumber(xlsBook);
-			if (trialInstanceNumber == null || "".equals(trialInstanceNumber)) {
+			if (trialInstanceNumber == null || "".equalsIgnoreCase(trialInstanceNumber)) {
 				if (!workbook.isNursery()) {
 					throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
 				}
@@ -469,7 +469,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
 						String entryNumber = wRow.getMeasurementDataValue(TermId.ENTRY_NO.getId());
 						String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
-						if (plotNumber == null || "".equals(plotNumber)) {
+						if (plotNumber == null || "".equalsIgnoreCase(plotNumber)) {
 							plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
 						}
 						
@@ -620,7 +620,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
             if (row != null) {
                 Cell cell = row.getCell(0);
                 if (cell != null && cell.getStringCellValue() != null) {
-                    if (cell.getStringCellValue().equals(cellValue)) {
+                    if (cell.getStringCellValue().equalsIgnoreCase(cellValue)) {
                         return i;
                     }
                 }
@@ -639,7 +639,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	            Cell cell = row.getCell(i);
 	            if (cell == null){
                    throw new WorkbookParserException("error.workbook.import.missing.columns.import.file");
-	            } else if (cell.getStringCellValue().equals(cellValue)) {
+	            } else if (cell.getStringCellValue().equalsIgnoreCase(cellValue)) {
 	                return i;
 	            }
 	        }
@@ -749,7 +749,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	if (plotLabel != null && entryLabel != null) {
     		String indexes = findColumns(observationSheet, trialInstanceNumber, plotLabel, entryLabel);
     		for (String index : indexes.split(",")) {
-    			if (!NumberUtils.isNumber(index) || "-1".equals(index)) {
+    			if (!NumberUtils.isNumber(index) || "-1".equalsIgnoreCase(index)) {
     				return null;
     			}
     		}
@@ -835,7 +835,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		for (int i = variateRow + 1; i <= descriptionSheet.getLastRowNum(); i++) {
 			if (descriptionSheet.getRow(i) != null && descriptionSheet.getRow(i).getCell(0) != null) {
 				Cell cell = descriptionSheet.getRow(i).getCell(0);
-				if (cell.getStringCellValue() != null && !"".equals(cell.getStringCellValue())) {
+				if (cell.getStringCellValue() != null && !"".equalsIgnoreCase(cell.getStringCellValue())) {
 					xlsVariates.add(cell.getStringCellValue());
 				}
 			}

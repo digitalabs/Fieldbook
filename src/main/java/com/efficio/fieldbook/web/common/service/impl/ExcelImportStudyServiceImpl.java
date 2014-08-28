@@ -686,30 +686,64 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		int conditionRow = findRow(descriptionSheet, TEMPLATE_SECTION_CONDITION);
 		int factorRow = findRow(descriptionSheet, TEMPLATE_SECTION_FACTOR);
 		int trialRow = -1;
+		List<Integer> possibleTrialRows = new ArrayList<Integer>();
 		String trialInstance = null;
 		for (String label : PhenotypicType.TRIAL_ENVIRONMENT.getLabelList()) {
 			trialRow = findRow(descriptionSheet, label);
 			if (trialRow > 0 && trialRow > conditionRow && trialRow < factorRow) {
-				break;
+				//we now get all the possible rows
+				possibleTrialRows.add(trialRow);
+				//break;
 			}
 		}
-		if (trialRow > 0) {
-			Row row = descriptionSheet.getRow(trialRow);
-			Cell cell = row.getCell(6);
-			//trialInstance = cell.getStringCellValue();
-			if(cell == null)
-				trialInstance = "1";
-			else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
-				Double temp = Double.valueOf(cell.getNumericCellValue());
+		if (possibleTrialRows != null && !possibleTrialRows.isEmpty()) {
+			Integer stdVarId = null;
+			for(Integer trialRowNum : possibleTrialRows){				
+				try{
+					Row row = descriptionSheet.getRow(trialRowNum);
+					//we need to check the PSM-R
+					Cell propertyCell = row.getCell(2);
+					Cell scaleCell = row.getCell(3);
+					Cell methodCell = row.getCell(4);
+					Cell labelCell = row.getCell(7);
+					
+					stdVarId = null;
+					
+					if(propertyCell != null && scaleCell != null && methodCell != null && labelCell != null &&
+					propertyCell.getStringCellValue() != null && 
+					scaleCell.getStringCellValue() != null && 
+					methodCell.getStringCellValue() != null && 
+					labelCell.getStringCellValue() != null){
+						//we get the corresponding standard variable id
+						stdVarId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(propertyCell.getStringCellValue(), scaleCell.getStringCellValue(), methodCell.getStringCellValue(), PhenotypicType.getPhenotypicTypeForLabel(labelCell.getStringCellValue()));																						
+					}
 				
-				trialInstance = Integer.toString(temp.intValue());
-			}
-			else if(cell.getCellType() == Cell.CELL_TYPE_STRING){
-				trialInstance = cell.getStringCellValue();
+					if(stdVarId != null && stdVarId.intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()){
+						Cell cell = row.getCell(6);
+						//trialInstance = cell.getStringCellValue();
+						if(cell == null)
+							trialInstance = "1";
+						else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+							Double temp = Double.valueOf(cell.getNumericCellValue());
+							
+							trialInstance = Integer.toString(temp.intValue());
+						}
+						else if(cell.getCellType() == Cell.CELL_TYPE_STRING){
+							trialInstance = cell.getStringCellValue();
+						}
+						break;
+					}
+				}catch(MiddlewareQueryException e){
+					// no matching
+					//just itereate the possible rows again
+				}catch(Exception e){
+					//cell might be null
+					//we won't throw error, since we need to check other variable
+				}
 			}
 		}
 		return trialInstance;
-    }
+    }       
 
     private List<MeasurementRow> filterObservationsByTrialInstance(org.apache.poi.ss.usermodel.Workbook xlsBook, List<MeasurementRow> observations, String trialInstanceNumber) {
 		if (trialInstanceNumber != null) {

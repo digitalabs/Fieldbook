@@ -633,7 +633,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     			val = germplasm.getEntryCode().toString();
     		}else if(term.intValue() == TermId.ENTRY_NO.getId()){
     			 val = germplasm.getEntryId().toString();
-    		}else if(term.intValue() == TermId.SOURCE.getId()){
+    		}else if(term.intValue() == TermId.SOURCE.getId() || term.intValue() == TermId.GERMLASM_SOURCE.getId()){
     			val = germplasm.getSource().toString();
     		}else if(term.intValue() == TermId.CROSS.getId()){
     			val = germplasm.getCross().toString();

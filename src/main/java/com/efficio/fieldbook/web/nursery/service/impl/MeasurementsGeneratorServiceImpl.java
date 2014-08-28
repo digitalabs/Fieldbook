@@ -169,7 +169,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	    			
 					if(termId.intValue() == TermId.ENTRY_NO.getId())
 						measurementData = new MeasurementData(var.getName(), Integer.toString(entryNo), false, var.getDataType(), var);
-					else if(termId.intValue() == TermId.SOURCE.getId())
+					else if(termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMLASM_SOURCE.getId())
 						measurementData = new MeasurementData(var.getName(), germplasm.getSource() != null ? germplasm.getSource() : "", false, var.getDataType(), var);
 					else if(termId.intValue() == TermId.CROSS.getId())	
 						measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);

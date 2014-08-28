@@ -200,6 +200,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                         if (ref.getId() == TermId.STUDY_TYPE.getId()
                                 || ref.getId() == TermId.PM_KEY.getId()
                                 || ref.getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+                                || ref.getId() == TermId.STUDY_STATUS.getId()
                                 || ref.getId() == TermId.DATASET_NAME.getId()
                                 || ref.getId() == TermId.DATASET_TITLE.getId()
                                 || ref.getId() == TermId.DATASET_TYPE.getId()) {

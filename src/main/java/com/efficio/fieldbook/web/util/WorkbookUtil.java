@@ -484,7 +484,9 @@ public class WorkbookUtil {
     }
     //we would validate all conditions except for name and the study type
     public static boolean isConditionValidate(Integer cvTermId){
-    	if(cvTermId != null && cvTermId.intValue() != TermId.STUDY_TYPE.getId() && cvTermId.intValue() != TermId.STUDY_NAME.getId()){
+    	if(cvTermId != null && cvTermId.intValue() != TermId.STUDY_TYPE.getId() 
+    	        && cvTermId.intValue() != TermId.STUDY_NAME.getId() 
+    	        && !AppConstants.HIDE_TRIAL_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString()) ){
     		return true;
     	}
     	return false;

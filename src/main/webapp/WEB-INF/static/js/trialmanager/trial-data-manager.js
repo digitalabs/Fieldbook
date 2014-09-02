@@ -1,16 +1,18 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
- invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,resetGermplasmList*/
+ invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree*/
 
 (function () {
     'use strict';
 
-    angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
-        'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
+    angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','TRIAL_SETTINGS_INITIAL_DATA',
+        'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
+        'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
         'TrialSettingsManager','_','$localStorage',
-        function (GERMPLASM_LIST_SIZE,TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA,
-                  MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
+        function (GERMPLASM_LIST_SIZE,TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+                  EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA,MEASUREMENTS_INITIAL_DATA,
+                  TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
                   TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q,TrialSettingsManager,_,$localStorage) {
 
             // TODO : clean up data service, at the very least arrange the functions in alphabetical order
@@ -165,7 +167,7 @@
             };
 
             var notifySaveEventListeners = function () {
-            	$('body').data('expDesignShowPreview', '0');
+                $('body').data('expDesignShowPreview', '0');
                 angular.forEach(saveEventListeners, function (saveListenerFunction) {
                     saveListenerFunction();
                 });
@@ -241,7 +243,7 @@
                         })(),
                         germplasmTotalListCount: GERMPLASM_LIST_SIZE,
 
-                        showAdvancedOptions : [false,false,false],
+                        showAdvancedOptions : [false,false,false]
                     },
                     treatmentLevelPairs: {}
 
@@ -296,7 +298,7 @@
                         performDataCleanup();
                         if (!service.isOpenTrial()) {
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
-                                success(function () {                                	
+                                success(function () {
                                     submitGermplasmList().then(function (generatedID) {
                                         showSuccessfulMessage('', saveSuccessMessage);
                                         notifySaveEventListeners();
@@ -487,7 +489,7 @@
                     var hasError = false, name = '', customMessage = '', errorCode = 0;
                     if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
                         hasError = true;
-                        name = $('#folderLabel').text();                        
+                        name = $('#folderLabel').text();
                         openStudyTree(2, service.updateSelectedFolder, true);
                         return false;
                     } else if ($.trim(service.currentData.basicDetails.basicDetails[8005]) === '') {
@@ -700,19 +702,17 @@
 
 
 
-        var service = {
-            openVariableSelectionDialog : function(params) {
+        return {
+            openVariableSelectionDialog: function (params) {
                 settingsManager._openVariableSelectionDialog(params);
             },
 
             // @param = this map contains variables of the pair that will be filtered
-            addDynamicFilterObj : function(_map,group) {
-                settingsManager._addDynamicFilter(_map,group);
+            addDynamicFilterObj: function (_map, group) {
+                settingsManager._addDynamicFilter(_map, group);
             }
 
 
         };
-
-        return service;
     }]);
 })();

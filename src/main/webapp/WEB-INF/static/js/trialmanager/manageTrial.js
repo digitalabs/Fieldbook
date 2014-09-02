@@ -2,7 +2,8 @@
  * Created by cyrus on 7/1/14.
  */
 
-/*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage, operationMode, resetGermplasmList,showAlertMessage*/
+/*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage, operationMode, resetGermplasmList,
+showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
 
 (function () {
     'use strict';
@@ -127,7 +128,7 @@
 
                 //$('.import-study-data').data('data-import', '0');
                 $rootScope.$on('$stateChangeStart',
-                    function(event, toState, toParams, fromState, fromParams){
+                    function(event){
                         if ($('.import-study-data').data('data-import') === '1') {
                             showAlertMessage('',importSaveDataWarningMessage);
 
@@ -144,7 +145,7 @@
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
 
-                uiSelect2Config.placeholder = "Please Choose";
+                uiSelect2Config.placeholder = 'Please Choose';
                 uiSelect2Config.minimumResultsForSearch = 20;
                 uiSelect2Config.allowClear = false;
             }
@@ -153,8 +154,8 @@
 
 
     // THE parent controller for the manageTrial (create/edit) page
-    manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout','_','$localStorage',
-        function ($scope, $rootScope, TrialManagerDataService, $http, $timeout,_,$localStorage) {
+    manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout','_',
+        '$localStorage', function ($scope, $rootScope, TrialManagerDataService, $http, $timeout,_,$localStorage) {
             $scope.trialTabs = [
                 {   'name': 'Settings',
                     'state': 'trialSettings'
@@ -191,13 +192,13 @@
                 if (!$scope.isChoosePreviousTrial) {
                     // reset the service data to initial state (for untick of user previous trial)
                     _.each(_.keys($localStorage.serviceBackup.settings),function(key) {
-                        if ("basicDetails" !== key) {
+                        if ('basicDetails' !== key) {
                             TrialManagerDataService.updateSettings(key,angular.copy($localStorage.serviceBackup.settings[key]));
                         }
                     });
 
                     _.each(_.keys($localStorage.serviceBackup.currentData),function(key) {
-                        if ("basicDetails" !== key) {
+                        if ('basicDetails' !== key) {
                             TrialManagerDataService.updateCurrentData(key,angular.copy($localStorage.serviceBackup.currentData[key]));
                         }
                     });
@@ -208,8 +209,9 @@
                     // perform other cleanup tasks
                     $http.get('/Fieldbook/TrialManager/createTrial/clearSettings');
 
-                    if($('#measurementsDiv').length !== 0){
-                        $('#measurementsDiv').html('');
+                    var measurementDiv = $('#measurementsDiv');
+                    if(measurementDiv.length !== 0){
+                        measurementDiv.html('');
                     }
 
                     if (typeof resetGermplasmList !== 'undefined') {
@@ -243,20 +245,25 @@
                     if (environmentData.noOfEnvironments > 0 && environmentData.environments.length === 0) {
                         while (environmentData.environments.length !== environmentData.noOfEnvironments) {
                             environmentData.environments.push({
-                                managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(environmentSettings.managementDetails),
-                                trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(environmentSettings.trialConditionDetails)
+                                managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
+                                    environmentSettings.managementDetails),
+                                trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
+                                    environmentSettings.trialConditionDetails)
                             });
                         }
                     }
 
                     TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
                     TrialManagerDataService.updateCurrentData('environments', environmentData);
-                    TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(data.treatmentFactorsData));
+                    TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
+                        data.treatmentFactorsData));
 
-                    TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(data.trialSettingsData));
+                    TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
+                        data.trialSettingsData));
                     TrialManagerDataService.updateSettings('environments', environmentSettings);
                     TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
-                    TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(data.treatmentFactorsData));
+                    TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
+                        data.treatmentFactorsData));
                     TrialManagerDataService.updateSettings('measurements', TrialManagerDataService.extractSettings(data.measurementsData));
                 });
             };
@@ -302,19 +309,19 @@
                             'Please regenerate the design on the Experimental Design tab', 10000);
                     }
                 }
-                
-                if(targetState === 'createMeasurements' || targetState === 'editMeasurements'){
-                	if($('body').data('expDesignShowPreview') === '1'){
-                		showMeasurementsPreview();
-                	}
+
+                if (targetState === 'createMeasurements' || targetState === 'editMeasurements') {
+                    if ($('body').data('expDesignShowPreview') === '1') {
+                        showMeasurementsPreview();
+                    }
                 }
             };
-            
-            $('body').on('DO_AUTO_SAVE', function(){
+
+            $('body').on('DO_AUTO_SAVE', function () {
                 TrialManagerDataService.saveCurrentData();
             });
-            $('body').on('REFRESH_AFTER_IMPORT_SAVE', function(){
-            	$scope.refreshTabAfterImport();
+            $('body').on('REFRESH_AFTER_IMPORT_SAVE', function () {
+                $scope.refreshTabAfterImport();
             });
         }]);
 
@@ -358,7 +365,7 @@
     document.onInitManageTrial = function () {
         // do nothing for now
         $('body').data('needGenerateExperimentalDesign', '0');
-        $('body').data('trialStatus', operationMode);       
+        $('body').data('trialStatus', operationMode);
     };
 
 })

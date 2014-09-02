@@ -57,6 +57,8 @@ public class AdvancingNursery implements Serializable {
     
     private Integer plotVariateId;
     
+    private boolean isCheckAdvanceLinesUnique;
+    
     
     public Study getStudy() {
         return study;
@@ -258,6 +260,15 @@ public class AdvancingNursery implements Serializable {
 	 */
 	public void setPlotVariateId(Integer plotVariateId) {
 		this.plotVariateId = plotVariateId;
+	}
+	
+
+	public boolean isCheckAdvanceLinesUnique() {
+		return isCheckAdvanceLinesUnique;
+	}
+
+	public void setCheckAdvanceLinesUnique(boolean isCheckAdvanceLinesUnique) {
+		this.isCheckAdvanceLinesUnique = isCheckAdvanceLinesUnique;
 	}
 
 	@Override

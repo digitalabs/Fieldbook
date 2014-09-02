@@ -127,6 +127,8 @@ public class AdvancingNurseryForm {
     
     private String errorInAdvance;
     
+    private String checkAdvanceLinesUnique;
+    
 	/**
 	 * Gets the method id all.
 	 *
@@ -807,6 +809,14 @@ public class AdvancingNurseryForm {
 	 */
 	public void setErrorInAdvance(String errorInAdvance) {
 		this.errorInAdvance = errorInAdvance;
+	}
+	
+	public String getCheckAdvanceLinesUnique() {
+		return checkAdvanceLinesUnique;
+	}
+
+	public void setCheckAdvanceLinesUnique(String checkAdvanceLinesUnique) {
+		this.checkAdvanceLinesUnique = checkAdvanceLinesUnique;
 	}
 
 		/* (non-Javadoc)

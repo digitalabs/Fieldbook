@@ -308,6 +308,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setLineVariateId(form.getLineVariateId());
         advancingNursery.setPlotVariateId(form.getPlotVariateId());
         advancingNursery.setMethodVariateId(form.getMethodVariateId());
+        advancingNursery.setCheckAdvanceLinesUnique((form.getCheckAdvanceLinesUnique() != null && form.getCheckAdvanceLinesUnique().equalsIgnoreCase("1")) ? true : false);
         
         try {
         	AdvanceResult advanceResult = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());

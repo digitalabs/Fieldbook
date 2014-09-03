@@ -314,19 +314,21 @@
                         } else {
 
 							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
-                                doSaveImportedData();
+                                doSaveImportedData().then(function () {
+                                    notifySaveEventListeners();
+                                    updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
+                                        service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
+                                        service.updateTrialMeasurementRowCount(data.measurementRowCount);
+                                        service.updateSettings('measurements', extractSettings(data.measurementsData));
+                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                            service.trialMeasurement.count);
+                                        service.applicationData.unsavedGeneratedDesign = false;
+                                        service.applicationData.unsavedTraitsAvailable = false;
+                                        $('body').data('needToSave', '0');
+                                    });
+                                });
 
-                                notifySaveEventListeners();
-                                updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
-                                    service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-                                    service.updateTrialMeasurementRowCount(data.measurementRowCount);
-                                    service.updateSettings('measurements', extractSettings(data.measurementsData));
-                                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                        service.trialMeasurement.count);
-                                    service.applicationData.unsavedGeneratedDesign = false;
-                                    service.applicationData.unsavedTraitsAvailable = false;
-                                    $('body').data('needToSave', '0');
-                                  });
+
 							}
                             else if (service.trialMeasurement.count > 0 &&
                                 (($('#chooseGermplasmAndChecks').length !== 0 &&

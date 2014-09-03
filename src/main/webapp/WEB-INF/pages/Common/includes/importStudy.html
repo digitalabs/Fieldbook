@@ -384,11 +384,11 @@
 		}
 		function doSaveImportedData(){
 			'use strict';
-			$.ajax(
+			return $.ajax(
 					{ 
 						url: '/Fieldbook/ImportManager/import/save',
 						type: 'POST',
-						async: false,
+                        async: true,
 						success: function(html) {
 							$('#measurementsDiv').html(html);							
 							$('.import-study-data').data('data-import', '0');

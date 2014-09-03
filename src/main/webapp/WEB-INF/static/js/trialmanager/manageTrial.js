@@ -11,6 +11,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
     var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils', 'fieldbook-utils',
         'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource','ngStorage']);
 
+    // HTTP INTERCEPTOR CONFIGURATION START
+    // The following block defines an interceptor that hooks into AJAX operations initiated by Angular to start / stop the spinner operation
     manageTrialApp.factory('spinnerHttpInterceptor', function ($q) {
         return {
             'request': function (config) {
@@ -41,6 +43,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
     manageTrialApp.config(['$httpProvider', function ($httpProvider) {
         $httpProvider.interceptors.push('spinnerHttpInterceptor');
     }]);
+
+    // HTTP INTERCEPTOR CONFIGURATION END
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants

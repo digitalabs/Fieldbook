@@ -131,8 +131,8 @@
                     showDetailsModal: '='
                 },
 
-                link: function (scope, elem, attrs) {
-                    elem.css({ cursor: "pointer" });
+                link: function (scope, elem) {
+                    elem.css({ cursor: 'pointer' });
                     elem.on('click', function () {
                         showBaselineTraitDetailsModal(scope.showDetailsModal);
                     });
@@ -204,11 +204,13 @@
 
                         scope.processData = function (data) {
                             scope.$apply(function () {
+                                var out = {};
+
                                 if (data.responseData) {
                                     data = data.responseData;
                                 }
                                 if (data) {
-                                    var out = {};
+
                                     // if retrieved data is an array of values
                                     if (data.length && data.length > 0) {
                                         $.each(data, function (key, value) {
@@ -385,13 +387,15 @@
                                 $http.get('/Fieldbook/NurseryManager/advance/nursery/getLocations').then(function (returnVal) {
                                     if (returnVal.data.success === '1') {
                                         $scope.variableDefinition.locationUpdated = true;
-                                        // clear and copy of array is performed so as to preserve previous reference and have changes applied to all components with a copy of the previous reference
+                                        // clear and copy of array is performed so as to preserve previous reference
+                                        // and have changes applied to all components with a copy of the previous reference
                                         $scope.clearArray($scope.variableDefinition.possibleValues);
                                         $scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
 
                                         $scope.variableDefinition.possibleValues.push.apply($scope.variableDefinition.possibleValues,
                                             $scope.convertLocationsToPossibleValues($.parseJSON(returnVal.data.allBreedingLocations)));
-                                        $scope.variableDefinition.possibleValuesFavorite.push.apply($scope.variableDefinition.possibleValuesFavorite,
+                                        $scope.variableDefinition.possibleValuesFavorite.push.apply(
+                                            $scope.variableDefinition.possibleValuesFavorite,
                                             $scope.convertLocationsToPossibleValues($.parseJSON(returnVal.data.favoriteLocations)));
                                         $scope.updateDropdownValues();
                                     }
@@ -427,9 +431,9 @@
         })
 
         .directive('jqDatepicker',function() {
-            return function(scope,element,attrs) {
+            return function(scope,element) {
                 $(element).placeholder();
-            }
+            };
         })
 
         .directive('sectionContainer', ['$parse', function ($parse) {
@@ -494,7 +498,7 @@
                 restrict: 'A',
                 link: function (scope, element, attrs) {
                     var length = 30;
-                    scope.$watch(attrs.truncateAndTooltip, function (newValue, oldValue) {
+                    scope.$watch(attrs.truncateAndTooltip, function (newValue) {
                         if (newValue.length > length) {
                             element.attr('tooltip', newValue);
                             element.attr('tooltip-placement', 'right');
@@ -520,8 +524,8 @@
                 scope: {
                     showBaselineTraitDetailsModalLink: '@'
                 },
-                link: function (scope, elem, attrs) {
-                    elem.click(function (e) {
+                link: function (scope, elem) {
+                    elem.click(function () {
                         showBaselineTraitDetailsModal(scope.cvTermId);
                     });
                 }
@@ -597,7 +601,7 @@
             return function (settingKeys, settingVals) {
                 var keys = [];
 
-                angular.forEach(settingKeys, function (val, key) {
+                angular.forEach(settingKeys, function (val) {
                     if (!settingVals[val].hidden) {
                         keys.push(val);
                     }

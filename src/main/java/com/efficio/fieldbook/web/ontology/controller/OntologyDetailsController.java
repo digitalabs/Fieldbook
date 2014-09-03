@@ -326,7 +326,9 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     			for (StandardVariableReference svRef : property.getStandardVariables()) {
     				if(stdVars.contains(svRef)) {
     					// if std variable is in the limited set, then add to the result
-    					propertyTree.getStandardVariables().add(svMap.get(svRef.getId()));
+    					if(svMap.get(svRef.getId()) != null){
+    						propertyTree.getStandardVariables().add(svMap.get(svRef.getId()));
+    					}
     				}									
     			}
     			// only add to the result if we have Std Variables to return

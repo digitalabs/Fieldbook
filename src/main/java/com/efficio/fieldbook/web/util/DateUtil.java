@@ -65,8 +65,9 @@ public class DateUtil {
      * @return the list
      */
     public static List<ChoiceKeyVal> generateYearChoices(int currentYear){
-    	List<ChoiceKeyVal> yearList = new ArrayList();
-    	int startYear = AppConstants.START_YEAR.getInt();
+    	List<ChoiceKeyVal> yearList = new ArrayList<ChoiceKeyVal>();
+    	int startYear = currentYear - AppConstants.ADVANCING_YEAR_RANGE.getInt();
+    	currentYear = currentYear + AppConstants.ADVANCING_YEAR_RANGE.getInt();
     	for(int i = startYear ; i <= currentYear ; i++){
     		yearList.add(new ChoiceKeyVal(Integer.toString(i), Integer.toString(i)));
     	}

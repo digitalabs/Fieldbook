@@ -170,7 +170,7 @@
 
                                 <div class="col-xs-6">
                                     <div class="pull-left" style="padding-right: 20px">
-                                        <select th:field="*{harvestYear}" style="width: 100px">
+                                        <select class="fbk-harvest-year" th:field="*{harvestYear}" style="width: 100px">
                                             <option th:each="year : ${yearChoices}" th:value="${year.val}" th:text="${year.name}">
                                             </option>
                                         </select>

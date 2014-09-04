@@ -1012,10 +1012,13 @@ function advanceNursery(tableName) {
 					$('#advance-nursery-modal-div').html(html);
 					$('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
 
-					$('#advanceNurseryModal select').each(function(){
+					$('#advanceNurseryModal select').not('.fbk-harvest-year').each(function(){
 						$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
 					});
-
+					$('#advanceNurseryModal select.fbk-harvest-year').each(function(){
+						$(this).select2({minimumResultsForSearch: -1});
+					});
+					
 				}
 			});
 		}

@@ -337,12 +337,12 @@
                     		<a th:if="*{factorsMap[8230] ne null}" th:text="*{factorsMap[8230].variable.name}" onclick="showBaselineTraitDetailsModal(8230)" href="javascript:void(0);"></a>
                     	</td></tr>
                     	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166' 
-                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'}"><td>
+                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10145' or experimentalDesignDetails.experimentalDesign.value eq '10167'
+                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10110'}"><td>
                     		<strong th:text="#{review.trial.replicate.factor}"></strong>
                     		<a th:if="*{factorsMap[8210] ne null}" href="javascript:void(0);" onclick="showBaselineTraitDetailsModal(8210)" th:text="*{factorsMap[8210].variable.name}"></a>
                     	</td></tr>
-                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166' 
-                    	 		or experimentalDesignDetails.experimentalDesign.value eq '10110'}"><td>
+                    	<tr th:if="*{experimentalDesignDetails.experimentalDesign.value eq '10130' or experimentalDesignDetails.experimentalDesign.value eq '10166'}"><td>
                     		<strong th:text="#{review.trial.block.factor}"></strong>
                     		<a onclick="showBaselineTraitDetailsModal(8220)" href="javascript:void(0);" th:if="*{factorsMap[8220] ne null}" th:text="*{factorsMap[8220].variable.name}"></a>
                     	</td></tr>

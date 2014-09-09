@@ -61,7 +61,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private static final int PIXEL_SIZE = 250;
 	
 	private static final String OCC_8170_LABEL = "8170_LABEL";
-	
+	private static final String PLOT = "PLOT";
+
 	@Resource
 	private MessageSource messageSource;
 	
@@ -269,7 +270,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 	
 	private int writeVariates(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> variates) {
-		return writeSection(currentRowNum, xlsBook, xlsSheet, variates, "export.study.description.column.variate", 51, 51, 153);
+		return writeSection(currentRowNum, xlsBook, xlsSheet, variates, "export.study.description.column.variate", 51, 51, 153,true);
 	}
 	
 	private CellStyle getHeaderStyle(HSSFWorkbook xlsBook, int c1, int c2, int c3) {
@@ -301,14 +302,27 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private int writeSection(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> variables, String sectionLabel,
 			int c1, int c2, int c3) {
 		
-		writeSectionHeader(xlsBook, xlsSheet, currentRowNum++, sectionLabel, c1, c2, c3);
-		if (variables != null && !variables.isEmpty()) {
-			for (MeasurementVariable variable : variables) {
-				writeSectionRow(currentRowNum++, xlsSheet, variable);
-			}
-		}
-		return currentRowNum;
+        return writeSection(currentRowNum,xlsBook,xlsSheet,variables,sectionLabel,c1,c2,c3,false);
 	}
+
+    private int writeSection(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> variables, String sectionLabel,
+                             int c1, int c2, int c3,boolean isVariate) {
+
+        writeSectionHeader(xlsBook, xlsSheet, currentRowNum++, sectionLabel, c1, c2, c3);
+        if (variables != null && !variables.isEmpty()) {
+            for (MeasurementVariable variable : variables) {
+
+                if (isVariate) {
+                    variable.setLabel(PLOT);
+                }
+
+                writeSectionRow(currentRowNum++, xlsSheet, variable);
+            }
+        }
+        return currentRowNum;
+
+    }
+
 	
 	private void writeSectionHeader(HSSFWorkbook xlsBook, HSSFSheet xlsSheet, int currentRowNum, String typeLabel, int c1, int c2, int c3) {
 		Locale locale = LocaleContextHolder.getLocale();
@@ -337,14 +351,26 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		cell = row.createCell(5, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(getHeaderStyle(xlsBook, c1, c2, c3));
 		cell.setCellValue(messageSource.getMessage("export.study.description.column.datatype", null, locale));
-		
+
 		cell = row.createCell(6, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(getHeaderStyle(xlsBook, c1, c2, c3));
 		cell.setCellValue(messageSource.getMessage("export.study.description.column.value", null, locale));
-		
-		cell = row.createCell(7, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellStyle(getHeaderStyle(xlsBook, c1, c2, c3));
-		cell.setCellValue(messageSource.getMessage("export.study.description.column.label", null, locale));
+
+
+        // If typeLabel is constant or variate, the label column should be 'SAMPLE LEVEL'
+        cell = row.createCell(7, HSSFCell.CELL_TYPE_STRING);
+        cell.setCellStyle(getHeaderStyle(xlsBook, c1, c2, c3));
+
+
+        if ("export.study.description.column.constant".equals(typeLabel)
+                || "export.study.description.column.variate".equals(typeLabel))  {
+            cell.setCellValue(messageSource.getMessage("export.study.description.column.samplelevel", null, locale));
+
+        } else {
+            cell.setCellValue(messageSource.getMessage("export.study.description.column.label", null, locale));
+
+        }
+
 	}
 	
 	private void writeSectionRow(int currentRowNum, HSSFSheet xlsSheet, MeasurementVariable variable) {

@@ -11,6 +11,7 @@ $(document).ready(function() {
 });
 function createErrorNotification( titleDisplay, textDisplay){
 	'use strict';
+	$('.error-notify').remove();
 	createNotification('default-notification',titleDisplay,textDisplay, false, 'error-notify');
 }
 function createSuccessNotification( titleDisplay, textDisplay){

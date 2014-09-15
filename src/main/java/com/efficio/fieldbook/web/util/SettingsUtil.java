@@ -1895,9 +1895,15 @@ public class SettingsUtil {
                 }
                 for (MeasurementRow row : observations) {
                     for (Integer i : indeces) {
-                        Integer value = row.getDataList().get(i).getValue() == null
-                                || row.getDataList().get(i).getValue().isEmpty() ?
-                                null : Integer.parseInt(row.getDataList().get(i).getValue());
+                        Integer value = null;
+                        
+                        if(row.getDataList().get(i).getValue() == null
+                                || row.getDataList().get(i).getValue().isEmpty()) {
+                        	value = null;
+                        }else if(NumberUtils.isNumber(row.getDataList().get(i).getValue())){
+                        	value = Integer.parseInt(row.getDataList().get(i).getValue());
+                        }
+                            
                         Method method = methodMap.get(value);
                         row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : method.getMcode());
                     }

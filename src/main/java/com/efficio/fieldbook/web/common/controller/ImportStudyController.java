@@ -407,6 +407,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	//fieldbookService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
         fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
         
+        //will do the cleanup for BM_CODE_VTE here
+        SettingsUtil.resetBreedingMethodValueToCode(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
     	fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook());
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	    

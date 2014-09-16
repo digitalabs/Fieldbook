@@ -410,6 +410,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
         //will do the cleanup for BM_CODE_VTE here
         SettingsUtil.resetBreedingMethodValueToCode(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
     	fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook());
+    	SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	    
     	userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());

@@ -489,6 +489,8 @@
                     }
 
                     var hasError = false, name = '', customMessage = '', errorCode = 0;
+                    var creationDate = service.currentData.basicDetails.basicDetails[8050];
+                    var completionDate = service.currentData.basicDetails.basicDetails[8060];
                     if (!service.currentData.basicDetails.folderId || service.currentData.basicDetails.folderId === '') {
                         hasError = true;
                         name = $('#folderLabel').text();
@@ -503,7 +505,7 @@
                     } else if (!isEdit && isStudyNameUnique(service.currentData.basicDetails.basicDetails[8005]) === false) {
                         hasError = true;
                         customMessage = 'Name should be unique';
-                    } else if (service.currentData.basicDetails.basicDetails[8050] === '') {
+                    } else if (creationDate === '') {
                         // validate creation date
                         hasError = true;
                         name = 'Creation Date';
@@ -511,7 +513,12 @@
                         hasError = true;
                         customMessage = 'Trials should have at least one environment';
                     }
-
+                    
+                    var invalidDateMsg = validateAllDates();
+                    if(invalidDateMsg !== '') {
+                    	hasError = true;
+                    	customMessage = invalidDateMsg;
+                    }
                     if (!hasError) {
                         errorCode = service.treatmentFactorDataInvalid();
                         if (errorCode === 1) {
@@ -538,8 +545,7 @@
                         return false;
                     }
 
-                    var valid = validateStartEndDateBasic(service.currentData.basicDetails.basicDetails[8050],
-                        service.currentData.basicDetails.basicDetails[8060]);
+                    var valid = validateStartEndDateBasic(creationDate,completionDate);
 
                     if (valid !== true) {
                         showInvalidInputMessage(valid);

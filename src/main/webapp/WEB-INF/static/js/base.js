@@ -41,3 +41,46 @@ function createNotification( template, titleDisplay, textDisplay, expires, class
 	}});
 	$(temp.element).addClass(className);
 }
+
+function isValidDate(dateString) {
+	if(dateString === '') {
+		return true;
+	}
+	var validPattern = /\d{4}-\d{1,2}-\d{1,2}/.test(dateString);
+	if(!validPattern) {
+		return false;
+	}
+	var parts = dateString.split("-");
+	var year = parseInt(parts[0], 10);
+    var month = parseInt(parts[1], 10);
+    var day = parseInt(parts[2], 10);
+    
+    if(year < 1000 || year > 3000 || month == 0 || month > 12)
+        return false;
+
+    var monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+    if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
+        monthLength[1] = 29;
+
+    return day > 0 && day <= monthLength[month - 1];
+    
+}
+
+function validateAllDates() {
+	var errorMsg = commonErrorDateFormat;
+	var attrs = $('input[jq-datepicker]');
+	var elems = $('input.date-input');
+	for(var i = 0; i< attrs.length; i++) {
+    	if(!isValidDate(attrs[i].value)) {
+    		return errorMsg;
+    	}
+    }
+    for(var i = 0; i< elems.length; i++) {
+    	if(!isValidDate(elems[i].value)) {
+    		return errorMsg;
+    	}
+    }
+    
+    return '';
+}

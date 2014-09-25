@@ -1472,6 +1472,12 @@ function validateCreateNursery() {
 		hasError = true;
 		customMessage = nurseryGermplasmListIsRequired;
 	}
+	
+	var invalidDateMsg = validateAllDates();
+    if(invalidDateMsg !== '') {
+    	hasError = true;
+    	customMessage = invalidDateMsg;
+    }
 
 	if (hasError) {
 		var errMsg = '';

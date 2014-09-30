@@ -97,7 +97,7 @@
 <div id="list-tree-include" th:include="/Common/includes/listTreeInclude"></div>
 
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
+	<script type="text/javascript" th:inline="javascript">
 	//<![CDATA[
 	/*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList*/
 	/*globals showErrorMessage, showInvalidInputMessage, getDisplayedTreeName*/
@@ -172,6 +172,12 @@
 					showInvalidInputMessage(dateRequired);
 					return false;
 				}
+				var invalidDateMsg = validateAllDates();
+			    if(invalidDateMsg !== '') {
+			    	showInvalidInputMessage(invalidDateMsg);
+			    	return false;
+			    }
+			    
 				var parentId = chosenNodeFolder.data.key;
 				$('#saveListForm #parentId').val(parentId);
 				var dataForm = $('#saveListForm').serialize();

@@ -1,7 +1,6 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree*/
-
 (function () {
     'use strict';
 
@@ -381,8 +380,6 @@
                     _.each(_.keys(newValue),function(nvkey) {
                         service.currentData[dataKey][nvkey] = newValue[nvkey];
                     });
-
-                    //service.currentData[dataKey] = newValue;
                     propagateChange(dataRegistry, dataKey, newValue);
                 },
 

@@ -1,9 +1,9 @@
 $(document).ready(function() {
 	$('.help-tooltip').tooltip();
-	$(".help-tooltip-nursery").tooltip();
+	$('.help-tooltip-nursery').tooltip();
 	//this would handle the closing of modal since some modal window wont close on esc
 	$('body').keydown(function(event){
-		if(event.keyCode == 27){
+		if(event.keyCode === 27){
 			var length = $('.modal.in').length - 1;
 			$($('.modal.in')[length]).modal('hide');
 		}
@@ -18,7 +18,6 @@ function createSuccessNotification( titleDisplay, textDisplay){
 	//we remove all error
 	'use strict';
 	$('.error-notify').remove();
-	//$('.warning-notify').remove();
 	createNotification('default-notification',titleDisplay,textDisplay, 3000, '');
 }
 function createWarningNotification( titleDisplay, textDisplay, duration){
@@ -50,21 +49,22 @@ function isValidDate(dateString) {
 	if(!validPattern) {
 		return false;
 	}
-	var parts = dateString.split("-");
+	var parts = dateString.split('-');
 	var year = parseInt(parts[0], 10);
     var month = parseInt(parts[1], 10);
     var day = parseInt(parts[2], 10);
     
-    if(year < 1000 || year > 3000 || month == 0 || month > 12)
+    if(year < 1000 || year > 3000 || month === 0 || month > 12) {
         return false;
+    }
 
     var monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 
-    if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
+    if(year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
         monthLength[1] = 29;
+    }
 
     return day > 0 && day <= monthLength[month - 1];
-    
 }
 
 function validateAllDates() {
@@ -81,6 +81,5 @@ function validateAllDates() {
     		return errorMsg;
     	}
     }
-    
     return '';
 }

@@ -6,7 +6,6 @@ function checkMethod() {
 		$('#methodIdFavorite').select2('enable', true);
 		$('#methodIdAll').select2('enable', true);
 		$('#showFavoriteMethod').prop('disabled', false);
-
 		$('#method-variates-section').hide();
 		$('.method-selection-div').find('input,select').prop('disabled', false);
 		$('#methodIdAll').select2('enable', true);
@@ -31,7 +30,7 @@ function checkMethod() {
 		// we show the bulk and lines section
 		$('.bulk-section').css('display', 'none');
 		$('.lines-section').css('display', 'none');
-		if ($("#methodVariateId").has("option").length === 0) {
+		if ($('#methodVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
 			showErrorMessage("page-advance-modal-message", noMethodVariatesError);
@@ -44,11 +43,11 @@ function checkMethod() {
 
 function displaySectionsPerMethodVariateValues() {
 	'use strict';
-	var id = $("#methodVariateId").val();
+	var id = $('#methodVariateId').val();
 	if (id !== '') {
 		$.ajax({
 			url : '/Fieldbook/NurseryManager/advance/nursery/checkMethodTypeMode/' + id,
-			type : "GET",
+			type : 'GET',
 			cache : false,
 			success : function(data) {
 				if (data === 'LINE') {
@@ -92,7 +91,7 @@ function setCorrectMethodValues(isCheckMethod) {
 			$('#methodIdFavorite').select2('data', methodSuggestionsFav_obj[0])
 					.trigger('change');
 		} else {
-			$('#' + getJquerySafeId("advanceBreedingMethodId")).val(0);
+			$('#' + getJquerySafeId('advanceBreedingMethodId')).val(0);
 		}
 	} else {
 		if (isCheckMethod) {
@@ -106,7 +105,7 @@ function setCorrectMethodValues(isCheckMethod) {
 			}
 		}
 		if (isFound) {
-			$("#methodIdAll").select2('data', dataVal).trigger('change');
+			$('#methodIdAll').select2('data', dataVal).trigger('change');
 		}
 	}
 }
@@ -114,18 +113,18 @@ function lineMethod() {
 	if ($('input[type=checkbox][name=lineChoice]:checked').val() == 1) {
 		$('#lineSelected').prop('disabled', false);
 		$('#lineSelected').val(oldLineSelected);
-		$("#line-variates-section").hide();
-		$(".lines-per-plot-section").show();
+		$('#line-variates-section').hide();
+		$('.lines-per-plot-section').show();
 	} else {
 		$('#lineSelected').prop('disabled', 'disabled');
 		oldLineSelected = $('#lineSelected').val();
 		$('#lineSelected').val(1);
-		$("#line-variates-section").show();
-		$(".lines-per-plot-section").hide();
-		if ($("#lineVariateId").has("option").length === 0) {
+		$('#line-variates-section').show();
+		$('.lines-per-plot-section').hide();
+		if ($('#lineVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=lineChoice]').prop('checked', true);
 			$('input[type=checkbox][name=lineChoice]').change();
-			showErrorMessage("page-advance-modal-message", noLineVariatesError);
+			showErrorMessage('page-advance-modal-message', noLineVariatesError);
 		}
 	}
 }
@@ -165,34 +164,34 @@ function showCorrectLocationCombo() {
 	if (isChecked) {
 		$('#s2id_harvestLocationIdFavorite').show();
 		$('#s2id_harvestLocationIdAll').hide();
-		if ($('#' + getJquerySafeId("harvestLocationIdFavorite")).select2(
-				"data") != null) {
-			$('#' + getJquerySafeId("harvestLocationId")).val(
-					$('#' + getJquerySafeId("harvestLocationIdFavorite"))
-							.select2("data").id);
-			$('#' + getJquerySafeId("harvestLocationName")).val(
-					$('#' + getJquerySafeId("harvestLocationIdFavorite"))
-							.select2("data").text);
-			$('#' + getJquerySafeId("harvestLocationAbbreviation")).val(
-					$('#' + getJquerySafeId("harvestLocationIdFavorite"))
-							.select2("data").abbr);
+		if ($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2(
+				'data') != null) {
+			$('#' + getJquerySafeId('harvestLocationId')).val(
+					$('#' + getJquerySafeId('harvestLocationIdFavorite'))
+							.select2('data').id);
+			$('#' + getJquerySafeId('harvestLocationName')).val(
+					$('#' + getJquerySafeId('harvestLocationIdFavorite'))
+							.select2('data').text);
+			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val(
+					$('#' + getJquerySafeId('harvestLocationIdFavorite'))
+							.select2('data').abbr);
 
 		} else {
-			$('#' + getJquerySafeId("harvestLocationId")).val(0);
-			$('#' + getJquerySafeId("harvestLocationName")).val("");
-			$('#' + getJquerySafeId("harvestLocationAbbreviation")).val("");
+			$('#' + getJquerySafeId('harvestLocationId')).val(0);
+			$('#' + getJquerySafeId('harvestLocationName')).val('');
+			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val('');
 		}
 	} else {
 		$('#s2id_harvestLocationIdFavorite').hide();
 		$('#s2id_harvestLocationIdAll').show();
-		if ($('#' + getJquerySafeId("harvestLocationIdAll")).select2("data") != null) {
-			$('#' + getJquerySafeId("harvestLocationId")).val($('#' + getJquerySafeId("harvestLocationIdAll")).select2("data").id);
-			$('#' + getJquerySafeId("harvestLocationName")).val($('#' + getJquerySafeId("harvestLocationIdAll")).select2("data").text);
-			$('#' + getJquerySafeId("harvestLocationAbbreviation")).val($('#' + getJquerySafeId("harvestLocationIdAll")).select2("data").abbr);
+		if ($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data') != null) {
+			$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id);
+			$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').text);
+			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 		} else {
-			$('#' + getJquerySafeId("harvestLocationId")).val(0);
-			$('#' + getJquerySafeId("harvestLocationName")).val("");
-			$('#' + getJquerySafeId("harvestLocationAbbreviation")).val("");
+			$('#' + getJquerySafeId('harvestLocationId')).val(0);
+			$('#' + getJquerySafeId('harvestLocationName')).val('');
+			$('#' + getJquerySafeId('harvestLocationAbbreviation')).val('');
 		}
 	}
 }
@@ -202,26 +201,27 @@ function showCorrectMethodCombo() {
 	// if show favorite Method is checked, hide all field locations, else, show
 	// only favorite methods
 	var methodSelect = false;
-	if ($('input[type=checkbox][name=methodChoice]:checked').val() === '1')
+	if ($('input[type=checkbox][name=methodChoice]:checked').val() === '1') {
 		methodSelect = true;
+	}
 
 	if (isChecked) {
 		$('#s2id_methodIdFavorite').show();
 		$('#s2id_methodIdAll').hide();
 		setCorrectMethodValues(methodSelect);
-		if ($('#' + getJquerySafeId("methodIdFavorite")).select2("data") != null) {
-			$('#' + getJquerySafeId("breedingMethodId")).val($('#' + getJquerySafeId("methodIdFavorite")).select2("data").id);
+		if ($('#' + getJquerySafeId('methodIdFavorite')).select2('data') != null) {
+			$('#' + getJquerySafeId('breedingMethodId')).val($('#' + getJquerySafeId('methodIdFavorite')).select2('data').id);
 		} else {
-			$('#' + getJquerySafeId("breedingMethodId")).val(0);
+			$('#' + getJquerySafeId('breedingMethodId')).val(0);
 		}
 	} else {
 		$('#s2id_methodIdFavorite').hide();
 		$('#s2id_methodIdAll').show();
 		setCorrectMethodValues(methodSelect);
-		if ($('#' + getJquerySafeId("methodIdAll")).select2("data") != null) {
-			$('#' + getJquerySafeId("breedingMethodId")).val($('#' + getJquerySafeId("methodIdAll")).select2("data").id);
+		if ($('#' + getJquerySafeId('methodIdAll')).select2('data') != null) {
+			$('#' + getJquerySafeId('breedingMethodId')).val($('#' + getJquerySafeId('methodIdAll')).select2('data').id);
 		} else {
-			$('#' + getJquerySafeId("breedingMethodId")).val(0);
+			$('#' + getJquerySafeId('breedingMethodId')).val(0);
 		}
 	}
 }
@@ -236,17 +236,17 @@ function getBreedingMethodRowIndex() {
 	});
 
 	$.each($('.breedingMethodDetails'), function(index, row) {
-		rowIndex = getIndexFromName($($(row).find('.1st').find(".cvTermIds")).attr('name'));
+		rowIndex = getIndexFromName($($(row).find('.1st').find('.cvTermIds')).attr('name'));
 	});
 	return rowIndex;
 }
 
 function getLocationRowIndex() {
 	var rowIndex = -1;
-	$.each($(".nurseryLevelSettings"), function(index, row) {
-		var cvTermId = $($(row).find('.1st').find(".cvTermIds")).val();
+	$.each($('.nurseryLevelSettings'), function(index, row) {
+		var cvTermId = $($(row).find('.1st').find('.cvTermIds')).val();
 		if (parseInt(cvTermId, 10) == parseInt(locationId, 10)) {
-			rowIndex = getIndexFromName($($(row).find('.1st').find(".cvTermIds")).attr("name"));
+			rowIndex = getIndexFromName($($(row).find('.1st').find('.cvTermIds')).attr('name'));
 		}
 	});
 
@@ -280,7 +280,7 @@ function setComboValues(suggestions_obj, id, name) {
 		}
 	}
 	// set the selected value of the combo
-	$("#" + name).select2('data', dataVal);
+	$('#' + name).select2('data', dataVal);
 }
 
 function initializeStandardVariableSearch(variables) {
@@ -293,9 +293,9 @@ function initializeStandardVariableSearch(variables) {
 		});
 	});
 
-	stdVariableSuggestions_obj = sortByKey(stdVariableSuggestions_obj, "text");
+	stdVariableSuggestions_obj = sortByKey(stdVariableSuggestions_obj, 'text');
 
-	$("#stdVarSearch").select2({
+	$('#stdVarSearch').select2({
 		query : function(query) {
 			var data = {
 				results : stdVariableSuggestions_obj
@@ -314,15 +314,15 @@ function initializeStandardVariableSearch(variables) {
 
 			query.callback(data);
 		}
-	}).unbind("change").on("change", function() {
+	}).unbind('change').on('change', function() {
 		// set attribute values
-		getStandardVariableDetailsModal($("#stdVarSearch").select2("data").id);
+		getStandardVariableDetailsModal($('#stdVarSearch').select2('data').id);
 	});
 	var dataVal = {
 		'id' : '',
 		'text' : ''
 	};
-	$("#stdVarSearch").select2('data', dataVal).trigger('change');
+	$('#stdVarSearch').select2('data', dataVal).trigger('change');
 }
 
 function getStandardVariableDetailsModal(id) {
@@ -332,7 +332,7 @@ function getStandardVariableDetailsModal(id) {
 				.ajax({
 					url : '/Fieldbook/NurseryManager/createNursery/showVariableDetails/'
 							+ id,
-					type : "GET",
+					type : 'GET',
 					cache : false,
 					success : function(data) {
 						$('#var-info').slideDown('slow');
@@ -373,10 +373,10 @@ function hideDummyRow(tableId) {
 }
 
 function showDummyRow(tableId) {
-	var dummyRow = '<tr class=\'dummy-row\'> ' +
-                	'<td class=\'even dummy-col\'>&nbsp;</td> ' +
-                	'<td class=\'even\'>&nbsp;</td> ' +
-                	'<td class=\'even\'>&nbsp;</td> </tr>';
+	var dummyRow = '<tr class="dummy-row"> ' +
+                	'<td class="even dummy-col">&nbsp;</td> ' +
+                	'<td class="even">&nbsp;</td> ' +
+                	'<td class="even">&nbsp;</td> </tr>';
 	$('#'+tableId+' tbody').append(dummyRow);
 }
 
@@ -391,172 +391,170 @@ function getLastRowIndex(name, hasTBody) {
 
 function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		posValSuffix) {
-	var ctr = $('.' + rowClass).length; // getLastRowIndex("nurseryLevelSettings",
-										// false) + 1;
+	var ctr = $('.' + rowClass).length;
 	if (name === 'studyLevelVariables') {
 		ctr++;
 	}
 
-	$
-			.each(
-					data,
-					function(index, settingDetail) {
-						var newRow = '<div class="row form-group ' + rowClass
-								+ ' newVariable">';
-						var isDelete = '';
+	$.each(
+	data,
+	function(index, settingDetail) {
+		var newRow = '<div class="row form-group ' + rowClass
+				+ ' newVariable">';
+		var isDelete = '';
 
-						// include delete button if variable is deletable
-						if (settingDetail.deletable) {
-							isDelete = '<span style="font-size: 16px;" class="delete-icon" onclick="deleteVariable('
-									+ varType
-									+ ','
-									+ settingDetail.variable.cvTermId
-									+ ',$(this))"></span>';
-						}
+		// include delete button if variable is deletable
+		if (settingDetail.deletable) {
+			isDelete = '<span style="font-size: 16px;" class="delete-icon" onclick="deleteVariable('
+					+ varType
+					+ ','
+					+ settingDetail.variable.cvTermId
+					+ ',$(this))"></span>';
+		}
 
-						// create html elements dynamically
-						newRow = newRow
-								+ '<div class="col-xs-5 col-md-5 1st">'
-								+ isDelete
-								+ '<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" id="'
-								+ name + ctr + '.variable.cvTermId" name="'
-								+ name + '[' + ctr
-								+ '].variable.cvTermId" value="'
-								+ settingDetail.variable.cvTermId
-								+ '" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		// create html elements dynamically
+		newRow = newRow
+				+ '<div class="col-xs-5 col-md-5 1st">'
+				+ isDelete
+				+ '<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" id="'
+				+ name + ctr + '.variable.cvTermId" name="'
+				+ name + '[' + ctr
+				+ '].variable.cvTermId" value="'
+				+ settingDetail.variable.cvTermId
+				+ '" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
-						newRow = newRow
-								+ '<a href="javascript: void(0);" onclick="javascript:showBaselineTraitDetailsModal('
-								+ settingDetail.variable.cvTermId
-								+ ');" ><span style="word-wrap: break-word"  class="var-names control-label label-bold">'
-								+ settingDetail.variable.name
-								+ '</span></a>: &nbsp;</div>';
+		newRow = newRow
+				+ '<a href="javascript: void(0);" onclick="javascript:showBaselineTraitDetailsModal('
+				+ settingDetail.variable.cvTermId
+				+ ');" ><span style="word-wrap: break-word"  class="var-names control-label label-bold">'
+				+ settingDetail.variable.name
+				+ '</span></a>: &nbsp;</div>';
 
-						newRow = newRow
-									+ '<div class="col-xs-7 col-md-7 2nd">';
+		newRow = newRow
+					+ '<div class="col-xs-7 col-md-7 2nd">';
 
-						var inputHtml = '';
+		var inputHtml = '';
 
-						if (settingDetail.variable.widgetType === 'DROPDOWN') {
-							inputHtml = createDropdownInput(ctr, name);
-						} else if (settingDetail.variable.widgetType === 'DATE') {
-							inputHtml = createDateInput(ctr, name);
-						} else if (settingDetail.variable.widgetType === 'CTEXT') {
-							inputHtml = createCharacterTextInput(ctr, name);
-						} else if (settingDetail.variable.widgetType === 'NTEXT') {
-							inputHtml = createNumericalTextInput(ctr, name);
-						} else if (settingDetail.variable.widgetType === 'SLIDER') {
-							inputHtml = createSliderInput(ctr,
-									settingDetail.variable.minRange,
-									settingDetail.variable.maxRange, name);
-						}
-						newRow = newRow + inputHtml;
+		if (settingDetail.variable.widgetType === 'DROPDOWN') {
+			inputHtml = createDropdownInput(ctr, name);
+		} else if (settingDetail.variable.widgetType === 'DATE') {
+			inputHtml = createDateInput(ctr, name);
+		} else if (settingDetail.variable.widgetType === 'CTEXT') {
+			inputHtml = createCharacterTextInput(ctr, name);
+		} else if (settingDetail.variable.widgetType === 'NTEXT') {
+			inputHtml = createNumericalTextInput(ctr, name);
+		} else if (settingDetail.variable.widgetType === 'SLIDER') {
+			inputHtml = createSliderInput(ctr,
+					settingDetail.variable.minRange,
+					settingDetail.variable.maxRange, name);
+		}
+		newRow = newRow + inputHtml;
 
-						if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
-								parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
-							// show favorite method
-							newRow = newRow
-									+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
-									+ name
-									+ ctr
-									+ '.favorite1"'
-									+ ' name="'
-									+ name
-									+ '['
-									+ ctr
-									+ '].favorite"'
-									+ ' onclick="javascript: toggleMethodDropdown('
-									+ ctr
-									+ ');" />'
-									+ '<input type="hidden" name="_'
-									+ name
-									+ '['
-									+ ctr
-									+ '].favorite" value="on" /> '
-									+ '<span>&nbsp;&nbsp;'
-									+ showFavoriteMethodLabel
-									+ '</span></div>'
-									+ '<div id="possibleValuesJson'
-									+ ctr
-									+ '" class="possibleValuesJson" style="display:none">'
-									+ JSON.stringify(settingDetail.possibleValues)
-									+ '</div><div id="possibleValuesFavoriteJson'
-									+ ctr
-									+ '" class="possibleValuesFavoriteJson" style="display:none">'
-									+ JSON.stringify(settingDetail.possibleValuesFavorite)
-									+ '</div>';
+		if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
+				parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
+			// show favorite method
+			newRow = newRow
+					+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
+					+ name
+					+ ctr
+					+ '.favorite1"'
+					+ ' name="'
+					+ name
+					+ '['
+					+ ctr
+					+ '].favorite"'
+					+ ' onclick="javascript: toggleMethodDropdown('
+					+ ctr
+					+ ');" />'
+					+ '<input type="hidden" name="_'
+					+ name
+					+ '['
+					+ ctr
+					+ '].favorite" value="on" /> '
+					+ '<span>&nbsp;&nbsp;'
+					+ showFavoriteMethodLabel
+					+ '</span></div>'
+					+ '<div id="possibleValuesJson'
+					+ ctr
+					+ '" class="possibleValuesJson" style="display:none">'
+					+ JSON.stringify(settingDetail.possibleValues)
+					+ '</div><div id="possibleValuesFavoriteJson'
+					+ ctr
+					+ '" class="possibleValuesFavoriteJson" style="display:none">'
+					+ JSON.stringify(settingDetail.possibleValuesFavorite)
+					+ '</div>';
 
-							newRow = newRow
-									+ "<span><a href='javascript: openManageMethods();'>"
-									+ manageMethodLabel + "</a></span>";
-							newRow = newRow + "</div>";
+			newRow = newRow
+					+ '<span><a href="javascript: openManageMethods();">'
+					+ manageMethodLabel + '</a></span>';
+			newRow = newRow + '</div>';
 
-						} else if (settingDetail.variable.cvTermId == locationId) {
-							// show favorite location
-							newRow = newRow
-									+ "<div class='possibleValuesDiv'><input type='checkbox' id='"
-									+ name
-									+ ctr
-									+ ".favorite1'"
-									+ " name='"
-									+ name
-									+ "["
-									+ ctr
-									+ "].favorite'"
-									+ " onclick='javascript: toggleLocationDropdown("
-									+ ctr
-									+ ");' />"
-									+ "<input type='hidden' name='_"
-									+ name
-									+ "["
-									+ ctr
-									+ "].favorite' value='on' /> "
-									+ "<span>&nbsp;&nbsp;"
-									+ showFavoriteLocationLabel
-									+ "</span></div>"
-									+ "<div id='possibleValuesJson"
-									+ ctr
-									+ "' class='possibleValuesJson' style='display:none'>"
-									+ JSON.stringify(settingDetail.possibleValues)
-									+ "</div><div id='possibleValuesFavoriteJson"
-									+ ctr
-									+ "' class='possibleValuesFavoriteJson' style='display:none'>"
-									+ JSON.stringify(settingDetail.possibleValuesFavorite)
-									+ "</div>";
+		} else if (settingDetail.variable.cvTermId == locationId) {
+			// show favorite location
+			newRow = newRow
+					+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
+					+ name
+					+ ctr
+					+ '.favorite1"'
+					+ ' name="'
+					+ name
+					+ '['
+					+ ctr
+					+ '].favorite"'
+					+ ' onclick="javascript: toggleLocationDropdown('
+					+ ctr
+					+ ');" />'
+					+ '<input type="hidden" name="_'
+					+ name
+					+ '['
+					+ ctr
+					+ '].favorite" value="on" /> '
+					+ '<span>&nbsp;&nbsp;'
+					+ showFavoriteLocationLabel
+					+ '</span></div>'
+					+ '<div id="possibleValuesJson'
+					+ ctr
+					+ '" class="possibleValuesJson" style="display:none">'
+					+ JSON.stringify(settingDetail.possibleValues)
+					+ '</div><div id="possibleValuesFavoriteJson'
+					+ ctr
+					+ '" class="possibleValuesFavoriteJson" style="display:none">'
+					+ JSON.stringify(settingDetail.possibleValuesFavorite)
+					+ '</div>';
 
-							newRow = newRow
-									+ '<span><a href="javascript: openManageLocations();">'
-									+ manageLocationLabel + '</a></span>';
-							newRow = newRow + '</div>';
+			newRow = newRow
+					+ '<span><a href="javascript: openManageLocations();">'
+					+ manageLocationLabel + '</a></span>';
+			newRow = newRow + '</div>';
 
-						} else {
-							newRow = newRow + '<div id="possibleValuesJson'
-									+ posValSuffix + ctr
-									+ '" class="possibleValuesJson'
-									+ posValSuffix + '" style="display:none">'
-									+ JSON.stringify(settingDetail.possibleValues)
-									+ '</div></div>';
-						}
+		} else {
+			newRow = newRow + '<div id="possibleValuesJson'
+					+ posValSuffix + ctr
+					+ '" class="possibleValuesJson'
+					+ posValSuffix + '" style="display:none">'
+					+ JSON.stringify(settingDetail.possibleValues)
+					+ '</div></div>';
+		}
 
-						$("#" + tableId).append(newRow);
+		$('#' + tableId).append(newRow);
 
-						if (settingDetail.variable.widgetType === 'DROPDOWN') {
-							// initialize select 2 combo
-							if (settingDetail.variable.cvTermId == locationId) {
-								initializePossibleValuesCombo(
-										settingDetail.possibleValues, '#'
-												+ getJquerySafeId(name + ctr
-														+ '.value'), true, null);
-							} else {
-								initializePossibleValuesCombo(
-										settingDetail.possibleValues, '#'
-												+ getJquerySafeId(name + ctr
-														+ '.value'), false,
-										null);
-							}
-						}
-						ctr++;
-					});
+		if (settingDetail.variable.widgetType === 'DROPDOWN') {
+			// initialize select 2 combo
+			if (settingDetail.variable.cvTermId == locationId) {
+				initializePossibleValuesCombo(
+						settingDetail.possibleValues, '#'
+								+ getJquerySafeId(name + ctr
+										+ '.value'), true, null);
+			} else {
+				initializePossibleValuesCombo(
+						settingDetail.possibleValues, '#'
+								+ getJquerySafeId(name + ctr
+										+ '.value'), false,
+						null);
+			}
+		}
+		ctr++;
+	});
 
 	initializeDateAndSliderInputs();
 }
@@ -593,165 +591,122 @@ function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
 
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;
-	var showFavorite = $(
-			"#"
-					+ getJquerySafeId("studyLevelVariables" + rowIndex
-							+ ".favorite1")).is(":checked");
-	var selectedVal = "";
+	var showFavorite = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex
+		+ '.favorite1')).is(':checked');
+	var selectedVal = '';
 
 	// get previously selected value
-	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value"))
-			.select2("data")) {
-		selectedVal = $(
-				"#"
-						+ getJquerySafeId("studyLevelVariables" + rowIndex
-								+ ".value")).select2("data").id;
+	if ($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data')) {
+		selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex
+			+ '.value')).select2('data').id;
 	}
 
 	// reset select2 combo
-	initializePossibleValuesCombo([], "#"
-			+ getJquerySafeId("studyLevelVariables" + rowIndex + ".value"),
+	initializePossibleValuesCombo([], '#'
+			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
 			false, null);
 
 	// get possible values based on checkbox
 	if (showFavorite) {
-		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
-
-		$(
-				$(
-						"#"
-								+ getJquerySafeId("studyLevelVariables"
-										+ rowIndex + ".value")).parent().find(
-						".selectedValue")).val(selectedVal);
-		selectedVal = $(
-				$(
-						"#"
-								+ getJquerySafeId("studyLevelVariables"
-										+ rowIndex + ".value")).parent().find(
-						".selectedValueFave")).val();
+		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+				.parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else {
-		possibleValues = $("#possibleValuesJson" + rowIndex).text();
-		$(
-				$(
-						"#"
-								+ getJquerySafeId("studyLevelVariables"
-										+ rowIndex + ".value")).parent().find(
-						".selectedValueFave")).val(selectedVal);
-		selectedVal = $(
-				$(
-						"#"
-								+ getJquerySafeId("studyLevelVariables"
-										+ rowIndex + ".value")).parent().find(
-						".selectedValue")).val();
+		possibleValues = $('#possibleValuesJson' + rowIndex).text();
+		$($('#' + getJquerySafeId('studyLevelVariables' 
+			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + ".value")).parent().find('.selectedValue')).val();
 	}
 	// recreate select2 combo
-	initializePossibleValuesCombo($.parseJSON(possibleValues), "#"
-			+ getJquerySafeId("studyLevelVariables" + rowIndex + ".value"),
+	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
+			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
 			false, selectedVal);
 }
 
 function toggleLocationDropdown(rowIndex) {
 	var possibleValues;
-	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex
-							+ ".favorite1")).is(":checked");
-	var selectedVal = "";
+	var showFavorite = $('#' + getJquerySafeId('studyLevelVariables'+ rowIndex
+		+ '.favorite1')).is(':checked');
+	var selectedVal = '';
 	var showAll = true;
 
 	// get previously selected value
-	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value"))
-			.select2("data")) {
-		selectedVal = $(
-				"#"
-						+ getJquerySafeId("studyLevelVariables" + rowIndex
-								+ ".value")).select2("data").id;
+	if ($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data')) {
+		selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+			select2('data').id;
 	}
 
 	// reset select2 combo
-	initializePossibleValuesCombo([], "#"
-			+ getJquerySafeId("studyLevelVariables" + rowIndex + ".value"),
-			false, null);
+	initializePossibleValuesCombo([], '#'
+			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'),
+				false, null);
 
 	// get possible values based on checkbox
     if (showFavorite) {
-        possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
+        possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
         showAll = false;
-        $(
-            $(
-                    "#"
-                    + getJquerySafeId("studyLevelVariables"
-                    + rowIndex + ".value")).parent().find(
-                ".selectedValue")).val(selectedVal);
+        $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+        		.parent().find('.selectedValue')).val(selectedVal);
         selectedVal = $(
-            $(
-                    "#"
-                    + getJquerySafeId("studyLevelVariables"
-                    + rowIndex + ".value")).parent().find(
-                ".selectedValueFave")).val();
+            $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+            .parent().find('.selectedValueFave')).val();
     } else {
-        possibleValues = $("#possibleValuesJson" + rowIndex).text();
-        $(
-            $(
-                    "#"
-                    + getJquerySafeId("studyLevelVariables"
-                    + rowIndex + ".value")).parent().find(
-                ".selectedValueFave")).val(selectedVal);
-        selectedVal = $(
-            $(
-                    "#"
-                    + getJquerySafeId("studyLevelVariables"
-                    + rowIndex + ".value")).parent().find(
-                ".selectedValue")).val();
+        possibleValues = $('#possibleValuesJson' + rowIndex).text();
+        $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+        		.parent().find('.selectedValueFave')).val(selectedVal);
+        selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+        	+ rowIndex + '.value')).parent().find('.selectedValue')).val();
     }
 
     // recreate select2 combo
-    initializePossibleValuesCombo($.parseJSON(possibleValues), "#"
-            + getJquerySafeId("studyLevelVariables" + rowIndex + ".value"),
-        showAll, selectedVal);
+    initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
+    		+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'), showAll, selectedVal);
 }
 
 function createTableSettingVariables(data, name, tableId, varType) {
-	$
-			.each(
-					data,
-					function(index, settingDetail) {
-						var length = $("#" + tableId + " tbody tr").length+1;
-						var className = length % 2 == 1 ? 'even' : 'odd';
-						var rowClass = "";
-						if (varType == 3) {
-							rowClass = "baseline-traits";
-						}
-						var newRow = "<tr class='newVariable " + rowClass
-								+ "'>";
-						var isDelete = "";
+	$.each(
+		data,
+		function(index, settingDetail) {
+		var length = $('#' + tableId + ' tbody tr').length+1;
+		var className = length % 2 == 1 ? 'even' : 'odd';
+		var rowClass = '';
+		if (varType == 3) {
+			rowClass = 'baseline-traits';
+		}
+		var newRow = '<tr class="newVariable ' + rowClass + '">';
+		var isDelete = '';
 
-						if (settingDetail.deletable) {
-							isDelete = "<span style='font-size: 16px;' class='delete-icon' onclick='deleteVariable("
-									+ varType
-									+ ","
-									+ settingDetail.variable.cvTermId
-									+ ",$(this))'></span>";
-						}
-						newRow = newRow
-								+ "<td style='text-align: center' class='fbk-delete-link "
-								+ className + "'>" + isDelete
-								+ "<input class='cvTermIds' type='hidden' id='"
-								+ name + (length - 1)
-								+ ".variable.cvTermId' name='" + name + "["
-								+ (length - 1) + "].variable.cvTermId' value='"
-								+ settingDetail.variable.cvTermId + "' />"
-								+ "</td>";
-						newRow = newRow
-								+ "<td width='45%' class='"
-								+ className
-								+ "'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal("
-								+ settingDetail.variable.cvTermId
-								+ ");' ><span class='var-names'>" + settingDetail.variable.name
-								+ "</span></a></td>";
-						newRow = newRow + "<td width='50%' class='" + className
-								+ "'>" + settingDetail.variable.description
-								+ "</td></tr>";
-						$("#" + tableId).append(newRow);
-					});
+		if (settingDetail.deletable) {
+			isDelete = '<span style="font-size: 16px;" class="delete-icon" onclick="deleteVariable('
+					+ varType
+					+ ','
+					+ settingDetail.variable.cvTermId
+					+ ',$(this))"></span>';
+		}
+		newRow = newRow
+				+ '<td style="text-align: center" class="fbk-delete-link '
+				+ className + '">' + isDelete
+				+ '<input class="cvTermIds" type="hidden" id="'
+				+ name + (length - 1)
+				+ '.variable.cvTermId" name="' + name + '['
+				+ (length - 1) + '].variable.cvTermId" value="'
+				+ settingDetail.variable.cvTermId + '" />'
+				+ '</td>';
+		newRow = newRow
+				+ '<td width="45%" class="'
+				+ className
+				+ '"><a href="javascript: void(0);" onclick="javascript:showBaselineTraitDetailsModal('
+				+ settingDetail.variable.cvTermId
+				+ ');" ><span class="var-names">' + settingDetail.variable.name
+				+ '</span></a></td>';
+		newRow = newRow + '<td width="50%" class="' + className
+				+ '">' + settingDetail.variable.description
+				+ '</td></tr>';
+		$('#' + tableId).append(newRow);
+	});
 }
 
 function sortByKey(array, key) {
@@ -768,49 +723,47 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 		counter = 0,
 		newPossibleValues = [];
 	var defaultJsonVal = null;
-	var isBreedingMethodSetting = $(name).parent().next().children(".breeding-method-tooltip").length > 0;
+	var isBreedingMethodSetting = $(name).parent().next().children('.breeding-method-tooltip').length > 0;
 
 	$.each(
-					possibleValues,
-					function(index, value) {
-						var jsonVal;
-						if (isBreedingMethodSetting && value.id !== undefined) {
-							jsonVal = {
-									'id' : value.key,
-									'text' : value.description,
-									'description' : value.name
-								};
-						}
-						else if (value.id !== undefined) {
-							jsonVal = {
-								'id' : value.key,
-								'text' : value.description
-							};
-						} else if (value.locid !== undefined) {
-							jsonVal = {
-								'id' : value.locid,
-								'text' : value.lname
-							};
-						} else {
-							jsonVal = {
-								'id' : value.mid,
-								'text' : value.mname + (value.mcode !== undefined ? ' - ' + value.mcode : ''),
-								'description': value.mdesc
-							};
-						}
+		possibleValues,
+		function(index, value) {
+			var jsonVal;
+			if (isBreedingMethodSetting && value.id !== undefined) {
+				jsonVal = {
+						'id' : value.key,
+						'text' : value.description,
+						'description' : value.name
+					};
+			}
+			else if (value.id !== undefined) {
+				jsonVal = {
+					'id' : value.key,
+					'text' : value.description
+				};
+			} else if (value.locid !== undefined) {
+				jsonVal = {
+					'id' : value.locid,
+					'text' : value.lname
+				};
+			} else {
+				jsonVal = {
+					'id' : value.mid,
+					'text' : value.mname + (value.mcode !== undefined ? ' - ' + value.mcode : ''),
+					'description': value.mdesc
+				};
+			}
 
-						possibleValues_obj.push(jsonVal);
-						if (defaultValue !== null
-								&& defaultValue !== ''
-								&& ((defaultValue === value.key
-										|| defaultValue == value.locid || defaultValue == value.mid) || (defaultValue == value.name
-										|| defaultValue == value.lname || defaultValue == value.mname))) {
-							defaultJsonVal = jsonVal;
-						}
+			possibleValues_obj.push(jsonVal);
+			if (defaultValue !== null
+					&& defaultValue !== ''
+					&& ((defaultValue === value.key
+							|| defaultValue == value.locid || defaultValue == value.mid) || (defaultValue == value.name
+							|| defaultValue == value.lname || defaultValue == value.mname))) {
+				defaultJsonVal = jsonVal;
+			}
 
-					});
-
-	// possibleValues_obj = sortByKey(possibleValues_obj, "text");
+		});
 
 	if (isLocation) {
 		$(name).select2(
@@ -829,7 +782,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						query.callback(data);
 					}
 				});
-	} else if ($(name).parent().next().children(".breeding-method-tooltip").length > 0) {
+	} else if ($(name).parent().next().children('.breeding-method-tooltip').length > 0) {
 		$(name).select2(
 				{
 					minimumResultsForSearch: (possibleValues_obj != null && possibleValues_obj.length != 0) ? 20 : -1,
@@ -844,10 +797,6 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 									item.text));
 
 						});
-						/*
-						 * if (data.results.length === 0){
-						 * data.results.unshift({id:query.term,text:query.term}); }
-						 */
 						query.callback(data);
 					}
 				}).on('change', function() {
@@ -879,10 +828,6 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 									item.text));
 
 						});
-						/*
-						 * if (data.results.length === 0){
-						 * data.results.unshift({id:query.term,text:query.term}); }
-						 */
 						query.callback(data);
 					}
 				});
@@ -893,12 +838,12 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 }
 
 function checkMeasurementData(variableType, variableId) {
-	var hasData = "0";
+	var hasData = '0';
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/editNursery/checkMeasurementData/"
-				+ variableType + "/" + variableId,
+		url : '/Fieldbook/NurseryManager/editNursery/checkMeasurementData/'
+				+ variableType + '/' + variableId,
 		cache : false,
-		type : "GET",
+		type : 'GET',
 		async : false,
 		success : function(data) {
 			hasData = data.hasMeasurementData;
@@ -915,16 +860,16 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	}
 
 	// if no data for measurement rows is saved yet, proceed with delete
-	if (hasMeasurementData == "0") {
+	if (hasMeasurementData == '0') {
 		// remove row from UI
 		deleteButton.parent().parent().remove();
 		checkShowSettingsFormReminder();
 		// remove row from session
 		$.ajax({
-			url : "/Fieldbook/NurseryManager/createNursery/deleteVariable/"
+			url : '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
 					+ variableType + "/" + variableId,
 			cache : false,
-			type : "POST",
+			type : 'POST',
 			success : function() {
 			}
 		});
@@ -956,12 +901,12 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		return true;
 	} else {
 		// show confirmation popup
-		$("#variateDeleteConfirmationModal").modal({
+		$('#variateDeleteConfirmationModal').modal({
 			backdrop : 'static',
 			keyboard : false
 		});
-		$("#varToDelete").val(variableId);
-		$("#variableType").val(variableType);
+		$('#varToDelete').val(variableId);
+		$('#variableType').val(variableType);
 		buttonToDelete = deleteButton;
 
 		return false;
@@ -969,8 +914,8 @@ function deleteVariable(variableType, variableId, deleteButton) {
 }
 
 function proceedWithDelete() {
-	var variableId = $("#varToDelete").val();
-	var variableType = parseInt($("#variableType").val(), 10);
+	var variableId = $('#varToDelete').val();
+	var variableType = parseInt($('#variableType').val(), 10);
 	var deleteButton = buttonToDelete;
 
 	// remove row from UI
@@ -978,10 +923,10 @@ function proceedWithDelete() {
 
 	// remove row from session
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/createNursery/deleteVariable/"
-				+ variableType + "/" + variableId,
+		url : '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
+				+ variableType + '/' + variableId,
 		cache : false,
-		type : "POST",
+		type : 'POST',
 		success : function() {
 		}
 	});
@@ -998,64 +943,52 @@ function proceedWithDelete() {
 }
 
 function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix) {
-	var reg = new RegExp(name + "[0-9]+", "g");
-	var reg2 = new RegExp(name + "\[[0-9]+\]", "g");
+	var reg = new RegExp(name + '[0-9]+', 'g');
+	var reg2 = new RegExp(name + '\[[0-9]+\]', 'g');
 	var breedingMethodIndex = getBreedingMethodRowIndex();
-	$
-			.each(
-					$("." + rowClass),
-					function(index, row) {
-						if (index >= breedingMethodIndex && name === 'studyLevelVariables') {
-							index++;
-						}
-						// get currently selected value of select2 dropdown
-						var selectedVal = null;
-						var oldSelect2 = row.innerHTML.match(reg)[0];
-
-						if ($("#" + getJquerySafeId(oldSelect2 + ".value"))
-								.select2("data")
-								&& row.innerHTML.indexOf("select2") > -1) {
-							selectedVal = $(
-									"#"
-											+ getJquerySafeId(oldSelect2
-													+ ".value"))
-									.select2("data").id;
-						} else {
-							selectedVal = $(
-									"#"
-											+ getJquerySafeId(oldSelect2
-													+ ".value")).val();
-						}
-						// if dropdown is for location or method, check if show
-						// favorite is checked
-						var isFavoriteChecked = "";
-						if ($("#" + getJquerySafeId(oldSelect2 + ".favorite1")).length != 0) {
-							isFavoriteChecked = $(
-									"#"
-											+ getJquerySafeId(oldSelect2
-													+ ".favorite1")).is(
-									":checked");
-						}
-
-						// change the ids and names of the objects
-						row.innerHTML = row.innerHTML
-								.replace(reg, name + index);
-						row.innerHTML = row.innerHTML.replace(reg2, name + "["
-								+ index + "]");
-
-						// delete the existing select2 object and recreate the
-						// select2 combo and checkbox/links for location/method
-						if (row.innerHTML.indexOf("select2") > -1) {
-							recreateSelect2Combo(index, row, selectedVal,
-									isFavoriteChecked, name, posValSuffix);
-						} else if (row.innerHTML.indexOf("spinner-input") > -1) {
-							recreateSpinnerInput(index, row, selectedVal, name);
-						} else if (row.innerHTML.indexOf("date-input") > -1) {
-							recreateDateInput(index, row, selectedVal, name);
-						} else {
-							$('#'+getJquerySafeId(name+index+'.value')).val(selectedVal);
-						}
-					});
+	$.each(
+		$('.' + rowClass),
+		function(index, row) {
+			if (index >= breedingMethodIndex && name === 'studyLevelVariables') {
+				index++;
+			}
+			// get currently selected value of select2 dropdown
+			var selectedVal = null;
+			var oldSelect2 = row.innerHTML.match(reg)[0];
+			if ($('#' + getJquerySafeId(oldSelect2 + '.value'))
+				.select2('data') && row.innerHTML.indexOf('select2') > -1) {
+				selectedVal = $('#' + getJquerySafeId(oldSelect2
+					+ '.value')).select2('data').id;
+			} else {
+				selectedVal = $('#' + getJquerySafeId(oldSelect2 + '.value')).val();
+			}
+			// if dropdown is for location or method, check if show
+			// favorite is checked
+			var isFavoriteChecked = '';
+			if ($('#' + getJquerySafeId(oldSelect2 + '.favorite1')).length != 0) {
+				isFavoriteChecked = $('#' + getJquerySafeId(oldSelect2 + '.favorite1'))
+				.is(':checked');
+			}
+	
+			// change the ids and names of the objects
+			row.innerHTML = row.innerHTML
+					.replace(reg, name + index);
+			row.innerHTML = row.innerHTML.replace(reg2, name + '['
+					+ index + ']');
+	
+			// delete the existing select2 object and recreate the
+			// select2 combo and checkbox/links for location/method
+			if (row.innerHTML.indexOf('select2') > -1) {
+				recreateSelect2Combo(index, row, selectedVal,
+						isFavoriteChecked, name, posValSuffix);
+			} else if (row.innerHTML.indexOf('spinner-input') > -1) {
+				recreateSpinnerInput(index, row, selectedVal, name);
+			} else if (row.innerHTML.indexOf('date-input') > -1) {
+				recreateDateInput(index, row, selectedVal, name);
+			} else {
+				$('#'+getJquerySafeId(name+index+'.value')).val(selectedVal);
+			}
+		});
 	initializeDateAndSliderInputs();
 }
 
@@ -1075,25 +1008,25 @@ function resetIdsOfTables(name, tableId) {
 function sortVariableIdsAndNames(variableType) {
 	switch (variableType) {
 	case 1:
-		recreateDynamicFieldsAfterDelete("studyLevelVariables",
-				"nurseryLevelSettings-dev", "nurseryLevelSettings", "");
+		recreateDynamicFieldsAfterDelete('studyLevelVariables',
+				'nurseryLevelSettings-dev', 'nurseryLevelSettings', '');
 		break;
 	case 2:
-		resetIdsOfTables("plotLevelVariables", "plotLevelSettings");
+		resetIdsOfTables('plotLevelVariables', 'plotLevelSettings');
 		break;
 	case 3:
-		resetIdsOfTables("baselineTraitVariables", "baselineTraitSettings");
+		resetIdsOfTables('baselineTraitVariables', 'baselineTraitSettings');
 		checkTraitsAndSelectionVariateTable('', false);
 		break;
 	case 6:
-		resetIdsOfTables("selectionVariatesVariables",
-				"selectionVariatesSettings");
+		resetIdsOfTables('selectionVariatesVariables',
+				'selectionVariatesSettings');
 		checkTraitsAndSelectionVariateTable('', false);
 		break;
 	case 7:
-		recreateDynamicFieldsAfterDelete("nurseryConditions",
-				"nurseryConditionsSettings", "nurseryConditionsSettings",
-				"Cons");
+		recreateDynamicFieldsAfterDelete('nurseryConditions',
+				'nurseryConditionsSettings', 'nurseryConditionsSettings',
+				'Cons');
 		break;
 	default:
 
@@ -1102,9 +1035,9 @@ function sortVariableIdsAndNames(variableType) {
 
 function recreateDateInput(index, row, selectedVal, name) {
 	'use strict';
-	var newCell = "<input placeholder='yyyy-mm-dd' type='text' id='" + name + index + ".value' name='"
-			+ name + "[" + index + "].value' " + "value='" + selectedVal
-			+ "' class='form-control date-input' />";
+	var newCell = '<input placeholder="yyyy-mm-dd" type="text" id="' + name + index + '.value" name="'
+			+ name + '[' + index + '].value" ' + 'value="' + selectedVal
+			+ '" class="form-control date-input" />';
 	newCell += '<label for="'
 			+ name
 			+ index
@@ -1114,78 +1047,78 @@ function recreateDateInput(index, row, selectedVal, name) {
 }
 
 function recreateSpinnerInput(index, row, selectedVal, name) {
-	var newCell = "<input  maxlength='250'  type='text' id='"
+	var newCell = '<input  maxlength="250"  type="text" id="'
 			+ name
 			+ index
-			+ ".value' name='"
+			+ '.value" name="'
 			+ name
-			+ "["
+			+ '['
 			+ index
-			+ "].value' "
-			+ "data-min='"
-			+ $($(row).find(".2nd").children("input.spinner-input"))
-					.data("min")
-			+ "' data-max='"
-			+ $($(row).find(".2nd").children("input.spinner-input"))
-					.data("max")
-			+ "' data-step='"
-			+ $($(row).find(".2nd").children("input.spinner-input")).data(
-					"step") + "' value='" + selectedVal
-			+ "' class='form-control spinner-input spinnerElement' />";
+			+ '].value" '
+			+ 'data-min="'
+			+ $($(row).find('.2nd').children('input.spinner-input'))
+					.data('min')
+			+ '" data-max="'
+			+ $($(row).find('.2nd').children('input.spinner-input'))
+					.data('max')
+			+ '" data-step="'
+			+ $($(row).find('.2nd').children('input.spinner-input')).data(
+					'step') + '" value="' + selectedVal
+			+ '" class="form-control spinner-input spinnerElement" />';
 
-	$($(row).find(".2nd")).html(newCell);
+	$($(row).find('.2nd')).html(newCell);
 }
 
 function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 		posValSuffix) {
 	// get the possible values of the variable
 	var possibleValuesJson = $(
-			$(row).find(".possibleValuesJson" + posValSuffix)).text();
+			$(row).find('.possibleValuesJson' + posValSuffix)).text();
 	var possibleValuesFavoriteJson = $(
-			$(row).find(".possibleValuesFavoriteJson" + posValSuffix)).text();
+			$(row).find('.possibleValuesFavoriteJson' + posValSuffix)).text();
 	var cvTermId = $(
-			$(row).find('.1st').find(
-					"#" + getJquerySafeId(name + index + ".variable.cvTermId")))
-			.val();
+			$(row).find('.1st')
+				  .find('#' + getJquerySafeId(name + index + '.variable.cvTermId')))
+				  .val();
 
 	// hidden field for select2
-	var newCell = "<input type='hidden' id='" + name + index + ".value' name='"
-			+ name + "[" + index + "].value' class='form-control select2' />";
+	var newCell = '<input type="hidden" id="' + name + index + '.value" name="'
+			+ name + '[' + index + '].value" class="form-control select2" />';
 
 	// div containing the possible values
-	newCell = newCell + "<div id='possibleValuesJson" + posValSuffix + index
-			+ "' class='possibleValuesJson" + posValSuffix
-			+ "' style='display:none'>" + possibleValuesJson + "</div>";
+	newCell = newCell + '<div id="possibleValuesJson' + posValSuffix + index
+			+ '" class="possibleValuesJson' + posValSuffix
+			+ '" style="display:none">' + possibleValuesJson + '</div>';
 
 	// div containing the favorite possible values
 	if (possibleValuesFavoriteJson !== "") {
-		newCell = newCell + "<div id='possibleValuesFavoriteJson"
-				+ posValSuffix + index + "' class='possibleValuesFavoriteJson"
-				+ posValSuffix + "' style='display:none'>"
-				+ possibleValuesFavoriteJson + "</div>";
+		newCell = newCell + '<div id="possibleValuesFavoriteJson'
+				+ posValSuffix + index + '" class="possibleValuesFavoriteJson'
+				+ posValSuffix + '" style="display:none">'
+				+ possibleValuesFavoriteJson + '</div>';
 	}
 
 	// div containing checkbox and label for location and method
-	var methodName = "toggleMethodDropdown";
+	var methodName = 'toggleMethodDropdown';
 	var favoriteLabel = showFavoriteMethodLabel;
 	var managePopupLabel = manageMethodLabel;
-	var manageMethodName = "openManageMethods";
-	var isChecked = "";
+	var manageMethodName = 'openManageMethods';
+	var isChecked = '';
 	var showAll = true;
 
 	// set possibleValues to favorite possible values
 	if (isFavoriteChecked) {
 		possibleValuesJson = possibleValuesFavoriteJson;
-		isChecked = "checked='checked'";
+		isChecked = 'checked="checked"';
 		showAll = false;
 	}
 
 	// set values for location
 	if (parseInt(cvTermId, 10) === parseInt(locationId, 10)) {
-		methodName = "toggleLocationDropdown";
+		methodName = 'toggleLocationDropdown';
 		favoriteLabel = showFavoriteLocationLabel;
 		managePopupLabel = manageLocationLabel;
-		manageMethodName = "openManageLocations";
+		manageMethodName = 'openManageLocations';
 	}
 
 	// add checkbox and manage location/method links
@@ -1193,28 +1126,28 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 			|| parseInt(cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)
 			|| parseInt(cvTermId, 10) === parseInt(locationId, 10)) {
 		newCell = newCell
-				+ "<div class='possibleValuesDiv'><input type='checkbox' id='"
-				+ name + index + ".favorite1'" + " name='" + name + "[" + index
-				+ "].favorite'" + " onclick='javascript: " + methodName + "("
-				+ index + ");' " + isChecked + " />"
-				+ "<input type='hidden' name='_" + name + "[" + index
-				+ "].favorite' value='on' /> " + "<span>&nbsp;&nbsp;"
-				+ favoriteLabel + "</span></div>";
+				+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
+				+ name + index + '.favorite1"' + ' name="' + name + '[' + index
+				+ '].favorite"' + ' onclick="javascript: ' + methodName + '('
+				+ index + ');" ' + isChecked + ' />'
+				+ '<input type="hidden" name="_' + name + '[' + index
+				+ '].favorite" value="on" /> ' + '<span>&nbsp;&nbsp;'
+				+ favoriteLabel + '</span></div>';
 
-		newCell = newCell + "<span><a href='javascript: " + manageMethodName
-				+ "();'>" + managePopupLabel + "</a></span>";
+		newCell = newCell + '<span><a href="javascript: ' + manageMethodName
+				+ '();">' + managePopupLabel + '</a></span>';
 	}
 
-	$($(row).find(".2nd")).html(newCell);
+	$($(row).find('.2nd')).html(newCell);
 
 	// recreate the select2 object
 	if (parseInt(cvTermId, 10) === parseInt(locationId, 10)) {
-		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), "#"
-				+ getJquerySafeId(name + index + ".value"), showAll,
+		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), '#'
+				+ getJquerySafeId(name + index + '.value'), showAll,
 				selectedVal);
 	} else {
-		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), "#"
-				+ getJquerySafeId(name + index + ".value"), false, selectedVal);
+		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), '#'
+				+ getJquerySafeId(name + index + '.value'), false, selectedVal);
 	}
 }
 
@@ -1225,13 +1158,12 @@ function hideDeleteConfirmation() {
 function clearSettings() {
 
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/createNursery/clearSettings",
-		type : "GET",
+		url : '/Fieldbook/NurseryManager/createNursery/clearSettings',
+		type : 'GET',
 		cache : false,
 		success : function(html) {
-			$("#chooseSettingsDiv").html(html);
+			$('#chooseSettingsDiv').html(html);
 			moveToTopScreen();
-
 		}
 	});
 
@@ -1249,7 +1181,7 @@ function hasEmptyNurseryValue() {
 		}
 	});
 	if (hasError) {
-		showInvalidInputMessage(name + " " + nurseryNumericError);
+		showInvalidInputMessage(name + ' ' + nurseryNumericError);
 	}
 
 	return hasError;
@@ -1267,7 +1199,6 @@ function doSaveSettings() {
 		moveToTopScreen();
 		return false;
 	} else if (hasEmptyNurseryValue()) {
-		// showErrorMessage('page-message', nurseryLevelValueEmpty);
 		moveToTopScreen();
 		return false;
 	} else if (!validateStartEndDate('nurseryLevelSettings')) {
@@ -1281,34 +1212,34 @@ function doSaveSettings() {
 
 
 function createSliderInput(ctr, minVal, maxVal, name) {
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-min='"
+	return '<input data-slider-orientation="horizontal" data-slider-selection="after" type="text" data-min="'
 			+ minVal
-			+ "' data-max='"
+			+ '" data-max="'
 			+ maxVal
-			+ "' id='"
+			+ '" id="'
 			+ name
 			+ ctr
-			+ ".value' name='"
+			+ '.value" name="'
 			+ name
-			+ "["
+			+ '['
 			+ ctr
-			+ "].value' class='form-control numeric-input' />";
+			+ '].value" class="form-control numeric-input" />';
 }
 function createDropdownInput(ctr, name) {
-	return "<input type='hidden' id='" + name + ctr + ".value' name='" + name
-			+ "[" + ctr + "].value' class='form-control select2' />"
-			+ "<input class='selectedValue' type='hidden' />"
-			+ "<input class='selectedValueFave' type='hidden' />";
+	return '<input type="hidden" id="' + name + ctr + '.value" name="' + name
+			+ '[' + ctr + '].value" class="form-control select2" />'
+			+ '<input class="selectedValue" type="hidden" />'
+			+ '<input class="selectedValueFave" type="hidden" />';
 }
 function createDateInput(ctr, name) {
-	return "<input placeholder='yyyy-mm-dd' type='text' id='"
+	return '<input placeholder="yyyy-mm-dd" type="text" id="'
 			+ name
 			+ ctr
-			+ ".value' name='"
+			+ '.value" name="'
 			+ name
-			+ "["
+			+ '['
 			+ ctr
-			+ "].value' class='form-control date-input' />"
+			+ '].value" class="form-control date-input" />'
 			+ '<label for="'
 			+ name
 			+ ctr
@@ -1316,13 +1247,12 @@ function createDateInput(ctr, name) {
 
 }
 function createNumericalTextInput(ctr, name) {
-	return "<input  maxlength='250' type='text' id='" + name + ctr + ".value' name='" + name
-			+ "[" + ctr + "].value' class='form-control numeric-input' />";
+	return '<input  maxlength="250" type="text" id="' + name + ctr + '.value" name="' + name
+			+ '[' + ctr + '].value" class="form-control numeric-input" />';
 }
 function createCharacterTextInput(ctr, name) {
-	return "<input  maxlength='250' type='text' id='" + name + ctr + ".value' name='" + name
-			+ "[" + ctr + "].value' class='form-control character-input' />";
-
+	return '<input  maxlength="250" type="text" id="' + name + ctr + '.value" name="' + name
+			+ '[' + ctr + '].value" class="form-control character-input" />';
 }
 
 function initializeDateAndSliderInputs() {
@@ -1332,13 +1262,13 @@ function initializeDateAndSliderInputs() {
 				'format' : 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {
 				$(this).datepicker('hide');
-			}).on("change", function (e) {
+			}).on('change', function (e) {
 				var curDate = $(this).val();
 				try {
-					var r = $.datepicker.parseDate("yy-mm-dd", curDate);
+					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
 					$(this).datepicker('setDate', r);
-				} catch(e) {					
-					if(curDate !== ''){						
+				} catch(e) { 
+					if(curDate !== '') {
 						$(this).datepicker('setDate', new Date());
 					}
 				}
@@ -1368,22 +1298,22 @@ function initializeDateAndSliderInputs() {
 }
 
 function loadNurserySettingsForCreate(templateSettingsId) {
-	var $form = $("#createNurseryForm");
+	var $form = $('#createNurseryForm');
 
 	var serializedData = $form.serialize();
 
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/createNursery/view/"
+		url : '/Fieldbook/NurseryManager/createNursery/view/'
 				+ templateSettingsId,
-		type : "POST",
+		type : 'POST',
 		data : serializedData,
 		cache : false,
 		timeout : 70000,
 		success : function(html) {
-			$("#chooseSettingsDiv").html(html);
+			$('#chooseSettingsDiv').html(html);
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
-			console.log("The following error occured: " + textStatus,
+			console.log('The following error occured: ' + textStatus,
 					errorThrown);
 		},
 		complete : function() {
@@ -1457,7 +1387,7 @@ function validateCreateNursery() {
 		name = 'Description';
 	}else if (isNurseryNameUnique() === false) {
 		hasError = true;
-		customMessage = "Name should be unique";
+		customMessage = 'Name should be unique';
 	} else if ($('#folderId').val() === '') {
 		hasError = true;
 		name = $('#folderLabel').text();
@@ -1481,8 +1411,9 @@ function validateCreateNursery() {
 
 	if (hasError) {
 		var errMsg = '';
-		if (name !== '')
+		if (name !== '') {
 			errMsg = name.replace('*', '').replace(':', '') + ' ' + nurseryFieldsIsRequired;
+		}
 		if (customMessage !== '') {
 			errMsg = customMessage;
 		}
@@ -1533,7 +1464,7 @@ function validateCreateNursery() {
 	 * Validate Position is less than the total germplasm Validate the Interval
 	 * should be less than the total germplasm
 	 */
-	if ($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null 
+	if ($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null
 			&& (($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1) 
 					|| ($('#studyId').length === 0 ))) {
 
@@ -1586,8 +1517,8 @@ function validateCreateNursery() {
 
 
 function nurseryValidateStartEndDateBasic() {
-	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
-	var endDate = $("#" + getJquerySafeId("basicDetails.value4")).val();
+	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
+	var endDate = $('#' + getJquerySafeId('basicDetails.value4')).val();
 
 	var returnVal =  (validateStartEndDateBasic(startDate, endDate));
 	if (returnVal === true) {
@@ -1600,33 +1531,33 @@ function nurseryValidateStartEndDateBasic() {
 }
 
 function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
-	var selectedMethodAll = $("#methodIdAll").val();
-	var selectedMethodFavorite = $("#methodIdFavorite").val();
+	var selectedMethodAll = $('#methodIdAll').val();
+	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
 
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods",
-		type : "GET",
+		url : '/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods',
+		type : 'GET',
 		cache : false,
-		data : "",
+		data : '',
 		async : false,
 		success : function(data) {
-			if (data.success == "1") {
+			if (data.success == '1') {
 				if (selectedMethodAll != null) {
 					// recreate the select2 combos to get updated list of
 					// methods
-					recreateMethodComboAfterClose("methodIdAll", $
+					recreateMethodComboAfterClose('methodIdAll', $
 							.parseJSON(data.allNonGenerativeMethods));
-					recreateMethodComboAfterClose("methodIdFavorite", $
+					recreateMethodComboAfterClose('methodIdFavorite', $
 							.parseJSON(data.favoriteNonGenerativeMethods));
 					showCorrectMethodCombo();
 					// set previously selected value of method
-					if ($("#showFavoriteMethod").prop("checked")) {
+					if ($('#showFavoriteMethod').prop('checked')) {
 						setComboValues(methodSuggestionsFav_obj,
-								selectedMethodFavorite, "methodIdFavorite");
+								selectedMethodFavorite, 'methodIdFavorite');
 					} else {
 						setComboValues(methodSuggestions_obj,
-								selectedMethodAll, "methodIdAll");
+								selectedMethodAll, 'methodIdAll');
 					}
 				} else {
 					var selectedVal = null;
@@ -1634,24 +1565,24 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					var index = getBreedingMethodRowIndex();
 
 
-					if ($("#" + getJquerySafeId(comboName)).select2("data")) {
-						selectedVal = $("#" + getJquerySafeId(comboName))
-								.select2("data").id;
+					if ($('#' + getJquerySafeId(comboName)).select2('data')) {
+						selectedVal = $('#' + getJquerySafeId(comboName))
+								.select2('data').id;
 					}
 					// recreate select2 of breeding method
-					initializePossibleValuesCombo([], "#"
+					initializePossibleValuesCombo([], '#'
 							+ getJquerySafeId(comboName), false, selectedVal);
 
 					// update values of combo
-					if ($("#" + getJquerySafeId(comboFaveCBoxName)).is(
-							":checked")) {
+					if ($('#' + getJquerySafeId(comboFaveCBoxName)).is(
+							':checked')) {
 						initializePossibleValuesCombo($
-								.parseJSON(data.favoriteNonGenerativeMethods), "#"
+								.parseJSON(data.favoriteNonGenerativeMethods), '#'
 								+ getJquerySafeId(comboName), false,
 								selectedVal);
 					} else {
 						initializePossibleValuesCombo($
-								.parseJSON(data.allNonGenerativeMethods), "#"
+								.parseJSON(data.allNonGenerativeMethods), '#'
 								+ getJquerySafeId(comboName), false,
 								selectedVal);
 					}
@@ -1662,7 +1593,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					}
 				}
 			} else {
-				showErrorMessage("page-message", data.errorMessage);
+				showErrorMessage('page-message', data.errorMessage);
 			}
 
 		}
@@ -1670,14 +1601,14 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 }
 function plotMethod() {
 	if ($('input[type=checkbox][name=allPlotsChoice]:checked').val() == 1) {
-		$("#plot-variates-section").hide();
+		$('#plot-variates-section').hide();
 	} else {
-		$("#plot-variates-section").show();
-		if ($("#plotVariateId").has("option").length === 0) {
+		$('#plot-variates-section').show();
+		if ($('#plotVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=allPlotsChoice]')
 					.prop('checked', true);
 			$('input[type=checkbox][name=allPlotsChoice]').change();
-			showErrorMessage("page-advance-modal-message", noPlotVariatesError);
+			showErrorMessage('page-advance-modal-message', noPlotVariatesError);
 		}
 	}
 }
@@ -1737,7 +1668,7 @@ function resetDesigConfirmationFields() {
 	// reset dropdowns and fields
 	$('#importLocationId').select2('data', null);
 	$('#importMethodId').select2('data', null);
-	$('#nameType').select2('data', {'id': $("#nameType option:first").val(), 'text':$("#nameType option:first").html()})
+	$('#nameType').select2('data', {'id': $('#nameType option:first').val(), 'text':$('#nameType option:first').html()});
 	$('#importDate').val('');
 	$('#confirmation-page-message').html('');
 }

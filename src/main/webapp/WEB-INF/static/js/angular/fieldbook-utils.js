@@ -321,9 +321,10 @@
 
                         // compute the value of $scope.localData.useFavorites
                         if (!auxParams[$scope.variableDefinition.variable.cvTermId]) {
-                            $scope.localData.useFavorites = true;
+                            $scope.localData.useFavorites = $scope.variableDefinition.possibleValuesFavorite.length > 0;
                         } else {
-                            $scope.localData.useFavorites = !auxParams[$scope.variableDefinition.variable.cvTermId].initialData;
+                            $scope.localData.useFavorites = !auxParams[$scope.variableDefinition.variable.cvTermId].initialData &&
+                                ($scope.variableDefinition.possibleValuesFavorite.length > 0);
                         }
 
                         $scope.updateDropdownValues();

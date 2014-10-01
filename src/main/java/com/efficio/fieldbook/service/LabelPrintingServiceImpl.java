@@ -35,6 +35,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -47,6 +49,7 @@ import org.springframework.stereotype.Service;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.util.LabelPaperFactory;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
@@ -223,6 +226,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     Map<String, String> moreFieldInfo = new HashMap<String, String>();
                     moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
                     moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
+                    moreFieldInfo.put("fieldName", fieldMapTrialInstanceInfo.getFieldName());
                     moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
                     moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
 
@@ -547,7 +551,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
             buffer.append(messageSource.getMessage(
                     "label.printing.available.fields.plot.coordinates", null, locale));
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
+        	buffer.append(messageSource.getMessage(
+        			"label.printing.available.fields.field.name", null, locale));
         } else {
+        	
         }
         return buffer.toString();
     }
@@ -596,6 +604,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             buffer.append(fieldMapLabel.getPedigree() == null ? "" : fieldMapLabel.getPedigree());
         } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
             buffer.append(fieldMapLabel.getPlotCoordinate());
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
+        	buffer.append(moreFieldInfo.get("fieldName"));
         } else {
         }
         String stemp = buffer.toString();
@@ -708,6 +718,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         Map<String,String> moreFieldInfo = new HashMap<String, String>();
                         moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
                         moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
+                        moreFieldInfo.put("fieldName", fieldMapTrialInstanceInfo.getFieldName());
                         moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
                         moreFieldInfo.put("trialInstanceNumber", 
                                 fieldMapTrialInstanceInfo.getTrialInstanceNo());
@@ -756,5 +767,85 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         return fileName;
     }
     
+    /**
+     * Gets the available label fields.
+     *
+     * @param isTrial the is trial
+     * @param isFromFieldMap the is from field map
+     * @param locale the locale
+     * @return the available label fields
+     */
+    public List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, Locale locale){
+        List<LabelFields> labelFieldsList = new ArrayList<LabelFields>();
+        
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.entry.num", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.gid", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.parentage", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.year", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.season", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.location", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()));
+        
+        if(isTrial){
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.trial.name", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()));
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()));
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.rep", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()));
+        }else{
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()));
+        }
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.plot", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()));
+        if(hasFieldMap){
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.block.name", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()));
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()));
+            labelFieldsList.add(new LabelFields(
+            		messageSource.getMessage("label.printing.available.fields.field.name", null, locale)
+            		, AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()));
+        }
+        return labelFieldsList;
+    }
     
+    public boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail) {
+    	//if there are datasets with fieldmap, check if all trial instances of the study have fieldmaps
+        if (fieldMapInfoDetail.getDatasetsWithFieldMap().size() > 0) {
+        	for (FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
+        		if (dataset.getTrialInstances().size() == dataset.getTrialInstancesWithFieldMap().size()) {
+        			userLabelPrinting.setFieldMapsExisting(true);
+        		} else {
+        			userLabelPrinting.setFieldMapsExisting(false);
+        		}
+        	}
+        	return true;
+        } else {
+        	userLabelPrinting.setFieldMapsExisting(false);
+        	return false;
+        }
+    }
 }

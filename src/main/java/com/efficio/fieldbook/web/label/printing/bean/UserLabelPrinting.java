@@ -19,6 +19,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class UserLabelPrinting.
  *
@@ -94,6 +95,9 @@ public class UserLabelPrinting implements Serializable{
     
     /** The filename dl location. */
     private String filenameDLLocation;
+    
+    /** The is field maps existing. */
+    private boolean isFieldMapsExisting;
     
     /**
      * Gets the field map info.
@@ -520,4 +524,22 @@ public class UserLabelPrinting implements Serializable{
     public void setOrder(String order) {
         this.order = order;
     }
+
+	/**
+	 * Checks if is field maps existing.
+	 *
+	 * @return true, if is field maps existing
+	 */
+	public boolean isFieldMapsExisting() {
+		return isFieldMapsExisting;
+	}
+
+	/**
+	 * Sets the field maps existing.
+	 *
+	 * @param isFieldMapsExisting the new field maps existing
+	 */
+	public void setFieldMapsExisting(boolean isFieldMapsExisting) {
+		this.isFieldMapsExisting = isFieldMapsExisting;
+	}
 }

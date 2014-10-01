@@ -24,6 +24,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <input type="hidden" th:field="*{userLabelPrinting.rightSelectedLabelFields}"/>
 <input type="hidden" th:field="*{userLabelPrinting.numberOfLabelPerRow}" value="3"/>
 <input type="hidden" th:field="*{userLabelPrinting.generateType}"/>
+<input type="hidden" th:field="*{userLabelPrinting.fieldMapsExisting}" />
 
 <div class="row">
 <div class="panel panel-default">

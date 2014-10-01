@@ -13,13 +13,17 @@ package com.efficio.fieldbook.service.api;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Locale;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Interface LabelPrintingService.
  */
@@ -33,6 +37,7 @@ public interface LabelPrintingService {
      * @param baos the baos
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
+     * @throws LabelPrintingException the label printing exception
      */
     String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, 
             UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) 
@@ -50,4 +55,23 @@ public interface LabelPrintingService {
     String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, 
             UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) 
                     throws MiddlewareQueryException;
+    
+    /**
+     * Gets the available label fields.
+     *
+     * @param isTrial the is trial
+     * @param hasFieldMap the has field map
+     * @param locale the locale
+     * @return the available label fields
+     */
+    List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, Locale locale);
+    
+    /**
+     * Check and set fieldmap properties.
+     *
+     * @param userLabelPrinting the user label printing
+     * @param fieldMapInfoDetail the field map info detail
+     * @return true, if successful
+     */
+    boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail);
 }

@@ -78,6 +78,10 @@ function validateEnterLabelFieldsPage(type){
 		return false;
 	}
 	
+	if ($('#'+getJquerySafeId('userLabelPrinting.fieldMapsExisting')).val().toString() === 'false') {
+		showAlertMessage('', generateLabelsWarningMessage);
+	}
+	
 	$("#"+getJquerySafeId('userLabelPrinting.generateType')).val(type);
 	
 	setSelectedTrialInstanceOrder();

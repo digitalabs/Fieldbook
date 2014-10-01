@@ -127,8 +127,6 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     	    labels = new String(streamBytes);
     	} catch (LabelPrintingException e) {
     		LOG.error(e.getMessage(), e);
-    	} catch (MiddlewareQueryException e) {
-    		LOG.error(e.getMessage(), e);
     	} catch (FileNotFoundException e) {
     		LOG.error(e.getMessage(), e);
     	} catch (IOException e) {

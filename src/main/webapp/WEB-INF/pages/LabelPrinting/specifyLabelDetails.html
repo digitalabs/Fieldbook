@@ -193,20 +193,6 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</select>
 				</div>
 			</div>
-			<!--
-			<div class="row form-group">
-				<div class="col-md-7">
-					&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{label.printing.number.of.labels.per.row}+':'"></label>
-				</div>
-				<div class="col-md-5">
-					<select th:field="*{userLabelPrinting.numberOfLabelPerRow}" class="form-control">
-					  <option value="3">3</option>
-					  <option value="4">4</option>
-					  <option value="5">5</option>
-					</select>
-				</div>
-			</div>
-			 -->
 
 			<div class="row form-group">
 				<div class="col-xs-7 col-md-7">
@@ -366,7 +352,6 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 
 				<div class="col-xs-3 col-md-3">
-					<!-- <input type="button" onclick="javascript: validateEnterLabelFieldsPage();" value="Preview" class="btn btn-primary btn-lg"/> -->
 				</div>
 
 				<div class="col-xs-6 col-md-6">
@@ -426,7 +411,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/labelPrinting.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
-<script type='text/javascript' th:inline="javascript">
+<script type="text/javascript" th:inline="javascript">
 	//<![CDATA[
         var barcodeNeededError = /*[[#{label.printing.bar.code.needed.error}]]*/;
         var barcodeFieldNeededError = /*[[#{label.printing.bar.code.field.error}]]*/;
@@ -438,8 +423,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  		 $(function() {
  			setSelectedTrialsAsDraggable();
 
- 			$( "ul.droptrue" ).sortable({
- 				connectWith: "ul",
+ 			$( 'ul.droptrue' ).sortable({
+ 				connectWith: 'ul',
 				receive: function(event, ui) {
 		            // so if > 10
 		            if (($(this).attr('id') == 'leftSelectedFields' || $(this).attr('id') == 'rightSelectedFields' ) &&
@@ -455,18 +440,18 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 
  		 function setTotalLabels(checkbox) {
  			 //count total number of labels to be generated based on selected trial/nursery instance
- 			 var labelCount = "";
+ 			 var labelCount = '';
  			 if (isTrial) {
  				labelCount = $(checkbox).parent().next().next().next().next().next().next().html();
  			 } else {
  				labelCount = $(checkbox).parent().next().next().next().next().html();
  			 }
- 			 var totalCount = $("#totalLabelCount").text();
+ 			 var totalCount = $('#totalLabelCount').text();
 
  			 if (checkbox.checked) {
- 				 $("#totalLabelCount").text(parseInt(totalCount) + parseInt(labelCount));
+ 				 $('#totalLabelCount').text(parseInt(totalCount) + parseInt(labelCount));
  			 } else {
- 				$("#totalLabelCount").text(parseInt(totalCount) - parseInt(labelCount));
+ 				$('#totalLabelCount').text(parseInt(totalCount) - parseInt(labelCount));
  			 }
  		 }
       //]]>

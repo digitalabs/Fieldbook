@@ -6,18 +6,18 @@ function validateEnterLabelFieldsPage(type){
 	$('#leftSelectedFields li').each(function(){
 		
 		leftSelectedFields += $(this).attr('id');
-		leftSelectedFields += ",";
+		leftSelectedFields += ',';
 	});
 	
 	if(leftSelectedFields != ''){
 		leftSelectedFields = leftSelectedFields.substring(0,leftSelectedFields.length-1); 
 	}
 	
-	var rightSelectedFields = "";
+	var rightSelectedFields = '';
 	$('#rightSelectedFields li').each(function(){
 		
 		rightSelectedFields += $(this).attr('id');
-		rightSelectedFields += ",";
+		rightSelectedFields += ',';
 	});
 	
 	if(rightSelectedFields != ''){
@@ -30,12 +30,11 @@ function validateEnterLabelFieldsPage(type){
 		return false;
 	}
 	
-	//console.log(selectedFields);
 	$('#'+getJquerySafeId('userLabelPrinting.leftSelectedLabelFields')).val(leftSelectedFields);
 	$('#'+getJquerySafeId('userLabelPrinting.rightSelectedLabelFields')).val(rightSelectedFields);
 	
 	
-	var barcodeNeeded = $("input[type='radio']:checked").length;
+	var barcodeNeeded = $('input[type="radio"]:checked').length;
 	if (barcodeNeeded == 0) {
 		showInvalidInputMessage(barcodeNeededError);
 		moveToTopScreen();
@@ -43,24 +42,24 @@ function validateEnterLabelFieldsPage(type){
 	}
 	
 	//we checked if something was checked
-	if($("#"+getJquerySafeId('userLabelPrinting.barcodeNeeded1')).is(":checked")){
+	if($('#'+getJquerySafeId('userLabelPrinting.barcodeNeeded1')).is(':checked')){
 		//we need to check if either one is chosen in the drop downs
 		if($('#'+getJquerySafeId('userLabelPrinting.firstBarcodeField')).val() == ""
-				&& $('#'+getJquerySafeId('userLabelPrinting.secondBarcodeField')).val() == ""
-				&& $('#'+getJquerySafeId('userLabelPrinting.thirdBarcodeField')).val() == ""){
+				&& $('#'+getJquerySafeId('userLabelPrinting.secondBarcodeField')).val() == ''
+				&& $('#'+getJquerySafeId('userLabelPrinting.thirdBarcodeField')).val() == ''){
 			showInvalidInputMessage(barcodeFieldNeededError);
 			moveToTopScreen();
 			return false;
 		}
 	}
 
-	if ($("#selectedTrials .includeTrial:checked").length == 0 && $("#selectedTrials .includeTrial").length > 0) {
+	if ($('#selectedTrials .includeTrial:checked').length == 0 && $('#selectedTrials .includeTrial').length > 0) {
 		showMessage(trialInstanceRequired);
 		moveToTopScreen();
 		return false;
 	}
 	
-	if($("#"+getJquerySafeId('userLabelPrinting.filename')).val() == ''){
+	if($('#'+getJquerySafeId('userLabelPrinting.filename')).val() == ''){
 		//we need to check if either one is chosen in the drop downs
 		
 		showInvalidInputMessage(filenameError);
@@ -68,7 +67,7 @@ function validateEnterLabelFieldsPage(type){
 			return false;
 		
 	}
-	var data = $("#"+getJquerySafeId('userLabelPrinting.filename')).val();
+	var data = $('#'+getJquerySafeId('userLabelPrinting.filename')).val();
      var isValid = /^[ A-Za-z0-9_@.\.&''@{}$!\-#()%.+~_=^\s]*$/i.test(data);
 	    
 	
@@ -82,7 +81,7 @@ function validateEnterLabelFieldsPage(type){
 		showAlertMessage('', generateLabelsWarningMessage);
 	}
 	
-	$("#"+getJquerySafeId('userLabelPrinting.generateType')).val(type);
+	$('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
 	
 	setSelectedTrialInstanceOrder();
 	
@@ -108,19 +107,19 @@ function setSelectedTrialInstanceOrder() {
 	var order = [];
 	var notIncluded = 0;
 	//check if instance is selected and include in the list
-	$("#selectedTrials .trialOrder").each(function(){
+	$('#selectedTrials .trialOrder').each(function(){
 		var checked = false;
-		$(this).parent().prev().find(":checked").each(function() {
+		$(this).parent().prev().find(':checked').each(function() {
 				checked = true;
 		});
 		if (!checked) {
 			notIncluded++;
 		}
 		if (checked) {
-			var orderId = $(this).parent().parent().attr("id");
+			var orderId = $(this).parent().parent().attr('id');
 			orderId = parseInt(orderId) - notIncluded;
-			order.push(orderId+"|"+$(this).val());
+			order.push(orderId+'|'+$(this).val());
 		}
 	});
-	$("#"+getJquerySafeId("userLabelPrinting.order")).val(order.join(","));
+	$('#'+getJquerySafeId('userLabelPrinting.order')).val(order.join(','));
 }

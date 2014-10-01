@@ -23,7 +23,6 @@ import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface LabelPrintingService.
  */
@@ -36,12 +35,11 @@ public interface LabelPrintingService {
      * @param userLabelPrinting the user label printing
      * @param baos the baos
      * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
      * @throws LabelPrintingException the label printing exception
      */
     String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, 
             UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) 
-                    throws MiddlewareQueryException, LabelPrintingException;
+                    throws LabelPrintingException;
     
     /**
      * Generate xl s labels.

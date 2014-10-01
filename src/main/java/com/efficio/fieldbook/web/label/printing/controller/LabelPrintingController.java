@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -53,11 +52,9 @@ import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
-import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 
@@ -205,7 +202,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         List<FieldMapInfo> fieldMapInfoList = userFieldmap.getSelectedFieldMaps();
         FieldMapInfo fieldMapInfo = null;
         
-        //getUserLabelPrinting().setStudy();
         getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
         getUserLabelPrinting().setFieldMapInfoList(fieldMapInfoList);
         getUserLabelPrinting().setBarcodeNeeded("1");
@@ -351,7 +347,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
                 fileName = labelPrintingService.generatePDFLabels(trialInstances, 
                                 getUserLabelPrinting(), baos);
-                //response.setHeader("Content-disposition","attachment; filename= + fileName);
             }else{
             	fileName  = getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + ".xls";
             	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
@@ -359,11 +354,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
                 fileName = labelPrintingService.generateXlSLabels(trialInstances, 
                                 getUserLabelPrinting(), baos);
-                //response.setHeader("Content-disposition","attachment; filename=" + fileName);
             }
             results.put("isSuccess", 1);
             results.put("fileName", fileName);
-            //return fileName;
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             results.put("isSuccess", 0);
@@ -376,8 +369,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                     e.getErrorCode(), new String[]{e.getLabelError()}, locale));
         }
         return results;
-         
-        //return "redirect:" + GenerateLabelController.URL;
     } 
     
     /**
@@ -470,6 +461,4 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
         this.userLabelPrinting = userLabelPrinting;
     }
-  
-    
 }

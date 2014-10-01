@@ -268,7 +268,8 @@
                     settingkey: '@',
                     valuecontainer: '=',
                     changefunction: '&',
-                    blockInput: '='
+                    blockInput: '=',
+                    auxParams: '&'
                 },
 
                 templateUrl: '/Fieldbook/static/angular-templates/showSettingFormElement.html',
@@ -299,19 +300,33 @@
                         $scope.variableDefinition.variable.cvTermId == BREEDING_METHOD_CODE);
 
                     $scope.localData = {};
-                    $scope.localData.useFavorites = false;
+
+                    $scope.localData.useFavorites = true;
 
                     $scope.updateDropdownValues = function () {
-                        if ($scope.localData.useFavorites) {
+
+                        if (!$scope.variableDefinition.possibleValuesFavorite) {
+                            $scope.dropdownValues = $scope.variableDefinition.possibleValues;
+                        } else if ($scope.localData.useFavorites && $scope.variableDefinition.possibleValuesFavorite.length > 0) {
                             $scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
                         } else {
                             $scope.dropdownValues = $scope.variableDefinition.possibleValues;
                         }
+
+
                     };
 
                     if ($scope.hasDropdownOptions) {
-                        // TODO : add code that will recognize categorical variable dropdowns and change the displayed text accordingly
-                        $scope.dropdownValues = $scope.variableDefinition.possibleValues;
+                        var auxParams = $scope.auxParams();
+
+                        // compute the value of $scope.localData.useFavorites
+                        if (!auxParams[$scope.variableDefinition.variable.cvTermId]) {
+                            $scope.localData.useFavorites = true;
+                        } else {
+                            $scope.localData.useFavorites = !auxParams[$scope.variableDefinition.variable.cvTermId].initialData;
+                        }
+
+                        $scope.updateDropdownValues();
 
                         $scope.computeMinimumSearchResults = function () {
                             return ($scope.dropdownValues.length > 0) ? 20 : -1;

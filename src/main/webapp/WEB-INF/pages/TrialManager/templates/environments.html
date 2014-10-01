@@ -57,7 +57,7 @@
                         label-bold var-names">{{settings.managementDetails.val(key).variable.name}}:</span>
                                 </div>
                                 <div class="col-xs-7 2nd">
-                                    <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
+                                    <show-setting-form-element aux-params="auxSettings" settings="settings.managementDetails" targetkey="{{key}}"
                                                                valuecontainer="environment.managementDetailValues"></show-setting-form-element>
                                 </div>
                             </div>
@@ -69,7 +69,7 @@
                         label-bold var-names">{{settings.trialConditionDetails.val(key).variable.name}}:</span>
                                 </div>
                                 <div class="col-xs-7 2nd">
-                                    <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
+                                    <show-setting-form-element aux-params="auxSettings" settings="settings.trialConditionDetails" targetkey="{{key}}"
                                                                valuecontainer="environment.trialDetailValues"></show-setting-form-element>
                                 </div>
                             </div>

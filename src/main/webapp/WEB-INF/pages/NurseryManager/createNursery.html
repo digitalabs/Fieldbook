@@ -290,8 +290,13 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			$('body').on('DO_AUTO_SAVE', function(){
 				submitCreateForm();
 			});
-				
-        	$('body').data('doAutoSave', '0'); 
+
+            // we check greater than 1 since theres a 'please choose' option
+            if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
+                $('.study-level-method-checkbox').click();
+            }
+
+            $('body').data('doAutoSave', '0');
 		});
 	//]]>
 	</script>

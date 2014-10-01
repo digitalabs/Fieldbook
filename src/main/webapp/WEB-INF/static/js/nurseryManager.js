@@ -450,9 +450,13 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		}
 		newRow = newRow + inputHtml;
 
+        // we want to keep track of location/method checkbox id
+        var locMethodCbxId = null;
+
 		if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
 				parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
 			// show favorite method
+            locMethodCbxId = name + ctr;
 			newRow = newRow
 					+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
 					+ name
@@ -491,7 +495,8 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 		} else if (settingDetail.variable.cvTermId == locationId) {
 			// show favorite location
-			newRow = newRow
+            locMethodCbxId = name + ctr;
+            newRow = newRow
 					+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
 					+ name
 					+ ctr
@@ -535,7 +540,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ JSON.stringify(settingDetail.possibleValues)
 					+ '</div></div>';
 		}
-
+        // the element will be appended to the dom
 		$('#' + tableId).append(newRow);
 
 		if (settingDetail.variable.widgetType === 'DROPDOWN') {
@@ -553,6 +558,14 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 						null);
 			}
 		}
+
+        // after the combo box have been added to the DOM
+        // if locMethodCbxId is not null lets toggle it
+        // lets make sure that we have a favorite items before we toggle the checkbox
+        if (!!locMethodCbxId && settingDetail.possibleValuesFavorite.length > 0 ) {
+            $('input[type=checkbox][id*='+locMethodCbxId + ']').click();
+        }
+
 		ctr++;
 	});
 

@@ -84,6 +84,7 @@
                     if (!initialData.settingMap) {
                         var data = new angular.OrderedHash();
                         data.addList(initialData.settings, function (item) {
+                            item.extracted = true;
                             return item.variable.cvTermId;
                         });
 
@@ -94,6 +95,7 @@
                         $.each(initialData.settingMap, function (key, value) {
                             dataMap[key] = new angular.OrderedHash();
                             dataMap[key].addList(value, function (item) {
+                                item.extracted = true;
                                 return item.variable.cvTermId;
                             });
                         });
@@ -112,6 +114,7 @@
                     if (initialData.settingMap && initialData.settingMap.details) {
                         var data = new angular.OrderedHash();
                         data.addList(initialData.settingMap.details, function (item) {
+                            item.extracted = true;
                             return item.variable.cvTermId;
                         });
 
@@ -123,6 +126,7 @@
                         angular.forEach(settingMap.treatmentLevelPairs, function(value, key) {
                             var data = new angular.OrderedHash();
                             data.addList(value, function (item) {
+                                item.extracted = true;
                                 return item.variable.cvTermId;
                             });
 
@@ -244,8 +248,8 @@
 
                         showAdvancedOptions : [false,false,false]
                     },
-                    treatmentLevelPairs: {}
-
+                    treatmentLevelPairs: {},
+                    auxSettings : {}
                 },
 
                 trialMeasurement: {
@@ -695,6 +699,26 @@
 
             // 5 is the group no of treatment factors
             TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors,5);
+
+            // assign auxilliary settings to the service.settings items to indicate it came from a initialization
+            _.each(service.settings,function(val,settingsKey) {
+                if (val instanceof angular.OrderedHash) {
+                    _.find(val.vals(),function(_val) {
+                        service.specialSettings.auxSettings[_val.variable.cvTermId] = { initialData :true  };
+                    });
+
+                } else {
+                    _.each(val,function(_val,key) {
+
+                        if (_val instanceof angular.OrderedHash) {
+                            _.find(_val.vals(),function(__val) {
+                                service.specialSettings.auxSettings[__val.variable.cvTermId] = { initialData :true  };
+                            });
+                        }
+                    });
+                }
+
+            });
 
 
             return service;

@@ -16,6 +16,7 @@
         $scope.disableTreatment = TrialManagerDataService.trialMeasurement.hasMeasurement;
 
         $scope.settings = TrialManagerDataService.settings.treatmentFactors;
+        $scope.auxSettings = TrialManagerDataService.specialSettings.auxSettings;
         $scope.data = TrialManagerDataService.currentData.treatmentFactors;
 
         // watch $scope.settings, since we are sure that $scope.settings is an orderedhash even empty, we could just

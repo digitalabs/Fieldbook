@@ -54,7 +54,7 @@ function isValidDate(dateString) {
     var month = parseInt(parts[1], 10);
     var day = parseInt(parts[2], 10);
     
-    if(year < 1000 || year > 3000 || month === 0 || month > 12) {
+    if(month === 0 || month > 12) {
         return false;
     }
 
@@ -67,19 +67,66 @@ function isValidDate(dateString) {
     return day > 0 && day <= monthLength[month - 1];
 }
 
+function isValidYear(dateString) {
+	if(dateString === '') {
+		return true;
+	}
+	var parts = dateString.split('-');
+	var year = parseInt(parts[0], 10);
+	if(year >= 1900 && year <= 9999) {
+		return true;
+	}
+	return false;
+}
+
+function padLeftByNumOfChars(value, toPad, numOfChars) {
+  var leftPadding = '';
+  var lengthOfValue = value.toString().length;
+  if (lengthOfValue < numOfChars) { 
+    for(var i = lengthOfValue; i < numOfChars; i++) {
+      leftPadding += toPad;
+    }
+  }
+  var sliceFromIndex = -1 * parseInt(numOfChars);
+  return (leftPadding + value).slice(sliceFromIndex);
+}
+
+function transformDate(dateString) {
+  var pattern = /\d{1,4}-\d{1,2}-\d{1,2}/.test(dateString);
+  if(pattern) {
+    var delim = '-';
+    var parts = dateString.split(delim);
+    var year = parseInt(parts[0], 10);
+    var month = parseInt(parts[1], 10);
+    var day = parseInt(parts[2], 10);
+    return padLeftByNumOfChars(year, '0', 4) + delim + padLeftByNumOfChars(month, '0', 2) + delim + padLeftByNumOfChars(day, '0', 2);
+  }
+  return dateString;
+}
+
+
 function validateAllDates() {
-	var errorMsg = commonErrorDateFormat;
-	var attrs = $('input[jq-datepicker]');
-	var elems = $('input.date-input');
-	for(var i = 0; i< attrs.length; i++) {
-    	if(!isValidDate(attrs[i].value)) {
-    		return errorMsg;
-    	}
+  var errorMsg = validateListOfDates('input[jq-datepicker]');
+  if(errorMsg === '') {
+    errorMsg = validateListOfDates('input.date-input');
+  }
+  return errorMsg;
+}
+
+function validateListOfDates(dateSelectorString) {
+  var dateFormatErrorMsg = commonErrorDateFormat;
+  var invalidYearErrorMsg = commonErrorInvalidYear;
+  var errorMsg = '';
+  $.each($(dateSelectorString), function(index, item) {
+      $(item).val(transformDate($(item).val()));
+      if(!isValidDate($(item).val())) {
+        errorMsg = dateFormatErrorMsg; 
+        return false;
+      } else if(!isValidYear($(item).val())) {
+        errorMsg = invalidYearErrorMsg;
+        return false;
+      }
     }
-    for(var i = 0; i< elems.length; i++) {
-    	if(!isValidDate(elems[i].value)) {
-    		return errorMsg;
-    	}
-    }
-    return '';
+  );
+  return errorMsg;
 }

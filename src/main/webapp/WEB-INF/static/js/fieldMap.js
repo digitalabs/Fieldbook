@@ -469,9 +469,10 @@ function recreatePopupLocationCombo() {
     		        }
     		    });
     			
-    			if(defaultData != null)
-    				$('#'+getJquerySafeId('parentLocationId')).select2('data', defaultData);
-    			
+    			if(defaultData != null) {
+                    $('#'+getJquerySafeId('parentLocationId')).select2('data', defaultData);
+                }
+
     	   } else {
     		   showErrorMessage('page-message', data.errorMessage);
     	   }
@@ -513,8 +514,9 @@ function recreatePopupFieldCombo() {
         				};
         			   popupFieldlocationSuggestions_obj.push(tempData);  
         				
-        			   if(currentLocId == value.locid)
-        				   defaultData = tempData;
+        			   if(currentLocId == value.locid) {
+                           defaultData = tempData;
+                       }
         			});
     			   
     			 //if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
@@ -540,9 +542,10 @@ function recreatePopupFieldCombo() {
        		    });
        			
     		   
-       			if(defaultData != null)
-    				$('#'+getJquerySafeId('parentFieldId')).select2('data', defaultData);	
-    			
+       			if(defaultData != null) {
+                    $('#'+getJquerySafeId('parentFieldId')).select2('data', defaultData);
+                }
+
     			
     	   } else {
     		   showErrorMessage('page-message', data.errorMessage);
@@ -666,16 +669,14 @@ function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, curre
 	
 	if(addOnChange){
 		$('#'+getJquerySafeId('userFieldmap.fieldId')).on('change', function (){
-	    	
 	    	loadBlockDropdown($('#'+getJquerySafeId('userFieldmap.fieldId')).val(), $('#'+getJquerySafeId("userFieldmap.blockId")).val());
-	    	
-	    })
+	    });
 	}
-	if(defaultData != null)
-		$('#'+getJquerySafeId('userFieldmap.fieldId')).select2('data', defaultData).trigger('change');
-	
-	
+	if(defaultData != null) {
+        $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('data', defaultData).trigger('change');
+    }
 }
+
 function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, currentBlockId) {
 	'use strict';
 	var defaultData = null;
@@ -717,7 +718,7 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, curre
 		$('#'+getJquerySafeId('userFieldmap.blockId')).on("change", function (){
 	    	
 	    	loadBlockInformation($('#'+getJquerySafeId("userFieldmap.blockId")).val());	    	
-	    })
+	    });
 	}
 	
 	if(defaultData != null)
@@ -737,11 +738,13 @@ function loadFieldsDropdown(locationId, currentFieldId){
 	           success: function(data) {	        	   
 	        		   //recreate the select2 combos to get updated list of locations
 	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
-	        		   if(locationId != '')
-	        			   initializeFieldSelect2($.parseJSON(data.allFields), [], false, currentFieldId);
-	        		   else
-	        			   initializeFieldSelect2({}, [], false, '');
-	        		   initializeBlockSelect2({}, [], false, '');
+	        		   if(locationId != '') {
+                           initializeFieldSelect2($.parseJSON(data.allFields), [], false, currentFieldId);
+                       }
+	        		   else {
+                           initializeFieldSelect2({}, [], false, '');
+                       }
+	        			initializeBlockSelect2({}, [], false, '');
 
 	           }
 	         }

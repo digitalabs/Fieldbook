@@ -77,7 +77,8 @@ function validateEnterLabelFieldsPage(type){
 		return false;
 	}
 	
-	if ($('#'+getJquerySafeId('userLabelPrinting.fieldMapsExisting')).val().toString() === 'false') {
+	if ($('#'+getJquerySafeId('userLabelPrinting.fieldMapsExisting')).val().toString() === 'false' 
+		&& hasFieldMapFieldsSelected()) {
 		showAlertMessage('', generateLabelsWarningMessage);
 	}
 	
@@ -101,6 +102,48 @@ function validateEnterLabelFieldsPage(type){
 		   }
 		});
 	
+}
+
+function hasFieldMapFieldsSelected() {
+	var hasFieldNameLabel = false;
+	//check available and selected label lists
+	hasFieldNameLabel = checkFieldMapLabelInSelectedFields(hasFieldNameLabel, '#leftSelectedFields li');
+	hasFieldNameLabel = checkFieldMapLabelInSelectedFields(hasFieldNameLabel, '#rightSelectedFields li');
+	hasFieldNameLabel = checkFieldMapLabelInBarcodeFields(hasFieldNameLabel, 'userLabelPrinting.firstBarcodeField');
+	hasFieldNameLabel = checkFieldMapLabelInBarcodeFields(hasFieldNameLabel, 'userLabelPrinting.secondBarcodeField');
+	hasFieldNameLabel = checkFieldMapLabelInBarcodeFields(hasFieldNameLabel, 'userLabelPrinting.thirdBarcodeField');
+	return hasFieldNameLabel;
+}
+
+function checkFieldMapLabelInSelectedFields(hasFieldNameLabel, listSelector) {
+	//if not yet found, check label in the current list
+	if (!hasFieldNameLabel) {
+		$.each($(listSelector), function(index, label) {
+			hasFieldNameLabel = isLabelInFieldMapLabels(hasFieldNameLabel, $(label).attr('id'));
+			if (hasFieldNameLabel) {
+				return false;
+			}
+		});
+	}
+	return hasFieldNameLabel;
+}
+
+function checkFieldMapLabelInBarcodeFields(hasFieldNameLabel, bardcodeId) {
+	//if not yet found, check if selected barcode is a fieldmap label
+	if (!hasFieldNameLabel) {
+		hasFieldNameLabel = isLabelInFieldMapLabels(hasFieldNameLabel, $('#'+getJquerySafeId(bardcodeId)).val());
+	}
+	return hasFieldNameLabel;
+}
+
+function isLabelInFieldMapLabels(hasFieldNameLabel, label) {
+	$.each(fieldMapLabelFields.split(','), function(index, fieldMapLabel) {
+		if (parseInt(label, 10) === parseInt(fieldMapLabel, 10)) {
+			hasFieldNameLabel = true;
+			return false;
+		} 
+	});
+	return hasFieldNameLabel;
 }
 
 function setSelectedTrialInstanceOrder() {

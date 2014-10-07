@@ -184,9 +184,19 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		    e.printStackTrace();
 		}
 		
+		CellStyle style = createCellStyle(xlsBook);
+		
 		for (MeasurementRow dataRow : observations) {
-			writeObservationRow(currentRowNum++, xlsSheet, dataRow, workbook.getMeasurementDatasetVariables(), xlsBook, propertyName);
+			writeObservationRow(currentRowNum++, xlsSheet, dataRow, workbook.getMeasurementDatasetVariables(), xlsBook, propertyName, style);
 		}
+	}
+	
+	private CellStyle createCellStyle(HSSFWorkbook xlsBook) {
+		CellStyle style =  xlsBook.createCellStyle();
+		DataFormat format = xlsBook.createDataFormat();
+		style.setDataFormat(format.getFormat("0.#"));
+		
+		return style;
 	}
 	
 	private int writeStudyDetails(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, StudyDetails studyDetails) {
@@ -458,16 +468,11 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 	
 	private void writeObservationRow(int currentRowNum, HSSFSheet xlsSheet, MeasurementRow dataRow, List<MeasurementVariable> variables, 
-			HSSFWorkbook xlsBook, String propertyName) {
+			HSSFWorkbook xlsBook, String propertyName, CellStyle style) {
 		
 		HSSFRow row = xlsSheet.createRow(currentRowNum);
 		int currentColNum = 0;
-		CellStyle style =  xlsBook.createCellStyle();
-		DataFormat format = xlsBook.createDataFormat();
-		style.setDataFormat(format.getFormat("0.#"));
-		
-		
-		
+				
 		for (MeasurementVariable variable : variables) {
 			MeasurementData dataCell = dataRow.getMeasurementData(variable.getTermId());
 			if (dataCell != null) {

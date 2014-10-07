@@ -42,6 +42,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -52,12 +54,13 @@ import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
 public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
+	private static final Logger LOG = LoggerFactory.getLogger(ExcelExportStudyServiceImpl.class);
+			
 	private static final int PIXEL_SIZE = 250;
 	
 	private static final String OCC_8170_LABEL = "8170_LABEL";
@@ -90,7 +93,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			try {
 				breedingMethodPropertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
 			} catch (MiddlewareQueryException e) {
-			    e.printStackTrace();
+			    LOG.error(e.getMessage(), e);
 			}
 		
 			for (Integer index : instances) {
@@ -118,13 +121,13 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 					filenameList.add(filenamePath);
 
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOG.error(e.getMessage(), e);
 				} finally {
 					if (fos != null) {
 						try {
 							fos.close();
 						} catch (Exception e) {
-							e.printStackTrace();
+							LOG.error(e.getMessage(), e);
 						}
 					}
 				}
@@ -156,10 +159,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		currentRowNum = writeConstants(currentRowNum, xlsBook, xlsSheet, workbook.getConstants(), trialObservation);
 		xlsSheet.createRow(currentRowNum++);
 		currentRowNum = writeVariates(currentRowNum, xlsBook, xlsSheet, workbook.getVariates());
-		
-//		for(int i = 0 ; i < 8 ; i++){
-//			xlsSheet.autoSizeColumn(i);
-//		}
+
 		xlsSheet.setColumnWidth(0, 20 * PIXEL_SIZE);
 		xlsSheet.setColumnWidth(1, 24 * PIXEL_SIZE);
 		xlsSheet.setColumnWidth(2, 30 * PIXEL_SIZE);
@@ -181,7 +181,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		try {
 		    propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
 		} catch (MiddlewareQueryException e) {
-		    e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		
 		CellStyle style = createCellStyle(xlsBook);
@@ -202,7 +202,6 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private int writeStudyDetails(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, StudyDetails studyDetails) {
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.study", studyDetails.getStudyName() != null ? HtmlUtils.htmlUnescape(studyDetails.getStudyName()) : "");
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.title", studyDetails.getTitle() != null ? HtmlUtils.htmlUnescape(studyDetails.getTitle()) : "");
-//		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.pmkey", studyDetails.getPmKey());
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.objective", studyDetails.getObjective() != null ? HtmlUtils.htmlUnescape(studyDetails.getObjective()) : "");
 		String startDate = studyDetails.getStartDate();
 		String endDate = studyDetails.getEndDate();
@@ -244,8 +243,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 							try {
 								variable.setPossibleValues(fieldbookService.getAllPossibleValues(variable.getTermId()));
 							} catch (MiddlewareQueryException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								LOG.error(e.getMessage(), e);
 							}
 						}
 					}
@@ -389,8 +387,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
 		String occName = variable.getName();
 		String appConstant8170 = AppConstants.getString(OCC_8170_LABEL);
-		if(appConstant8170 != null && appConstant8170.equalsIgnoreCase(occName))
+		if(appConstant8170 != null && appConstant8170.equalsIgnoreCase(occName)) {
 			occName = AppConstants.OCC.getString();
+		}
 		cell.setCellValue(occName);
 
 		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
@@ -414,8 +413,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		try {
 			variable.setPossibleValues(fieldbookService.getAllPossibleValues(variable.getTermId()));
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		
 		if (variable != null && variable.getPossibleValues() != null

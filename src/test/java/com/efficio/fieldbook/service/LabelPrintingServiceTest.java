@@ -1,8 +1,6 @@
 package com.efficio.fieldbook.service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -12,13 +10,9 @@ import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -31,6 +25,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.utils.test.ExcelImportUtil;
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
@@ -145,7 +140,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     	String fileName = "";
     	try {
     		fileName = labelPrintingService.generateXlSLabels(trialInstances, userLabelPrinting, baos);
-    		org.apache.poi.ss.usermodel.Workbook xlsBook = parseFile(fileName);
+    		org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
 			
     		Sheet sheet = xlsBook.getSheetAt(0);
     		
@@ -164,10 +159,6 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     		
     	} catch (MiddlewareQueryException e) {
     		LOG.error(e.getMessage(), e);
-    	} catch (FileNotFoundException e) {
-    		LOG.error(e.getMessage(), e);
-    	} catch (IOException e) {
-    		LOG.error(e.getMessage(), e);
     	} catch (Exception e) {
     		LOG.error(e.getMessage(), e);
     	}
@@ -175,27 +166,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     	Assert.assertTrue(areFieldsinGeneratedLabels(labels, false));
     }
     
-    private Workbook parseFile(String filename) throws Exception {
-		Workbook readWorkbook = null;
-		try{
-			HSSFWorkbook xlsBook = new HSSFWorkbook(new FileInputStream(new File(filename))); //WorkbookFactory.create(new FileInputStream(new File(filename)));
-			readWorkbook = xlsBook;
-		}catch(OfficeXmlFileException officeException){
-			try {
-				XSSFWorkbook xlsxBook = new XSSFWorkbook(new FileInputStream(new File(filename)));
-				readWorkbook = xlsxBook;
-			} catch (FileNotFoundException e) {
-				throw e;
-			} catch (IOException e) {
-				throw e;
-			} 
-		} catch (FileNotFoundException e) {
-			throw e;
-		} catch (IOException e) {
-			throw e;
-		}
-		return readWorkbook;
-	}
+    
     
     private boolean areFieldsinGeneratedLabels(String labels, boolean isPdf) {
     	boolean areFieldsInLabels = true;

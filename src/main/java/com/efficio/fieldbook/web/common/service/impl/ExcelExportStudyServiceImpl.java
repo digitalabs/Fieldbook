@@ -142,7 +142,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 	
 	
-	private void writeDescriptionSheet(HSSFWorkbook xlsBook, Workbook workbook, MeasurementRow trialObservation) {
+	protected void writeDescriptionSheet(HSSFWorkbook xlsBook, Workbook workbook, MeasurementRow trialObservation) {
 		Locale locale = LocaleContextHolder.getLocale();
 		HSSFSheet xlsSheet = xlsBook.createSheet(messageSource.getMessage("export.study.sheet.description", null, locale));
 		int currentRowNum = 0;
@@ -170,7 +170,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		xlsSheet.setColumnWidth(7, 20 * PIXEL_SIZE);
 	}
 
-	private void writeObservationSheet(HSSFWorkbook xlsBook, Workbook workbook, List<MeasurementRow> observations) {
+	protected void writeObservationSheet(HSSFWorkbook xlsBook, Workbook workbook, List<MeasurementRow> observations) {
 		Locale locale = LocaleContextHolder.getLocale();
 		HSSFSheet xlsSheet = xlsBook.createSheet(messageSource.getMessage("export.study.sheet.observation", null, locale));
 		int currentRowNum = 0;
@@ -532,4 +532,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		return ids;
 	}
 	
+	protected void setFieldbookService(FieldbookService fieldbookService) {
+        this.fieldbookService = fieldbookService;
+    }
 }

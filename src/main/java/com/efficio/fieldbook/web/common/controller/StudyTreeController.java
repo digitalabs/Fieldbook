@@ -101,14 +101,9 @@ public class StudyTreeController {
 				LOG.error(e.getMessage(), e);
 			}			
 		}
-		/*
-		for(TreeNode newNode : childNodes){
-			newNode.setChildren(getChildNodes(newNode.getKey(), isFolderOnly));
-		}
-		*/
+
 		for(TreeNode newNode : childNodes){
 			List<TreeNode> childOfChildNode = getChildrenTreeNodes(newNode.getKey(), isNursery, isFolderOnly);
-			//newNode.setChildren(childOfChildNode);
 			if(childOfChildNode.size() == 0) {
 				newNode.setIsLazy(false);
 			}

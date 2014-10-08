@@ -19,9 +19,7 @@
 					           			<label for="variableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
 				                        <div class="col-md-7">
 				                        	<input type="text" th:field="*{variableName}" class="form-control"/>
-				                        	<!--  <input id="comboVariableName" type="hidden" th:field="*{variableName}" class="form-control select2" placeholder=""/> -->
 											<input type="hidden" th:field="*{variableId}" />
-											<!--  <input type="hidden" th:field="*{newVariableName}" /> -->
 				                        </div>
 			                        </div>
 			                        
@@ -71,11 +69,6 @@
 					                        		<button class="btn btn-primary" type="button" id="btnAddTraitClass" onClick="doSave('TraitClass')">
 					                        			<span class="glyphicon glyphicon-plus"></span>
 					                        		</button>
-					                        		<!--  
-					                        		<button class="btn btn-danger" type="button" id="btnDeleteTraitClass" onClick="deleteOntology('TraitClass')">
-					                        			<span class="glyphicon glyphicon-minus"></span>
-					                        		</button>
-					                        		-->
 			                        			</span>
 				                        	</div>
 				                        </div>
@@ -97,11 +90,6 @@
 					                        		<button class="btn btn-primary" type="button" id="btnAddProperty" onClick="doSave('Property')">
 					                        			<span class="glyphicon glyphicon-plus"></span>
 					                        		</button>
-					                        		<!--  
-					                        		<button class="btn btn-danger" type="button" id="btnDeleteProperty" onClick="deleteOntology('Property')">
-					                        			<span class="glyphicon glyphicon-minus"></span>
-					                        		</button>
-					                        		-->
 			                        			</span>
 		                        			</div>
 				                        </div>
@@ -123,11 +111,6 @@
 					                        		<button class="btn btn-primary" type="button" id="btnAddMethod" onClick="doSave('Method')">
 					                        			<span class="glyphicon glyphicon-plus"></span>
 					                        		</button>
-					                        		<!--  
-					                        		<button class="btn btn-danger" type="button" id="btnDeleteMethod" onClick="deleteOntology('Method')">
-					                        			<span class="glyphicon glyphicon-minus"></span>
-					                        		</button>
-					                        		-->
 			                        			</span>
 		                        			</div>
 				                        </div>
@@ -259,28 +242,6 @@
 		    }
 	    }
 	    
-	    /*
-	    function validateComboForDelete(combo) {
-	    	var message = null;
-			//check if field is blank
-	    	if ($("#combo"+combo).val() == "" || 
-	    			($("#combo"+combo).select2("data").id == $("#combo"+combo).select2("data").id && 
-    				 $("#combo"+combo).select2("data").description == undefined)) {
-				if (combo == "TraitClass") {
-					message = [[#{ontology.browser.modal.combo.no.value.delete(#{ontology.browser.modal.trait.class})}]];
-				} else if (combo == "Property") {
-					message = [[#{ontology.browser.modal.combo.no.value.delete(#{ontology.browser.modal.property})}]];
-				} else if (combo == "Method") {
-					message = [[#{ontology.browser.modal.combo.no.value.delete(#{ontology.browser.modal.method})}]];
-				} else {
-					message = [[#{ontology.browser.modal.combo.no.value.delete(#{ontology.browser.modal.scale})}]];	
-				}
-				showMessage(message);
-				return false;
-			}
-			return true;
-	    }
-	    */
     //]]>
     </script>
 </div>

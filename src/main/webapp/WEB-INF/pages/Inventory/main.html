@@ -4,11 +4,6 @@
         <span class="h1" style="float: left" th:text="#{seed.inventory.header}">
             SEED STORE INVENTORY
         </span>
-        <!--
-        <span class="h1" >
-            <span class="bms-fa-question-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{fieldmap.header.field.plan.help}"></span>
-        </span>
-         -->
     </div>
 </div>
 
@@ -35,14 +30,6 @@
 				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Germplasm List</strong></label>
 				      		</div>
-				      		<!--
-				      		<div id="checks-section" style="float: left; width: 30%; ">
-				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
-				      			<label class="control-label"><strong class="sub-content-heading">Checks List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></label>
-				      			<a style="margin-top: -10px; padding: 6px 8px;" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" class="btn btn-info">Manage Checks</a>
-				      			<a style="margin-top: -10px; padding: 6px 8px;" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
-				      		</div>
-				      		 -->
 
 				      		 <div style="float:right; ">
 
@@ -130,12 +117,9 @@
 	  displayGermplasmListTree("germplasmTree");
 
 	  if(isIE){
-//		  $('#primary-section').css('width', '67%');
-
+		//no implementation yet
 	  }
 
-	  //initializePossibleValuesCombo(locationSuggestions, "#locationId", true, null);
-	  //initializePossibleValuesCombo(scaleSuggestions, "#scaleId", false, null);
   });
 
 
@@ -180,14 +164,13 @@
         			active: "fbtree-active"
         		},
         		 onPostInit: function (isReloading, isError) {
-        			 //console.log('postini' + listId);
         		     if(listId != 0)
         		    	 doInitialLoad(listId);
         		     	 listId = 0;
         		    },
         		onActivate: function(node) {
         			if (node.data.isFolder == false) {
-         				;//displayGermplasmDetails(node.data.key);
+         				//no implementation yet
         			}
         		},
         		dnd: {
@@ -196,17 +179,16 @@
         		        /** This function MUST be defined to enable dragging for the tree.
         		         *  Return false to cancel dragging of node.
         		         */
-        		        //console.log("tree.onDragStart" + node);
         		        if(node.data.isFolder){
         		          return false;
         		        }
         		        return true;
         		      },
         		      onDragStop: function(node) {
-        		        //console.log("tree.onDragStop" + node);
+        		        //no implementation done
         		      },
         		      onDragOver: function(node){
-        		    	  //console.log('dragging');
+        		    	//no implementation done
         		      }
         		    }
         	});
@@ -215,25 +197,17 @@
       		    hoverClass: "drophover",
       		    addClasses: true,
       		    over: function(event, ui) {
-      		      //console.log("droppable.over, "+ event+ui);
+      		    //no implementation done
       		    },
       		    drop: function(event, ui) {
       		      var source = ui.helper.data("dtSourceNode") || ui.draggable;
 
-      		     //$(this).html("Dropped " + source);
-      		     //console.log(isFunction(source.data));
       		     if(isFunction(source.data) == false){
 	      		      if($(this).hasClass('primary')){
-	      		    	  	//if (lastDraggedChecksList != source.data.key) {
 			      		    	//loads the primary germplasm list
 			      		    	$(this).removeClass('add-border');
-			      		    	//lastDraggedPrimaryList = source.data.key;
 			      		    	displayGermplasmDetails(source.data.key);
 			      		    	$('#page-message').html('');
-	      		    	  	//} else {
-	      		    	  	//	showErrorMessage("page-message", sameListErr);
-	      		    	  	//	moveToTopScreen();
-	      		    	  	//}
 	      		      }
       		     }
       		    }

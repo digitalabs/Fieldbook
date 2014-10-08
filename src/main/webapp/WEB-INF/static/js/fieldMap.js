@@ -801,16 +801,6 @@ function showBlockDetails(isHide, blockInfo){
 	}else{
 		$('.block-details').slideDown( 'slow', function() {
 			// Animation complete.
-			/*
-			sample data: 	
-				blockId 15471	
-				machineRowCapacity 0	
-				new false	
-				numberOfRowsInPlot 20	
-				plantingOrder null	
-				rangesInBlock 20	
-				rowsInBlock 20
-			 */
 			if($('body').data('previousFmapData') === '1'){
 				if(blockInfo.newBlock == false){
 					isNewBlock = false;

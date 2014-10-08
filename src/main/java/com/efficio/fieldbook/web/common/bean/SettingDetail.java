@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.common.bean;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 

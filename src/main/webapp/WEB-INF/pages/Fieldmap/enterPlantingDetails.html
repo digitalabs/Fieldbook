@@ -204,8 +204,6 @@
 			deletedRect = deletedRect.substr(0,deletedRect.length-1);
 		}
 		$('#markedCells').val(deletedRect);
-			//console.log(deletedRect);
-
 			//validate that total no. of plots does not exceed total no. of blocks
 			if (isHorizontal) {
 				insufficientPlots = checkRemainingPlotsHorizontal();
@@ -220,8 +218,6 @@
 			$('.plantingOrder').attr('disabled', false);
 			$('#'+getJquerySafeId('userFieldmap.machineRowCapacity')).select2('enable', true);
 			return true;
-			//$("#fieldmapForm").submit();
-			//setTimeout(function(){$('#submitButton').trigger('submit')}, 50);
 		}
 		$(document).ready(function() {
 
@@ -246,7 +242,6 @@
 					$(this).addClass('deleted');
 					$(this).html("<label class='alert alert-danger'>X</label>");
 				}
-				//console.log($(this).attr('id'));
 			});
 			$('#field-map td.plot').each(function(){
 				if(!$(this).hasClass('deleted')){

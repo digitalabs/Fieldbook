@@ -167,7 +167,6 @@
         <div class="form-group">
             <label class="col-xs-4 label-bold" for="cropOntologyDisplay" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
             <div class="col-xs-8">
-                <!-- span id="cropOntologyId" name="cropOntologyId" th:text="*{cropOntologyId}" >crop</span -->
                 <span id="cropOntologyDisplay" name="cropOntologyDisplay"></span>
             </div>
         </div>
@@ -459,7 +458,6 @@ $( document ).ready(function() {
             recreateVariableNameCombo("VariableName", varId, name);
         } else if (isDelete == 1) {
             recreateComboAfterDelete("VariableName", varId);
-            //notifyIntegratingApps(varId);
         } else {
             preSelectAfterUpdate("VariableName", varId, name);
         }
@@ -490,7 +488,6 @@ $( document ).ready(function() {
     });
 
     $('#role').on('change', function(){
-        //console.log($(this).val())
         if($(this).val() == roleCategoricalVariate){
             rebuildDataTypeOptions(true);
         }else{
@@ -515,7 +512,6 @@ function rebuildDataTypeOptions(isCategoricalVariate){
         for(var i = 0 ; i < dataTypeOptionList.length ; i++){
             var val = dataTypeOptionList[i].text;
             var id = dataTypeOptionList[i].id;
-            //console.log(id);
             if(id == dataTypeCategoricalVariable)
                 $('#dataType').append($('<option></option>').attr('value', id).text(val));
         }
@@ -523,7 +519,6 @@ function rebuildDataTypeOptions(isCategoricalVariate){
         for(var i = 0 ; i < dataTypeOptionList.length ; i++){
             var val = dataTypeOptionList[i].text;
             var id = dataTypeOptionList[i].id;
-            //if(id != dataTypeCategoricalVariable)
             $('#dataType').append($('<option></option>').attr('value', id).text(val));
         }
     }

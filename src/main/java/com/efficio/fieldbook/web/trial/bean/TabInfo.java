@@ -2,8 +2,6 @@ package com.efficio.fieldbook.web.trial.bean;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

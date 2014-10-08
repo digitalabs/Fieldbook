@@ -210,9 +210,6 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	        
 	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, param, trialVariables, factors, factors, 
 					variates, null);
-//			for(MeasurementRow measurementRow : measurementRowList){
-//				System.out.println(measurementRow.toString());
-//			}
 			assertEquals(96, measurementRowList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -249,9 +246,6 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	        
 	        List<MeasurementRow> measurementRowList = resolveIncompleteBlockDesign.generateDesign(germplasmList, param, trialVariables, factors, factors, 
 					variates, null);
-//			for(MeasurementRow measurementRow : measurementRowList){
-//				System.out.println(measurementRow.toString());
-//			}
 			assertEquals(96, measurementRowList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -337,9 +331,6 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	        
 	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, 
 					variates, null);
-//			for(MeasurementRow measurementRow : measurementRowList){
-//				System.out.println(measurementRow.toString());
-//			}
 			
 			assertEquals(800, measurementRowList.size());
 			
@@ -384,9 +375,6 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	        
 	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, 
 					variates, null);
-//			for(MeasurementRow measurementRow : measurementRowList){
-//				System.out.println(measurementRow.toString());
-//			}
 			
 			assertEquals(800, measurementRowList.size());
 			
@@ -430,9 +418,6 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	        
 	        List<MeasurementRow> measurementRowList = resolveRowColumn.generateDesign(germplasmList, param, trialVariables, factors, factors, 
 					variates, null);
-//			for(MeasurementRow measurementRow : measurementRowList){
-//				System.out.println(measurementRow.toString());
-//			}
 			
 			assertEquals(1200, measurementRowList.size());
 			
@@ -496,9 +481,6 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 	        
 	        List<MeasurementRow> measurementRowList = randomizeBlockDesign.generateDesign(germplasmList, param, trialVariables, factors, factors, 
 					variates, treatmentVarList);
-//			for(MeasurementRow measurementRow : measurementRowList){
-//				System.out.println(measurementRow.toString());
-//			}
 			
 			assertEquals(7200, measurementRowList.size());
 			

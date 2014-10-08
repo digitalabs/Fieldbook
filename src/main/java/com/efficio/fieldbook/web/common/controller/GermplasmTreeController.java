@@ -182,7 +182,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         
         // Create germplasm list
         String listName =  saveListForm.getListName();
-        String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00";//form.getHarvestDate(); 
+        String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00"; 
         String listType = saveListForm.getListType(); 
         
         Integer userId = 0;
@@ -196,7 +196,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
         String description = saveListForm.getListDescription();
-        GermplasmList parent = null; //lhierarchy = 0
+        GermplasmList parent = null;
         Integer parentId = null;
         GermplasmList gpList = null;
         if (saveListForm.getParentId() != null && !"LOCAL".equals(saveListForm.getParentId())) {
@@ -231,8 +231,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         
         //Common germplasm list data fields
         Integer listDataId = null; 
-        Integer listDataStatus = 0; //lrstatus = 0
-        Integer localRecordId = 0; //llrecid = 0
+        Integer listDataStatus = 0;
+        Integer localRecordId = 0;
         
         //Common name fields
         Integer nDate = gDate;
@@ -342,8 +342,6 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
             TreeNode centralNode = new TreeNode("CENTRAL", AppConstants.GERMPLASM_LIST_CENTRAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
             rootNodes.add(localNode);
             rootNodes.add(centralNode);
-            //localNode.setChildren(getGermplasmChildNodes(localNode.getKey(), isFolderOnlyBool));
-            //centralNode.setChildren(getGermplasmChildNodes(centralNode.getKey(), isFolderOnlyBool));
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
             
         } catch(Exception e) {
@@ -376,14 +374,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 	            LOG.error(e.getMessage(), e);
 	        }		
 		}
-		/*
-		for(TreeNode newNode : childNodes){
-			newNode.setChildren(getGermplasmChildNodes(newNode.getKey(), isFolderOnly));
-		}
-		*/
+
 		for(TreeNode newNode : childNodes){
 			List<TreeNode> childOfChildNode = getGermplasmChildrenNode(newNode.getKey(), isFolderOnly);
-			//newNode.setChildren(childOfChildNode);
 			if(childOfChildNode.size() == 0) {
 				newNode.setIsLazy(false);
 			}else{
@@ -642,9 +635,6 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         try {
             GermplasmList gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(sourceId));
 
-            /*if (!gpList.isFolder())
-                 throw new Error(NOT_FOLDER);*/
-
             if (targetId != null) {
                 GermplasmList parent = germplasmListManager.getGermplasmListById(Integer.parseInt(targetId));
                             gpList.setParent(parent);
@@ -657,7 +647,6 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            //throw new Error(messageSource.getMessage(Message.ERROR_DATABASE));
         }
         return resultsMap;
     }

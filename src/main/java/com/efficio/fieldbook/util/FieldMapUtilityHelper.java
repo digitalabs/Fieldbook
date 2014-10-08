@@ -32,9 +32,7 @@ public class FieldMapUtilityHelper {
          for(int j = range -1 ; j >= 0 ; j--){
              for(int i = 0 ; i < col ; i++){
                  plots[i][j] = new Plot(i, j, "");
-                 //System.out.print("[ " + plots[i][j].getDisplayString() + " ]");
              }
-             //System.out.println("");
          }
          return plots;
     }
@@ -69,7 +67,6 @@ public class FieldMapUtilityHelper {
         }else{
             hasAvailableEntries = false;
         }
-        //plots[i][j].setUpward(isUpward);
     
         
         if(isDeleted(i,j, deletedPlot)){
@@ -93,7 +90,6 @@ public class FieldMapUtilityHelper {
                 if(hasAvailableEntries){
                     //meaning we can plant already and move to the next plant
                     plots[i][j].setDisplayString(stringToDisplay);
-                    //plots[i][j].setExperimentId(labels.get(counter).getExperimentId());
                     labels.get(counter).setColumn(i + 1);
                     labels.get(counter).setRange(j + 1);
                     
@@ -184,12 +180,7 @@ public class FieldMapUtilityHelper {
                 info.setStartingRange(j + 1);
                 isStarted = true;
             }
-            /*
-            if (!possiblyDeletedCoordinates.isEmpty()) {
-                markDeletedCoordinates(plots, possiblyDeletedCoordinates);
-                possiblyDeletedCoordinates.clear();
-            }
-            */
+
             FieldMapTrialInstanceInfo trial = null;
             
             if(plot.getDatasetId() != null &&  plot.getGeolocationId() != null){
@@ -203,7 +194,6 @@ public class FieldMapUtilityHelper {
         }
         else {
             if (isStarted) {
-                //possiblyDeletedCoordinates.add(i + "_" + j);
             }
             else {
                 plot.setNotStarted(true);

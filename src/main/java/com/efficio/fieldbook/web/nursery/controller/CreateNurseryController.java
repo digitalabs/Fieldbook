@@ -59,7 +59,6 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-
 /**
  * The Class CreateNurseryController.
  */
@@ -137,7 +136,6 @@ public class CreateNurseryController extends SettingsController {
             form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             form.setNurseryConditions(userSelection.getNurseryConditions());
-            //form.setSelectedSettingId(1);
             form.setLoadSettings("1");            
             form.setProjectId(this.getCurrentProjectId());
             
@@ -145,7 +143,7 @@ public class CreateNurseryController extends SettingsController {
         }
         setFormStaticData(form, contextParams);
         model.addAttribute("createNurseryForm", form);
-        //setupFormData(form);
+        
         return super.showAjaxPage(model, URL_SETTINGS);
     }
     
@@ -376,7 +374,6 @@ public class CreateNurseryController extends SettingsController {
             LOG.error(e.getMessage(), e);
         }
         
-        //return "[]";
         return result;
     }
 

@@ -153,7 +153,6 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);
 			}
 			
-			//importTrialToWorkbook(xlsBook, trialObservations);
 			ImportResult res = new ImportResult(modes, changeDetailsList);
 			res.setConditionsAndConstantsErrorMessage(conditionsAndConstantsErrorMessage);
 			return res;
@@ -201,7 +200,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private org.apache.poi.ss.usermodel.Workbook parseFile(String filename) throws Exception {
 		org.apache.poi.ss.usermodel.Workbook readWorkbook = null;
 		try{
-			HSSFWorkbook xlsBook = new HSSFWorkbook(new FileInputStream(new File(filename))); //WorkbookFactory.create(new FileInputStream(new File(filename)));
+			HSSFWorkbook xlsBook = new HSSFWorkbook(new FileInputStream(new File(filename)));
 			readWorkbook = xlsBook;
 		}catch(OfficeXmlFileException officeException){
 			try {
@@ -712,7 +711,6 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			
 				if(stdVarId != null && stdVarId.intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()){
 					Cell cell = row.getCell(6);
-					//trialInstance = cell.getStringCellValue();
 					if(cell == null)
 						trialInstance = "1";
 					else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){

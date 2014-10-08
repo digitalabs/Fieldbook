@@ -31,7 +31,7 @@ import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 @Service
 public class FieldMapServiceImpl implements FieldMapService{
          
-    /* (non-Javadoc)
+    /** (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#createDummyData(int, int, int, int, boolean, java.util.Map)
      */
     @Override
@@ -40,20 +40,9 @@ public class FieldMapServiceImpl implements FieldMapService{
     		FieldPlotLayoutIterator plotLayouIterator) {
         startRange--;
         startCol--;
-        /*
-        List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
-        for (int i = 0; i < range*col; i++) {
-            FieldMapLabel label = new FieldMapLabel(null, null, "DummyData-" + i, null, null);
-            label.setStudyName("Dummy Trial");
-            labels.add(label);
-        }
-        */
-        //Plot[][] plots = createFieldMap(col, range, startRange, startCol
-        //                  , isSerpentine, deletedPlot, labels, true);
         //for testing only
         Plot[][] plots = plotLayouIterator.createFieldMap(col, range
                 , startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true, null);
-        //setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
         return plots;
     }
     
@@ -66,7 +55,7 @@ public class FieldMapServiceImpl implements FieldMapService{
     	return generateFieldmap(info, plotIterator, isSavedAlready, null);
     }    
     
-    /* (non-Javadoc)
+    /** (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#generateFieldmap(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
     @Override
@@ -92,7 +81,6 @@ public class FieldMapServiceImpl implements FieldMapService{
                     plot.setDatasetId(label.getDatasetId());
                     plot.setGeolocationId(label.getGeolocationId());
                     if (isSerpentine && column % 2 == 0) {
-                        //plot.setUpward(false);
                     }
                     plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
                     plot.setNotStarted(false);
@@ -139,7 +127,6 @@ public class FieldMapServiceImpl implements FieldMapService{
                 Plot plot = new Plot(i, j, "");
                 plots[i][j] = plot;
                 plot.setNotStarted(false);
-                //plot.setUpward(true);
             }
         }
     }

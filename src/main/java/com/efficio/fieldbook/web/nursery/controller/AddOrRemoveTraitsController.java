@@ -92,7 +92,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
-    	//getUserSelection().getWorkbook().getMeasurementDatasetVariables();
     	getUserSelection().setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(getUserSelection()));
     	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());

@@ -34,21 +34,10 @@ public class ToolUtil {
      * @throws IOException if an I/O error occurs while trying to launch the tool
      */
     public Process launchNativeTool(String abolutePath, String parameter) throws IOException {
-        /*
-        if (tool.getToolType() != ToolType.NATIVE) {
-            throw new IllegalArgumentException("Tool must be a native tool");
-        }
-        */
         //we close the app first
         closeNativeTool(abolutePath);               
         
         File absoluteToolFile = new File(abolutePath).getAbsoluteFile();
-        /*
-        String parameter = "";
-        if (!StringUtil.isEmpty(tool.getParameter())) {
-            parameter = tool.getParameter();
-        }
-        */
         ProcessBuilder pb = new ProcessBuilder(absoluteToolFile.getAbsolutePath(), parameter);
         pb.directory(absoluteToolFile.getParentFile());
         return pb.start();
@@ -61,11 +50,6 @@ public class ToolUtil {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void closeNativeTool(String abolutePath) throws IOException {
-        /*
-        if (tool.getToolType() != ToolType.NATIVE) {
-            throw new IllegalArgumentException("Tool must be a native tool");
-        }*/
-
         File absoluteToolFile = new File(abolutePath).getAbsoluteFile();
         String[] pathTokens = absoluteToolFile.getAbsolutePath().split(
                                                                        "\\" + File.separator);

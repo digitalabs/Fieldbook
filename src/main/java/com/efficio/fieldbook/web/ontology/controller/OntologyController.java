@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-//import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -62,11 +61,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
     /** The message source. */
     @Autowired
     public MessageSource messageSource;
-    
-//    /** The error handler service. */
-//    @Resource
-//    private ErrorHandlerService errorHandlerService;
-    
+        
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -85,20 +80,17 @@ public class OntologyController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
         //this set the necessary info from the session variable
-        //OntologyDataManager.getTraitGroups()
     	return setupForm(form, false, model);
     }
     
     @RequestMapping(value="popup", method = RequestMethod.GET)
     public String showPopup(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
         //this set the necessary info from the session variable
-        //OntologyDataManager.getTraitGroups()
         return setupForm(form, true, model);
     }
     
     private String setupForm(OntologyBrowserForm form, boolean showAsPopup,  Model model){
-    	try {
-            //List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getTraitGroupsHierarchy(TermId.ONTOLOGY_TRAIT_CLASS);//getDummyData();    
+    	try {    
             List<TraitClassReference> traitRefList = (List<TraitClassReference>) 
                     ontologyService.getAllTraitGroupsHierarchy(true);
             form.setTraitClassReferenceList(traitRefList);

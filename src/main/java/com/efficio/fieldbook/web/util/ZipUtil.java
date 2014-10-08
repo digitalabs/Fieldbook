@@ -31,7 +31,6 @@ public class ZipUtil {
  
     	for(String file : filenameList){
  
-    		//System.out.println("File Added : " + file);
     		File f = new File(file);
     		ZipEntry ze= new ZipEntry(f.getName());
         	zos.putNextEntry(ze);

@@ -17,8 +17,6 @@ public class ListDataProjectUtil {
         	//need a copy of the germplasm list and save
             for (ImportedGermplasm aData : importedGermplasmList) {
             	ListDataProject listDataProj = new ListDataProject();
-            	//listDataProj.setListDataProjectId(listDataProjectId);            	
-            	//listDataProj.setList(germplasmList);
             	listDataProj.setGermplasmId(Integer.valueOf(aData.getGid()));
             	if(aData.getCheckId() != null){
             		listDataProj.setCheckType(aData.getCheckId());
@@ -44,8 +42,6 @@ public class ListDataProjectUtil {
 	        	//need a copy of the germplasm list and save
 	            for (GermplasmListData aData : germplasmListDatas) {
 	            	ListDataProject listDataProj = new ListDataProject();
-	            	//listDataProj.setListDataProjectId(listDataProjectId);            	
-	            	//listDataProj.setList(germplasmList);
 	            	listDataProj.setGermplasmId(Integer.valueOf(aData.getGid()));
 	            	
 	            	listDataProj.setDesignation(aData.getDesignation());

@@ -235,7 +235,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		}, this));
 
 		// TODO Awaiting Rebecca's JSONified variable usage service
-		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: groupData.variables}));
 
 		// Listen for variable selection
 		$(propertyContainerSelector).on('click', addVariableButtonSelector, {}, $.proxy(function(e) {

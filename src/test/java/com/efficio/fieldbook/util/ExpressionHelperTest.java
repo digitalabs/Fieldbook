@@ -2,8 +2,6 @@ package com.efficio.fieldbook.util;
 
 import org.junit.Test;
 
-import java.util.regex.Pattern;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte

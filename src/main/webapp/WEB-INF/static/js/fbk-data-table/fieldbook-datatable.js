@@ -666,9 +666,6 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 			}
 		});
 		this.germplasmDataTable = $(tableIdentifier).dataTable({
-			//data: dataList,
-			//columns: columns,
-			//columnDefs: columnsDef,
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,

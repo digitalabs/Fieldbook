@@ -993,7 +993,6 @@ function recreateVariableNameCombo(combo, id, name) {
 
 	              if (data.results.length === 0)
 	            	  {
-	            	  	//console.log('new');
 	            	  	data.results.unshift({id:query.term,text:query.term});
 
 	            	  }
@@ -1073,8 +1072,6 @@ function deleteOntology(combo) {
 }
 
 function clearForm(formName) {
-	//$("#" + formName).reset();
-
 	$("#" + formName).find("input").each(function() {
 
 		this.value = "";
@@ -1188,7 +1185,6 @@ function delCatVar(button) {
 		//we add the checking here if its being use before deleting
 		var stdVarId = $('#comboVariableName').select2('data').id;
 		var enumerationId = enumerations[index].id;
-		//console.log(stdVarId + " " + enumerationId );
 
 		//daniel
 		var hasError = false;
@@ -1204,10 +1200,6 @@ function delCatVar(button) {
 					showErrorMessage('page-message', variateValidValueDeleteError);
 					hasError = true;
 				}
-				/*else{
-					enumerations.splice(index, 1);
-				}*/
-				//console.log(data);
 			}
 		});
 		if (hasError) {
@@ -1216,7 +1208,6 @@ function delCatVar(button) {
 
 		enumerations[index].operation = "-1";
 	}
-	//console.log('here');
 	//remove the row
 	button.closest("tr").remove();
 	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {
@@ -1310,7 +1301,6 @@ function enableFieldsForUpdate() {
 
 	  	if(enumerations.length != 0){
 	  		for(var index = 0 ; index < enumerations.length ; index++){
-	  			//console.log(enumerations_central[index].operation)
 	  			if(enumerations[index].operation != '-1'){
 	  				enumerationsTemp.push({ 'id' : null,
 	                			  'name' : enumerations[index].name,
@@ -1321,7 +1311,6 @@ function enableFieldsForUpdate() {
 	  		}
 
 	  	}
-	  	//console.log('here');
 	  	enumerations = enumerationsTemp;
 	  	enumerations_central = [];
 

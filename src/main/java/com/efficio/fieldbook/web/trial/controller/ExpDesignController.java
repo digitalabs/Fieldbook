@@ -1,13 +1,8 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -15,10 +10,8 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -104,7 +97,6 @@ public class ExpDesignController extends
     	int designType = expDesign.getDesignType();
     	List<ImportedGermplasm> germplasmList = userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 		
-		//{designType=0, replicationsCount=4, treatmentFactors={8284={variable={cvTermId=8284, name=DAY_OBS, description=Day of observation - Not specified (Day), property=Observation time, scale=Day (dd), method=Not specified, role=Trial design information, dataType=Numeric variable, traitClass=Trial environment, cropOntologyId=, dataTypeId=1110, minRange=null, maxRange=null, widgetType=NTEXT, operation=ADD, storedInId=null}, possibleValues=[], possibleValuesFavorite=null, possibleValuesJson=null, possibleValuesFavoriteJson=null, value=null, order=0, group=null, pairedVariable=null, hidden=false, deletable=true, favorite=false}}, treatmentFactorsData={8284={levels=4, labels=[100, 200, 300, 400], pairCvTermId=8282}}}
     	ExpDesignValidationOutput expParameterOutput = new ExpDesignValidationOutput(true, "");
     	Locale locale = LocaleContextHolder.getLocale();
     	try{

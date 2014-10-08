@@ -34,26 +34,7 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		// TODO Auto-generated method stub
-		
-		/**Boolean lastOpenedProjectChanged = true;
-    	try {
-			lastOpenedProjectChanged = workbenchDataManager.isLastOpenedProjectChanged();
-		} catch (MiddlewareQueryException e) {
-			e.printStackTrace();
-		}
-    	
-    	if (lastOpenedProjectChanged){	
-    		
-    		try{
-    			managerFactoryProvider.close();
-    		}catch(Exception e){
-    			e.printStackTrace();
-    		}
-    		
-			request.getSession().invalidate();
-		}**/
-		
+		// TODO Auto-generated method stub		
 	}
 
 	@Override
@@ -62,8 +43,6 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 			throws Exception {
 		
 		managerFactoryProvider.close();
-		//workbenchDataManager.close();
-	
 	}
 
 }

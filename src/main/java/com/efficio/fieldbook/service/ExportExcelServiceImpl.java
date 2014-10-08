@@ -252,7 +252,6 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             for (SelectedFieldmapRow rec : userFieldMap.getSelectedFieldmapList().getRows()) {
                 row = summarySheet.createRow(rowIndex++);
                 columnIndex = 0;
-//                row.createCell(columnIndex++).setCellValue(rec.getOrder());
                 row.createCell(columnIndex++).setCellValue(order++);
                 row.createCell(columnIndex++).setCellValue(rec.getStudyName());
                 if (isTrial) {
@@ -442,12 +441,10 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                         displayString = "  X  ";
                     }
                     Cell dataCell = row.createCell(columnIndex++);
-                    //dataCell.setCellValue(displayString);
                     dataCell.setCellValue(
                             new HSSFRichTextString(displayString)
                          ); 
                     dataCell.setCellStyle(wrapStyle);
-                    //row.createCell(columnIndex).setCellValue("");
                     
                     for(int k = 0 ; k < rowsPerPlot -1 ; k++){
                         row.createCell(columnIndex++).setCellValue("");
@@ -459,7 +456,6 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                             columnIndex - rowsPerPlot, //first column (0-based)
                             columnIndex -1 //last column  (0-based)
                             ));
-                    //columnIndex++;
                 }
                 rowIndex++;
                 
@@ -530,7 +526,6 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             
             fieldMapSheet.addMergedRegion(new CellRangeAddress(
                     rowIndex, rowIndex, columnIndex - rowsPerPlot, columnIndex-1));
-            //columnIndex++;
         }
         rowIndex++;
         return rowIndex;
@@ -563,25 +558,6 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 cell.setCellValue(UP);
                 cell.setCellStyle(subHeaderStyle);
             }
-            /*
-            if (isSerpentine) {
-                if (i % 2 == 1) {
-                    Cell cell = row.createCell(startCol);
-                    cell.setCellValue(DOWN);
-                    cell.setCellStyle(subHeaderStyle);
-                }
-                else {
-                    Cell cell = row.createCell(startCol);
-                    cell.setCellValue(UP);
-                    cell.setCellStyle(subHeaderStyle);
-                }
-            }
-            else {
-                Cell cell = row.createCell(startCol);
-                cell.setCellValue(UP);
-                cell.setCellStyle(subHeaderStyle);
-            }
-            */
             if (i == numberOfDirections - 1 && remainingRows > 0) { //last item
                 fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 
                         startCol, machineRowCapacity * i + remainingRows));

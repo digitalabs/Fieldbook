@@ -29,20 +29,10 @@ h6,.h6{font-size:13px;font-weight:500;line-height:13px}
 }
 
 .sub-heading {
-    /*
-    font-size: 24px;
-    font-weight: 300;
-    text-transform:uppercase;
-    */
     font-size:16.5px;height:16.5px;line-height:16.5px;font-weight:600;text-transform:uppercase
 margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
 }
 .sub-content-heading{
-    /*
-    font-size: 16px;
-    font-weight: bold;
-    text-transform:uppercase;
-    */
     font-size:14px;height:14px;line-height:14px;font-weight:500
 margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
 }
@@ -163,7 +153,6 @@ table .even{
 
 
 table .highlight, table .field-map-highlight {
-    /* background-color: #BED6B2;*/
 }
 table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
     background-color: #BED6B2;
@@ -307,8 +296,6 @@ div.dataTables_scrollBody table.table-curved {
 }
 /*end*/
 .container{
-    /*max-width: none !important;*/
-    /*width: 950px;*/
     min-width: 100%;
     padding-left: 35px; margin-top: -20px; margin-left: 0px;
 }
@@ -440,7 +427,6 @@ td.validValueDesc {
     border:1px dashed;
     overflow:auto;
     border-bottom:none;
-    /*max-width: 1200px;*/
     max-width: 100%;
 }
 
@@ -489,7 +475,6 @@ tr.trialInstance {
     table-layout: fixed;
 }
 #ontology-tab-headers{
-    /*border-bottom:none;*/
 }
 #ontology-tab-headers  > li > a,
 #ontology-tab-headers  > li > a:hover,
@@ -520,13 +505,7 @@ tr.trialInstance {
 }
 .tooltip.right .tooltip-arrow {
     border-right-color: #5A5A5A;
-    /*margin-top: -5px;*/
 }
-/*
-.help-tooltip{
-padding-left: 20px; margin-top: 7px
-}
-*/
 .help-tooltip {
     vertical-align: middle;
 }
@@ -593,37 +572,21 @@ table.make-sticky{
     background: #fff;
 }
 .sticky-wrap td, th {
-    /*adding: 0.75em 1.5em;*/
     padding: 5px 5px;
     text-align: left;
 }
-/*
-	td.err {
-		background-color: #e992b9;
-		color: #fff;
-		font-size: 0.75em;
-		text-align: center;
-		line-height: 1;
-	}
-	*/
 .make-sticky th {
     white-space: nowrap;
 }
 .sticky-wrap th {
-    /*background-color: #31bc86;
-    font-weight: bold;
-    color: #fff;*/
     white-space: nowrap;
 }
 .sticky-wrap tbody th {
-    /*background-color: #2ea879;*/
 }
 .sticky-wrap tbody tr:nth-child(2n-1) {
-    /* background-color: #f5f5f5;*/
     transition: all .125s ease-in-out;
 }
 .sticky-wrap tbody tr:hover {
-    /*background-color: rgba(129,208,177,.3);*/
 }
 /**/
 /* For appearance */
@@ -681,7 +644,6 @@ td.user-name {
 }
 .sticky-wrap.overflow-y {
     overflow-y: auto;
-    /*max-height: 70vh;*/
     max-height: 500px;
 }
 .datepicker th{
@@ -738,14 +700,6 @@ div.possibleValuesDiv{
 #ontologyBrowserTree{
     height: 430px;
 }
-/*
-#addVariablesSettingBody #ontologyBrowserTree{
-	height: 228px;
-}
-#addVariablesSettingBody #ontology-tabs{
-	min-height: 200px;
-}
-*/
 #addVariablesSettingBody{
     padding-bottom: 0px;
 }
@@ -960,7 +914,6 @@ div.sectionContainer {
 }
 
 .fb-tabs{
-    /*min-height: 460px;*/
     background-color: #f6f6f6;
     border:1px solid #e4e4e4;
     border-top: 0px;
@@ -1091,7 +1044,6 @@ a.fbk-edit-experiment{
     display: block;
 }
 .fbk-dropdown-select-highlight{
-    /*background-color: #428bca;*/
     color: #000000;
 }
 .fbk-dropdown-select-fade{

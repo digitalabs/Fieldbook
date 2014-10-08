@@ -320,26 +320,6 @@ public class UserSelection implements Serializable {
     }
 
 	/**
-	 * Gets the measurement row list.
-	 *
-	 * @return the measurement row list
-	 */
-//	public List<MeasurementRow> getMeasurementRowList() {
-//		return measurementRowList;
-//	}
-
-	/**
-	 * Sets the measurement row list.
-	 *
-	 * @param measurementRowList the new measurement row list
-	 */
-//	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
-//		this.measurementRowList = measurementRowList;
-//	}
-
-	
-
-	/**
 	 * Gets the study level conditions.
 	 *
 	 * @return the study level conditions

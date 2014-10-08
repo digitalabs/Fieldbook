@@ -12,7 +12,6 @@
         .controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService',
             'EXP_DESIGN_MSGS', '_',function ($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, EXP_DESIGN_MSGS) {
 
-                //$scope.hideFeatures = true;
                 $scope.Math = Math;
                 $scope.designTypes = [
                     {

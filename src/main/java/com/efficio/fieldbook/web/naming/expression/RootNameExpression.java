@@ -37,19 +37,6 @@ public class RootNameExpression implements Expression {
 	    		break;
 	    	}
 	    	
-	    	//If the root name is a cross string (contains one or more /s not enclosed within the range 
-	    	//of a pair of parentheses) then enclose the root name in parentheses.
-//	    	Pattern pattern = Pattern.compile("[(]+[^)]*[/\\]+[^(]*[)]+");
-//	    	Matcher matcher = pattern.matcher(nameString);
-//	    	Pattern pattern2 = Pattern.compile("[^(]+[/]+[^)]+");
-//	    	Matcher matcher2 = pattern2.matcher(nameString);
-//	    	if (nameString.contains("/") && !matcher.find() || matcher2.find()) {
-//	    		value.append("(").append(nameString).append(")");
-//	    	}
-//	    	else {
-//	    		value.append(nameString);
-//	    	}
-
 	    	if (!checkNameIfEnclosed(nameString)) {
 	    		value.append("(").append(nameString).append(")");
 	    	}

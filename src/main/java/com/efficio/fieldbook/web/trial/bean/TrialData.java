@@ -1,7 +1,5 @@
 package com.efficio.fieldbook.web.trial.bean;
 
-import java.util.Map;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte

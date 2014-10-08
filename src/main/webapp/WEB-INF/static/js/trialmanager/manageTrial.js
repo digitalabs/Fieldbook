@@ -130,7 +130,6 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
         [          '$rootScope', '$state', '$stateParams', 'uiSelect2Config',
             function ($rootScope, $state, $stateParams, uiSelect2Config) {
 
-                //$('.import-study-data').data('data-import', '0');
                 $rootScope.$on('$stateChangeStart',
                     function(event){
                         if ($('.import-study-data').data('data-import') === '1') {

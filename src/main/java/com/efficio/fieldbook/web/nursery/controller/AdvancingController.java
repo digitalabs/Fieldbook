@@ -140,13 +140,11 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLineChoice("1");
     	form.setLineSelected("1");
     	form.setAllPlotsChoice("1");
-    	/*form.setProjectId(this.getCurrentProjectId());*/
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
     	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
     	
     	advancingNursery.setStudy(study);
-    	/*form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());*/
     	form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedingMethodsUrl());
     	form.setNurseryId(Integer.toString(nurseryId));
     	Project project = workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
@@ -201,7 +199,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
 
 			List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);						
 			List<Method> allNonGenerativeMethods = fieldbookMiddlewareService.getAllBreedingMethods(true);
-			//List<Method> favoriteNonGenerativeMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, true);
                                    
             result.put("success", "1");
             result.put("allMethods", convertMethodsToJson(breedingMethods));
@@ -338,7 +335,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         }
         
         return results;
-    	//return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
     }
     
     @ResponseBody
@@ -348,21 +344,14 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	ObjectMapper objectMapper = new ObjectMapper();
     	AdvanceGermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, AdvanceGermplasmChangeDetail[].class);
     	List<ImportedGermplasm> importedGermplasmListTemp = userSelection.getImportedAdvancedGermplasmList();
-//    	List<Integer> deletedIndex = new ArrayList();
     	List<Integer> deletedEntryIds = new ArrayList<Integer>();
     	for (AdvanceGermplasmChangeDetail responseDetail : responseDetails) {
     		if (responseDetail.getIndex() < importedGermplasmListTemp.size()) {
     			ImportedGermplasm importedGermplasm = importedGermplasmListTemp.get(responseDetail.getIndex());
     			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
     				//we need to delete
-//    				deletedIndex.add(responseDetail.getIndex());
     				deletedEntryIds.add(importedGermplasm.getEntryId());
     			}
-    			/*
-    			else if (responseDetail.getStatus() == 2) { //create new germlasm
-					//maintain germplasm
-    			}
-    			*/
     			else if (responseDetail.getStatus() == 3) { //choose gids
     				importedGermplasm.setDesig(responseDetail.getNewAdvanceName());
     				List<Name> names = importedGermplasm.getNames();

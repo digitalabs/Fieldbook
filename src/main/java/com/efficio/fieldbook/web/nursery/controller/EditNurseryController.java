@@ -148,7 +148,6 @@ public class EditNurseryController extends SettingsController {
             form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
             
             form.setNurseryConditions(userSelection.getNurseryConditions());
-            //form.setSelectedSettingId(1);
             form.setLoadSettings("1");
             form.setFolderId(Integer.valueOf((int)workbook.getStudyDetails().getParentFolderId()));
             if (form.getFolderId() == 1) {
@@ -417,7 +416,6 @@ public class EditNurseryController extends SettingsController {
                 workbook.setObservations(form.getMeasurementRowList());
                 
                 userSelection.setWorkbook(workbook);
-                //validationService.validateObservationValues(workbook);
                 
                 fieldbookService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
                 fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION.getString(), true);

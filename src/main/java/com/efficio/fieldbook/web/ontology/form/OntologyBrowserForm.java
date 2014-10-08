@@ -257,11 +257,6 @@ public class OntologyBrowserForm{
     }
     
     
-    /*
-     * Sets the new variable name.
-     *
-     * @param newVariableName the new variable name
-     */
     /**
      * Sets the new variable name.
      *

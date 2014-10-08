@@ -239,7 +239,6 @@
 
 					start: function (/*event, ui*/) {
 						var selected = $('.check-germplasm-list-items tr.checkGermplasmSelectedRow');
-						/*$(selected).css('opacity', '.5');*/
 					},
 
 					stop: function (/*event, ui*/) {
@@ -295,7 +294,6 @@
 
 					start: function (/*event, ui*/) {
 						var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
-						/*$(selected).css('opacity', '.5');*/
 					},
 
 					stop: function (/*event, ui*/) {
@@ -362,7 +360,6 @@
 				success: function(html) {
 
 					$('#check-germplasm-list').html(html);
-					//makeCheckDraggable(true);
 					showSpecifyCheckSection();
 					checksFromPrimary++;
 					setSpinnerMaxValue();

@@ -65,9 +65,6 @@ public class AddOrRemoveTraitsControllerTest extends AbstractBaseControllerTest 
     @Before
     public void setUp() {
     	 try {
-             // InputStream inp = new FileInputStream("");
-
-
     		 InputStream inp = getClass().getClassLoader().getResourceAsStream(
                      "GermplasmImportTemplate-Advanced-rev4.xls");
 

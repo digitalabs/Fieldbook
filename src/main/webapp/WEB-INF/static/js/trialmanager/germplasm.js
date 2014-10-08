@@ -51,7 +51,6 @@
             // function called whenever the user has successfully selected a germplasm list
             $scope.germplasmListSelected = function() {
                 // validation requiring user to re-generate experimental design after selecting new germplasm list is removed as per new maintain germplasm list functionality
-                // TrialManagerDataService.indicateUnappliedChangesAvailable(true);
                 $scope.updateOccurred = false;
             };
 
@@ -148,7 +147,6 @@
         $('.show-germplasm-details').on('click', function() {
             showGermplasmDetailsSection();
         });
-        //displayEditFactorsAndGermplasmSection();
     };
 
 })();

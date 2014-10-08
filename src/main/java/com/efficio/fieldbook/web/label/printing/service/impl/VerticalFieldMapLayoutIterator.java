@@ -29,7 +29,7 @@ import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 public class VerticalFieldMapLayoutIterator implements
 		FieldPlotLayoutIterator {
 	
-	/* (non-Javadoc)
+	/** (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List, boolean)
      */
     public Plot[][] createFieldMap(int col, int range, int startRange,

@@ -120,7 +120,6 @@ public class ResolvableRowColumnDesignServiceImpl implements
 	public List<StandardVariable> getRequiredVariable() {
 		List<StandardVariable> varList = new ArrayList();
 		try {		
-			//StandardVariable stdvarTreatment = fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
 			StandardVariable stdvarRep = fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());				
 			StandardVariable stdvarPlot = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
 			StandardVariable stdvarRows = fieldbookMiddlewareService.getStandardVariable(TermId.ROW.getId());

@@ -204,7 +204,6 @@ public class UserFieldmap  implements Serializable {
                 if (fieldMapInfo.getDataSet(datasetId) != null) {
                     FieldMapTrialInstanceInfo info = 
                             fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
-                    //setFieldMapLabels(info.getFieldMapLabels());
                     setFieldMapLabels(getAllSelectedFieldMapLabels(false));
                     setNumberOfEntries(info.getEntryCount());
                     setNumberOfReps(info.getRepCount());
@@ -610,10 +609,8 @@ public class UserFieldmap  implements Serializable {
     public FieldMapTrialInstanceInfo getAnySelectedTrialInstance() {
         if (getSelectedFieldMaps() != null) {
         	FieldMapInfo info = getSelectedFieldMaps().get(getSelectedFieldMaps().size()-1);
-            //for (FieldMapInfo info : getSelectedFieldMaps()) {
                 if (info.getDatasets() != null) {
                 	FieldMapDatasetInfo dataset = info.getDatasets().get(info.getDatasets().size()-1);
-                    //for (FieldMapDatasetInfo dataset : info.getDatasets()) {
                         if (dataset.getTrialInstances() != null) {
                         	
                             for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
@@ -621,12 +618,8 @@ public class UserFieldmap  implements Serializable {
                             		return trial;
                             	}
                             }
-                            
-                        	//return dataset.getTrialInstances().get(dataset.getTrialInstances().size()-1);
                         }
-                    //}
                 }
-            //}
         }
         return null;
     }

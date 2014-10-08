@@ -63,7 +63,7 @@ public class ExpDesignUtil {
 		String bvDesignLocation = getBreedingViewExeLocation(workbenchService);
 		int returnCode = -1;
 		if(bvDesignLocation != null && design != null && design.getDesign() != null){
-			 String outputFilePath = System.currentTimeMillis()+BV_PREFIX+CSV_EXTENSION; //generateBVFilePath(CSV_EXTENSION, fieldbookProperties);
+			 String outputFilePath = System.currentTimeMillis()+BV_PREFIX+CSV_EXTENSION;
 			 
 			 design.getDesign().setParameterValue(OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
 			 String xml = getXmlStringForSetting(design);
@@ -78,7 +78,6 @@ public class ExpDesignUtil {
 
         	    String lineRead;
         	    while ((lineRead = br.readLine()) != null) {
-        	        // swallow the line, or print it out - System.out.println(lineRead);
         	    	LOG.debug(lineRead);
         	    }
 
@@ -402,7 +401,6 @@ public class ExpDesignUtil {
 				}else{
 					//meaning non factor
                 	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
-                	//var.setFactor(false);
 				}
 				
 				

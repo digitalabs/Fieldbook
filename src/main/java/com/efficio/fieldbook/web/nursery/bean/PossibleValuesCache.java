@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Component;
 
 public class PossibleValuesCache implements Serializable {
 

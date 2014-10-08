@@ -280,7 +280,6 @@ window.TrialSettingsManager = (function () {
             variableSelectedMessage : this._translations.variableSelectedMessage,
             invalidAliasError: this._translations.invalidAliasError
         });
-        //this._variableSelection.getModal().on('variable-select', addSelectedVariables);
 
         return this._variableSelection;
     };

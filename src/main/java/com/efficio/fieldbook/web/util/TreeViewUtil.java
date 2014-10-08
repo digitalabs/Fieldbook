@@ -426,27 +426,10 @@ public class TreeViewUtil {
 	 * @throws Exception the exception
 	 */
 	public static String convertOntologyTraitsToJson(List<TraitClassReference> traitClassReferences, HashMap<String, StandardVariableReference> mapVariableRef) 
-	        throws Exception {
-	    /*
-	    TreeNode treeNode = new TreeNode();
-        
-        treeNode.setKey("0");
-        treeNode.setTitle("Trait Class");
-        treeNode.setIsFolder(true);
-        treeNode.setIsLazy(false);
-        treeNode.setExpand(true);
-        treeNode.setIcon(false);
-        */
-		
-		
+	        throws Exception {		
 		
         List<TreeNode> treeNodes = convertTraitClassReferencesToTreeView(traitClassReferences, mapVariableRef);
         
-//        treeNode.setChildren(treeNodes);
-        
-//        List<TreeNode> tempList = new ArrayList();
-//        tempList.add(treeNode);
-//        return convertTreeViewToJson(tempList);
         return convertTreeViewToJson(treeNodes);
     }
 	
@@ -487,7 +470,6 @@ public class TreeViewUtil {
         treeNode.setIsLazy(false);
         treeNode.setIcon(false);
         treeNode.setIncludeInSearch(false);
-        //treeNode.setExpand(true);
         
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         
@@ -531,7 +513,6 @@ public class TreeViewUtil {
         treeNode.setIncludeInSearch(true);
         String newParentTitle = parentTitle + " > " + reference.getName();
         treeNode.setParentTitle(newParentTitle);
-        //treeNode.setExpand(true);
         //we need to set the children for the property
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if(reference.getStandardVariables() != null && !reference.getStandardVariables().isEmpty()){
@@ -577,7 +558,6 @@ public class TreeViewUtil {
         treeNode.setIncludeInSearch(true);
         String newParentTitle = parentTitle + " > " + reference.getName();
         treeNode.setParentTitle(newParentTitle);
-        //treeNode.setExpand(true);
         //we need to set the children for the property
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();           
         treeNode.setChildren(treeNodes);

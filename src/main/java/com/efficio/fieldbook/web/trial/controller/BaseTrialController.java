@@ -242,7 +242,6 @@ public abstract class BaseTrialController extends SettingsController {
             TreatmentFactorData treatmentFactorData;
             if (! currentData.containsKey(levelFactorID.toString())) {
                 treatmentFactorData = new TreatmentFactorData();
-                /*treatmentFactorData.setLevels(Integer.parseInt(treatmentVariable.getLevelVariable().getValue()));*/
                 treatmentFactorData.setVariableId(treatmentVariable.getValueVariable().getTermId());
                 currentData.put(levelFactorID.toString(), treatmentFactorData);
             } else {

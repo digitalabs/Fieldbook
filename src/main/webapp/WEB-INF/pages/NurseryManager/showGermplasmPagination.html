@@ -20,8 +20,7 @@
 			class="table-curved table-condensed germplasm-list-items check-table-popover">		
 				<thead>
 					<tr>
-					<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
-						<!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->					
+					<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>					
 					</tr>
 				</thead>				
 			</table>

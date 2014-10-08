@@ -138,7 +138,6 @@ public class OpenTrialController extends
         	}
         	
             try {
-				//SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
 				userSelection.setMeasurementRowList(workbook.getObservations());
 				if(measurementDatasetId != null){
 					form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(measurementDatasetId, SettingsUtil.buildVariates(workbook.getVariates())));
@@ -394,7 +393,6 @@ public class OpenTrialController extends
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
         
         resetSessionVariablesAfterSave(workbook, false);
-//        resetExperimentalDesignAfterSave(workbook, userSelection.getExperimentalDesignVariables());
         return loadMeasurementDataPage(false, form, workbook,workbook.getMeasurementDatasetVariablesView(), workbook.getObservations(), workbook.getMeasurementDatesetId(), workbook.getVariates(), model);
     }
 

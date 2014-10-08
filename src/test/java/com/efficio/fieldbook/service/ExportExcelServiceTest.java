@@ -200,7 +200,6 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 	
 	private UserFieldmap createUserFieldMap(){
 	       UserFieldmap userFieldMap = new UserFieldmap();
-	        //userFieldMap.setSelectedName("Field Map Name");
 	        userFieldMap.setNumberOfEntries(25L);
 	        userFieldMap.setNumberOfReps(3L);
 	        userFieldMap.setTotalNumberOfPlots(75L);
@@ -218,7 +217,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 	}
 	
 	private Map<String, String> createDeletedPlot(){
-	    Map<String, String> deletedPlot = new HashMap<String, String>(); // key = "<col>_<range>"
+	    Map<String, String> deletedPlot = new HashMap<String, String>();
         deletedPlot.put("2_2", "X");
         deletedPlot.put("4_7", "X");
         deletedPlot.put("6_1", "X");

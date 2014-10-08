@@ -60,7 +60,6 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	public List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection) throws MiddlewareQueryException {
 		long start = System.currentTimeMillis();
     	List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
-    	//int newGid = fieldbookMiddlewareService.getNextGermplasmId();
     	Map<String, Integer> standardVariableMap = new HashMap<String, Integer>();
     	int entryNo, plotNo;
     	
@@ -148,7 +147,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 				MeasurementData measurementData =null;
 				
 				
-				Integer termId = null;//fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+				Integer termId = null;
 				String key = var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":" + PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
 				if(standardVariableMap.get(key) == null){
 					termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
@@ -199,7 +198,6 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 				}
 				
 				dataList.add(measurementData); 
-				//measurementRow.addFactorDataList(measurementData);//for improvement
 			}
 		}
 	}

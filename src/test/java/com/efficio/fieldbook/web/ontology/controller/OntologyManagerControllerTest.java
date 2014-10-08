@@ -133,27 +133,4 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
         assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
         assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
     } 
-    /* causing DB problems due to concurrent access
-    @Test
-    public void testSaveValidValues() throws MiddlewareQueryException, MiddlewareException {
-        //add
-        List<Enumeration> enumerations = new ArrayList<Enumeration>();
-        String randNum = String.valueOf(new Random().nextInt(10000));
-        enumerations.add(new Enumeration(null, randNum, "Low " + randNum, 0));
-        for (Enumeration enumeration : enumerations) {
-            ontologyService.addStandardVariableValidValue(standardVariable, enumeration);
-        }
-        standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
-        assertEquals(standardVariable.getEnumerations().get(0).getName(), randNum);
-        assertEquals(standardVariable.getEnumerations().get(0).getDescription(), "Low " + randNum);
-        
-        //delete
-        enumerations = standardVariable.getEnumerations();
-        for (Enumeration enumeration : enumerations) {
-            ontologyService.deleteStandardVariableValidValue(standardVariable.getId(), enumeration.getId());
-        }
-        standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
-        assertNull(standardVariable.getEnumerations());
-    }
-    */
 }

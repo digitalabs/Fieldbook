@@ -3,15 +3,6 @@
  */
 ul.fbtree-container
 {
-    /*	font-family: tahoma, arial, helvetica;
-        font-size: 10pt;
-        white-space: nowrap;
-        padding: 0px;
-        margin: 0;
-        overflow: hidden;
-        height: 100%;
-        width: 100%;
-    */
     padding: 0px;
     margin-bottom: 0px;
     background-color: #f5f5f5;
@@ -119,14 +110,6 @@ ul.fbtree-container img
  * Lines and connectors
  */
 
-/*
-span.dynatree-empty
-{
-}
-span.dynatree-vline
-{
-}
-*/
 span.dynatree-connector
 {
     background-image: none;
@@ -292,7 +275,6 @@ span.fbtree-icon /* Default icon */
 {
     background-image: url("../img/icons.gif");
     background-position: 0px -112px;
-    /*	background-image: url("ltError.gif");*/
 }
 
 /*******************************************************************************
@@ -303,9 +285,6 @@ span.fbtree-icon /* Default icon */
    Removed again for issue 165; (133 couldn't be reproduced) */
 span.dynatree-node
 {
-    /*	display: -moz-inline-box; /* issue 133, 165, 172, 192. removed for issue 221 */
-    /*	-moz-box-align: start; /* issue 221 */
-    /*  display: inline-block; /* Required to make a span sizeable */
 }
 
 
@@ -318,7 +297,6 @@ ul.fbtree-container a
     vertical-align: top;
     margin: 0px;
     margin-left: 3px;
-    /*	outline: 0; /* @ Firefox, prevent dotted border after click */
     /* Set transparent border to prevent jumping when active node gets a border
        (we can do this, because this theme doesn't use vertical lines)
        */
@@ -328,8 +306,6 @@ ul.fbtree-container a
 
 ul.fbtree-container a:hover
 {
-    /*	text-decoration: underline; */
-
     background: #F2F7FD; /* light blue */
     border-color: #B8D6FB; /* darker light blue */
 }
@@ -337,20 +313,16 @@ ul.fbtree-container a:hover
 span.dynatree-node a
 {
     display: inline-block; /* Better alignment, when title contains <br> */
-    /*	vertical-align: top;*/
     padding-left: 3px;
     padding-right: 3px; /* Otherwise italic font will be outside bounds */
-    /*	line-height: 16px; /* should be the same as img height, in case 16 px */
 }
 span.dynatree-folder a
 {
-    /*	font-weight: bold; */ /* custom */
 }
 
 ul.fbtree-container a:focus,
 span.fbtree-focused a:link  /* @IE */
 {
-    /* background-color: #EFEBDE; */ /* gray */
     background-color: #FFF441;  /* yellow */
 }
 
@@ -366,15 +338,12 @@ span.dynatree-expanded a
 
 span.dynatree-selected a
 {
-    /*	color: green; */
     font-style: italic;
     background-color: #FFF441;
 }
 
 span.fbtree-active a
 {
-    /* border: 1px solid #99DEFD;
-    background-color: #D8F0FA; */ /* light blue */
 }
 
 /*******************************************************************************
@@ -395,15 +364,9 @@ div.dynatree-drag-helper a
 }
 span.dynatree-drag-helper-img
 {
-    /*
-    position: relative;
-    left: -16px;
-    */
 }
 div.dynatree-drag-helper /*.dynatree-drop-accept*/
 {
-    /*    border-color: green;
-        background-color: red;*/
 }
 div.dynatree-drop-accept span.dynatree-drag-helper-img
 {
@@ -446,7 +409,6 @@ div.dynatree-drop-reject span.dynatree-drag-helper-img
 
 span.dynatree-drag-source
 {
-    /* border: 1px dotted gray; */
     background-color: #e0e0e0;
 }
 span.dynatree-drag-source a
@@ -458,14 +420,12 @@ span.dynatree-drag-source a
 
 span.dynatree-drop-target
 {
-    /*border: 1px solid gray;*/
 }
 span.dynatree-drop-target a
 {
 }
 span.dynatree-drop-target.dynatree-drop-accept a
 {
-    /*border: 1px solid green;*/
     background-color: #3169C6 !important;
     color: white !important; /* @ IE6 */
     text-decoration: none;

@@ -146,13 +146,8 @@ public class OntologyControllerTest extends AbstractBaseControllerTest {
         try{
             
             List<TraitClassReference> traitRefList = getDummyData();
-            //form.setTraitClassReferenceList(traitRefList);
             List<TreeNode> rootTree = convertJsonStringToMap(
                     TreeViewUtil.convertOntologyTraitsToJson(traitRefList, null));
-            //assertEquals(mainInfo.getFileIsValid(), false);
-            //assertEquals(jsonMap.get('1'), false);
-            //System.out.println(jsonMap.get("key"));
-            //assertEquals("Trait Class", rootTree.get(0).getTitle());
             assertEquals(6, rootTree.get(0).getChildren().size());
             
             assertEquals("Test 1 Child", rootTree.get(0).getChildren().get(0).getTitle());

@@ -353,7 +353,6 @@ public class ImportGermplasmListForm {
      */
     public List<ImportedGermplasm> getPaginatedImportedGermplasm() {
         return paginatedImportedGermplasm;
-    	//return getImportedGermplasm();
     }
     
     /**

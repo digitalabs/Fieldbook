@@ -11,13 +11,11 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;

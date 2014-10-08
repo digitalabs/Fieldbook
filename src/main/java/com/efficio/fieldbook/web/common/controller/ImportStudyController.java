@@ -8,26 +8,19 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.context.ContextConstants;
-import org.generationcp.commons.context.ContextInfo;
-import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -45,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -198,7 +190,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	Map<String, Object> resultsMap = new HashMap<String,Object>();
     	if(!result.hasErrors()){
     		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-	    	//form.setMeasurementRowList(userSelection.getMeasurementRowList());
 	    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 	    	form.changePage(userSelection.getCurrentPage());
 	    	userSelection.setCurrentPage(form.getCurrentPage());
@@ -247,8 +238,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     		}
     	}
 	    	
-    	//return show(model, isTrial);
-    	//return resultsMap;
     	return super.convertObjectToJson(resultsMap);
     }
     
@@ -404,7 +393,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	Workbook workbook = userSelection.getWorkbook();
     	userSelection.getWorkbook().getVariates().addAll(traits);
     	
-    	//fieldbookService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
         fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
         
         //will do the cleanup for BM_CODE_VTE here

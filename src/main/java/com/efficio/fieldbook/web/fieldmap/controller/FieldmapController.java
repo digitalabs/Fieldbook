@@ -45,7 +45,6 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 
 /**
@@ -697,7 +696,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());
         this.userFieldmap.setNumberOfRangesInBlock(form.getUserFieldmap().getNumberOfRangesInBlock());
         this.userFieldmap.setNumberOfRowsInBlock(form.getUserFieldmap().getNumberOfRowsInBlock());
-        //this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
         this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
         this.userFieldmap.setNumberOfRowsPerPlot(form.getNumberOfRowsPerPlot());
         this.userFieldmap.setNew(form.getUserFieldmap().isNew());

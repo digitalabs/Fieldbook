@@ -72,8 +72,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     	try {
 	        setPrevValues(form);
 	        
-//	        userFieldmap.setFieldmap(null);
-	        
 	        List<FieldMapInfo> infos = fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(
 		        		userFieldmap.getBlockId());
 	        if(this.userFieldmap.getSelectedFieldMapsToBeAdded() == null){
@@ -170,9 +168,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         userFieldmap.setStartingColumn(1);
         userFieldmap.setStartingRange(1);
         userFieldmap.setMachineRowCapacity(1);
-//        info.setStartingColumn(1);
-//        info.setStartingRange(1);
-//        info.setMachineRowCapacity(1);
         form.setUserFieldmap(info);
     }
     

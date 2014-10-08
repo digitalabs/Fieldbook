@@ -99,7 +99,6 @@
 	  			return;
 	  		}
 	  		if($('#manageTraitClassId').val() == $('#manageParentTraitClassId').val()){
-	  			//console.log('error ito')
 	  			message = /*[[#{ontology.browser.modal.error.parent.trait}]]*/;
 	  			showInvalidInputMessage('page-message-modal', message);
 	  			return;
@@ -116,7 +115,6 @@
 			    success: function(data) {
 			    	if (data.status == '1') {
 			    		//we would be resetting
-			    		//console.log($("#comboTraitClass"));
 			    		recreateComboAfterUpdate("ManageTraitClass", data.savedObject);
 			    		var chosendRecord = $("#comboTraitClass").select2("data");
 			    		traitClassesSuggestions = data.traitClassesSuggestionList;
@@ -124,7 +122,6 @@
 						treeClassData = data.traitClassTreeData;
 			    		
 						loadTraitOntologyCombos();
-						//console.log($("#comboTraitClass"));
 						//we set it again
 						if(chosendRecord != null){
 							$("#comboTraitClass").select2('data', chosendRecord);
@@ -136,8 +133,6 @@
 
 			    		}
 						
-				  		
-			    		//recreateComboAfterUpdate("ManageTraitClass", data.savedObject);
 			    		showSuccessMessageInModal(data.successMessage);
 			    		$("#btnAddManageTraitClass").hide();
 			    		$("#btnUpdateManageTraitClass").show();

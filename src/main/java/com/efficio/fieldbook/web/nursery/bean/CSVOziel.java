@@ -61,7 +61,7 @@ public class CSVOziel {
     public CSVOziel(Workbook workbook, List<MeasurementRow> observations, List<MeasurementRow> trialObservations, boolean isDataKapture) {
     	this.workbook = workbook;
     	this.headers = workbook.getMeasurementDatasetVariables();
-    	this.observations = observations; //workbook.getObservations();
+    	this.observations = observations;
     	this.variateHeaders = workbook.getVariates();
     	this.trialObservations = trialObservations;
     	this.isDataKapture = isDataKapture;
@@ -300,12 +300,8 @@ public class CSVOziel {
                 String dataOfTraits = "";
                 before = actual;
                 String trial = csvReader.get("Trial");
-//                String rep = csvReader.get("Rep");
-//                String block = csvReader.get("Block");
                 String plot = csvReader.get("Plot");
                 String entry = csvReader.get("Entry");
-//                String ped = csvReader.get("BreedersPedigree1");
-//                String gid = csvReader.get("GID");
 
                 actual = entry;
 
@@ -387,7 +383,6 @@ public class CSVOziel {
 	        	if (plotValueStr != null && NumberUtils.isNumber(plotValueStr)) {
 	        		int plotValue = Integer.valueOf(plotValueStr);
 	        		if (plotValue == plot) {
-	        			//return row;
 	        			match = true;
 	        		}
 	        	}
@@ -621,7 +616,6 @@ public class CSVOziel {
                     csvOutput.write("");
                 }
 
-                //csvOutput.write("END");
                 csvOutput.endRecord();
             }
         } catch (IOException ex) {
@@ -691,18 +685,12 @@ public class CSVOziel {
 
         int variateCol = 0;
         HashMap<String, Integer> traitsMap = new HashMap<String, Integer>();
-//        for (MeasurementVariable variate : this.variateHeaders) {
-//            variateCol = modelo.getHeaderIndex(Workbook.getStringWithOutBlanks(variate.getProperty()+variate.getScale()));
-//            traitsMap.put(variate.getName(), variateCol);
-//        }
-//        int add = 0;
 
         try {
             CsvReader csvReader = new CsvReader(file.toString());
             csvReader.readHeaders();
             String[] headers = csvReader.getHeaders();
 
-//            int myrow = 0;
             while (csvReader.readRecord()) {
 
                 //get name of breeding method property and get all methods 
@@ -741,16 +729,6 @@ public class CSVOziel {
             		}
             	}
             	
-//            	for (MeasurementVariable variate : this.variateHeaders) {
-//                    String head = variate.getName();
-//                    int col = traitsMap.get(head);
-//                    if (col >= 0) {
-//                        String data = csvReader.get(head);
-//                        modelo.setValueAt(data, myrow + add, col);
-//                    }
-//                }
-
-//                myrow++;
             }
             csvReader.close();
             
@@ -762,265 +740,4 @@ public class CSVOziel {
         }
     }
     //end copied from CSVFileManager (old Fb)
-
-    
-    
-    //These methods were not used YET, temporarily commented out while not in use.
-    //TODO cleanup once we have confirmed that these methods will no longer 
-/*
-    public void writeTraits(CsvWriter csvOutput) {
-        try {
-            listModel = (DefaultListModel) lista.getModel();
-            int tot = listModel.size();
-
-            for (int i = 0; i < tot; i++) {
-                String cadena = listModel.getElementAt(i).toString();
-                int espacio = cadena.indexOf("(");
-                String valor = cadena.substring(0, espacio - 1).trim();
-                csvOutput.write(valor);
-            }
-
-
-            writeColums(csvOutput, 104 - tot);
-            csvOutput.write("IBFB");
-
-
-        } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR TRAITS CSV " + ex);
-        }
-    }
-
-    public void writeTraitsR(CsvWriter csvOutput) {
-        try {
-
-            listModel = (DefaultListModel) lista.getModel();
-            int tot = listModel.size();
-
-            for (int i = 0; i < tot; i++) {
-                String cadena = listModel.getElementAt(i).toString();
-                int espacio = cadena.indexOf("(");
-                String valor = cadena.substring(0, espacio - 1).trim();
-                if (!valor.equals(stringTraitToEvaluate)) {
-                    if(valor.isEmpty()){
-                    valor=".";
-                }
-                    csvOutput.write(valor);
-                }
-            }
-
-        } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR TRAITS CSV " + ex);
-        }
-    }
-
-    public void writeDATA(CsvWriter csvOutput) {
-        //int total = observations.size();
-        //int tot = listModel.size();
-        try {
-            //for (int i = 0; i < total; i++) {
-        	for (MeasurementRow row : this.observations) {
-
-                csvOutput.write(row.getMeasurementDataValue(label));
-                csvOutput.write(modeloFiltro.getValueAt(i, modeloFiltro.findColumn("REP")).toString());
-                csvOutput.write(modeloFiltro.getValueAt(i, modeloFiltro.findColumn("BLOCK")).toString());
-                csvOutput.write(modeloFiltro.getValueAt(i, modeloFiltro.findColumn("PLOT")).toString());
-                csvOutput.write(modeloFiltro.getValueAt(i, modeloFiltro.findColumn("ENTRY")).toString());
-                writeColums(csvOutput, 2);
-                csvOutput.write(modeloFiltro.getValueAt(i, modeloFiltro.findColumn("DESIG")).toString());
-                writeColums(csvOutput, 15);
-                csvOutput.write(modeloFiltro.getValueAt(i, modeloFiltro.findColumn("GID")).toString());
-                writeColums(csvOutput, 2);
-
-                for (int j = 0; j < tot; j++) {
-                    String cadena = listModel.getElementAt(j).toString();
-                    int espacio = cadena.indexOf("(");
-                    String valor = cadena.substring(0, espacio - 1).trim();
-
-
-                    try {
-                        csvOutput.write(modeloFiltro.getValueAt(i, modeloFiltro.findColumn(valor)).toString());
-                    } catch (NullPointerException ex) {
-                        String cad = null;
-                        csvOutput.write(cad);
-                    }
-                }
-
-                writeColums(csvOutput, 104 - tot);
-                csvOutput.write("END");
-                csvOutput.endRecord();
-            }
-        } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR DATA CSV " + ex);
-        }
-
-    }
-
-    public void writeDATAR(CsvWriter csvOutput, DefaultTableModel modeloFilter) {
-
-        int total = modeloFilter.getRowCount();
-        int tot = listModel.size();
-
-        try {
-
-
-            for (int i = 0; i < total; i++) {
-
-                csvOutput.write(modeloFilter.getValueAt(i, modeloFilter.findColumn("NURSERY")).toString());
-                csvOutput.write(modeloFilter.getValueAt(i, modeloFilter.findColumn("REP")).toString());
-                csvOutput.write(modeloFilter.getValueAt(i, modeloFilter.findColumn("BLOCK")).toString());
-                csvOutput.write(modeloFilter.getValueAt(i, modeloFilter.findColumn("ENTRY")).toString());
-                try {
-                    csvOutput.write(modeloFilter.getValueAt(i, modeloFilter.findColumn(stringTraitToEvaluate)).toString());
-                } catch (NullPointerException ex) {
-                    String cad = null;
-                    csvOutput.write(cad);
-                }
-
-
-                for (int j = 0; j < tot; j++) {
-                    String cadena = listModel.getElementAt(j).toString();
-                    int espacio = cadena.indexOf("(");
-                    String valor = cadena.substring(0, espacio - 1).trim();
-
-                    if (!valor.equals(stringTraitToEvaluate)) {
-                        try {
-                            csvOutput.write(modeloFilter.getValueAt(i, modeloFilter.findColumn(valor)).toString());
-                        } catch (NullPointerException ex) {
-                            String cad = null;
-                            csvOutput.write(cad);
-                        }
-                    }
-
-                }
-
-                csvOutput.endRecord();
-            }
-        } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR DATA CSV FOR R" + ex);
-        }
-
-    }
-    @SuppressWarnings("unchecked")
-    public void readDATA(File file) {
-
-        ArrayList titulos = new ArrayList();
-        DefaultTableModel modelo = (DefaultTableModel) jTableObservations.getModel();
-        //ObservationsTableModel modelo =  (ObservationsTableModel)jTableObservations.getModel();
-        System.out.println("TENEMOS: " + dameTotalDatos(file));
-
-        try {
-            CsvReader csvReader = new CsvReader(file.toString());
-            csvReader.readHeaders();
-            String[] headers = csvReader.getHeaders();
-
-            if (headers[headers.length - 1].equals("IBFB")) {
-                System.out.println("ES DEL IBFB");
-            } else {
-                System.out.println("NO ES DEL IBFB");
-            }
-
-            for (int i = 26; i < headers.length - 1; i++) {
-                String titulo = headers[i];
-                if (!titulo.equals("")) {
-                    System.out.println(titulo);
-                    titulos.add(titulo);
-                }
-            }
-
-            for (int i = 0; i < 23; i++) {
-                csvReader.skipRecord();
-
-            }
-
-            System.out.println("TENEMOS traits: " + titulos.size());
-
-
-            int myrow = 0;
-            while (csvReader.readRecord()) {
-                String dataOfTraits = "";
-
-                String trial = csvReader.get("Trial");
-                String rep = csvReader.get("Rep");
-                String block = csvReader.get("Block");
-                String plot = csvReader.get("Plot");
-                String entry = csvReader.get("Entry");
-                String ped = csvReader.get("BreedersPedigree1");
-                String gid = csvReader.get("GID");
-
-
-                for (int i = 0; i < titulos.size(); i++) {
-
-                    String head = titulos.get(i).toString();
-
-                    int col = buscaCol(head);
-
-                    if (col >= 0) {
-                        String data = csvReader.get(head);
-                        modelo.setValueAt(data, myrow, col);
-
-                        dataOfTraits = dataOfTraits + " " + data;
-                    } else {
-                        modelo.addColumn(head);
-
-                        col = buscaCol(head);
-                        String data = csvReader.get(head);
-                        modelo.setValueAt(data, myrow, col);
-
-                        dataOfTraits = dataOfTraits + " " + data;
-
-                    }
-
-
-                }
-
-                myrow++;
-
-                System.out.println(trial + " " + rep + " " + block + " " + plot + " " + entry + " " + ped + " " + gid + dataOfTraits);
-            }
-
-            csvReader.close();
-
-        } catch (FileNotFoundException ex) {
-            System.out.println("FILE NOT FOUND. readDATAcsv. " + ex);
-
-        } catch (IOException e) {
-            System.out.println("IO EXCEPTION. readDATAcsv. " + e);
-        }
-    }
-    public int dameTotalDatos(File file) {
-        int total = 0;
-        try {
-            CsvReader csvReader = new CsvReader(file.toString());
-
-            for (int i = 0; i < 24; i++) {
-                csvReader.skipRecord();
-            }
-
-            while (csvReader.readRecord()) {
-                total++;
-            }
-        } catch (IOException ex) {
-            System.out.println("ERROR EN CONTAR REGISTROS CSV READER");
-            total = 0;
-        }
-
-        return total;
-    }
-
-    public int dameTotalColumnas(File file) {
-        int total = 0;
-        try {
-            CsvReader csvReader = new CsvReader(file.toString());
-
-            total = csvReader.getHeaderCount();
-
-
-        } catch (IOException ex) {
-            System.out.println("ERROR EN CONTAR REGISTROS CSV READER");
-            total = 0;
-        }
-
-        return total;
-    }
-*/
 }

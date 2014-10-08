@@ -1,6 +1,5 @@
 package com.efficio.fieldbook.web.trial.form;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 
 import java.util.Map;

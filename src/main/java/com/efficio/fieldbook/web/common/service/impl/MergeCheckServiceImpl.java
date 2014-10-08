@@ -43,7 +43,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 				intervalEntry++;
 			}
 			
-			if (shouldInsert /*&& primaryGermplasm != primaryList.get(primaryList.size()-1)*/) {
+			if (shouldInsert) {
 				shouldInsert = false;
 				List<ImportedGermplasm> checks = generateChecksToInsert(checkList, checkIndex, manner, newEntry);
 				checkIndex++;

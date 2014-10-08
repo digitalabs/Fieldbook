@@ -1788,8 +1788,6 @@ function recreateMethodCombo() {
 		data: '',
 		async: false,
 		success: function(data) {
-			//allNonGenerativeMethods
-			//favoriteNonGenerativeMethods
 			if (data.success == '1') {
 				if (createGermplasmOpened) {
 					refreshImportMethodCombo(data);
@@ -2687,7 +2685,6 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 					success : function(data) {
 						checkTypes = $.parseJSON(data.allCheckTypes);
 						suggestions = checkTypes;
-						// alert('here');
 					}
 				});
 	}
@@ -2765,31 +2762,6 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 
 		if($('.check-table-popover tbody tr').length != 0){
 				reloadCheckListTable();
-				/*
-				var checkDataTable = isNursery() ? selectedCheckListDataTable.getDataTable() : germplasmDataTable.getDataTable();
-
-				checkDataTable.$('.check-hidden').each(function(){
-
-
-				var currentCode = $(this).data('code');
-
-				for (i = 0; i < suggestions_obj.length; i++) {
-					var val = suggestions_obj[i].text;
-					var id = suggestions_obj[i].id;
-					selected = '';
-					if (currentCode == suggestions_obj[i].originalText){
-						selected = 'selected';
-						var $href = $(this).siblings().parent().find('.check-href');
-						$href.html(val);
-						$href.data('code', suggestions_obj[i].originalText);
-						$(this).data('code', suggestions_obj[i].originalText);
-						$(this).val(id);
-						break;
-					}
-				}
-
-			});
-			*/
 			//we need to get the real index of the check
 		}
 	}

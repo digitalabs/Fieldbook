@@ -608,7 +608,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.entrycode", null, locale), "entryCode"));
     		
     	}else if(type != null && type.equalsIgnoreCase(StudyType.T.getName())){
-    		//tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.check.trial", null, locale), "check"));
     		if(factorsList != null){
     			//we iterate the map for dynamic header of trial
     			for(int counter = 0 ; counter < factorsList.size() ; counter++){
@@ -861,7 +860,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             String checkId = getCheckId(DEFAULT_CHECK_VALUE, checksList);               
                      
             List<ImportedGermplasm> primaryList = userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-            ImportedGermplasm importedGermplasm = null;//primaryList.get(entryId-1);
+            ImportedGermplasm importedGermplasm = null;
             for(ImportedGermplasm impGerm : primaryList){
             	if(impGerm.getEntryId().intValue() == entryId.intValue()){
             		importedGermplasm = impGerm.copy();

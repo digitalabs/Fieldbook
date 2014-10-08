@@ -91,13 +91,6 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerTes
         }
     }
 
-    /*
-     * @Test public void testInvalidParseImportGerplasm(){
-     * ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-     * try{ importGermplasmFileService.doProcessNow(workbookInvalid, mainInfo);
-     * assertEquals(mainInfo.getFileIsValid(), false); }catch (Exception e) {
-     * LOG.error(e.getMessage(), e); } }
-     */
     /**
      * Test valid basic parse import gerplasm.
      */
@@ -270,21 +263,8 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerTes
             LOG.error(e.getMessage(), e);
         }
         form.changePage(1);
-        //assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68835-58-1-1-B"); // we check the parse data here
-        /* no more pagination
-        assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), Integer.valueOf(10));
-        assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 68815-25-PMI 3-UBN 6-B-B"); // we check the parse data here
-
-        form.setCurrentPage(2);
-        assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(11));
-        assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68815-51-PMI 2-UBN 2-2-B"); // we check the parse data here
-
-
-        assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), Integer.valueOf(20));
-        assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 67632-14-2-5-1-2-B"); // we check the parse data here
-         */
     }
 
     /**
@@ -303,25 +283,8 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerTes
             LOG.error(e.getMessage(), e);
         }
         form.changePage(1);
-        //assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68201-21-2-B-4-B-B"); // we check the parse data here
-        /* no more pagination
-        assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), Integer.valueOf(10));
-        assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 67632-14-2-5-1-2-B"); // we check the parse data here
-
-        form.setCurrentPage(2);
-        assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(11));
-        assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 67632-14-2-5-1-2-B"); // we check the parse data here
-
-        assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), Integer.valueOf(20));
-        assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 67632-14-2-5-1-2-B"); // we check the parse data here
-
-        form.setCurrentPage(3);
-        assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(21));
-        assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 67632-14-2-5-1-2-B1"); // we check the parse data here
-        assertEquals(form.getPaginatedImportedGermplasm().get(0).getCross(), "21"); // we check the parse data here
-		*/
     }
     
     @Test
@@ -340,7 +303,6 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerTes
         userSelection.setWorkbook(new org.generationcp.middleware.domain.etl.Workbook());
         List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
         
-        //factors.add(new MeasurementVariable());
         userSelection.getWorkbook().setFactors(factors);
         userSelection.getWorkbook().setVariates(new ArrayList<MeasurementVariable> ());
         userSelection.setImportedGermplasmMainInfo(mainInfo);

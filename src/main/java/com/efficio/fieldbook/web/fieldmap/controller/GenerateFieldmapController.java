@@ -137,7 +137,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                                             datasetId, geolocationId);
             if (trialInfo != null) {
                 this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-                //this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock(), trialInfo.getRowsPerPlot());
                 this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock());
                 this.userFieldmap.setNumberOfEntries(
                         (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
@@ -247,22 +246,12 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
         markDeletedPlots(form, form.getMarkedCells());
         
-
-//        List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
         List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabelsToBeAdded(true);
 
-        //we'll use vertical layouter for now
-        /*
-        Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
-                isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
-        */
         //we can add logic here to decide if its vertical or horizontal
         FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-        //
-        //	FieldMapUtilityHelper.markedDeletedPlot(this.userFieldmap.getFieldmap(),deletedPlot);
         Plot[][] plots = plotIterator.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, labels, userFieldmap.isTrial(), this.userFieldmap.getFieldmap());
-        //FieldMapUtilityHelper.markedDeletedPlot(this.userFieldmap.getFieldmap(),deletedPlot);
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);
         

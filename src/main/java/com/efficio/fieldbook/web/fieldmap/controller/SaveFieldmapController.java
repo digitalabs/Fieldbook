@@ -83,7 +83,6 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
             if (userFieldmap != null && userFieldmap.getSelectedFieldMaps() != null 
                     && !userFieldmap.getSelectedFieldMaps().isEmpty()) {
             	
-//                String fieldmapUUID = UUID.randomUUID().toString();
                 updateSelectedFieldMapInfo();
                 int userId = this.getCurrentIbdbUserId();
                 fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(
@@ -129,7 +128,6 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
                     trialInfo.setBlockName(userFieldmap.getBlockName());
                     trialInfo.setFieldName(userFieldmap.getFieldName());
                     trialInfo.setLocationName(userFieldmap.getLocationName());
-//                    trialInfo.setFieldmapUUID(fieldmapUUID);
                 }
             }
         }

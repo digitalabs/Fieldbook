@@ -136,7 +136,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 int fixTableRowSize = numberOfLabelPerRow;
                 PdfPTable table = new PdfPTable(fixTableRowSize);
 
-                float columnWidthSize = 265f;// 180f;
+                float columnWidthSize = 265f;
                 float[] widthColumns = new float[fixTableRowSize];
 
                 for (int counter = 0; counter < widthColumns.length; counter++) {

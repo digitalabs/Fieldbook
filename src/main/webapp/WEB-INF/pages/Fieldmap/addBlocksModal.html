@@ -83,7 +83,6 @@
 			success: function(data) {
 				if(data == 'success'){
 					showSuccessfulMessage("page-block-message-modal", blockAddedSuccessfully);
-						//$('#newBlockName').val('');
 						$('#addBlocksModal').modal('toggle');
 					}else{
 						showInvalidInputMessage(blockNameDuplicateError);

@@ -79,7 +79,6 @@
             if (!$scope.settings.treatmentLevelPairs[key]) {
                 return [];
             } else {
-                /*var arrayCopy = angular.copy($scope.settings.treatmentLevelPairs[key].vals());*/
                 var options = _.filter($scope.settings.treatmentLevelPairs[key].vals(), function (entry) {
                     var found = false;
                     angular.forEach($scope.data.currentData, function (value, key2) {
@@ -130,7 +129,6 @@
 
             if ($scope.data.currentData[key] && $scope.data.currentData[key].variableId) {
                 options.initSelection = function(element, callback) {
-                    /*callback($scope.data.currentData[key].variableId);*/
                     angular.forEach($scope.generateDropdownList(key), function(value) {
                         if (value.variable.cvTermId === $scope.data.currentData[key].variableId) {
                             callback(value);
@@ -208,7 +206,7 @@
 
             TrialManagerDataService.indicateUnappliedChangesAvailable();
 
-        }; // end $scope.onLevelChange
+        }; // end 
 
 
     }]);

@@ -1377,57 +1377,6 @@ public class SettingsUtil {
         return settingDetail;
     }
 
-    private static Factor createFactor(SettingDetail settingDetail, UserSelection userSelection,
-                                       org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, int index) {
-
-        SettingVariable variable = settingDetail.getVariable();
-        if (userSelection != null) {
-            StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-            variable.setPSMRFromStandardVariable(standardVariable);
-            //need to get the name from the session
-            variable.setName(userSelection.getTreatmentFactors().get(index).getVariable().getName());
-        }
-        Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
-                variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
-        return factor;
-    }
-
-    private static int getTreatmentGroup(UserSelection userSelection, List<SettingDetail> treatmentFactorList, int index) {
-        Integer currentGroup;
-        if (userSelection != null) {
-            currentGroup = userSelection.getTreatmentFactors().get(index).getGroup();
-        } else {
-            currentGroup = treatmentFactorList.get(index).getGroup();
-        }
-        return currentGroup != null ? currentGroup : -1;
-    }
-
-    private static TreatmentFactor convertTreatmentFactorDetailToTreatmentFactor(TreatmentFactorDetail detail, UserSelection userSelection,
-                                                                                 org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
-
-        Factor levelFactor = createFactor(detail.getLevelId(), detail.getLevelName(), userSelection, fieldbookMiddlewareService);
-        Factor valueFactor = createFactor(detail.getAmountId(), detail.getAmountName(), userSelection, fieldbookMiddlewareService);
-        levelFactor.setTreatmentLabel(detail.getLevelName());
-        valueFactor.setTreatmentLabel(detail.getLevelName());
-
-        return new TreatmentFactor(levelFactor, valueFactor, Integer.valueOf(detail.getLevelValue()), detail.getAmountValue());
-    }
-
-    private static Factor createFactor(int id, String name, UserSelection userSelection,
-                                       org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
-
-        StandardVariable variable = null;
-        if (userSelection != null) {
-            variable = getStandardVariable(id, userSelection, fieldbookMiddlewareService);
-        }
-        if (variable != null) {
-            return new Factor(name, variable.getDescription(), variable.getProperty().getName(),
-                    variable.getScale().getName(), variable.getMethod().getName(),
-                    variable.getPhenotypicType().name(), variable.getDataType().getName(), id);
-        }
-        return null;
-    }
-
     public static StudyDetails convertWorkbookToStudyDetails(Workbook workbook, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                              FieldbookService fieldbookService, UserSelection userSelection)
             throws MiddlewareQueryException {

@@ -220,13 +220,14 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
                     return ($.fn.select2.defaults.matcher($.trim(query.term), $.trim(item.text)));
 
                 });
-                if (data.results.length === 0) {
-                    data.results.unshift({id: query.term, text: query.term});
-                }
-
                 query.callback(data);
-            }
-
+            },
+            //allow new values which is a substring of the existing options i.e. AC should be allowed even if there is ACCNO 
+            createSearchChoice: function(term, data) { 
+        		if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) {
+        			return {id:term, text:term};
+    			} 
+    		}
         }).on("change", function () {
             getStandardVariableDetails($("#combo" + name).select2("data").id, $("#combo" + name).select2("data").text);
             var tempId = $("#combo" + name).select2("data").id
@@ -246,13 +247,14 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
                     return ($.fn.select2.defaults.matcher($.trim(query.term), $.trim(item.text)));
 
                 });
-                if (allowTypedValues == true) {
-                    if (data.results.length === 0)
-                        data.results.unshift({id: query.term, text: query.term});
-                }
                 query.callback(data);
-            }
-
+            },
+            //allow new values which is a substring of the existing options i.e. AC should be allowed even if there is ACCNO 
+            createSearchChoice: function(term, data) { 
+        		if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0 && allowTypedValues) {
+        			return {id:term, text:term};
+    			} 
+    		}
         }).on("change", function () {
             $("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo" + name).select2("data").description);
             if (name == 'TraitClass') {

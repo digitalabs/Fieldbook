@@ -167,4 +167,15 @@ public class SettingDetail implements Serializable {
 		}
 		return this.value;
 	}
+
+	@Override
+	public String toString() {
+		return "SettingDetail [variable=" + variable + ", possibleValues=" + possibleValues
+				+ ", possibleValuesFavorite=" + possibleValuesFavorite + ", value=" + value
+				+ ", isDeletable=" + isDeletable + ", isFavorite=" + isFavorite + ", isHidden="
+				+ isHidden + ", order=" + order + ", group=" + group + ", pairedVariable="
+				+ pairedVariable + "]";
+	}
+    
+    
 }

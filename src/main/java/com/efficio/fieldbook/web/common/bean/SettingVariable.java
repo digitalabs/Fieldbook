@@ -290,5 +290,13 @@ public class SettingVariable implements Serializable{
 	public void setStoredInId(Integer storedInId) {
 		this.storedInId = storedInId;
 	}
+
+
+	@Override
+	public String toString() {
+		return "SettingVariable [cvTermId=" + cvTermId + ", name=" + name + ", description="
+				+ description + ", property=" + property + ", scale=" + scale + ", method="
+				+ method + "]";
+	}
 	
 }

@@ -286,6 +286,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             , BindingResult result, Model model) {
         OntologyBrowserValidator validator = new OntologyBrowserValidator();
         boolean isPopup = false;
+        int preselectVariableId = 0;
         //validations for delete and update
         if (form.getIsDelete().equals(1)) {
             validateDelete(form, result);
@@ -327,10 +328,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     form.setVariableName(standardVariable.getName());
                 }
                 form.setAddSuccessful("1");
-                model.addAttribute("isPopup", form.getFromPopup());
+                model.addAttribute("isPopup", form.getFromPopup());                
                 
                 if(form.getFromPopup() != null && form.getFromPopup().equalsIgnoreCase("1")){
                 	isPopup = true;
+                	preselectVariableId = form.getPreselectVariableId();
                 }
            } catch (MiddlewareQueryException e) {
                LOG.error(e.getMessage(), e);
@@ -342,7 +344,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getMessage(), null, "\n"));
            }
         }
-        return showManageVariable(form, isPopup, 0, model);
+        return showManageVariable(form, isPopup, preselectVariableId, model);
     }
     
     /**
@@ -1087,4 +1089,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         
         return result;
     }
+
+
+	protected void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
+	}
+    
+    
 }

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import junit.framework.Assert;
+
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.VariableConstraints;
@@ -31,11 +33,16 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 
 /**
  * The Class OntologyManagerControllerTest.
@@ -53,6 +60,11 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
     
     /** The standard variable. */
     private StandardVariable standardVariable;
+    
+    private OntologyService mockOntologyService;
+    private OntologyBrowserForm form;
+    private Term term;
+    private OntologyManagerController ontologyManagerController;
     
     /**
      * Sets the up.
@@ -93,6 +105,11 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
+        
+        ontologyManagerController = new OntologyManagerController();
+    	form = new OntologyBrowserForm();
+    	mockOntologyService = Mockito.mock(OntologyService.class);
+    	term = Mockito.mock(Term.class);
     }
 
     /**
@@ -133,4 +150,47 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
         assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
         assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
     } 
+    
+    @Test
+    public void testSaveNewVariableConfirmPreselectVariableIdIsMaintainedIfFromPopup() throws MiddlewareQueryException{
+    	int variableId = 10180;
+    	String dataTypeId = "1";
+    	
+    	Mockito.when(term.getName()).thenReturn("Categorical");
+    	Mockito.when(mockOntologyService.getStandardVariable(10180)).thenReturn(Mockito.mock(StandardVariable.class));
+    	Mockito.when(mockOntologyService.getTermById(Integer.parseInt(dataTypeId))).thenReturn(term);
+
+    	BindingResult result = Mockito.mock(BindingResult.class);
+    	Model model = new ExtendedModelMap();
+    	form.setIsDelete(0);
+    	form.setFromPopup("1");
+    	form.setPreselectVariableId(variableId);
+    	form.setVariableId(variableId);
+    	form.setDataTypeId(dataTypeId);
+    	ontologyManagerController.setOntologyService(mockOntologyService);
+    	ontologyManagerController.saveNewVariable(form, result, model);
+    	Assert.assertEquals("Should return in model the same preselect variable id that was set in the form when it is a popup", variableId, model.asMap().get("preselectVariableId"));
+    }
+    @Test
+    public void testSaveNewVariableConfirmPreselectVariableIdIsIsNotMaintainedIfNotFromPopup() throws MiddlewareQueryException{
+    	int variableId = 10180;
+    	String dataTypeId = "1";
+    	
+    	Mockito.when(term.getName()).thenReturn("Categorical");
+    	Mockito.when(mockOntologyService.getStandardVariable(10180)).thenReturn(Mockito.mock(StandardVariable.class));
+    	Mockito.when(mockOntologyService.getTermById(Integer.parseInt(dataTypeId))).thenReturn(term);
+
+
+    	BindingResult result = Mockito.mock(BindingResult.class);
+    	Model model = new ExtendedModelMap();
+    	form.setIsDelete(0);
+    	form.setFromPopup("0");
+    	form.setPreselectVariableId(variableId);
+    	form.setVariableId(variableId);
+    	form.setDataTypeId(dataTypeId);
+    	ontologyManagerController.setOntologyService(mockOntologyService);
+    	ontologyManagerController.saveNewVariable(form, result, model);
+
+    	Assert.assertEquals("Should return in model the 0 as preselect variable id when it is not from a popup", 0, model.asMap().get("preselectVariableId"));
+    }
 }

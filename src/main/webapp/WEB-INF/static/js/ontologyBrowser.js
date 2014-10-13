@@ -438,18 +438,19 @@ function recreateCombo(combo, data) {
 	//recreate the dropdown
 	$("#combo" + combo).select2({
 			query: function (query) {
-	              var data = {results: suggestions_obj}, i, j, s;
-	              // return the array that matches
-	              data.results = $.grep(data.results,function(item,index) {
-	                return ($.fn.select2.defaults.matcher(query.term,item.text));
-
-	              });
-
-	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-
-	                query.callback(data);
-
-	            }
+				var data = {results: suggestions_obj}, i, j, s;
+				// return the array that matches
+				data.results = $.grep(data.results,function(item,index) {
+					return ($.fn.select2.defaults.matcher(query.term,item.text));
+				});
+				query.callback(data);
+	        },
+            //allow new values which is a substring of the existing options i.e. AC should be allowed even if there is ACCNO 
+            createSearchChoice: function(term, data) { 
+                if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) {
+                    return {id:term, text:term};
+                } 
+            }
 	});
 	var newData = { 'id' : data.id,
 			  'text' : data.name + getOntologySuffix(data.id),
@@ -854,10 +855,14 @@ function recreate(combo, suggestions_obj) {
                 return ($.fn.select2.defaults.matcher(query.term,item.text));
 
               });
-              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-
-                query.callback(data);
-            }
+              query.callback(data);
+        },
+      	//allow new values which is a substring of the existing options i.e. AC should be allowed even if there is ACCNO 
+        createSearchChoice: function(term, data) { 
+            if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) {
+                return {id:term, text:term};
+            } 
+        }
 	});
 }
 
@@ -950,12 +955,14 @@ function recreateComboAfterUpdate(combo, data) {
 	                return ($.fn.select2.defaults.matcher(query.term,item.text));
 
 	              });
-
-	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-
-	                query.callback(data);
-
-	            }
+	              query.callback(data);
+	        },
+	        //allow new values which is a substring of the existing options i.e. AC should be allowed even if there is ACCNO 
+            createSearchChoice: function(term, data) { 
+                if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) {
+                    return {id:term, text:term};
+                } 
+            }
 	});
 	var newData = { 'id' : data.id,
 			  'text' : data.name + getOntologySuffix(data.id),
@@ -992,16 +999,14 @@ function recreateVariableNameCombo(combo, id, name) {
 	                return ($.fn.select2.defaults.matcher(query.term,item.text));
 
 	              });
-
-	              if (data.results.length === 0)
-	            	  {
-	            	  	data.results.unshift({id:query.term,text:query.term});
-
-	            	  }
-
-	                query.callback(data);
-
-	            }
+	              query.callback(data);
+	        },
+	        //allow new values which is a substring of the existing options i.e. AC should be allowed even if there is ACCNO 
+            createSearchChoice: function(term, data) { 
+                if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) {
+                    return {id:term, text:term};
+                } 
+            }
 	});
 
 	var newData = { 'id' : id,

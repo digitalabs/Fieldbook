@@ -74,21 +74,23 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 			//we set the reminder
 			$('#ontology-detail-tabs').empty().append($('.variable-detail-info').html());
 			$('#variable-details').html('');
-			if($('#heading-modal').text() == addNurseryLevelSettings)
-					$('#reminder-placeholder').html(reminderNursery);
-			else if($('#heading-modal').text() == addPlotLevelSettings)
-					$('#reminder-placeholder').html(reminderPlot);
-			else if($('#heading-modal').text() == addBaselineTraits)
-					$('#reminder-placeholder').html(reminderTraits);
-			else if ($('#heading-modal').text() == addTreatmentFactors)
-					$('#reminder-placeholder').html(reminderTreatmentFactors);
+			if($('#heading-modal').text() == addNurseryLevelSettings) {
+				$('#reminder-placeholder').html(reminderNursery);
+			} else if($('#heading-modal').text() == addPlotLevelSettings) {
+				$('#reminder-placeholder').html(reminderPlot);
+			} else if($('#heading-modal').text() == addBaselineTraits) {
+				$('#reminder-placeholder').html(reminderTraits);
+			} else if ($('#heading-modal').text() == addTreatmentFactors) {
+				$('#reminder-placeholder').html(reminderTreatmentFactors);
+			}
 		}
 	}
 }
 
 function viewTabs(variableName, variableId) {
-	if(false && isSearchTab == true)
+	if(false && isSearchTab == true) {
 		return;
+	}
 	isSearchTab = true;
 	$.ajax({
 		url: '/Fieldbook/OntologyBrowser/details/' + variableId,

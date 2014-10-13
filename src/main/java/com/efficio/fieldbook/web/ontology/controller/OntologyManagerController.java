@@ -677,7 +677,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<Term>();
     }
     
     
@@ -703,7 +703,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<Term>();
     }
     
     
@@ -730,7 +730,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<Term>();
     }
 
     private List<TraitClassReference> getAllTraitClassesFromHierarchy(List<TraitClassReference> refList) 
@@ -1078,10 +1078,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         
         try {
         	boolean isValidDelete = ontologyService.validateDeleteStandardVariableEnumeration(Integer.parseInt(standardVariableId),Integer.parseInt(enumerationId));
-        	if(isValidDelete)
+        	if(isValidDelete) {
         		result.put("status", "1");
-        	else
+        	}
+        	else {
         		result.put("status", "0");
+        	}
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("status", "0");          

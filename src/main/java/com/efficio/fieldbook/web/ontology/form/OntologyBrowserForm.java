@@ -102,6 +102,8 @@ public class OntologyBrowserForm{
     
     private String fromPopup;
     
+    private int preselectVariableId;
+    
     
     
     public String getFromPopup() {
@@ -119,7 +121,7 @@ public class OntologyBrowserForm{
      */
     public String getHasError() {
                 return hasError;
-        }
+    }
 
     /**
      * Sets the checks for error.
@@ -588,6 +590,14 @@ public class OntologyBrowserForm{
      */
     public void setEnumerations(String enumerations) {
         this.enumerations = enumerations;
-    } 
-    
+    }
+
+	public int getPreselectVariableId() {
+		return preselectVariableId;
+	}
+
+	public void setPreselectVariableId(int preselectVariableId) {
+		this.preselectVariableId = preselectVariableId;
+	} 
+        
 }

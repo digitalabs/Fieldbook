@@ -178,37 +178,10 @@ function getOntologySuffix(id){
 
 //function to create the select2 combos
 function initializeVariable(variableSuggestions, variableSuggestions_obj, description, name, allowTypedValues) {
-
-    if (name.indexOf('TraitClass') > -1 && variableSuggestions_obj.length == 1 || variableSuggestions_obj.length == 0) {
-        //initialize the arrays that would contain json data for the combos
-        if (description == "description") {
-            $.each(variableSuggestions, function (index, value) {
-                variableSuggestions_obj.push({ 'id': value.id,
-                    'text': value.name + getOntologySuffix(value.id),
-                    'description': value.description
-                });
-
-            });
-        } else if (name == "Property") {
-            $.each(variableSuggestions, function (index, value) {
-                variableSuggestions_obj.push({ 'id': value.id,
-                    'text': value.name + getOntologySuffix(value.id),
-                    'description': value.definition,
-                    'traitId': value.isAId,
-                    'cropOntologyId': value.cropOntologyId
-                });
-
-            });
-        } else {
-            $.each(variableSuggestions, function (index, value) {
-                variableSuggestions_obj.push({ 'id': value.id,
-                    'text': value.name + getOntologySuffix(value.id),
-                    'description': value.definition
-                });
-
-            });
-        }
-    }
+	
+	//set json data
+	variableSuggestions_obj = initializeJsonDataForCombos(variableSuggestions, variableSuggestions_obj, description, name);
+    
     //create the select2 combo
     //if combo to create is the variable name, add an onchange event to fill up all the fields of the selected variable
     if (name == "VariableName") {
@@ -255,81 +228,134 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
         			return {id:term, text:term};
     			} 
     		}
-        }).on("change", function () {
-            $("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo" + name).select2("data").description);
-            if (name == 'TraitClass') {
-                filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
-            }
-            else if (name == 'Property') {
-                $("#cropOntologyDisplay").html($("#combo" + name).select2("data").cropOntologyId);
-            }
-            if (name.match("^Manage")) {
-                $("#" + "page-message-" + lowerCaseFirstLetter(name) + "-modal").html("");
-                if ($("#combo" + name).select2("data").description) {
-                    //edit mode
-                    $("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo" + name).select2("data").id);
-                    $("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo" + name).select2("data").text.replace(" (Shared)", ""));
-                    $("#btnAdd" + name).hide();
-                    $("#btnUpdate" + name).show();
-                    $("#btnDelete" + name).show();
-                    $("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo" + name).select2("data").text.replace(" (Shared)", ""));
-
-                    //add the loading of the linked variables here
-                    if (allowTypedValues) {
-                        retrieveLinkedVariables(name, $("#combo" + name).select2("data").id);
-                    }
-
-                    if (name == 'ManageTraitClass') {
-                        //setCorrespondingTraitClass($("#combo"+name).select2("data").id);
-                        var count = 0;
-                        var traitId = $("#combo" + name).select2("data").id;
-                        if (traitId != null && traitId != '') {
-                            var nodeKeyFull = getNodeKeyFromTraitClass(traitId, 'manageParentTraitClassBrowserTree')
-
-                            var elem = nodeKeyFull.split("_");
-                            var count = 0;
-                            var prevTraitId;
-                            for (count = 0; count < elem.length; count++) {
-
-                                if (traitId == elem[count])
-                                    break;
-                                else
-                                    prevTraitId = elem[count];
-                            }
-
-                            for (count = 0; count < traitClassesSuggestions_obj.length; count++) {
-                                if (traitClassesSuggestions_obj[count].id == prevTraitId) {
-                                    dataVal = traitClassesSuggestions_obj[count];
-                                    break;
-                                }
-                            }
-                            $("#comboManageParentTraitClass").select2('data', dataVal).trigger('change');
-                        }
-                    }
-                    if (name == 'ManageProperty') {
-                        setCorrespondingTraitClass($("#combo" + name).select2("data").id);
-                        if (parseInt($("#combo" + name).select2("data").id) > 0) {
-                            disablePropertyFields();
-                        } else {
-                            enablePropertyFields();
-                        }
-                    }
-
-                } else { //add mode
-                    if (name != 'ManageProperty') {
-                        clearForm(lowerCaseFirstLetter(name) + "Form");
-                    }
-                    $("#" + lowerCaseFirstLetter(name) + "Id").val('');
-                    $("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo" + name).select2("data").id);
-                    $("#btnAdd" + name).show();
-                    $("#btnUpdate" + name).hide();
-                    $("#btnDelete" + name).hide();
-                    $("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo" + name).select2("data").id);
-                    $("#manageLinkedVariableList").html("");
-                }
-            }
+        }).on('change', function () {
+        	setOnChangeSettingsOfOntologyCombos(name, allowTypedValues);
         });
     }
+}
+
+function initializeJsonDataForCombos(variableSuggestions, variableSuggestions_obj, description, name) {
+	if (name.indexOf('TraitClass') > -1 && variableSuggestions_obj.length == 1 || variableSuggestions_obj.length == 0) {
+        //initialize the arrays that would contain json data for the combos
+        if (description == 'description') {
+            $.each(variableSuggestions, function (index, value) {
+                variableSuggestions_obj.push({ 'id': value.id,
+                    'text': value.name + getOntologySuffix(value.id),
+                    'description': value.description
+                });
+
+            });
+        } else if (name == 'Property') {
+            $.each(variableSuggestions, function (index, value) {
+                variableSuggestions_obj.push({ 'id': value.id,
+                    'text': value.name + getOntologySuffix(value.id),
+                    'description': value.definition,
+                    'traitId': value.isAId,
+                    'cropOntologyId': value.cropOntologyId
+                });
+
+            });
+        } else {
+            $.each(variableSuggestions, function (index, value) {
+                variableSuggestions_obj.push({ 'id': value.id,
+                    'text': value.name + getOntologySuffix(value.id),
+                    'description': value.definition
+                });
+
+            });
+        }
+    }
+	return variableSuggestions_obj;
+}
+
+function setOnChangeSettingsOfOntologyCombos(name, allowTypedValues) {
+	//set the description value of the combo selected 
+	$('#' + lowerCaseFirstLetter(name) + 'Description').val($('#combo' + name).select2('data').description);
+	
+    if (name == 'TraitClass') {
+    	//filter property combo based on selected trait class
+        filterPropertyCombo(treeDivId, 'comboTraitClass', 'traitClassDescription', $('#comboTraitClass').select2('data').id, true);
+    } else if (name == 'Property') { 
+        $('#cropOntologyDisplay').html($('#combo' + name).select2('data').cropOntologyId);
+    }
+    
+    if (name.match('^Manage')) {
+        $('#' + 'page-message-' + lowerCaseFirstLetter(name) + '-modal').html('');
+        if ($('#combo' + name).select2('data').description) {
+            //edit mode
+        	setComboValuesAndVisibilityOfButtons(name, true);
+
+            //add the loading of the linked variables here
+            if (allowTypedValues) {
+                retrieveLinkedVariables(name, $('#combo' + name).select2('data').id);
+            }
+
+            if (name == 'ManageTraitClass') {
+                var traitId = $('#combo' + name).select2('data').id;
+                if (traitId != null && traitId != '') {
+                	setParentTraitClassSelectedValue(traitId);
+                }
+            }
+            
+            if (name == 'ManageProperty') {
+                setCorrespondingTraitClass($('#combo' + name).select2('data').id);
+                if (parseInt($('#combo' + name).select2('data').id) > 0) {
+                    disablePropertyFields();
+                } else {
+                    enablePropertyFields();
+                }
+            }
+
+        } else { //add mode
+            if (name != 'ManageProperty') {
+                clearForm(lowerCaseFirstLetter(name) + 'Form');
+            }
+            
+            setComboValuesAndVisibilityOfButtons(name, false);
+            $('#manageLinkedVariableList').html('');
+        }
+    }
+}
+
+function setComboValuesAndVisibilityOfButtons(name, isUpdate) {
+	if (isUpdate) {
+		$('#' + lowerCaseFirstLetter(name) + 'Id').val($('#combo' + name).select2('data').id);
+	    $('#' + lowerCaseFirstLetter(name) + 'Name').val($('#combo' + name).select2('data').text.replace(' (Shared)', ''));
+	    $('#btnAdd' + name).hide();
+	    $('#btnUpdate' + name).show();
+	    $('#btnDelete' + name).show();
+	    $('#' + lowerCaseFirstLetter(name) + 'NameText').html($('#combo' + name).select2('data').text.replace(' (Shared)', ''));
+	} else {
+		$('#' + lowerCaseFirstLetter(name) + 'Id').val('');
+        $('#' + lowerCaseFirstLetter(name) + 'Name').val($('#combo' + name).select2('data').id);
+        $('#btnAdd' + name).show();
+        $('#btnUpdate' + name).hide();
+        $('#btnDelete' + name).hide();
+        $('#' + lowerCaseFirstLetter(name) + 'NameText').html($('#combo' + name).select2('data').id);
+	}
+}
+
+function setParentTraitClassSelectedValue(traitId) {
+	var nodeKeyFull = getNodeKeyFromTraitClass(traitId, 'manageParentTraitClassBrowserTree');
+
+    var elem = nodeKeyFull.split('_');
+    var count = 0;
+    var prevTraitId = 0;
+    for (count = 0; count < elem.length; count++) {
+        if (traitId == elem[count]) {
+            break;
+        } else {
+            prevTraitId = elem[count];
+        }
+    }
+
+    for (count = 0; count < traitClassesSuggestions_obj.length; count++) {
+        if (traitClassesSuggestions_obj[count].id == prevTraitId) {
+            dataVal = traitClassesSuggestions_obj[count];
+            break;
+        }
+    }
+    $('#comboManageParentTraitClass').select2('data', dataVal).trigger('change');
 }
 
 function disablePropertyFields() {

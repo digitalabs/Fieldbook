@@ -252,9 +252,6 @@
 
     </div>
 </div>
-<div class="row">
-    <div  style="display:none"  id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
-</div>
 <a style="display: none" id="ontologyBaseUrl" href="/OntologyManager/manage" th:href="@{/OntologyManager/manage/}">test</a>
 </div>
 <div layout:fragment="page-script">
@@ -546,4 +543,7 @@ function addCatVar(label, description, id) {
 
 //]]>
 </script>
+<div class="row">
+    <div  style="display:none"  id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
+</div>
 </div>

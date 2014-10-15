@@ -648,8 +648,7 @@ function toggleLocationDropdown(rowIndex) {
 
 	// get previously selected value
 	if ($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data')) {
-		selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-			select2('data').id;
+		selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).select2('data').id;
 	}
 
 	// reset select2 combo

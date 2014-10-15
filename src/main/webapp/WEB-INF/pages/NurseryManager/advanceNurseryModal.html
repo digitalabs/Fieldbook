@@ -216,7 +216,7 @@
 		/*global getJquerySafeId, recreateLocationCombo, recreateModalMethodCombo, showCorrectLocationCombo*/
 		/*global showCorrectMethodCombo, checkMethod, lineMethod, plotMethod, validatePlantsSelected*/
 		/*global oldMethodSelected, oldLineSelected, lineMethod, plotMethod, validatePlantsSelected*/
-		/*global methodSuggestions*/
+		/*global methodSuggestions, openManageLocations, openManageMethods*/
 
 		// FIXME These variables should be camel case, and should not be global. Dangerous to fix right now,
 		// because they are used in so many other files. Don't use ignore! This should be fixed!
@@ -333,24 +333,28 @@
 						
 			initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
 			initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
-			
-			if($('input.study-level-method') !== null && $('input.study-level-method').val() !== '' && $('input.study-level-method').val() !== '0'){
-				oldMethodSelected = $('input.study-level-method').val()
+
+            var inputStudyLevelMethodElm = $('input.study-level-method');
+			if(inputStudyLevelMethodElm !== null && inputStudyLevelMethodElm.val() !== '' && inputStudyLevelMethodElm.val() !== '0'){
+				oldMethodSelected = inputStudyLevelMethodElm.val();
 				$('input.advance-fav-method-checkbox').prop( 'checked', $('input.study-level-method-checkbox').is(':checked'));
 			}					
             var locationRowIndex = getLocationRowIndex();
 			if(locationRowIndex > -1){
-				if($('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value')).length !== 0 && $('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value')).select2('data') !== null){
-					$('input.advance-favorite-location-checkbox').prop('checked', $('#'+ getJquerySafeId('studyLevelVariables' + locationRowIndex + '.favorite1')).is(':checked'));
+                var studyLevelVariableRowIndexIdValueElm = $('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value'));
+                var studyLevelVariableRowIndexFavoriteElm = $('#'+ getJquerySafeId('studyLevelVariables' + locationRowIndex + '.favorite1'));
+                if(studyLevelVariableRowIndexIdValueElm.length !== 0 && studyLevelVariableRowIndexIdValueElm.select2('data') !== null){
+                    $('input.advance-favorite-location-checkbox').prop('checked', studyLevelVariableRowIndexFavoriteElm.is(':checked'));
 					showCorrectLocationCombo();
-					var chosenSettingsLocationId = $('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value')).select2('data').id,
+                    var chosenSettingsLocationId = studyLevelVariableRowIndexIdValueElm.select2('data').id,
 						indexCounter = 0;
-					if($("#"+ getJquerySafeId('studyLevelVariables' + locationRowIndex + '.favorite1')).is(':checked')){
+					if(studyLevelVariableRowIndexFavoriteElm.is(':checked')){
 						//meaning favorite is checked
-						$('#harvestLocationIdFavorite').select2('data', $('#'+ getJquerySafeId('studyLevelVariables'+ locationRowIndex + '.value')).select2('data'));
+						var harvestLocIdFavElm = $('#harvestLocationIdFavorite');
+                        harvestLocIdFavElm.select2('data', studyLevelVariableRowIndexIdValueElm.select2('data'));
 						for(indexCounter = 0 ; indexCounter < locationSuggestionsFavObj.length; indexCounter++){
 							if(locationSuggestionsFavObj[indexCounter].id == chosenSettingsLocationId){
-								$('#harvestLocationIdFavorite').select2('data',locationSuggestionsFavObj[indexCounter]);
+                                harvestLocIdFavElm.select2('data',locationSuggestionsFavObj[indexCounter]);
 								break;
 							}            							
 						}
@@ -375,20 +379,22 @@
 			$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);
 			changeAdvanceBreedingMethod();
 
+            var advNurseryModalElm = $('#advanceNurseryModal');
+
             // remove any other listeners for the location update
             $(document).off('location-update');
             $(document).on('location-update', recreateLocationCombo);
 			$('.advance-manage-method').on('click', function(){
-				$('#advanceNurseryModal').modal('hide');
-                $('#advanceNurseryModal').data('open', '1');
+                advNurseryModalElm.modal('hide');
+                advNurseryModalElm.data('open', '1');
 				setTimeout(openManageMethods, 500);
 			});
 			$('.advance-manage-location').on('click', function(){
-				$('#advanceNurseryModal').modal('hide');
-				$('#advanceNurseryModal').data('open', '1');
+                advNurseryModalElm.modal('hide');
+                advNurseryModalElm.data('open', '1');
 				setTimeout(openManageLocations, 500);
 			});
-			$('#advanceNurseryModal').data('open', '0');
+            advNurseryModalElm.data('open', '0');
 			
 		});
 	//]]>

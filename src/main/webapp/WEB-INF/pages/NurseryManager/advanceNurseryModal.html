@@ -379,7 +379,8 @@
             $(document).off('location-update');
             $(document).on('location-update', recreateLocationCombo);
 			$('.advance-manage-method').on('click', function(){
-				$('#advanceNurseryModal').modal('hide')			$('#advanceNurseryModal').data('open', '1');
+				$('#advanceNurseryModal').modal('hide');
+                $('#advanceNurseryModal').data('open', '1');
 				setTimeout(openManageMethods, 500);
 			});
 			$('.advance-manage-location').on('click', function(){

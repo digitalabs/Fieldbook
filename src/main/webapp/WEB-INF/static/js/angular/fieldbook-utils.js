@@ -316,16 +316,24 @@
 
                     };
 
+                    var useFavorites = function() {
+                        if (null !== $scope.variableDefinition.possibleValuesFavorite) {
+                            // compute the value of $scope.localData.useFavorites
+                            if (!auxParams[$scope.variableDefinition.variable.cvTermId]) {
+                                return $scope.variableDefinition.possibleValuesFavorite.length > 0;
+                            } else {
+                                return !auxParams[$scope.variableDefinition.variable.cvTermId].initialData &&
+                                    ($scope.variableDefinition.possibleValuesFavorite.length > 0);
+                            }
+                        } else {
+                            return false;
+                        }
+                    };
+
                     if ($scope.hasDropdownOptions) {
                         var auxParams = $scope.auxParams();
 
-                        // compute the value of $scope.localData.useFavorites
-                        if (!auxParams[$scope.variableDefinition.variable.cvTermId]) {
-                            $scope.localData.useFavorites = $scope.variableDefinition.possibleValuesFavorite.length > 0;
-                        } else {
-                            $scope.localData.useFavorites = !auxParams[$scope.variableDefinition.variable.cvTermId].initialData &&
-                                ($scope.variableDefinition.possibleValuesFavorite.length > 0);
-                        }
+                        $scope.localData.useFavorites = useFavorites();
 
                         $scope.updateDropdownValues();
 

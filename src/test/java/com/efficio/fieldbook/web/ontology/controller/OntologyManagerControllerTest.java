@@ -66,6 +66,10 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
     private Term term;
     private OntologyManagerController ontologyManagerController;
     
+    private static final int VARIABLE_ID = 1;
+	private static final String VARIABLE_NAME = "NREP";
+	private static final String VARIABLE_DEFINITION = "Number of replications in an experiment";
+    
     /**
      * Sets the up.
      */
@@ -192,5 +196,37 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
     	ontologyManagerController.saveNewVariable(form, result, model);
 
     	Assert.assertEquals("Should return in model the 0 as preselect variable id when it is not from a popup", 0, model.asMap().get("preselectVariableId"));
+    }
+    
+    @Test
+    public void testValidateNewVariableNameExisting() throws MiddlewareQueryException, Exception {
+    	
+    	Term termWithValue = new Term(VARIABLE_ID, VARIABLE_NAME, VARIABLE_DEFINITION);
+    	BindingResult result = null;
+    	Model model = null;
+    	
+    	form.setVariableName(VARIABLE_NAME);
+    	Mockito.when(mockOntologyService.findTermByName(VARIABLE_NAME, CvId.VARIABLES)).thenReturn(termWithValue);
+    	
+    	//set the mocked ontology service in the controller
+    	ontologyManagerController.setOntologyService(mockOntologyService);
+    	String status = ontologyManagerController.validateNewVariableName(form, result, model);
+    	
+    	Assert.assertEquals("error", status);
+    }
+    
+    @Test
+    public void testValidateNewVariableNameNonExisting() throws MiddlewareQueryException, Exception {
+    	BindingResult result = null;
+    	Model model = null;
+    	String variableName = VARIABLE_NAME + new Random().nextInt();
+    	
+    	form.setVariableName(variableName);
+    	Mockito.when(mockOntologyService.findTermByName(variableName, CvId.VARIABLES)).thenReturn(null);
+    	
+    	ontologyManagerController.setOntologyService(mockOntologyService);
+    	String status = ontologyManagerController.validateNewVariableName(form, result, model);
+    	
+    	Assert.assertEquals("success", status);
     }
 }

@@ -501,7 +501,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 //delete valid value
                 ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
                 List<Enumeration> enumerationVar = stdVariable.getEnumerations();
-                List<Enumeration> newStdEnumList = new ArrayList();
+                List<Enumeration> newStdEnumList = new ArrayList<Enumeration>();
                 for(int i = 0 ; i < enumerationVar.size() ; i++){
                 	Enumeration enumVar = enumerationVar.get(i);
                 	if(enumeration.getId() != null && enumVar.getId().intValue() == enumeration.getId().intValue()){
@@ -530,7 +530,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     private static List<EnumerationOperation> convertToEnumerationOperation(String enumerations) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(enumerations, new TypeReference<List<EnumerationOperation>>() { });
+            return mapper.readValue(enumerations, new TypeReference<List<EnumerationOperation>>() {});
         } catch(Exception e) {
             LoggerFactory.getLogger(OntologyManagerController.class).error(e.getMessage(), e);
         }
@@ -973,8 +973,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 }
                 result.put("traitClassesSuggestionList", traitClass);
 
-            }
-            else if (form instanceof OntologyPropertyForm) {
+            } else if (form instanceof OntologyPropertyForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.property.name", null, locale);
                 String desc = ((OntologyPropertyForm) form).getManagePropertyDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
@@ -985,8 +984,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                         desc, 
                         ((OntologyPropertyForm)form).getManagePropTraitClassId(),
                         ((OntologyPropertyForm)form).getCropOntologyId()));
-            }
-            else if (form instanceof OntologyScaleForm) {
+            } else if (form instanceof OntologyScaleForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.scale.name", null, locale);
                 String desc = ((OntologyScaleForm) form).getManageScaleDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
@@ -995,8 +993,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 result.put("savedObject", ontologyService.addOrUpdateScale(
                         ((OntologyScaleForm) form).getManageScaleName().trim(), 
                         desc));
-            }
-            else if (form instanceof OntologyMethodForm) {
+            } else if (form instanceof OntologyMethodForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.method.name", null, locale);
                 String desc = ((OntologyMethodForm) form).getManageMethodDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
@@ -1007,13 +1004,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                         desc));
             }
             
-            if (form.isAddMode()) { //add mode
+            if (form.isAddMode()) { 
+            	//add mode
                 result.put("successMessage", 
                         messageSource.getMessage("ontology.browser.modal.add.ontology.successful", 
                                 new Object[] {ontologyName, form.getName()}, 
                                 locale));
-            } 
-            else { //edit mode
+            } else { 
+            	//edit mode
                 result.put("successMessage", 
                         messageSource.getMessage("ontology.browser.modal.update.ontology.successful", 
                                 new Object[] {ontologyName, form.getName()}, 
@@ -1103,8 +1101,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         	boolean isValidDelete = ontologyService.validateDeleteStandardVariableEnumeration(Integer.parseInt(standardVariableId),Integer.parseInt(enumerationId));
         	if(isValidDelete) {
         		result.put("status", "1");
-        	}
-        	else {
+        	} else {
         		result.put("status", "0");
         	}
         } catch(MiddlewareQueryException e) {

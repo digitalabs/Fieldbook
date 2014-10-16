@@ -69,7 +69,7 @@
 			})
 			
 
-	    if (addSuccessful == "1") {
+	    if (addSuccessful == '1') {
 	    	$('#role').select2('data',{'id': $('#role option:first').val(), 'text': $('#role option:first').text()});
 			$('#dataType').select2('data',{'id': $('#dataType option:first').val(), 'text': $('#dataType option:first').text()});		
 			createSuccessNotification( successMsgHeader, $('#addVariableSuccessfulBody .alert').html());
@@ -86,7 +86,7 @@
 		}
 	    function notifyIntegratingApps(varIdDeleted){
 	    	if(typeof window.parent.applyOntologyManageVariableUpdate == 'function') {
-				 var status = "";
+				 var status = '';
 				 var operation = $('#operation').val()
 				 if(operation == 0)
 					 status = 'ADD';
@@ -146,7 +146,7 @@
 				 }
 				 
 				 variableDescription = $('#variableDescription').val();	 
-				 var storedInId = "";
+				 var storedInId = '';
 				 if($('#role').select2('data') != null){
 					 storedInId = $('#role').select2('data').id;
 				 }

@@ -300,12 +300,12 @@ var psmrError = /*[[#{error.pcm.combination.exists}]]*/;
 function validateCombo(combo) {
     var message = null;
     //check if field is blank
-    if ($("#combo"+combo).val() == "") {
-        if (combo == "TraitClass") {
+    if ($('#combo'+combo).val() == '') {
+        if (combo == 'TraitClass') {
             message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.trait.class})}]]*/;
-        } else if (combo == "Property") {
+        } else if (combo == 'Property') {
             message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.property})}]]*/;
-        } else if (combo == "Method") {
+        } else if (combo == 'Method') {
             message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.method})}]]*/;
         } else {
             message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.scale})}]]*/;
@@ -315,11 +315,11 @@ function validateCombo(combo) {
     }
     //check if items to be added exists
     if (itemExists(combo)) {
-        if (combo == "TraitClass") {
+        if (combo == 'TraitClass') {
             message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.trait.class})}]]*/;
-        } else if (combo == "Property") {
+        } else if (combo == 'Property') {
             message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.property})}]]*/;
-        } else if (combo == "Method") {
+        } else if (combo == 'Method') {
             message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.method})}]]*/;
         } else {
             message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.scale})}]]*/;
@@ -330,7 +330,7 @@ function validateCombo(combo) {
 
     if(combo == 'Property'){
         //we need to check if the trait class has a value
-        var dataVal = $("#comboTraitClass").select2("data");
+        var dataVal = $('#comboTraitClass').select2('data');
         if(dataVal == null || dataVal.id == ''){
             message = /*[[#{ontology.browser.modal.trait.class.required}]]*/;
             showInvalidInputMessage(message);
@@ -370,22 +370,22 @@ function doValidation() {
             return false;
         }
 
-        $("#enumerations").val(JSON.stringify(enumerations));
+        $('#enumerations').val(JSON.stringify(enumerations));
 
-        if ($("#isDelete").val() == 0) {
-            $("#dataTypeId").val($("#dataType").val());
+        if ($('#isDelete').val() == 0) {
+            $('#dataTypeId').val($('#dataType').val());
         }
         //add validation and make sure variate name does not have - in the string
         var varName = $('#comboVariableName').select2('data').text;
-        if($("#isDelete").val() == 0 && varName.indexOf('-') != -1){
+        if($('#isDelete').val() == 0 && varName.indexOf('-') != -1){
             message = /*[[#{ontology.browser.modal.name.invalid.value}]]*/;
             showInvalidInputMessage(message);
             moveToTopScreen()
             return false;
         }
 
-        var roleId = $("#role").select2('data').id;
-        var dataTypeId = $("#dataType").select2('data').id;
+        var roleId = $('#role').select2('data').id;
+        var dataTypeId = $('#dataType').select2('data').id;
 
 
         if(roleId == roleCategoricalVariate && dataTypeId == dataTypeCategoricalVariable){
@@ -397,11 +397,11 @@ function doValidation() {
             }
         }
 
-    } else if ($("#isDelete").val() == 1) {
-        if (parseInt($("#comboVariableName").select2('data').id) > 0) {
-            var variableName = $("#comboVariableName").select2('data').text.replace(" (Shared)", "");
+    } else if ($('#isDelete').val() == 1) {
+        if (parseInt($('#comboVariableName').select2('data').id) > 0) {
+            var variableName = $('#comboVariableName').select2('data').text.replace(' (Shared)', '');
             message = /*[[#{ontology.browser.cannot.delete.central.variable}]]*/;
-            showMessage(message.replace("{0}", variableName));
+            showMessage(message.replace('{0}', variableName));
             moveToTopScreen()
             return false;
         }
@@ -421,7 +421,7 @@ function doValidation() {
 
     }
 
-    var serializedData = $("#manageVariable").serialize();
+    var serializedData = $('#manageVariable').serialize();
     var isValid = true;
     
     $.ajax({
@@ -445,8 +445,8 @@ function doValidation() {
     }
     
     $.ajax({
-        url: $('#manageVariable').attr('action') + "/verify",
-        type: "POST",
+        url: $('#manageVariable').attr('action') + '/verify',
+        type: 'POST',
         data: serializedData,
         cache: false,
         async: false,
@@ -465,24 +465,24 @@ function doValidation() {
 $( document ).ready(function() {
 
     loadOntologyCombos();
-    loadTraitClassTree(treeDivId, "comboTraitClass", "traitClassDescription", treeClassData, 'comboTraitClass');
+    loadTraitClassTree(treeDivId, 'comboTraitClass', 'traitClassDescription', treeClassData, 'comboTraitClass');
     setVisibleButtons(true, false, false);
     clearFields();
 
-    if (saveSuccessful == "1" ) {
+    if (saveSuccessful == '1' ) {
         triggerExternalNotification = true;
         if (isDelete == 0) {
-            recreateVariableNameCombo("VariableName", varId, name);
+            recreateVariableNameCombo('VariableName', varId, name);
         } else if (isDelete == 1) {
-            recreateComboAfterDelete("VariableName", varId);
+            recreateComboAfterDelete('VariableName', varId);
         } else {
-            preSelectAfterUpdate("VariableName", varId, name);
+            preSelectAfterUpdate('VariableName', varId, name);
         }
 
     }
 
-    showSelectedValidValues(["None"]);
-    hideValidValues(["AddCatVar","DelCatVar", "Min", "Max"]);
+    showSelectedValidValues(['None']);
+    hideValidValues(['AddCatVar','DelCatVar', 'Min', 'Max']);
     if($('#preselectVariableId').val() != 0){
         var preselectVariableId = $('#preselectVariableId').val();
         var dataVal = null;
@@ -490,7 +490,7 @@ $( document ).ready(function() {
             if(variableNameSuggestions_obj[count].id == preselectVariableId){
                 dataVal = variableNameSuggestions_obj[count];
                 if(dataVal != null)
-                    $("#comboVariableName").select2('data', dataVal).trigger('change');
+                    $('#comboVariableName').select2('data', dataVal).trigger('change');
                 break;
             }
         }
@@ -540,19 +540,19 @@ function rebuildDataTypeOptions(isCategoricalVariate){
         }
     }
     $('#dataType').select2({minimumResultsForSearch: 20});
-    $("#dataType").trigger("change");
+    $('#dataType').trigger('change');
 }
 
 function addCatVar(label, description, id) {
     label = $.trim(label);
     var errorColumn = validateNewValidValue(label, description, id);
-    var message = "";
-    if (errorColumn == "") {
+    var message = '';
+    if (errorColumn == '') {
         addCategoricalValidValue(id, label, description)
     } else {
-        if (errorColumn == "name") {
+        if (errorColumn == 'name') {
             message = /*[[#{ontology.manager.valid.value.not.unique(#{ontology.manager.valid.value.name})}]]*/;
-        } else if (errorColumn == "description"){
+        } else if (errorColumn == 'description'){
             message = /*[[#{ontology.manager.valid.value.not.unique(#{ontology.browser.modal.description})}]]*/;
         } else {
             message = /*[[#{ontology.manager.valid.value.required}]]*/;

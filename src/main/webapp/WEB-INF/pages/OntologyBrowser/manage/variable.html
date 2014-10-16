@@ -489,8 +489,9 @@ $( document ).ready(function() {
         for(count = 0 ; count < variableNameSuggestions_obj.length ; count++){
             if(variableNameSuggestions_obj[count].id == preselectVariableId){
                 dataVal = variableNameSuggestions_obj[count];
-                if(dataVal != null)
+                if(dataVal != null) {
                     $('#comboVariableName').select2('data', dataVal).trigger('change');
+                }
                 break;
             }
         }

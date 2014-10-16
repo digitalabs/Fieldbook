@@ -43,6 +43,7 @@ import org.springframework.validation.BindingResult;
 
 import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
 
 /**
  * The Class OntologyManagerControllerTest.
@@ -63,12 +64,17 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
     
     private OntologyService mockOntologyService;
     private OntologyBrowserForm form;
+    private OntologyPropertyForm propForm;
     private Term term;
     private OntologyManagerController ontologyManagerController;
-    
+     
     private static final int VARIABLE_ID = 1;
 	private static final String VARIABLE_NAME = "NREP";
 	private static final String VARIABLE_DEFINITION = "Number of replications in an experiment";
+	
+	private static final int PROPERTY_ID = 2;
+	private static final String PROPERTY_NAME = "ACQ_DATE"; 
+	private static final String PROPERTY_DEFINITION = "ACQ_DATE definition";
     
     /**
      * Sets the up.
@@ -112,6 +118,7 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
         
         ontologyManagerController = new OntologyManagerController();
     	form = new OntologyBrowserForm();
+    	propForm = new OntologyPropertyForm();
     	mockOntologyService = Mockito.mock(OntologyService.class);
     	term = Mockito.mock(Term.class);
     }
@@ -228,5 +235,36 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
     	String status = ontologyManagerController.validateNewVariableName(form, result, model);
     	
     	Assert.assertEquals("success", status);
+    }
+    
+    @Test
+    public void testValidationOfPropertyNameExisting() {
+    	Term termWithValue = new Term(PROPERTY_ID, PROPERTY_NAME, PROPERTY_DEFINITION);
+    	propForm.setManagePropertyName(PROPERTY_NAME);
+    	try {
+    		Mockito.when(mockOntologyService.findTermByName(PROPERTY_NAME, CvId.PROPERTIES)).thenReturn(termWithValue);
+    		ontologyManagerController.setOntologyService(mockOntologyService);
+    		
+    		ontologyManagerController.validatePropertyName(propForm);
+    	} catch (MiddlewareQueryException e) {
+    		Assert.assertEquals("Expected error code error.ontology.property.exists but got " + 
+    				e.getCode() + "instead", "error.ontology.property.exists", e.getCode());
+    	}
+    }
+    
+    @Test
+    public void testValidationOfPropertyNameNonExisting() throws MiddlewareQueryException {
+    	propForm.setManagePropertyName(PROPERTY_NAME);
+    	boolean hasError = false;
+    	try {
+    		Mockito.when(mockOntologyService.findTermByName(PROPERTY_NAME, CvId.PROPERTIES)).thenReturn(null);
+    		ontologyManagerController.setOntologyService(mockOntologyService);
+    		
+    		ontologyManagerController.validatePropertyName(propForm);
+    	} catch (MiddlewareQueryException e) {
+    		hasError = true;
+    	}
+    	
+    	Assert.assertEquals("Not expecting an error but encountered an error instead.", false, hasError);
     }
 }

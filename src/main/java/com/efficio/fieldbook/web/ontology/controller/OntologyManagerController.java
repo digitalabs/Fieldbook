@@ -34,6 +34,7 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -979,6 +980,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 if(desc != null && desc.equalsIgnoreCase("")){
                     desc = ((OntologyPropertyForm) form).getManagePropertyName().trim();
                 }
+                validatePropertyName(form);
                 result.put("savedObject", ontologyService.addOrUpdateProperty(
                         ((OntologyPropertyForm)form).getManagePropertyName().trim(), 
                         desc, 
@@ -1034,7 +1036,17 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return result;
     }
     
-    /**
+    protected void validatePropertyName(OntologyModalForm form) throws MiddlewareQueryException {
+    	if (((OntologyPropertyForm) form).getId() == null) {
+        	Term term = ontologyService.findTermByName(((OntologyPropertyForm) form).getManagePropertyName(), CvId.PROPERTIES);
+        	if (term != null) {
+        		throw new MiddlewareQueryException("error.ontology.property.exists", "The term you entered is invalid");
+        	}
+        }
+	}
+
+
+	/**
      * Delete ontology.
      *
      * @param id the id

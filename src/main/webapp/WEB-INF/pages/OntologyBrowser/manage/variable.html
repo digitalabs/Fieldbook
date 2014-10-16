@@ -440,6 +440,10 @@ function doValidation() {
         }
     });
     
+    if (!isValid) {
+    	return isValid;
+    }
+    
     $.ajax({
         url: $('#manageVariable').attr('action') + "/verify",
         type: "POST",

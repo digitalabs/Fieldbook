@@ -423,7 +423,23 @@ function doValidation() {
 
     var serializedData = $("#manageVariable").serialize();
     var isValid = true;
-
+    
+    $.ajax({
+    	url: $('#manageVariable').attr('action') + '/validateName',
+    	type: 'POST',
+        data: serializedData,
+        cache: false,
+        async: false,
+        success: function (data) {
+            if(data === 'error'){
+                isValid = false;
+                message = /*[[#{error.name.exists}]]*/;
+                showErrorMessage('page-message', message);
+                moveToTopScreen();
+            }
+        }
+    });
+    
     $.ajax({
         url: $('#manageVariable').attr('action') + "/verify",
         type: "POST",

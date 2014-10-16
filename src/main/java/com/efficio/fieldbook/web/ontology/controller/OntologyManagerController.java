@@ -394,6 +394,29 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
        
     }
     
+    @ResponseBody
+    @RequestMapping(value="variable/validateName", method = RequestMethod.POST)
+    public String validateNewVariableName(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form
+            , BindingResult result, Model model) {
+        boolean error = false;
+        try {
+            if (form.getVariableId() == null) {
+            	Term term = ontologyService.findTermByName(form.getVariableName(), CvId.VARIABLES);
+            	if (term != null) {
+            		error = true;
+            	}
+            }                                      
+        } catch (MiddlewareQueryException e) {
+               LOG.error(e.getMessage(), e);
+               form.setAddSuccessful("2");
+               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), null, "\n"));
+        }
+        if(error){
+        	return "error";
+        }
+        return "success";
+    }
+    
     /**
      * Save constraints and valid values.
      *

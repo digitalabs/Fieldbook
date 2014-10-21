@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -328,7 +331,7 @@ public class CreateNurseryController extends SettingsController {
         } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
             return userSelection.getSelectionVariates();
         }
-        return null;
+        return new ArrayList<SettingDetail>();
     }
 
 
@@ -505,10 +508,13 @@ public class CreateNurseryController extends SettingsController {
      * @param mode the mode
      * @param newDetails the new details
      * @return the string
+     * @throws IOException 
+     * @throws JsonMappingException 
+     * @throws JsonGenerationException 
      * @throws Exception the exception
      */
     private String addNewSettingDetails(CreateNurseryForm form, int mode
-            , List<SettingDetail> newDetails) throws Exception {
+            , List<SettingDetail> newDetails) throws JsonGenerationException, JsonMappingException, IOException {
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             if (form.getStudyLevelVariables() == null) {
                 form.setStudyLevelVariables(newDetails);

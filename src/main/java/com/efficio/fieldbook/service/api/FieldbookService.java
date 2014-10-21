@@ -20,6 +20,7 @@ import java.util.Map;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
@@ -186,5 +187,15 @@ public interface FieldbookService {
      * @return the id name pair for retrieve and save
      */
     Map<String,String> getIdNamePairForRetrieveAndSave();
+
+	List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareQueryException;
+	/**
+     * Get all possible values.
+     *
+     * @param id the id
+     * @return the all possible values
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareQueryException;
     
 }

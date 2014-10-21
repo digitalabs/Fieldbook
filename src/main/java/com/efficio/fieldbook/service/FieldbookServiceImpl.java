@@ -44,6 +44,8 @@ import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -63,6 +65,8 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
  * The Class FieldbookServiceImpl.
  */
 public class FieldbookServiceImpl implements FieldbookService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FieldbookServiceImpl.class);
 
     /**
      * The file service.
@@ -85,7 +89,14 @@ public class FieldbookServiceImpl implements FieldbookService {
     @Resource
     private NamingConventionService namingConventionService;
 
-
+    public FieldbookServiceImpl(){
+    }
+    
+    public FieldbookServiceImpl(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, PossibleValuesCache possibleValuesCache){
+    	this.fieldbookMiddlewareService = fieldbookMiddlewareService;    	
+    	this.possibleValuesCache = possibleValuesCache;
+    }
+    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldbookService#storeUserWorkbook(java.io.InputStream)
      */
@@ -307,7 +318,7 @@ public class FieldbookServiceImpl implements FieldbookService {
         }
         return possibleValues;
     }
-
+    
     private List<ValueReference> filterValues(List<ValueReference> possibleValues, String filter) {
         List<ValueReference> filteredValues = new ArrayList<ValueReference>();
         StringTokenizer token = new StringTokenizer(filter, ",");
@@ -672,7 +683,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                         MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
                         String actualNameVal = "";
                         if (tempVarId.getValue() != null && !tempVarId.getValue().equalsIgnoreCase("")) {
-                            List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId());
+                            List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);
 
                             for (ValueReference ref : possibleValues) {
                                 if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())) {
@@ -699,7 +710,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                         MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
                         String actualNameVal = "";
                         if (tempVarId.getValue() != null && !tempVarId.getValue().equalsIgnoreCase("")) {
-                            List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId());
+                            List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);
 
                             for (ValueReference ref : possibleValues) {
                                 if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())) {
@@ -745,7 +756,7 @@ public class FieldbookServiceImpl implements FieldbookService {
   						MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
   						String actualIdVal = "";
   						if(tempVarName.getValue() != null && !tempVarName.getValue().equalsIgnoreCase("")){
-  							List<ValueReference> possibleValues = this.getAllPossibleValues(Integer.valueOf(idTermId));
+  							List<ValueReference> possibleValues = this.getAllPossibleValues(Integer.valueOf(idTermId), true);
   							
   							for(ValueReference ref : possibleValues){
   								
@@ -848,8 +859,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
                         MeasurementData idData = row.getMeasurementData(idTerm);
                         if (idData != null) {
-                            List<ValueReference> possibleValues = idData.getMeasurementVariable().getPossibleValues();
-
+                        	List<ValueReference> possibleValues = getVariablePossibleValues(idData.getMeasurementVariable());
                             for (ValueReference ref : possibleValues) {
                                 if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(pairData.getValue())) {
                                     actualNameVal = ref.getName();
@@ -865,7 +875,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                         Integer idTerm = Integer.valueOf(nameIdMap.get(String.valueOf(variable.getTermId())));
                         MeasurementData idData = row.getMeasurementData(idTerm);
                         if (idData != null) {
-                            List<ValueReference> possibleValues = idData.getMeasurementVariable().getPossibleValues();
+                            List<ValueReference> possibleValues = getVariablePossibleValues(idData.getMeasurementVariable());                        	                            
                             if (possibleValues != null) {
                                 for (ValueReference ref : possibleValues) {
                                     if (ref.getId() != null && ref.getId().toString().equals(idData.getValue())) {
@@ -881,4 +891,41 @@ public class FieldbookServiceImpl implements FieldbookService {
             }
         }
     }
+    
+    @Override
+    public List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareQueryException{
+    	List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+    	//we need to get all possible values so we can check the favorites as well, since if we depend on the variable possible values, its already filtered, so it can be wrong
+    	if(TermId.LOCATION_ID.getId() == var.getTermId()) {
+        	possibleValues = this.getAllLocations();
+        } else {
+        	possibleValues = var.getPossibleValues();
+        }
+    	return possibleValues;
+    }
+    
+    public List<ValueReference> getAllLocations(){
+    	List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+		try {
+			possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+    	return possibleValues;
+    }
+    @Override
+    public List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareQueryException {
+        List<ValueReference> possibleValues = null;
+        if (possibleValues == null) {
+        	
+        	if(isGetAllRecords && TermId.LOCATION_ID.getId() == id) {
+        		//for location, we get all since it is for saving, so we would be able to set the name properly
+        		possibleValues = this.getAllLocations();
+        	} else {
+        		possibleValues = this.getAllPossibleValues(id);
+        	}           
+        }
+        return possibleValues;
+    }
+
 }

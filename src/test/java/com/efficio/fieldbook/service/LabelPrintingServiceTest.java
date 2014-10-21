@@ -267,4 +267,55 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     		}
     	}
     }
+    
+    @Test
+    public void testGenerationOfPdfLabels() {
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(true);
+    	String fileName = "";
+    	try {
+    		fileName = labelPrintingService.generatePDFLabels(trialInstances, userLabelPrinting, baos);
+    		
+    		PdfReader reader = new PdfReader(fileName);
+    		Assert.assertNotNull("Expected a new pdf file was created but found none.", reader);
+    		byte[] streamBytes = reader.getPageContent(1);
+    		Assert.assertNotNull("Expected a file with content but found none.", streamBytes);
+    	} catch (LabelPrintingException e) {
+    		LOG.error(e.getMessage(), e);
+    		Assert.fail("Error encountered while generating pdf file.");
+    	} catch (FileNotFoundException e) {
+    		LOG.error(e.getMessage(), e);
+    		Assert.fail("File not found.");
+    	} catch (IOException e) {
+    		LOG.error(e.getMessage(), e);
+    		Assert.fail("Error encountered while reading file.");
+    	}
+    }
+    
+    @Test
+    public void testGenerationOfXlsLabels() {
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(false);
+    	String fileName = "";
+    	try {
+    		fileName = labelPrintingService.generateXlSLabels(trialInstances, userLabelPrinting, baos);
+    		org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
+			
+    		Assert.assertNotNull("Expected a new workbook file was created but found none.", xlsBook);
+    		
+    		Sheet sheet = xlsBook.getSheetAt(0);
+    		
+    		Assert.assertNotNull("Expecting an xls file with 1 sheet but found none.", sheet);
+    		
+    		Assert.assertTrue("Expected at least one row but got 0", sheet.getLastRowNum() > 0);
+    	} catch (MiddlewareQueryException e) {
+    		LOG.error(e.getMessage(), e);
+    		Assert.fail("Encountered error while exporting to xls.");
+    	} catch (Exception e) {
+    		LOG.error(e.getMessage(), e);
+    		Assert.fail("Excountered error while reading xls file.");
+    	}
+    }
 }

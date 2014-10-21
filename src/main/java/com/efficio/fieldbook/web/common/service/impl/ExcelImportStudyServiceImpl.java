@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -358,7 +359,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						originalValueMap.put(temp, temp.getValue());
 						
 						try {
-							temp.setPossibleValues(fieldbookService.getAllPossibleValues(temp.getTermId()));
+							temp.setPossibleValues(fieldbookService.getAllPossibleValues(temp.getTermId(), true));
 						} catch (MiddlewareQueryException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -403,7 +404,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						originalValueMap.put(data, data.getValue());
 						
 						try {
-							origVar.setPossibleValues(fieldbookService.getAllPossibleValues(origVar.getTermId()));
+							origVar.setPossibleValues(fieldbookService.getAllPossibleValues(origVar.getTermId(), true));
 						} catch (MiddlewareQueryException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

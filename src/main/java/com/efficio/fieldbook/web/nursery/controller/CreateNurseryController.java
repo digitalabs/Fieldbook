@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -35,6 +36,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -678,33 +680,7 @@ public class CreateNurseryController extends SettingsController {
                 if(userSelection.getStudyLevelConditions() != null){
                 	for(SettingDetail detail : userSelection.getStudyLevelConditions()){
                 		MeasurementVariable var = WorkbookUtil.getMeasurementVariable(workbook.getConditions(), detail.getVariable().getCvTermId());
-                		
-                		if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId()
-                                && var.getValue() != null && !var.getValue().isEmpty()) {
-                            //set the value of code to ID for it to be selected in the popup
-                        	Method method = fieldbookMiddlewareService.getMethodByCode(var.getValue());
-                        	if(method != null){
-                        		detail.setValue(String.valueOf(method.getMid()));
-                        	}else{
-                        		detail.setValue("");
-                        	}
-                        }else if(var != null){
-                        	String currentVal = var.getValue();
-                        	if(var.getTermId() != TermId.NURSERY_TYPE.getId() && (detail.getPossibleValues() == null || detail.getPossibleValues().isEmpty())){
-                        		detail.setValue(currentVal);
-                        	}else{
-                        		//special case for nursery type
-                        		if(var.getValue() != null && detail.getPossibleValues() != null){
-                        			
-                        			for (ValueReference possibleValue : detail.getPossibleValues()) {
-                        	    		if (var.getValue().equalsIgnoreCase(possibleValue.getDescription())) {
-                        	    			detail.setValue(possibleValue.getId().toString());
-                        	    			break;
-                        	    		}
-                        	    	}
-                        		}                        		
-                        	}
-                		}
+                		setSettingDetailsValueFromVariable(var, detail);                		
                 	}
                 }
                 
@@ -731,4 +707,48 @@ public class CreateNurseryController extends SettingsController {
     	        setFormStaticData(form, contextParams);
     	        return super.showAjaxPage(model, URL_SETTINGS);
     	    }
+    
+    protected void setSettingDetailsValueFromVariable(MeasurementVariable var, SettingDetail detail) throws MiddlewareQueryException{
+    	if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId()
+                && var.getValue() != null && !var.getValue().isEmpty()) {
+            //set the value of code to ID for it to be selected in the popup
+        	Method method = fieldbookMiddlewareService.getMethodByCode(var.getValue());
+        	if(method != null){
+        		detail.setValue(String.valueOf(method.getMid()));
+        	}else{
+        		detail.setValue("");
+        	}
+        }else if (var.getTermId() == TermId.LOCATION_ID.getId()){
+        	setLocationVariableValue(detail, var);
+        }else if(var != null){
+        	String currentVal = var.getValue();
+        	if(var.getTermId() != TermId.NURSERY_TYPE.getId() && (detail.getPossibleValues() == null || detail.getPossibleValues().isEmpty())){
+        		detail.setValue(currentVal);
+        	}else{
+        		//special case for nursery type
+        		if(var.getValue() != null && detail.getPossibleValues() != null){
+        			
+        			for (ValueReference possibleValue : detail.getPossibleValues()) {
+        	    		if (var.getValue().equalsIgnoreCase(possibleValue.getDescription())) {
+        	    			detail.setValue(possibleValue.getId().toString());
+        	    			break;
+        	    		}
+        	    	}
+        		}                        		
+        	}
+		}
+    }
+    protected void setLocationVariableValue(SettingDetail detail, MeasurementVariable var) throws MiddlewareQueryException{
+    	int locationId =  var.getValue() != null && !var.getValue().isEmpty() && NumberUtils.isNumber(var.getValue()) ? Integer.valueOf(var.getValue()) : 0;
+    	Location location = fieldbookMiddlewareService.getLocationById(locationId);
+    	if(location != null) {
+    		detail.setValue(String.valueOf(location.getLocid()));
+    	} else {
+    		detail.setValue("");
+    	}	   
+    }
+    
+    protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService){
+    	this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+    }
 }

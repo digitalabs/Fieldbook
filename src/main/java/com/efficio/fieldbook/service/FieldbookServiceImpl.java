@@ -50,7 +50,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -76,9 +75,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 
     @Autowired
     private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-
-    @Autowired
-    private WorkbenchService workbenchService;
 
     @Autowired
     private OntologyService ontologyService;
@@ -152,8 +148,9 @@ public class FieldbookServiceImpl implements FieldbookService {
                                 || ref.getId() == TermId.DATASET_NAME.getId()
                                 || ref.getId() == TermId.DATASET_TITLE.getId()
                                 || ref.getId() == TermId.DATASET_TYPE.getId()
-                                || inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString()))
+                                || inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString())) {
                             continue;
+                        }
 
                     } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
                         if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
@@ -250,8 +247,9 @@ public class FieldbookServiceImpl implements FieldbookService {
         List<Integer> list = new ArrayList<Integer>();
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             list.addAll(PhenotypicType.STUDY.getTypeStorages());
-            if (isNursery)
+            if (isNursery) {
                 list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
+            }
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
             list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
@@ -319,22 +317,6 @@ public class FieldbookServiceImpl implements FieldbookService {
         return possibleValues;
     }
     
-    private List<ValueReference> filterValues(List<ValueReference> possibleValues, String filter) {
-        List<ValueReference> filteredValues = new ArrayList<ValueReference>();
-        StringTokenizer token = new StringTokenizer(filter, ",");
-
-        while (token.hasMoreTokens()) {
-            Integer id = Integer.parseInt(token.nextToken());
-            for (ValueReference value : possibleValues) {
-                if (value.getId().equals(id)) {
-                    filteredValues.add(value);
-                }
-            }
-        }
-
-        return filteredValues;
-    }
-
     @Override
     public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {
         List<ValueReference> possibleValuesFavorite = null;
@@ -399,8 +381,9 @@ public class FieldbookServiceImpl implements FieldbookService {
         List<ValueReference> list = new ArrayList<ValueReference>();
         Integer standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
                 property, scale, method, phenotypeType);
-        if (standardVariableId != null)
+        if (standardVariableId != null) {
             list = getAllPossibleValues(standardVariableId.intValue());
+        }
         return list;
     }
 
@@ -568,7 +551,7 @@ public class FieldbookServiceImpl implements FieldbookService {
     @Override
     public void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException {
         Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
-        if (workbook != null && idCodeNamePairs != null && !idCodeNamePairs.equalsIgnoreCase("")) {
+        if (workbook != null && idCodeNamePairs != null && !("").equalsIgnoreCase(idCodeNamePairs)) {
             //we get a map so we can check easily instead of traversing it again
             for (MeasurementVariable var : workbook.getConditions()) {
                 if (var != null) {
@@ -653,7 +636,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
         Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
         Map<String, List<MeasurementVariable>> studyConditionMapList = new HashMap<String, List<MeasurementVariable>>();
-        if (workbook != null && idNamePairs != null && !idNamePairs.equalsIgnoreCase("")) {
+        if (workbook != null && idNamePairs != null && !("").equalsIgnoreCase(idNamePairs)) {
             //we get a map so we can check easily instead of traversing it again
             for (MeasurementVariable var : workbook.getConditions()) {
                 if (var != null) {
@@ -682,7 +665,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                         MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
                         MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
                         String actualNameVal = "";
-                        if (tempVarId.getValue() != null && !tempVarId.getValue().equalsIgnoreCase("")) {
+                        if (tempVarId.getValue() != null && !("").equalsIgnoreCase(tempVarId.getValue())) {
                             List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);
 
                             for (ValueReference ref : possibleValues) {
@@ -709,7 +692,7 @@ public class FieldbookServiceImpl implements FieldbookService {
   						 */
                         MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
                         String actualNameVal = "";
-                        if (tempVarId.getValue() != null && !tempVarId.getValue().equalsIgnoreCase("")) {
+                        if (tempVarId.getValue() != null && !("").equalsIgnoreCase(tempVarId.getValue())) {
                             List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId(), true);
 
                             for (ValueReference ref : possibleValues) {
@@ -755,7 +738,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
   						MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
   						String actualIdVal = "";
-  						if(tempVarName.getValue() != null && !tempVarName.getValue().equalsIgnoreCase("")){
+  						if(tempVarName.getValue() != null && !("").equalsIgnoreCase(tempVarName.getValue())){
   							List<ValueReference> possibleValues = this.getAllPossibleValues(Integer.valueOf(idTermId), true);
   							
   							for(ValueReference ref : possibleValues){

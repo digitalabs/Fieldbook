@@ -330,6 +330,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
         		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
         		response.setContentType("application/zip");
         	} else {
+        		filename = getOutputFileName(workbook.isNursery(), outputFilename, filename);
         		response.setContentType("application/vnd.ms-excel");
         	}
     	}else if(AppConstants.EXPORT_DATAKAPTURE.getInt() == exportType) {
@@ -359,7 +360,14 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	return super.convertObjectToJson(results);
     }
     
-    private UserSelection getUserSelection() {
+    protected String getOutputFileName(boolean isNursery, String outputFilename, String filename) {
+    	if (!isNursery) {
+			return outputFilename;
+		}
+		return filename;
+	}
+
+	private UserSelection getUserSelection() {
     	return this.studySelection;
     }
     

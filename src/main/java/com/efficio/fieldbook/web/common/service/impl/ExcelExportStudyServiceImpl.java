@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -49,11 +50,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
@@ -77,6 +78,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
 	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
+	@Resource
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
 	private static final List<Integer> STUDY_DETAILS_IDS = Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(), 
 			TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(), TermId.START_DATE.getId(), TermId.END_DATE.getId(), 
@@ -110,11 +114,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 					writeDescriptionSheet(xlsBook, workbook, trialObservation);
 					writeObservationSheet(xlsBook, workbook, observations);
 					
-					String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator + filename;
-					if (instances != null && instances.size() > 1) {
-						int fileExtensionIndex = filenamePath.lastIndexOf(".");
-						filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + index + filenamePath.substring(fileExtensionIndex);
-					}
+					String filenamePath = getFileNamePath(index, workbook.getTrialObservations().get(index-1), 
+							instances, filename, workbook.isNursery());
 					fos = new FileOutputStream(new File(filenamePath));
 					xlsBook.write(fos);
 					outputFilename = filenamePath;
@@ -144,6 +145,40 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		return outputFilename;
 	}
 	
+	protected String getFileNamePath(int index, MeasurementRow trialObservation, 
+			List<Integer> instances, String filename, boolean isNursery) throws MiddlewareQueryException {
+		String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(filename);
+		if (instances != null && (instances.size() > 1 || !isNursery)) {
+			int fileExtensionIndex = filenamePath.lastIndexOf(".");
+			if (instances.size() > 1) {
+				return filenamePath.substring(0, fileExtensionIndex) +  "-" + index +
+						SettingsUtil.cleanSheetAndFileName(getSiteNameOfTrialInstance(trialObservation)) + filenamePath.substring(fileExtensionIndex);
+			} else {
+				return filename.substring(0, filename.lastIndexOf("."))  +  "-" + index + 
+						SettingsUtil.cleanSheetAndFileName(getSiteNameOfTrialInstance(trialObservation)) + filenamePath.substring(fileExtensionIndex);
+			}
+		}
+		return filenamePath;
+	}
+	
+	private String getSiteNameOfTrialInstance(MeasurementRow trialObservation) throws MiddlewareQueryException {
+		if (trialObservation != null) {
+			if (trialObservation.getMeasurementVariables() != null) {
+				for (MeasurementData data : trialObservation.getDataList()) {
+					if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_LOCATION.getId()) {
+						return "_" + data.getValue();
+					} else if (data.getMeasurementVariable().getTermId() == TermId.LOCATION_ID.getId()) {
+						if (data.getValue() != null && !data.getValue().isEmpty() && NumberUtils.isNumber(data.getValue())) {
+							return "_" + fieldbookMiddlewareService.getLocationById(Integer.parseInt(data.getValue())).getLname();
+						} else {
+							return "";
+						}
+					}
+				}
+			}
+		}
+		return "";
+	}
 	
 	protected void writeDescriptionSheet(HSSFWorkbook xlsBook, Workbook workbook, MeasurementRow trialObservation) {
 		Locale locale = LocaleContextHolder.getLocale();
@@ -530,7 +565,11 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		return ids;
 	}
 	
-	protected void setFieldbookService(FieldbookService fieldbookService) {
+	protected void setFieldbookService(com.efficio.fieldbook.service.api.FieldbookService fieldbookService) {
         this.fieldbookService = fieldbookService;
     }
+	
+	protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
 }

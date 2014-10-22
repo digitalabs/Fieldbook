@@ -55,6 +55,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
+import com.efficio.fieldbook.util.JsonIoException;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
@@ -511,10 +512,11 @@ public class CreateNurseryController extends SettingsController {
      * @throws IOException 
      * @throws JsonMappingException 
      * @throws JsonGenerationException 
+     * @throws JsonIoException 
      * @throws Exception the exception
      */
     private String addNewSettingDetails(CreateNurseryForm form, int mode
-            , List<SettingDetail> newDetails) throws JsonGenerationException, JsonMappingException, IOException {
+            , List<SettingDetail> newDetails) throws JsonGenerationException, JsonMappingException, JsonIoException {
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             if (form.getStudyLevelVariables() == null) {
                 form.setStudyLevelVariables(newDetails);
@@ -579,7 +581,13 @@ public class CreateNurseryController extends SettingsController {
             }
         }
         ObjectMapper om = new ObjectMapper();
-        return om.writeValueAsString(newDetails);
+        String jsonData = "";
+        try {
+        	jsonData = om.writeValueAsString(newDetails);
+        } catch(IOException e) {
+        	throw new JsonIoException(e.getMessage(), e);
+        }
+        return jsonData;
     }
     
     @ResponseBody

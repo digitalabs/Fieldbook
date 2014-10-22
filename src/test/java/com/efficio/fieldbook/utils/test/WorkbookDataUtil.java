@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.pojos.Location;
 
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -29,7 +30,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
  */
 public class WorkbookDataUtil {
 
-	public static final String FILE_NAME = "nursery_sample_file";
+	public static final String FILE_NAME = "sample_file";
 	public static final int NUMBER_OF_OBSERVATIONS = 12000;
 
 	private static final String NURSERY_NAME = "Nursery_";
@@ -117,6 +118,18 @@ public class WorkbookDataUtil {
 
 	private static final String GERMPLASM_NAME = "TIANDOUGOU-9";
 	private static final String NUMERIC_VALUE = "1";
+	
+	public static final Integer LOCATION_ID_1 = 1;
+	public static final Integer LOCATION_ID_2 = 2;
+	private static final Integer LTYPE = 1;
+	private static final Integer NLLP = 1;
+	public static final String LNAME = "Location";
+	private static final String LABBR = "LOC2";
+	private static final Integer SNL3ID = 1;
+	private static final Integer SNL2ID = 1;
+	private static final Integer SNL1ID = 1;
+	private static final Integer CNTRYID = 1;
+	private static final Integer LRPLCE = 1;
 
 	private static Workbook workbook;
 
@@ -191,7 +204,7 @@ public class WorkbookDataUtil {
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		conditions.add(variable);
 
-		variable = new MeasurementVariable(TermId.SITE_NAME.getId(), "SITE", "TRIAL SITE NAME",
+		variable = new MeasurementVariable(TermId.TRIAL_LOCATION.getId(), "SITE", "TRIAL SITE NAME",
 				WorkbookDataUtil.DBCV, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
 				WorkbookDataUtil.CHAR, "", WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
@@ -415,11 +428,11 @@ public class WorkbookDataUtil {
 			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
 					AppConstants.COOPERATOR_ID.getInt(), WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
-			data = new MeasurementData(WorkbookDataUtil.SITE, "");
+			data = new MeasurementData(WorkbookDataUtil.SITE, LNAME + "_" + (i+1));
 			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.SITE_NAME.getId(), WorkbookDataUtil.workbook.getConditions()));
+					TermId.TRIAL_LOCATION.getId(), WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
-			data = new MeasurementData(WorkbookDataUtil.SITE_ID, "");
+			data = new MeasurementData(WorkbookDataUtil.SITE_ID, String.valueOf(i+1));
 			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
 					TermId.LOCATION_ID.getId(), WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
@@ -453,6 +466,51 @@ public class WorkbookDataUtil {
 	private static String randomizeValue(Random random, DecimalFormat fmt, int base) {
 		double value = random.nextDouble() * base;
 		return fmt.format(value);
+	}
+	
+	public static List<Location> createLocationData() {
+		List<Location> locations = new ArrayList<Location>();
+		locations.add(new Location(LOCATION_ID_1, LTYPE, NLLP, LNAME + " 1", LABBR, SNL3ID, SNL2ID,
+	            SNL1ID, CNTRYID, LRPLCE));
+		locations.add(new Location(LOCATION_ID_2, LTYPE, NLLP, LNAME + " 2", LABBR, SNL3ID, SNL2ID,
+	            SNL1ID, CNTRYID, LRPLCE));
+		return locations;
+	}
+	
+	public static MeasurementRow createTrialObservationWithoutSite() {
+		WorkbookDataUtil.workbook = new Workbook();
+
+		WorkbookDataUtil.createStudyDetails(StudyType.T);
+		WorkbookDataUtil.createConditions();
+		
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+
+		MeasurementData data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE,
+				NUMERIC_VALUE);
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
+				TermId.TRIAL_INSTANCE_FACTOR.getId(), WorkbookDataUtil.workbook.getConditions()));
+		dataList.add(data);
+		data = new MeasurementData(WorkbookDataUtil.PI_NAME, "");
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
+				TermId.PI_NAME.getId(), WorkbookDataUtil.workbook.getConditions()));
+		dataList.add(data);
+		data = new MeasurementData(WorkbookDataUtil.PI_ID, "");
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
+				TermId.PI_ID.getId(), WorkbookDataUtil.workbook.getConditions()));
+		dataList.add(data);
+		data = new MeasurementData(WorkbookDataUtil.COOPERATOR, "");
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
+				AppConstants.COOPERATOR_NAME.getInt(),
+				WorkbookDataUtil.workbook.getConditions()));
+		dataList.add(data);
+		data = new MeasurementData(WorkbookDataUtil.COOPERATOR_ID, "");
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
+				AppConstants.COOPERATOR_ID.getInt(), WorkbookDataUtil.workbook.getConditions()));
+		dataList.add(data);
+
+		row.setDataList(dataList);
+		return row;
 	}
 
 }

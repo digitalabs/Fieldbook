@@ -139,7 +139,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						<div th:each="map : *{userLabelPrinting.fieldMapInfoList}">
 							<div th:each="dataset : ${map.datasets}">
 								<tr th:each="trial, row : ${dataset.trialInstances}">
-									<td><input class="includeTrial" type="checkbox" onclick="setTotalLabels(this);" /></td>
+									<td><input class="includeTrial" type="checkbox" /></td>
 									<td>
 										<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}" />
 										<span class="orderNo"></span>
@@ -147,9 +147,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 									<td th:text="${map.fieldbookName}"></td>
 									<td th:if="*{isTrial == false}" th:text="${dataset.datasetName}"></td>
 									<td th:if="*{isTrial == true}" th:text="${trial.trialInstanceNo}"></td>
-									<td th:text="${trial.entryCount}"></td>
+									<td class="entry-count" th:text="${trial.entryCount}"></td>
 									<td th:if="*{isTrial == true}" th:text="${trial.repCount}"></td>
-									<td th:if="*{isTrial == true}" th:text="${trial.plotCount}"></td>
+									<td class="plot-count" th:if="*{isTrial == true}" th:text="${trial.plotCount}"></td>
 								</tr>
 							</div>
 						</div>
@@ -412,22 +412,25 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <script type="text/javascript" th:src="@{/static/js/labelPrinting.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
 <script type="text/javascript" th:inline="javascript">
-	//<![CDATA[
-        var barcodeNeededError = /*[[#{label.printing.bar.code.needed.error}]]*/;
-        var barcodeFieldNeededError = /*[[#{label.printing.bar.code.field.error}]]*/;
-        var filenameError = /*[[#{label.printing.filename.field.error}]]*/;
-        var selectedFieldsError = /*[[#{label.printing.selected.fields.error}]]*/;
-        var trialInstanceRequired = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
+	//<![CDATA[    
+		/*globals setSelectedTrialsAsDraggable*/   
+		/*exported setTotalLabels*/ 
+
   		var isTrial = /*[[${labelPrintingForm.isTrial}]]*/;
-  		var filenameErrorCharacter =  /*[[#{label.printing.filename.fields.error.character}]]*/;
+  		
  		 $(function() {
+ 		 	'use strict';
+ 		 	
+ 		 	$('.includeTrial').on('click', function(){
+ 		 		setTotalLabels($(this));	
+ 		 	});
  			setSelectedTrialsAsDraggable();
 
  			$( 'ul.droptrue' ).sortable({
  				connectWith: 'ul',
 				receive: function(event, ui) {
 		            // so if > 10
-		            if (($(this).attr('id') == 'leftSelectedFields' || $(this).attr('id') == 'rightSelectedFields' ) &&
+		            if (($(this).attr('id') === 'leftSelectedFields' || $(this).attr('id') === 'rightSelectedFields' ) &&
 	            		$(this).children().length > 5) {
 		                //ui.sender: will cancel the change.
 		                //Useful in the 'receive' callback.
@@ -439,19 +442,20 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  		});
 
  		 function setTotalLabels(checkbox) {
+ 		 	 'use strict';
  			 //count total number of labels to be generated based on selected trial/nursery instance
  			 var labelCount = '';
  			 if (isTrial) {
- 				labelCount = $(checkbox).parent().next().next().next().next().next().next().html();
+ 				labelCount = $(checkbox).parents('tr').find('td.plot-count').html();
  			 } else {
- 				labelCount = $(checkbox).parent().next().next().next().next().html();
+ 				labelCount = $(checkbox).parents('tr').find('td.entry-count').html();
  			 }
  			 var totalCount = $('#totalLabelCount').text();
 
- 			 if (checkbox.checked) {
- 				 $('#totalLabelCount').text(parseInt(totalCount) + parseInt(labelCount));
+ 			 if ($(checkbox).is(':checked')) {
+ 				 $('#totalLabelCount').text(parseInt(totalCount, 10) + parseInt(labelCount, 10));
  			 } else {
- 				$('#totalLabelCount').text(parseInt(totalCount) - parseInt(labelCount));
+ 				$('#totalLabelCount').text(parseInt(totalCount, 10) - parseInt(labelCount, 10));
  			 }
  		 }
       //]]>

@@ -342,6 +342,17 @@ function validateCombo(combo) {
     return true;
 }
 
+function validateStandardVariableName(){
+	var variableName = $('#comboVariableName').val();
+	var pattern = /^[^0-9][\w\d%]*$/;
+	
+	if(variableName.length <= standardVariableMaxLength && pattern.test(variableName)){
+		return true;
+	}
+	
+	return false;
+}
+
 function doValidation() {
     var message = null;
     if ($('#isDelete').val() != 1) {
@@ -352,6 +363,15 @@ function doValidation() {
             moveToTopScreen()
             return false;
         }
+        
+        //check the standardVariableName
+        if(!validateStandardVariableName()){
+        	message = /*[[#{ontology.browser.modal.error.standard.variable}]]*/;
+            showInvalidInputMessage(message);
+            moveToTopScreen();
+        	return false;
+        }
+        
         //check combo values
         if (comboValuesInvalid()) {
             message = /*[[#{ontology.browser.modal.invalid.value}]]*/;

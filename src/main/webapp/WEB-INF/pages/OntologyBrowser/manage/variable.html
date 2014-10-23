@@ -376,7 +376,7 @@ function doValidation() {
         if (comboValuesInvalid()) {
             message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
             showInvalidInputMessage(message);
-            moveToTopScreen()
+            moveToTopScreen();
             return false;
         }
         //check min max values
@@ -386,7 +386,7 @@ function doValidation() {
         message = minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue);
         if (message != '') {
         	showInvalidInputMessage(message);
-            moveToTopScreen()
+            moveToTopScreen();
             return false;
         }
 
@@ -400,7 +400,7 @@ function doValidation() {
         if($('#isDelete').val() == 0 && varName.indexOf('-') != -1){
             message = /*[[#{ontology.browser.modal.name.invalid.value}]]*/;
             showInvalidInputMessage(message);
-            moveToTopScreen()
+            moveToTopScreen();
             return false;
         }
 
@@ -412,7 +412,7 @@ function doValidation() {
             if(!hasCategoricalValues()){
                 message = /*[[#{ontology.browser.categorical.value.required}]]*/;
                 showInvalidInputMessage(message);
-                moveToTopScreen()
+                moveToTopScreen();
                 return false;
             }
         }
@@ -422,7 +422,7 @@ function doValidation() {
             var variableName = $('#comboVariableName').select2('data').text.replace(' (Shared)', '');
             message = /*[[#{ontology.browser.cannot.delete.central.variable}]]*/;
             showMessage(message.replace('{0}', variableName));
-            moveToTopScreen()
+            moveToTopScreen();
             return false;
         }
     }

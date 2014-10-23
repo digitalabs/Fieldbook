@@ -438,7 +438,10 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		            }
 		        }
  			});
-
+ 			if($('.includeTrial').length === 1) {
+ 				$('.includeTrial').trigger('click');
+ 			}
+			
  		});
 
  		 function setTotalLabels(checkbox) {

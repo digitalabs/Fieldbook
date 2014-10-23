@@ -105,7 +105,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	String filename = req.getParameter("filename");
     	String contentType = req.getParameter("contentType");
     	
-        File xls = new File(outputFilename); // the selected name + current date
+    	// the selected name + current date
+        File xls = new File(outputFilename); 
         FileInputStream in;
         
         response.setHeader("Content-disposition","attachment; filename=" + SettingsUtil.cleanSheetAndFileName(filename));
@@ -114,7 +115,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
             in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();
 
-            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+            // use bigger if you want
+            byte[] buffer= new byte[BUFFER_SIZE]; 
             int length = 0;
 
             while ((length = in.read(buffer)) > 0){
@@ -141,7 +143,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 @PathVariable int exportWayType,
 HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = false;
-    	List<Integer> instancesList = new ArrayList();
+    	List<Integer> instancesList = new ArrayList<Integer>();
     	instancesList.add(1);
     	return doExport(exportType, selectedTraitTermId, response, isTrial,instancesList,exportWayType,req);
     	
@@ -154,7 +156,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     		@PathVariable int exportWayType,
     		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = false;
-    	List<Integer> instancesList = new ArrayList();
+    	List<Integer> instancesList = new ArrayList<Integer>();
     	instancesList.add(1);
         return doExport(exportType, 0, response, isTrial,instancesList, exportWayType,req);
     	
@@ -167,7 +169,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     		@PathVariable int exportWayType,
     		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = true;
-    	List<Integer> instancesList = new ArrayList();
+    	List<Integer> instancesList = new ArrayList<Integer>();
     	StringTokenizer tokenizer = new StringTokenizer(instances, "|");
     	while(tokenizer.hasMoreTokens()){
     		instancesList.add(Integer.valueOf(tokenizer.nextToken()));
@@ -183,7 +185,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     		@PathVariable int exportWayType, 
     		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = true;
-    	List<Integer> instancesList = new ArrayList();
+    	List<Integer> instancesList = new ArrayList<Integer>();
     	StringTokenizer tokenizer = new StringTokenizer(instances, "|");
     	while(tokenizer.hasMoreTokens()){
     		instancesList.add(Integer.valueOf(tokenizer.nextToken()));
@@ -210,8 +212,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
 			}
 			hasFieldMap = fieldbookMiddlewareService.checkIfStudyHasFieldmap(Integer.valueOf(studyId));
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
     	return hasFieldMap ? "1" : "0";
     }
@@ -250,8 +251,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
 			}
 	    	
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
     	return super.convertObjectToJson(variates);
     }
@@ -299,11 +299,9 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
 	    		userSelection.setWorkbook(workbookSession);
 	    	}
     	} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+    		LOG.error(e.getMessage(), e);
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
     	
     	Workbook workbook = userSelection.getWorkbook();
@@ -392,15 +390,16 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     		@PathVariable int studyId,
     		Model model, HttpSession session) {
 
-    	List<ExportTrialInstanceBean> trialInstances = new ArrayList();
+    	List<ExportTrialInstanceBean> trialInstances = new ArrayList<ExportTrialInstanceBean>();
 
-        List<Integer> trialIds = new ArrayList();
+        List<Integer> trialIds = new ArrayList<Integer>();
         trialIds.add(studyId);
-        List<FieldMapInfo> fieldMapInfoList = new ArrayList();
+        List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();       
+        
         try{
         	fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds);
-        }catch(Exception e){
-        	e.printStackTrace();
+        }catch(MiddlewareQueryException e){
+        	LOG.error(e.getMessage(), e);
         }
         if(fieldMapInfoList != null && fieldMapInfoList.get(0).getDatasets() != null && fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances() != null){
         	for(int i = 0 ; i < fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances().size() ; i++){

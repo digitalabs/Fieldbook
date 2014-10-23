@@ -465,19 +465,17 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
 				cell.setCellType(Cell.CELL_TYPE_NUMERIC);		
 				cell.setCellValue(Double.valueOf(variable.getValue()));				
-			}else{
+			} else {
 				cell.setCellValue(variable.getValue());	
 			}		
-		}
-		else{
+		} else {
 			cell.setCellValue(variable.getValue());
 		}
 
 		cell = row.createCell(7, HSSFCell.CELL_TYPE_STRING);
 		if (variable.getTreatmentLabel() != null && !"".equals(variable.getTreatmentLabel())) {
 			cell.setCellValue(variable.getTreatmentLabel());
-		}
-		else {
+		} else {
 			cell.setCellValue(variable.getLabel());
 		}
 	}
@@ -546,8 +544,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			List<Integer> specialDropdowns = getSpecialDropdownIds();
 			if (specialDropdowns.contains(variable.getTermId()) && "0".equals(variable.getValue())) {
 				variable.setValue("");
-			}
-			else if (variable.getDataTypeId().equals(TermId.DATE_VARIABLE.getId()) && "0".equals(variable.getValue())) {
+			} else if (variable.getDataTypeId().equals(TermId.DATE_VARIABLE.getId()) && "0".equals(variable.getValue())) {
 				variable.setValue("");
 			}
 		}

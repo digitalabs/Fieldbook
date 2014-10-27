@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -32,7 +36,10 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 	private CreateNurseryController controller;
 	
 	@Autowired
-	private UserSelection userSelection; 	
+	private UserSelection userSelection;
+	
+	@Resource
+	private FieldbookService fieldbookMiddlewareService;
 	
 	@Test
 	public void testGetReturnsCorrectModelAndView() throws Exception {
@@ -45,6 +52,30 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		
 		Assert.assertEquals(HttpStatus.OK.value(), response.getStatus());
 		ModelAndViewAssert.assertModelAttributeAvailable(mav, "createNurseryForm");	
+	}
+	
+	@Test
+	public void testUseExistingNursery() throws Exception {
+		fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		Mockito.when(fieldbookMiddlewareService.getStudyVariableSettings(1, true))
+			.thenThrow(new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
+		controller.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		
+		ModelAndView mav = request(CreateNurseryController.URL + "/nursery/1", HttpMethod.GET.name());
+		
+		Assert.assertEquals("Expected HttpStatus OK but got " + response.getStatus() + " instead.", 
+				HttpStatus.OK.value(), response.getStatus());
+		ModelAndViewAssert.assertModelAttributeAvailable(mav, "createNurseryForm");
+	}
+	
+	@Test
+	public void testAddErrorMessageToResult() throws Exception {
+		CreateNurseryForm form = new CreateNurseryForm();
+
+		controller.addErrorMessageToResult(form,
+				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
+		
+		Assert.assertEquals("Expecting error but did not get one", "1", form.getHasError());
 	}
 	
 	@Test

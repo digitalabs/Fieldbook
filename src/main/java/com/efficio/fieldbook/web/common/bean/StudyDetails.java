@@ -72,6 +72,8 @@ public class StudyDetails{
     private ExperimentalDesignVariable experimentalDesignDetails;
     
     private Map<Integer, SettingDetail> factorsMap;
+    
+    private String errorMessage;
 
     /**
      * Instantiates a new study details.
@@ -434,6 +436,14 @@ public class StudyDetails{
 			}
 		}
 		return this.factorsMap;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 
 }

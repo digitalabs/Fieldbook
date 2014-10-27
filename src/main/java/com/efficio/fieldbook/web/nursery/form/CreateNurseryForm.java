@@ -195,7 +195,11 @@ public class CreateNurseryForm {
     /** The breeding method code. */
     private String breedingMethodCode;
     
+    /** The has fieldmap. */
     private boolean hasFieldmap;
+    
+    /** The error message. */
+    private String errorMessage;
     
     /**
      * Gets the project id.
@@ -1227,13 +1231,41 @@ public class CreateNurseryForm {
             this.breedingMethodCode = breedingMethodCode;
         }
 
+        /**
+         * Checks if is checks for fieldmap.
+         *
+         * @return true, if is checks for fieldmap
+         */
         public boolean isHasFieldmap() {
             return hasFieldmap;
         }
 
+        /**
+         * Sets the checks for fieldmap.
+         *
+         * @param hasFieldmap the new checks for fieldmap
+         */
         public void setHasFieldmap(boolean hasFieldmap) {
             this.hasFieldmap = hasFieldmap;
         }
+
+		/**
+		 * Gets the error message.
+		 *
+		 * @return the error message
+		 */
+		public String getErrorMessage() {
+			return errorMessage;
+		}
+
+		/**
+		 * Sets the error message.
+		 *
+		 * @param errorMessage the new error message
+		 */
+		public void setErrorMessage(String errorMessage) {
+			this.errorMessage = errorMessage;
+		}
 
         
 }

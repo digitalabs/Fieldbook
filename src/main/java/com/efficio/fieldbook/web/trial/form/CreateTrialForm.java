@@ -87,8 +87,13 @@ public class CreateTrialForm {
      */
     private List<List<ValueReference>> trialEnvironmentValues;
     
+    /** The measurement variables. */
     private List<MeasurementVariable> measurementVariables;
+    
+    /** The is measurement data existing. */
     private boolean isMeasurementDataExisting;
+    
+    /** The study id. */
     private Integer studyId;
     /** The name type. */
     private int nameType;
@@ -101,9 +106,15 @@ public class CreateTrialForm {
     
     /** The import location id. */
     private int importLocationId;
+    
+    /** The file. */
     private MultipartFile file;
 
-
+    /** The has error. */
+    private boolean hasError;
+    
+    /** The error message. */
+    private String errorMessage;
 
 
     /**
@@ -286,80 +297,211 @@ public class CreateTrialForm {
         this.treatmentFactors = treatmentFactors;
     }
 
+    /**
+     * Gets the folder name label.
+     *
+     * @return the folder name label
+     */
     public String getFolderNameLabel() {
         return folderNameLabel;
     }
 
+    /**
+     * Sets the folder name label.
+     *
+     * @param folderNameLabel the new folder name label
+     */
     public void setFolderNameLabel(String folderNameLabel) {
         this.folderNameLabel = folderNameLabel;
     }
 
+	/**
+	 * Gets the measurement variables.
+	 *
+	 * @return the measurement variables
+	 */
 	public List<MeasurementVariable> getMeasurementVariables() {
 		return measurementVariables;
 	}
 
+	/**
+	 * Sets the measurement variables.
+	 *
+	 * @param measurementVariables the new measurement variables
+	 */
 	public void setMeasurementVariables(
 			List<MeasurementVariable> measurementVariables) {
 		this.measurementVariables = measurementVariables;
 	}
 
+	/**
+	 * Checks if is measurement data existing.
+	 *
+	 * @return true, if is measurement data existing
+	 */
 	public boolean isMeasurementDataExisting() {
 		return isMeasurementDataExisting;
 	}
 
+	/**
+	 * Sets the measurement data existing.
+	 *
+	 * @param isMeasurementDataExisting the new measurement data existing
+	 */
 	public void setMeasurementDataExisting(boolean isMeasurementDataExisting) {
 		this.isMeasurementDataExisting = isMeasurementDataExisting;
 	}
 
+	/**
+	 * Gets the arrange measurement variables.
+	 *
+	 * @return the arrange measurement variables
+	 */
 	public List<MeasurementVariable> getArrangeMeasurementVariables(){
 		return SettingsUtil.getArrangedMeasurementVariable(getMeasurementVariables());
 	}
 
+	/**
+	 * Gets the study id.
+	 *
+	 * @return the study id
+	 */
 	public Integer getStudyId() {
 		return studyId;
 	}
 
+	/**
+	 * Sets the study id.
+	 *
+	 * @param studyId the new study id
+	 */
 	public void setStudyId(Integer studyId) {
 		this.studyId = studyId;
 	}
 
+	/**
+	 * Gets the name type.
+	 *
+	 * @return the name type
+	 */
 	public int getNameType() {
 		return nameType;
 	}
 
+	/**
+	 * Sets the name type.
+	 *
+	 * @param nameType the new name type
+	 */
 	public void setNameType(int nameType) {
 		this.nameType = nameType;
 	}
 
+	/**
+	 * Gets the import date.
+	 *
+	 * @return the import date
+	 */
 	public String getImportDate() {
 		return importDate;
 	}
 
+	/**
+	 * Sets the import date.
+	 *
+	 * @param importDate the new import date
+	 */
 	public void setImportDate(String importDate) {
 		this.importDate = importDate;
 	}
 
+	/**
+	 * Gets the import method id.
+	 *
+	 * @return the import method id
+	 */
 	public int getImportMethodId() {
 		return importMethodId;
 	}
 
+	/**
+	 * Sets the import method id.
+	 *
+	 * @param importMethodId the new import method id
+	 */
 	public void setImportMethodId(int importMethodId) {
 		this.importMethodId = importMethodId;
 	}
 
+	/**
+	 * Gets the import location id.
+	 *
+	 * @return the import location id
+	 */
 	public int getImportLocationId() {
 		return importLocationId;
 	}
 
+	/**
+	 * Sets the import location id.
+	 *
+	 * @param importLocationId the new import location id
+	 */
 	public void setImportLocationId(int importLocationId) {
 		this.importLocationId = importLocationId;
 	}
 
+	/**
+	 * Gets the file.
+	 *
+	 * @return the file
+	 */
 	public MultipartFile getFile() {
 		return file;
 	}
 
+	/**
+	 * Sets the file.
+	 *
+	 * @param file the new file
+	 */
 	public void setFile(MultipartFile file) {
 		this.file = file;
+	}
+
+	/**
+	 * Checks if is checks for error.
+	 *
+	 * @return true, if is checks for error
+	 */
+	public boolean isHasError() {
+		return hasError;
+	}
+
+	/**
+	 * Sets the checks for error.
+	 *
+	 * @param hasError the new checks for error
+	 */
+	public void setHasError(boolean hasError) {
+		this.hasError = hasError;
+	}
+
+	/**
+	 * Gets the error message.
+	 *
+	 * @return the error message
+	 */
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	/**
+	 * Sets the error message.
+	 *
+	 * @param errorMessage the new error message
+	 */
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 }

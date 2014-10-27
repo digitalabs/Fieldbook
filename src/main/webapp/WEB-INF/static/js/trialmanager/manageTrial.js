@@ -193,37 +193,39 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
                 $scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
 
                 if (!$scope.isChoosePreviousTrial) {
-                    // reset the service data to initial state (for untick of user previous trial)
-                    _.each(_.keys($localStorage.serviceBackup.settings),function(key) {
-                        if ('basicDetails' !== key) {
-                            TrialManagerDataService.updateSettings(key,angular.copy($localStorage.serviceBackup.settings[key]));
-                        }
-                    });
-
-                    _.each(_.keys($localStorage.serviceBackup.currentData),function(key) {
-                        if ('basicDetails' !== key) {
-                            TrialManagerDataService.updateCurrentData(key,angular.copy($localStorage.serviceBackup.currentData[key]));
-                        }
-                    });
-
-                    TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
-                    TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
-
-                    // perform other cleanup tasks
-                    $http.get('/Fieldbook/TrialManager/createTrial/clearSettings');
-
-                    var measurementDiv = $('#measurementsDiv');
-                    if(measurementDiv.length !== 0){
-                        measurementDiv.html('');
-                    }
-
-                    if (typeof resetGermplasmList !== 'undefined') {
-                        resetGermplasmList();
-                    }
-
+                	$scope.resetTabsData();
                 }
             };
 
+            $scope.resetTabsData = function () {
+            	// reset the service data to initial state (for untick of user previous trial)
+                _.each(_.keys($localStorage.serviceBackup.settings),function(key) {
+                    if ('basicDetails' !== key) {
+                        TrialManagerDataService.updateSettings(key,angular.copy($localStorage.serviceBackup.settings[key]));
+                    }
+                });
+
+                _.each(_.keys($localStorage.serviceBackup.currentData),function(key) {
+                    if ('basicDetails' !== key) {
+                        TrialManagerDataService.updateCurrentData(key,angular.copy($localStorage.serviceBackup.currentData[key]));
+                    }
+                });
+
+                TrialManagerDataService.applicationData = angular.copy($localStorage.serviceBackup.applicationData);
+                TrialManagerDataService.trialMeasurement = angular.copy($localStorage.serviceBackup.trialMeasurement);
+
+                // perform other cleanup tasks
+                $http.get('/Fieldbook/TrialManager/createTrial/clearSettings');
+
+                var measurementDiv = $('#measurementsDiv');
+                if(measurementDiv.length !== 0){
+                    measurementDiv.html('');
+                }
+
+                if (typeof resetGermplasmList !== 'undefined') {
+                    resetGermplasmList();
+                }
+            }
 
 
             $scope.data = TrialManagerDataService.currentData.basicDetails;
@@ -241,33 +243,37 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
             $scope.useExistingTrial = function (existingTrialID) {
                 $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
                     // update data and settings
-
-                    var environmentData = TrialManagerDataService.extractData(data.environmentData);
-                    var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
-
-                    if (environmentData.noOfEnvironments > 0 && environmentData.environments.length === 0) {
-                        while (environmentData.environments.length !== environmentData.noOfEnvironments) {
-                            environmentData.environments.push({
-                                managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
-                                    environmentSettings.managementDetails),
-                                trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
-                                    environmentSettings.trialConditionDetails)
-                            });
-                        }
-                    }
-
-                    TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
-                    TrialManagerDataService.updateCurrentData('environments', environmentData);
-                    TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
-                        data.treatmentFactorsData));
-
-                    TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
-                        data.trialSettingsData));
-                    TrialManagerDataService.updateSettings('environments', environmentSettings);
-                    TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
-                    TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
-                        data.treatmentFactorsData));
-                    TrialManagerDataService.updateSettings('measurements', TrialManagerDataService.extractSettings(data.measurementsData));
+                	if (data.createTrialForm !== null && data.createTrialForm.hasError === true) {
+                		$scope.resetTabsData();
+                        createErrorNotification(errorMsgHeader, data.createTrialForm.errorMessage);
+                	} else {
+	                    var environmentData = TrialManagerDataService.extractData(data.environmentData);
+	                    var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
+	
+	                    if (environmentData.noOfEnvironments > 0 && environmentData.environments.length === 0) {
+	                        while (environmentData.environments.length !== environmentData.noOfEnvironments) {
+	                            environmentData.environments.push({
+	                                managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
+	                                    environmentSettings.managementDetails),
+	                                trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
+	                                    environmentSettings.trialConditionDetails)
+	                            });
+	                        }
+	                    }
+	
+	                    TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
+	                    TrialManagerDataService.updateCurrentData('environments', environmentData);
+	                    TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
+	                        data.treatmentFactorsData));
+	
+	                    TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
+	                        data.trialSettingsData));
+	                    TrialManagerDataService.updateSettings('environments', environmentSettings);
+	                    TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
+	                    TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
+	                        data.treatmentFactorsData));
+	                    TrialManagerDataService.updateSettings('measurements', TrialManagerDataService.extractSettings(data.measurementsData));
+                	}
                 });
             };
             

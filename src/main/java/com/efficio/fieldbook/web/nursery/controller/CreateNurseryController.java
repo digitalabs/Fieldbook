@@ -55,6 +55,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.util.JsonIoException;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -84,6 +85,8 @@ public class CreateNurseryController extends SettingsController {
     @Resource
     private OntologyService ontologyService;
 	
+    @Resource
+    private ErrorHandlerService errorHandlerService;
    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -110,47 +113,60 @@ public class CreateNurseryController extends SettingsController {
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
 
-    	if(nurseryId != 0){     
-            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
-            userSelection.setConstantsWithLabels(workbook.getConstants());
-            fieldbookService.createIdNameVariablePairs(workbook, new ArrayList<SettingDetail>(),AppConstants.ID_NAME_COMBINATION.getString(), false);
-
-            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
-            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true, false);
-            
-            //nursery-level
-            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
-                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
-                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    userSelection.getStudyLevelConditions(), false, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
-            removeBasicDetailsVariables(nurseryLevelConditions);
-            
-            //plot-level
-            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()),
-                    buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
-                    buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
-                    userSelection.getPlotsLevelList(), false, "");
-            
-            //remove variables not needed
-            removeVariablesFromExistingNursery(plotLevelConditions, AppConstants.REMOVE_FACTORS_IN_USE_PREVIOUS_STUDY.getString());
-            
-            userSelection.setStudyLevelConditions(nurseryLevelConditions);
-            userSelection.setPlotsLevelList(plotLevelConditions);
-            
-            form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
-            form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
-            form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
-            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-            form.setNurseryConditions(userSelection.getNurseryConditions());
-            form.setLoadSettings("1");            
-            form.setProjectId(this.getCurrentProjectId());
-            
-            form.setMeasurementRowList(new ArrayList<MeasurementRow>());
-        }
-        setFormStaticData(form, contextParams);
+    	try{
+	    	if(nurseryId != 0){     
+	            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
+	            userSelection.setConstantsWithLabels(workbook.getConstants());
+	            fieldbookService.createIdNameVariablePairs(workbook, new ArrayList<SettingDetail>(),AppConstants.ID_NAME_COMBINATION.getString(), false);
+	
+	            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
+	            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true, false);
+	            
+	            //nursery-level
+	            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
+	                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
+	                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+	                    userSelection.getStudyLevelConditions(), false, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+	            removeBasicDetailsVariables(nurseryLevelConditions);
+	            
+	            //plot-level
+	            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()),
+	                    buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
+	                    buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
+	                    userSelection.getPlotsLevelList(), false, "");
+	            
+	            //remove variables not needed
+	            removeVariablesFromExistingNursery(plotLevelConditions, AppConstants.REMOVE_FACTORS_IN_USE_PREVIOUS_STUDY.getString());
+	            
+	            userSelection.setStudyLevelConditions(nurseryLevelConditions);
+	            userSelection.setPlotsLevelList(plotLevelConditions);
+	            
+	            form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
+	            form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+	            form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
+	            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+	            form.setNurseryConditions(userSelection.getNurseryConditions());
+	            form.setLoadSettings("1");            
+	            form.setProjectId(this.getCurrentProjectId());
+	            
+	            form.setMeasurementRowList(new ArrayList<MeasurementRow>());
+	            setFormStaticData(form, contextParams);
+	        }
+    	} catch (MiddlewareQueryException e) {
+    		LOG.error(e.getMessage(), e);
+    		addErrorMessageToResult(form, e);
+    	}
         model.addAttribute("createNurseryForm", form);
         
         return super.showAjaxPage(model, URL_SETTINGS);
+    }
+    
+    protected void addErrorMessageToResult(CreateNurseryForm form, MiddlewareQueryException e) {
+    	String param = AppConstants.NURSERY.getString();
+		form.setHasError("1");
+		form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), 
+				new Object[] {param, param.substring(0, 1).toUpperCase()
+				.concat(param.substring(1, param.length())), param}, "\n"));
     }
     
     private void removeBasicDetailsVariables(List<SettingDetail> nurseryLevelConditions) {

@@ -1359,6 +1359,9 @@ function choosePreviousNursery(studyId) {
 			} else {
 				$('.container .row').first().html(html);
 			}
+			if ($('#hasError').val() === '1' && $('#errorMessage').val() !== '') {
+				createErrorNotification(errorMsgHeader, $('#errorMessage').val());
+			}
 			$('.chs-add-variable-factor').show();
 		}
 	});

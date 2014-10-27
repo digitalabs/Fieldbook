@@ -31,11 +31,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
@@ -54,6 +56,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+    
+    @Resource
+    private ErrorHandlerService errorHandlerService;
     
     @Override
 	public String getContentName() {
@@ -74,27 +79,50 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     		@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) throws MiddlewareQueryException {
     	
     	boolean isNursery = (studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType)) ? true : false;
-        Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
-        workbook.setStudyId(id);
-        StudyDetails details = SettingsUtil.convertWorkbookToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService, userSelection);
-        rearrangeDetails(details);
-        this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
-        if (workbook.getMeasurementDatesetId() != null) {
-        	details.setHasMeasurements(fieldbookMiddlewareService.countObservations(workbook.getMeasurementDatesetId()) > 0);
-        }
-        else {
-        	details.setHasMeasurements(false);
-        }
-        if (workbook.isNursery()) {
+    	Workbook workbook;
+    	StudyDetails details;
+    	try { 
+	        workbook = fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
+	        workbook.setStudyId(id);
+	        details = SettingsUtil.convertWorkbookToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService, userSelection);
+	        rearrangeDetails(details);
+	        this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
+	        if (workbook.getMeasurementDatesetId() != null) {
+	        	details.setHasMeasurements(fieldbookMiddlewareService.countObservations(workbook.getMeasurementDatesetId()) > 0);
+	        }
+	        else {
+	        	details.setHasMeasurements(false);
+	        }
+	        
+    	} catch (MiddlewareQueryException e) {
+    		LOG.error(e.getMessage(), e);
+    		details = new StudyDetails();
+    		addErrorMessageToResult(details, e, isNursery);
+    	}
+    	
+    	if (isNursery) {
         	model.addAttribute("nurseryDetails", details);
         } 
         else {
         	model.addAttribute("trialDetails", details);
         }
-    	return showAjaxPage(model, getContentName(!workbook.isNursery()));
+    	
+    	return showAjaxPage(model, getContentName(!isNursery));
     }
     
-    @ResponseBody
+    protected void addErrorMessageToResult(StudyDetails details, MiddlewareQueryException e, boolean isNursery) {
+    	String param;
+		if (isNursery) {
+			param = AppConstants.NURSERY.getString();
+		} else {
+			param = AppConstants.TRIAL.getString();
+		}
+		details.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), 
+				new Object[] {param, param.substring(0, 1).toUpperCase()
+				.concat(param.substring(1, param.length())), param}, "\n"));		
+	}
+
+	@ResponseBody
     @RequestMapping(value="/datasets/{nurseryId}")
     public List<DatasetReference> loadDatasets(@PathVariable int nurseryId) throws MiddlewareQueryException {
     	List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(nurseryId);
@@ -130,5 +158,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     	}
     	return newList;
     }
+
+	protected void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
     
 }

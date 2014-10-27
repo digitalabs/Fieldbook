@@ -2884,7 +2884,7 @@ function addDetailsTab(studyId, title) {
 			url : '/Fieldbook/StudyManager/reviewStudyDetails/show/' + studyType + '/' + studyId,
 			type : 'GET',
 			cache : false,
-			success : function(data) {
+			success : function(data) {	
 				var close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+studyId+'"></i>';
 				$('#study-tab-headers').append(
 						"<li id='li-study" + studyId + "'><a href='#study"+studyId+"' role='tab' data-toggle='tab'><span class='review-study-name'>"
@@ -2892,14 +2892,18 @@ function addDetailsTab(studyId, title) {
 				$('#study-tabs').append(
 						'<div class="info tab-pane" id="study' + studyId + '">' + data
 								+ '</div>');
-				initializeStudyTabs();
-				$('li#li-study'+studyId + ' a').tab('show');			
-				
-				$('.info#study' + studyId + ' select').each(function() {
-					$(this).select2({minimumResultsForSearch: 20});
-				});
-				truncateStudyVariableNames('#study'+studyId+' .review-study-name', 20);
-				reviewLandingSetup();
+				if ($('#review-study-error').val() !== '') {
+					createErrorNotification(errorMsgHeader, $('#review-study-error').val());
+				} else {
+					initializeStudyTabs();
+					$('li#li-study'+studyId + ' a').tab('show');			
+					
+					$('.info#study' + studyId + ' select').each(function() {
+						$(this).select2({minimumResultsForSearch: 20});
+					});
+					truncateStudyVariableNames('#study'+studyId+' .review-study-name', 20);
+					reviewLandingSetup();
+				}
 			}
 		});
 	}

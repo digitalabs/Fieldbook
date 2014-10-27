@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
@@ -71,6 +73,9 @@ public class CreateTrialController extends BaseTrialController {
     /**
      * The Constant URL_SETTINGS.
      */
+    
+    @Resource
+    private ErrorHandlerService errorHandlerService;
 
 
     /* (non-Javadoc)
@@ -119,21 +124,38 @@ public class CreateTrialController extends BaseTrialController {
 
     @ResponseBody
     @RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
-    public Map<String, TabInfo> getExistingTrialDetails(@RequestParam(value = "trialID") Integer trialID) throws MiddlewareQueryException{
-        Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
-        if (trialID != null && trialID != 0) {
-            Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialID);
-            userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
+    public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") Integer trialID) throws MiddlewareQueryException{
+        Map<String, Object> tabDetails = new HashMap<String, Object>();
+        CreateTrialForm form = new CreateTrialForm();
+        try{
+	        if (trialID != null && trialID != 0) {
+	            Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialID);
+	            userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
+	
+	            tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
+	            tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
+	            tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
+	            tabDetails.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
+	            fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
+	            tabDetails.put("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
+	        }
+        } catch (MiddlewareQueryException e) {
+    		LOG.error(e.getMessage(), e);
+    		form = addErrorMessageToResult(e);	
+    	}
 
-            tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
-            tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
-            tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
-            tabDetails.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
-            fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
-            tabDetails.put("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
-        }
-
+        tabDetails.put("createTrialForm", form);
         return tabDetails;
+    }
+    
+    private CreateTrialForm addErrorMessageToResult(MiddlewareQueryException e) {
+    	String param = AppConstants.TRIAL.getString();
+		CreateTrialForm form = new CreateTrialForm();
+		form.setHasError(true);
+		form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), 
+				new Object[] {param, param.substring(0, 1).toUpperCase()
+				.concat(param.substring(1, param.length())), param}, "\n"));
+		return form;
     }
 
     @ModelAttribute("programLocationURL")
@@ -395,5 +417,9 @@ public class CreateTrialController extends BaseTrialController {
             tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));                    
 
         return tabDetails;
+    }
+    
+    protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService){
+    	this.fieldbookMiddlewareService = fieldbookMiddlewareService;
     }
 }

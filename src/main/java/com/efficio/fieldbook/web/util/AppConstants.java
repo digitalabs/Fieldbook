@@ -266,6 +266,8 @@ public enum AppConstants {
     ,HIDE_TRIAL_VARIABLES
     ,EXP_DESIGN_VARIABLES
     ,STANDARD_VARIABLE_NAME_LIMIT
+    ,NURSERY
+    ,TRIAL
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

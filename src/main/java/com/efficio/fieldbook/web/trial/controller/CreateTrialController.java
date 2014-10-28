@@ -118,7 +118,8 @@ public class CreateTrialController extends BaseTrialController {
         model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
         model.addAttribute("measurementRowCount", 0);
 
-        model.addAttribute("createNurseryForm", form); //so that we can reuse the same page being use for nursery
+        //so that we can reuse the same page being use for nursery
+        model.addAttribute("createNurseryForm", form); 
         return showAngularPage(model);
     }
 
@@ -266,7 +267,7 @@ public class CreateTrialController extends BaseTrialController {
                 SettingDetail detail = createSettingDetail(initialSettingID, null);
                 initialDetailList.add(detail);
             } catch (MiddlewareQueryException e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
 
         }
@@ -331,7 +332,7 @@ public class CreateTrialController extends BaseTrialController {
                 SettingDetail detail = createSettingDetail(initialSettingID, null);
                 initialDetailList.add(detail);
             } catch (MiddlewareQueryException e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
         }
 
@@ -399,8 +400,7 @@ public class CreateTrialController extends BaseTrialController {
 		     	userSelection.setImportedGermplasmMainInfo(null);
 		     }
     	 } catch (MiddlewareQueryException e) {
- 			// TODO Auto-generated catch block
- 			e.printStackTrace();
+ 			LOG.error(e.getMessage(), e);
  		}
         return "success";
     }

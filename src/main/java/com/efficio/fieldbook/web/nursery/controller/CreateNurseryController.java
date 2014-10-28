@@ -316,8 +316,7 @@ public class CreateNurseryController extends SettingsController {
         form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
         try {
             form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
-        }
-        catch (MiddlewareQueryException e) {
+        } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
     }
@@ -536,41 +535,35 @@ public class CreateNurseryController extends SettingsController {
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             if (form.getStudyLevelVariables() == null) {
                 form.setStudyLevelVariables(newDetails);
-            }
-            else {
+            } else {
                 form.getStudyLevelVariables().addAll(newDetails);
             }
             if (userSelection.getStudyLevelConditions() == null) {
                 userSelection.setStudyLevelConditions(newDetails);
-            }
-            else {
+            } else {
                 userSelection.getStudyLevelConditions().addAll(newDetails);
             }
             
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             if (form.getPlotLevelVariables() == null) {
                 form.setPlotLevelVariables(newDetails);
-            }
-            else {
+            } else {
                 form.getPlotLevelVariables().addAll(newDetails);
             }
             if (userSelection.getPlotsLevelList() == null) {
                 userSelection.setPlotsLevelList(newDetails);
-            }
-            else {
+            } else {
                 userSelection.getPlotsLevelList().addAll(newDetails);
             }
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()){
             if (form.getBaselineTraitVariables() == null) {
                 form.setBaselineTraitVariables(newDetails);
-            }
-            else {
+            } else {
                 form.getBaselineTraitVariables().addAll(newDetails);
             }
             if (userSelection.getBaselineTraitsList() == null) {
                 userSelection.setBaselineTraitsList(newDetails);
-            }
-            else {
+            } else {
                 userSelection.getBaselineTraitsList().addAll(newDetails);
             }
         } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {

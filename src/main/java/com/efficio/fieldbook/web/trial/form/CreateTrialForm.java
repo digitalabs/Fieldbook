@@ -21,8 +21,6 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
-// TODO: Auto-generated Javadoc
-
 /**
  * The Class CreateNurseryForm.
  */

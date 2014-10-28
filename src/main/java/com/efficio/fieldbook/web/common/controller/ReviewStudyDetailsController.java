@@ -68,8 +68,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     private String getContentName(boolean isTrial) {
     	if (isTrial) {
     		return "TrialManager/reviewTrialDetails";
-    	}
-    	else {
+    	} else {
     		return "NurseryManager/reviewNurseryDetails";
     	}
     }
@@ -89,8 +88,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	        this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
 	        if (workbook.getMeasurementDatesetId() != null) {
 	        	details.setHasMeasurements(fieldbookMiddlewareService.countObservations(workbook.getMeasurementDatesetId()) > 0);
-	        }
-	        else {
+	        } else {
 	        	details.setHasMeasurements(false);
 	        }
 	        
@@ -125,8 +123,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	@ResponseBody
     @RequestMapping(value="/datasets/{nurseryId}")
     public List<DatasetReference> loadDatasets(@PathVariable int nurseryId) throws MiddlewareQueryException {
-    	List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(nurseryId);
-    	return datasets;
+		return fieldbookMiddlewareService.getDatasetReferences(nurseryId);
     }
     
     private void rearrangeDetails(StudyDetails details) {

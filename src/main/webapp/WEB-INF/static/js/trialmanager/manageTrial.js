@@ -225,7 +225,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
                 if (typeof resetGermplasmList !== 'undefined') {
                     resetGermplasmList();
                 }
-            }
+            };
 
 
             $scope.data = TrialManagerDataService.currentData.basicDetails;

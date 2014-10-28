@@ -9,7 +9,7 @@ function checkMethod() {
 		$('#method-variates-section').hide();
 		$('.method-selection-div').find('input,select').prop('disabled', false);
 		$('#methodIdAll').select2('enable', true);
-		$('#methodIdFavorite').select2("enable", true);
+		$('#methodIdFavorite').select2('enable', true);
 
 		setCorrectMethodValues(true);
 		changeAdvanceBreedingMethod();
@@ -33,7 +33,7 @@ function checkMethod() {
 		if ($('#methodVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
-			showErrorMessage("page-advance-modal-message", noMethodVariatesError);
+			showErrorMessage('page-advance-modal-message', noMethodVariatesError);
 		}
 		else {
 			displaySectionsPerMethodVariateValues();
@@ -359,7 +359,7 @@ function populateAttributeFields(data) {
 function checkIfEmpty(value) {
 	'use strict';
 	if (value === '') {
-		return "&nbsp";
+		return '&nbsp';
 	} else {
 		return value;
 	}
@@ -631,7 +631,7 @@ function toggleMethodDropdown(rowIndex) {
 		$($('#' + getJquerySafeId('studyLevelVariables' 
 			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val(selectedVal);
 		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-			+ rowIndex + ".value")).parent().find('.selectedValue')).val();
+			+ rowIndex + '.value')).parent().find('.selectedValue')).val();
 	}
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
@@ -879,7 +879,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		// remove row from session
 		$.ajax({
 			url : '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
-					+ variableType + "/" + variableId,
+					+ variableType + '/' + variableId,
 			cache : false,
 			type : 'POST',
 			success : function() {
@@ -1055,7 +1055,7 @@ function recreateDateInput(index, row, selectedVal, name) {
 			+ index
 			+ '.value" class="btn datepicker"><img  src="/Fieldbook/static/img/calendar.png" style="padding-bottom:3px;" /></label>';
 
-	$($(row).find(".2nd")).html(newCell);
+	$($(row).find('.2nd')).html(newCell);
 }
 
 function recreateSpinnerInput(index, row, selectedVal, name) {
@@ -1103,7 +1103,7 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 			+ '" style="display:none">' + possibleValuesJson + '</div>';
 
 	// div containing the favorite possible values
-	if (possibleValuesFavoriteJson !== "") {
+	if (possibleValuesFavoriteJson !== '') {
 		newCell = newCell + '<div id="possibleValuesFavoriteJson'
 				+ posValSuffix + index + '" class="possibleValuesFavoriteJson'
 				+ posValSuffix + '" style="display:none">'
@@ -1451,7 +1451,7 @@ function validateCreateNursery() {
 			}else {
 				name = $(this).parent().prev().find('.control-label').html();
 			}
-			customMessage = name + " " + valueNotNumeric;
+			customMessage = name + ' ' + valueNotNumeric;
 		}
 	});
 
@@ -1716,7 +1716,7 @@ function submitGermplasmAndCheck() {
 	var $form = $('#germplasm-list-form'),
 		serializedData = $form.serialize() + '&lastDraggedChecksList='+lastDraggedChecksList;
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
-		serializedData += "&" + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
+		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
 
 	$.ajax({

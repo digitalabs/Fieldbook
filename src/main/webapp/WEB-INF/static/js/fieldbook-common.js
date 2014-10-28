@@ -2769,8 +2769,8 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 
 function hideClearChecksButton() {
 	if ($('.check-germplasm-list-items tbody tr').length === 0 
-			|| ($('#studyId') != null || ($('#chooseGermplasmAndChecks').data('replace') 
-					&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1))) {
+			|| ($('#studyId') != null && $('#chooseGermplasmAndChecks').data('replace') !== undefined 
+					&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 0)) {
 		$('#check-germplasm-list-reset-button').hide();
 	}
 }

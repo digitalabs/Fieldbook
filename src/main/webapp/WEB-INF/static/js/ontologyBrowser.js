@@ -11,7 +11,6 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 		if(key != '') {
 			key = key + '_';
 		}
-
 		key = key + elem[count];
 		$('.'+key).addClass('highlight');
 	}
@@ -197,8 +196,8 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
                 });
                 query.callback(data);
             },
-            //allow new values which is a substring of the existing options i.e. AC should be allowed even if there is ACCNO 
-            createSearchChoice: function(term, data) { 
+            //allow new values which is a substring of the existing options i.e. AC should be allowed even if there is ACCNO
+            createSearchChoice: function(term, data) {
         		if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) {
         			return {id:term, text:term};
     			} 
@@ -480,12 +479,12 @@ function recreateCombo(combo, data) {
                 } 
             }
 	});
-	var newData = { 'id' : data.id,
+	var newData = {'id' : data.id,
 			  'text' : data.name + getOntologySuffix(data.id),
 			  'description' : data.definition
 	};
 	description.val(data.definition);
-	$('#combo'+combo).select2('data', newData);//no need to trigger change.trigger('change');
+	$('#combo'+combo).select2('data', newData);
 }
 
 //check if the selected item is an existing record
@@ -537,8 +536,9 @@ function doTraitClassTreeHighlight(treeName, comboName, descriptionName, nodeKey
 	var key = '';
 	var traitClassId = '';
 	for(count = 0 ; count < elem.length ; count++){
-		if(key != '')
+		if(key != '') {
 			key = key + '_';
+		}
 
 		key = key + elem[count];
 		$('.'+key).addClass('highlight');
@@ -584,8 +584,9 @@ function getTreeChildren(child, traitClassId){
 			if(children[i].data.key.indexOf(traitClassId) != -1){
 				return children[i].data.key;
 			}
-			if(children[i].getChildren() != null)
+			if(children[i].getChildren() != null) {
 				nodeKey = getTreeChildren(children[i], traitClassId);
+			}
 
 			if(nodeKey != ''){
 				break;
@@ -607,8 +608,9 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 				var count = 0;
 				var key = '';
 				for(count = 0 ; count < elem.length ; count++){
-					if(key != '')
+					if(key != '') {
 						key = key + '_';
+					}
 
 					key = key + elem[count];
 					$('.'+key).addClass('highlight');

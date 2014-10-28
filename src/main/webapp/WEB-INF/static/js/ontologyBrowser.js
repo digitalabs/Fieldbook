@@ -309,6 +309,8 @@ function setOnChangeSettingsOfOntologyCombos(name, allowTypedValues) {
         } else { //add mode
             if (name != 'ManageProperty') {
                 clearForm(lowerCaseFirstLetter(name) + 'Form');
+            } else {
+            	enablePropertyFields();
             }
             
             setComboValuesAndVisibilityOfButtons(name, false);

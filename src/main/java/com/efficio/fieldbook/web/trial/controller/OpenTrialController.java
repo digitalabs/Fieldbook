@@ -56,10 +56,14 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 public class OpenTrialController extends
         BaseTrialController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
     public static final String URL = "/TrialManager/openTrial";
-    
-    @Resource
+	public static final String IS_EXP_DESIGN_PREVIEW = "isExpDesignPreview";
+	public static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
+	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
+	public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
+
+	@Resource
     private OntologyService ontologyService;
 
     @Override
@@ -122,7 +126,6 @@ public class OpenTrialController extends
     @RequestMapping(value = "/measurements", method = RequestMethod.GET)
     public String showMeasurements(@ModelAttribute("createTrialForm") CreateTrialForm form, Model model) {
     	
-    	// TODO : integrate loading of data for
 	    Workbook workbook = userSelection.getWorkbook();
 	    Integer measurementDatasetId = null;
         if (workbook != null) {
@@ -134,7 +137,7 @@ public class OpenTrialController extends
         	//this is so we can preview the exp design
         	if(userSelection.getTemporaryWorkbook() != null){
         		workbook = userSelection.getTemporaryWorkbook();
-        		model.addAttribute("isExpDesignPreview", "1");
+        		model.addAttribute(IS_EXP_DESIGN_PREVIEW, "1");
         	}
         	
             try {
@@ -147,9 +150,9 @@ public class OpenTrialController extends
 				
 	            form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
 	            
-	            model.addAttribute("measurementRowCount", workbook.getObservations() != null ? workbook.getObservations().size() : 0);
+	            model.addAttribute(MEASUREMENT_ROW_COUNT, workbook.getObservations() != null ? workbook.getObservations().size() : 0);
 			} catch (MiddlewareQueryException e) {
-				// TODO Auto-generated catch block
+				LOG.error(e.getMessage());
 				e.printStackTrace();
 			}           
         }
@@ -171,19 +174,21 @@ public class OpenTrialController extends
             userSelection.setTemporaryWorkbook(null);
             model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
             model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
-            model.addAttribute("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
+            model.addAttribute(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, false));
             model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
             model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
             model.addAttribute("experimentalDesignData", prepareExperimentalDesignTabInfo(trialWorkbook.getExperimentalDesignVariables(), false));
-            model.addAttribute("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
+            model.addAttribute(MEASUREMENT_DATA_EXISTING, fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                     SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-            model.addAttribute("measurementRowCount", trialWorkbook.getObservations().size());
+            model.addAttribute(MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
             fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
             model.addAttribute("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
             userSelection.setMeasurementRowList(trialWorkbook.getObservations());
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
             form.setStudyId(trialId);
-            model.addAttribute("createNurseryForm", form); //so that we can reuse the same age being use for nursery
+
+			//so that we can reuse the same age being use for nursery
+            model.addAttribute("createNurseryForm", form);
             model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
             model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
             
@@ -271,8 +276,6 @@ public class OpenTrialController extends
         int trialDatasetId = userSelection.getWorkbook().getTrialDatasetId();
         int measurementDatasetId = userSelection.getWorkbook().getMeasurementDatesetId();
 
-        // TODO : integrate treatment factor detail once it's finalized
-
         Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
                 userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
                 userSelection.getTreatmentFactors(), data.getTreatmentFactors().getCurrentData(), null, userSelection.getNurseryConditions(), false);
@@ -302,17 +305,16 @@ public class OpenTrialController extends
 
         userSelection.setWorkbook(workbook);
 
-        // TODO : clarify if the environment values placed in session also need to be updated to include the values for the trial level conditions
         userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
 
 
         Map<String, Object> returnVal = new HashMap<String, Object>();
-        returnVal.put("environmentData", prepareEnvironmentsTabInfo(workbook, false));
+        returnVal.put(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(workbook, false));
         returnVal.put("measurementDataExisting", false);
-        returnVal.put("measurementRowCount", 0);
+        returnVal.put(MEASUREMENT_ROW_COUNT, 0);
         
         //saving of measurement rows
-        if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0 && replace == 0) {
+        if (userSelection.getMeasurementRowList() != null && (!userSelection.getMeasurementRowList().isEmpty()) && replace == 0) {
             try {                                
                 WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, userSelection, ontologyService, fieldbookService);
                 WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, userSelection, ontologyService, fieldbookService);
@@ -327,7 +329,7 @@ public class OpenTrialController extends
 
                 returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
                         SettingsUtil.buildVariates(workbook.getVariates())));
-                returnVal.put("measurementRowCount", workbook.getObservations().size());
+                returnVal.put(MEASUREMENT_ROW_COUNT, workbook.getObservations().size());
 
                 return returnVal;
             } catch (MiddlewareQueryException e) {
@@ -348,10 +350,10 @@ public class OpenTrialController extends
         userSelection.setWorkbook(trialWorkbook);
         userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
         userSelection.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(userSelection.getExperimentalDesignVariables()));
-        returnVal.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
+        returnVal.put(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, false));
         returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                             SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-        returnVal.put("measurementRowCount", trialWorkbook.getObservations().size());
+        returnVal.put(MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
         returnVal.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
         prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, id);
         prepareGermplasmTabInfo(trialWorkbook.getFactors(), false);
@@ -376,7 +378,7 @@ public class OpenTrialController extends
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<>();
     }
     
     /**
@@ -423,7 +425,7 @@ public class OpenTrialController extends
         List<MeasurementRow> observations = workbook.getObservations();
         Integer measurementDatasetId = workbook.getMeasurementDatesetId();
         userSelection.setMeasurementRowList(workbook.getObservations());
-        model.addAttribute("isExpDesignPreview", "1");
+        model.addAttribute(IS_EXP_DESIGN_PREVIEW, "1");
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
     }
     @RequestMapping(value="/load/dynamic/change/measurement", method = RequestMethod.POST)
@@ -477,13 +479,14 @@ public class OpenTrialController extends
         userSelection.setMeasurementRowList(workbook.getObservations());
         //we do a cleanup here
         if(isInPreviewMode){
-        	model.addAttribute("isExpDesignPreview", "1");
+        	model.addAttribute(IS_EXP_DESIGN_PREVIEW, "1");
         }
         
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations,measurementDatasetId, variates, model);
     }
   
-    private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, List<MeasurementVariable> measurementDatasetVariables, List<MeasurementRow> observations, Integer measurementDatasetId,  List<MeasurementVariable> variates, Model model) throws MiddlewareQueryException{
+    private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, List<MeasurementVariable> measurementDatasetVariables,
+			List<MeasurementRow> observations, Integer measurementDatasetId,  List<MeasurementVariable> variates, Model model) throws MiddlewareQueryException{
     	 //set measurements data
         userSelection.setMeasurementRowList(observations);
         if(!isTemporary){

@@ -58,9 +58,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @Controller
 @RequestMapping(CreateTrialController.URL)
 public class CreateTrialController extends BaseTrialController {
-    // TODO : rename and repurpose class to handle not just initial creation, but also editing
-
-    /**
+	/**
      * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(CreateTrialController.class);
@@ -69,8 +67,10 @@ public class CreateTrialController extends BaseTrialController {
      * The Constant URL.
      */
     public static final String URL = "/TrialManager/createTrial";
+	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
+	public static final String TRIAL_SETTINGS_DATA_TAB = "trialSettingsData";
 
-    /**
+	/**
      * The Constant URL_SETTINGS.
      */
     
@@ -113,8 +113,8 @@ public class CreateTrialController extends BaseTrialController {
 
         model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo());
         model.addAttribute("germplasmData", prepareGermplasmTabInfo(false));
-        model.addAttribute("environmentData", prepareEnvironmentsTabInfo(false));
-        model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo());
+        model.addAttribute(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(false));
+        model.addAttribute(TRIAL_SETTINGS_DATA_TAB, prepareTrialSettingsTabInfo());
         model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
         model.addAttribute("measurementRowCount", 0);
 
@@ -134,8 +134,8 @@ public class CreateTrialController extends BaseTrialController {
 	            userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
 	
 	            tabDetails.put("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
-	            tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, true));
-	            tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
+	            tabDetails.put(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, true));
+	            tabDetails.put(TRIAL_SETTINGS_DATA_TAB, prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
 	            tabDetails.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), true));
 	            fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
 	            tabDetails.put("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
@@ -219,7 +219,7 @@ public class CreateTrialController extends BaseTrialController {
         processEnvironmentData(data.getEnvironments());
         List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
         List<SettingDetail> basicDetails = userSelection.getBasicDetails();
-        addUserIdIfNecessary(basicDetails);
+        basicDetails = addUserIdIfNecessary(basicDetails);
         // transfer over data from user input into the list of setting details stored in the session
         populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
@@ -249,11 +249,8 @@ public class CreateTrialController extends BaseTrialController {
 
         createStudyDetails(workbook, data.getBasicDetails());
 
-        // TODO : integration with experimental design here
-
         userSelection.setWorkbook(workbook);
 
-        // TODO : clarify if the environment values placed in session also need to be updated to include the values for the trial level conditions
         userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
         return "success";
     }
@@ -362,19 +359,20 @@ public class CreateTrialController extends BaseTrialController {
     private List<SettingDetail> addUserIdIfNecessary(List<SettingDetail> basicDetails)
     throws MiddlewareQueryException {
 		boolean found = false;
+		List<SettingDetail> detailList = basicDetails;
     	if (basicDetails == null) {
-    		basicDetails = new ArrayList<SettingDetail>();
+    		detailList = new ArrayList<SettingDetail>();
     	}
-		for (SettingDetail detail : basicDetails) {
+		for (SettingDetail detail : detailList) {
 			if (detail.getVariable().getCvTermId() == TermId.STUDY_UID.getId()) {
 				found = true;
 				break;
 			}
 		}
 		if (!found) {
-			basicDetails.add(createSettingDetail(TermId.STUDY_UID.getId(), "STUDY_UID"));
+			detailList.add(createSettingDetail(TermId.STUDY_UID.getId(), "STUDY_UID"));
 		}
-		return basicDetails;
+		return detailList;
     }
     
 
@@ -413,8 +411,8 @@ public class CreateTrialController extends BaseTrialController {
             Workbook trialWorkbook = userSelection.getWorkbook();
             userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
             
-            tabDetails.put("environmentData", prepareEnvironmentsTabInfo(trialWorkbook, false));
-            tabDetails.put("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));                    
+            tabDetails.put(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, false));
+            tabDetails.put(TRIAL_SETTINGS_DATA_TAB, prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
 
         return tabDetails;
     }

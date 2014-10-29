@@ -70,7 +70,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseControllerTest
 
 		reviewStudyDetailsController.addErrorMessageToResult(details,
 				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"),
-				true);
+				true, 1);
 		
 		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.", 
 				"This nursery is in a format that cannot be opened in the Nursery Manager. Please use the Study Browser if you" +
@@ -84,7 +84,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseControllerTest
 
 		reviewStudyDetailsController.addErrorMessageToResult(details,
 				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"),
-				false);
+				false, 1);
 		
 		Assert.assertEquals("Expecting error message for nursery but got " + details.getErrorMessage() + " instead.", 
 				"This trial is in a format that cannot be opened in the Trial Manager. Please use the Study Browser if you" +

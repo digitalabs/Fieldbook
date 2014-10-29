@@ -2892,8 +2892,10 @@ function addDetailsTab(studyId, title) {
 				$('#study-tabs').append(
 						'<div class="info tab-pane" id="study' + studyId + '">' + data
 								+ '</div>');
-				if ($('#review-study-error').val() !== '') {
-					createErrorNotification(errorMsgHeader, $('#review-study-error').val());
+				if ($('#review-study-error-'+studyId).val() !== '') {
+					createErrorNotification(errorMsgHeader, $('#review-study-error-'+studyId).val());
+					$('#study-tab-headers li#li-study' + studyId).remove();
+					$('#study-tabs div#study'+studyId).remove();
 				} else {
 					initializeStudyTabs();
 					$('li#li-study'+studyId + ' a').tab('show');			

@@ -95,7 +95,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     	} catch (MiddlewareQueryException e) {
     		LOG.error(e.getMessage(), e);
     		details = new StudyDetails();
-    		addErrorMessageToResult(details, e, isNursery);
+    		addErrorMessageToResult(details, e, isNursery, id);
     	}
     	
     	if (isNursery) {
@@ -107,13 +107,14 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     	return showAjaxPage(model, getContentName(!isNursery));
     }
     
-    protected void addErrorMessageToResult(StudyDetails details, MiddlewareQueryException e, boolean isNursery) {
+    protected void addErrorMessageToResult(StudyDetails details, MiddlewareQueryException e, boolean isNursery, int id) {
     	String param;
 		if (isNursery) {
 			param = AppConstants.NURSERY.getString();
 		} else {
 			param = AppConstants.TRIAL.getString();
 		}
+		details.setId(id);
 		details.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), 
 				new Object[] {param, param.substring(0, 1).toUpperCase()
 				.concat(param.substring(1, param.length())), param}, "\n"));		

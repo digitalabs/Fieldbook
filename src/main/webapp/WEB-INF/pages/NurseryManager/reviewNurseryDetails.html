@@ -3,7 +3,7 @@
 		<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
 		<input type="hidden" id="study-type" name="study-type" value="Nursery" />
 		<input type="hidden" id="has-measurements" name="has-measurements" th:value="*{hasMeasurements}" />
-		<input type="hidden" id="review-study-error" th:value="*{errorMessage}" />
+		<input type="hidden" th:id="'review-study-error-' + *{id}" th:value="*{errorMessage}" />
 
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".nurseryDetails">

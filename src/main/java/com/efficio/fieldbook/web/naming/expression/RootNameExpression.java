@@ -39,8 +39,7 @@ public class RootNameExpression implements Expression {
 	    	
 	    	if (!checkNameIfEnclosed(nameString)) {
 	    		value.append("(").append(nameString).append(")");
-	    	}
-	    	else {
+	    	} else {
 	    		value.append(nameString);
 	    	}
 		}
@@ -75,12 +74,10 @@ public class RootNameExpression implements Expression {
 			if (name.charAt(i) == literal) {
 				if (oppositeCount == 0) {
 					return true;
-				}
-				else {
+				} else {
 					oppositeCount--;
 				}
-			}
-			else if (name.charAt(i) == oppositeLiteral) {
+			} else if (name.charAt(i) == oppositeLiteral) {
 				oppositeCount++;
 			}
 		}

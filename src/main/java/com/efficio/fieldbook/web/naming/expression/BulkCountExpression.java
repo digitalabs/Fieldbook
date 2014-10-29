@@ -32,8 +32,7 @@ public class BulkCountExpression implements Expression {
 
 						if (capturedText.equals("-B")) {
 							lastBulkCount.replace(0, lastBulkCount.length(), "1");
-						}
-						else {
+						} else {
 							String newCapturedText = capturedText.replaceAll("[-B]*", "");
 							if (newCapturedText != null && NumberUtils.isNumber(newCapturedText)) {
 								lastBulkCount.replace(0, lastBulkCount.length(), newCapturedText);
@@ -45,12 +44,10 @@ public class BulkCountExpression implements Expression {
 				
 				if (lastBulkCount.length() > 0) {
 					value.replace(startIndex, endIndex, "-" + String.valueOf(Integer.valueOf(lastBulkCount.toString()) + 1) + "B");
-				}
-				else {
+				} else {
 					value.replace(startIndex, endIndex, "-B");
 				}
-			}
-			else {
+			} else {
 				value.replace(startIndex, endIndex, "-B");
 			}
 		}

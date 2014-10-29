@@ -105,10 +105,10 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
             
             if (infos != null && !infos.isEmpty()) {
                 if (trialInfo != null) {
-                    if(this.userFieldmap.getFieldmap() == null)
+                    if(this.userFieldmap.getFieldmap() == null) {
                     	this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
                             plotIterator, true, trialInfo.getDeletedPlots()));
-                    else{
+                    } else {
                     	//data clean up
                     	plotCleanup();
                     }
@@ -148,10 +148,11 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     			Plot plot = currentPlot[i][j];
     			if(!plot.isSavedAlready()){
     				//we reset the the plot
-    				if(plot.isPlotDeleted())
+    				if(plot.isPlotDeleted()) {
     					plot.setPlotDeleted(false);
-    				else
+    				} else {
     					plot.setDisplayString("");
+    				}
     			}
     		}
     	}
@@ -199,8 +200,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     				for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
     					if (offset >= 0 && trial.getOrder() != null) {
     						trial.setOrder(trial.getOrder() + offset);
-    					}
-    					else {
+    					} else {
     						trial.setOrder(order++);
     					}
     				}

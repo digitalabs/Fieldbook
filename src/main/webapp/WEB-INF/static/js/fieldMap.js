@@ -575,19 +575,19 @@ function showCorrectLocationCombo() {
 			$('#'+getJquerySafeId('fieldLocationName')).val($('#'+getJquerySafeId('fieldLocationIdFavorite')).select2('data').text);
 			$('#'+getJquerySafeId('fieldLocationAbbreviation')).val($('#'+getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
 			
-		}else{
+		} else {
 			$('#'+getJquerySafeId('fieldLocationId')).val(0);
 			$('#'+getJquerySafeId('fieldLocationName')).val('');
 			$('#'+getJquerySafeId('fieldLocationAbbreviation')).val('');
 		}
-	}else{
+	} else {
 		$('#s2id_fieldLocationIdFavorite').hide();
 		$('#s2id_fieldLocationIdAll').show();
 		if($('#'+getJquerySafeId('fieldLocationIdAll')).select2('data') != null){
 			$('#'+getJquerySafeId('fieldLocationId')).val($('#'+getJquerySafeId('fieldLocationIdAll')).select2('data').id);
 			$('#'+getJquerySafeId('fieldLocationName')).val($('#'+getJquerySafeId('fieldLocationIdAll')).select2('data').text);
 			$('#'+getJquerySafeId('fieldLocationAbbreviation')).val($('#'+getJquerySafeId('fieldLocationIdFavorite')).select2('data').abbr);
-		}else{
+		} else {
 			$('#'+getJquerySafeId('fieldLocationId')).val(0);
 			$('#'+getJquerySafeId('fieldLocationName')).val('');
 			$('#'+getJquerySafeId('fieldLocationAbbreviation')).val('');
@@ -649,7 +649,7 @@ function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, curre
 		
 		if(newlyAddedField == '' && currentFieldId != '' && currentFieldId == value.locid){
 			defaultData = dataObj;
-		}else if(newlyAddedField != '' && newlyAddedField == value.lname){
+		} else if(newlyAddedField != '' && newlyAddedField == value.lname) {
 			defaultData = dataObj;
 		}
 	});		
@@ -693,9 +693,9 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, curre
 		
 		suggestions_obj.push(dataObj);  
 		
-		if(newlyAddedBlock == '' && currentBlockId != '' && currentBlockId == value.locid){
+		if(newlyAddedBlock == '' && currentBlockId != '' && currentBlockId == value.locid) {
 			defaultData = dataObj;
-		}else if(newlyAddedBlock != '' && newlyAddedBlock == value.lname){
+		} else if(newlyAddedBlock != '' && newlyAddedBlock == value.lname) {
 			defaultData = dataObj;
 		}
 	});
@@ -719,15 +719,16 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, curre
 
     });
 	
-	if(addOnChange){
+	if(addOnChange) {
 		$('#'+getJquerySafeId('userFieldmap.blockId')).on('change', function (){
 	    	
 	    	loadBlockInformation($('#'+getJquerySafeId('userFieldmap.blockId')).val());
 	    });
 	}
 	
-	if(defaultData != null)
+	if(defaultData != null) {
 		$('#'+getJquerySafeId('userFieldmap.blockId')).select2('data', defaultData).trigger('change');
+	}
 }
 function loadFieldsDropdown(locationId, currentFieldId){
 	'use strict';
@@ -745,8 +746,7 @@ function loadFieldsDropdown(locationId, currentFieldId){
 	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
 	        		   if(locationId != '') {
                            initializeFieldSelect2($.parseJSON(data.allFields), [], false, currentFieldId);
-                       }
-	        		   else {
+                       } else {
                            initializeFieldSelect2({}, [], false, '');
                        }
 	        			initializeBlockSelect2({}, [], false, '');
@@ -798,7 +798,7 @@ function showBlockDetails(isHide, blockInfo){
 			// Animation complete.
 			  
 		   });
-	}else{
+	} else {
 		$('.block-details').slideDown( 'slow', function() {
 			// Animation complete.
 			if($('body').data('previousFmapData') === '1'){
@@ -806,7 +806,7 @@ function showBlockDetails(isHide, blockInfo){
 					isNewBlock = false;
 					$('.block-details input').attr('disabled', true);
 					$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', false);
-				}else{
+				} else {
 					isNewBlock = true;
 					$('.block-details input').attr('disabled', false);
 					$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
@@ -823,7 +823,7 @@ function showBlockDetails(isHide, blockInfo){
 				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', false);
 				isNewBlock = false;			
 				
-			}else{
+			} else {
 				//has fieldmap already
 				var rowsPerPlotData = {'id': 1 , 'text' : 1};
 				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
@@ -905,8 +905,7 @@ function doEnterFieldDetailsPageLoad() {
     var numRowPerPlot = $('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val();
     $('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
 
-    if($('#'+getJquerySafeId('userFieldmap.fieldId')).val() != ''){
-
+    if($('#'+getJquerySafeId('userFieldmap.fieldId')).val() != '') {
         var favLocationChkElem =  $('#showFavoriteLocation');
         favLocationChkElem.prop('checked',!favLocationChkElem.prop('checked'));
 
@@ -915,7 +914,7 @@ function doEnterFieldDetailsPageLoad() {
 
         $('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(numRowPerPlot);
 
-        if(isChecked){
+        if(isChecked) {
             $('#s2id_fieldLocationIdFavorite').show();
             $('#s2id_fieldLocationIdAll').hide();
             for(var index in locationSuggestionsFav_obj) {
@@ -928,10 +927,8 @@ function doEnterFieldDetailsPageLoad() {
                 }
             }
 
-        }
-
-        // not checked
-        else {
+        } else {
+        	//not checked
             $('#s2id_fieldLocationIdFavorite').hide();
             $('#s2id_fieldLocationIdAll').show();
             for(var index in locationSuggestions_obj) {
@@ -948,9 +945,9 @@ function doEnterFieldDetailsPageLoad() {
 
     $('#'+getJquerySafeId('fieldLocationIdAll')).val('');
     $('#'+getJquerySafeId('fieldLocationIdFavorite')).val('');
-    if($('#'+getJquerySafeId('userFieldmap.fieldId')).val() != '')
+    if($('#'+getJquerySafeId('userFieldmap.fieldId')).val() != '') {
         loadFieldsDropdown($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val());
-
+    }
 
     $('#addFieldsModal').on('hidden.bs.modal', function (e) {
         if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() != '' && $('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() == $('#parentLocationId').val()){

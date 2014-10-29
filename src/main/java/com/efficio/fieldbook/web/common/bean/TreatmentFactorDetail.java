@@ -215,18 +215,14 @@ public class TreatmentFactorDetail implements Serializable {
             if (amountDataTypeId != null) {
                     if (amountDataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
                             this.widgetType = WidgetType.DATE;
-                    }
-                    else if (minRange != null && maxRange != null) {
+                    } else if (minRange != null && maxRange != null) {
                         this.widgetType = WidgetType.SLIDER;
-                    }
-                    else if (amountDataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+                    } else if (amountDataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
                             this.widgetType = WidgetType.DROPDOWN;
-                    }
-                    else if (amountDataTypeId.equals(TermId.NUMERIC_VARIABLE.getId()) 
+                    } else if (amountDataTypeId.equals(TermId.NUMERIC_VARIABLE.getId()) 
                                     || amountDataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {
                             this.widgetType = WidgetType.NTEXT;
-                    }
-                    else {
+                    } else {
                             this.widgetType = WidgetType.CTEXT;
                     }                                       
             }

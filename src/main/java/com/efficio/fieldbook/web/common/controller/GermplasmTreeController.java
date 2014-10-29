@@ -362,11 +362,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 	                List<GermplasmList> rootLists = germplasmListManager
 	                            .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(parentKey));
 	                childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
-	            } 
-	            else if (NumberUtils.isNumber(parentKey)) {
+	            } else if (NumberUtils.isNumber(parentKey)) {
 	                childNodes = getGermplasmChildrenNode(parentKey, isFolderOnly);	                
-	            }
-	            else {
+	            } else {
 	                LOG.error("parentKey = " + parentKey + " is not a number");
 	            }
 	            
@@ -536,8 +534,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
             if (id == null) {
                 newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,null,0);
-            }
-            else {
+            } else {
                 gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(id));
 
                 if (gpList != null && !gpList.isFolder()) {

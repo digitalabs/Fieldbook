@@ -166,31 +166,30 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	            	measurementData.setEditable(true);
 				}else{
 	    			
-					if(termId.intValue() == TermId.ENTRY_NO.getId())
+					if(termId.intValue() == TermId.ENTRY_NO.getId()) {
 						measurementData = new MeasurementData(var.getName(), Integer.toString(entryNo), false, var.getDataType(), var);
-					else if(termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMPLASM_SOURCE.getId())
+					} else if(termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
 						measurementData = new MeasurementData(var.getName(), germplasm.getSource() != null ? germplasm.getSource() : "", false, var.getDataType(), var);
-					else if(termId.intValue() == TermId.CROSS.getId())	
+					} else if(termId.intValue() == TermId.CROSS.getId()) {	
 						measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);
-					else if(termId.intValue() == TermId.DESIG.getId())	
+					} else if(termId.intValue() == TermId.DESIG.getId()) {	
 						measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType(), var);
-					else if(termId.intValue() == TermId.GID.getId()){	    					
+					} else if(termId.intValue() == TermId.GID.getId()) {	    					
 						measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
-					}else if(termId.intValue() == TermId.ENTRY_CODE.getId())	    					
+					} else if(termId.intValue() == TermId.ENTRY_CODE.getId()) {	    					
 						measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
-					else if(termId.intValue() == TermId.PLOT_NO.getId())
+					} else if(termId.intValue() == TermId.PLOT_NO.getId()) {
 						measurementData = new MeasurementData(var.getName(), Integer.toString(plotNo), false, var.getDataType(), var);
-					else if(termId.intValue() == TermId.CHECK.getId()){
+					} else if(termId.intValue() == TermId.CHECK.getId()) {
 						measurementData = new MeasurementData(var.getName(), germplasm.getCheckName(), 
 				    							false, var.getDataType(), germplasm.getCheckId(), var);
 						
 					} else if (termId.intValue() == TermId.REP_NO.getId()) {
 						measurementData = new MeasurementData(var.getName(), Integer.toString(repNo), false, var.getDataType(), var);
-						
 					} else if (termId.intValue() == TermId.BLOCK_NO.getId()) {
 						measurementData = new MeasurementData(var.getName(), Integer.toString(blockNo), false, var.getDataType(), var);
 						
-					}else{
+					} else {
 						//meaning non factor
 	                	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
 	                	var.setFactor(false);
@@ -224,17 +223,13 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 						Integer value = Integer.valueOf(Double.valueOf(ref.getName()).intValue());
 						if (ref.getId().equals(TermId.TRIAL_INSTANCE_FACTOR.getId())) {
 							info.setTrialNumber(value);
-						}
-						else if (ref.getId().equals(TermId.EXPERIMENT_DESIGN_FACTOR.getId())) {
+						} else if (ref.getId().equals(TermId.EXPERIMENT_DESIGN_FACTOR.getId())) {
 							info.setDesign(value);
-						}
-						else if (ref.getId().equals(TermId.NUMBER_OF_REPLICATES.getId()))  {
+						} else if (ref.getId().equals(TermId.NUMBER_OF_REPLICATES.getId())) {
 							info.setNumberOfReps(value);
-						}
-						else if (ref.getId().equals(TermId.BLOCK_SIZE.getId())) {
+						} else if (ref.getId().equals(TermId.BLOCK_SIZE.getId())) {
 							info.setBlockSize(value);
-						}
-						else if (ref.getId().equals(TermId.BLOCKS_PER_REPLICATE.getId())) {
+						} else if (ref.getId().equals(TermId.BLOCKS_PER_REPLICATE.getId())) {
 							info.setBlocksPerRep(value);
 						}
 					}

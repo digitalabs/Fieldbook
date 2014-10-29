@@ -348,19 +348,19 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	for (AdvanceGermplasmChangeDetail responseDetail : responseDetails) {
     		if (responseDetail.getIndex() < importedGermplasmListTemp.size()) {
     			ImportedGermplasm importedGermplasm = importedGermplasmListTemp.get(responseDetail.getIndex());
-    			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
+    			if (responseDetail.getStatus() == 1) { 
+    				// add germplasm name to gid
     				//we need to delete
     				deletedEntryIds.add(importedGermplasm.getEntryId());
-    			}
-    			else if (responseDetail.getStatus() == 3) { //choose gids
+    			} else if (responseDetail.getStatus() == 3) { 
+    				//choose gids
     				importedGermplasm.setDesig(responseDetail.getNewAdvanceName());
     				List<Name> names = importedGermplasm.getNames();
     				if (names != null) {
     					//set the first value, for now, we're expecting only 1 records. 
     					//this was a list because in the past, we can have more than 1 names, but this was changed
     					names.get(0).setNval(responseDetail.getNewAdvanceName());
-    				}
-    				
+    				}    				
     			}
     		}
     	}
@@ -370,8 +370,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		ImportedGermplasm germplasm = iterator.next();
     		if (deletedEntryIds.contains(germplasm.getEntryId())) {
     			iterator.remove();
-    		}
-    		else {
+    		} else {
     			germplasm.setEntryId(index++);
     		}
     	}
@@ -498,11 +497,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		if (var.getValue() != null && !var.getValue().equalsIgnoreCase("") && !var.getValue().equalsIgnoreCase("0")) {
 	    		if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_ID.getId()){    			
 	    			return var.getValue();
-	    		}
-	    		else if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_CODE.getId()) {
+	    		} else if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_CODE.getId()) {
 	    			code = var.getValue();
-	    		}
-	    		else if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD.getId()) {
+	    		} else if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD.getId()) {
 	    			name = var.getValue();
 	    		}
     		}

@@ -97,8 +97,7 @@ public class AdvancingSourceListFactory {
                         if (methodVariateId != null) {
                         	methodId = getBreedingMethodId(methodVariateId, row, breedingMethodCodeMap);
                         } 
-                    }
-                    else {
+                    } else {
                     	methodId = getIntegerValue(advanceInfo.getBreedingMethodId());
                     }
 
@@ -111,8 +110,7 @@ public class AdvancingSourceListFactory {
 		                    	if (plotVariateId != null) {
 			                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(plotVariateId));
 		                    	}
-		                	}
-		                    else {
+		                	} else {
 		                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
 		                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(lineVariateId));
 		                    	}
@@ -233,13 +231,11 @@ public class AdvancingSourceListFactory {
     	Integer methodId = null;
     	if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE.getId())) {
     		methodId = getIntegerValue(row.getMeasurementDataValue(methodVariateId));
-    	}
-    	else if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId())) {
+    	} else if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId())) {
     		String methodName = row.getMeasurementDataValue(methodVariateId);
     		if (NumberUtils.isNumber(methodName)) {
         		methodId = Double.valueOf(methodName).intValue();
-    		}
-    		else { //coming from old fb or other sources
+    		} else { //coming from old fb or other sources
 	    		Set<String> keys = breedingMethodCodeMap.keySet();
 	    		Iterator<String> iterator = keys.iterator();
 	    		while (iterator.hasNext()) {
@@ -251,8 +247,7 @@ public class AdvancingSourceListFactory {
 	    			}
 	    		}
     		}
-    	}
-    	else {
+    	} else {
     		//on load of study, this has been converted to id and not the code.
     		methodId = getIntegerValue(row.getMeasurementDataValue(methodVariateId));
     	}

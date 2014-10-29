@@ -52,8 +52,7 @@ public class ErrorHandlerServiceImpl implements ErrorHandlerService{
                 }
                 if (message != null) {
                     errorMessages.add(message);
-                }
-                else {
+                } else {
                     errorMessages.add(errorCode);
                 }
             }

@@ -235,13 +235,15 @@ public class SettingVariable implements Serializable{
                 this.widgetType = WidgetType.NTEXT;
             } else {
                 this.widgetType = WidgetType.CTEXT;
-                if (cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString()))
+                if (cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString())) {
                     this.widgetType = WidgetType.TEXTAREA;
+                }
             }
         } else {
             this.widgetType = WidgetType.CTEXT;
-            if (cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString()))
+            if (cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString())) {
                 this.widgetType = WidgetType.TEXTAREA;
+            }
         }
 
         if (cvTermId != null) {

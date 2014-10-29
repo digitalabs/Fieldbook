@@ -268,10 +268,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         
         String fileName = getUserLabelPrinting().getFilenameDL();
 
-        if(fileName.indexOf(".pdf") != -1){
+        if(fileName.indexOf(".pdf") != -1) {
         	response.setContentType("application/pdf");
-        }else
+        } else {
         	response.setContentType("application/vnd.ms-excel");
+        }
         response.setHeader("Content-disposition","attachment; filename=" + fileName);
 
         File xls = new File(getUserLabelPrinting().getFilenameDLLocation()); // the selected name + current date

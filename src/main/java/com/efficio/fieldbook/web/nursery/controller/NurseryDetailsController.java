@@ -153,14 +153,10 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
         return "";
     }
     
-    private static boolean isNumeric(String str)  
-    {  
-      try  
-      {  
+    private static boolean isNumeric(String str) {
+      try {  
         Double.parseDouble(str);  
-      }  
-      catch(NumberFormatException nfe)  
-      {  
+      } catch(NumberFormatException nfe) {  
         return false;  
       }  
       return true;  

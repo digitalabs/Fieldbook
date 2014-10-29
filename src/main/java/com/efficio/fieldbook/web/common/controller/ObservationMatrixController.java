@@ -261,8 +261,9 @@ public class ObservationMatrixController extends
 		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
 		for(MeasurementData data : row.getDataList()){
 			String displayVal = data.getDisplayValue();
-			if(suffix != null)
+			if(suffix != null) {
 				displayVal += suffix;
+			}
 			dataMap.put(data.getMeasurementVariable().getName(), displayVal);
 		}
 		UserSelection userSelection = getUserSelection(false);

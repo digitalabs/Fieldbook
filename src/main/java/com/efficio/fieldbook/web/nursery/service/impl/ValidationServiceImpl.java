@@ -77,8 +77,7 @@ public class ValidationServiceImpl implements ValidationService {
 			}catch(NumberFormatException e){
 				if (cValueId != null && NumberUtils.isNumber(cValueId) && isValidInteger(cValueId)) {
 					valueToCompare = Integer.parseInt(cValueId);
-				}
-				else {
+				} else {
 					return false;
 				}
 			}
@@ -158,8 +157,7 @@ public class ValidationServiceImpl implements ValidationService {
 				                }else{
 				                	var.setOperation(Operation.UPDATE);
 				                }
-						}
-						else if(!isValidValue(var, var.getValue(), "", true)) {
+						} else if(!isValidValue(var, var.getValue(), "", true)) {
 							var.setOperation(null);
 							throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {var.getName(), var.getValue()}, locale));
 						}

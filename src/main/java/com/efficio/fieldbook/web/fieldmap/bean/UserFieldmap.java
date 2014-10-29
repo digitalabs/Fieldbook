@@ -241,8 +241,7 @@ public class UserFieldmap  implements Serializable {
                     allLabels.addAll(trial.getFieldMapLabels());
                 }
             }
-        }
-        else {
+        } else {
             if (getSelectedFieldMaps() != null && !getSelectedFieldMaps().isEmpty()) {
                 for (FieldMapInfo info : getSelectedFieldMaps()) {
                     if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
@@ -275,8 +274,7 @@ public class UserFieldmap  implements Serializable {
                     allLabels.addAll(trial.getFieldMapLabels());
                 }
             }
-        }
-        else {
+        } else {
             if (getSelectedFieldmapListToBeAdded() != null && !getSelectedFieldmapListToBeAdded().isEmpty()) {
                 for (FieldMapInfo info : getSelectedFieldMapsToBeAdded()) {
                     if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
@@ -903,8 +901,9 @@ public class UserFieldmap  implements Serializable {
     public long getTotalNumberOfSelectedPlots() {
         long total = 0;
         List<FieldMapInfo> fieldMapTemp = getSelectedFieldMapsToBeAdded();
-        if(fieldMapTemp == null)
+        if(fieldMapTemp == null) {
         	fieldMapTemp = getSelectedFieldMaps();
+        }
         for (FieldMapInfo info : fieldMapTemp) {
             for (FieldMapDatasetInfo dataset : info.getDatasets()) {
                 for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {

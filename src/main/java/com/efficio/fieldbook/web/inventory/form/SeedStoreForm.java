@@ -85,8 +85,9 @@ public class SeedStoreForm {
 	 * @return the total number of germplasms
 	 */
 	public int getTotalNumberOfGermplasms() {
-    	if(inventoryList != null)
+    	if(inventoryList != null) {
     		return inventoryList.size();
+    	}
     	return 0;
 	}
 

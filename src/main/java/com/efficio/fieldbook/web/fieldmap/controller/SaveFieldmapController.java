@@ -99,8 +99,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         
         if (userFieldmap.isTrial()) {
             return "redirect:" + ManageTrialController.URL;
-        }
-        else {
+        } else {
             return "redirect:" + ManageNurseriesController.URL;
         }
     }

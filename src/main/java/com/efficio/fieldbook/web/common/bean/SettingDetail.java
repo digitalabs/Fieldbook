@@ -72,12 +72,11 @@ public class SettingDetail implements Serializable {
 	}
 	public void setPossibleValuesToJson(List<ValueReference> possibleValues) {
 	    try {
-                ObjectMapper om = new ObjectMapper();
-                setPossibleValuesJson(om.writeValueAsString(possibleValues));
-            }
-            catch(Exception e) {
-                setPossibleValuesJson("err");
-            }
+            ObjectMapper om = new ObjectMapper();
+            setPossibleValuesJson(om.writeValueAsString(possibleValues));
+        } catch(Exception e) {
+            setPossibleValuesJson("err");
+        }
 	}
 	public String getPossibleValuesFavoriteJson() {
             return possibleValuesFavoriteJson;
@@ -89,8 +88,7 @@ public class SettingDetail implements Serializable {
             try {
                 ObjectMapper om = new ObjectMapper();
                 setPossibleValuesFavoriteJson(om.writeValueAsString(possibleValuesFavorite));
-            }
-            catch(Exception e) {
+            } catch(Exception e) {
                 setPossibleValuesFavoriteJson("err");
             }
         }

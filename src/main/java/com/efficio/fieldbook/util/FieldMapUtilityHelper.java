@@ -83,8 +83,9 @@ public class FieldMapUtilityHelper {
                 }
             	if(counter < labels.size()){
     	        	FieldMapLabel oldLabel = labels.get(counter);
-    	        	if(oldLabel.getColumn() != null && oldLabel.getRange() != null)
+    	        	if(oldLabel.getColumn() != null && oldLabel.getRange() != null) {
     	        		return counter;
+    	        	}
             	}
             	
                 if(hasAvailableEntries){
@@ -95,16 +96,15 @@ public class FieldMapUtilityHelper {
                     
                     plots[i][j].setNoMoreEntries(false);
                     counter++;
-                }else{
+                } else {
                     //there are space but no more entries to plant
                     plots[i][j].setNoMoreEntries(true);
                 }
-            }
-            else{
+            } else {
                 //meaing this plot is deleted
                 plots[i][j].setPlotDeleted(true);
             }
-        }else{
+        } else {
             //meaning we haven't started
             plots[i][j].setNotStarted(true);
         }
@@ -135,8 +135,9 @@ public class FieldMapUtilityHelper {
      * @return true, if is deleted
      */
     public static boolean isDeleted(int col, int range, Map<String, String> deletedPlot){
-        if(deletedPlot.get(col+"_"+range) != null)
+        if(deletedPlot.get(col+"_"+range) != null) {
             return true;
+        }
         return false;
     }    
     
@@ -191,11 +192,9 @@ public class FieldMapUtilityHelper {
                 trial.setOrder(order[0]);
                 order[0] += 1;
             }
-        }
-        else {
+        } else {
             if (isStarted) {
-            }
-            else {
+            } else {
                 plot.setNotStarted(true);
             }
         }

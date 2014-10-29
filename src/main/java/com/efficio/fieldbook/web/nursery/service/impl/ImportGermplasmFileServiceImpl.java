@@ -246,7 +246,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         Boolean desigEntryCodePresent = false;
 
         // Check if columns ENTRY and DESIG is present
-        if (importedGermplasmList.getImportedFactors() != null)
+        if (importedGermplasmList.getImportedFactors() != null) {
             for (int col = 0; col < importedGermplasmList.getImportedFactors().size(); col++) {
                 if (getCellStringValue(currentSheet, currentRow, col, true)
                         .equalsIgnoreCase(AppConstants.ENTRY.getString())){
@@ -268,6 +268,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                     desigEntryCodePresent = true;
                 }
             }
+        }
         if (!entryColumnIsPresent || !desigColumnIsPresent) {
             showInvalidFileError("ENTRY or DESIG column missing from Observation sheet.");
             LOG.debug("Invalid file on missing ENTRY or DESIG on readSheet2");
@@ -315,9 +316,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                     } else if (importedGermplasmList.getImportedFactors().get(col)
                             .getFactor().equalsIgnoreCase(AppConstants.ENTRY_CODE.getString())) {
                         importedGermplasm.setEntryCode(getCellStringValue(currentSheet, currentRow, col, true));
-                    }
-
-                    else {
+                    } else {
                         LOG.debug("Unhandled Column - "
                                 + importedGermplasmList.getImportedFactors().get(col)
                                         .getFactor().toUpperCase() + ":"

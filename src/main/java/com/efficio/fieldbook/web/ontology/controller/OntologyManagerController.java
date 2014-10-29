@@ -530,7 +530,9 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     private static List<EnumerationOperation> convertToEnumerationOperation(String enumerations) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(enumerations, new TypeReference<List<EnumerationOperation>>() {});
+            return mapper.readValue(enumerations, new TypeReference<List<EnumerationOperation>>() {
+            	//added comment to fix empty code block violation
+            });
         } catch(Exception e) {
             LoggerFactory.getLogger(OntologyManagerController.class).error(e.getMessage(), e);
         }

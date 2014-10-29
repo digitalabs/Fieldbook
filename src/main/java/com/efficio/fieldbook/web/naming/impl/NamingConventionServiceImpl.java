@@ -103,16 +103,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         int plantsSelected = 0;
         if (info.getLineSelected() != null && NumberUtils.isNumber(info.getLineSelected())) {
             plantsSelected = Integer.valueOf(info.getLineSelected()); 
-        }
-        else {
+        } else {
             lineChoiceSame = false;
         }
         if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0 || allPlotsChoice)) {
             for (AdvancingSource row : list.getRows()) {
             	if (!row.isBulk() && lineChoiceSame) {
             		row.setPlantsSelected(plantsSelected);
-            	}
-            	else if (row.isBulk() && allPlotsChoice) {
+            	} else if (row.isBulk() && allPlotsChoice) {
             		row.setPlantsSelected(1); //set it to 1, it does not matter since it's bulked
             	}
             }
@@ -126,8 +124,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
                 || sourceGnpgs < 0 && sourceGpid1 == 0 && sourceGpid2 == 0) {
             
             germplasm.setGpid1(sourceGid);
-        }
-        else {
+        } else {
             germplasm.setGpid1(sourceGpid1);
         }
         
@@ -229,8 +226,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			            			if (countExpression.equalsIgnoreCase(SequenceExpression.KEY)) {
 			            				currentCount++;
 			            				name = countPrefix + currentCount + countSuffix;
-			            			}
-			            			else {
+			            			} else {
 			            				if (row.getChangeDetail() == null) {
 				                    		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
 				                			row.getChangeDetail().setIndex(index-1); //index in java (starts at 0)
@@ -242,8 +238,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			            				name = row.getChangeDetail().getOldAdvanceName() + "(" + currentCount + ")"; 
 			            				currentCount++;
 			            			}
-			            		}
-			            		else if (row.getChangeDetail() != null) {
+			            		} else if (row.getChangeDetail() != null) {
 			            			row.getChangeDetail().setNewAdvanceName(name);
 		                			Locale locale = LocaleContextHolder.getLocale();
 		                			row.getChangeDetail().setAddSequenceText(messageSource.getMessage("advance.nursery.duplicate.add.sequence.text", 

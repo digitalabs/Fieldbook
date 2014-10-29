@@ -32,12 +32,10 @@ public class BracketsExpression implements Expression {
 					
 					value.replace(startIndex, endIndex, ")");
 					value.insert(0, "(");
-				}
-				else {
+				} else {
 					value.replace(startIndex, endIndex, "");
 				}
-			}
-			else {
+			} else {
 				value.replace(startIndex, endIndex, "");
 			}
 		}
@@ -51,14 +49,11 @@ public class BracketsExpression implements Expression {
     private String getExpressionAfterRootName(Method method) {
     	if (method.getSeparator() != null) {
     		return method.getSeparator();
-    	}
-    	else if (method.getPrefix() != null) {
+    	} else if (method.getPrefix() != null) {
     		return method.getPrefix();
-    	}
-    	else if (method.getCount() != null) {
+    	} else if (method.getCount() != null) {
     		return method.getCount();
-    	}
-    	else if (method.getSuffix() != null) {
+    	} else if (method.getSuffix() != null) {
     		return method.getSuffix();
     	}
     	return null;

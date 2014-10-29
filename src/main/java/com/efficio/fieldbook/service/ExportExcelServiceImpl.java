@@ -238,8 +238,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 headerCell = row.createCell(columnIndex++);
                 headerCell.setCellValue(repsCountHeader);
                 headerCell.setCellStyle(labelStyle);
-            }
-            else {
+            } else {
                 headerCell = row.createCell(columnIndex++);
                 headerCell.setCellValue(datasetNameHeader);
                 headerCell.setCellStyle(labelStyle);
@@ -561,8 +560,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             if (i == numberOfDirections - 1 && remainingRows > 0) { //last item
                 fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 
                         startCol, machineRowCapacity * i + remainingRows));
-            }
-            else {
+            } else {
                 fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 
                         startCol, machineRowCapacity * (i+1)));
             }

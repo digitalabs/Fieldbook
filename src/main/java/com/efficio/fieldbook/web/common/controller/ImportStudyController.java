@@ -326,8 +326,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     						Integer.valueOf(responseDetail.getOriginalGid()), userId, responseDetail.getNameType(), responseDetail.getImportLocationId(), dateInteger);
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(responseDetail.getOriginalGid());    				
-    			}
-    			else if (responseDetail.getStatus() == 2) { //create new germlasm
+    			} else if (responseDetail.getStatus() == 2) { 
+    				//create new germlasm
 					String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
 					Integer dateInteger = Integer.valueOf(gDate); 
     			    Name name = new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(), responseDetail.getImportLocationId(), dateInteger, 0);
@@ -336,8 +336,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     				int newGid = fieldbookMiddlewareService.addGermplasm(germplasm, name);
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(String.valueOf(newGid));
-    			}
-    			else if (responseDetail.getStatus() == 3) { //choose gids
+    			} else if (responseDetail.getStatus() == 3) { 
+    				//choose gids
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(String.valueOf(responseDetail.getSelectedGid()));
     				

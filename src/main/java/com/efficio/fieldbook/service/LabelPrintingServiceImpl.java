@@ -119,8 +119,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             	
                 Rectangle pageSize = PageSize.LETTER;
 
-                if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4.getInt())
+                if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4.getInt()) {
                     pageSize = PageSize.A4;
+                }
 
                 Document document = new Document(pageSize);
                 
@@ -525,8 +526,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         	buffer.append(moreFieldInfo.get("fieldName"));
         }
         String stemp = buffer.toString();
-        if(stemp != null && "null".equalsIgnoreCase(stemp))
+        if(stemp != null && "null".equalsIgnoreCase(stemp)) {
         	stemp = " ";
+        }
         
         if(includeHeaderLabel && headerName != null){
         	stemp = headerName + " : " + stemp;
@@ -551,8 +553,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             
                     HSSFWorkbook workbook = new HSSFWorkbook();
                     String sheetName = SettingsUtil.cleanSheetAndFileName(userLabelPrinting.getName());
-                    if(sheetName == null)
+                    if(sheetName == null) {
                         sheetName = "Labels";
+                    }
                     Sheet labelPrintingSheet = workbook.createSheet(sheetName);
                 
                     CellStyle labelStyle = workbook.createCellStyle();

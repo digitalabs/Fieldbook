@@ -333,21 +333,21 @@ public class ExpDesignUtil {
 				
 				Integer termId = var.getTermId();											
 				
-				if(termId.intValue() == TermId.ENTRY_NO.getId())
+				if(termId.intValue() == TermId.ENTRY_NO.getId()) {
 					measurementData = new MeasurementData(var.getName(), entryNo, false, var.getDataType(), var);
-				else if(termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMPLASM_SOURCE.getId())
+				} else if(termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
 					measurementData = new MeasurementData(var.getName(), germplasm.getSource() != null ? germplasm.getSource() : "", false, var.getDataType(), var);
-				else if(termId.intValue() == TermId.CROSS.getId())	
+				} else if(termId.intValue() == TermId.CROSS.getId()) {	
 					measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);
-				else if(termId.intValue() == TermId.DESIG.getId())	
+				} else if(termId.intValue() == TermId.DESIG.getId()) {	
 					measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType(), var);
-				else if(termId.intValue() == TermId.GID.getId()){	    					
+				} else if(termId.intValue() == TermId.GID.getId()) {	    					
 					measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
-				}else if(termId.intValue() == TermId.ENTRY_CODE.getId())	    					
+				} else if(termId.intValue() == TermId.ENTRY_CODE.getId()) {	    					
 					measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
-				else if(termId.intValue() == TermId.PLOT_NO.getId())
+				} else if(termId.intValue() == TermId.PLOT_NO.getId()) {
 					measurementData = new MeasurementData(var.getName(), bvEntryMap.get(var.getName()), false, var.getDataType(), var);
-				else if(termId.intValue() == TermId.CHECK.getId()){
+				} else if(termId.intValue() == TermId.CHECK.getId()){
 					measurementData = new MeasurementData(var.getName(), Integer.toString(germplasm.getCheckId()), 
 			    							false, var.getDataType(), germplasm.getCheckId(), var);
 					

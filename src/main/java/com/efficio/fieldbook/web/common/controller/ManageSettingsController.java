@@ -386,15 +386,18 @@ public class ManageSettingsController extends SettingsController{
                             break;
                         }
                     }
-                    if (hasData) break;
+                    if (hasData) {
+                    	break;
+                    }
                 }
             }
         }
 
-        if (hasData)
+        if (hasData) {
             resultMap.put("hasMeasurementData", "1");
-        else 
+        } else { 
             resultMap.put("hasMeasurementData", "0");
+        }
         
         return resultMap;
     }

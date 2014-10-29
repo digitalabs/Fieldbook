@@ -85,8 +85,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                     plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
                     plot.setNotStarted(false);
                     plot.setSavedAlready(isSavedAlready);
-                }
-                else {
+                } else {
                     throw new MiddlewareQueryException(
                             "The Column/Range of the Field Map exceeded the Total Columns/Ranges");
                 }

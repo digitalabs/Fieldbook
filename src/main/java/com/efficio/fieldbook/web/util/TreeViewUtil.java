@@ -136,8 +136,7 @@ public class TreeViewUtil {
                 treeNodes.add(treeNode);
                 if (reference.getSubFolders() != null && !reference.getSubFolders().isEmpty()) {
                     treeNode.setChildren(convertFolderReferencesToTreeView(reference.getSubFolders(), isLazy));
-                }
-                else {
+                } else {
                     treeNode.setIsFolder(false);
                 }
             }
@@ -151,8 +150,9 @@ public class TreeViewUtil {
         if (references != null && !references.isEmpty()) {
             for (FolderReference reference : references) {
                 treeNode = convertStudyReferenceToTreeNode(reference, isNursery,isAll, fieldbookService, isFolderOnly);
-                if(treeNode == null)
+                if(treeNode == null) {
                 	continue;
+                }
                 treeNode.setIsLazy(isLazy);
                 treeNodes.add(treeNode);
                 if (reference.getSubFolders() != null && !reference.getSubFolders().isEmpty()) {
@@ -189,8 +189,9 @@ public class TreeViewUtil {
         if (germplasmLists != null && !germplasmLists.isEmpty()) {
             for (GermplasmList germplasmList : germplasmLists) {
             	TreeNode node = convertGermplasmListToTreeNode(germplasmList, isFolderOnly);
-            	if(node != null)
+            	if(node != null) {
             		treeNodes.add(node);
+            	}
             }
         }
         return treeNodes;
@@ -241,17 +242,14 @@ public class TreeViewUtil {
 		treeNode.setIsLazy(true);
 		if(isFolder){
 			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
-		}
-		else{
-			
-			if(isFolderOnly)
+		} else {
+			if(isFolderOnly) {
 				return null;
-			
+			}
 			treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
-				if(!isNurseryStudy(reference.getId(), isNursery, fieldbookService))
+				if(!isNurseryStudy(reference.getId(), isNursery, fieldbookService)) {
 					return null;
-			
-			
+				}
 		}
 		
 		
@@ -263,12 +261,14 @@ public class TreeViewUtil {
 		try {
 			TermId termId = fieldbookService.getStudyType(studyId);
 		
-			if(isNursery){
-				if(TermId.NURSERY == termId)
+			if(isNursery) {
+				if(TermId.NURSERY == termId) {
 					return true;
-			}else{
-				if(TermId.TRIAL == termId)
+				}
+			} else {
+				if(TermId.TRIAL == termId) {
 					return true;
+				}
 			}
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
@@ -291,14 +291,16 @@ public class TreeViewUtil {
 	    treeNode.setIsFolder(germplasmList.getType() != null 
 	            && germplasmList.getType().equals("FOLDER") ? true : false);
 	    treeNode.setIsLazy(false);
-	    if(treeNode.getIsFolder())
+	    if(treeNode.getIsFolder()) {
 	    	treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
-	    else
+	    } else {
 	    	treeNode.setIcon(AppConstants.BASIC_DETAILS_PNG.getString());
-	    if(isFolderOnly){
+	    }
+	    if(isFolderOnly) {
 	    	//we dont return if its not a folder
-	    	if(!treeNode.getIsFolder())
+	    	if(!treeNode.getIsFolder()) {
 	    		return null;
+	    	}
 	    }
 	    	
 	    
@@ -518,8 +520,9 @@ public class TreeViewUtil {
         if(reference.getStandardVariables() != null && !reference.getStandardVariables().isEmpty()){
             for (StandardVariableReference variableRef : reference.getStandardVariables()) {
             	TreeNode variableTreeNode = convertStandardVariableReferenceToTreeNode(id, variableRef, newParentTitle, mapVariableRef);
-    			if(variableTreeNode != null)
+    			if(variableTreeNode != null) {
     				treeNodes.add(variableTreeNode);
+    			}
             }
             
         }

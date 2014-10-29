@@ -21,13 +21,11 @@ public abstract class NumberSequenceExpression implements Expression {
 	
 	                Integer newValue = source.getPlantsSelected();
                 	value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
-	            }
-	            else {
+	            } else {
 	                value.replace(startIndex, endIndex, "");
 	            }
 	        }
-    	}
-    	else {
+    	} else {
 			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
 			int startCount = 1;
 			if (source.getCurrentMaxSequence() > -1) {
@@ -45,8 +43,7 @@ public abstract class NumberSequenceExpression implements Expression {
 						newName.replace(startIndex, endIndex, String.valueOf(i));
 						newNames.add(newName);
 					}
-				}
-				else {
+				} else {
 					newNames.add(value.replace(startIndex, endIndex, ""));
 				}
 			}

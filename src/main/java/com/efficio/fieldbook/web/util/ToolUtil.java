@@ -64,8 +64,7 @@ public class ToolUtil {
         Process process = pb.start();
         try {
             process.waitFor();
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             LOG.error("Interrupted while waiting for " + abolutePath + " to stop.");
         }
     }

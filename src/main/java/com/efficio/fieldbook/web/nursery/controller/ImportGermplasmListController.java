@@ -345,8 +345,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     private List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList, 
 			List<ImportedGermplasm> checkList){
     	
-    	if(checkList == null || checkList.size() == 0 )
+    	if(checkList == null || checkList.size() == 0 ) {
     		return primaryList;
+    	}
     	
     	List<ImportedGermplasm> newPrimaryList = new ArrayList<ImportedGermplasm>();
     	Map<Integer, ImportedGermplasm> checkGermplasmMap = new HashMap<Integer, ImportedGermplasm>();
@@ -355,8 +356,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	}
     	
     	for (ImportedGermplasm primaryGermplasm : primaryList) {
-    		if(checkGermplasmMap.get(primaryGermplasm.getIndex()) == null)
+    		if(checkGermplasmMap.get(primaryGermplasm.getIndex()) == null) {
     			newPrimaryList.add(primaryGermplasm);
+    		}
     	}
     	return newPrimaryList;
     }
@@ -815,8 +817,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         try {
             
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-            if(userSelection.getImportedCheckGermplasmMainInfo() != null)
+            if(userSelection.getImportedCheckGermplasmMainInfo() != null) {
                 mainInfo = userSelection.getImportedCheckGermplasmMainInfo();
+            }
             mainInfo.setAdvanceImportType(true);
             
             List<ImportedGermplasm> checkList = mainInfo.getImportedGermplasmList().getImportedGermplasms();
@@ -851,8 +854,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         
         try {
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-            if(userSelection.getImportedCheckGermplasmMainInfo() != null)
+            if(userSelection.getImportedCheckGermplasmMainInfo() != null) {
             	mainInfo = userSelection.getImportedCheckGermplasmMainInfo();
+            }
             mainInfo.setAdvanceImportType(true);
             form.setImportedCheckGermplasmMainInfo(mainInfo);
             
@@ -1153,8 +1157,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             if (!validateEnumerationDescription(stdVar.getEnumerations(), enumeration)) {
             	result.put("success", "-1");
             	result.put("error",  messageSource.getMessage("error.add.check.duplicate.description", null, local));
-            }
-            else {
+            } else {
             	ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
                 List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
                 result.put("checkTypes", convertObjectToJson(allEnumerations));

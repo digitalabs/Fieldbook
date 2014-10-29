@@ -70,8 +70,7 @@ public class KsuFieldbookUtil {
 					String value = null;
 					if (label.getPossibleValues() != null && !label.getPossibleValues().isEmpty()) {
 						value = ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementData(label.getName()).getValue(), label.getPossibleValues());
-					}
-					else {
+					} else {
 						value = row.getMeasurementData(label.getName()).getValue();
 					}
 					dataRow.add(value);
@@ -108,8 +107,7 @@ public class KsuFieldbookUtil {
 					
 					if (idNameMap.get(header.getTermId()) != null) {
 						names.add(idNameMap.get(header.getTermId()));
-					}
-					else {
+					} else {
 						names.add(header.getName());
 					}
 				}
@@ -180,21 +178,18 @@ public class KsuFieldbookUtil {
 			traitData.add(trait.getName());
 			if (trait.getDataTypeDisplay().equals("C")) {
 				traitData.add(TEXT_FORMAT);
-			}
-			else {
+			} else {
 				traitData.add(NUMERIC_FORMAT);
 			}
 			traitData.add(""); //default value
 			if (trait.getMinRange() != null) {
 				traitData.add(trait.getMinRange().toString());
-			}
-			else {
+			} else {
 				traitData.add("");
 			}
 			if (trait.getMaxRange() != null) {
 				traitData.add(trait.getMaxRange().toString());
-			}
-			else {
+			} else {
 				traitData.add("");
 			}
 			traitData.add(""); //details

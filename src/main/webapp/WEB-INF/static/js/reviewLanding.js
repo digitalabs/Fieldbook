@@ -36,8 +36,7 @@ function reviewLandingSetup(){
 	$('#div-study-tab-' + getCurrentStudyIdInTab() + ' #toggle-additional-link').click(function() {
 		if ($(this).text() == showText) {
 			$(this).text(hideText);
-		}
-		else {
+		} else {
 			$(this).text(showText);
 		}
 	});
@@ -52,8 +51,9 @@ function reviewLandingSetup(){
 			var name = $(this).find('option:selected').text();
 			var selectedId = $(this).find('option:selected').val();
 			var found = false;
-			if($(this).val() == 'Please Choose')
+			if($(this).val() == 'Please Choose') {
 				return;
+			}
 	
 			$('#study' + getCurrentStudyIdInTab() + ' #measurement-tabs').children().hide();
 			$('#study' + getCurrentStudyIdInTab() + ' #measurement-tab-headers').find('li').each(function(index) {

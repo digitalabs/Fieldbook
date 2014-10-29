@@ -152,8 +152,9 @@ public class ImportGermplasmListForm {
 	 * @return the total germplasms
 	 */
 	public int getTotalGermplasms() {
-    	if(importedGermplasm != null)
+    	if(importedGermplasm != null) {
     		return importedGermplasm.size();
+    	}
     	return 0;
 	}
 

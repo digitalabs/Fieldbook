@@ -69,8 +69,9 @@ public class SettingsUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
 
     public static String cleanSheetAndFileName(String name) {
-        if (name == null)
+        if (name == null) {
             return null;
+        }
         name = name.replaceAll("[^a-zA-Z0-9-_.=^&'@{}$!-#()%.+~_\\[\\]]", "_");
         name = name.replaceAll("\"", "_");
         return name;
@@ -431,10 +432,11 @@ public class SettingsUtil {
      * @throws MiddlewareQueryException the middleware query exception
      */
     public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection, String projectId, boolean isUsePrevious, boolean isTrial) throws MiddlewareQueryException {
-        if (!isTrial)
+        if (!isTrial) {
             convertXmlNurseryDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection, projectId, isUsePrevious);
-        else
+        } else {
             convertXmlTrialDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection, projectId);
+        }
     }
 
     private static boolean idCounterPartInList(Integer stdVar, HashMap<String, String> idCodeNameMap, List<Condition> conditions) {
@@ -1244,8 +1246,7 @@ public class SettingsUtil {
         //currently if operation is add, then it's always a trial constant
         if (constant.getOperation() == Operation.ADD) {
         	label = PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0);
-        }
-        else {
+        } else {
         	label = constant.getLabel();
         }
 
@@ -1854,9 +1855,13 @@ public class SettingsUtil {
                 }
             }
             if (!newDeletedList.isEmpty()) {
-                if (formList == null) formList = new ArrayList<SettingDetail>();
+                if (formList == null) {
+                	formList = new ArrayList<SettingDetail>();
+                }
                 formList.addAll(newDeletedList);
-                if (sessionList == null) sessionList = new ArrayList<SettingDetail>();
+                if (sessionList == null) {
+                	sessionList = new ArrayList<SettingDetail>();
+                }
                 sessionList.addAll(newDeletedList);
             }
         }
@@ -2068,20 +2073,16 @@ public class SettingsUtil {
     			if (param.getDesignType() != null) {
     				if (param.getDesignType().equals(0)) {
     					return String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId());
-    				}
-    				else if (param.getDesignType().equals(1)) {
+    				} else if (param.getDesignType().equals(1)) {
     					if (param.getUseLatenized() != null && param.getUseLatenized()) {
     						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId());
-    					}
-    					else {
+    					} else {
     						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId());
     					}
-    				}
-    				else if (param.getDesignType().equals(2)) {
+    				} else if (param.getDesignType().equals(2)) {
     					if (param.getUseLatenized() != null && param.getUseLatenized()) {
     						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId());
-    					}
-    					else {
+    					} else {
     						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId());
     					}
     				}

@@ -153,10 +153,9 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, fieldbookService);					
 			
-		}catch(BVDesignException e){
+		} catch(BVDesignException e) {
 			throw e;
-		}
-		catch(Exception e){
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		

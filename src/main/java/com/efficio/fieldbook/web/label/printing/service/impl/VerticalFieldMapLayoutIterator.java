@@ -38,8 +38,9 @@ public class VerticalFieldMapLayoutIterator implements
         
     	Plot[][] plots = FieldMapUtilityHelper.initializePlots(col, range);
     	
-    	if(currentPlots != null)
+    	if(currentPlots != null) {
 			plots = currentPlots;
+    	}
         //this is how we populate data
         int counter = 0;
         //we need to take note of the start range
@@ -100,8 +101,7 @@ public class VerticalFieldMapLayoutIterator implements
                     isStarted = FieldMapUtilityHelper.renderPlotCell(
                             info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
                 }
-            }
-            else {                
+            } else {                
                 for (int y = totalRanges - 1; y >= 0; y--) {
                     isStarted = FieldMapUtilityHelper.renderPlotCell(
                             info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);

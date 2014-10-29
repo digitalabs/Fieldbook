@@ -41,8 +41,9 @@ public class BVDesignOutput implements Serializable{
 	}
 	
 	public Map<String, String> getEntryMap(int index){
-		if(index < bvResultMap.size() && index >= 0)
+		if(index < bvResultMap.size() && index >= 0) {
 			return bvResultMap.get(index);
+		}
 		return null;
 	}
 	

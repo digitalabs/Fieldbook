@@ -35,8 +35,9 @@ public class HorizontalFieldMapLayoutIterator implements
         
        
     	Plot[][] plots = FieldMapUtilityHelper.initializePlots(col, range);
-    	if(currentPlots != null)
+    	if(currentPlots != null) {
 			plots = currentPlots;
+    	}
         //this is how we populate data
         int counter = 0;
         //we need to take note of the start range
@@ -97,8 +98,7 @@ public class HorizontalFieldMapLayoutIterator implements
                     isStarted = FieldMapUtilityHelper.renderPlotCell(
                             info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
                 }
-            }
-            else {                
+            } else {                
             	for(int x = totalColumns - 1 ; x >= 0; x--){
                     isStarted = FieldMapUtilityHelper.renderPlotCell(
                             info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);

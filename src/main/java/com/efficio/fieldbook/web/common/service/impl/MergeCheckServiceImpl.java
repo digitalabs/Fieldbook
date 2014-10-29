@@ -75,8 +75,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 				newList.add(assignNewGermplasm(checkGerm, newEntry));
 				newEntry++;
 			}
-		}
-		else {
+		} else {
 			checkIndex = checkIndex % checkList.size();
 			ImportedGermplasm checkGerm = checkList.get(checkIndex);
 			newList.add(assignNewGermplasm(checkGerm, newEntry));

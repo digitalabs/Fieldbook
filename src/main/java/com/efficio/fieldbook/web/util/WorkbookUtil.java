@@ -471,8 +471,7 @@ public class WorkbookUtil {
                         }
                         if (found) {
                             row.getDataList().remove(varIndex);
-                        }
-                        else {
+                        } else {
                             break;
                         }
                         index++;

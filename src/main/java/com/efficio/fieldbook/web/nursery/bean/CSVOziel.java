@@ -139,8 +139,7 @@ public class CSVOziel {
                 if (workbook.isNursery()) {
 	                csvOutput.write("1");
 	                csvOutput.write("1");
-                }
-                else {
+                } else {
 	                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row));
 	                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), row));
                 }
@@ -173,11 +172,9 @@ public class CSVOziel {
                         		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementDataValue(valor), variate.getPossibleValues()));
                         	} else if (variate.getProperty().equals(propertyName)) {
                         	    csvOutput.write(row.getMeasurementData(valor).getValue());
-                        	}
-                        	else {
+                        	} else {
                         		csvOutput.write(row.getMeasurementDataValue(valor));
                         	}
-                        	
                         } catch (NullPointerException ex) {
                             String cad = ".";
                             csvOutput.write(cad);
@@ -214,8 +211,7 @@ public class CSVOziel {
                 if (workbook.isNursery()) {
                     csvOutput.write("1");
                     csvOutput.write("1");
-                }
-                else {
+                } else {
                     csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), mRow));
                     csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), mRow));
                 }
@@ -230,8 +226,7 @@ public class CSVOziel {
     	                	String value = WorkbookUtil.getValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
     	                	if (this.selectedTrait != null && selectedTrait.getPossibleValues() != null && !selectedTrait.getPossibleValues().isEmpty()) {
     	                		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(value, selectedTrait.getPossibleValues()));
-    	                	}
-    	                	else {
+    	                	} else {
     	                		csvOutput.write(value);
     	                	}
                 	    }
@@ -252,8 +247,7 @@ public class CSVOziel {
                         		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(mRow.getMeasurementDataValue(variate.getName()), variate.getPossibleValues()));
                         	} else if (variate.getProperty().equals(propertyName)) {
                         	    csvOutput.write(mRow.getMeasurementData(variate.getName()).getValue());
-                        	}
-                        	else {
+                        	} else {
                         		csvOutput.write(mRow.getMeasurementDataValue(variate.getName()));
                         	}
                         } catch (NullPointerException ex) {
@@ -391,8 +385,7 @@ public class CSVOziel {
 		        		int trialValue = Integer.valueOf(trialValueStr);
 		        		if (trialValue == trial) {
 		        			return row;
-		        		}
-		        		else {
+		        		} else {
 		        			match = false;
 		        		}
 	        		} else {
@@ -467,19 +460,16 @@ public class CSVOziel {
 	    				if (data != null && data.getValue() != null && "".equals(data.getValue())) {
 	    					data.setcValueId(null);
 	    					data.setValue(null);
-	    				}
-	    				else if (data.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+	    				} else if (data.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
 	    					data.setcValueId(data.getValue());
 	    					data.setValue(data.getValue());
 	    				}
-	    			}
-	    			else {
+	    			} else {
 			    		if (!"N".equalsIgnoreCase(data.getDataType())
 			    				|| ("N".equalsIgnoreCase(data.getDataType()) && value != null && NumberUtils.isNumber(value))) {
 	
 			    			data.setValue(value);
-			    		}
-			    		else {
+			    		} else {
 			    			data.setValue(null);
 			    		}
 	    			}
@@ -531,11 +521,9 @@ public class CSVOziel {
         for (MeasurementVariable condition : workbook.getStudyConditions()) {
             if ("TID".equalsIgnoreCase(condition.getName())) {
                 trialNumber = condition.getValue();
-            }
-            else if ("LID".equalsIgnoreCase(condition.getName())) {
+            } else if ("LID".equalsIgnoreCase(condition.getName())) {
                 strLocationName = condition.getValue();
-            }
-            else if ("Cycle".equalsIgnoreCase(condition.getName())) {
+            } else if ("Cycle".equalsIgnoreCase(condition.getName())) {
                 strCycle = condition.getValue();
             }
         }

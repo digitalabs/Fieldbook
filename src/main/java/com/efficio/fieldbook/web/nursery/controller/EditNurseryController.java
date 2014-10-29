@@ -153,12 +153,10 @@ public class EditNurseryController extends SettingsController {
             if (form.getFolderId() == 1) {
             	if (nurseryId > 0) {
             		form.setFolderName(AppConstants.PUBLIC_NURSERIES.getString());
-            	}
-            	else {
+            	} else {
             		form.setFolderName(AppConstants.PROGRAM_NURSERIES.getString());
             	}
-            }
-            else {
+            } else {
             	form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
             }
             
@@ -230,8 +228,7 @@ public class EditNurseryController extends SettingsController {
                         	if (setting.getValue() != null && !setting.getValue().isEmpty() && NumberUtils.isNumber(setting.getValue())) {
                         		form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
                         	}
-                        }
-                        catch (MiddlewareQueryException e) {
+                        } catch (MiddlewareQueryException e) {
                             LOG.error(e.getMessage(), e);
                         }
                     } else if (termId.equals(Integer.valueOf(TermId.STUDY_UPDATE.getId()))) {
@@ -248,8 +245,7 @@ public class EditNurseryController extends SettingsController {
                     if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
                         try {
                             form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
-                        }
-                        catch (MiddlewareQueryException e) {
+                        } catch (MiddlewareQueryException e) {
                             LOG.error(e.getMessage(), e);
                         }
                     }
@@ -525,14 +521,17 @@ public class EditNurseryController extends SettingsController {
                         break;
                     }
                 }
-                if (hasData) break;
+                if (hasData) {
+                	break;
+                }
             }
         }
 
-        if (hasData)
+        if (hasData) {
             resultMap.put("hasMeasurementData", "1");
-        else 
+        } else { 
             resultMap.put("hasMeasurementData", "0");
+        }
         
         return resultMap;
     }

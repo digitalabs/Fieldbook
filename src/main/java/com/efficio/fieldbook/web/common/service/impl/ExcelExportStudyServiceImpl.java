@@ -488,8 +488,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				HSSFCell cell = row.createCell(currentColNum++);
 				if (variable.isFactor()) {
 					cell.setCellStyle(getHeaderStyle(xlsBook, 51, 153, 102));
-				}
-				else {
+				} else {
 					cell.setCellStyle(getHeaderStyle(xlsBook, 51, 51, 153));
 				}
 				cell.setCellValue(variable.getName());
@@ -520,8 +519,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 					
 						cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
 					
-				}
-				else {
+				} else {
 					
 					if(AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())){					
 						if(dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())){
@@ -530,7 +528,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 							cell.setCellValue(Double.valueOf(dataCell.getValue()));
 							
 						}
-					}else{
+					} else {
 						cell.setCellValue(dataCell.getValue());	
 					}
 				}

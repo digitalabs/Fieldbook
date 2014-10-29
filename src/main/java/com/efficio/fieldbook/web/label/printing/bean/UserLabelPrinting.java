@@ -159,8 +159,9 @@ public class UserLabelPrinting implements Serializable{
                     this.numberOfInstances = Integer.toString(info.getTrialInstances().size());
                     for(int i = 0 ; i < info.getTrialInstances().size(); i++){
                         FieldMapTrialInstanceInfo trialInstanceInfo = info.getTrialInstances().get(i);
-                        if(trialInstanceInfo.getFieldMapLabels() != null)
+                        if(trialInstanceInfo.getFieldMapLabels() != null) {
                             totalLabels+=trialInstanceInfo.getFieldMapLabels().size();
+                        }
                     }
                     
                 }

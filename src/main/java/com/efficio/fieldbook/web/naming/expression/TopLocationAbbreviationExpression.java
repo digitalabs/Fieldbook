@@ -21,8 +21,7 @@ public class TopLocationAbbreviationExpression implements Expression {
 			String labbr = source.getLocationAbbreviation() != null ? source.getLocationAbbreviation() : "";
 			if (rootName != null && rootName.toString().endsWith("T")) {
 				value.replace(startIndex, endIndex, "TOP" + labbr);
-			}
-			else {
+			} else {
 				value.replace(startIndex, endIndex, labbr);
 			}
 		}

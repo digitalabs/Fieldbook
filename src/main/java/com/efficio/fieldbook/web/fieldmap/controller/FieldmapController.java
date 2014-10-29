@@ -584,10 +584,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         String msg = "success";
         try {
         	Integer currentUserId = this.getCurrentIbdbUserId();
-        	if(isFieldNameUnique(fieldName, locationId))
+        	if(isFieldNameUnique(fieldName, locationId)) {
         		fieldbookMiddlewareService.addFieldLocation(fieldName, locationId, currentUserId);
-        	else 
+        	} else { 
         		msg = "error";
+        	}
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}
@@ -645,10 +646,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         String msg = "success";
         try {
         	Integer currentUserId = this.getCurrentIbdbUserId();
-        	if(isBlockNameUnique(blockName, parentFieldId))
+        	if(isBlockNameUnique(blockName, parentFieldId)) {
         		fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId, currentUserId);
-        	else
+        	} else {
         		msg = "error";
+        	}
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}

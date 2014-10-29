@@ -100,8 +100,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     	
     	if (isNursery) {
         	model.addAttribute("nurseryDetails", details);
-        } 
-        else {
+        } else {
         	model.addAttribute("trialDetails", details);
         }
     	
@@ -147,8 +146,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     			int computedIndex = currentColumn * rows + i / COLS - delta;
     			if (computedIndex < list.size()) {
     				newList.add(list.get(computedIndex));
-    			}
-    			else {
+    			} else {
     				newList.add(list.get(computedIndex - 1));
     			}
     		}

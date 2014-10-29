@@ -56,16 +56,18 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 					        	//for left to right planting
 					        	String coordinateKey = Integer.toString(x) + ":" + Integer.toString(y);
 					        	MeasurementRow rowExperiment = fieldMapExperimentMap.get(coordinateKey);
-					        	if(rowExperiment != null)
+					        	if(rowExperiment != null) {
 					        		observationsPerInstance.add(rowExperiment);
+					        	}
 					        }
 			        	}else{
 			    			for(int x = columns ; x >= 0; x--){
 					        	//for right to left planting
 			    				String coordinateKey = Integer.toString(x) + ":" + Integer.toString(y);
 			    				MeasurementRow rowExperiment = fieldMapExperimentMap.get(coordinateKey);
-			    				if(rowExperiment != null)
+			    				if(rowExperiment != null) {
 			    					observationsPerInstance.add(rowExperiment);
+			    				}
 					        }
 			        	}
 				        

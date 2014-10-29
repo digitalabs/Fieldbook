@@ -94,8 +94,7 @@ public class ExportImportStudyUtil {
 	    			rows.add(row);
 	    		}
 	    	}
-    	} 
-    	else {
+    	} else {
     		rows = workbook.getObservations();
     	}
     	return rows;

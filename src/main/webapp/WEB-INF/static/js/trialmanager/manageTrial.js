@@ -3,7 +3,7 @@
  */
 
 /*global angular,openStudyTree, SpinnerManager, ajaxGenericErrorMsg, showErrorMessage, operationMode, resetGermplasmList,
-showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
+showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader*/
 
 (function () {
     'use strict';
@@ -193,21 +193,21 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
                 $scope.isChoosePreviousTrial = !$scope.isChoosePreviousTrial;
 
                 if (!$scope.isChoosePreviousTrial) {
-                	$scope.resetTabsData();
+                    $scope.resetTabsData();
                 }
             };
 
             $scope.resetTabsData = function () {
-            	// reset the service data to initial state (for untick of user previous trial)
-                _.each(_.keys($localStorage.serviceBackup.settings),function(key) {
+                // reset the service data to initial state (for untick of user previous trial)
+                _.each(_.keys($localStorage.serviceBackup.settings), function (key) {
                     if ('basicDetails' !== key) {
-                        TrialManagerDataService.updateSettings(key,angular.copy($localStorage.serviceBackup.settings[key]));
+                        TrialManagerDataService.updateSettings(key, angular.copy($localStorage.serviceBackup.settings[key]));
                     }
                 });
 
-                _.each(_.keys($localStorage.serviceBackup.currentData),function(key) {
+                _.each(_.keys($localStorage.serviceBackup.currentData), function (key) {
                     if ('basicDetails' !== key) {
-                        TrialManagerDataService.updateCurrentData(key,angular.copy($localStorage.serviceBackup.currentData[key]));
+                        TrialManagerDataService.updateCurrentData(key, angular.copy($localStorage.serviceBackup.currentData[key]));
                     }
                 });
 
@@ -218,7 +218,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
                 $http.get('/Fieldbook/TrialManager/createTrial/clearSettings');
 
                 var measurementDiv = $('#measurementsDiv');
-                if(measurementDiv.length !== 0){
+                if (measurementDiv.length !== 0) {
                     measurementDiv.html('');
                 }
 
@@ -243,37 +243,39 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview*/
             $scope.useExistingTrial = function (existingTrialID) {
                 $http.get('/Fieldbook/TrialManager/createTrial/useExistingTrial?trialID=' + existingTrialID).success(function (data) {
                     // update data and settings
-                	if (data.createTrialForm !== null && data.createTrialForm.hasError === true) {
-                		$scope.resetTabsData();
+                    if (data.createTrialForm !== null && data.createTrialForm.hasError === true) {
+                        $scope.resetTabsData();
                         createErrorNotification(errorMsgHeader, data.createTrialForm.errorMessage);
-                	} else {
-	                    var environmentData = TrialManagerDataService.extractData(data.environmentData);
-	                    var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
-	
-	                    if (environmentData.noOfEnvironments > 0 && environmentData.environments.length === 0) {
-	                        while (environmentData.environments.length !== environmentData.noOfEnvironments) {
-	                            environmentData.environments.push({
-	                                managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
-	                                    environmentSettings.managementDetails),
-	                                trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
-	                                    environmentSettings.trialConditionDetails)
-	                            });
-	                        }
-	                    }
-	
-	                    TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
-	                    TrialManagerDataService.updateCurrentData('environments', environmentData);
-	                    TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
-	                        data.treatmentFactorsData));
-	
-	                    TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
-	                        data.trialSettingsData));
-	                    TrialManagerDataService.updateSettings('environments', environmentSettings);
-	                    TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
-	                    TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
-	                        data.treatmentFactorsData));
-	                    TrialManagerDataService.updateSettings('measurements', TrialManagerDataService.extractSettings(data.measurementsData));
-                	}
+                    } else {
+                        var environmentData = TrialManagerDataService.extractData(data.environmentData);
+                        var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
+
+                        if (environmentData.noOfEnvironments > 0 && environmentData.environments.length === 0) {
+                            while (environmentData.environments.length !== environmentData.noOfEnvironments) {
+                                environmentData.environments.push({
+                                    managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
+                                        environmentSettings.managementDetails),
+                                    trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
+                                        environmentSettings.trialConditionDetails)
+                                });
+                            }
+                        }
+
+                        TrialManagerDataService.updateCurrentData('trialSettings',
+                            TrialManagerDataService.extractData(data.trialSettingsData));
+                        TrialManagerDataService.updateCurrentData('environments', environmentData);
+                        TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
+                            data.treatmentFactorsData));
+
+                        TrialManagerDataService.updateSettings('trialSettings', TrialManagerDataService.extractSettings(
+                            data.trialSettingsData));
+                        TrialManagerDataService.updateSettings('environments', environmentSettings);
+                        TrialManagerDataService.updateSettings('germplasm', TrialManagerDataService.extractSettings(data.germplasmData));
+                        TrialManagerDataService.updateSettings('treatmentFactors', TrialManagerDataService.extractTreatmentFactorSettings(
+                            data.treatmentFactorsData));
+                        TrialManagerDataService.updateSettings('measurements',
+                            TrialManagerDataService.extractSettings(data.measurementsData));
+                    }
                 });
             };
             

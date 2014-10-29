@@ -1,6 +1,6 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
- invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree*/
+ invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates*/
 (function () {
     'use strict';
 
@@ -56,7 +56,7 @@
                 return data;
             };
 
-            var updateTrialDataAfterCreation = function (trialID, updateFunction) {
+            var updateFrontEndTrialData = function (trialID, updateFunction) {
                 $http.get('/Fieldbook/TrialManager/openTrial/updateSavedTrial?trialID=' + trialID).success(function (data) {
                     if (updateFunction) {
                         updateFunction(data);
@@ -319,7 +319,7 @@
 							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
                                 doSaveImportedData().then(function () {
                                     notifySaveEventListeners();
-                                    updateTrialDataAfterCreation(service.currentData.basicDetails.studyID, function (data) {
+                                    updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (data) {
                                         service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
                                         service.updateTrialMeasurementRowCount(data.measurementRowCount);
                                         service.updateSettings('measurements', extractSettings(data.measurementsData));
@@ -339,16 +339,22 @@
                                     parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
                                     service.applicationData.unsavedGeneratedDesign === false)
                                 ) {
-                                $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function (data) {
+                                $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function () {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
-                                    service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
-                                    service.updateTrialMeasurementRowCount(data.measurementRowCount);
-                                    displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                        service.trialMeasurement.count);
-                                    service.applicationData.unsavedGeneratedDesign = false;
-                                    service.applicationData.unsavedTraitsAvailable = false;
-                                    $('body').data('needToSave', '0');
+                                    updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(updatedData) {
+                                        service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);
+                                        service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
+
+                                        service.updateCurrentData('environments', extractData(updatedData.environmentData));
+                                        service.updateSettings('environments', extractSettings(updatedData.environmentData));
+                                        displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
+                                            service.trialMeasurement.count);
+                                        service.applicationData.unsavedGeneratedDesign = false;
+                                        service.applicationData.unsavedTraitsAvailable = false;
+                                        $('body').data('needToSave', '0');
+                                    });
+
                                 });
                             }
                             else {
@@ -514,11 +520,11 @@
                         hasError = true;
                         customMessage = 'Trials should have at least one environment';
                     }
-                    
+
                     var invalidDateMsg = validateAllDates();
-                    if(invalidDateMsg !== '') {
-                    	hasError = true;
-                    	customMessage = invalidDateMsg;
+                    if (invalidDateMsg !== '') {
+                        hasError = true;
+                        customMessage = invalidDateMsg;
                     }
                     if (!hasError) {
                         errorCode = service.treatmentFactorDataInvalid();

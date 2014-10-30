@@ -378,7 +378,7 @@ public class OpenTrialController extends
             LOG.error(e.getMessage(), e);
         }
 
-        return new ArrayList<>();
+        return new ArrayList<UserDefinedField>();
     }
     
     /**

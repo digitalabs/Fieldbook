@@ -128,7 +128,9 @@ public class OntologyDetailsControllerTest  extends AbstractBaseControllerTest {
         
         StandardVariable stdvar = 
                 new StandardVariable(property, scale, method, dataType, storedIn, traitClass, 
-                        PhenotypicType.TRIAL_DESIGN, constraints, enumerations);
+                        PhenotypicType.TRIAL_DESIGN);
+        stdvar.setConstraints(constraints);
+        stdvar.setEnumerations(enumerations);
         stdvar.setName("VARIABLE1");
         stdvar.setDescription("VARIABLE DESCRIPTION");
         

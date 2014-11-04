@@ -260,7 +260,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	return value != null ? value : "";
     }
     
-    private String getGermplasmRootName(Integer snametype, AdvancingSource row)
+    protected String getGermplasmRootName(Integer snametype, AdvancingSource row)
     throws MiddlewareQueryException {
     	
     	RootNameExpression expression = new RootNameExpression();
@@ -270,7 +270,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	String name = builders.get(0).toString();
     	if (name.length() == 0) {
     		throw new MiddlewareQueryException(messageSource.getMessage("error.advancing.nursery.no.root.name.found", 
-    				new Object[] {row.getGermplasm().getDesig()}, LocaleContextHolder.getLocale())); 
+    				new Object[] {row.getGermplasm().getEntryId()}, LocaleContextHolder.getLocale())); 
     	}
     	return name;
     }
@@ -291,4 +291,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	}
    		return null;
     }
+
+	public void setMessageSource(ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+    
+    
 }

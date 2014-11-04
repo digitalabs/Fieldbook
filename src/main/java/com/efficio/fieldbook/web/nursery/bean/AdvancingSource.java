@@ -54,6 +54,10 @@ public class AdvancingSource {
 		this.season = season;
 		this.locationAbbreviation = locationAbbreviation;
 	}
+    
+    public AdvancingSource(){
+    	super();
+    }
 
 	/**
      * @return the germplasm

@@ -93,8 +93,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         }
         Study nursery = advanceInfo.getStudy();
         
-        AdvancingSourceList list = factory.create(workbook, advanceInfo, nursery, breedingMethodMap, breedingMethodCodeMap);
-        return list;
+        return factory.create(workbook, advanceInfo, nursery, breedingMethodMap, breedingMethodCodeMap);        
     }
     
     private void updatePlantsSelectedIfNecessary(AdvancingSourceList list, AdvancingNursery info) {
@@ -111,7 +110,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             	if (!row.isBulk() && lineChoiceSame) {
             		row.setPlantsSelected(plantsSelected);
             	} else if (row.isBulk() && allPlotsChoice) {
-            		row.setPlantsSelected(1); //set it to 1, it does not matter since it's bulked
+            		//set it to 1, it does not matter since it's bulked
+            		row.setPlantsSelected(1); 
             	}
             }
         }
@@ -229,7 +229,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			            			} else {
 			            				if (row.getChangeDetail() == null) {
 				                    		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
-				                			row.getChangeDetail().setIndex(index-1); //index in java (starts at 0)
+				                    		//index in java (starts at 0)
+				                			row.getChangeDetail().setIndex(index-1); 
 				                			row.getChangeDetail().setOldAdvanceName(name);
 				                			Locale locale = LocaleContextHolder.getLocale();
 				                			row.getChangeDetail().setQuestionText(messageSource.getMessage("advance.nursery.duplicate.question.text", 
@@ -276,7 +277,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     }
     
     private Integer getCount(String countStr) {
-    	if (countStr.equals("")) {
+    	if (("").equals(countStr)) {
     		return 1;
     	}
     	String[] countArray = countStr.split("\\D");

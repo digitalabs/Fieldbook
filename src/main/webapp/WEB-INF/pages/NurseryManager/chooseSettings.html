@@ -429,7 +429,9 @@ $(document).ready(function() {
 
 	$('#folderNameSpan').html($('#folderName').val());
 
-	$.each($('.possibleValuesJson'), function(index, divElem) {
+    var possibleValuesJsonElm = $('.possibleValuesJson');
+
+    $.each(possibleValuesJsonElm, function(index, divElem) {
 		var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
 
 		if (parseInt($('#' + getJquerySafeId('studyLevelVariables' + select2Index +
@@ -502,14 +504,24 @@ $(document).ready(function() {
 		actionBtn.tooltip('destroy');
 		actionBtn.removeClass('disabled');
 	};
-            if ($('#baselineTraitSettings tbody tr').length > 1) {
-    			hideDummyRow('baselineTraitSettings');
-    		}
 
-            if ($('#selectionVariatesSettings tbody tr').length > 1) {
-    			hideDummyRow('selectionVariatesSettings');
-    		}
-            checkShowSettingsFormReminder();
+
+    if ($('#baselineTraitSettings tbody tr').length > 1) {
+        hideDummyRow('baselineTraitSettings');
+    }
+
+    if ($('#selectionVariatesSettings tbody tr').length > 1) {
+        hideDummyRow('selectionVariatesSettings');
+    }
+    checkShowSettingsFormReminder();
+
+    // toggle favorites by default on edit if value is a favorite
+    if ($('.edit-nursery-page-identifier').length) {
+        $.each(possibleValuesJsonElm, function(index, divElem) {
+            var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
+            checkFavoritesIfValIsAFavorite(select2Index);
+        });
+    }
 });
 //]]>
 </script>

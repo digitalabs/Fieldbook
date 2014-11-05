@@ -1762,3 +1762,22 @@ function discardImportedData(){
 		keyboard : true
 	});
 }
+
+function checkFavoritesIfValIsAFavorite(rowIndex) {
+    'use strict';
+
+    var valueOfDropdown = parseInt($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).val(),10);
+    var possibleValuesElm = $('#possibleValuesFavoriteJson' + rowIndex);
+    var possibleValuesFavoriteArr = $.parseJSON(possibleValuesElm.text());
+
+    if ('' === possibleValuesElm.text().trim()) {
+        return false;
+    }
+
+    $.each(possibleValuesFavoriteArr,function(index,val) {
+        if (val.id === valueOfDropdown) {
+            $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
+            return false;
+        }
+    });
+}

@@ -461,6 +461,9 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					group: this._group,
 					responseData: data
 				});
+				if(data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0].possibleValues.length == 0){
+					showAlertMessage('', variableNoValidValueNotification);
+				}
 			}, this),
 			error: function(jqxhr, textStatus, error) {
 

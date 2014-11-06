@@ -177,29 +177,16 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, 
             Model model, HttpServletResponse response) {
 
-        String currentDate = DateUtil.getCurrentDate();
-        String fileName = userFieldmap.getBlockName().replace(" ", "") + "-" 
-                + currentDate + ".xls"; //changed selected name to block name for now
+        String fileName = makeSafeFileName(userFieldmap.getBlockName()); //changed selected name to block name for now
 
-        response.setHeader("Content-disposition","attachment; filename=" + fileName);
+        response.setHeader("Content-disposition","attachment; filename=\"" + fileName + "\"");
 
-        File xls = new File(fileName); // the selected name + current date
-        FileInputStream in;
-        
         try {
             exportExcelService.exportFieldMapToExcel(fileName, userFieldmap);
 
-            in = new FileInputStream(xls);
-            OutputStream out = response.getOutputStream();
+			// the selected name + current date
+			writeXlsToOutputStream(response, new File(fileName));
 
-            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
-            int length = 0;
-
-            while ((length = in.read(buffer)) > 0){
-                 out.write(buffer, 0, length);
-            }
-            in.close();
-            out.close();
         } catch (FieldbookException e) {
             LOG.error(e.getMessage(), e);
         } catch (FileNotFoundException e) {
@@ -210,8 +197,29 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         
         return "";
     }
-    
-    /**
+
+	protected String makeSafeFileName(String filename) {
+		return filename.replace(" ", "") + "-"
+				+ DateUtil.getCurrentDate() + ".xls";
+	}
+
+	protected void writeXlsToOutputStream(HttpServletResponse response, File xls)
+			throws IOException {
+		FileInputStream in = new FileInputStream(xls);
+		OutputStream out = response.getOutputStream();
+
+		// use bigger if you want
+		byte[] buffer= new byte[BUFFER_SIZE];
+		int length = 0;
+
+		while ((length = in.read(buffer)) > 0){
+			 out.write(buffer, 0, length);
+		}
+		in.close();
+		out.close();
+	}
+
+	/**
      * Submits the details.
      *
      * @param form the form

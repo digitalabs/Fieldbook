@@ -486,13 +486,22 @@ function recreatePopupLocationCombo() {
 
 function formatFieldResult(myItem) {
     'use strict';
-    return myItem.text;
+    return escapeHtml(myItem.text);
  }
 
 function formatField(myItem) {
     'use strict';
-	return '<p><strong>'+myItem.text+'</strong> <br /> Location: '+myItem.location+'</p>';
+	return '<p><strong>'+escapeHtml(myItem.text)+'</strong> <br /> Location: '+escapeHtml(myItem.location)+'</p>';
 }
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;')
+         .replace(/"/g, '&quot;')
+         .replace(/'/g, '&#039;');
+ }
 
 function recreatePopupFieldCombo() {
 	'use strict';

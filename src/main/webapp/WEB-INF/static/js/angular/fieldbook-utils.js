@@ -258,7 +258,7 @@
                     }
                 };
             }])
-        .directive('showSettingFormElement', function () {
+        .directive('showSettingFormElement',['_',function (_) {
             return {
                 require: '?uiSelect2, ?ngModel',
                 restrict: 'E',
@@ -268,8 +268,7 @@
                     settingkey: '@',
                     valuecontainer: '=',
                     changefunction: '&',
-                    blockInput: '=',
-                    auxParams: '&'
+                    blockInput: '='
                 },
 
                 templateUrl: '/Fieldbook/static/angular-templates/showSettingFormElement.html',
@@ -294,46 +293,40 @@
                     $scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
 
 
-                    $scope.isLocation = $scope.variableDefinition.variable.cvTermId == LOCATION_ID;
+                    $scope.isLocation = parseInt(LOCATION_ID,10) === parseInt($scope.variableDefinition.variable.cvTermId,10);
 
-                    $scope.isBreedingMethod = ($scope.variableDefinition.variable.cvTermId == BREEDING_METHOD_ID ||
-                        $scope.variableDefinition.variable.cvTermId == BREEDING_METHOD_CODE);
+                    $scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID,10) === parseInt($scope.variableDefinition.variable.cvTermId,10) ||
+                        parseInt(BREEDING_METHOD_CODE,10) === parseInt($scope.variableDefinition.variable.cvTermId,10);
 
                     $scope.localData = {};
-
-                    $scope.localData.useFavorites = true;
+                    $scope.localData.useFavorites = false;
 
                     $scope.updateDropdownValues = function () {
-
-                        if (!$scope.variableDefinition.possibleValuesFavorite) {
-                            $scope.dropdownValues = $scope.variableDefinition.possibleValues;
-                        } else if ($scope.localData.useFavorites && $scope.variableDefinition.possibleValuesFavorite.length > 0) {
-                            $scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
-                        } else {
-                            $scope.dropdownValues = $scope.variableDefinition.possibleValues;
-                        }
-
-
+                        $scope.dropdownValues = (!$scope.localData.useFavorites) ? $scope.variableDefinition.possibleValues : $scope.variableDefinition.possibleValuesFavorite;
                     };
 
-                    var useFavorites = function() {
-                        if (null !== $scope.variableDefinition.possibleValuesFavorite) {
-                            // compute the value of $scope.localData.useFavorites
-                            if (!auxParams[$scope.variableDefinition.variable.cvTermId]) {
-                                return $scope.variableDefinition.possibleValuesFavorite.length > 0;
-                            } else {
-                                return !auxParams[$scope.variableDefinition.variable.cvTermId].initialData &&
-                                    ($scope.variableDefinition.possibleValuesFavorite.length > 0);
-                            }
-                        } else {
-                            return false;
+                    // if the value of the dropdown from existing data matches from the list of favorites, we set the checkbox as true
+                    var useFavorites = function(currentVal) {
+
+                        if (!$scope.variableDefinition.existingData && null !== $scope.variableDefinition.possibleValuesFavorite) {
+                            return $scope.variableDefinition.possibleValuesFavorite.length > 0;
+                        } else if (currentVal !== null && !isNaN(currentVal) && null !== $scope.variableDefinition.possibleValuesFavorite) {
+                            return $scope.localData.useFavorites || _.where($scope.variableDefinition.possibleValuesFavorite,{'id':parseInt(currentVal,10)}).length > 0;
                         }
+
+                        return $scope.localData.useFavorites;
                     };
 
                     if ($scope.hasDropdownOptions) {
-                        var auxParams = $scope.auxParams();
+                        var currentVal = $scope.valuecontainer[$scope.targetkey];
 
-                        $scope.localData.useFavorites = useFavorites();
+                        // lets fix current val if its an object so that valuecontainer only contains the id
+                        if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
+                            currentVal = currentVal.id;
+                            $scope.valuecontainer[$scope.targetkey] = currentVal;
+                        }
+
+                        $scope.localData.useFavorites = useFavorites(currentVal);
 
                         $scope.updateDropdownValues();
 
@@ -372,13 +365,6 @@
                         };
 
                         if ($scope.valuecontainer[$scope.targetkey]) {
-                            var currentVal = $scope.valuecontainer[$scope.targetkey];
-
-                            // check if the value currently stored is an object
-                            if (currentVal.id) {
-                                $scope.valuecontainer[$scope.targetkey] = currentVal.id;
-                            }
-
                             $scope.dropdownOptions.initSelection = function (element, callback) {
                                 angular.forEach($scope.dropdownValues, function (value) {
                                     var idNumber;
@@ -452,7 +438,7 @@
                     }
                 }
             };
-        })
+        }])
 
         .directive('jqDatepicker',function() {
             return function(scope,element) {

@@ -249,7 +249,6 @@
                         showAdvancedOptions : [false,false,false]
                     },
                     treatmentLevelPairs: {},
-                    auxSettings : {}
                 },
 
                 trialMeasurement: {
@@ -710,7 +709,7 @@
             _.each(service.settings,function(val,settingsKey) {
                 if (val instanceof angular.OrderedHash) {
                     _.find(val.vals(),function(_val) {
-                        service.specialSettings.auxSettings[_val.variable.cvTermId] = { initialData :true  };
+                        _val.existingData = true;
                     });
 
                 } else {
@@ -718,7 +717,7 @@
 
                         if (_val instanceof angular.OrderedHash) {
                             _.find(_val.vals(),function(__val) {
-                                service.specialSettings.auxSettings[__val.variable.cvTermId] = { initialData :true  };
+                                __val.existingData = true;
                             });
                         }
                     });

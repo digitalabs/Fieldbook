@@ -69,8 +69,13 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
             .state('environment', {
                 url: '/environment',
-                templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
-                controller: 'EnvironmentCtrl'
+                views: {
+                    'environment': {
+                        controller: 'EnvironmentCtrl',
+                        templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
+                    }
+                },
+                deepStateRedirect: true, sticky: true
             })
 
             .state('experimentalDesign', {

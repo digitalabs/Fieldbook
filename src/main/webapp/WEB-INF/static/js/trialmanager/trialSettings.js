@@ -12,7 +12,6 @@
     manageTrialApp.controller('TrialSettingsCtrl', ['$scope', 'TrialManagerDataService', function ($scope, TrialManagerDataService) {
 
         $scope.settings = TrialManagerDataService.settings.trialSettings;
-        $scope.auxSettings = TrialManagerDataService.specialSettings.auxSettings;
 
         $scope.data = TrialManagerDataService.currentData.trialSettings;
 

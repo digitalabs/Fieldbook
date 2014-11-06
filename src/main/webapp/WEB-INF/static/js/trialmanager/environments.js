@@ -15,7 +15,6 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 
             $scope.data = TrialManagerDataService.currentData.environments;
             $scope.isHideDelete = false;
-            $scope.auxSettings = TrialManagerDataService.specialSettings.auxSettings;
             $scope.settings = TrialManagerDataService.settings.environments;
             if (Object.keys($scope.settings).length === 0) {
                 $scope.settings = {};

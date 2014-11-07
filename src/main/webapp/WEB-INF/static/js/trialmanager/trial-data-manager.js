@@ -229,8 +229,8 @@
                     germplasmListSelected : GERMPLASM_LIST_SIZE > 0
                 },
 
-                // settings that has special data structure
                 specialSettings: {
+                    // settings that has special data structure
                     experimentalDesign: {
                         factors: (function () {
                             var hardFactors = new angular.OrderedHash();
@@ -248,7 +248,7 @@
 
                         showAdvancedOptions : [false,false,false]
                     },
-                    treatmentLevelPairs: {},
+                    treatmentLevelPairs: {}
                 },
 
                 trialMeasurement: {

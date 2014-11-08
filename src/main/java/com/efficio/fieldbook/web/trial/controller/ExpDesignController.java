@@ -119,11 +119,11 @@ public class ExpDesignController extends
 		    			
 		    			workbook.setObservations(measurementRows);
 		    			//should have at least 1 record
-		    			List<MeasurementVariable> currentNewFactors = new ArrayList();
+		    			List<MeasurementVariable> currentNewFactors = new ArrayList<MeasurementVariable>();
 		    			List<MeasurementVariable> oldFactors = workbook.getFactors();
-		    			List<MeasurementVariable> deletedFactors = new ArrayList();
+		    			List<MeasurementVariable> deletedFactors = new ArrayList<MeasurementVariable>();
 		    			if(measurementRows != null && !measurementRows.isEmpty()){
-		    				List<MeasurementVariable> measurementDatasetVariables = new ArrayList();
+		    				List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
 			    	        MeasurementRow dataRow =  measurementRows.get(0);
 			    	        for(MeasurementData measurementData : dataRow.getDataList()){
 			    	        	measurementDatasetVariables.add(measurementData.getMeasurementVariable());

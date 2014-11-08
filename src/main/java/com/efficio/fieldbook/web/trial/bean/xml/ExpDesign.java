@@ -54,7 +54,7 @@ public class ExpDesign  implements Serializable {
 		}
 		if(!isFound){
 			if(parameters == null){
-				parameters = new ArrayList();
+				parameters = new ArrayList<ExpDesignParameter>();
 			}
 			parameters.add(new ExpDesignParameter(name, value));
 		}

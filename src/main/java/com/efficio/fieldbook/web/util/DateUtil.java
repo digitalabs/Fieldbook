@@ -80,7 +80,7 @@ public class DateUtil {
      * @return the list
      */
     public static List<ChoiceKeyVal> generateMonthChoices(){
-    	List<ChoiceKeyVal> monthList = new ArrayList();
+    	List<ChoiceKeyVal> monthList = new ArrayList<ChoiceKeyVal>();
     	DecimalFormat df2 = new DecimalFormat( "00" );
     	for(double i = 1 ; i <= 12 ; i++){
     		monthList.add(new ChoiceKeyVal(df2.format(i), df2.format(i)));

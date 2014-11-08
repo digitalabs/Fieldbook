@@ -54,7 +54,7 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 						+ studyName 
 						+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
 		        boolean alreadyExists = new File(filenamePath).exists();
-		        List<Integer> indexes = new ArrayList();
+		        List<Integer> indexes = new ArrayList<Integer>();
         		indexes.add(index);
 	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 	            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());

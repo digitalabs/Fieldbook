@@ -50,7 +50,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			List<MeasurementVariable> nonTrialFactors, List<MeasurementVariable> variates, 
 			List<TreatmentVariable> treatmentVariables) throws BVDesignException {
 		
-		List<MeasurementRow> measurementRowList = new ArrayList();
+		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 
 		int nTreatments = germplasmList.size();
 		String blockSize = parameter.getBlockSize();
@@ -114,7 +114,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 
 	@Override
 	public List<StandardVariable> getRequiredVariable() {
-		List<StandardVariable> varList = new ArrayList();
+		List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {		
 			StandardVariable stdvarRep = fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());
 			StandardVariable stdvarBlock = fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId());		

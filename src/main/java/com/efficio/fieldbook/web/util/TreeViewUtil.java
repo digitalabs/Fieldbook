@@ -48,7 +48,7 @@ public class TreeViewUtil {
 	}
 	
 	public static List<FolderReference> convertReferenceToFolderReference(List<Reference> refList){
-		 List<FolderReference> folRefs = new ArrayList();
+		 List<FolderReference> folRefs = new ArrayList<FolderReference>();
          for(Reference ref : refList){
          	FolderReference folderReference = new FolderReference(ref.getId(), ref.getName());                	
          	folRefs.add(folderReference);

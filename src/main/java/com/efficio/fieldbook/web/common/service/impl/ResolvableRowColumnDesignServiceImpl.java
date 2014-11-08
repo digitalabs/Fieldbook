@@ -118,7 +118,7 @@ public class ResolvableRowColumnDesignServiceImpl implements
 	
 	@Override
 	public List<StandardVariable> getRequiredVariable() {
-		List<StandardVariable> varList = new ArrayList();
+		List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {		
 			StandardVariable stdvarRep = fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());				
 			StandardVariable stdvarPlot = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());

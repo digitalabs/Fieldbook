@@ -50,7 +50,7 @@ public class KsuExcelExportStudyServiceImpl implements
         	List<String> filenameList = new ArrayList<String>();
         	int fileCount = instances.size();
     		for (Integer index : instances) {
-        		List<Integer> indexes = new ArrayList();
+        		List<Integer> indexes = new ArrayList<Integer>();
         		indexes.add(index);
 	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 	            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());

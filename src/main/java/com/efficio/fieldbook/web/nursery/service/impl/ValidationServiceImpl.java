@@ -111,7 +111,7 @@ public class ValidationServiceImpl implements ValidationService {
 	public void validateObservationValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException {
 		Locale locale = LocaleContextHolder.getLocale();		
 		if (workbook.getObservations() != null) {
-			List<MeasurementRow> observations = new ArrayList();
+			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 			if(instanceNumber != null && "".equalsIgnoreCase(instanceNumber)){
 				//meaning we want to validate all
 				observations = workbook.getObservations();
@@ -166,7 +166,7 @@ public class ValidationServiceImpl implements ValidationService {
 			}
 		}
 		if(workbook.getTrialObservations() != null){
-			List<MeasurementRow> observations = new ArrayList();
+			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 			observations = WorkbookUtil.filterObservationsByTrialInstance(workbook.getTrialObservations(), instanceNumber);
 			
 			

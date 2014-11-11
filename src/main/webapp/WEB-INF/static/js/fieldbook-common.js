@@ -1859,6 +1859,15 @@ function refreshImportLocationCombo(data) {
 	replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, 'Location');
 }
 
+function generateGenericLocationSuggestions(genericLocationJson){
+	var genericLocationSuggestion = [];
+	$.each(genericLocationJson, function( index, value ) {
+		genericLocationSuggestion.push({ 'id' : value.locid,
+            'text' : value.lname
+		});
+	});
+	return genericLocationSuggestion;
+}
 function recreateLocationCombo() {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationFavorite = $('#harvestLocationIdFavorite').val();
@@ -1908,9 +1917,9 @@ function recreateLocationCombo() {
                         showCorrectLocationInventoryCombo();
                         // set previously selected value of location
                         if ($('#showFavoriteLocationInventory').prop('checked')) {
-                            setComboValues(locationSuggestionsFav_obj, $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
-                        } else {
-                            setComboValues(locationSuggestions_obj, $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
+                        	setComboValues(generateGenericLocationSuggestions($.parseJSON(data.favoriteLocations)), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
+                        } else { 
+                        	setComboValues(generateGenericLocationSuggestions($.parseJSON(data.allSeedStorageLocations)), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
                         }
                         refreshLocationComboInSettings(data);
                     } else if (advancePopup === true

@@ -20,6 +20,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
@@ -46,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -86,6 +89,11 @@ public class EditNurseryController extends SettingsController {
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
+
+    @Resource
+    private ErrorHandlerService errorHandlerService;
+
+
     @Override
     public String getContentName() {
 	return "NurseryManager/editNursery";
@@ -106,7 +114,7 @@ public class EditNurseryController extends SettingsController {
     public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
     		@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, 
             @PathVariable int nurseryId,@RequestParam(required=false) String isAjax, 
-            Model model, HttpServletRequest req, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+            Model model, HttpSession session, HttpServletRequest request,RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
     	
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
@@ -116,7 +124,13 @@ public class EditNurseryController extends SettingsController {
     	Workbook workbook = null;
         if(nurseryId != 0){     
             //settings part
-            workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+
+            try {
+                workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+            } catch (MiddlewareQueryException e) {
+                redirectAttributes.addFlashAttribute("redirectErrorMessage",errorHandlerService.getErrorMessagesAsString(e.getCode(),new String[]{AppConstants.NURSERY.getString(), StringUtils.capitalize(AppConstants.NURSERY.getString()), AppConstants.NURSERY.getString()},"\n"));
+                return "redirect:" + ManageNurseriesController.URL;
+            }
             userSelection.setConstantsWithLabels(workbook.getConstants());
             
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));

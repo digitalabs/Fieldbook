@@ -54,5 +54,15 @@
 		hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/ '',
 		currentStudyId = getCurrentStudyIdInTab(),
 		selectedTableIds = [];
+		redirectErrorMessage = /*[[${redirectErrorMessage}]]*/ '';
+
+	(function() {
+		$('document').ready(function() {
+			if (redirectErrorMessage !== null && redirectErrorMessage !== '') {
+				createErrorNotification(errorMsgHeader,redirectErrorMessage);
+			}
+		});
+	})();
+
 //]]>
 </script>

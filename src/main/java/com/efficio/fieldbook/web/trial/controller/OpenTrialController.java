@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -50,6 +52,7 @@ import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -65,6 +68,9 @@ public class OpenTrialController extends
 
 	@Resource
     private OntologyService ontologyService;
+
+    @Resource
+    private ErrorHandlerService errorHandlerService;
 
     @Override
     public String getContentName() {
@@ -161,12 +167,18 @@ public class OpenTrialController extends
     }
 
     @RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
-    public String openTrial(@ModelAttribute("createTrialForm") CreateTrialForm form, Model model, HttpSession session, @PathVariable Integer trialId) throws MiddlewareQueryException {
+    public String openTrial(@ModelAttribute("createTrialForm") CreateTrialForm form,@PathVariable Integer trialId, Model model, HttpSession session,RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
         SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-
         if (trialId != null && trialId != 0) {
+            Workbook trialWorkbook;
 
-            Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
+            try {
+                trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
+            } catch (MiddlewareQueryException e) {
+                redirectAttributes.addFlashAttribute("redirectErrorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[]{AppConstants.TRIAL.getString(), StringUtils.capitalize(AppConstants.TRIAL.getString()), AppConstants.TRIAL.getString()}, "\n"));
+                return "redirect:" + ManageTrialController.URL;
+            }
+
             userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
             userSelection.setWorkbook(trialWorkbook);
             userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));

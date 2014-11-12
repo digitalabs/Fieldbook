@@ -140,8 +140,7 @@ public class OpenTrialController extends
 
                 model.addAttribute(MEASUREMENT_ROW_COUNT, workbook.getObservations() != null ? workbook.getObservations().size() : 0);
             } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
         }
 
@@ -150,65 +149,69 @@ public class OpenTrialController extends
 
     @RequestMapping(value = "/{trialId}", method = RequestMethod.GET)
     public String openTrial(@ModelAttribute("createTrialForm") CreateTrialForm form, @PathVariable Integer trialId, Model model, HttpSession session, RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
-        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-        if (trialId != null && trialId != 0) {
-            Workbook trialWorkbook;
+        clearSessionData(session);
 
-            try {
-                trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
-            } catch (MiddlewareQueryException e) {
-                redirectAttributes.addFlashAttribute("redirectErrorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[]{AppConstants.TRIAL.getString(), StringUtils.capitalize(AppConstants.TRIAL.getString()), AppConstants.TRIAL.getString()}, "\n"));
-                return "redirect:" + ManageTrialController.URL;
-            }
+        try {
+            if (trialId != null && trialId != 0) {
+                final Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
 
-            userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
-            userSelection.setWorkbook(trialWorkbook);
-            userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
-            userSelection.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(userSelection.getExperimentalDesignVariables()));
-            userSelection.setTemporaryWorkbook(null);
-            model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
-            model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
-            model.addAttribute(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, false));
-            model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
-            model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
-            model.addAttribute("experimentalDesignData", prepareExperimentalDesignTabInfo(trialWorkbook.getExperimentalDesignVariables(), false));
-            model.addAttribute(MEASUREMENT_DATA_EXISTING, fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
-                    SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-            model.addAttribute(MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
-            fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
-            model.addAttribute("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
-            userSelection.setMeasurementRowList(trialWorkbook.getObservations());
-            form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-            form.setStudyId(trialId);
+                userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
+                userSelection.setWorkbook(trialWorkbook);
+                userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
+                userSelection.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(userSelection.getExperimentalDesignVariables()));
+                userSelection.setTemporaryWorkbook(null);
+                model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
+                model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
+                model.addAttribute(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, false));
+                model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
+                model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
+                model.addAttribute("experimentalDesignData", prepareExperimentalDesignTabInfo(trialWorkbook.getExperimentalDesignVariables(), false));
+                model.addAttribute(MEASUREMENT_DATA_EXISTING, fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
+                        SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+                model.addAttribute(MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
+                fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
+                model.addAttribute("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
+                userSelection.setMeasurementRowList(trialWorkbook.getObservations());
+                form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+                form.setStudyId(trialId);
 
-            //so that we can reuse the same age being use for nursery
-            model.addAttribute("createNurseryForm", form);
-            model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
-            model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
+                //so that we can reuse the same age being use for nursery
+                model.addAttribute("createNurseryForm", form);
+                model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
+                model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
 
-            model.addAttribute("germplasmListSize", 0);
-            List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
-            List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
-            if (germplasmLists != null && !germplasmLists.isEmpty()) {
-                GermplasmList germplasmList = germplasmLists.get(0);
-                List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
-                if (data != null && !data.isEmpty()) {
-                    model.addAttribute("germplasmListSize", data.size());
-                    list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
-                    ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-                    importedGermplasmList.setImportedGermplasms(list);
-                    ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-                    mainInfo.setListId(germplasmList.getId());
-                    mainInfo.setAdvanceImportType(true);
-                    mainInfo.setImportedGermplasmList(importedGermplasmList);
-                    userSelection.setImportedGermplasmMainInfo(mainInfo);
-                    userSelection.setImportValid(true);
+                model.addAttribute("germplasmListSize", 0);
+                List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
+                List<ImportedGermplasm> list;
+                if (germplasmLists != null && !germplasmLists.isEmpty()) {
+                    GermplasmList germplasmList = germplasmLists.get(0);
+                    List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
+                    if (data != null && !data.isEmpty()) {
+                        model.addAttribute("germplasmListSize", data.size());
+                        list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
+                        ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+                        importedGermplasmList.setImportedGermplasms(list);
+                        ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+                        mainInfo.setListId(germplasmList.getId());
+                        mainInfo.setAdvanceImportType(true);
+                        mainInfo.setImportedGermplasmList(importedGermplasmList);
+                        userSelection.setImportedGermplasmMainInfo(mainInfo);
+                        userSelection.setImportValid(true);
+                    }
                 }
             }
+            return showAngularPage(model);
+
+        } catch (MiddlewareQueryException e) {
+            LOG.debug(e.getMessage(), e);
+
+            redirectAttributes.addFlashAttribute("redirectErrorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[]{AppConstants.TRIAL.getString(), StringUtils.capitalize(AppConstants.TRIAL.getString()), AppConstants.TRIAL.getString()}, "\n"));
+            return "redirect:" + ManageTrialController.URL;
         }
+    }
 
-
-        return showAngularPage(model);
+    protected void clearSessionData(HttpSession session) {
+        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     }
 
     /**
@@ -303,7 +306,7 @@ public class OpenTrialController extends
 
         Map<String, Object> returnVal = new HashMap<String, Object>();
         returnVal.put(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(workbook, false));
-        returnVal.put("measurementDataExisting", false);
+        returnVal.put(MEASUREMENT_DATA_EXISTING, false);
         returnVal.put(MEASUREMENT_ROW_COUNT, 0);
 
         //saving of measurement rows
@@ -320,13 +323,13 @@ public class OpenTrialController extends
                 fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
 
-                returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
+                returnVal.put(MEASUREMENT_DATA_EXISTING, fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
                         SettingsUtil.buildVariates(workbook.getVariates())));
                 returnVal.put(MEASUREMENT_ROW_COUNT, workbook.getObservations().size());
 
                 return returnVal;
             } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(), e);
                 return new HashMap<String, Object>();
             }
         } else {
@@ -344,7 +347,7 @@ public class OpenTrialController extends
         userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
         userSelection.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(userSelection.getExperimentalDesignVariables()));
         returnVal.put(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, false));
-        returnVal.put("measurementDataExisting", fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
+        returnVal.put(MEASUREMENT_DATA_EXISTING, fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
                 SettingsUtil.buildVariates(trialWorkbook.getVariates())));
         returnVal.put(MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
         returnVal.put("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));

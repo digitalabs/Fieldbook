@@ -50,8 +50,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-// TODO: Auto-generated Javadoc
-
 /**
  * The Class CreateNurseryController.
  */
@@ -67,6 +65,12 @@ public class EditNurseryController extends SettingsController {
      * The Constant URL_SETTINGS.
      */
     public static final String URL_SETTINGS = "/NurseryManager/addOrRemoveTraits";
+    public static final String STATUS = "status";
+    public static final String HAS_MEASUREMENT_DATA_STR = "hasMeasurementData";
+    public static final String ERROR = "-1";
+    public static final String NO_MEASUREMENT = "0";
+    public static final String SUCCESS = "1";
+
     /**
      * The Constant LOG.
      */
@@ -82,7 +86,7 @@ public class EditNurseryController extends SettingsController {
      */
     @Resource
     private FieldbookService fieldbookService;
-   
+
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -113,90 +117,94 @@ public class EditNurseryController extends SettingsController {
                                      @PathVariable int nurseryId, @RequestParam(required = false) String isAjax,
                                      Model model, HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
 
-        ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
-        String contextParams = ContextUtil.getContextParameterString(contextInfo);
+        final String contextParams = retrieveContextInfo(request);
 
-        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+        this.clearSessionData(session);
 
-        Workbook workbook = null;
-        if (nurseryId != 0) {
-            //settings part
-
-            try {
+        try {
+            Workbook workbook = null;
+            if (nurseryId != 0) {
+                //settings part
                 workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
-            } catch (MiddlewareQueryException e) {
-                redirectAttributes.addFlashAttribute("redirectErrorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[]{AppConstants.NURSERY.getString(), StringUtils.capitalize(AppConstants.NURSERY.getString()), AppConstants.NURSERY.getString()}, "\n"));
-                return "redirect:" + ManageNurseriesController.URL;
-            }
-            userSelection.setConstantsWithLabels(workbook.getConstants());
 
-            form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
+                userSelection.setConstantsWithLabels(workbook.getConstants());
 
-            Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
+                form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
 
-            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, false);
+                Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 
-            //nursery-level
-            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
-                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true),
-                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
-                    userSelection.getStudyLevelConditions(), false, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+                SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, false);
+
+                //nursery-level
+                List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
+                        buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true),
+                        buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
+                        userSelection.getStudyLevelConditions(), false, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 
             List<SettingDetail> basicDetails = getSettingDetailsOfSection(nurseryLevelConditions, form,
             		AppConstants.FIXED_NURSERY_VARIABLES.getString());
             
             setCheckVariables(userSelection.getRemovedConditions(), form2, form);
 
-            SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
+                SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
 
-            userSelection.setBasicDetails(basicDetails);
-            form.setStudyId(nurseryId);
-            form.setBasicDetails(userSelection.getBasicDetails());
-            form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
-            form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
-            form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
+                userSelection.setBasicDetails(basicDetails);
+                form.setStudyId(nurseryId);
+                form.setBasicDetails(userSelection.getBasicDetails());
+                form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
+                form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+                form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
 
-            form.setNurseryConditions(userSelection.getNurseryConditions());
-            form.setLoadSettings("1");
-            form.setFolderId(Integer.valueOf((int) workbook.getStudyDetails().getParentFolderId()));
-            if (form.getFolderId() == 1) {
-                if (nurseryId > 0) {
-                    form.setFolderName(AppConstants.PUBLIC_NURSERIES.getString());
+                form.setNurseryConditions(userSelection.getNurseryConditions());
+                form.setLoadSettings(SUCCESS);
+                form.setFolderId(Integer.valueOf((int) workbook.getStudyDetails().getParentFolderId()));
+                if (form.getFolderId() == 1) {
+                    if (nurseryId > 0) {
+                        form.setFolderName(AppConstants.PUBLIC_NURSERIES.getString());
+                    } else {
+                        form.setFolderName(AppConstants.PROGRAM_NURSERIES.getString());
+                    }
                 } else {
-                    form.setFolderName(AppConstants.PROGRAM_NURSERIES.getString());
+                    form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
                 }
-            } else {
-                form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
-            }
 
-
-            //measurements part
-            if (workbook != null) {
+                //measurements part
                 SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
                 setMeasurementsData(form, workbook);
-            }
 
-            //make factors uneditable if experiments exist already
-            if (form.isMeasurementDataExisting()) {
-                for (SettingDetail setting : userSelection.getPlotsLevelList()) {
-                    setting.setDeletable(false);
+                //make factors uneditable if experiments exist already
+                if (form.isMeasurementDataExisting()) {
+                    for (SettingDetail setting : userSelection.getPlotsLevelList()) {
+                        setting.setDeletable(false);
+                    }
                 }
+
+                form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+
+                List<GermplasmList> germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.ADVANCED);
+
+                model.addAttribute("advancedList", germplasmList);
             }
 
-            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            setFormStaticData(form, contextParams, workbook);
+            model.addAttribute("createNurseryForm", form);
 
-            List<GermplasmList> germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.ADVANCED);
+            if (isAjax != null && SUCCESS.equalsIgnoreCase(isAjax)) {
+                return super.showAjaxPage(model, getContentName());
+            }
 
-            model.addAttribute("advancedList", germplasmList);
+            return super.show(model);
+
+        } catch (MiddlewareQueryException e) {
+            LOG.debug(e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("redirectErrorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[]{AppConstants.NURSERY.getString(), StringUtils.capitalize(AppConstants.NURSERY.getString()), AppConstants.NURSERY.getString()}, "\n"));
+            return "redirect:" + ManageNurseriesController.URL;
         }
-        setFormStaticData(form, contextParams, workbook);
-        model.addAttribute("createNurseryForm", form);
 
-        if (isAjax != null && isAjax.equalsIgnoreCase("1")) {
-            return super.showAjaxPage(model, getContentName());
-        }
+    }
 
-        return super.show(model);
+    protected void clearSessionData(HttpSession session) {
+        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     }
 
     
@@ -206,6 +214,10 @@ public class EditNurseryController extends SettingsController {
         List<SettingDetail> checkVariables = getCheckVariables(removedConditions, form);
         form2.setCheckVariables(checkVariables);
 	}
+    protected String retrieveContextInfo(HttpServletRequest request) {
+        ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
+        return ContextUtil.getContextParameterString(contextInfo);
+    }
 
 	/**
      * Sets the measurements data.
@@ -260,15 +272,10 @@ public class EditNurseryController extends SettingsController {
                 try {
                     basicDetails.add(createSettingDetail(termId, null));
                     if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
-                        try {
-                            form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
-                        } catch (MiddlewareQueryException e) {
-                            LOG.error(e.getMessage(), e);
-                        }
+                        form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
                     }
                 } catch (MiddlewareQueryException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    LOG.error(e.getMessage(), e);
                 }
             }
         }
@@ -291,9 +298,8 @@ public class EditNurseryController extends SettingsController {
                        @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2,
                        Model model, HttpServletRequest req, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
 
-        ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
-        String contextParams = ContextUtil.getContextParameterString(contextInfo);
-        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+        final String contextParams = retrieveContextInfo(request);
+        clearSessionData(session);
         setFormStaticData(form, contextParams, new Workbook());
         assignDefaultValues(form);
         return super.show(model);
@@ -418,7 +424,7 @@ public class EditNurseryController extends SettingsController {
 
         Map<String, String> resultMap = new HashMap<String, String>();
         //saving of measurement rows
-        if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+        if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
             try {
                 WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, userSelection, ontologyService, fieldbookService);
                 WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, userSelection, ontologyService, fieldbookService);
@@ -437,41 +443,43 @@ public class EditNurseryController extends SettingsController {
                         fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));
                 workbook.setOriginalObservations(workbook.getObservations());
 
-                resultMap.put("status", "1");
-                resultMap.put("hasMeasurementData", String.valueOf(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates()))));
+                resultMap.put(STATUS, SUCCESS);
+                resultMap.put(HAS_MEASUREMENT_DATA_STR, String.valueOf(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates()))));
             } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
-                resultMap.put("status", "-1");
+                resultMap.put(STATUS, ERROR);
                 resultMap.put("errorMessage", e.getMessage());
+
+                LOG.error(e.getMessage(), e);
             }
             return resultMap;
         } else {
-            resultMap.put("status", "1");
+            resultMap.put(STATUS, SUCCESS);
             return resultMap;
         }
 
     }
 
     private void setTrialObservationsFromVariables(Workbook workbook) {
-        if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()) {
-            if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
-                for (MeasurementVariable condition : workbook.getTrialConditions()) {
-                    for (MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
-                        if (data.getMeasurementVariable().getTermId() == condition.getTermId()) {
-                            data.setValue(condition.getValue());
-                        }
+        if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() &&
+                workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
+            for (MeasurementVariable condition : workbook.getTrialConditions()) {
+                for (MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
+                    if (data.getMeasurementVariable().getTermId() == condition.getTermId()) {
+                        data.setValue(condition.getValue());
                     }
                 }
             }
-            if (workbook.getTrialConstants() != null && !workbook.getTrialConstants().isEmpty()) {
-                for (MeasurementVariable constant : workbook.getTrialConstants()) {
-                    for (MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
-                        if (data.getMeasurementVariable().getTermId() == constant.getTermId()) {
-                            if (constant.getStoredIn() == TermId.CATEGORICAL_VARIATE.getId() && constant.getValue() != null
-                                    && NumberUtils.isNumber(constant.getValue())) {
-                                data.setcValueId(constant.getValue());
-                            }
-                            data.setValue(constant.getValue());
+        }
+        if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() &&
+                workbook.getTrialConstants() != null && !workbook.getTrialConstants().isEmpty()) {
+            for (MeasurementVariable constant : workbook.getTrialConstants()) {
+                for (MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
+                    if (data.getMeasurementVariable().getTermId() == constant.getTermId()) {
+                        data.setValue(constant.getValue());
+
+                        if (constant.getStoredIn() == TermId.CATEGORICAL_VARIATE.getId() && constant.getValue() != null
+                                && NumberUtils.isNumber(constant.getValue())) {
+                            data.setcValueId(constant.getValue());
                         }
                     }
                 }
@@ -527,30 +535,27 @@ public class EditNurseryController extends SettingsController {
     public Map<String, String> checkMeasurementData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model,
                                                     @PathVariable int mode, @PathVariable int variableId) {
         Map<String, String> resultMap = new HashMap<String, String>();
-        boolean hasData = false;
 
         //if there are measurement rows, check if values are already entered
-        if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
-            for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-                for (MeasurementData data : row.getDataList()) {
-                    if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
-                        hasData = true;
-                        break;
-                    }
-                }
-                if (hasData) {
-                    break;
-                }
-            }
-        }
-
-        if (hasData) {
-            resultMap.put("hasMeasurementData", "1");
+        if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty() &&
+                hasMeasurementDataEntered(variableId)) {
+            resultMap.put(HAS_MEASUREMENT_DATA_STR, SUCCESS);
         } else {
-            resultMap.put("hasMeasurementData", "0");
+            resultMap.put(HAS_MEASUREMENT_DATA_STR, NO_MEASUREMENT);
         }
 
         return resultMap;
+    }
+
+    protected boolean hasMeasurementDataEntered(int variableId) {
+        for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+            for (MeasurementData data : row.getDataList()) {
+                if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -566,8 +571,7 @@ public class EditNurseryController extends SettingsController {
     public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model,
                                                  HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
 
-        ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
-        String contextParams = ContextUtil.getContextParameterString(contextInfo);
+        final String contextParams = retrieveContextInfo(request);
 
         Workbook workbook = userSelection.getWorkbook();
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
@@ -612,10 +616,10 @@ public class EditNurseryController extends SettingsController {
 
         try {
             fieldbookMiddlewareService.deleteObservationsOfStudy(userSelection.getWorkbook().getMeasurementDatesetId());
-            resultMap.put("status", "1");
+            resultMap.put(STATUS, SUCCESS);
         } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage());
-            resultMap.put("status", "-1");
+            LOG.error(e.getMessage(), e);
+            resultMap.put(STATUS, ERROR);
             resultMap.put("errorMessage", e.getMessage());
         }
 
@@ -628,14 +632,12 @@ public class EditNurseryController extends SettingsController {
     @ModelAttribute("nameTypes")
     public List<UserDefinedField> getNameTypes() {
         try {
-            List<UserDefinedField> nameTypes = fieldbookMiddlewareService.getGermplasmNameTypes();
-
-            return nameTypes;
+            return fieldbookMiddlewareService.getGermplasmNameTypes();
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<UserDefinedField>();
     }
 
     @ModelAttribute("programLocationURL")

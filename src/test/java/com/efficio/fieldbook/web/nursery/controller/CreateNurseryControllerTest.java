@@ -6,12 +6,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,14 +23,20 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.efficio.fieldbook.service.FieldbookServiceImpl;
+import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
 import com.efficio.fieldbook.web.AbstractBaseControllerTest;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 	
@@ -55,6 +63,97 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 	}
 	
 	@Test
+	public void testSettingOfCheckVariablesInCreateNursery() {
+		fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		FieldbookServiceImpl fieldbookServiceImpl = new FieldbookServiceImpl(fieldbookMiddlewareService, new PossibleValuesCache());
+		setupMockReturns();
+		controller.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		controller.setFieldbookService(fieldbookServiceImpl);
+		
+		CreateNurseryForm form = new CreateNurseryForm();
+		ImportGermplasmListForm form2 = new ImportGermplasmListForm();
+		Model model = Mockito.mock(Model.class);
+		try {			
+			controller.show(form, form2, model, session, request);
+			Assert.assertNotNull(form2.getCheckVariables());
+			Assert.assertTrue("Expected only check variables but the list has non check variables as well.", 
+					WorkbookTestUtil.areDetailsFilteredVariables(form2.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
+		} catch (MiddlewareQueryException e) {
+			Assert.fail("Expected mock values but still called the middleware class");
+		}
+	}
+		
+	@Test
+	public void testSettingOfCheckVariablesInUsePreviousNursery() {
+		ImportGermplasmListForm form = new ImportGermplasmListForm();
+		Model model = Mockito.mock(Model.class);
+		userSelection.setRemovedConditions(WorkbookTestUtil.createCheckVariables());
+		controller.setUserSelection(userSelection);
+				
+		try {
+			controller.getChecksForUseExistingNursery(form, -1, model, session, request);
+			Assert.assertNotNull(form.getCheckVariables());
+			Assert.assertTrue("Expected only check variables but the list has non check variables as well.", 
+					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
+		} catch (MiddlewareQueryException e) {
+			Assert.fail("Expected mock values but still called the middleware class");
+		}
+		
+	}
+	
+	private void setupMockReturns() {
+		try {
+			Mockito.when(fieldbookMiddlewareService.getPersonById(-1)).thenReturn(new Person());
+			
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_NAME.getId()))
+				.thenReturn(createStandardVariable(TermId.STUDY_NAME.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_TITLE.getId()))
+				.thenReturn(createStandardVariable(TermId.STUDY_TITLE.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.START_DATE.getId()))
+				.thenReturn(createStandardVariable(TermId.START_DATE.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_OBJECTIVE.getId()))
+				.thenReturn(createStandardVariable(TermId.STUDY_OBJECTIVE.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.END_DATE.getId()))
+				.thenReturn(createStandardVariable(TermId.END_DATE.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId()))
+				.thenReturn(createStandardVariable(TermId.STUDY_UID.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UPDATE.getId()))
+				.thenReturn(createStandardVariable(TermId.STUDY_UPDATE.getId()));
+			
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.BREEDING_METHOD_CODE.getId()))
+				.thenReturn(createStandardVariable(TermId.BREEDING_METHOD_CODE.getId()));
+			
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId()))
+				.thenReturn(createStandardVariable(TermId.ENTRY_NO.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId()))
+				.thenReturn(createStandardVariable(TermId.DESIG.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CROSS.getId()))
+				.thenReturn(createStandardVariable(TermId.CROSS.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId()))
+				.thenReturn(createStandardVariable(TermId.GID.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId()))
+				.thenReturn(createStandardVariable(TermId.PLOT_NO.getId()));
+			
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId()))
+			.thenReturn(createStandardVariable(TermId.CHECK_START.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId()))
+			.thenReturn(createStandardVariable(TermId.CHECK_INTERVAL.getId()));
+			Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId()))
+			.thenReturn(createStandardVariable(TermId.CHECK_PLAN.getId()));
+			
+		} catch (MiddlewareQueryException e) {
+			Assert.fail("Expected mock returns but still called the middleware class.");
+		} 
+	}
+
+	private StandardVariable createStandardVariable(int id) {
+		StandardVariable stdVar = new StandardVariable();
+		stdVar.setId(id);
+		stdVar.setName(null);
+		return stdVar;
+	}
+
+	@Test
 	public void testUseExistingNursery() throws Exception {
 		fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
 		Mockito.when(fieldbookMiddlewareService.getStudyVariableSettings(1, true))
@@ -66,6 +165,7 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		Assert.assertEquals("Expected HttpStatus OK but got " + response.getStatus() + " instead.", 
 				HttpStatus.OK.value(), response.getStatus());
 		ModelAndViewAssert.assertModelAttributeAvailable(mav, "createNurseryForm");
+		
 	}
 	
 	@Test

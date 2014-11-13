@@ -56,9 +56,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.util.JsonIoException;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -795,5 +797,13 @@ public class CreateNurseryController extends SettingsController {
     
     protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService){
     	this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+    }
+    
+    protected void setFieldbookService(FieldbookService fieldbookService) {
+    	this.fieldbookService = fieldbookService;
+    }
+    
+    protected void setUserSelection(UserSelection userSelection) {
+    	this.userSelection = userSelection;
     }
 }

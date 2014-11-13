@@ -589,4 +589,8 @@ public class EditNurseryController extends SettingsController {
     public String getProgramID() {
         return getCurrentProjectId();
     }
+    
+    protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+    	this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+    }
 }

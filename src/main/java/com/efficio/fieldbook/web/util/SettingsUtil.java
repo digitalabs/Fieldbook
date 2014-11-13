@@ -1889,8 +1889,8 @@ public class SettingsUtil {
      * @param propertyId the property id
      * @return true, if successful
      */
-    private static boolean inFixedNurseryList(int propertyId) {
-        StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
+    protected static boolean inFixedNurseryList(int propertyId) {
+        StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString(), ",");
         while(token.hasMoreTokens()){
             if (Integer.parseInt(token.nextToken()) == propertyId) {
                 return true;
@@ -1898,6 +1898,7 @@ public class SettingsUtil {
         }
         return false;
     }
+    
     public static List<MeasurementVariable> getArrangedMeasurementVariable(List<MeasurementVariable> measurementVariables){
     	List<MeasurementVariable> measureList = new ArrayList<MeasurementVariable>();
 		List<MeasurementVariable> newMeasureList = new ArrayList<MeasurementVariable>();
@@ -2159,4 +2160,56 @@ public class SettingsUtil {
     	}
     	return param;
     }
+    
+    /**
+     * Gets the setting detail value.
+     *
+     * @param details the details
+     * @param termId the term id
+     * @return the setting detail value
+     */
+    public static String getSettingDetailValue(List<SettingDetail> details, int termId) {
+    	String value = null;
+    	
+    	for (SettingDetail detail : details) {
+    		if (detail.getVariable().getCvTermId().equals(termId)) {
+    			value = detail.getValue();
+    			break;
+    		}
+    	}
+    	
+    	return value;
+    }
+    
+    public static int getCodeValue(String settingDetailValue, List<SettingDetail> removedConditions,
+			int termId) {
+		for (SettingDetail detail : removedConditions) {
+    		if (detail.getVariable().getCvTermId().equals(termId)) {
+    			return getCodeInPossibleValues(detail, settingDetailValue);
+    		}
+    	}
+		return 0;
+	}
+
+	private static int getCodeInPossibleValues(SettingDetail detail, String settingDetailValue) {
+		if (detail.getPossibleValues() != null && !detail.getPossibleValues().isEmpty()) {
+			for (ValueReference valueRef : detail.getPossibleValues()) {
+				if (valueRef.getId().equals(Integer.parseInt(settingDetailValue))) {
+					return Integer.parseInt(valueRef.getName());
+				}
+			}
+		}
+		return 0;
+	}
+
+	public static boolean checkVariablesHaveValues(List<SettingDetail> checkVariables) {
+		if (checkVariables != null && !checkVariables.isEmpty()) {
+			for (SettingDetail setting : checkVariables) {
+				if (setting.getValue() == null) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 }

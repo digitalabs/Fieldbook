@@ -82,6 +82,8 @@ public class CreateNurseryController extends SettingsController {
     /** The Constant URL_SETTINGS. */
     public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
     
+    private static final String URL_CHECKS = "/NurseryManager/includes/importGermplasmListCheckSection";
+    
     @Resource
     private OntologyService ontologyService;
 	
@@ -161,6 +163,20 @@ public class CreateNurseryController extends SettingsController {
         return super.showAjaxPage(model, URL_SETTINGS);
     }
     
+    @RequestMapping(value="/nursery/getChecks/{nurseryId}", method = RequestMethod.GET)
+    public String getChecksForUseExistingNursery(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, @PathVariable int nurseryId
+            , Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    	if (userSelection.getRemovedConditions() != null) {
+    		CreateNurseryForm createNurseryForm = new CreateNurseryForm();
+	    	List<SettingDetail> checkVariables = getCheckVariables(userSelection.getRemovedConditions(), createNurseryForm);
+	        form.setCheckVariables(checkVariables);
+    	}
+    	
+    	model.addAttribute("importGermplasmListForm", form);
+    	
+    	return super.showAjaxPage(model, URL_CHECKS);
+    }
+    
     protected void addErrorMessageToResult(CreateNurseryForm form, MiddlewareQueryException e) {
     	String param = AppConstants.NURSERY.getString();
 		form.setHasError("1");
@@ -210,6 +226,12 @@ public class CreateNurseryController extends SettingsController {
     	setFormStaticData(form, contextParams);
     	assignDefaultValues(form);
     	form.setMeasurementRowList(new ArrayList<MeasurementRow>());
+    	
+    	//create check variables for specify checks
+    	List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
+        checkVariables = buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(), 
+        		buildRequiredVariablesLabel(AppConstants.CHECK_VARIABLES.getString(), false));        		
+        form2.setCheckVariables(checkVariables);
     	
     	return super.show(model);
     }

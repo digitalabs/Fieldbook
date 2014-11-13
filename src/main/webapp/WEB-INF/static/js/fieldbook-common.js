@@ -3151,6 +3151,7 @@ function showGermplasmDetailsSection() {
 	        	selectedCheckListDataTable.getDataTable().$('.delete-check').show();
 	        }
         }
+        disableCheckVariables(false);
 	}
 }
 
@@ -3167,7 +3168,7 @@ function displayStudyGermplasmSection(hasData, observationCount){
 		$('.observation-exists-notif').show();
 		$('.browse-import-link').hide();
 		if (isNursery()) {
-			$('#specifyCheckSection').hide();
+			disableCheckVariables(true);
 		}
 	} else if (observationCount > 0) {
 		$('.observation-exists-notif').hide();
@@ -3175,12 +3176,16 @@ function displayStudyGermplasmSection(hasData, observationCount){
 		$('#imported-germplasm-list').show();
 		$('.browse-import-link').hide();
 		if (isNursery()) {
-			$('#specifyCheckSection').hide();
+			disableCheckVariables(true);
 		}
 	} else {
 		$('.observation-exists-notif').hide();
 		$('.overwrite-germplasm-list').hide();
 	}
+}
+
+function disableCheckVariables(isDisabled) {
+	$("#specifyCheckSection").find('input,select').prop('disabled', isDisabled);
 }
 
 function showMeasurementsPreview(){

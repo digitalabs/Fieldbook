@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -52,7 +53,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -78,7 +78,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
  */
 @Controller
 @RequestMapping({ImportGermplasmListController.URL, ImportGermplasmListController.URL_2, ImportGermplasmListController.URL_3 , ImportGermplasmListController.URL_4})
-public class ImportGermplasmListController extends AbstractBaseFieldbookController{
+public class ImportGermplasmListController extends SettingsController {
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
@@ -185,8 +185,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         }
     	return super.show(model);
     }            
-    
-    /**
+
+	/**
      * Goes to the Next screen.  Added validation if a germplasm list was properly uploaded
      *
      * @param form the form
@@ -259,8 +259,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             		getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().copyImportedGermplasms();
             	}
             	//merge primary and check germplasm list
-            	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null && form.getStartIndex() != null
-            			&& form.getInterval() != null && form.getMannerOfInsertion() != null) {
+            	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null 
+            			&& SettingsUtil.checkVariablesHaveValues(form.getCheckVariables())) {
             		String lastDragCheckList = form.getLastDraggedChecksList();        		
             		if("0".equalsIgnoreCase(lastDragCheckList)){
             			//we do the cleaning here	
@@ -268,17 +268,17 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             	    	        form.getImportedCheckGermplasm());
             			form.setImportedGermplasm(newNurseryGermplasm);
             		}
-            		int interval = 0;
-            		if(form.getInterval() != null && !form.getInterval().equalsIgnoreCase("")){
-            			interval = Integer.parseInt(form.getInterval());
-            		}
+            		
+            		int interval = Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_INTERVAL.getId()));
+
             		String defaultTestCheckId = getCheckId(DEFAULT_TEST_VALUE, fieldbookService.getCheckList());
             		
             		List<ImportedGermplasm> newImportedGermplasm = mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
         	    	        form.getImportedCheckGermplasm(), 
-        	    	        Integer.parseInt(form.getStartIndex()), 
+        	    	        Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId())), 
         	    	        interval, 
-        	    	        Integer.parseInt(form.getMannerOfInsertion()), defaultTestCheckId);
+        	    	        SettingsUtil.getCodeValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()), userSelection.getStudyLevelConditions(), TermId.CHECK_PLAN.getId()), 
+        	    	        defaultTestCheckId);
             		
         	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(newImportedGermplasm);
         	    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
@@ -287,6 +287,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             	//this would validate and add CHECK factor if necessary
                 importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
                 userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
+                
+                //add or remove check variables if needed
+                fieldbookService.manageCheckVariables(userSelection, form);
             }
         } else {
             isDeleteObservations = true;

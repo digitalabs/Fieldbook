@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 
@@ -47,6 +48,8 @@ public class ImportGermplasmListForm {
 	
 	/** The paginated imported check germplasm. */
 	private List<ImportedGermplasm> paginatedImportedCheckGermplasm;
+	
+	private List<SettingDetail> checkVariables;
 	
 	/** The current page. */
 	private int currentPage;
@@ -81,16 +84,6 @@ public class ImportGermplasmListForm {
 	/** The manage check value. */
 	private String manageCheckValue;
 	
-    
-    /** The manner of insertion. */
-    private String mannerOfInsertion;
-    
-    /** The interval. */
-    private String interval;
-    
-    /** The start index. */
-    private String startIndex;
-    
     /** The total germplasms. */
     private int totalGermplasms;
     
@@ -576,60 +569,6 @@ public class ImportGermplasmListForm {
 			this.paginatedImportedCheckGermplasm = paginatedImportedCheckGermplasm;
 		}
 
-		/**
-		 * Gets the manner of insertion.
-		 *
-		 * @return the manner of insertion
-		 */
-		public String getMannerOfInsertion() {
-			return mannerOfInsertion;
-		}
-
-		/**
-		 * Sets the manner of insertion.
-		 *
-		 * @param mannerOfInsertion the new manner of insertion
-		 */
-		public void setMannerOfInsertion(String mannerOfInsertion) {
-			this.mannerOfInsertion = mannerOfInsertion;
-		}
-
-		/**
-		 * Gets the interval.
-		 *
-		 * @return the interval
-		 */
-		public String getInterval() {
-			return interval;
-		}
-
-		/**
-		 * Sets the interval.
-		 *
-		 * @param interval the new interval
-		 */
-		public void setInterval(String interval) {
-			this.interval = interval;
-		}
-
-		/**
-		 * Gets the start index.
-		 *
-		 * @return the start index
-		 */
-		public String getStartIndex() {
-			return startIndex;
-		}
-
-		/**
-		 * Sets the start index.
-		 *
-		 * @param startIndex the new start index
-		 */
-		public void setStartIndex(String startIndex) {
-			this.startIndex = startIndex;
-		}
-
         /**
          * Gets the key for overwrite.
          *
@@ -683,5 +622,13 @@ public class ImportGermplasmListForm {
         public void setLastDraggedPrimaryList(String lastDraggedPrimaryList) {
             this.lastDraggedPrimaryList = lastDraggedPrimaryList;
         }
+
+		public List<SettingDetail> getCheckVariables() {
+			return checkVariables;
+		}
+
+		public void setCheckVariables(List<SettingDetail> checkVariables) {
+			this.checkVariables = checkVariables;
+		}
     
 }

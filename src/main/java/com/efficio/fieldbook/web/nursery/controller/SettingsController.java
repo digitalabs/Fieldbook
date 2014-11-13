@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -51,6 +52,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -488,11 +490,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         	if(studyId != null){
         		studyDetails.setId(studyId);
         	}
-	        studyDetails.setTitle(getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
-	        studyDetails.setObjective(getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
-	        studyDetails.setStudyName(getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
-	        studyDetails.setStartDate(getSettingDetailValue(conditions, TermId.START_DATE.getId()));
-	        studyDetails.setEndDate(getSettingDetailValue(conditions, TermId.END_DATE.getId()));
+	        studyDetails.setTitle(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
+	        studyDetails.setObjective(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
+	        studyDetails.setStudyName(SettingsUtil.getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
+	        studyDetails.setStartDate(SettingsUtil.getSettingDetailValue(conditions, TermId.START_DATE.getId()));
+	        studyDetails.setEndDate(SettingsUtil.getSettingDetailValue(conditions, TermId.END_DATE.getId()));
 	        studyDetails.setStudyType(StudyType.N);
 	        
 	        if (folderId != null) {
@@ -500,27 +502,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	        }
     	}
         studyDetails.print(1);
-    }
-    
-
-    /**
-     * Gets the setting detail value.
-     *
-     * @param details the details
-     * @param termId the term id
-     * @return the setting detail value
-     */
-    private String getSettingDetailValue(List<SettingDetail> details, int termId) {
-    	String value = null;
-    	
-    	for (SettingDetail detail : details) {
-    		if (detail.getVariable().getCvTermId().equals(termId)) {
-    			value = detail.getValue();
-    			break;
-    		}
-    	}
-    	
-    	return value;
     }
     
     protected void removeVariablesFromExistingNursery(List<SettingDetail> settingList, String variables) {
@@ -818,4 +799,81 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         }
     }
 
+    protected List<SettingDetail> getCheckVariables(List<SettingDetail> nurseryLevelConditions,
+			CreateNurseryForm form) {
+    	List<SettingDetail> checkVariables = getSettingDetailsOfSection(nurseryLevelConditions, form,
+        		AppConstants.CHECK_VARIABLES.getString());
+        //set order by id
+        Collections.sort(checkVariables, new  Comparator<SettingDetail>() {
+            @Override
+            public int compare(SettingDetail o1, SettingDetail o2) {
+                    return o1.getVariable().getCvTermId() - o2.getVariable().getCvTermId();
+            }
+        });
+		return checkVariables;
+	}
+
+    /**
+     * Gets the basic details.
+     *
+     * @param nurseryLevelConditions the nursery level conditions
+     * @return the basic details
+     */
+    protected List<SettingDetail> getSettingDetailsOfSection(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form, String variableList) {
+        List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
+        
+        StringTokenizer token = new StringTokenizer(variableList, ",");
+        while(token.hasMoreTokens()){
+            Integer termId = Integer.valueOf(token.nextToken());
+            boolean isFound = searchAndSetValuesOfSpecialVariables(nurseryLevelConditions, termId, settingDetails, form); 
+            if(!isFound){
+            	addSettingDetails(settingDetails, termId, form);
+            }
+        }
+        
+        return settingDetails;
+    }
+
+	private boolean searchAndSetValuesOfSpecialVariables(
+			List<SettingDetail> nurseryLevelConditions, Integer termId,
+			List<SettingDetail> settingDetails, CreateNurseryForm form) {
+		boolean isFound = false;
+		for (SettingDetail setting : nurseryLevelConditions) {
+            if (termId.equals(setting.getVariable().getCvTermId())) {
+                isFound = true;
+                setCreatedByAndStudyUpdate(termId, setting, form);
+                settingDetails.add(setting);
+            }
+        } 
+		return isFound;
+	}
+
+	private void setCreatedByAndStudyUpdate(Integer termId, SettingDetail setting,
+			CreateNurseryForm form) {
+		if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
+            try {
+            	if (setting.getValue() != null && !setting.getValue().isEmpty() && NumberUtils.isNumber(setting.getValue())) {
+            		form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
+            	}
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        } else if (termId.equals(Integer.valueOf(TermId.STUDY_UPDATE.getId()))) {
+            DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
+            Date date = new Date();
+            setting.setValue(dateFormat.format(date));
+        }
+	}
+
+	private void addSettingDetails(List<SettingDetail> settingDetails, Integer termId,
+			CreateNurseryForm form) {
+		try {
+        	settingDetails.add(createSettingDetail(termId, null));
+            if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {                    	
+        		form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
+            }
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+	}
 }

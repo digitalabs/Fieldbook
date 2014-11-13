@@ -150,6 +150,8 @@ public class WorkbookDataUtil {
 		WorkbookDataUtil.createVariates();
 		WorkbookDataUtil.createObservations(noOfObservations);
 		WorkbookDataUtil.createTrialObservations(studyType.equals(StudyType.N) ? 1 : 2);
+		workbook.setMeasurementDatesetId(-2);
+		workbook.setTrialDatasetId(-3);
 	}
 
 	private static void createStudyDetails(StudyType studyType) {
@@ -161,6 +163,7 @@ public class WorkbookDataUtil {
 		details.setEndDate(WorkbookDataUtil.END_DATE);
 		details.setParentFolderId(WorkbookDataUtil.FOLDER_ID);
 		details.setStudyType(studyType);
+		details.setId(-1);
 
 		WorkbookDataUtil.workbook.setStudyDetails(details);
 	}

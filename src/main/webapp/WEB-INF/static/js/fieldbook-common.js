@@ -1918,7 +1918,7 @@ function recreateLocationCombo() {
                         // set previously selected value of location
                         if ($('#showFavoriteLocationInventory').prop('checked')) {
                         	setComboValues(generateGenericLocationSuggestions($.parseJSON(data.favoriteLocations)), $('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
-                        } else { 
+                        } else {
                         	setComboValues(generateGenericLocationSuggestions($.parseJSON(data.allSeedStorageLocations)), $('#inventoryLocationIdAll').val(), 'inventoryLocationIdAll');
                         }
                         refreshLocationComboInSettings(data);

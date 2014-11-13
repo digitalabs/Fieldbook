@@ -70,9 +70,10 @@
 	<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
 		<property name="templateResolver" ref="templateResolver" />
 		<property name="additionalDialects">
-        <set>
-            <bean class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect"/>
-        </set>
+	        <set>
+	            <bean class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect"/>
+	            <bean class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
+	        </set>
         </property>
 	</bean>
 

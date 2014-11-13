@@ -8,6 +8,7 @@
 		<intercept-url pattern="/OntologyManager/manage/variable" access="hasRole('ROLE_ADMIN')"/>
 		<intercept-url pattern="/**" access="isAuthenticated()" />		
 		<custom-filter position="PRE_AUTH_FILTER" ref="bmsPreAuthenticationFilter" />
+		<access-denied-handler error-page="/accessDenied"/>
 	</http>
 	
 	<!-- Must use AspectJ mode for using method level security annotations on Vaadin component beans. -->

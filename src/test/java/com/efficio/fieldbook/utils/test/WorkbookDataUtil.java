@@ -139,6 +139,10 @@ public class WorkbookDataUtil {
 		}
 		return WorkbookDataUtil.workbook;
 	}
+	
+	public static void setTestWorkbook(Workbook workbook) {
+		WorkbookDataUtil.workbook = workbook;
+	}
 
 	private static void createTestWorkbook(int noOfObservations, StudyType studyType) {
 		WorkbookDataUtil.workbook = new Workbook();

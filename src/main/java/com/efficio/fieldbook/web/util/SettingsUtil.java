@@ -2191,10 +2191,12 @@ public class SettingsUtil {
     
     public static int getCodeValue(String settingDetailValue, List<SettingDetail> removedConditions,
 			int termId) {
-		for (SettingDetail detail : removedConditions) {
-    		if (detail.getVariable().getCvTermId().equals(termId)) {
-    			return getCodeInPossibleValues(detail, settingDetailValue);
-    		}
+    	if (removedConditions != null) {
+			for (SettingDetail detail : removedConditions) {
+	    		if (detail.getVariable().getCvTermId().equals(termId)) {
+	    			return getCodeInPossibleValues(detail, settingDetailValue);
+	    		}
+	    	}
     	}
 		return 0;
 	}
@@ -2217,7 +2219,8 @@ public class SettingsUtil {
 					return false;
 				}
 			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 }

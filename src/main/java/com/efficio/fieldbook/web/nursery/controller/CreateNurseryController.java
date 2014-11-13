@@ -230,15 +230,19 @@ public class CreateNurseryController extends SettingsController {
     	form.setMeasurementRowList(new ArrayList<MeasurementRow>());
     	
     	//create check variables for specify checks
-    	List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
-        checkVariables = buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(), 
-        		buildRequiredVariablesLabel(AppConstants.CHECK_VARIABLES.getString(), false));        		
-        form2.setCheckVariables(checkVariables);
+    	setCheckVariablesInForm(form2);
     	
     	return super.show(model);
     }
     
-    /**
+    protected void setCheckVariablesInForm(ImportGermplasmListForm form2) throws MiddlewareQueryException {
+    	List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
+        checkVariables = buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(), 
+        		buildRequiredVariablesLabel(AppConstants.CHECK_VARIABLES.getString(), false));        		
+        form2.setCheckVariables(checkVariables);
+	}
+
+	/**
      * Assign default values.
      *
      * @param form the form

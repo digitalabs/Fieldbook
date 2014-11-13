@@ -82,6 +82,19 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 			Assert.fail("Expected mock values but still called the middleware class");
 		}
 	}
+	
+	@Test
+	public void testSettingOfCheckVariables() {
+		ImportGermplasmListForm form = new ImportGermplasmListForm();
+		try {			
+			controller.setCheckVariablesInForm(form);
+			Assert.assertNotNull(form.getCheckVariables());
+			Assert.assertTrue("Expected only check variables but the list has non check variables as well.", 
+					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
+		} catch (MiddlewareQueryException e) {
+			Assert.fail("Expected mock values but still called the middleware class");
+		}
+	}
 		
 	@Test
 	public void testSettingOfCheckVariablesInUsePreviousNursery() {
@@ -95,6 +108,22 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 			Assert.assertNotNull(form.getCheckVariables());
 			Assert.assertTrue("Expected only check variables but the list has non check variables as well.", 
 					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
+		} catch (MiddlewareQueryException e) {
+			Assert.fail("Expected mock values but still called the middleware class");
+		}
+		
+	}
+	
+	@Test
+	public void testSettingOfCheckVariablesInUsePreviousNurseryWhenRemovedConditionsIsNull() {
+		ImportGermplasmListForm form = new ImportGermplasmListForm();
+		Model model = Mockito.mock(Model.class);
+		userSelection.setRemovedConditions(null);
+		controller.setUserSelection(userSelection);
+				
+		try {
+			controller.getChecksForUseExistingNursery(form, -1, model, session, request);
+			Assert.assertNull(form.getCheckVariables());
 		} catch (MiddlewareQueryException e) {
 			Assert.fail("Expected mock values but still called the middleware class");
 		}

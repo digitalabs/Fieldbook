@@ -173,6 +173,7 @@ public class FieldbookServiceTest {
     	//prepare test data
     	UserSelection userSelection = new UserSelection();
     	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	WorkbookDataUtil.setTestWorkbook(null);
     	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
     	
     	userSelection.setImportedCheckGermplasmMainInfo(null);
@@ -194,6 +195,7 @@ public class FieldbookServiceTest {
 		//prepare test data
     	UserSelection userSelection = new UserSelection();
     	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	WorkbookDataUtil.setTestWorkbook(null);
     	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
     	
     	userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
@@ -215,6 +217,7 @@ public class FieldbookServiceTest {
     	//prepare test data
     	UserSelection userSelection = new UserSelection();
     	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	WorkbookDataUtil.setTestWorkbook(null);
     	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
     	
     	userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
@@ -244,6 +247,7 @@ public class FieldbookServiceTest {
 		//prepare test data
     	UserSelection userSelection = new UserSelection();
     	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	WorkbookDataUtil.setTestWorkbook(null);
     	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
     	
     	try {	
@@ -288,6 +292,7 @@ public class FieldbookServiceTest {
     	//prepare test data
     	UserSelection userSelection = new UserSelection();
     	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	WorkbookDataUtil.setTestWorkbook(null);
     	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
     	
     	try {
@@ -323,6 +328,7 @@ public class FieldbookServiceTest {
     	//prepare test data
     	UserSelection userSelection = new UserSelection();
     	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	WorkbookDataUtil.setTestWorkbook(null);
     	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
     	
     	userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
@@ -337,5 +343,29 @@ public class FieldbookServiceTest {
     	
     	Assert.assertFalse("Expected no check variables in the conditions but found one.", 
     			fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
+    }
+	
+	@Test
+    public void testCheckingOfCheckVariablesIfConditionsIsNotNullAndNotEmpty() {
+    	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+    	
+    	Assert.assertFalse("Expected no check variables in the conditions but found one.", 
+    			fieldbookServiceImpl.hasCheckVariables(workbook.getConditions()));
+    }
+	
+	@Test
+    public void testCheckingOfCheckVariablesIfConditionsIsNotNullButEmpty() {
+		List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
+    	
+    	Assert.assertFalse("Expected no check variables in the conditions but found one.", 
+    			fieldbookServiceImpl.hasCheckVariables(conditions));
+    }
+	
+	@Test
+    public void testCheckingOfCheckVariablesIfConditionsIsNullAndEmpty() {
+		List<MeasurementVariable> conditions = null;
+    	
+    	Assert.assertFalse("Expected no check variables in the conditions but found one.", 
+    			fieldbookServiceImpl.hasCheckVariables(conditions));
     }
 }

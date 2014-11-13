@@ -76,6 +76,27 @@ public class SettingsUtilTest {
     	int code = SettingsUtil.getCodeValue("8414", removedConditions, TermId.CHECK_PLAN.getId());
     	Assert.assertEquals("Expected 1 but got " + code + " instead.", 1, code);
     }
+	
+	@Test
+    public void testGetCodeValueWhenConditionsIsNull() {
+    	List<SettingDetail> removedConditions = null;
+    	int code = SettingsUtil.getCodeValue("8414", removedConditions, TermId.CHECK_PLAN.getId());
+    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+    }
+	
+	@Test
+    public void testGetCodeValueWhenPossibleValuesIsNull() {
+    	List<SettingDetail> removedConditions = createCheckVariables(true);
+    	int code = SettingsUtil.getCodeValue("8411", removedConditions, TermId.CHECK_START.getId());
+    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+    }
+	
+	@Test
+    public void testGetCodeValueWhenPossibleValuesIsNotNullButEmpty() {
+    	List<SettingDetail> removedConditions = createCheckVariables(true);
+    	int code = SettingsUtil.getCodeValue("8412", removedConditions, TermId.CHECK_INTERVAL.getId());
+    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+    }
     
     @Test
     public void testGetCodeValueInvalid() {
@@ -94,6 +115,20 @@ public class SettingsUtilTest {
     @Test
     public void testIfCheckVariablesHaveNoValues() {
     	List<SettingDetail> checkVariables = createCheckVariables(false);
+    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+    	Assert.assertFalse(checksHaveValues);
+    }
+    
+    @Test
+    public void testIfCheckVariablesIsNull() {
+    	List<SettingDetail> checkVariables = null;
+    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+    	Assert.assertFalse(checksHaveValues);
+    }
+    
+    @Test
+    public void testIfCheckVariablesIsEmpty() {
+    	List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
     	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
     	Assert.assertFalse(checksHaveValues);
     }
@@ -118,6 +153,8 @@ public class SettingsUtilTest {
 			possibleValues.add(new ValueReference(8414, "1", "Insert each check in turn"));
 			possibleValues.add(new ValueReference(8415, "2", "Insert all checks at each position"));
 			settingDetail.setPossibleValues(possibleValues);
+		} else if (cvTermId == TermId.CHECK_INTERVAL.getId()) {
+			settingDetail.setPossibleValues(new ArrayList<ValueReference>());
 		}
 		return settingDetail;
 	}

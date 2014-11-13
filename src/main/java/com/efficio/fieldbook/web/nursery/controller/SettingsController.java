@@ -151,8 +151,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     @ModelAttribute("nurseryList")
     public List<StudyDetails> getNurseryList() {
         try {
-            List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalNurseryDetails();
-            return nurseries;
+            return fieldbookMiddlewareService.getAllLocalNurseryDetails();
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -168,8 +167,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     @ModelAttribute("trialList")
     public List<StudyDetails> getTrialList() {
         try {
-            List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
-            return nurseries;
+            return fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -400,8 +398,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             } else {
                 SettingVariable svar = new SettingVariable();
                 svar.setCvTermId(stdVar.getId());
-                SettingDetail settingDetail = new SettingDetail(svar, null, null, false);
-                return settingDetail;
+                return new SettingDetail(svar, null, null, false);
             }
     }
     
@@ -705,7 +702,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException {
         Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
         Map<String, SettingDetail> removedConditionsMap = new HashMap<String, SettingDetail>();
-        if (workbook != null && idCodeNamePairs != null && !idCodeNamePairs.equalsIgnoreCase("")) {
+        if (workbook != null && idCodeNamePairs != null && !("").equalsIgnoreCase(idCodeNamePairs)) {
             //we get a map so we can check easily instead of traversing it again
             for(MeasurementVariable var : workbook.getConditions()){
                 if(var != null){

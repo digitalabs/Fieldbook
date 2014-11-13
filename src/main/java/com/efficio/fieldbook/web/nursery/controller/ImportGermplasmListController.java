@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -201,7 +200,7 @@ public class ImportGermplasmListController extends SettingsController {
             , BindingResult result, Model model, HttpServletRequest req) throws MiddlewareQueryException {
     		//start: section for taking note of the check germplasm
         boolean isDeleteObservations = false;
-		String selectedCheck[] = form.getSelectedCheck();
+		String[] selectedCheck = form.getSelectedCheck();
 		boolean isNursery = userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N ? true : false;
 	    if (userSelection.getTemporaryWorkbook() != null) {
             WorkbookUtil.manageExpDesignVariablesAndObs(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
@@ -348,7 +347,7 @@ public class ImportGermplasmListController extends SettingsController {
     private List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList, 
 			List<ImportedGermplasm> checkList){
     	
-    	if(checkList == null || checkList.size() == 0 ) {
+    	if(checkList == null || checkList.isEmpty()) {
     		return primaryList;
     	}
     	
@@ -502,7 +501,7 @@ public class ImportGermplasmListController extends SettingsController {
                 
                 
                 if(!isNursery){
-                    if (germplasm.getCheck() == null || germplasm.getCheck().equals("0")) {
+                    if (germplasm.getCheck() == null || ("0").equals(germplasm.getCheck())) {
                         germplasm.setCheck(defaultTestCheckId);
                         germplasm.setCheckId(Integer.valueOf(defaultTestCheckId));
                         dataMap.put("check", defaultTestCheckId);
@@ -1037,7 +1036,7 @@ public class ImportGermplasmListController extends SettingsController {
         try {
 			model.addAttribute("checkLists", fieldbookService.getCheckList());
 		} catch (MiddlewareQueryException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
@@ -1070,8 +1069,7 @@ public class ImportGermplasmListController extends SettingsController {
         try {
 			model.addAttribute("checkLists", fieldbookService.getCheckList());
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
         return super.showAjaxPage(model, CHECK_PAGINATION_TEMPLATE);
     }
@@ -1087,7 +1085,7 @@ public class ImportGermplasmListController extends SettingsController {
     private List<ImportedGermplasm> transformGermplasmListDataToImportedGermplasm(List<GermplasmListData> data, String defaultCheckId) {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         int index = 1;
-        if (data != null && data.size() > 0) {
+        if (data != null && !data.isEmpty()) {
             for (GermplasmListData aData : data) {
                 ImportedGermplasm germplasm = new ImportedGermplasm();
                 germplasm.setCheck(defaultCheckId);

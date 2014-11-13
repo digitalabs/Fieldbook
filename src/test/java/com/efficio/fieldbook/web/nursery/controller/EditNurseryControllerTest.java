@@ -85,10 +85,10 @@ public class EditNurseryControllerTest {
 
         doNothing().when(moleEditNurseryController).convertToXmlDatasetPojo(workbook);
         doReturn(basicDetails).when(moleEditNurseryController).updateRequiredFields(anyList(), anyList(), any(boolean[].class), anyList(), anyBoolean(), anyString());
-        doReturn(basicDetails).when(moleEditNurseryController).getBasicDetails(basicDetails, createNurseryForm);
+        doReturn(basicDetails).when(moleEditNurseryController).getSettingDetailsOfSection(basicDetails, createNurseryForm, AppConstants.FIXED_NURSERY_VARIABLES.getString());
+        doNothing().when(moleEditNurseryController).setCheckVariables(anyList(), any(ImportGermplasmListForm.class), eq(createNurseryForm));
         doNothing().when(moleEditNurseryController).removeBasicDetailsVariables(basicDetails);
         doNothing().when(moleEditNurseryController).setFormStaticData(eq(createNurseryForm), anyString(), eq(workbook));
-
         // test
         String out = moleEditNurseryController.useExistingNursery(createNurseryForm, importGermplasmListForm, NURSERY_ID, "context-info", model, session, request, redirectAttributes);
 

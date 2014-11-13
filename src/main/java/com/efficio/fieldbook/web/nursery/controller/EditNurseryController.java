@@ -17,7 +17,10 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.*;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -46,9 +49,10 @@ import org.springframework.web.util.WebUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class CreateNurseryController.
@@ -139,10 +143,10 @@ public class EditNurseryController extends SettingsController {
                         buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
                         userSelection.getStudyLevelConditions(), false, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 
-            List<SettingDetail> basicDetails = getSettingDetailsOfSection(nurseryLevelConditions, form,
-            		AppConstants.FIXED_NURSERY_VARIABLES.getString());
-            
-            setCheckVariables(userSelection.getRemovedConditions(), form2, form);
+                List<SettingDetail> basicDetails = getSettingDetailsOfSection(nurseryLevelConditions, form,
+                        AppConstants.FIXED_NURSERY_VARIABLES.getString());
+
+                setCheckVariables(userSelection.getRemovedConditions(), form2, form);
 
                 removeBasicDetailsVariables(nurseryLevelConditions);
 
@@ -218,19 +222,20 @@ public class EditNurseryController extends SettingsController {
         SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     }
 
-    
-	protected void setCheckVariables(List<SettingDetail> removedConditions,
-			ImportGermplasmListForm form2, CreateNurseryForm form) {
-		//set check variables
+
+    protected void setCheckVariables(List<SettingDetail> removedConditions,
+                                     ImportGermplasmListForm form2, CreateNurseryForm form) {
+        //set check variables
         List<SettingDetail> checkVariables = getCheckVariables(removedConditions, form);
         form2.setCheckVariables(checkVariables);
-	}
+    }
+
     protected String retrieveContextInfo(HttpServletRequest request) {
         ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
         return ContextUtil.getContextParameterString(contextInfo);
     }
 
-	/**
+    /**
      * Sets the measurements data.
      *
      * @param form     the form
@@ -245,53 +250,6 @@ public class EditNurseryController extends SettingsController {
         userSelection.setCurrentPage(form.getCurrentPage());
         userSelection.setWorkbook(workbook);
         userSelection.setTemporaryWorkbook(null);
-    }
-
-    /**
-     * Gets the basic details.
-     *
-     * @param nurseryLevelConditions the nursery level conditions
-     * @return the basic details
-     */
-    protected List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form) {
-        List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
-
-        StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
-        while (token.hasMoreTokens()) {
-            Integer termId = Integer.valueOf(token.nextToken());
-            boolean isFound = false;
-            for (SettingDetail setting : nurseryLevelConditions) {
-                if (termId.equals(setting.getVariable().getCvTermId())) {
-                    isFound = true;
-                    if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
-                        try {
-                            if (setting.getValue() != null && !setting.getValue().isEmpty() && NumberUtils.isNumber(setting.getValue())) {
-                                form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
-                            }
-                        } catch (MiddlewareQueryException e) {
-                            LOG.error(e.getMessage(), e);
-                        }
-                    } else if (termId.equals(Integer.valueOf(TermId.STUDY_UPDATE.getId()))) {
-                        DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
-                        Date date = new Date();
-                        setting.setValue(dateFormat.format(date));
-                    }
-                    basicDetails.add(setting);
-                }
-            }
-            if (!isFound) {
-                try {
-                    basicDetails.add(createSettingDetail(termId, null));
-                    if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
-                        form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
-                    }
-                } catch (MiddlewareQueryException e) {
-                    LOG.error(e.getMessage(), e);
-                }
-            }
-        }
-
-        return basicDetails;
     }
 
     /**
@@ -664,9 +622,5 @@ public class EditNurseryController extends SettingsController {
     @ModelAttribute("projectID")
     public String getProgramID() {
         return getCurrentProjectId();
-    }
-    
-    protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
-    	this.fieldbookMiddlewareService = fieldbookMiddlewareService;
     }
 }

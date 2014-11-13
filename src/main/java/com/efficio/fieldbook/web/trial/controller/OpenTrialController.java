@@ -160,45 +160,15 @@ public class OpenTrialController extends
                 userSelection.setExperimentalDesignVariables(WorkbookUtil.getExperimentalDesignVariables(trialWorkbook.getConditions()));
                 userSelection.setExpDesignParams(SettingsUtil.convertToExpDesignParamsUi(userSelection.getExperimentalDesignVariables()));
                 userSelection.setTemporaryWorkbook(null);
-                model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
-                model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
-                model.addAttribute(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, false));
-                model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
-                model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
-                model.addAttribute("experimentalDesignData", prepareExperimentalDesignTabInfo(trialWorkbook.getExperimentalDesignVariables(), false));
-                model.addAttribute(MEASUREMENT_DATA_EXISTING, fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
-                        SettingsUtil.buildVariates(trialWorkbook.getVariates())));
-                model.addAttribute(MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
-                fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
-                model.addAttribute("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
                 userSelection.setMeasurementRowList(trialWorkbook.getObservations());
+
+                fieldbookMiddlewareService.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
+
                 form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
                 form.setStudyId(trialId);
 
-                //so that we can reuse the same age being use for nursery
-                model.addAttribute("createNurseryForm", form);
-                model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
-                model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
-
-                model.addAttribute("germplasmListSize", 0);
-                List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
-                List<ImportedGermplasm> list;
-                if (germplasmLists != null && !germplasmLists.isEmpty()) {
-                    GermplasmList germplasmList = germplasmLists.get(0);
-                    List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
-                    if (data != null && !data.isEmpty()) {
-                        model.addAttribute("germplasmListSize", data.size());
-                        list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
-                        ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-                        importedGermplasmList.setImportedGermplasms(list);
-                        ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-                        mainInfo.setListId(germplasmList.getId());
-                        mainInfo.setAdvanceImportType(true);
-                        mainInfo.setImportedGermplasmList(importedGermplasmList);
-                        userSelection.setImportedGermplasmMainInfo(mainInfo);
-                        userSelection.setImportValid(true);
-                    }
-                }
+                this.setModelAttributes(form, trialId, model, trialWorkbook);
+                this.setUserSelectionImportedGermplasmMainInfo(trialId, model);
             }
             return showAngularPage(model);
 
@@ -208,6 +178,46 @@ public class OpenTrialController extends
             redirectAttributes.addFlashAttribute("redirectErrorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[]{AppConstants.TRIAL.getString(), StringUtils.capitalize(AppConstants.TRIAL.getString()), AppConstants.TRIAL.getString()}, "\n"));
             return "redirect:" + ManageTrialController.URL;
         }
+    }
+
+    protected void setUserSelectionImportedGermplasmMainInfo(Integer trialId, Model model) throws MiddlewareQueryException {
+        List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(trialId), GermplasmListType.TRIAL);
+        if (germplasmLists != null && !germplasmLists.isEmpty()) {
+            GermplasmList germplasmList = germplasmLists.get(0);
+            List<ListDataProject> data = fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
+            if (data != null && !data.isEmpty()) {
+                model.addAttribute("germplasmListSize", data.size());
+                List<ImportedGermplasm> list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
+                ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+                importedGermplasmList.setImportedGermplasms(list);
+                ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+                mainInfo.setListId(germplasmList.getId());
+                mainInfo.setAdvanceImportType(true);
+                mainInfo.setImportedGermplasmList(importedGermplasmList);
+                userSelection.setImportedGermplasmMainInfo(mainInfo);
+                userSelection.setImportValid(true);
+            }
+        }
+    }
+
+    protected void setModelAttributes(CreateTrialForm form, Integer trialId, Model model, Workbook trialWorkbook) throws MiddlewareQueryException {
+        model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
+        model.addAttribute("germplasmData", prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
+        model.addAttribute(ENVIRONMENT_DATA_TAB, prepareEnvironmentsTabInfo(trialWorkbook, false));
+        model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), false));
+        model.addAttribute("measurementsData", prepareMeasurementsTabInfo(trialWorkbook.getVariates(), false));
+        model.addAttribute("experimentalDesignData", prepareExperimentalDesignTabInfo(trialWorkbook.getExperimentalDesignVariables(), false));
+        model.addAttribute(MEASUREMENT_DATA_EXISTING, fieldbookMiddlewareService.checkIfStudyHasMeasurementData(trialWorkbook.getMeasurementDatesetId(),
+                SettingsUtil.buildVariates(trialWorkbook.getVariates())));
+        model.addAttribute(MEASUREMENT_ROW_COUNT, trialWorkbook.getObservations().size());
+        model.addAttribute("treatmentFactorsData", prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), false));
+
+        //so that we can reuse the same age being use for nursery
+        model.addAttribute("createNurseryForm", form);
+        model.addAttribute("experimentalDesignSpecialData", prepareExperimentalDesignSpecialData());
+        model.addAttribute("studyName", trialWorkbook.getStudyDetails().getLabel());
+
+        model.addAttribute("germplasmListSize", 0);
     }
 
     protected void clearSessionData(HttpSession session) {

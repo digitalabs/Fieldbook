@@ -131,9 +131,7 @@ public class EditNurseryController extends SettingsController {
 
                 form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
 
-                Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
-
-                SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, false);
+                convertToXmlDatasetPojo(workbook);
 
                 //nursery-level
                 List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
@@ -146,7 +144,7 @@ public class EditNurseryController extends SettingsController {
             
             setCheckVariables(userSelection.getRemovedConditions(), form2, form);
 
-                SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
+                removeBasicDetailsVariables(nurseryLevelConditions);
 
                 userSelection.setBasicDetails(basicDetails);
                 form.setStudyId(nurseryId);
@@ -158,15 +156,8 @@ public class EditNurseryController extends SettingsController {
                 form.setNurseryConditions(userSelection.getNurseryConditions());
                 form.setLoadSettings(SUCCESS);
                 form.setFolderId(Integer.valueOf((int) workbook.getStudyDetails().getParentFolderId()));
-                if (form.getFolderId() == 1) {
-                    if (nurseryId > 0) {
-                        form.setFolderName(AppConstants.PUBLIC_NURSERIES.getString());
-                    } else {
-                        form.setFolderName(AppConstants.PROGRAM_NURSERIES.getString());
-                    }
-                } else {
-                    form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
-                }
+
+                form.setFolderName(getNurseryFolderName(form.getFolderId(), nurseryId));
 
                 //measurements part
                 SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
@@ -201,6 +192,26 @@ public class EditNurseryController extends SettingsController {
             return "redirect:" + ManageNurseriesController.URL;
         }
 
+    }
+
+    protected String getNurseryFolderName(int folderId, int nurseryId) throws MiddlewareQueryException {
+        if (folderId == 1 && nurseryId > 0) {
+            return AppConstants.PUBLIC_NURSERIES.getString();
+        } else if (folderId == 1) {
+            return AppConstants.PROGRAM_NURSERIES.getString();
+        }
+
+        return fieldbookMiddlewareService.getFolderNameById(folderId);
+    }
+
+    protected void removeBasicDetailsVariables(List<SettingDetail> nurseryLevelConditions) {
+        SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
+    }
+
+    protected void convertToXmlDatasetPojo(Workbook workbook) throws MiddlewareQueryException {
+        Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
+
+        SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, false);
     }
 
     protected void clearSessionData(HttpSession session) {
@@ -242,7 +253,7 @@ public class EditNurseryController extends SettingsController {
      * @param nurseryLevelConditions the nursery level conditions
      * @return the basic details
      */
-    private List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form) {
+    protected List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form) {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
 
         StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
@@ -492,7 +503,7 @@ public class EditNurseryController extends SettingsController {
      *
      * @param form the new form static data
      */
-    private void setFormStaticData(CreateNurseryForm form, String contextParams, Workbook workbook) {
+    protected void setFormStaticData(CreateNurseryForm form, String contextParams, Workbook workbook) {
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
         form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedingMethodsUrl());

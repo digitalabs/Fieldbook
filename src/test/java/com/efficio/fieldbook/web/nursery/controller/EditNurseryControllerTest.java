@@ -7,9 +7,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,11 +32,14 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class EditNurseryControllerTest {
 
+    public static final int ROOT_FOLDER_ID = 1;
+    public static final int PUBLIC_NURSERY_ID = 1;
+    public static final int LOCAL_NURSERY_ID = -1;
     private static final int DEFAULT_TERM_ID = 1234;
     private static final int NOT_EXIST_TERM_ID = 2345;
     private static final int DEFAULT_TERM_ID_2 = 3456;
     private static final int NURSERY_ID = 1;
-
+    public static final int CHILD_FOLDER_ID = 2;
     @Mock
     HttpServletRequest request;
 
@@ -70,6 +71,32 @@ public class EditNurseryControllerTest {
     EditNurseryController editNurseryController;
 
     @Test
+    public void testUseExistingNurseryNoRedirect() throws Exception {
+        EditNurseryController moleEditNurseryController = spy(editNurseryController);
+
+        Workbook workbook = mock(Workbook.class);
+        List<SettingDetail> basicDetails = Arrays.asList(mock(SettingDetail.class));
+        StudyDetails studyDetails = mock(StudyDetails.class);
+
+        // setup: we dont care actually whats happening inside controller.useExistingNursery, we just want it to return the url
+        when(studyDetails.getParentFolderId()).thenReturn((long) 1);
+        when(workbook.getStudyDetails()).thenReturn(studyDetails);
+        when(fieldbookMiddlewareService.getNurseryDataSet(anyInt())).thenReturn(workbook);
+
+        doNothing().when(moleEditNurseryController).convertToXmlDatasetPojo(workbook);
+        doReturn(basicDetails).when(moleEditNurseryController).updateRequiredFields(anyList(), anyList(), any(boolean[].class), anyList(), anyBoolean(), anyString());
+        doReturn(basicDetails).when(moleEditNurseryController).getBasicDetails(basicDetails, createNurseryForm);
+        doNothing().when(moleEditNurseryController).removeBasicDetailsVariables(basicDetails);
+        doNothing().when(moleEditNurseryController).setFormStaticData(eq(createNurseryForm), anyString(), eq(workbook));
+
+        // test
+        String out = moleEditNurseryController.useExistingNursery(createNurseryForm, importGermplasmListForm, NURSERY_ID, "context-info", model, session, request, redirectAttributes);
+
+        verify(fieldbookMiddlewareService).getNurseryDataSet(anyInt());
+        assertEquals("should return the URL of the base_template", EditNurseryController.BASE_TEMPLATE_NAME, out);
+    }
+
+    @Test
     public void testUseExistingNurseryRedirectForIncompatibleStudy() throws Exception {
         EditNurseryController moleEditNurseryController = spy(editNurseryController);
 
@@ -77,7 +104,6 @@ public class EditNurseryControllerTest {
         doReturn("context-info").when(moleEditNurseryController).retrieveContextInfo(request);
         doNothing().when(moleEditNurseryController).clearSessionData(session);
         when(fieldbookMiddlewareService.getNurseryDataSet(NURSERY_ID)).thenThrow(MiddlewareQueryException.class);
-        doThrow(MiddlewareQueryException.class).when(fieldbookMiddlewareService).getNurseryDataSet(NURSERY_ID);
 
         String out = moleEditNurseryController.useExistingNursery(createNurseryForm, importGermplasmListForm, NURSERY_ID, "context-info", model, session, request, redirectAttributes);
         assertEquals("should redirect to manage nurseries page", "redirect:" + ManageNurseriesController.URL, out);
@@ -86,8 +112,8 @@ public class EditNurseryControllerTest {
         ArgumentCaptor<String> redirectArg1 = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> redirectArg2 = ArgumentCaptor.forClass(String.class);
 
-        verify(redirectAttributes).addFlashAttribute(redirectArg1.capture(),redirectArg2.capture());
-        assertEquals("value should be redirectErrorMessage","redirectErrorMessage",redirectArg1.getValue());
+        verify(redirectAttributes).addFlashAttribute(redirectArg1.capture(), redirectArg2.capture());
+        assertEquals("value should be redirectErrorMessage", "redirectErrorMessage", redirectArg1.getValue());
     }
 
     @Test
@@ -123,6 +149,24 @@ public class EditNurseryControllerTest {
 		assertTrue("Expected check variables but the list does not have all check variables.",
 				WorkbookTestUtil.areDetailsFilteredVariables(form2.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
 	}
+
+    @Test
+    public void testGetNurseryFolderName() throws Exception {
+        // case nurseryId = positive
+        String out = editNurseryController.getNurseryFolderName(ROOT_FOLDER_ID, PUBLIC_NURSERY_ID);
+        verify(fieldbookMiddlewareService,never()).getFolderNameById(ROOT_FOLDER_ID);
+        assertEquals("should be public folder", AppConstants.PUBLIC_NURSERIES.getString(), out);
+
+        // case nurseryId = negative (local)
+        String out2 = editNurseryController.getNurseryFolderName(ROOT_FOLDER_ID, LOCAL_NURSERY_ID);
+        verify(fieldbookMiddlewareService,never()).getFolderNameById(ROOT_FOLDER_ID);
+        assertEquals("should be a program local folder", AppConstants.PROGRAM_NURSERIES.getString(), out2);
+
+        // case not a root folder
+        when(fieldbookMiddlewareService.getFolderNameById(anyInt())).thenReturn(anyString());
+        editNurseryController.getNurseryFolderName(CHILD_FOLDER_ID, LOCAL_NURSERY_ID);
+        verify(fieldbookMiddlewareService).getFolderNameById(CHILD_FOLDER_ID);
+    }
 
     private void initializeMeasurementRowList() {
         final Random random = new Random(1000);

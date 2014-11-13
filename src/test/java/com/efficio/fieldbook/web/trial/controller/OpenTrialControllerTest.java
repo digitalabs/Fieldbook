@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Test;
@@ -47,9 +48,23 @@ public class OpenTrialControllerTest {
     private OpenTrialController openTrialController;
 
     @Test
+    public void testOpenTrialNoRedirect() throws Exception {
+        final OpenTrialController moleOpenTrialController = setupOpenTrialController();
+        Workbook workbook = mock(Workbook.class);
+        when(fieldbookService.getTrialDataSet(TRIAL_ID)).thenReturn(workbook);
+
+        doNothing().when(moleOpenTrialController).setModelAttributes(createTrialForm,TRIAL_ID,model,workbook);
+
+        String out = moleOpenTrialController.openTrial(createTrialForm,TRIAL_ID,model,session,redirectAttributes);
+
+        verify(fieldbookService).getTrialDataSet(TRIAL_ID);
+        assertEquals("should return the base angular template",OpenTrialController.ANGULAR_BASE_TEMPLATE_NAME,out);
+    }
+
+    @Test
     public void testOpenTrialRedirectForIncompatibleStudy() throws Exception {
-        final OpenTrialController moleOpenTrialController = spy(openTrialController);
-        doNothing().when(moleOpenTrialController).clearSessionData(session);
+        final OpenTrialController moleOpenTrialController = setupOpenTrialController();
+
         when(fieldbookService.getTrialDataSet(TRIAL_ID)).thenThrow(MiddlewareQueryException.class);
 
         String out = moleOpenTrialController.openTrial(createTrialForm, TRIAL_ID, model, session, redirectAttributes);
@@ -63,5 +78,11 @@ public class OpenTrialControllerTest {
         assertEquals("value should be redirectErrorMessage", "redirectErrorMessage", arg1.getValue());
 
 
+    }
+
+    protected OpenTrialController setupOpenTrialController() {
+        final OpenTrialController moleOpenTrialController = spy(openTrialController);
+        doNothing().when(moleOpenTrialController).clearSessionData(session);
+        return moleOpenTrialController;
     }
 }

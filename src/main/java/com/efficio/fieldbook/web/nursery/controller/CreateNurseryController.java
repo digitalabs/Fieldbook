@@ -240,6 +240,7 @@ public class CreateNurseryController extends SettingsController {
         checkVariables = buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(), 
         		buildRequiredVariablesLabel(AppConstants.CHECK_VARIABLES.getString(), false));        		
         form2.setCheckVariables(checkVariables);
+        userSelection.setRemovedConditions(checkVariables);
 	}
 
 	/**

@@ -268,7 +268,7 @@ public class ImportGermplasmListController extends SettingsController {
             			form.setImportedGermplasm(newNurseryGermplasm);
             		}
             		
-            		int interval = Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_INTERVAL.getId()));
+            		int interval = getIntervalValue(form);
 
             		String defaultTestCheckId = getCheckId(DEFAULT_TEST_VALUE, fieldbookService.getCheckList());
             		
@@ -276,7 +276,7 @@ public class ImportGermplasmListController extends SettingsController {
         	    	        form.getImportedCheckGermplasm(), 
         	    	        Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId())), 
         	    	        interval, 
-        	    	        SettingsUtil.getCodeValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()), userSelection.getStudyLevelConditions(), TermId.CHECK_PLAN.getId()), 
+        	    	        SettingsUtil.getCodeValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()), userSelection.getRemovedConditions(), TermId.CHECK_PLAN.getId()), 
         	    	        defaultTestCheckId);
             		
         	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(newImportedGermplasm);
@@ -305,7 +305,15 @@ public class ImportGermplasmListController extends SettingsController {
         return Integer.toString(studyId);
     }       
     
-    private void saveListDataProject(boolean isNursery, int studyId) throws NumberFormatException, MiddlewareQueryException{
+    private int getIntervalValue(ImportGermplasmListForm form) {
+    	String interval = SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_INTERVAL.getId()); 
+    	if (interval != null && !("").equals(interval)) {
+    		return Integer.parseInt(interval);
+    	}
+    	return 0;
+	}
+
+	private void saveListDataProject(boolean isNursery, int studyId) throws NumberFormatException, MiddlewareQueryException{
     	//we call here to have
     	
         if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getListId() != null){

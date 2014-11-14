@@ -923,11 +923,38 @@ public class FieldbookServiceImpl implements FieldbookService {
     		} else if (!form.getImportedCheckGermplasm().isEmpty() && hasCheckVariables(userSelection.getWorkbook().getConditions())) {
     			// update values of check variables
     			updateCheckVariables(userSelection.getWorkbook().getConditions(), form);
+    			updateChecksInTrialObservations(userSelection.getWorkbook().getTrialObservations(), form);
     		} else if (form.getImportedCheckGermplasm().isEmpty() && hasCheckVariables(userSelection.getWorkbook().getConditions())) {
     			// delete check variables
     			deleteCheckVariables(userSelection.getWorkbook().getConditions());
     		}
     	}
+	}
+
+	private void updateChecksInTrialObservations(List<MeasurementRow> trialObservations,
+			ImportGermplasmListForm form) {
+		if (trialObservations != null) {
+			for (MeasurementRow row : trialObservations) {
+				setMeasurementDataInList(row, form);
+			}
+		}
+	}
+
+	private void setMeasurementDataInList(MeasurementRow row, ImportGermplasmListForm form) {
+		if (row.getDataList() != null) {
+			for (MeasurementData data : row.getDataList()) {
+				if (AppConstants.CHECK_VARIABLES.getString().contains(String.valueOf(data.getMeasurementVariable().getTermId()))) {
+					setMeasurementData(data, form, data.getMeasurementVariable().getTermId());
+				}
+			}
+		}
+	}
+
+	private void setMeasurementData(MeasurementData data, ImportGermplasmListForm form, int id) {
+		data.setValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), id));
+		if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+			data.setcValueId(data.getValue());
+		}
 	}
 
 	private void addCheckVariables(List<MeasurementVariable> conditions,

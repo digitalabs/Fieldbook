@@ -225,6 +225,26 @@ public class WorkbookDataUtil {
 
 		WorkbookDataUtil.workbook.setConditions(conditions);
 	}
+	
+	public static void addCheckConditions() {
+		MeasurementVariable variable = new MeasurementVariable(TermId.CHECK_START.getId(), "CHECK_START", "CHECK_START",
+				WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
+				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.TRIAL);
+		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+		WorkbookDataUtil.workbook.getConditions().add(variable);
+		
+		variable = new MeasurementVariable(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", "CHECK_INTERVAL",
+				WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
+				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.TRIAL);
+		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+		WorkbookDataUtil.workbook.getConditions().add(variable);
+		
+		variable = new MeasurementVariable(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", "CHECK_PLAN",
+				WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
+				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.TRIAL);
+		variable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
+		WorkbookDataUtil.workbook.getConditions().add(variable);
+	}
 
 	private static void createFactors() {
 		//Create measurement variables and set its dataTypeId
@@ -403,7 +423,7 @@ public class WorkbookDataUtil {
 		WorkbookDataUtil.workbook.setObservations(observations);
 	}
 
-	private static void createTrialObservations(int noOfTrialInstances) {
+	public static void createTrialObservations(int noOfTrialInstances) {
 		List<MeasurementRow> trialObservations = new ArrayList<MeasurementRow>();
 
 		MeasurementRow row;
@@ -442,6 +462,20 @@ public class WorkbookDataUtil {
 			data = new MeasurementData(WorkbookDataUtil.SITE_ID, String.valueOf(i+1));
 			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
 					TermId.LOCATION_ID.getId(), WorkbookDataUtil.workbook.getConditions()));
+			dataList.add(data);
+			
+			//Check variables
+			data = new MeasurementData("CHECK_START", String.valueOf(i+1));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
+					TermId.CHECK_START.getId(), WorkbookDataUtil.workbook.getConditions()));
+			dataList.add(data);
+			data = new MeasurementData("CHECK_INTERVAL", String.valueOf(i+1));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
+					TermId.CHECK_PLAN.getId(), WorkbookDataUtil.workbook.getConditions()));
+			dataList.add(data);
+			data = new MeasurementData("CHECK_PLAN", "1");
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
+					TermId.CHECK_INTERVAL.getId(), WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
 
 			row.setDataList(dataList);

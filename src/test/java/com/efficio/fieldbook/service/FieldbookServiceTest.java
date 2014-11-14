@@ -249,7 +249,36 @@ public class FieldbookServiceTest {
     	ImportGermplasmListForm form = new ImportGermplasmListForm();
     	WorkbookDataUtil.setTestWorkbook(null);
     	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+    	WorkbookDataUtil.addCheckConditions();
+    	WorkbookDataUtil.createTrialObservations(1);
+    	try {	
+        	addCheckVariables(workbook.getConditions());
+        	
+        	userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
+        	userSelection.setWorkbook(workbook);
+        	form.setImportedCheckGermplasm(createImportedCheckGermplasmData());
+        	form.setCheckVariables(WorkbookTestUtil.createCheckVariables());
+        	
+    		fieldbookServiceImpl.manageCheckVariables(userSelection, form);
+    	} catch(MiddlewareQueryException e) {
+    		Assert.fail("Epected mocked class but original method was called.");
+    	}
     	
+    	Assert.assertTrue("Expected check variables in the conditions but found none.", 
+    			fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
+    	
+    	Assert.assertTrue("Expected check variable values were updated but weren't.", 
+    			areCheckVariableValuesUpdated(userSelection.getWorkbook().getConditions()));
+    }
+	
+	@Test
+    public void testManageCheckVariablesForUpdateWithNoTrialObservations() {
+		//prepare test data
+    	UserSelection userSelection = new UserSelection();
+    	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	WorkbookDataUtil.setTestWorkbook(null);
+    	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+    	workbook.setTrialObservations(null);
     	try {	
         	addCheckVariables(workbook.getConditions());
         	
@@ -347,6 +376,7 @@ public class FieldbookServiceTest {
 	
 	@Test
     public void testCheckingOfCheckVariablesIfConditionsIsNotNullAndNotEmpty() {
+		WorkbookDataUtil.setTestWorkbook(null);
     	Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
     	
     	Assert.assertFalse("Expected no check variables in the conditions but found one.", 

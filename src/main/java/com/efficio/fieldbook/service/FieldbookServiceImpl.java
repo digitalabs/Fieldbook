@@ -53,9 +53,11 @@ import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -535,7 +537,7 @@ public class FieldbookServiceImpl implements FieldbookService {
         return idNameMap;
     }
 
-    private MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation) throws MiddlewareQueryException {
+    protected MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation) throws MiddlewareQueryException {
         StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate));
         MeasurementVariable var = new MeasurementVariable(
                 Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
@@ -910,5 +912,127 @@ public class FieldbookServiceImpl implements FieldbookService {
         }
         return possibleValues;
     }
+    
+    @Override
+	public void manageCheckVariables(UserSelection userSelection,
+			ImportGermplasmListForm form) throws MiddlewareQueryException {
+    	if (userSelection.getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null) {
+    		if (!form.getImportedCheckGermplasm().isEmpty() && !hasCheckVariables(userSelection.getWorkbook().getConditions())) {
+    			// add check variables
+    			addCheckVariables(userSelection.getWorkbook().getConditions(), form);
+    		} else if (!form.getImportedCheckGermplasm().isEmpty() && hasCheckVariables(userSelection.getWorkbook().getConditions())) {
+    			// update values of check variables
+    			updateCheckVariables(userSelection.getWorkbook().getConditions(), form);
+    			updateChecksInTrialObservations(userSelection.getWorkbook().getTrialObservations(), form);
+    		} else if (form.getImportedCheckGermplasm().isEmpty() && hasCheckVariables(userSelection.getWorkbook().getConditions())) {
+    			// delete check variables
+    			deleteCheckVariables(userSelection.getWorkbook().getConditions());
+    		}
+    	}
+	}
 
+	private void updateChecksInTrialObservations(List<MeasurementRow> trialObservations,
+			ImportGermplasmListForm form) {
+		if (trialObservations != null) {
+			for (MeasurementRow row : trialObservations) {
+				setMeasurementDataInList(row, form);
+			}
+		}
+	}
+
+	private void setMeasurementDataInList(MeasurementRow row, ImportGermplasmListForm form) {
+		if (row.getDataList() != null) {
+			for (MeasurementData data : row.getDataList()) {
+				if (AppConstants.CHECK_VARIABLES.getString().contains(String.valueOf(data.getMeasurementVariable().getTermId()))) {
+					setMeasurementData(data, form, data.getMeasurementVariable().getTermId());
+				}
+			}
+		}
+	}
+
+	private void setMeasurementData(MeasurementData data, ImportGermplasmListForm form, int id) {
+		data.setValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), id));
+		if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+			data.setcValueId(data.getValue());
+		}
+	}
+
+	private void addCheckVariables(List<MeasurementVariable> conditions,
+			ImportGermplasmListForm form) throws MiddlewareQueryException {
+		conditions.add(createMeasurementVariable(
+				String.valueOf(TermId.CHECK_START.getId()),
+				SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
+						TermId.CHECK_START.getId()), Operation.ADD));
+		conditions.add(createMeasurementVariable(
+				String.valueOf(TermId.CHECK_INTERVAL.getId()),
+				SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
+						TermId.CHECK_INTERVAL.getId()), Operation.ADD));
+		conditions.add(createMeasurementVariable(
+				String.valueOf(TermId.CHECK_PLAN.getId()),
+				SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
+						TermId.CHECK_PLAN.getId()), Operation.ADD));
+	}
+
+	private void updateCheckVariables(List<MeasurementVariable> conditions,
+			ImportGermplasmListForm form) {
+		if (conditions != null && !conditions.isEmpty()) {
+			for (MeasurementVariable var : conditions) {
+				if (var.getTermId() == TermId.CHECK_START.getId()) {
+					var.setValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
+							TermId.CHECK_START.getId()));
+				} else if (var.getTermId() == TermId.CHECK_INTERVAL.getId()) {
+					var.setValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
+							TermId.CHECK_INTERVAL.getId()));
+				} else if (var.getTermId() == TermId.CHECK_PLAN.getId()) {
+					var.setValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
+							TermId.CHECK_PLAN.getId()));
+				}
+			}
+		}
+	}
+
+	private void deleteCheckVariables(List<MeasurementVariable> conditions) {
+		String checkVariables = AppConstants.CHECK_VARIABLES.getString();
+		if (checkVariables != null & !checkVariables.isEmpty()) {
+			StringTokenizer tokenizer = new StringTokenizer(checkVariables, ",");
+			if (tokenizer.hasMoreTokens()) {
+				while (tokenizer.hasMoreTokens()) {
+					setCheckVariableToDelete(tokenizer.nextToken(), conditions);
+				}
+			}
+		}
+	}
+
+	private void setCheckVariableToDelete(String id, List<MeasurementVariable> conditions) {
+		if (conditions != null && !conditions.isEmpty()) {
+			for (MeasurementVariable var : conditions) {
+				if (var.getTermId() == Integer.valueOf(id).intValue()) {
+					var.setOperation(Operation.DELETE);
+				}
+			}
+		}
+	}
+
+	protected boolean hasCheckVariables(List<MeasurementVariable> conditions) {
+		if (conditions != null && !conditions.isEmpty()) {
+			for (MeasurementVariable var : conditions) {
+				if (isCheckVariable(var.getTermId())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean isCheckVariable(int termId) {
+		StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");
+			if (tokenizer.hasMoreTokens()) {
+				while (tokenizer.hasMoreTokens()) { 
+					if (Integer.valueOf(tokenizer.nextToken()).intValue() == termId) {
+						return true;
+					}
+				}
+			}
+		return false;
+	}
 }

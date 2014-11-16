@@ -3,9 +3,6 @@
 	th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{totalGermplasms}"/>
-	<input type="hidden" th:field="*{startIndex}"/>
-	<input type="hidden" th:field="*{interval}"/>
-	<input type="hidden" th:field="*{mannerOfInsertion}"/>
 	<input type="hidden" th:field="*{lastDraggedPrimaryList}"/>
 
 	<!-- case 1: no data means no table -->
@@ -53,7 +50,7 @@
 
 </div>
 
-<script type='text/javascript' th:inline="javascript">
+<script type="text/javascript" th:inline="javascript">
 	//<![CDATA[
 	var dataGermplasmList = /*[[${listDataTable}]]*/ [];	
 	$( document ).ready(function() {

@@ -28,7 +28,9 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -188,14 +190,31 @@ public interface FieldbookService {
      */
     Map<String,String> getIdNamePairForRetrieveAndSave();
 
-	List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareQueryException;
 	/**
-     * Get all possible values.
-     *
-     * @param id the id
-     * @return the all possible values
-     * @throws MiddlewareQueryException the middleware query exception
-     */
+	 * Gets the variable possible values.
+	 *
+	 * @param var the var
+	 * @return the variable possible values
+	 * @throws MiddlewareQueryException the middleware query exception
+	 */
+	List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareQueryException;
+	
+	/**
+	 * Get all possible values.
+	 *
+	 * @param id the id
+	 * @param isGetAllRecords the is get all records
+	 * @return the all possible values
+	 * @throws MiddlewareQueryException the middleware query exception
+	 */
     List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareQueryException;
+
+	/**
+	 * Add/Updates/Deletes check variables.
+	 *
+	 * @param UserSelection the userSelection
+	 * @param form the form
+	 */
+	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) throws MiddlewareQueryException;
     
 }

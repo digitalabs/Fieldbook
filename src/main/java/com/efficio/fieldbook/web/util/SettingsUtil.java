@@ -94,7 +94,7 @@ public class SettingsUtil {
             try {
                 variable = fieldbookMiddlewareService.getStandardVariable(id);
             } catch (MiddlewareQueryException e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
             if (variable != null) {
                 userSelection.putStandardVariableInCache(variable);
@@ -136,7 +136,7 @@ public class SettingsUtil {
 
                         if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) ||
                                 variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
-                                && settingDetail.getValue().equals("0")) {
+                                && ("0").equals(settingDetail.getValue())) {
                             settingDetail.setValue("");
                         }
 
@@ -1348,9 +1348,10 @@ public class SettingsUtil {
      * @return the measurement variable
      */
     private static MeasurementVariable convertVariateToMeasurementVariable(Variate variate) {
+    	//because variates are mostly PLOT variables
         MeasurementVariable mvar = new MeasurementVariable(
                 variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(), variate.getProperty(), variate.getDatatype(), null,
-                PhenotypicType.TRIAL_DESIGN.getLabelList().get(0), variate.getMinRange(), variate.getMaxRange()); //because variates are mostly PLOT variables
+                PhenotypicType.TRIAL_DESIGN.getLabelList().get(0), variate.getMinRange(), variate.getMaxRange()); 
         mvar.setOperation(variate.getOperation());
         mvar.setTermId(variate.getId());
         mvar.setStoredIn(variate.getStoredIn());
@@ -1484,9 +1485,11 @@ public class SettingsUtil {
                 String id = String.valueOf(condition.getTermId());
                 String role = (isVariate) ? PhenotypicType.VARIATE.toString() : PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString();
                 if (!basicFields.contains(id) && !hiddenFields.contains(id)
-                        && !(condition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null) //do not show breeding method id if code exists
+                		//do not show breeding method id if code exists
+                        && !(condition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null) 
                         && !(condition.getTermId() == TermId.BREEDING_METHOD.getId() && (variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null ||
-                        variableMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) != null))) { //do not name if code or id exists
+                        variableMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) != null))) { 
+                	//do not name if code or id exists
                     SettingVariable variable = getSettingVariable(getDisplayName(conditions, condition.getTermId(), condition.getName()), condition.getDescription(), condition.getProperty(),
                             condition.getScale(), condition.getMethod(), role,
                             condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
@@ -1556,7 +1559,8 @@ public class SettingsUtil {
                                 found = true;
                                 break;
                             }
-                        } else { //special field
+                        } else { 
+                        	//special field
                             SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
                             String value = getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
                             SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
@@ -1571,7 +1575,8 @@ public class SettingsUtil {
                         }
                     }
                 }
-                if (!found) { //required field but has no value
+                if (!found) { 
+                	//required field but has no value
                     SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
                     SettingDetail settingDetail = new SettingDetail(variable, null, "", false);
                     index = addToList(details, settingDetail, index, fields, strFieldId);
@@ -1725,9 +1730,9 @@ public class SettingsUtil {
 
     public static void resetBreedingMethodValueToId(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                     List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) throws MiddlewareQueryException {
-        if (observations != null && observations.size() > 0) {
+        if (observations != null && !observations.isEmpty()) {
             List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
-            if (indeces.size() > 0) {
+            if (!indeces.isEmpty()) {
                 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
                 HashMap<String, Method> methodMap = new HashMap<String, Method>();
                 //create a map to get method id based on given code
@@ -1751,9 +1756,9 @@ public class SettingsUtil {
     public static void resetBreedingMethodValueToCode(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                       List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) throws MiddlewareQueryException {
         //set value of breeding method code in selection variates to code instead of id
-        if (observations != null && observations.size() > 0) {
+        if (observations != null && !observations.isEmpty()) {
             List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
-            if (indeces.size() > 0) {
+            if (!indeces.isEmpty()) {
                 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
                 HashMap<Integer, Method> methodMap = new HashMap<Integer, Method>();
 
@@ -1889,8 +1894,8 @@ public class SettingsUtil {
      * @param propertyId the property id
      * @return true, if successful
      */
-    private static boolean inFixedNurseryList(int propertyId) {
-        StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
+    protected static boolean inFixedNurseryList(int propertyId) {
+        StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString() + AppConstants.CHECK_VARIABLES.getString(), ",");
         while(token.hasMoreTokens()){
             if (Integer.parseInt(token.nextToken()) == propertyId) {
                 return true;
@@ -1898,6 +1903,7 @@ public class SettingsUtil {
         }
         return false;
     }
+    
     public static List<MeasurementVariable> getArrangedMeasurementVariable(List<MeasurementVariable> measurementVariables){
     	List<MeasurementVariable> measureList = new ArrayList<MeasurementVariable>();
 		List<MeasurementVariable> newMeasureList = new ArrayList<MeasurementVariable>();
@@ -2034,7 +2040,8 @@ public class SettingsUtil {
     						}
     					}
     				}
-    				if (!found) { //for deletion
+    				if (!found) { 
+    					//for deletion
     					workbook.getConditions().add(condition);
     					workbook.resetTrialConditions();
     				}
@@ -2096,6 +2103,7 @@ public class SettingsUtil {
     				case 1 : return String.valueOf(TermId.REPS_IN_SINGLE_COL.getId());
     				case 2 : return String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId());
     				case 3 : return String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId());
+    				default : 
     				}
     			}
     			break;
@@ -2105,6 +2113,7 @@ public class SettingsUtil {
     		case NO_OF_COLS_IN_REPS : return String.valueOf(param.getColsPerReplications());
     		case NO_OF_CCOLS_LATINIZE : return param.getNclatin();
     		case NO_OF_CROWS_LATINIZE : return param.getNrlatin();
+    		default : 
     	}
     	return "";
     }
@@ -2159,4 +2168,59 @@ public class SettingsUtil {
     	}
     	return param;
     }
+    
+    /**
+     * Gets the setting detail value.
+     *
+     * @param details the details
+     * @param termId the term id
+     * @return the setting detail value
+     */
+    public static String getSettingDetailValue(List<SettingDetail> details, int termId) {
+    	String value = null;
+    	
+    	for (SettingDetail detail : details) {
+    		if (detail.getVariable().getCvTermId().equals(termId)) {
+    			value = detail.getValue();
+    			break;
+    		}
+    	}
+    	
+    	return value;
+    }
+    
+    public static int getCodeValue(String settingDetailValue, List<SettingDetail> removedConditions,
+			int termId) {
+    	if (removedConditions != null) {
+			for (SettingDetail detail : removedConditions) {
+	    		if (detail.getVariable().getCvTermId().equals(termId)) {
+	    			return getCodeInPossibleValues(detail, settingDetailValue);
+	    		}
+	    	}
+    	}
+		return 0;
+	}
+
+	private static int getCodeInPossibleValues(SettingDetail detail, String settingDetailValue) {
+		if (detail.getPossibleValues() != null && !detail.getPossibleValues().isEmpty()) {
+			for (ValueReference valueRef : detail.getPossibleValues()) {
+				if (valueRef.getId().equals(Integer.parseInt(settingDetailValue))) {
+					return Integer.parseInt(valueRef.getName());
+				}
+			}
+		}
+		return 0;
+	}
+
+	public static boolean checkVariablesHaveValues(List<SettingDetail> checkVariables) {
+		if (checkVariables != null && !checkVariables.isEmpty()) {
+			for (SettingDetail setting : checkVariables) {
+				if (setting.getValue() == null) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

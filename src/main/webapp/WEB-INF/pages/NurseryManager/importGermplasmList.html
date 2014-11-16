@@ -377,13 +377,16 @@
 
 		function showSpecifyCheckSection() {
 			'use strict';
-
+			
 			if ($('.check-germplasm-list-items tr').length === 0) {
 				$('#specifyCheckSection').css('display', 'none');
 				$('#check-germplasm-list-reset-button').css('opacity', '0');
 			} else {
 				$('#check-germplasm-list-reset-button').css('opacity', '1');
 				$('#specifyCheckSection').css('display', 'block');
+			}
+			if ($('#chooseGermplasmAndChecks').data('replace') === '0') {
+				disableCheckVariables(true);
 			}
 		}
 
@@ -660,10 +663,6 @@
         $(document).ready(function () {
             'use strict';
 
-			// Display tree
-            showSpecifyCheckSection();
-
-
             $('#entries-details').css('display', 'none');
 
             displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
@@ -685,6 +684,8 @@
             	displaySelectedGermplasmDetails();
             	displaySelectedCheckGermplasmDetails();
             }
+            
+            showSpecifyCheckSection();
         });
         
 	//]]>

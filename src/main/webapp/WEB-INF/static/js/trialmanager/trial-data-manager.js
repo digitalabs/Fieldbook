@@ -63,8 +63,8 @@
                     } else {
                         // update necessary data and settings
                         // currently identified is the stockid, locationid, and experimentid found in the environment tab
-                        service.updateCurrentData('environments', extractData(data.environmentData));
                         service.updateSettings('environments', extractSettings(data.environmentData));
+                        service.updateCurrentData('environments', extractData(data.environmentData));
 
                         service.currentData.basicDetails.studyID = trialID;
                         service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
@@ -351,6 +351,7 @@
                                             service.trialMeasurement.count);
                                         service.applicationData.unsavedGeneratedDesign = false;
                                         service.applicationData.unsavedTraitsAvailable = false;
+                                        setupSettingsVariables();
                                         $('body').data('needToSave', '0');
                                     });
 
@@ -706,24 +707,29 @@
             TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors,5);
 
             // assign auxilliary settings to the service.settings items to indicate it came from a initialization
-            _.each(service.settings,function(val,settingsKey) {
-                if (val instanceof angular.OrderedHash) {
-                    _.find(val.vals(),function(_val) {
-                        _val.existingData = true;
-                    });
+            var setupSettingsVariables = function () {
+                _.each(service.settings, function (val) {
+                    if (val instanceof angular.OrderedHash) {
+                        _.find(val.vals(), function (_val) {
+                            _val.existingData = true;
+                        });
 
-                } else {
-                    _.each(val,function(_val,key) {
+                    } else {
+                        _.each(val, function (_val) {
 
-                        if (_val instanceof angular.OrderedHash) {
-                            _.find(_val.vals(),function(__val) {
-                                __val.existingData = true;
-                            });
-                        }
-                    });
-                }
+                            if (_val instanceof angular.OrderedHash) {
+                                _.find(_val.vals(), function (__val) {
+                                    __val.existingData = true;
+                                });
+                            }
+                        });
+                    }
 
-            });
+                });
+            };
+
+            setupSettingsVariables();
+
 
 
             return service;

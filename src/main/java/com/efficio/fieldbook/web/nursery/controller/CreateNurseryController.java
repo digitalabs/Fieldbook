@@ -56,9 +56,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.util.JsonIoException;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -81,6 +83,8 @@ public class CreateNurseryController extends SettingsController {
     
     /** The Constant URL_SETTINGS. */
     public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
+    
+    private static final String URL_CHECKS = "/NurseryManager/includes/importGermplasmListCheckSection";
     
     @Resource
     private OntologyService ontologyService;
@@ -161,6 +165,20 @@ public class CreateNurseryController extends SettingsController {
         return super.showAjaxPage(model, URL_SETTINGS);
     }
     
+    @RequestMapping(value="/nursery/getChecks/{nurseryId}", method = RequestMethod.GET)
+    public String getChecksForUseExistingNursery(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, @PathVariable int nurseryId
+            , Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    	if (userSelection.getRemovedConditions() != null) {
+    		CreateNurseryForm createNurseryForm = new CreateNurseryForm();
+	    	List<SettingDetail> checkVariables = getCheckVariables(userSelection.getRemovedConditions(), createNurseryForm);
+	        form.setCheckVariables(checkVariables);
+    	}
+    	
+    	model.addAttribute("importGermplasmListForm", form);
+    	
+    	return super.showAjaxPage(model, URL_CHECKS);
+    }
+    
     protected void addErrorMessageToResult(CreateNurseryForm form, MiddlewareQueryException e) {
     	String param = AppConstants.NURSERY.getString();
 		form.setHasError("1");
@@ -211,10 +229,21 @@ public class CreateNurseryController extends SettingsController {
     	assignDefaultValues(form);
     	form.setMeasurementRowList(new ArrayList<MeasurementRow>());
     	
+    	//create check variables for specify checks
+    	setCheckVariablesInForm(form2);
+    	
     	return super.show(model);
     }
     
-    /**
+    protected void setCheckVariablesInForm(ImportGermplasmListForm form2) throws MiddlewareQueryException {
+    	List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
+        checkVariables = buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(), 
+        		buildRequiredVariablesLabel(AppConstants.CHECK_VARIABLES.getString(), false));        		
+        form2.setCheckVariables(checkVariables);
+        userSelection.setRemovedConditions(checkVariables);
+	}
+
+	/**
      * Assign default values.
      *
      * @param form the form
@@ -773,5 +802,13 @@ public class CreateNurseryController extends SettingsController {
     
     protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService){
     	this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+    }
+    
+    protected void setFieldbookService(FieldbookService fieldbookService) {
+    	this.fieldbookService = fieldbookService;
+    }
+    
+    protected void setUserSelection(UserSelection userSelection) {
+    	this.userSelection = userSelection;
     }
 }

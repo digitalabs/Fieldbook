@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -14,6 +15,9 @@ import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.util.Debug;
 import org.junit.Test;
+
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 public class SettingsUtilTest {
 
@@ -57,5 +61,101 @@ public class SettingsUtilTest {
 		Assert.assertEquals(dataset.getVariates().get(0).getRole(), newDataset.getVariates().get(0).getRole());
 		Assert.assertEquals(dataset.getVariates().get(0).getDatatype(), newDataset.getVariates().get(0).getDatatype());
 
+	}
+	
+	@Test
+	public void testIfCheckVariablesAreInFixedNurseryList() {
+		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_START.getId()));
+		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_INTERVAL.getId()));
+		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_PLAN.getId()));
+	}
+	
+	@Test
+    public void testGetCodeValueValid() {
+    	List<SettingDetail> removedConditions = createCheckVariables(true);
+    	int code = SettingsUtil.getCodeValue("8414", removedConditions, TermId.CHECK_PLAN.getId());
+    	Assert.assertEquals("Expected 1 but got " + code + " instead.", 1, code);
+    }
+	
+	@Test
+    public void testGetCodeValueWhenConditionsIsNull() {
+    	List<SettingDetail> removedConditions = null;
+    	int code = SettingsUtil.getCodeValue("8414", removedConditions, TermId.CHECK_PLAN.getId());
+    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+    }
+	
+	@Test
+    public void testGetCodeValueWhenPossibleValuesIsNull() {
+    	List<SettingDetail> removedConditions = createCheckVariables(true);
+    	int code = SettingsUtil.getCodeValue("8411", removedConditions, TermId.CHECK_START.getId());
+    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+    }
+	
+	@Test
+    public void testGetCodeValueWhenPossibleValuesIsNotNullButEmpty() {
+    	List<SettingDetail> removedConditions = createCheckVariables(true);
+    	int code = SettingsUtil.getCodeValue("8412", removedConditions, TermId.CHECK_INTERVAL.getId());
+    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+    }
+    
+    @Test
+    public void testGetCodeValueInvalid() {
+    	List<SettingDetail> removedConditions = createCheckVariables(true);
+    	int code = SettingsUtil.getCodeValue("8413", removedConditions, TermId.CHECK_PLAN.getId());
+    	Assert.assertNotSame("Expected 1 but got " + code + " instead.", 1, code);
+    }
+    
+    @Test
+    public void testIfCheckVariablesHaveValues() {
+    	List<SettingDetail> checkVariables = createCheckVariables(true);
+    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+    	Assert.assertTrue(checksHaveValues);
+    }
+    
+    @Test
+    public void testIfCheckVariablesHaveNoValues() {
+    	List<SettingDetail> checkVariables = createCheckVariables(false);
+    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+    	Assert.assertFalse(checksHaveValues);
+    }
+    
+    @Test
+    public void testIfCheckVariablesIsNull() {
+    	List<SettingDetail> checkVariables = null;
+    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+    	Assert.assertFalse(checksHaveValues);
+    }
+    
+    @Test
+    public void testIfCheckVariablesIsEmpty() {
+    	List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
+    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+    	Assert.assertFalse(checksHaveValues);
+    }
+
+    private List<SettingDetail> createCheckVariables(boolean hasValue) {
+		List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
+		
+		checkVariables.add(createSettingDetail(TermId.CHECK_START.getId(), hasValue ? "1" : null));
+		checkVariables.add(createSettingDetail(TermId.CHECK_INTERVAL.getId(), hasValue ? "4" : null));
+		checkVariables.add(createSettingDetail(TermId.CHECK_PLAN.getId(), hasValue ? "8414" : null));
+		
+		return checkVariables;
+	}
+    
+    private SettingDetail createSettingDetail(int cvTermId, String value) {
+		SettingVariable variable = new SettingVariable();
+		variable.setCvTermId(cvTermId);
+		SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
+		
+		if (cvTermId == TermId.CHECK_PLAN.getId()) {
+			List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+			possibleValues.add(new ValueReference(8414, "1", "Insert each check in turn"));
+			possibleValues.add(new ValueReference(8415, "2", "Insert all checks at each position"));
+			settingDetail.setPossibleValues(possibleValues);
+		} else if (cvTermId == TermId.CHECK_INTERVAL.getId()) {
+			settingDetail.setPossibleValues(new ArrayList<ValueReference>());
+		}
+		return settingDetail;
 	}
 }

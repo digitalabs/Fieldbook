@@ -1347,7 +1347,6 @@ function choosePreviousNursery(studyId) {
 		url = '/Fieldbook/NurseryManager/createNursery/nursery/';
 	}
 
-
 	$.ajax({
 		url : url + studyId,
 		type : 'GET',
@@ -1363,8 +1362,25 @@ function choosePreviousNursery(studyId) {
 				createErrorNotification(errorMsgHeader, $('#errorMessage').val());
 			}
 			$('.chs-add-variable-factor').show();
+		},
+		complete : function () {
+			url = '/Fieldbook/NurseryManager/createNursery/nursery/getChecks/';
+			$.ajax({
+				url : url + studyId,
+				type : 'GET',
+				cache : false,
+				data : '',
+				success : function(html) {
+					console.log(html);
+					if ($('#specifyCheckSection').length !== 0) {
+						$('#specifyCheckSection').html(html);
+					}
+				}
+			});
 		}
 	});
+	
+	
 }
 function isNurseryNameUnique() {
 	'use strict';
@@ -1490,6 +1506,8 @@ function validateCreateNursery() {
 			// we validate only if there is a check
 			// we try to validate if all the check row has check
 			var hasCheckError = false;
+			var checkStartIndex = $('#' + getJquerySafeId('checkVariables0.value')).val();
+			var checkInterval = $('#' + getJquerySafeId('checkVariables1.value')).val();
 			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(){
 				  if($(this).val() === ''){
 					  hasCheckError = true;
@@ -1500,27 +1518,27 @@ function validateCreateNursery() {
 				showInvalidInputMessage(selectedCheckError);
 				return false;
 			}
-			if (isInt($('#startIndex2').val()) === false) {
+			if (isInt(checkStartIndex) === false) {
 				showInvalidInputMessage(startIndexWholeNumberError);
 				return false;
 			}
-			if (isInt($('#interval2').val()) === false) {
+			if (isInt(checkInterval) === false) {
 				showInvalidInputMessage(intervalWholeNumberError);
 				return false;
 			}
 			var totalGermplasms = $('#totalGermplasms').val();
-			if (parseInt($('#startIndex2').val(), 10) < 0
-					|| parseInt($('#startIndex2').val(), 10) > totalGermplasms) {
+			if (parseInt(checkStartIndex, 10) < 0
+					|| parseInt(checkStartIndex, 10) > totalGermplasms) {
 				showInvalidInputMessage(startIndexLessGermplasmError);
 				return false;
 			}
 
-			if (parseInt($('#interval2').val(), 10) < 0) {
+			if (parseInt(checkInterval, 10) < 0) {
 				showInvalidInputMessage(checkIntervalGreaterThanZeroError);
 				return false;
 			}
 			var totalNumberOfChecks = selectedCheckListDataTable.getDataTable().$('.check-hidden').length;
-			if (parseInt($('#interval2').val(), 10) <= totalNumberOfChecks) {
+			if (parseInt(checkInterval, 10) <= totalNumberOfChecks) {
 				showInvalidInputMessage(checkIntervalError);
 				return false;
 			}
@@ -1708,12 +1726,9 @@ function validateGermplasmInput(importDate, importLocationId, importMethodId) {
 function submitGermplasmAndCheck() {
 	'use strict';
 
-	$('#startIndex').val($('#startIndex2').val());
-	$('#interval').val($('#interval2').val());
-	$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
 	$('#lastDraggedChecksList').val(lastDraggedChecksList);
 
-	var $form = $('#germplasm-list-form'),
+	var $form = $('#germplasm-list-form,#specify-checks-form'),
 		serializedData = $form.serialize() + '&lastDraggedChecksList='+lastDraggedChecksList;
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
 		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();

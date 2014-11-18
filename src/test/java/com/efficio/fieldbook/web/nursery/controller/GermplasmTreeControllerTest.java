@@ -27,11 +27,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.controller.GermplasmTreeController;
 import com.efficio.pojos.treeview.TreeNode;
 
-public class GermplasmTreeControllerTest extends AbstractBaseControllerTest {
+public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrationTest {
 
     /** The controller. */
     @Autowired

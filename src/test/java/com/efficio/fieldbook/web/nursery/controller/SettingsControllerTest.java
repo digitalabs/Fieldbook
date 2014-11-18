@@ -11,13 +11,13 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-public class SettingsControllerTest extends AbstractBaseControllerTest {
+public class SettingsControllerTest extends AbstractBaseControllerIntegrationTest {
 	
 	private SettingsController controller;
 	

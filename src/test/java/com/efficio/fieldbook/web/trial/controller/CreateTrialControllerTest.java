@@ -15,11 +15,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 
-public class CreateTrialControllerTest extends AbstractBaseControllerTest {
+public class CreateTrialControllerTest extends AbstractBaseControllerIntegrationTest {
 	
 	@Autowired
 	private CreateTrialController controller;

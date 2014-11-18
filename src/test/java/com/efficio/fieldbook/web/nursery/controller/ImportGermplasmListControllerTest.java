@@ -29,13 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
-public class ImportGermplasmListControllerTest extends AbstractBaseControllerTest {
+public class ImportGermplasmListControllerTest extends AbstractBaseControllerIntegrationTest {
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListControllerTest.class);

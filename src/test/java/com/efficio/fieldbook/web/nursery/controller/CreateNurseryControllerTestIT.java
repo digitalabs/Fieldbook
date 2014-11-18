@@ -1,11 +1,16 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.FieldbookServiceImpl;
+import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -15,7 +20,6 @@ import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,40 +30,47 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.efficio.fieldbook.service.FieldbookServiceImpl;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
+// TODO : setup testing framework for Fieldbook so that they are not essentially partly an integration test
+public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegrationTest{
 	
 	@Autowired
 	private CreateNurseryController controller;
-	
+
 	@Autowired
 	private UserSelection userSelection;
 	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	@Test
 	public void testGetReturnsCorrectModelAndView() throws Exception {
-		
-		ModelAndView mav = request(CreateNurseryController.URL, HttpMethod.GET.name());
-		
-		ModelAndViewAssert.assertViewName(mav, CreateNurseryController.BASE_TEMPLATE_NAME);
-		ModelAndViewAssert.assertModelAttributeValue(mav, 
-				AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "/NurseryManager/createNursery");
-		
-		Assert.assertEquals(HttpStatus.OK.value(), response.getStatus());
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "createNurseryForm");	
+
+		boolean isHandler = verifyHandler(CreateNurseryController.URL, HttpMethod.GET.name(),
+				CreateNurseryController.class, "show");
+		assertTrue(isHandler);
+
+		fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		FieldbookServiceImpl fieldbookServiceImpl = new FieldbookServiceImpl(
+				fieldbookMiddlewareService, new PossibleValuesCache());
+		setupMockReturns();
+		controller.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		controller.setFieldbookService(fieldbookServiceImpl);
+
+		CreateNurseryForm form = new CreateNurseryForm();
+		ImportGermplasmListForm form2 = new ImportGermplasmListForm();
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		String viewName = controller.show(form, form2, model, session, request);
+		assertEquals(CreateNurseryController.BASE_TEMPLATE_NAME, viewName);
+
+		assertEquals("/NurseryManager/createNursery", model.get(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE));
 	}
 	
 	@Test
@@ -75,11 +86,13 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		Model model = Mockito.mock(Model.class);
 		try {			
 			controller.show(form, form2, model, session, request);
-			Assert.assertNotNull(form2.getCheckVariables());
-			Assert.assertTrue("Expected only check variables but the list has non check variables as well.", 
-					WorkbookTestUtil.areDetailsFilteredVariables(form2.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
+			assertNotNull(form2.getCheckVariables());
+			assertTrue(
+					"Expected only check variables but the list has non check variables as well.",
+					WorkbookTestUtil.areDetailsFilteredVariables(form2.getCheckVariables(),
+							AppConstants.CHECK_VARIABLES.getString()));
 		} catch (MiddlewareQueryException e) {
-			Assert.fail("Expected mock values but still called the middleware class");
+			fail("Expected mock values but still called the middleware class");
 		}
 	}
 	
@@ -88,11 +101,13 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 		try {			
 			controller.setCheckVariablesInForm(form);
-			Assert.assertNotNull(form.getCheckVariables());
-			Assert.assertTrue("Expected only check variables but the list has non check variables as well.", 
-					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
+			assertNotNull(form.getCheckVariables());
+			assertTrue(
+					"Expected only check variables but the list has non check variables as well.",
+					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(),
+							AppConstants.CHECK_VARIABLES.getString()));
 		} catch (MiddlewareQueryException e) {
-			Assert.fail("Expected mock values but still called the middleware class");
+			fail("Expected mock values but still called the middleware class");
 		}
 	}
 		
@@ -105,11 +120,13 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 				
 		try {
 			controller.getChecksForUseExistingNursery(form, -1, model, session, request);
-			Assert.assertNotNull(form.getCheckVariables());
-			Assert.assertTrue("Expected only check variables but the list has non check variables as well.", 
-					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
+			assertNotNull(form.getCheckVariables());
+			assertTrue(
+					"Expected only check variables but the list has non check variables as well.",
+					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(),
+							AppConstants.CHECK_VARIABLES.getString()));
 		} catch (MiddlewareQueryException e) {
-			Assert.fail("Expected mock values but still called the middleware class");
+			fail("Expected mock values but still called the middleware class");
 		}
 		
 	}
@@ -123,9 +140,9 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 				
 		try {
 			controller.getChecksForUseExistingNursery(form, -1, model, session, request);
-			Assert.assertNull(form.getCheckVariables());
+			assertNull(form.getCheckVariables());
 		} catch (MiddlewareQueryException e) {
-			Assert.fail("Expected mock values but still called the middleware class");
+			fail("Expected mock values but still called the middleware class");
 		}
 		
 	}
@@ -171,7 +188,7 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 			.thenReturn(createStandardVariable(TermId.CHECK_PLAN.getId()));
 			
 		} catch (MiddlewareQueryException e) {
-			Assert.fail("Expected mock returns but still called the middleware class.");
+			fail("Expected mock returns but still called the middleware class.");
 		} 
 	}
 
@@ -185,13 +202,13 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 	@Test
 	public void testUseExistingNursery() throws Exception {
 		fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		Mockito.when(fieldbookMiddlewareService.getStudyVariableSettings(1, true))
+		when(fieldbookMiddlewareService.getStudyVariableSettings(1, true))
 			.thenThrow(new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
 		controller.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		
 		ModelAndView mav = request(CreateNurseryController.URL + "/nursery/1", HttpMethod.GET.name());
 		
-		Assert.assertEquals("Expected HttpStatus OK but got " + response.getStatus() + " instead.", 
+		assertEquals("Expected HttpStatus OK but got " + response.getStatus() + " instead.",
 				HttpStatus.OK.value(), response.getStatus());
 		ModelAndViewAssert.assertModelAttributeAvailable(mav, "createNurseryForm");
 		
@@ -204,7 +221,7 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		controller.addErrorMessageToResult(form,
 				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
 		
-		Assert.assertEquals("Expecting error but did not get one", "1", form.getHasError());
+		assertEquals("Expecting error but did not get one", "1", form.getHasError());
 	}
 	
 	@Test
@@ -229,7 +246,7 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
 		
 		String submitResponse = controller.submit(form, new ExtendedModelMap());
-		Assert.assertEquals("success", submitResponse);
+		assertEquals("success", submitResponse);
 	}
 	
 	@Test 
@@ -248,7 +265,8 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		var.setTermId(TermId.LOCATION_ID.getId());
 		var.setValue(locationId);
 		createNurseryController.setLocationVariableValue(detail, var);
-		Assert.assertEquals("Should be able to set the value in the setting detail if its a location",locationId, detail.getValue());
+		assertEquals("Should be able to set the value in the setting detail if its a location",
+				locationId, detail.getValue());
 	}
 	
 	@Test 
@@ -267,7 +285,9 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		var.setTermId(TermId.LOCATION_ID.getId());
 		var.setValue("");
 		createNurseryController.setLocationVariableValue(detail, var);
-		Assert.assertEquals("Setting detail should have an empty value since the variable did not have a value itself","", detail.getValue());
+		assertEquals(
+				"Setting detail should have an empty value since the variable did not have a value itself",
+				"", detail.getValue());
 	}
 	
 	@Test
@@ -287,7 +307,8 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		var.setValue(locationId);
 		
 		createNurseryController.setSettingDetailsValueFromVariable(var, detail);
-		Assert.assertEquals("Should be able to set the value in the setting detail if its a location",locationId, detail.getValue());
+		assertEquals("Should be able to set the value in the setting detail if its a location",
+				locationId, detail.getValue());
 	}
 	
 	@Test
@@ -307,7 +328,9 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		var.setValue("");
 		
 		createNurseryController.setSettingDetailsValueFromVariable(var, detail);
-		Assert.assertEquals("Setting detail should have an empty value if the location variable is an empty value", "", detail.getValue());
+		assertEquals(
+				"Setting detail should have an empty value if the location variable is an empty value",
+				"", detail.getValue());
 	}
 	
 	@Test
@@ -329,6 +352,8 @@ public class CreateNurseryControllerTest extends AbstractBaseControllerTest {
 		var.setValue(bmCode);
 		
 		createNurseryController.setSettingDetailsValueFromVariable(var, detail);
-		Assert.assertEquals("Setting detail should the corresponding id of the matching method for the method code", bmId.toString(), detail.getValue());
+		assertEquals(
+				"Setting detail should the corresponding id of the matching method for the method code",
+				bmId.toString(), detail.getValue());
 	}
 }

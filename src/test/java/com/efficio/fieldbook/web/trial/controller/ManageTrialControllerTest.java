@@ -17,10 +17,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
-public class ManageTrialControllerTest extends AbstractBaseControllerTest {
+public class ManageTrialControllerTest extends AbstractBaseControllerIntegrationTest {
 	
 	@Test
 	public void testGetReturnsCorrectModelAndView() throws Exception {

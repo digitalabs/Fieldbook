@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 
-public class NurseryDetailsTest extends AbstractBaseControllerTest {
+public class NurseryDetailsTest extends AbstractBaseControllerIntegrationTest {
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(NurseryDetailsTest.class);

@@ -17,9 +17,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 
-public class ExportStudyControllerTest extends AbstractBaseControllerTest {
+public class ExportStudyControllerTest extends AbstractBaseControllerIntegrationTest {
 
 	@Resource
 	private ExportStudyController exportStudyController;

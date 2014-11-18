@@ -41,7 +41,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
 
@@ -50,7 +50,7 @@ import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
  *
  * @author Chezka Camille Arevalo
  */
-public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
+public class OntologyManagerControllerTest extends AbstractBaseControllerIntegrationTest {
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);
@@ -123,45 +123,6 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerTest {
     	term = Mockito.mock(Term.class);
     }
 
-    /**
-     * Test save constraints.
-     *
-     * @throws MiddlewareQueryException the middleware query exception
-     * @throws MiddlewareException the middleware exception
-     */
-    @Test
-    public void testSaveConstraints() throws MiddlewareQueryException, MiddlewareException {
-        Double minValue = null, maxValue = null;
-        
-        //delete constraint
-        ontologyService.deleteStandardVariableMinMaxConstraints(standardVariable.getId());
-        standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
-        assertNull(standardVariable.getConstraints());
-        
-        minValue = 0.0;
-        maxValue = 10.0;
-        
-        //add constraint
-        ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId()
-                , new VariableConstraints(Double.valueOf(minValue.toString())
-                        , Double.valueOf(maxValue.toString())));
-        standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
-        assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
-        assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
-        
-        //edit
-        minValue = 1.0;
-        maxValue = 10.0;
-        Integer minValueId = standardVariable.getConstraints().getMinValueId();
-        Integer maxValueId = standardVariable.getConstraints().getMaxValueId();
-        ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), 
-                new VariableConstraints(minValueId, maxValueId, Double.valueOf(minValue.toString())
-                        , Double.valueOf(maxValue.toString())));
-        standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
-        assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
-        assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
-    } 
-    
     @Test
     public void testSaveNewVariableConfirmPreselectVariableIdIsMaintainedIfFromPopup() throws MiddlewareQueryException{
     	int variableId = 10180;

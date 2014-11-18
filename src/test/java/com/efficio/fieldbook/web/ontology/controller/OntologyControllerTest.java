@@ -40,11 +40,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
-public class OntologyControllerTest extends AbstractBaseControllerTest {
+public class OntologyControllerTest extends AbstractBaseControllerIntegrationTest {
     
     private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);
     

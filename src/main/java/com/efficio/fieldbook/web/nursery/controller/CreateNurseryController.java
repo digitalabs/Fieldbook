@@ -249,7 +249,7 @@ public class CreateNurseryController extends SettingsController {
      * @param form the form
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
+    protected void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
         List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
         List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();

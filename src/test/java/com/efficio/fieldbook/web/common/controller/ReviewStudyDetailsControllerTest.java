@@ -25,10 +25,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 
-public class ReviewStudyDetailsControllerTest extends AbstractBaseControllerTest {
+public class ReviewStudyDetailsControllerTest extends AbstractBaseControllerIntegrationTest {
 
 	@Resource
 	private ReviewStudyDetailsController reviewStudyDetailsController;

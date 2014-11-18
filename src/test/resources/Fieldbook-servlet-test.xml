@@ -161,6 +161,8 @@
        		</list>
    		</property>    
 	</bean>
+	
+	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
 
 	<!-- **************************************************************** -->
 	<!-- MIDDLEWARE Database Managers -->

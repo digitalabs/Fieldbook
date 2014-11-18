@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+import com.csvreader.CsvReader;
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.utils.test.ExcelImportUtil;
@@ -111,7 +112,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     public void testFieldmapFieldsInGeneratedPdf() {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(true);
+    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
     	String labels = "";
     	String fileName = "";
     	try {
@@ -135,7 +136,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     public void testFieldmapFieldsInGeneratedXls() {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(false);
+    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
     	String labels = "";
     	String fileName = "";
     	try {
@@ -272,7 +273,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     public void testGenerationOfPdfLabels() {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(true);
+    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
     	String fileName = "";
     	try {
     		fileName = labelPrintingService.generatePDFLabels(trialInstances, userLabelPrinting, baos);
@@ -297,7 +298,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     public void testGenerationOfXlsLabels() {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(false);
+    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
     	String fileName = "";
     	try {
     		fileName = labelPrintingService.generateXlSLabels(trialInstances, userLabelPrinting, baos);
@@ -318,4 +319,54 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     		Assert.fail("Excountered error while reading xls file.");
     	}
     }
+    
+    @Test
+    public void testGenerationOfCsvLabels() {
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
+    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
+    	String fileName = "";
+    	try {
+    		fileName = labelPrintingService.generateCSVLabels(trialInstances, userLabelPrinting, baos);
+    		
+    		CsvReader csvReader = new CsvReader(fileName);
+    		
+    		csvReader.readHeaders();
+            String[] headers = csvReader.getHeaders();
+			
+    		Assert.assertNotNull("Expected a new csv file was created but found none.", csvReader);    		
+    		Assert.assertNotNull("Expecting a csv file with headers but no header was found.", headers);
+    		Assert.assertTrue("Expected all headers but only got " + headers.length, areHeadersEqual(headers, userLabelPrinting));
+    		Assert.assertTrue("Expected " + " rows but got " + " instead.", areRowsEqual(csvReader, headers, userLabelPrinting));
+    	} catch (IOException e) {
+    		LOG.error(e.getMessage(), e);
+    		Assert.fail("Excountered error while exporting/reading csv file.");
+    	}
+    }
+
+	private boolean areRowsEqual(CsvReader csvReader, String[] headers, UserLabelPrinting userLabelPrinting) {
+		try {
+			int rowNum = 0, rowNum2 = 0;
+			while (csvReader.readRecord()) {
+				rowNum++;
+			}
+			
+			for (FieldMapDatasetInfo dataset : userLabelPrinting.getFieldMapInfo().getDatasets()) {
+				for (FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstancesWithFieldMap()) {
+					rowNum2 += trialInstance.getFieldMapLabels().size();
+				}
+			}
+			return rowNum == rowNum2;
+		} catch (IOException e) {
+			LOG.error(e.getMessage(), e);
+			Assert.fail("Error encountered while reading the file.");
+			return false;
+		}
+	}
+
+	private boolean areHeadersEqual(String[] headers, UserLabelPrinting userLabelPrinting) {
+		int headerLength = userLabelPrinting.getLeftSelectedLabelFields().split(",").length + 
+				userLabelPrinting.getRightSelectedLabelFields().split(",").length;
+		return headers.length == headerLength;
+	}
 }

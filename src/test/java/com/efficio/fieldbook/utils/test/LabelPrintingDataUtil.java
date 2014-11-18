@@ -66,11 +66,12 @@ public class LabelPrintingDataUtil {
     private static final String SECOND_BARCODE_FIELD = "";
     private static final String THIRD_BARCODE_FIELD = "";
     private static final String FILE_NAME = "labelPrintingTest";
-    private static final String GENERATE_TYPE = "1";
     private static final String FILE_NAME_DL_PDF = FILE_NAME + ".pdf";
     private static final String FILE_NAME_DL_XLS = FILE_NAME + ".xls";
+    private static final String FILE_NAME_DL_CSV = FILE_NAME + ".csv";
     private static final String FILE_NAME_DDL_PDF = System.getProperty( "user.home" ) + "/" + FILE_NAME_DL_PDF;
     private static final String FILE_NAME_DDL_XLS = System.getProperty( "user.home" ) + "/" + FILE_NAME_DL_XLS;
+    private static final String FILE_NAME_DDL_CSV = System.getProperty( "user.home" ) + "/" + FILE_NAME_DL_CSV;
     
     //data for StudyTrialInstanceInfo
     private static final String FIELDBOOK_NAME = "test fieldbook";
@@ -91,7 +92,7 @@ public class LabelPrintingDataUtil {
 		return fieldMapInfoList;
 	}
     
-    public static UserLabelPrinting createUserLabelPrinting(boolean isPdf) {
+    public static UserLabelPrinting createUserLabelPrinting(String type) {
     	UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
     	
     	FieldMapInfo fieldMapInfo = new FieldMapInfo();
@@ -104,19 +105,22 @@ public class LabelPrintingDataUtil {
     	userLabelPrinting.setFirstBarcodeField(FIRST_BARCODE_FIELD);
     	userLabelPrinting.setSecondBarcodeField(SECOND_BARCODE_FIELD);
     	userLabelPrinting.setThirdBarcodeField(THIRD_BARCODE_FIELD);
-    	userLabelPrinting.setGenerateType(GENERATE_TYPE);
+    	userLabelPrinting.setGenerateType(type);
     	userLabelPrinting.setLeftSelectedLabelFields(LEFT_LABEL_FIELDS);
     	userLabelPrinting.setRightSelectedLabelFields(RIGHT_LABEL_FIELDS);
     	userLabelPrinting.setNumberOfLabelPerRow(LABEL_PER_ROW);
     	userLabelPrinting.setNumberOfRowsPerPageOfLabel(ROWS_PER_PAGE);
     	userLabelPrinting.setSizeOfLabelSheet(LABEL_SHEET_SIZE);
     	
-    	if (isPdf) {
+    	if (type.equals(AppConstants.LABEL_PRINTING_PDF.getString())) {
 	    	userLabelPrinting.setFilenameDL(FILE_NAME_DL_PDF);
 	    	userLabelPrinting.setFilenameDLLocation(FILE_NAME_DDL_PDF);
-    	} else {
+    	} else if (type.equals(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
     		userLabelPrinting.setFilenameDL(FILE_NAME_DL_XLS);
 	    	userLabelPrinting.setFilenameDLLocation(FILE_NAME_DDL_XLS);
+    	} else {
+    		userLabelPrinting.setFilenameDL(FILE_NAME_DL_CSV);
+	    	userLabelPrinting.setFilenameDLLocation(FILE_NAME_DDL_CSV);
     	}
     	
     	userLabelPrinting.setFieldMapInfo(fieldMapInfo);

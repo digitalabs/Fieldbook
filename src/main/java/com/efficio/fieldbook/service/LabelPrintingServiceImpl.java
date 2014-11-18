@@ -35,6 +35,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.commons.pojo.ExportColumnHeader;
+import org.generationcp.commons.pojo.ExportColumnValue;
+import org.generationcp.commons.service.ExportService;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -88,6 +91,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
+    
+    @Resource
+    private ExportService exportService;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
@@ -667,7 +673,82 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         return fileName;
     }
     
-    /**
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateCSVLabels(org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo, com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting, java.io.ByteArrayOutputStream)
+     */
+    @Override
+    public String generateCSVLabels(List<StudyTrialInstanceInfo> trialInstances,
+            UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
+            throws IOException {
+    	String fileName = userLabelPrinting.getFilenameDLLocation();
+    	String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
+        String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
+    	
+    	List<ExportColumnHeader> exportColumnHeaders = generateColumnHeaders(leftSelectedFields);
+    	exportColumnHeaders.addAll(generateColumnHeaders(rightSelectedFields));
+    	
+		List<Map<Integer, ExportColumnValue>> exportColumnValues = generateColumnValues(trialInstances, leftSelectedFields, rightSelectedFields);
+		
+		exportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName);
+    	
+    	return fileName;
+    }
+    
+    private List<Map<Integer, ExportColumnValue>> generateColumnValues(List<StudyTrialInstanceInfo> trialInstances, String leftSelectedFields,
+			String rightSelectedFields) {
+    	List<Map<Integer, ExportColumnValue>> columnValues = new ArrayList<Map<Integer, ExportColumnValue>>();
+    	
+    	//we populate the info now
+        for(StudyTrialInstanceInfo trialInstance : trialInstances){
+            FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
+            
+            Map<String,String> moreFieldInfo = new HashMap<String, String>();
+            moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
+            moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
+            moreFieldInfo.put("fieldName", fieldMapTrialInstanceInfo.getFieldName());
+            moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
+            moreFieldInfo.put("trialInstanceNumber", 
+                    fieldMapTrialInstanceInfo.getTrialInstanceNo());
+            
+            for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
+            	Map<Integer, ExportColumnValue> rowMap = generateRowMap(leftSelectedFields, moreFieldInfo, fieldMapLabel);
+            	rowMap.putAll(generateRowMap(rightSelectedFields, moreFieldInfo, fieldMapLabel));
+            	columnValues.add(rowMap);
+            }
+        }
+        
+        return columnValues;
+	}
+
+	private Map<Integer, ExportColumnValue> generateRowMap(String leftSelectedFields,
+			Map<String, String> moreFieldInfo, FieldMapLabel fieldMapLabel) {
+		Map<Integer, ExportColumnValue> rowMap = new HashMap<Integer, ExportColumnValue>();    
+        
+        StringTokenizer token = new StringTokenizer(leftSelectedFields, ",");
+        while(token.hasMoreTokens()){
+            String headerId = token.nextToken();
+            String value = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId, false);
+            ExportColumnValue columnValue = new ExportColumnValue(Integer.parseInt(headerId), value);
+            rowMap.put(Integer.parseInt(headerId), columnValue);
+        }
+        
+        return rowMap;
+	}
+
+	private List<ExportColumnHeader> generateColumnHeaders(String selectedFields) {
+    	List<ExportColumnHeader> columnHeaders = new ArrayList<ExportColumnHeader>();
+    	StringTokenizer token = new StringTokenizer(selectedFields, ",");
+    	
+    	while (token.hasMoreTokens()) {
+    		String headerId = token.nextToken();
+            String headerName = getHeader(headerId);
+            ExportColumnHeader columnHeader = new ExportColumnHeader(Integer.parseInt(headerId), headerName, true);
+            columnHeaders.add(columnHeader);
+    	}
+    	return columnHeaders;
+	}
+
+	/**
      * Gets the available label fields.
      *
      * @param isTrial the is trial

@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.service.api;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,6 +54,19 @@ public interface LabelPrintingService {
     String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, 
             UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) 
                     throws MiddlewareQueryException;
+    
+    /**
+     * Generate csv labels.
+     *
+     * @param trialInstances the trial instances
+     * @param userLabelPrinting the user label printing
+     * @param baos the baos
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    String generateCSVLabels(List<StudyTrialInstanceInfo> trialInstances, 
+            UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
+            		throws IOException;
     
     /**
      * Gets the available label fields.

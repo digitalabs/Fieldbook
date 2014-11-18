@@ -82,7 +82,11 @@ function validateEnterLabelFieldsPage(type){
 		showAlertMessage('', generateLabelsWarningMessage);
 	}
 	
-	$('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
+	if (type === labelPrintingExcel) {
+		$('#'+getJquerySafeId('userLabelPrinting.generateType')).val($('#export-type').val());
+	} else {
+		$('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
+	}
 	
 	setSelectedTrialInstanceOrder();
 	
@@ -165,4 +169,10 @@ function setSelectedTrialInstanceOrder() {
 		}
 	});
 	$('#'+getJquerySafeId('userLabelPrinting.order')).val(order.join(','));
+}
+
+function showExportModal() {
+	var selectedData = {'id': labelPrintingExcel, 'text': excelOption};
+	$('#export-type').select2('data', selectedData);
+	$('#export-label-data-modal').modal('show');
 }

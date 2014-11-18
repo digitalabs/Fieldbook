@@ -398,12 +398,15 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 	    <div class="col-xs-4 col-md-4">&nbsp;</div>
 	    <div class="col-xs-8 col-md-8">
 	      <input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>
-	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage(1);" value="Generate Labels" th:value="#{common.form.generate.label.text}" class="btn btn-primary"/>
-	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage(2);" value="Export Label Data" th:value="#{common.form.export.label.text}" class="btn btn-primary"/>
+	      <input type="button" id="generate-labels" value="Generate Labels" th:value="#{common.form.generate.label.text}" class="btn btn-primary"/>
+	      <input type="button" id="export-label-data" value="Export Label Data" th:value="#{common.form.export.label.text}" class="btn btn-primary"/>
 
 	    </div>
-	  </div>
-	  <div class="form-group">&nbsp;</div>
+    </div>
+	<div class="form-group">&nbsp;</div>
+	<div class="row">
+		<div id="export-labels" th:include="/LabelPrinting/exportLabelDataModal"></div>
+	</div>
 </div>
 </div></div>
 </form>
@@ -414,9 +417,10 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <script type="text/javascript" th:inline="javascript">
 	//<![CDATA[    
 		/*globals setSelectedTrialsAsDraggable*/   
-		/*exported setTotalLabels*/ 
-
-  		var isTrial = /*[[${labelPrintingForm.isTrial}]]*/;
+		/*exported setTotalLabels*/
+		
+		var isTrial = /*[[${labelPrintingForm.isTrial}]]*/;
+		var excelOption = /*[[#{label.printing.export.excel}]]*/;
   		
  		 $(function() {
  		 	'use strict';
@@ -424,6 +428,19 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  		 	$('.includeTrial').on('click', function(){
  		 		setTotalLabels($(this));	
  		 	});
+ 		 	
+ 		 	$('#generate-labels').on('click', function() {
+ 		 		validateEnterLabelFieldsPage(labelPrintingPDF)
+ 		 	});
+ 		 	
+ 		 	$('#export-label-data').on('click', function(){
+ 		 		showExportModal();
+ 		 	});
+ 		 	
+ 		 	$('#export-label-data-continue').on('click', function(){
+ 		 		validateEnterLabelFieldsPage(labelPrintingExcel);
+ 		 	})
+ 		 	
  			setSelectedTrialsAsDraggable();
 
  			$( 'ul.droptrue' ).sortable({

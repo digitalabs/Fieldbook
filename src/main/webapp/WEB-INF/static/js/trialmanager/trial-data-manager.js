@@ -3,7 +3,6 @@
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates*/
 (function () {
     'use strict';
-
     angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','TRIAL_SETTINGS_INITIAL_DATA',
         'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
         'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
@@ -398,8 +397,8 @@
                     if (service.settings[key] instanceof angular.OrderedHash) {
                         service.settings[key].removeAll();
 
-                        _.each(newValue.vals(),function(val,nvkey) {
-                            service.settings[key].push(nvkey,val);
+                        _.each(newValue.keys(),function(nvkey) {
+                            service.settings[key].push(nvkey,newValue.val(nvkey));
                         });
                     } else {
                         _.each(_.keys(newValue),function(nvkey) {
@@ -408,8 +407,8 @@
 
                                 service.settings[key][nvkey].removeAll();
 
-                                _.each(newValue[nvkey].vals(),function(val,ohkey) {
-                                    service.settings[key][nvkey].push(ohkey,val);
+                                _.each(newValue[nvkey].keys(),function(ohkey) {
+                                    service.settings[key][nvkey].push(ohkey,newValue[nvkey].val(ohkey));
                                 });
                             } else {
                                 service.settings[key][nvkey] = newValue[nvkey];

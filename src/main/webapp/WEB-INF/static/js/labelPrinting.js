@@ -4,11 +4,10 @@ function validateEnterLabelFieldsPage(type){
 	'use strict';
 	var leftSelectedFields = '';
 	$('#leftSelectedFields li').each(function(){
-		
 		leftSelectedFields += $(this).attr('id');
 		leftSelectedFields += ',';
 	});
-	
+
 	if(leftSelectedFields != ''){
 		leftSelectedFields = leftSelectedFields.substring(0,leftSelectedFields.length-1); 
 	}
@@ -44,7 +43,7 @@ function validateEnterLabelFieldsPage(type){
 	//we checked if something was checked
 	if($('#'+getJquerySafeId('userLabelPrinting.barcodeNeeded1')).is(':checked')){
 		//we need to check if either one is chosen in the drop downs
-		if($('#'+getJquerySafeId('userLabelPrinting.firstBarcodeField')).val() == ""
+		if($('#'+getJquerySafeId('userLabelPrinting.firstBarcodeField')).val() == ''
 				&& $('#'+getJquerySafeId('userLabelPrinting.secondBarcodeField')).val() == ''
 				&& $('#'+getJquerySafeId('userLabelPrinting.thirdBarcodeField')).val() == ''){
 			showInvalidInputMessage(barcodeFieldNeededError);

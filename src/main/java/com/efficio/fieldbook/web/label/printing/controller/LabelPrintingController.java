@@ -240,14 +240,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             if (getUserLabelPrinting().getFieldMapInfoList() != null) {
                 fileName = "Trial-Field-Map-Labels-" + currentDate;
             } else {
+            	//changed selected name to block name for now
                 fileName += "-" + userLabelPrinting.getNumberOfInstances() 
-                        + "-" + currentDate; //changed selected name to block name for now
+                        + "-" + currentDate; 
             }
         } else {
             if (getUserLabelPrinting().getFieldMapInfoList() != null) {
                 fileName = "Nursery-Field-Map-Labels-" + currentDate;
             } else {
-                fileName += "-" + currentDate; //changed selected name to block name for now
+            	//changed selected name to block name for now
+                fileName += "-" + currentDate; 
             }
         }
         
@@ -276,14 +278,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         }
         response.setHeader("Content-disposition","attachment; filename=" + fileName);
 
-        File xls = new File(getUserLabelPrinting().getFilenameDLLocation()); // the selected name + current date
+        // the selected name + current date
+        File xls = new File(getUserLabelPrinting().getFilenameDLLocation()); 
         FileInputStream in;
         
         try {
             in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();
 
-            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+            // use bigger if you want
+            byte[] buffer= new byte[BUFFER_SIZE]; 
             int length = 0;
 
             while ((length = in.read(buffer)) > 0){
@@ -363,17 +367,17 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
 	    } catch (MiddlewareQueryException e) {
 	        LOG.error(e.getMessage(), e);
 	        results.put("isSuccess", 0);
-	        results.put("message", e.getMessage());
+	        results.put(AppConstants.MESSAGE.getString(), e.getMessage());
 	    } catch (LabelPrintingException e) {
 	        LOG.error(e.getMessage(), e);
 	        results.put("isSuccess", 0);
 	        Locale locale = LocaleContextHolder.getLocale();
-	        results.put("message", messageSource.getMessage(
+	        results.put(AppConstants.MESSAGE.getString(), messageSource.getMessage(
 	                e.getErrorCode(), new String[]{e.getLabelError()}, locale));
 	    } catch (IOException e) {
 	    	LOG.error(e.getMessage(), e);
 	    	results.put("isSuccess", 0);
-	        results.put("message", e.getMessage());
+	        results.put(AppConstants.MESSAGE.getString(), e.getMessage());
 	    }
     	return results;
 	}

@@ -383,10 +383,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         fieldList.add(thirdField);
         
         for(String barcodeLabel : fieldList){
-            if(barcodeLabel.equalsIgnoreCase("")){
+            if(("").equalsIgnoreCase(barcodeLabel)){
                 continue;
             }
-            if(!buffer.toString().equalsIgnoreCase("")){
+            if(!("").equalsIgnoreCase(buffer.toString())){
                 buffer.append(delimiter);
             }
             buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel, includeLabel));
@@ -412,7 +412,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             String barcodeLabel = token.nextToken();
             
             if(i == rowNumber){
-                if(barcodeLabel != null && !barcodeLabel.equalsIgnoreCase("")){                    
+                if(barcodeLabel != null && !("").equalsIgnoreCase(barcodeLabel)){                    
                     buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel, true));
                     break;
                 }
@@ -815,7 +815,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
     public boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail) {
     	//if there are datasets with fieldmap, check if all trial instances of the study have fieldmaps
-        if (fieldMapInfoDetail.getDatasetsWithFieldMap().size() > 0) {
+        if (!fieldMapInfoDetail.getDatasetsWithFieldMap().isEmpty()) {
         	for (FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
         		if (dataset.getTrialInstances().size() == dataset.getTrialInstancesWithFieldMap().size()) {
         			userLabelPrinting.setFieldMapsExisting(true);

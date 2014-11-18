@@ -273,6 +273,8 @@ public enum AppConstants {
     ,LABEL_PRINTING_PDF
     ,LABEL_PRINTING_EXCEL
     ,LABEL_PRINTING_CSV
+    
+    ,MESSAGE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

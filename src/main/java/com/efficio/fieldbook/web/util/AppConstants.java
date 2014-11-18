@@ -269,6 +269,10 @@ public enum AppConstants {
     ,STANDARD_VARIABLE_NAME_LIMIT
     ,NURSERY
     ,TRIAL
+    
+    ,LABEL_PRINTING_PDF
+    ,LABEL_PRINTING_EXCEL
+    ,LABEL_PRINTING_CSV
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

@@ -20,12 +20,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-public class LabelPrintingControllerTest extends AbstractBaseControllerTest {
+public class LabelPrintingControllerTest extends AbstractBaseControllerIntegrationTest {
 	
 	@Resource
 	private LabelPrintingController labelPrintingController;

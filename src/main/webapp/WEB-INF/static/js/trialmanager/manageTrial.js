@@ -295,6 +295,10 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                     
                 });
             };
+            
+            $scope.refreshEnvironmentsAndExperimentalDesign = function () {
+            	window.location.hash = '#/environment';
+            };
 
 
             $scope.displayMeasurementOnlyActions = function () {

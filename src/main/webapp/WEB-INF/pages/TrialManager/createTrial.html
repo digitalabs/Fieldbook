@@ -85,6 +85,13 @@
                                 <!--TODO : replace with URL for manage trial-->
                                 <a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
                             </li>
+                            
+                            <li ng-show="displayMeasurementOnlyActions()">
+
+                                <a href="javascript: showAddEnvironmentsDialog();" id="add-environments-url-link"
+                                   th:text="#{trial.add.environments}">Add Environments</a>
+
+                            </li>
                         </ul>
                     </div>
                 </span>
@@ -279,6 +286,12 @@
 </div>
 <div class="row">
 	<div id="study-fieldmap" th:include="/Common/selectStudyFieldmap"></div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div id="add-environments" th:include="/Common/includes/addEnvironments"></div>
+    </div>
 </div>
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">

@@ -3266,3 +3266,8 @@ function displaySelectedGermplasmDetails() {
 			}					
 	});	
 }
+function showAddEnvironmentsDialog(){
+	'use strict';
+	$('#numberOfEnvironments').val('');
+	$('#addEnvironmentsModal').modal({ backdrop: 'static', keyboard: true });
+}

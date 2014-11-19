@@ -7,7 +7,8 @@
 
                     <div style="display:inline-block">
                         <div  style="width: 350px !important;">
-                            <select ui-select2="{minimumResultsForSearch : -1}" ng-model="currentDesignTypeId" ng-change="onSwitchDesignTypes(currentDesignTypeId)">
+                            <select ui-select2="{minimumResultsForSearch : -1}" ng-model="currentDesignTypeId" 
+                            	ng-change="onSwitchDesignTypes(currentDesignTypeId)" ng-disabled="measurementDetails.hasMeasurement">
                                 <option value="{{item.id}}" ng-repeat="item in designTypes| filterExperimentalDesignType">{{item.name}}</option>
                             </select>
                         </div>

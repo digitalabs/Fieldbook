@@ -907,14 +907,11 @@ function openTreeStudy(id){
 
 function openDeleteConfirmation() {
 	'use strict';
-	
 	var deleteConfirmationText;
-	
 	if (isNursery() && !$('.edit-trial-page-identifier').length) {
 		$('#delete-nursery-heading-modal').text(deleteNurseryTitle);
 		deleteConfirmationText = deleteNurseryConfirmation;
-	}
-	else {
+	} else {
 		$('#delete-nursery-heading-modal').text(deleteTrialTitle);
 		deleteConfirmationText = deleteTrialConfirmation;
 	}
@@ -1020,7 +1017,6 @@ function advanceNursery(tableName) {
 					$('#advanceNurseryModal select.fbk-harvest-year').each(function(){
 						$(this).select2({minimumResultsForSearch: -1});
 					});
-					
 				}
 			});
 		}
@@ -1599,7 +1595,6 @@ function doAdvanceNursery() {
 		cache: false,
 		success: function(data) {
 			var advanceGermplasmChangeDetail = [];
-			
 			if(data.isSuccess === '0'){
 				showErrorMessage('page-advance-modal-message', data.message);
 			}else{
@@ -1633,10 +1628,7 @@ function showAdvanceGermplasmInfo(uniqueId){
 			var uniqueId,
 				close,
 				aHtml;
-
-			
 				$('#advanceNurseryModal').modal('hide');
-
 				uniqueId = $(html).find('.uniqueId').attr('id');
 				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
 				aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + uniqueId + '" href="#advance-list' + uniqueId + '">Advance List' + close + '</a>';
@@ -2490,7 +2482,6 @@ function showManageCheckTypePopup() {
 		backdrop : 'static',
 		keyboard : false
 	});
-	
 }
 function addUpdateCheckType(operation) {
 	'use strict';
@@ -2812,13 +2803,11 @@ function reloadCheckListTable(){
 }
 function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	'use strict';
-	
 	if(isPreSelect){
 		$('body').data('doAutoSave', '1');
 	}else{
 		$('body').data('doAutoSave', '0');
 	}
-	
 	$('#page-study-tree-message-modal').html('');
 	  $('#addFolderDiv').hide();
 	  $('#renameFolderDiv').hide();
@@ -2907,8 +2896,7 @@ function addDetailsTab(studyId, title) {
 					$('#study-tabs div#study'+studyId).remove();
 				} else {
 					initializeStudyTabs();
-					$('li#li-study'+studyId + ' a').tab('show');			
-					
+					$('li#li-study'+studyId + ' a').tab('show');
 					$('.info#study' + studyId + ' select').each(function() {
 						$(this).select2({minimumResultsForSearch: 20});
 					});
@@ -3128,24 +3116,19 @@ function showGermplasmDetailsSection() {
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
 	$('.browse-import-link').show();
-	
 	if ($('.germplasm-list-items tbody tr').length > 0) {
 		$('#imported-germplasm-list-reset-button').show();
 	}
-	
 	//flag to determine if existing measurements should be deleted
 	$('#chooseGermplasmAndChecks').data('replace', '1');
-	
 	if (isNursery()) {
 		//enable drag and drop
         makeDraggable(true);
         makeCheckDraggable(true);
-        
         if ($('.check-germplasm-list-items tbody tr').length > 0) {
 			//show clear button and specify checks section
 			$('#check-germplasm-list-reset-button').show();
-	        $('#specifyCheckSection').show();
-	        
+			$('#specifyCheckSection').show();
 	        //enable deletion of checks
 	        if (selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null) {
 	        	selectedCheckListDataTable.getDataTable().$('.delete-check').show();
@@ -3214,7 +3197,6 @@ function displaySelectedCheckGermplasmDetails() {
 			setSpinnerMaxValue();
 			itemsIndexAdded = [];
 			$('#check-details').removeClass('fbk-hide');
-			
 			//hide clear button, set list id used fror checks if from list, and set checksFromPrimary value based on checks
 			$('#check-germplasm-list-reset-button').hide();
 			lastDraggedChecksList = $('#lastDraggedChecksList').val();

@@ -283,30 +283,23 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                     }
                 });
             };
-            
             $scope.refreshTabAfterImport = function () {
                 $http.get('/Fieldbook/TrialManager/createTrial/refresh/settings/tab').success(function (data) {
                     // update data and settings
 
                     var environmentData = TrialManagerDataService.extractData(data.environmentData);
-                    
                     TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
                     TrialManagerDataService.updateCurrentData('environments', environmentData);
-                    
                 });
             };
-            
             $scope.refreshEnvironmentsAndExperimentalDesign = function () {
             	window.location.hash = '#/environment';
             };
-
-
             $scope.displayMeasurementOnlyActions = function () {
                 return TrialManagerDataService.trialMeasurement.count &&
                     TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&
                     !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
             };
-
             $scope.performFunctionOnTabChange = function (targetState) {
                 if (targetState === 'editMeasurements') {
                     if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
@@ -336,7 +329,6 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                     }
                 }
             };
-
             $('body').on('DO_AUTO_SAVE', function () {
                 TrialManagerDataService.saveCurrentData();
             });

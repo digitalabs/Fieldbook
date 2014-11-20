@@ -467,6 +467,26 @@
                     return returnVal;
                 },
 
+                transformViewSettingsVariable: function(settingVar) {
+                    settingVar.isChecked = false;
+                    settingVar.existingData = false;
+                    return settingVar;
+                },
+
+                removeSettings: function(mode,_settings,cleanupCallback) {
+                    // This will retrieve only the .isChecked of the variable-settings by filtering out the settings collection.
+                    var checkedCvtermIds = _.pairs(_settings.vals()).filter(function(val) { return _.last(val).isChecked; }).map(function(val) {
+                        return parseInt(_.first(val));
+                    });
+
+                    $http.post('/Fieldbook/manageSettings/removeVariables/' + mode,checkedCvtermIds)
+                        .success(function(data, status, headers, config) {
+                            _.each(checkedCvtermIds,function(cvTermId) {
+                                cleanupCallback(data,cvTermId);
+                            });
+                        });
+                },
+
                 getSettingsArray: function () {
                     if (settingsArray.length === 0) {
                         angular.forEach(service.settings, function (value, key) {
@@ -705,12 +725,13 @@
             // 5 is the group no of treatment factors
             TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors,5);
 
-            // assign auxilliary settings to the service.settings items to indicate it came from a initialization
+            // setup view-data specific properties to setting variables
             var setupSettingsVariables = function () {
                 _.each(service.settings, function (val) {
                     if (val instanceof angular.OrderedHash) {
                         _.find(val.vals(), function (_val) {
                             _val.existingData = true;
+                            _val.isChecked = false;
                         });
 
                     } else {
@@ -719,6 +740,7 @@
                             if (_val instanceof angular.OrderedHash) {
                                 _.find(_val.vals(), function (__val) {
                                     __val.existingData = true;
+                                    __val.isChecked = false;
                                 });
                             }
                         });

@@ -7,8 +7,8 @@
     'use strict';
 
     angular.module('manageTrialApp').controller('MeasurementsCtrl',
-        ['$scope', 'TrialManagerDataService', '$modal', '$q','debounce','$timeout',
-            function ($scope, TrialManagerDataService, $modal, $q,debounce,$timeout) {
+        ['$scope', 'TrialManagerDataService', '$modal', '$q','debounce','$http',
+            function ($scope, TrialManagerDataService, $modal, $q,debounce,$http) {
 
                 $scope.settings = TrialManagerDataService.settings.measurements;
 
@@ -20,45 +20,34 @@
                     }
                 });
 
-                $scope.predeleteFunction = function (variableType, key) {
-                    var hasData = false;
+                $scope.beforeDelete = function(variableType,variableIds) {
                     var deferred = $q.defer();
-                    // do AJAX stuff here
-                    $.ajax({
-                        url: "/Fieldbook/manageSettings/checkMeasurementData/" + variableType + "/" + key,
-                        cache: false,
-                        type: "GET",
-                        async: false,
-                        success: function (data) {
-                            hasData = data.hasMeasurementData;
-                        }
-                    });
 
-                    // if still needed to ask for confirmation, return value of modal popup
-                    // else return false
-                    var modalInstance = null;
-                    if (hasData === '1') {
-                        modalInstance = $modal.open({
-                            templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
-                            controller: 'ConfirmModalController',
-                            resolve: {
-                                MODAL_TITLE: function () {
-                                    return modalConfirmationTitle;
-                                },
-                                MODAL_TEXT: function () {
-                                    return measurementModalConfirmationText;
-                                },
-                                CONFIRM_BUTTON_LABEL: function () {
-                                    return environmentConfirmLabel;
-                                }
+                    $http.post('/Fieldbook/manageSettings/hasMeasurementData/' + variableType,variableIds,{cache: false})
+                        .success(function(data, status, headers, config) {
+                            if ('true' === data) {
+                                var modalInstance = $modal.open({
+                                    templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
+                                    controller: 'ConfirmModalController',
+                                    resolve: {
+                                        MODAL_TITLE: function () {
+                                            return modalConfirmationTitle;
+                                        },
+                                        MODAL_TEXT: function () {
+                                            return measurementModalConfirmationText;
+                                        },
+                                        CONFIRM_BUTTON_LABEL: function () {
+                                            return environmentConfirmLabel;
+                                        }
+                                    }
+                                });
+
+                                modalInstance.result.then(deferred.resolve);
+
+                            } else {
+                                deferred.resolve(true);
                             }
                         });
-                        modalInstance.result.then(function (shouldContinue) {
-                            deferred.resolve(shouldContinue);
-                        });
-                    } else {
-                        deferred.resolve(true);
-                    }
 
                     return deferred.promise;
                 };

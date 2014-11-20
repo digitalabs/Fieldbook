@@ -6,7 +6,6 @@ import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
-
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -22,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-
 import java.util.*;
 
 /**
@@ -255,6 +253,18 @@ public class ManageSettingsController extends SettingsController{
     }
 
     @ResponseBody
+    @RequestMapping(value = "/removeVariables/{mode}", method = RequestMethod.POST)
+    public boolean removeVariables(@RequestBody List<Integer> ids,
+            @PathVariable int mode) {
+
+        for (Integer id : ids) {
+            this.deleteVariable(mode,id);
+        }
+
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
     public String deleteVariable(@PathVariable int mode, @PathVariable int variableId) {
         Map<String, String> idNameRetrieveSaveMap = fieldbookService.getIdNamePairForRetrieveAndSave();
@@ -304,7 +314,7 @@ public class ManageSettingsController extends SettingsController{
 
         return "";
     }
-    
+
     private void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId) {
         SettingDetail newSetting = null;
         for (SettingDetail setting : currentList) {
@@ -312,7 +322,7 @@ public class ManageSettingsController extends SettingsController{
                 newSetting = setting;
             }
         }
-        
+
         if (newSetting == null) {
             try {
                 newSetting = createSettingDetail(variableId, "");
@@ -368,38 +378,50 @@ public class ManageSettingsController extends SettingsController{
             }
         }
     }
-    
+
     @ResponseBody
     @RequestMapping(value = "/checkMeasurementData/{mode}/{variableId}", method = RequestMethod.GET)
-    public Map<String, String> checkMeasurementData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
+    public Map<String, String> checkMeasurementData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model,
             @PathVariable int mode, @PathVariable int variableId) {
         Map<String, String> resultMap = new HashMap<String, String>();
-        boolean hasData = false;
-        
-        //if there are measurement rows, check if values are already entered
-        if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-            if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
-                for (MeasurementRow row: userSelection.getMeasurementRowList()) {
-                    for (MeasurementData data: row.getDataList()) {
-                        if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
-                            hasData = true;
-                            break;
-                        }
-                    }
-                    if (hasData) {
-                    	break;
-                    }
-                }
+
+        if (isVariableHasMeasurementData(mode, variableId)) {
+            resultMap.put("hasMeasurementData", "1");
+        } else {
+            resultMap.put("hasMeasurementData", "0");
+        }
+
+        return resultMap;
+    }
+
+	@ResponseBody
+    @RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)
+    public boolean hasMeasurementData(@RequestBody List<Integer> ids,@PathVariable int mode) {
+
+        for (Integer id : ids) {
+            if (isVariableHasMeasurementData(mode,id)) {
+                return true;
             }
         }
 
-        if (hasData) {
-            resultMap.put("hasMeasurementData", "1");
-        } else { 
-            resultMap.put("hasMeasurementData", "0");
+        return false;
+    }
+
+    protected boolean isVariableHasMeasurementData(int mode, int variableId) {
+        //if there are measurement rows, check if values are already entered
+        if (mode == AppConstants.SEGMENT_TRAITS.getInt() &&
+			userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
+			for (MeasurementRow row: userSelection.getMeasurementRowList()) {
+				for (MeasurementData data: row.getDataList()) {
+					if (data.getMeasurementVariable().getTermId() == variableId
+							&& data.getValue() != null && !data.getValue().isEmpty()) {
+						return true;
+					}
+				}
+			}
         }
-        
-        return resultMap;
+
+        return false;
     }
 
     @Override

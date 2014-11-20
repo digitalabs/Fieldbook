@@ -7,8 +7,6 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -17,7 +15,6 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -253,9 +250,8 @@ public class ManageSettingsController extends SettingsController{
     }
 
     @ResponseBody
-    @RequestMapping(value = "/removeVariables/{mode}", method = RequestMethod.POST)
-    public boolean removeVariables(@RequestBody List<Integer> ids,
-            @PathVariable int mode) {
+    @RequestMapping(value = "/deleteVariable/{mode}", method = RequestMethod.POST)
+    public boolean deleteVariable(@PathVariable int mode, @RequestBody List<Integer> ids) {
 
         for (Integer id : ids) {
             this.deleteVariable(mode,id);
@@ -377,21 +373,6 @@ public class ManageSettingsController extends SettingsController{
                 iter.remove();
             }
         }
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/checkMeasurementData/{mode}/{variableId}", method = RequestMethod.GET)
-    public Map<String, String> checkMeasurementData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model,
-            @PathVariable int mode, @PathVariable int variableId) {
-        Map<String, String> resultMap = new HashMap<String, String>();
-
-        if (checkModeAndHasMeasurementData(mode, variableId)) {
-            resultMap.put("hasMeasurementData", "1");
-        } else {
-            resultMap.put("hasMeasurementData", "0");
-        }
-
-        return resultMap;
     }
 
     @ResponseBody

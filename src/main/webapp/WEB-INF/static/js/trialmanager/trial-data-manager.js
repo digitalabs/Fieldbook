@@ -479,7 +479,7 @@
                         return parseInt(_.first(val));
                     });
 
-                    $http.post('/Fieldbook/manageSettings/removeVariables/' + mode,checkedCvtermIds)
+                    $http.post('/Fieldbook/manageSettings/deleteVariable/' + mode,checkedCvtermIds)
                         .success(function(data, status, headers, config) {
                             _.each(checkedCvtermIds,function(cvTermId) {
                                 cleanupCallback(data,cvTermId);

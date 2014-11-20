@@ -500,6 +500,22 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     	}
         studyDetails.print(1);
     }
+
+    /**
+     * Checks if the measurement table has user input data for a particular variable id
+     * @param variableId
+     * @return
+     */
+    public boolean hasMeasurementDataEntered(int variableId) {
+        for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+            for (MeasurementData data : row.getDataList()) {
+                if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     protected void removeVariablesFromExistingNursery(List<SettingDetail> settingList, String variables) {
         Iterator<SettingDetail> variableList = settingList.iterator();
@@ -587,7 +603,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             removeSelectionVariatesFromTraits(userSelection.getBaselineTraitsList());
         }                 
     }
-    
+
     private void removeRemovedVariablesFromSession(List<SettingDetail> variableList, List<SettingDetail> removedVariableList) {
         if (removedVariableList != null && variableList != null) {
             for (SettingDetail setting : removedVariableList) {

@@ -385,7 +385,7 @@ public class ManageSettingsController extends SettingsController{
             @PathVariable int mode, @PathVariable int variableId) {
         Map<String, String> resultMap = new HashMap<String, String>();
 
-        if (isVariableHasMeasurementData(mode, variableId)) {
+        if (checkModeAndHasMeasurementData(mode, variableId)) {
             resultMap.put("hasMeasurementData", "1");
         } else {
             resultMap.put("hasMeasurementData", "0");
@@ -394,34 +394,22 @@ public class ManageSettingsController extends SettingsController{
         return resultMap;
     }
 
-	@ResponseBody
+    @ResponseBody
     @RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)
     public boolean hasMeasurementData(@RequestBody List<Integer> ids,@PathVariable int mode) {
-
-        for (Integer id : ids) {
-            if (isVariableHasMeasurementData(mode,id)) {
+        for(Integer id : ids) {
+            if (checkModeAndHasMeasurementData(mode, id)) {
                 return true;
             }
         }
-
         return false;
     }
 
-    protected boolean isVariableHasMeasurementData(int mode, int variableId) {
-        //if there are measurement rows, check if values are already entered
-        if (mode == AppConstants.SEGMENT_TRAITS.getInt() &&
-			userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
-			for (MeasurementRow row: userSelection.getMeasurementRowList()) {
-				for (MeasurementData data: row.getDataList()) {
-					if (data.getMeasurementVariable().getTermId() == variableId
-							&& data.getValue() != null && !data.getValue().isEmpty()) {
-						return true;
-					}
-				}
-			}
-        }
-
-        return false;
+    protected boolean checkModeAndHasMeasurementData(int mode, int variableId) {
+        return mode == AppConstants.SEGMENT_TRAITS.getInt() &&
+                userSelection.getMeasurementRowList() != null &&
+                !userSelection.getMeasurementRowList().isEmpty() &&
+                hasMeasurementDataEntered(variableId);
     }
 
     @Override

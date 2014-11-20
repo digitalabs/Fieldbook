@@ -516,17 +516,6 @@ public class EditNurseryController extends SettingsController {
         return resultMap;
     }
 
-    protected boolean hasMeasurementDataEntered(int variableId) {
-        for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-            for (MeasurementData data : row.getDataList()) {
-                if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     /**
      * Reset session variables after save.
      *

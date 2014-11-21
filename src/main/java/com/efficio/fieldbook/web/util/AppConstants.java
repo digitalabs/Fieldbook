@@ -278,6 +278,12 @@ public enum AppConstants {
 
     ,EXPORT_ADVANCE_NURSERY_EXCEL
     ,EXPORT_ADVANCE_NURSERY_CSV
+    
+	,TEMPORARY_INVENTORY_AMOUNT
+	,TEMPORARY_INVENTORY_SCALE
+	,TEMPORARY_INVENTORY_COMMENT
+	
+	,ADVANCE_ZIP_DEFAULT_FILENAME
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

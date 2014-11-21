@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,13 +44,6 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	public MessageSource messageSource;
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	private final String ZIP_DEFAULT_FILENAME = "AdvancedList";
-
-	// Temporary Id that we use to map it for the generation of export file
-	protected static final Integer INVENTORY_AMOUNT = 90001;
-	protected static final Integer INVENTORY_SCALE = 90002;
-	protected static final Integer INVENTORY_COMMENT = 90003;
 	
 	private static final String NO_FILE = "noFile";
 
@@ -70,7 +64,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 						.getGermplasmListById(advanceGermpasmListId);
 				String advanceListName = germplasmList.getName();
 				String filenamePath = this.getFileNamePath(advanceListName) + suffix;
-				String sheetName = advanceListName;
+				String sheetName =  SettingsUtil.cleanSheetAndFileName(advanceListName);
 				
 				exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, type);
 					
@@ -84,7 +78,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		}
 
 		if (filenameList.size() > 1) {
-			outputFilename = getFileNamePath(studyName+"-"+this.ZIP_DEFAULT_FILENAME) + AppConstants.ZIP_FILE_SUFFIX.getString();
+			outputFilename = getFileNamePath(studyName+"-"+AppConstants.ADVANCE_ZIP_DEFAULT_FILENAME.getString()) + AppConstants.ZIP_FILE_SUFFIX.getString();
 			this.zipFileNameList(outputFilename, filenameList);
 		}
 
@@ -92,15 +86,14 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	}
 
 	protected void exportList(List<InventoryDetails> inventoryDetailList, String filenamePath, String sheetName, ExportService exportServiceImpl, String type) throws IOException {
+		List<ExportColumnHeader> exportColumnHeaders = this.generateAdvanceListColumnHeaders();
 		if(AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
-			exportServiceImpl.generateExcelFileForSingleSheet(this.generateAdvanceListColumnValues(inventoryDetailList), this.generateAdvanceListColumnHeaders(), filenamePath, sheetName);
+			exportServiceImpl.generateExcelFileForSingleSheet(this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath, sheetName);
 		} else {
-			exportServiceImpl.generateCSVFile(this.generateAdvanceListColumnValues(inventoryDetailList), this.generateAdvanceListColumnHeaders(), filenamePath);
+			exportServiceImpl.generateCSVFile(this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath);
 		}		
 	}
 	
-	
-
 	protected boolean zipFileNameList(String outputFilename, List<String> filenameList) {
 		ZipUtil.zipIt(outputFilename, filenameList);
 		return true;
@@ -139,65 +132,64 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 				.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(), this.messageSource
 						.getMessage("seed.inventory.table.location", null, locale), true));
 		exportColumnHeaders.add(new ExportColumnHeader(
-				ExportAdvanceListServiceImpl.INVENTORY_AMOUNT, this.messageSource.getMessage(
+				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(), this.messageSource.getMessage(
 						"seed.inventory.amount", null, locale), true));
 		exportColumnHeaders.add(new ExportColumnHeader(
-				ExportAdvanceListServiceImpl.INVENTORY_SCALE, this.messageSource.getMessage(
+				AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(), this.messageSource.getMessage(
 						"seed.inventory.table.scale", null, locale), true));
 		exportColumnHeaders.add(new ExportColumnHeader(
-				ExportAdvanceListServiceImpl.INVENTORY_COMMENT, this.messageSource.getMessage(
+				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(), this.messageSource.getMessage(
 						"seed.inventory.comment", null, locale), true));
 
 		return exportColumnHeaders;
 	}
 
 	protected List<Map<Integer, ExportColumnValue>> generateAdvanceListColumnValues(
-			List<InventoryDetails> inventoryDetailList) {
+			List<InventoryDetails> inventoryDetailList, List<ExportColumnHeader> exportColumnHeaders) {
 		List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<Map<Integer, ExportColumnValue>>();
 		for (InventoryDetails inventoryDetails : inventoryDetailList) {
-			Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();
-			dataMap.put(TermId.ENTRY_NO.getId(), new ExportColumnValue(TermId.ENTRY_NO.getId(),
-					inventoryDetails.getEntryId().toString()));
-			dataMap.put(TermId.DESIG.getId(), new ExportColumnValue(TermId.DESIG.getId(),
-					inventoryDetails.getGermplasmName()));
-			dataMap.put(TermId.CROSS.getId(), new ExportColumnValue(TermId.CROSS.getId(),
-					inventoryDetails.getParentage()));
-			dataMap.put(TermId.GID.getId(), new ExportColumnValue(TermId.GID.getId(),
-					inventoryDetails.getGid().toString()));
-			dataMap.put(TermId.SOURCE.getId(), new ExportColumnValue(TermId.SOURCE.getId(),
-					inventoryDetails.getSource()));
-			dataMap.put(
-					TermId.LOCATION_ID.getId(),
-					new ExportColumnValue(TermId.LOCATION_ID.getId(), inventoryDetails
-							.getLocationName()));
-			String amount = getInventoryAmount(inventoryDetails);
-			String scaleName = getInventoryScale(inventoryDetails);
-			String comment = getInventoryComment(inventoryDetails);
-			dataMap.put(ExportAdvanceListServiceImpl.INVENTORY_AMOUNT, new ExportColumnValue(
-					ExportAdvanceListServiceImpl.INVENTORY_AMOUNT, amount));
-			dataMap.put(ExportAdvanceListServiceImpl.INVENTORY_SCALE, new ExportColumnValue(
-					ExportAdvanceListServiceImpl.INVENTORY_SCALE, scaleName));
-			dataMap.put(ExportAdvanceListServiceImpl.INVENTORY_COMMENT, new ExportColumnValue(
-					ExportAdvanceListServiceImpl.INVENTORY_COMMENT, comment));
+			Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();						
+			for(ExportColumnHeader columnHeaders : exportColumnHeaders){				
+				dataMap.put(columnHeaders.getId(), new ExportColumnValue(columnHeaders.getId(),
+						getInventoryDetailValueInfo(inventoryDetails, columnHeaders.getId())));
+			}
 			exportColumnValues.add(dataMap);
 		}
 		return exportColumnValues;
 	}
+	
+	protected String getInventoryDetailValueInfo(InventoryDetails inventoryDetails, int columnHeaderId){
+		String val = "";
+		if(columnHeaderId == TermId.ENTRY_NO.getId()) {
+				val = inventoryDetails.getEntryId().toString();
+		} else if(columnHeaderId == TermId.DESIG.getId()) {
+				val = inventoryDetails.getGermplasmName();
+		} else if(columnHeaderId == TermId.CROSS.getId() ){ 
+				val = inventoryDetails.getParentage();
+		} else if(columnHeaderId == TermId.GID.getId()) {
+				val = inventoryDetails.getGid().toString();
+		} else if(columnHeaderId == TermId.SOURCE.getId()) { 
+				val = inventoryDetails.getSource();
+		} else if(columnHeaderId == TermId.LOCATION_ID.getId()) { 
+				val = inventoryDetails.getLocationName();
+		} else if(columnHeaderId == AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt()) { 
+				val = getInventoryAmount(inventoryDetails);
+		} else if(columnHeaderId == AppConstants.TEMPORARY_INVENTORY_SCALE.getInt()) { 
+				val = getInventoryValue(inventoryDetails.getScaleName());
+		} else if(columnHeaderId == AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()) { 
+				val = getInventoryValue(inventoryDetails.getComment());
+		}
+		return val;		
+	}
 
+	protected String getInventoryValue(String inventoryValue){
+		return inventoryValue != null ? inventoryValue : "";
+	}
+	
 	protected String getInventoryAmount(InventoryDetails inventoryDetails){
 		return inventoryDetails.getAmount() != null ? inventoryDetails.getAmount()
 				.toString() : "";
-	}
-	
-	protected String getInventoryScale(InventoryDetails inventoryDetails){
-		return inventoryDetails.getScaleName() != null ? inventoryDetails
-				.getScaleName() : "";
-	}
-	
-	protected String getInventoryComment(InventoryDetails inventoryDetails){
-		return  inventoryDetails.getComment() != null ? inventoryDetails.getComment()
-				: "";
-	}
+	}	
 	
 	public void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;

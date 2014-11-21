@@ -78,7 +78,7 @@ public class ManageSettingsController extends SettingsController{
                 result.put("treeData", treeData);
                 result.put("searchTreeData", searchTreeData);
             } catch (Exception e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(),e);
             }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -246,7 +246,7 @@ public class ManageSettingsController extends SettingsController{
         } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
             return userSelection.getTreatmentFactors();
         }
-        return null;
+        return new ArrayList<SettingDetail>();
     }
 
     @ResponseBody
@@ -324,7 +324,7 @@ public class ManageSettingsController extends SettingsController{
                 newSetting = createSettingDetail(variableId, "");
                 newSetting.getVariable().setOperation(Operation.UPDATE);
             } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(),e);
             }
         }
 

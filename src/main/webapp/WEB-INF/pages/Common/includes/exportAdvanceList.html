@@ -6,7 +6,7 @@
 				<div class="modal-body" id="exportAdvanceListModalBody">
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11">					
-							<label class="modal-title fbk-modal-title" id="heading-modal">EXPORT ADVANCE LIST</label>
+							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{nursery.nurserydetails.action.export.advance.header}">.header</label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
@@ -15,7 +15,7 @@
 										
 					<div class="row form-group export-advance-germplasm-list fbk-hide">
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label h4">LIST(S) TO BE EXPORTED</label>
+							<label class="control-label h4" th:text="#{nursery.nurserydetails.action.export.advance.lists.to.be.exported}">.list to be exported</label>
 						</div>						
 						<div class="col-xs-9 col-md-9 advances-list">
 							
@@ -36,8 +36,8 @@
 						</div>
 						<div class="col-xs-4 col-md-4">
 							<select id="exportAdvancedType" style="width: 170px">
-								<option value="1" selected="selected">Excel</option>
-								<option value="2">Csv</option>								
+								<option value="1" selected="selected" th:text="#{nursery.nurserydetails.action.export.advance.excel}">Excel</option>
+								<option value="2" th:text="#{nursery.nurserydetails.action.export.advance.csv}">Csv</option>								
 							</select>
 						</div>
 					</div>
@@ -67,12 +67,10 @@
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 
-		var submitAdvanceExportUrl = '/Fieldbook/ExportManager/',
-
-			exportAdvanceOptions = {
-				dataType: 'text',
-					success: showExportAdvanceResponse // post-submit callback
-				};
+		var exportAdvanceOptions = {
+			dataType: 'text',
+			success: showExportAdvanceResponse // post-submit callback
+		};
 
 		$(document).ready(function() {
 			'use strict';

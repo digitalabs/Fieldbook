@@ -68,7 +68,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
             })
 
             .state('environment', {
-                url: '/environment',
+                templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
+                params: ['addtlNumOfEnvironments'],
                 views: {
                     'environment': {
                         controller: 'EnvironmentCtrl',
@@ -163,7 +164,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
     // THE parent controller for the manageTrial (create/edit) page
     manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout','_',
-        '$localStorage', function ($scope, $rootScope, TrialManagerDataService, $http, $timeout,_,$localStorage) {
+        '$localStorage', '$state', function ($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage, $state) {
             $scope.trialTabs = [
                 {   'name': 'Settings',
                     'state': 'trialSettings'
@@ -292,9 +293,13 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                     TrialManagerDataService.updateCurrentData('environments', environmentData);
                 });
             };
+            $scope.temp = {
+                noOfEnvironments : 0
+            }
             $scope.refreshEnvironmentsAndExperimentalDesign = function () {
-            	window.location.hash = '#/environment';
+                $state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments});
             };
+
             $scope.displayMeasurementOnlyActions = function () {
                 return TrialManagerDataService.trialMeasurement.count &&
                     TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&

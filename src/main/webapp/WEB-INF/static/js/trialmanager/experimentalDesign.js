@@ -55,6 +55,8 @@
                         $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
                     }
                 };
+                
+                $scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable;
 
                 //FIXME: cheating a bit for the meantime.
                 if (!TrialManagerDataService.applicationData.germplasmListCleared) {

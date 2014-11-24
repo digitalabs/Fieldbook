@@ -16,11 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.impl.ExportServiceImpl;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -39,6 +44,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
@@ -59,6 +65,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     public static final String URL = "/ExportManager";
     private static final int BUFFER_SIZE = 4096 * 4;
     private static String EXPORT_TRIAL_INSTANCE = "Common/includes/exportTrialInstance";
+    private static String DISPLAY_ADVANCE_GERMPLASM_LIST = "Common/includes/displayListOfAdvanceGermplasmList";
 
     @Resource
     private UserSelection studySelection;
@@ -87,12 +94,15 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     private OntologyService ontologyService;
     
     @Resource
-    private ExportOrderingRowColImpl exportOrderingRowColService;
-    @Resource
+    private ExportOrderingRowColImpl exportOrderingRowColService;  
+
+	@Resource
     private ExportOrderingSerpentineOverRangeImpl exportOrderingSerpentineOverRangeService;
     @Resource
     private ExportOrderingSerpentineOverColImpl exportOrderingSerpentineOverColumnService;
     
+    @Resource
+    private ExportAdvanceListService exportAdvanceListService;
     @Override
 	public String getContentName() {
 		return null;
@@ -365,11 +375,11 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
 		return filename;
 	}
 
-	private UserSelection getUserSelection() {
+	protected UserSelection getUserSelection() {
     	return this.studySelection;
     }
     
-    private ExportDataCollectionOrderService getExportOrderService(int exportWayType){
+    protected ExportDataCollectionOrderService getExportOrderService(int exportWayType){
     	if(exportWayType == 1){
     		return exportOrderingRowColService;
     	}else if(exportWayType == 2){
@@ -410,4 +420,96 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
         model.addAttribute("trialInstances", trialInstances);
         return super.showAjaxPage(model, EXPORT_TRIAL_INSTANCE);
     }
+    /*
+     * Returns the advances list using the study id
+     */
+    @RequestMapping(value = "/retrieve/advanced/lists/{studyId}", method = RequestMethod.GET)
+    public String getAdvanceListsOfStudy(
+    		@PathVariable int studyId,
+    		Model model, HttpSession session) {
+            
+        List<GermplasmList> germplasmList = new ArrayList<GermplasmList>();;
+		try {
+			germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(studyId), GermplasmListType.ADVANCED);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+        model.addAttribute("advancedList", germplasmList);        
+        return super.showAjaxPage(model, DISPLAY_ADVANCE_GERMPLASM_LIST);
+    }
+    
+    /**
+     * Do export.
+     *
+     * @param exportType the export type
+     * @param selectedTraitTermId the selected trait term id
+     * @param response the response
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/export/advanced/lists", method = RequestMethod.POST)
+    public String doAdvanceExport(HttpServletResponse response, HttpServletRequest req) 
+    		        throws MiddlewareQueryException {
+    	
+    	String advancedListIds = req.getParameter("exportAdvanceListGermplasmIds");
+    	String exportType = req.getParameter("exportAdvanceListGermplasmType");
+    	
+    	
+    	UserSelection userSelection = getUserSelection();    	
+    	StudyDetails studyDetails = userSelection.getWorkbook().getStudyDetails();
+    	
+    	String outputFilename = null;
+    	File file = exportAdvanceListItems(exportType, advancedListIds, studyDetails);
+    	  	
+    	outputFilename = file.getAbsolutePath();
+    	int extensionIndex = outputFilename.lastIndexOf(".");
+		String extensionName = outputFilename.substring(extensionIndex, outputFilename.length());
+		String contentType = "";
+    	if (extensionName.indexOf(AppConstants.ZIP_FILE_SUFFIX.getString()) != -1) {
+    		contentType = "application/zip";    		
+    	} else if (extensionName.indexOf(AppConstants.EXPORT_CSV_SUFFIX.getString()) != -1) {
+    		contentType = "text/csv";
+    	} else if (extensionName.indexOf(AppConstants.EXPORT_XLS_SUFFIX.getString()) != -1) {
+    		contentType = "application/vnd.ms-excel";
+    	}
+    	response.setContentType(contentType);;
+    	Map<String, Object> results = new HashMap<String, Object>();
+    	results.put("outputFilename", outputFilename);
+    	results.put("filename", SettingsUtil.cleanSheetAndFileName(file.getName()));
+    	results.put("contentType", contentType);
+    	
+    	return super.convertObjectToJson(results);
+    }
+    
+    protected File exportAdvanceListItems(String exportType, String advancedListIds, StudyDetails studyDetails){
+    	if(AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(exportType) 
+    			|| AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString().equalsIgnoreCase(exportType)){    	
+    		return exportAdvanceListService.exportAdvanceGermplasmList(advancedListIds, studyDetails.getStudyName(), getExportServiceImpl(), exportType);
+    	}  
+    	return null;
+    }    
+
+	protected void setExportAdvanceListService(ExportAdvanceListService exportAdvanceListService) {
+		this.exportAdvanceListService = exportAdvanceListService;
+	}
+    protected ExportService getExportServiceImpl(){
+    	return new ExportServiceImpl();
+    }
+    
+    protected void setUserSelection(UserSelection userSelection){
+    	this.studySelection = userSelection;
+    }
+    public void setExportOrderingRowColService(ExportOrderingRowColImpl exportOrderingRowColService) {
+		this.exportOrderingRowColService = exportOrderingRowColService;
+	}
+
+	public void setExportOrderingSerpentineOverRangeService(
+			ExportOrderingSerpentineOverRangeImpl exportOrderingSerpentineOverRangeService) {
+		this.exportOrderingSerpentineOverRangeService = exportOrderingSerpentineOverRangeService;
+	}
+
+	public void setExportOrderingSerpentineOverColumnService(
+			ExportOrderingSerpentineOverColImpl exportOrderingSerpentineOverColumnService) {
+		this.exportOrderingSerpentineOverColumnService = exportOrderingSerpentineOverColumnService;
+	}
 }

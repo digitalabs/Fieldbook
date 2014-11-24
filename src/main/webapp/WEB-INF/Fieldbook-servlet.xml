@@ -133,6 +133,8 @@
 	</bean>
 	<bean id="exportOrderingRowColService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl">
 	</bean>
+	<bean id="exportGermplasmListService" class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl">
+	</bean>
 	
 	<bean id="projectActivityService" class="com.efficio.fieldbook.web.common.service.impl.ProjectActivityServiceImpl">
 	</bean>

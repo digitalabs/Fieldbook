@@ -1216,6 +1216,36 @@ function initTrialModalSelection() {
 	$('#selectedRTrait').prop('selectedIndex', 0);
 }
 
+function exportGermplasmList(){
+	'use strict';
+	
+	var submitExportUrl = '/Fieldbook/ExportManager/exportGermplasmList/',
+		formName = '#exportGermplasmListForm',
+		type = $('#exportGermplasmListFormat').val();
+	
+	var exportOptions = {
+			dataType: 'text',
+				success: showGermplasmExportResponse // post-submit callback
+			};
+	
+	if (type === '0') {
+		showMessage('Please choose export format');
+		return false;
+	}
+	
+	submitExportUrl = submitExportUrl + type;
+	if (isNursery()){
+		submitExportUrl = submitExportUrl + '/N';
+	}else{
+		submitExportUrl = submitExportUrl + '/T';
+	}
+	
+	
+	$(formName).attr('action', submitExportUrl);
+	$(formName).ajaxForm(exportOptions).submit();
+}
+
+
 function exportStudy() {
 	'use strict';
 	var type = $('#exportType').val();
@@ -2561,6 +2591,37 @@ function showManageCheckTypePopup() {
 		backdrop : 'static',
 		keyboard : false
 	});
+}
+function showExportGermplasmListPopup() {
+	'use strict';
+	$('.check-germplasm-list-items .popover').remove();
+	$('#exportGermplasmListModal').modal({
+		backdrop : 'static',
+		keyboard : false
+	});
+	
+	var visibleColumnTermIds = [];
+	
+	$("#imported-germplasm-list th[aria-label!='']").each(
+		function(){
+			var termId = $(this).attr('data-col-name').split('-')[0];
+			if ($.inArray(termId, visibleColumnTermIds) === -1){
+				visibleColumnTermIds.push(termId);
+			}
+		}	
+	);
+	
+	if (!isNursery() && $("#imported-germplasm-list").size() !== 0){
+		
+		if ($.inArray(gidTermId+'', visibleColumnTermIds) === -1
+				|| $.inArray(entryNoTermId+'', visibleColumnTermIds) === -1
+				|| $.inArray(desigTermId+'', visibleColumnTermIds) === -1
+		){
+			showAlertMessage('', requiredGermplasmColumnsMessage);
+		}
+		
+	}
+	
 }
 function addUpdateCheckType(operation) {
 	'use strict';

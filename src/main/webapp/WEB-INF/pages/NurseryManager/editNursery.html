@@ -102,6 +102,11 @@
                                 <a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"
                                    th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a>
                             </li>
+                            <li th:if="${createNurseryForm.measurementRowList.size() != 0}">
+
+                                <a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
+
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -253,6 +258,11 @@
 			
 		</div>
 	</div>	
+</div>
+
+<!-- Modal Dialog for Export Germplasm List -->
+<div class="row">
+	<div th:include="/Common/exportGermplasmList"></div>
 </div>
 
 <!-- Modal Dialog for Choosing Folder Location -->

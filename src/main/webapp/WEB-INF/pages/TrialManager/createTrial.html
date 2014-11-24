@@ -92,6 +92,12 @@
                                    th:text="#{trial.add.environments}">Add Environments</a>
 
                             </li>
+                            
+                            <li ng-show="displayGermplasmOnlyActions()">
+
+                                <a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
+
+                            </li>
                         </ul>
                     </div>
                 </span>
@@ -293,6 +299,11 @@
         <div id="add-environments" th:include="/Common/includes/addEnvironments"></div>
     </div>
 </div>
+
+<div class="row">
+	<div th:include="/Common/exportGermplasmList"></div>
+</div>
+
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
     <input type="hidden" th:field="*{measurementDataExisting}"/>

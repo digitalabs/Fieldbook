@@ -309,6 +309,11 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                 return TrialManagerDataService.trialMeasurement.count &&
                     TrialManagerDataService.trialMeasurement.count > 0;
             };
+            
+            $scope.displayGermplasmOnlyActions = function () {
+                return TrialManagerDataService.applicationData.germplasmListSelected;
+            };
+            
             $scope.performFunctionOnTabChange = function (targetState) {
                 if (targetState === 'editMeasurements') {
                     if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {

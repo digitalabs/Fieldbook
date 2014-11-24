@@ -189,7 +189,7 @@
 					success: function(data) {
 						if(data.isSuccess === 1){
 							$('#saveListTreeModal').modal('hide');
-							displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false);
+							displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false, data.advancedGermplasmListId);
 						}else{
 							showErrorMessage('page-save-list-message-modal', data.message);
 						}

@@ -1,14 +1,24 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+	<meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<meta charset="utf-8"/>
+
 	<title>Access Denied</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+	<link th:href="@{/static/css/lib/font-awesome-4.2.0/css/font-awesome.css}" rel="stylesheet"/>
+	<link th:href="@{/static/fonts/font.css}" rel="stylesheet"/>
+	<link th:href="@{/static/css/access-denied.css}" rel="stylesheet"/>
 </head>
-<body class="container">
-	<h1>Access Denied</h1>
-	<hr/>
-	<p>Sorry <strong sec:authentication="name">User</strong>! Access to this functionality is not available for your role: <strong sec:authentication="principal.authorities">ROLE</strong>.</p>
-	<small>I know, I need styling. Helen! Lisa!</small>
+<body>
+	<div class="access-notifcation-container">
+		<h1 class="access-notification-title">
+			<span class="fa fa-lock access-denied-icon"></span> Access Denied
+		</h1>
+		<p>This functionality is restricted. See your administrator for additional permissions.</p>
+	</div>
+	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-1.10.2.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/lib/modernizr-custom.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/access-denied/access-denied.js}"></script>
 </body>
 </html>

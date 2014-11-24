@@ -81,14 +81,16 @@
                 },
                 templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
                 controller: function ($scope, $element, $attrs) {
-                    $scope.isSelectAllChecked = false;
+                    $scope.options = {
+                        selectAll : false
+                    };
 
                     // when the selectAll checkbox is clicked, do this
                     $scope.doSelectAll = function() {
                         var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(),$scope.settings.vals());
 
                         _.each(filteredVariables,function(cvTermID){
-                            $scope.settings.val(cvTermID).isChecked = $scope.isSelectAllChecked;
+                            $scope.settings.val(cvTermID).isChecked = $scope.options.selectAll;
                         });
 
                     };
@@ -109,12 +111,14 @@
                     };
 
                     $scope.doDeleteSelectedSettings = function() {
-                        TrialManagerDataService.removeSettings($attrs.variableType,$scope.settings,function(cvTermId) {
-                            $scope.settings.remove(cvTermId);
+                        TrialManagerDataService.removeSettings($attrs.variableType,$scope.settings).then(function(data) {
+                            if (data.length > 0) {
+                                $scope.$emit('deleteOccurred');
+                            }
+
+                            $scope.options.selectAll = false;
                         });
 
-                        $scope.$emit('deleteOccurred');
-                        $scope.isSelectAllChecked = false;
                     };
 
                     $scope.showDetailsModal = function (setting) {

@@ -14,26 +14,31 @@
         $scope.settings = TrialManagerDataService.settings.trialSettings;
         $scope.data = TrialManagerDataService.currentData.trialSettings;
         $scope.addVariable = true;
-        $scope.isSelectAllChecked = false;
+
+        $scope.options = {
+            selectAll : false
+        };
 
         $scope.doSelectAll = function() {
-          $scope.isSelectAllChecked = !$scope.isSelectAllChecked;
-
             var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(),$scope.settings.vals());
 
             _.each(filteredVariables,function(cvTermID){
-                $scope.settings.val(cvTermID).isChecked = $scope.isSelectAllChecked;
+                $scope.settings.val(cvTermID).isChecked = $scope.options.selectAll;
             });
 
         };
 
         $scope.removeSettings = function() {
-            TrialManagerDataService.removeSettings(1,$scope.settings,function(cvTermId) {
-                $scope.settings.remove(cvTermId);
-                delete $scope.data.userInput[cvTermId];
+            TrialManagerDataService.removeSettings(1,$scope.settings).then(function(data) {
+                _(data).each(function(ids) {
+                    delete $scope.data.userInput[ids];
+                });
+
+                $scope.options.selectAll = false;
             });
-            $scope.isSelectAllChecked = false;
+
         };
+
 
         $scope.managementDetailsSize = function () {
             return $scope.settings.length();

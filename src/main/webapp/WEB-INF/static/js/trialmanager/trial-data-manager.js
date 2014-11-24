@@ -473,18 +473,28 @@
                     return settingVar;
                 },
 
-                removeSettings: function(mode,_settings,cleanupCallback) {
+                /* this function returns a promise with the checkedCvtermIds map as the result */
+                removeSettings: function(mode,_settings) {
+                    var deferred = $q.defer();
                     // This will retrieve only the .isChecked of the variable-settings by filtering out the settings collection.
                     var checkedCvtermIds = _.pairs(_settings.vals()).filter(function(val) { return _.last(val).isChecked; }).map(function(val) {
                         return parseInt(_.first(val));
                     });
 
-                    $http.post('/Fieldbook/manageSettings/deleteVariable/' + mode,checkedCvtermIds)
-                        .success(function(data, status, headers, config) {
-                            _.each(checkedCvtermIds,function(cvTermId) {
-                                cleanupCallback(data,cvTermId);
-                            });
+                    if (checkedCvtermIds.length > 0) {
+                        $http.post('/Fieldbook/manageSettings/deleteVariable/' + mode,checkedCvtermIds)
+                            .success(function(data, status, headers, config) {
+                                _(checkedCvtermIds).each(function(varIds) {
+                                    _settings.remove(varIds);
+                                });
+
+                                deferred.resolve(checkedCvtermIds);
                         });
+                    } else {
+                        deferred.resolve([]);
+                    }
+
+                    return deferred.promise;
                 },
 
                 getSettingsArray: function () {

@@ -23,7 +23,7 @@
 
                 <div class="row form-group" ng-show="(settings.keys() | removeHiddenAndDeletablesVariableFilter: settings.vals() ).length &gt; 0">
                     <div class="col-md-12">
-                        <label class="fbk-selectall-chk"><input type="checkbox" ng-model="isSelectAllChecked" ng-change="doSelectAll()"/> Select All</label>
+                        <label class="fbk-selectall-chk"><input type="checkbox" ng-model="options.selectAll" ng-change="doSelectAll()"/> Select All</label>
                         <a class="fbk-remove-link" href="javascript: void(0);" ng-click="removeSettings()" >Remove</a>
                     </div>
                 </div>

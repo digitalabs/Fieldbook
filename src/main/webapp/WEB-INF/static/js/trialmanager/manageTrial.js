@@ -69,7 +69,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
             .state('environment', {
                 templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
-                params: ['addtlNumOfEnvironments'],
+                params: ['addtlNumOfEnvironments','timestamp'],
                 views: {
                     'environment': {
                         controller: 'EnvironmentCtrl',
@@ -295,9 +295,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
             };
             $scope.temp = {
                 noOfEnvironments : 0
-            }
+            };
             $scope.refreshEnvironmentsAndExperimentalDesign = function () {
-                $state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments});
+                $state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, timestamp: new Date()});
             };
 
             $scope.displayMeasurementOnlyActions = function () {

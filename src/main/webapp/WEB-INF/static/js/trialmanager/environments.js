@@ -94,7 +94,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                     });
                 }
                 TrialManagerDataService.indicateUnappliedChangesAvailable();
-            }
+            };
 
             $scope.$watch('data.noOfEnvironments', function (newVal, oldVal) {
 

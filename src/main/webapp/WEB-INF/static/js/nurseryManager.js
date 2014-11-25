@@ -628,7 +628,7 @@ function toggleMethodDropdown(rowIndex) {
 			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val();
 	} else {
 		possibleValues = $('#possibleValuesJson' + rowIndex).text();
-		$($('#' + getJquerySafeId('studyLevelVariables' 
+		$($('#' + getJquerySafeId('studyLevelVariables'
 			+ rowIndex + '.value')).parent().find('.selectedValueFave')).val(selectedVal);
 		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
 			+ rowIndex + '.value')).parent().find('.selectedValue')).val();
@@ -981,13 +981,11 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 				isFavoriteChecked = $('#' + getJquerySafeId(oldSelect2 + '.favorite1'))
 				.is(':checked');
 			}
-	
 			// change the ids and names of the objects
 			row.innerHTML = row.innerHTML
 					.replace(reg, name + index);
 			row.innerHTML = row.innerHTML.replace(reg2, name + '['
 					+ index + ']');
-	
 			// delete the existing select2 object and recreate the
 			// select2 combo and checkbox/links for location/method
 			if (row.innerHTML.indexOf('select2') > -1) {
@@ -1005,7 +1003,6 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 }
 
 function resetIdsOfTables(name, tableId) {
-	
 	var reg = new RegExp(name + '[0-9]+', 'g');
 	var reg2 = new RegExp(name + '\[[0-9]+\]', 'g');
 	var bodyContent = '', rowContent = '';
@@ -1279,7 +1276,7 @@ function initializeDateAndSliderInputs() {
 				try {
 					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
 					$(this).datepicker('setDate', r);
-				} catch(e) { 
+				} catch(e) {
 					if(curDate !== '') {
 						$(this).datepicker('setDate', new Date());
 					}
@@ -1379,8 +1376,6 @@ function choosePreviousNursery(studyId) {
 			});
 		}
 	});
-	
-	
 }
 function isNurseryNameUnique() {
 	'use strict';
@@ -1433,13 +1428,11 @@ function validateCreateNursery() {
 		hasError = true;
 		customMessage = nurseryGermplasmListIsRequired;
 	}
-	
 	var invalidDateMsg = validateAllDates();
     if(invalidDateMsg !== '') {
     	hasError = true;
     	customMessage = invalidDateMsg;
     }
-
 	if (hasError) {
 		var errMsg = '';
 		if (name !== '') {
@@ -1496,13 +1489,12 @@ function validateCreateNursery() {
 	 * should be less than the total germplasm
 	 */
 	if ($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null
-			&& (($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1) 
+			&& (($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1)
 					|| ($('#studyId').length === 0 ))) {
 
 		selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 
 		if (selectedCheckListDataTable.getDataTable().$('.check-hidden').length > 0) {
-
 			// we validate only if there is a check
 			// we try to validate if all the check row has check
 			var hasCheckError = false;

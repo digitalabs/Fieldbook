@@ -86,7 +86,7 @@
                                 <a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
                             </li>
                             
-                            <li ng-show="displayMeasurementOnlyActions()">
+                            <li ng-show="hasMeasurementData()">
 
                                 <a href="javascript: showAddEnvironmentsDialog();" id="add-environments-url-link"
                                    th:text="#{trial.add.environments}">Add Environments</a>

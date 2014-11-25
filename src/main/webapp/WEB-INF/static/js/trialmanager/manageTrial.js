@@ -305,6 +305,10 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                     TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&
                     !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
             };
+            $scope.hasMeasurementData = function () {
+                return TrialManagerDataService.trialMeasurement.count &&
+                    TrialManagerDataService.trialMeasurement.count > 0;
+            };
             $scope.performFunctionOnTabChange = function (targetState) {
                 if (targetState === 'editMeasurements') {
                     if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {

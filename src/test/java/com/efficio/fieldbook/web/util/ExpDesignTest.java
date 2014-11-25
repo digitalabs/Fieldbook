@@ -57,7 +57,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 				"Plots", "0", "", "1", "", false);
 		
 		try{
-			BVDesignOutput output = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			BVDesignOutput output = fieldbookService.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
 			assertEquals(output.isSuccess(), true);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -73,7 +73,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 				"0", "0", "", "1", "", false);
 		
 		try{
-			BVDesignOutput output = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			BVDesignOutput output = fieldbookService.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
 			assertEquals(output.isSuccess(), true);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -95,7 +95,7 @@ public class ExpDesignTest extends AbstractBaseIntegrationTest {
 				treatmentFactor, levels, "1", "");
 		
 		try{
-			BVDesignOutput output = ExpDesignUtil.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			BVDesignOutput output = fieldbookService.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
 			assertEquals(output.isSuccess(), true);
 		}catch(Exception e){
 			e.printStackTrace();

@@ -1305,8 +1305,7 @@ function doExportContinue(paramUrl, isNursery) {
 }
 
 function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
-	var formName = '#exportStudyForm',
-		action = submitExportUrl,
+	var action = submitExportUrl,
 		newAction = '',
 		studyId = '0';
 
@@ -1318,17 +1317,77 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 	}
 	newAction += exportWayType;
 
+	var visibleColumns = '';
 	if ($('#browser-nurseries').length !== 0) {
 		// Meaning we are on the landing page
 		studyId = getCurrentStudyIdInTab();
+	} else {
+		// the nursery is opened
+		visibleColumns = getMeasurementTableVisibleColumns();
+		
+		showWarningMessageForRequiredColumns(visibleColumns);
 	}
 
-	$('#exportStudyForm #studyExportId').val(studyId);
-	$(formName).attr('action', newAction);
+	$.ajax(newAction, {
+		headers : {
+			'Accept' : 'application/json',
+			'Content-Type' : 'application/json'
+		},
+		data : JSON.stringify({
+			'visibleColumns' : visibleColumns,
+			'studyExportId' : studyId
+		}),
+		type : 'POST',
+		dataType: 'text',
+		success: function(data){
+			showExportResponse(data);
+		}
+	});
+}
+
+function hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns){
+	var requiredColumns = [plotNoTermId, entryNoTermId, desigTermId];
+	var i = 0;
+	
+	var noOfRequiredColumns = 0;
+	for(i = 0; i < requiredColumns.length; i++){
+		if(visibleColumns.indexOf(requiredColumns[i]) >= 0){
+			noOfRequiredColumns++;
+		}
+	}
+	
+	return !(noOfRequiredColumns == requiredColumns.length);
+}
 
 
-	$(formName).ajaxForm(exportOptions).submit();
-	$('#exportStudyForm #studyExportId').val('0');
+function showWarningMessageForRequiredColumns(visibleColumns){
+	var warningMessage = 'The export file will leave out contain columns that you have marked ' + 
+					'as hidden in the table view, with the exception of key columns that are ' + 
+					'necessary to identify your data when you import it back into the system.';
+	if(hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns)){
+		showAlertMessage('', warningMessage);
+	};
+}
+
+function getMeasurementTableVisibleColumns() {
+	var visibleColumns = '';
+	var headers = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]');
+	var headerCount = headers.size();
+
+	var i = 0;	
+	for(i = 0; i < headerCount; i++){
+		var headerId = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]:eq('+i+')').attr('data-term-id');
+		
+		if($.isNumeric(headerId)){
+			if(visibleColumns.length == 0){
+				visibleColumns = headerId; 
+			} else {
+				visibleColumns = visibleColumns + "," + headerId;
+			}
+		}  
+	}
+	
+	return visibleColumns;
 }
 
 function importNursery(type) {

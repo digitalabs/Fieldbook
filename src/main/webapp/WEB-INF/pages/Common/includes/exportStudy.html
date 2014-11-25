@@ -42,6 +42,7 @@
 						<div class="col-xs-4 col-md-4">
 							<select id="exportType" style="width: 170px">
 								<option value="0">Please Choose</option>
+								<option value="7" th:text="#{nursery.export.csv}"></option>
 								<option value="4">DataKapture</option>
 								<option selected="selected"  value="3" th:text="#{nursery.export.excel}"></option>
 								<option value="1" th:text="#{nursery.export.fieldlog.fieldroid}"></option>								
@@ -140,9 +141,7 @@
 		</div>
 	</div>
 </div>
-<form id="exportStudyForm" role="form-horizontal" action="#" th:action="@{/ExportManager/}" method="GET">
-	<input type="hidden" name="studyExportId" id="studyExportId" value="0"/>
-</form>
+
 <form id="exportStudyDownloadForm" role="form-horizontal" action="#" th:action="@{/ExportManager/download/file}" method="GET">
 	<input type="hidden" name="outputFilename" id="outputFilename" value=""/>
 	<input type="hidden" name="filename" id="filename" value=""/>
@@ -155,12 +154,8 @@
 
 		var submitExportUrl = '/Fieldbook/ExportManager/',
 			exportHeader = /*[[#{study.export.study.header}]]*/ '',
-			exportBookHeader = /*[[#{study.export.study.book.header}]]*/ '',
+			exportBookHeader = /*[[#{study.export.study.book.header}]]*/ '';
 
-			exportOptions = {
-				dataType: 'text',
-					success: showExportResponse // post-submit callback
-				};
 
 		$(document).ready(function() {
 			'use strict';

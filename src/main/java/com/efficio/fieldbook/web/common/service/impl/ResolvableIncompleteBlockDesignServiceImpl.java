@@ -56,6 +56,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 		String blockSize = parameter.getBlockSize();
 		String replicates = parameter.getReplicationsCount();	    	
 		int environments = Integer.valueOf(parameter.getNoOfEnvironments());
+		int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
 		//we need to add the 4 vars
 		try {
 			
@@ -100,7 +101,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 				stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), 
 				parameter.getNblatin(), parameter.getReplatinGroups(), "1", "", parameter.getUseLatenized());
 			
-			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
+			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd,
 					trialVariables, factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null, fieldbookService);					
 			

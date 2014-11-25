@@ -56,7 +56,8 @@ public class ResolvableRowColumnDesignServiceImpl implements
 			String rows = parameter.getRowsPerReplications();
 			String cols = parameter.getColsPerReplications();
 			String replicates = parameter.getReplicationsCount();
-			int environments = Integer.valueOf(parameter.getNoOfEnvironments());					
+			int environments = Integer.valueOf(parameter.getNoOfEnvironments());
+			int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
 			
 			try {
 				
@@ -103,7 +104,7 @@ public class ResolvableRowColumnDesignServiceImpl implements
 						stdvarRows.getName(),stdvarCols.getName(),stdvarPlot.getName(),
 						parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "1", "", parameter.getUseLatenized());
 				
-				measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, 
+				measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, 
 						trialVariables, factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 						mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), null, fieldbookService);					
 				

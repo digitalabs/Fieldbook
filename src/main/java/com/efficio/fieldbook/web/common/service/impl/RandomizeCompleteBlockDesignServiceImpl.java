@@ -62,7 +62,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		String block = parameter.getReplicationsCount();	
-		int environments = Integer.valueOf(parameter.getNoOfEnvironments());				
+		int environments = Integer.valueOf(parameter.getNoOfEnvironments());
+		int environmentsToAdd = Integer.valueOf(parameter.getNoOfEnvironmentsToAdd());
 		
 		try {
 			
@@ -149,7 +150,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					stdvarRep.getName(), stdvarPlot.getName(),
 				treatmentFactor, levels, "1", "");
 			
-			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, trialVariables, factors,
+			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, trialVariables, factors,
 					nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 
 					mainDesign, workbenchService, fieldbookProperties, stdvarTreatment.getName(), treatmentFactorValues, fieldbookService);					
 			

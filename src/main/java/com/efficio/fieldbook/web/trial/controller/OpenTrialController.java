@@ -125,7 +125,7 @@ public class OpenTrialController extends
             //this is so we can preview the exp design
             if (userSelection.getTemporaryWorkbook() != null) {
                 workbook = userSelection.getTemporaryWorkbook();
-                model.addAttribute(IS_EXP_DESIGN_PREVIEW, "1");
+                model.addAttribute(IS_EXP_DESIGN_PREVIEW, "0");
             }
 
             try {
@@ -430,7 +430,7 @@ public class OpenTrialController extends
         List<MeasurementRow> observations = workbook.getObservations();
         Integer measurementDatasetId = workbook.getMeasurementDatesetId();
         userSelection.setMeasurementRowList(workbook.getObservations());
-        model.addAttribute(IS_EXP_DESIGN_PREVIEW, "1");
+        model.addAttribute(IS_EXP_DESIGN_PREVIEW, "0");
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations, measurementDatasetId, variates, model);
     }
 
@@ -484,7 +484,7 @@ public class OpenTrialController extends
         userSelection.setMeasurementRowList(workbook.getObservations());
         //we do a cleanup here
         if (isInPreviewMode) {
-            model.addAttribute(IS_EXP_DESIGN_PREVIEW, "1");
+            model.addAttribute(IS_EXP_DESIGN_PREVIEW, "0");
         }
 
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations, measurementDatasetId, variates, model);

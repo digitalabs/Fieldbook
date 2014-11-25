@@ -1788,11 +1788,12 @@ function checkFavoritesIfValIsAFavorite(rowIndex) {
     if ('' === possibleValuesElm.text().trim()) {
         return false;
     }
-
-    $.each(possibleValuesFavoriteArr,function(index,val) {
-        if (val.id === valueOfDropdown) {
-            $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
-            return false;
-        }
-    });
+    if(possibleValuesFavoriteArr !== null) {
+    	$.each(possibleValuesFavoriteArr,function(index,val) {
+            if (val.id === valueOfDropdown) {
+                $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
+                return false;
+            }
+        });
+    }
 }

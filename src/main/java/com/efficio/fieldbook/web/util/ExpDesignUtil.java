@@ -22,6 +22,8 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -38,6 +40,8 @@ public class ExpDesignUtil {
 	private static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
 	private static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
 	
+	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
+	
 	public static String getXmlStringForSetting(MainDesign mainDesign) throws JAXBException{
 		JAXBContext context = JAXBContext.newInstance(MainDesign.class);
         Marshaller marshaller = context.createMarshaller();
@@ -49,8 +53,7 @@ public class ExpDesignUtil {
 	public static MainDesign readXmlStringForSetting(String xmlString) throws JAXBException{
 		JAXBContext context = JAXBContext.newInstance(MainDesign.class);
 		Unmarshaller unmarshaller = context.createUnmarshaller();
-		MainDesign mainDesign = (MainDesign) unmarshaller.unmarshal(new StringReader(xmlString));
-        return mainDesign;
+        return (MainDesign) unmarshaller.unmarshal(new StringReader(xmlString));
 	}
 	
 	public static ExpDesignParameter createExpDesignParameter(String name, String value, List<ListItem> items){
@@ -92,8 +95,8 @@ public class ExpDesignUtil {
 		paramList.add(createExpDesignParameter("outputfile", outputfile, null));
 		
 		ExpDesign design = new ExpDesign(RANDOMIZED_COMPLETE_BLOCK_DESIGN, paramList);
-		MainDesign mainDesign = new MainDesign(design);
-		return mainDesign;
+		
+		return new MainDesign(design);
 	}
 	
 	public static MainDesign createResolvableIncompleteBlockDesign(String blockSize, String nTreatments,
@@ -128,8 +131,8 @@ public class ExpDesignUtil {
 		paramList.add(createExpDesignParameter("outputfile", outputfile, null));
 		
 		ExpDesign design = new ExpDesign(RESOLVABLE_INCOMPLETE_BLOCK_DESIGN, paramList);
-		MainDesign mainDesign = new MainDesign(design);
-		return mainDesign;
+		
+		return new MainDesign(design);
 	}
 	
 	public static MainDesign createResolvableRowColDesign(String nTreatments,
@@ -170,8 +173,8 @@ public class ExpDesignUtil {
 		
 	
 		ExpDesign design = new ExpDesign(RESOLVABLE_ROW_COL_DESIGN, paramList);
-		MainDesign mainDesign = new MainDesign(design);
-		return mainDesign;
+		
+		return new MainDesign(design);
 	}
 	
 	public static MeasurementVariable convertStandardVariableToMeasurementVariable(StandardVariable var, Operation operation, FieldbookService fieldbookService) {
@@ -187,8 +190,7 @@ public class ExpDesignUtil {
         try {
 			mvar.setPossibleValues(fieldbookService.getAllPossibleValues(var.getId()));
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
         return mvar;
     }

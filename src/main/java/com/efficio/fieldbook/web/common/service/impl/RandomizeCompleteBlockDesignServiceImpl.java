@@ -19,6 +19,8 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,8 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Service
 public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeCompleteBlockDesignService{
+	
+	private static final Logger LOG = LoggerFactory.getLogger(RandomizeCompleteBlockDesignServiceImpl.class);
 
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -70,8 +74,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			List<String> treatmentFactor = new ArrayList<String>();
 			List<String> levels = new ArrayList<String>();
 			
-			Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>(); //Key - CVTerm ID , List of values
-			List<TreatmentVariable> treatmentVarList = new ArrayList<TreatmentVariable>();
+			//Key - CVTerm ID , List of values
+			Map<String, List<String>> treatmentFactorValues = new HashMap<String, List<String>>(); 
 			Map treatmentFactorsData = parameter.getTreatmentFactorsData();
 			
 			List<SettingDetail> treatmentFactorList = userSelection.getTreatmentFactors();
@@ -157,7 +161,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		} catch(BVDesignException e) {
 			throw e;
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		
 		return measurementRowList;
@@ -174,8 +178,7 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 			varList.add(stdvarRep);
 			varList.add(stdvarPlot);
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		return varList;
 	}

@@ -15,6 +15,8 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 @Service
 public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableIncompleteBlockDesignService{
 
+	private static final Logger LOG = LoggerFactory.getLogger(ResolvableIncompleteBlockDesignServiceImpl.class);
+	
 	@Resource
 	public org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	@Resource
@@ -108,7 +112,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 		}catch(BVDesignException e){
 			throw e;
 		}catch(Exception e){
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		return measurementRowList;
 	}
@@ -125,8 +129,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			varList.add(stdvarBlock);
 			varList.add(stdvarPlot);
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		return varList;
 	}

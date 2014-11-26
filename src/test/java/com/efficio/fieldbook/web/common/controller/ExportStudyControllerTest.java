@@ -13,6 +13,9 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +31,26 @@ import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.commons.service.ExportService;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Property;
+import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import static org.mockito.Mockito.*;
+
+import org.mockito.MockitoAnnotations;
+
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
@@ -42,10 +59,40 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 public class ExportStudyControllerTest{
 
+	private static final String SAMPLE_NURSERY_FILENAME = "Sample_Nursery";
+
+	private static final String SAMPLE_TRIAL_FILENAME = "Sample_Trial";
+
+	private static final String ZIP_EXT = ".zip";
+
+	private static final String CSV_EXT = ".csv";
+
 	private ExportStudyController exportStudyController;
 	
+	@Mock
+    private FieldbookService fieldbookMiddlewareService;
+	
+    @Mock
+    private OntologyService ontologyService;
+    
+    @Mock
+    private CsvExportStudyService csvExportStudyService;
+    
+    @Mock
+    private ExportOrderingRowColImpl exportOrderingRowColService;
+    
+    @Mock
+    private HttpServletRequest req;
+    
+    @Mock
+    private HttpServletResponse resp;
+    
+    private static final String CSV_CONTENT_TYPE = "text/csv";
+    private static final String ZIP_CONTENT_TYPE = "application/zip";
+    
 	@Before
 	public void setUp(){
+		MockitoAnnotations.initMocks(this);
 		exportStudyController = new ExportStudyController();
 	}
 
@@ -270,5 +317,184 @@ public class ExportStudyControllerTest{
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
 		exportStudyControllerMock.setExportOrderingRowColService(Mockito.mock(ExportOrderingRowColImpl.class));
 		Assert.assertTrue("Should return ExportOrderingRowColImpl type", exportStudyControllerMock.getExportOrderService(4) instanceof ExportOrderingRowColImpl );		
+	}
+	
+	@Test
+	public void testGetVisibleColumnsWhenThereIsNoVisibleColumns(){
+		Assert.assertNull("Expected to return a null object for visible columns but didn't.", exportStudyController.getVisibleColumns(""));
+	}
+	
+	@Test
+	public void testGetVisibleColumnsWhenThereIsVisibleColumns(){
+		Assert.assertEquals("Expected to return a list with 3 visible column entries.",3, exportStudyController.getVisibleColumns("8810,8023,8024").size());
+	}
+	
+	@Test
+	public void testDoExportNurseryInCSVFormatWithDefinedVisibleColumns() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException{
+		
+		ExportStudyController exportStudyControllerMock = initializeExportStudyControllerForStudyCSVExport();
+		
+		// Inputs
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
+		
+		String outputFilename = SAMPLE_NURSERY_FILENAME;
+		String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
+		List<Integer> instances = WorkbookDataUtil.getTrialInstances();
+		Integer exportType = AppConstants.EXPORT_CSV.getInt();
+		Integer exportWayType = 1; // Plot Data
+		Map<String, String> data = getData();
+		
+		
+		//Mock Object Method Calls
+		UserSelection userSelection = new UserSelection();
+		userSelection.setWorkbook(workbook);
+		exportStudyControllerMock.setUserSelection(userSelection);
+		
+		mockOtherRelatedMethodCallsForExportStudyMethods(exportStudyControllerMock, generatedFilename, userSelection);
+		
+		Mockito.when(resp.getContentType()).thenReturn(CSV_CONTENT_TYPE);
+		Mockito.when(csvExportStudyService.export(workbook, generatedFilename + CSV_EXT, instances, getVisibleColumns())).thenReturn(outputFilename + CSV_EXT);
+		
+		String returnedValue = exportStudyControllerMock.exportFile(data, exportType, exportWayType, req, resp);
+		
+		HashMap<String,String> result = (new ObjectMapper()).readValue(returnedValue, HashMap.class);
+		
+		Assert.assertEquals("Expected that the returned content type is " + CSV_CONTENT_TYPE + " but returned " + result.get("contentType"),CSV_CONTENT_TYPE, result.get("contentType"));
+		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ".csv but returned " + result.get("filename"),generatedFilename + CSV_EXT, result.get("filename"));
+		Assert.assertEquals("Expected that the returned output filename is " + outputFilename + ".csv but returned " + result.get("outputFilename"),outputFilename + CSV_EXT, result.get("outputFilename"));
+	}
+
+	private void mockOtherRelatedMethodCallsForExportStudyMethods(
+			ExportStudyController exportStudyControllerMock,
+			String generatedFilename, UserSelection userSelection)
+			throws MiddlewareQueryException {
+		Mockito.doReturn(userSelection).when(exportStudyControllerMock).getUserSelection();
+		PaginationListSelection paginationListSelection = Mockito.mock(PaginationListSelection.class);
+		Mockito.doReturn(paginationListSelection).when(exportStudyControllerMock).getPaginationListSelection();
+		Mockito.doReturn(null).when(paginationListSelection).getReviewFullWorkbook("0");
+		Mockito.doReturn(generatedFilename).when(exportStudyControllerMock).getFileName(userSelection);
+		Mockito.when(ontologyService.getProperty(anyString())).thenReturn(getProperty());
+	}
+
+	private Property getProperty() {
+		Property prop = new Property();
+		Term term = new Term();
+		term.setId(-1);
+		prop.setTerm(term);
+		return prop;
+	}
+
+	private Map<String, String> getData() {
+		Map<String,String> data = new HashMap<String,String>();
+		data.put("visibleColumns", getVisibleColumnsString());
+		data.put("studyExportId", "0");
+		return data;
+	}
+
+	private ExportStudyController initializeExportStudyControllerForStudyCSVExport() {
+		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
+		ExportService exportService = Mockito.mock(ExportService.class);
+		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		exportStudyControllerMock.setOntologyService(ontologyService);
+		exportStudyControllerMock.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		exportStudyControllerMock.setCsvExportStudyService(csvExportStudyService);
+		exportStudyControllerMock.setExportOrderingRowColService(exportOrderingRowColService);
+		return exportStudyControllerMock;
+	}
+	
+	private String getVisibleColumnsString(){
+		return "8230,8377,8200,20368,20308";
+	}
+	
+	private List<Integer> getVisibleColumns() {
+		List<Integer> visibleColumns = new ArrayList<Integer>();
+		visibleColumns.add(8230);
+		visibleColumns.add(8377);
+		visibleColumns.add(8200);
+		visibleColumns.add(20368);
+		visibleColumns.add(20308);
+		return visibleColumns;
+	}
+
+	@Test
+	public void testDoExportTrialWith1InstanceInCSVFormat() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException{
+		
+		ExportStudyController exportStudyControllerMock = initializeExportStudyControllerForStudyCSVExport();
+		
+		// Inputs
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 1);
+		
+		String outputFilename = SAMPLE_TRIAL_FILENAME;
+		String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
+		List<Integer> instances = WorkbookDataUtil.getTrialInstances();
+		Integer exportType = AppConstants.EXPORT_CSV.getInt();
+		Integer exportWayType = 1;
+		Map<String, String> data = getData();
+
+		//Mock Object Method Calls
+		UserSelection userSelection = new UserSelection();
+		userSelection.setWorkbook(workbook);
+		Mockito.doReturn(userSelection).when(exportStudyControllerMock).getUserSelection();
+		
+		mockOtherRelatedMethodCallsForExportStudyMethods(exportStudyControllerMock, generatedFilename, userSelection);
+
+		Mockito.when(csvExportStudyService.export(workbook, generatedFilename + CSV_EXT, instances, getVisibleColumns())).thenReturn(outputFilename + CSV_EXT);
+		Mockito.when(resp.getContentType()).thenReturn(CSV_CONTENT_TYPE);
+
+		String returnedValue = exportStudyControllerMock.exportFileTrial(data, exportType, "1", exportWayType, req, resp);
+		HashMap<String,String> result = (new ObjectMapper()).readValue(returnedValue, HashMap.class);
+		Assert.assertEquals("Expected that the returned content type is " + CSV_CONTENT_TYPE + " but returned " + result.get("contentType"),CSV_CONTENT_TYPE, result.get("contentType"));
+		Assert.assertEquals("Expected that the returned filename is " + outputFilename + ".csv but returned " + result.get("filename"),outputFilename + CSV_EXT, result.get("filename"));
+		Assert.assertEquals("Expected that the returned output filename is " + outputFilename + ".csv but returned " + result.get("outputFilename"),outputFilename + CSV_EXT, result.get("outputFilename"));
+	}
+	
+	@Test
+	public void testDoExportTrialWithMultipleInstancesInCSVFormat() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException{
+		
+		ExportStudyController exportStudyControllerMock = initializeExportStudyControllerForStudyCSVExport();
+		
+		// Inputs 
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(20, 3);
+		
+		String outputFilename = SAMPLE_TRIAL_FILENAME;
+		String generatedFilename = workbook.getStudyDetails().getStudyName() + "_" + workbook.getStudyDetails().getId();
+		List<Integer> instances = WorkbookDataUtil.getTrialInstances();
+		
+		Integer exportType = AppConstants.EXPORT_CSV.getInt();
+		Integer exportWayType = 1;
+		Map<String, String> data = getData();
+
+		//Mock Object Method Calls
+		UserSelection userSelection = new UserSelection();
+		userSelection.setWorkbook(workbook);
+		Mockito.doReturn(userSelection).when(exportStudyControllerMock).getUserSelection();
+		
+		mockOtherRelatedMethodCallsForExportStudyMethods(exportStudyControllerMock, generatedFilename, userSelection);
+		
+		Mockito.when(csvExportStudyService.export(workbook, generatedFilename + CSV_EXT, instances, getVisibleColumns())).thenReturn(outputFilename + ZIP_EXT);
+		Mockito.when(resp.getContentType()).thenReturn(ZIP_CONTENT_TYPE);
+
+		String returnedValue = exportStudyControllerMock.exportFileTrial(data, exportType,getTrialInstanceString(instances),exportWayType, req, resp);
+		HashMap<String,String> result = (new ObjectMapper()).readValue(returnedValue, HashMap.class);
+		Assert.assertEquals("Expected that the returned content type is " + ZIP_CONTENT_TYPE + " but returned " + result.get("contentType"),ZIP_CONTENT_TYPE, result.get("contentType"));
+		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ".zip but returned " + result.get("filename"),generatedFilename + ZIP_EXT, result.get("filename"));
+		Assert.assertEquals("Expected that the returned output filename is " + outputFilename + ".zip but returned " + result.get("outputFilename"),outputFilename + ZIP_EXT, result.get("outputFilename"));
+	}
+
+	private String getTrialInstanceString(List<Integer> instances) {
+		String trialInstances = "";
+		
+		for(Integer instance : instances){
+			if("".equalsIgnoreCase(trialInstances)){
+				trialInstances = instance.toString();
+			} else {
+				trialInstances = trialInstances + "|" + instance.toString();
+			}
+		}
+		
+		return trialInstances;
 	}
 }

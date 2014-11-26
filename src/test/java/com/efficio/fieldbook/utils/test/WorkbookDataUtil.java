@@ -12,7 +12,9 @@
 package com.efficio.fieldbook.utils.test;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -45,7 +47,7 @@ public class WorkbookDataUtil {
 
 	// PROPERTIES
 	private static final String PERSON = "PERSON";
-	private static final String TRIAL_INSTANCE = "TRIAL INSTANCE";
+	public static final String TRIAL_INSTANCE = "TRIAL INSTANCE";
 	private static final String LOCATION = "LOCATION";
 	private static final String GERMPLASM_ENTRY = "GERMPLASM ENTRY";
 	private static final String GERMPLASM_ID = "GERMPLASM ID";
@@ -63,7 +65,7 @@ public class WorkbookDataUtil {
 	// SCALES
 	private static final String DBCV = "DBCV";
 	private static final String DBID = "DBID";
-	private static final String NUMBER = "NUMBER";
+	public static final String NUMBER = "NUMBER";
 	private static final String PEDIGREE_STRING = "PEDIGREE STRING";
 	private static final String NAME = "NAME";
 	private static final String NESTED_NUMBER = "NESTED NUMBER";
@@ -73,7 +75,7 @@ public class WorkbookDataUtil {
 
 	// METHODS
 	private static final String ASSIGNED = "ASSIGNED";
-	private static final String ENUMERATED = "ENUMERATED";
+	public static final String ENUMERATED = "ENUMERATED";
 	private static final String CONDUCTED = "CONDUCTED";
 	private static final String APPLIED = "APPLIED";
 	private static final String SELECTED = "SELECTED";
@@ -83,13 +85,13 @@ public class WorkbookDataUtil {
 
 	// LABELS
 	private static final String STUDY = "STUDY";
-	private static final String TRIAL = "TRIAL";
-	private static final String ENTRY = "ENTRY";
+	public static final String TRIAL = "TRIAL";
+	public static final String ENTRY = "ENTRY";
 	private static final String PLOT = "PLOT";
 
 	// DATA TYPES
 	private static final String CHAR = "C";
-	private static final String NUMERIC = "N";
+	public static final String NUMERIC = "N";
 
 	// FACTORS
 	private static final String GID = "GID";
@@ -115,7 +117,7 @@ public class WorkbookDataUtil {
 	private static final String COOPERATOR = "Cooperator";
 	private static final String COOPERATOR_ID = "Cooperator Id";
 	private static final String SITE = "Site";
-	private static final String SITE_ID = "Site Id";
+	public static final String SITE_ID = "Site Id";
 
 	private static final String GERMPLASM_NAME = "TIANDOUGOU-9";
 	private static final String NUMERIC_VALUE = "1";
@@ -141,11 +143,23 @@ public class WorkbookDataUtil {
 		return WorkbookDataUtil.workbook;
 	}
 	
+	public static Workbook getTestWorkbookForTrial(int noOfObservations, int noOfInstance) {
+		if (WorkbookDataUtil.workbook == null) {
+			WorkbookDataUtil.createTestWorkbook(noOfObservations, StudyType.T, noOfInstance);
+		}
+		return WorkbookDataUtil.workbook;
+	}
+
 	public static void setTestWorkbook(Workbook workbook) {
 		WorkbookDataUtil.workbook = workbook;
 	}
 
 	private static void createTestWorkbook(int noOfObservations, StudyType studyType) {
+		createTestWorkbook(noOfObservations, studyType, 2);
+	}
+	
+	private static void createTestWorkbook(int noOfObservations, StudyType studyType,
+			int noOfInstance) {
 		WorkbookDataUtil.workbook = new Workbook();
 
 		WorkbookDataUtil.createStudyDetails(studyType);
@@ -153,8 +167,8 @@ public class WorkbookDataUtil {
 		WorkbookDataUtil.createFactors();
 		WorkbookDataUtil.createConstants();
 		WorkbookDataUtil.createVariates();
-		WorkbookDataUtil.createObservations(noOfObservations, studyType.equals(StudyType.N) ? 1 : 2);
-		WorkbookDataUtil.createTrialObservations(studyType.equals(StudyType.N) ? 1 : 2);
+		WorkbookDataUtil.createObservations(noOfObservations, studyType.equals(StudyType.N) ? 1 : noOfInstance);
+		WorkbookDataUtil.createTrialObservations(studyType.equals(StudyType.N) ? 1 : noOfInstance);
 		workbook.setMeasurementDatesetId(-2);
 		workbook.setTrialDatasetId(-3);
 	}
@@ -546,7 +560,7 @@ public class WorkbookDataUtil {
 		WorkbookDataUtil.workbook.setTrialObservations(trialObservations);
 	}
 
-	private static MeasurementVariable getMeasurementVariable(int termId,
+	public static MeasurementVariable getMeasurementVariable(int termId,
 			List<MeasurementVariable> variables) {
 		if (variables != null) {
 			//get matching MeasurementVariable object given the term id
@@ -613,6 +627,25 @@ public class WorkbookDataUtil {
 
 		row.setDataList(dataList);
 		return row;
+	}
+	
+	public static List<Integer> getTrialInstances(){
+		List<Integer> instances = new ArrayList<Integer>();
+		for (MeasurementRow row : workbook.getTrialObservations()) {
+			if (row.getDataList() != null) {
+				instances.add(getTrialInstanceNo(row.getDataList()));
+			}
+		}
+		return instances;
+	}
+	
+	private static int getTrialInstanceNo(List<MeasurementData> dataList) {
+		for (MeasurementData data : dataList) {
+			if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				return Integer.valueOf(data.getValue());
+			} 
+		}
+		return 0;
 	}
 
 }

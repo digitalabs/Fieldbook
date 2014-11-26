@@ -49,7 +49,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 	@Resource
 	private ExportService exportService;
 	
-	private static Integer[] REQUIRED_COLUMNS = {TermId.PLOT_NO.getId(), TermId.ENTRY_NO.getId(), TermId.DESIG.getId()};
+	protected static final Integer[] REQUIRED_COLUMNS = {TermId.PLOT_NO.getId(), TermId.ENTRY_NO.getId(), TermId.DESIG.getId()};
 
 	@Override
 	public String export(Workbook workbook, String filename,
@@ -188,7 +188,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		return exportColumnHeaders;
 	}
 
-	private ExportColumnHeader getColumnsBasedOnVisibility(
+	protected ExportColumnHeader getColumnsBasedOnVisibility(
 			List<Integer> visibleColumns, MeasurementVariable variable) {
 		if (visibleColumns.contains(variable.getTermId()) || partOfRequiredColumns(variable.getTermId())) {
 			return new ExportColumnHeader(variable.getTermId(), variable.getName(), true);

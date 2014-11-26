@@ -148,6 +148,9 @@
 		<aop:scoped-proxy />
 	</bean>
 	
+	<bean id="exportGermplasmListService" class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl">
+	</bean>
+	
 	<!-- **************************************************************** -->
 	<!-- RESTful Web Service -->
 	<!-- **************************************************************** -->

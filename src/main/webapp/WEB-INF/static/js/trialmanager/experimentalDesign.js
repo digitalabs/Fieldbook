@@ -51,6 +51,7 @@
                     $scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
 
                     $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+                    $scope.data.hasMeasurementData = TrialManagerDataService.trialMeasurement.hasMeasurement;
                     if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
                         $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
                     }
@@ -90,7 +91,8 @@
                         'colsPerReplications': null,
                         'nrlatin': null,
                         'nclatin': null,
-                        'replatinGroups': ''
+                        'replatinGroups': '',
+                        'hasMeasurementData': TrialManagerDataService.trialMeasurement.hasMeasurement
                     },$scope.data);
                 }
 

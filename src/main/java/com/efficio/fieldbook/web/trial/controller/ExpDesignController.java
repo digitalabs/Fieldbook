@@ -114,13 +114,13 @@ public class ExpDesignController extends
 		    		expParameterOutput = designService.validate(expDesign, germplasmList);
 		    		//we call the actual process
 		    		if(expParameterOutput.isValid()){
-		    			expDesign.setNoOfEnvironmentsToAdd(countNewEnvironments(expDesign.getNoOfEnvironments(), userSelection));
+		    			expDesign.setNoOfEnvironmentsToAdd(countNewEnvironments(expDesign.getNoOfEnvironments(), userSelection, expDesign.isHasMeasurementData()));
 		    			List<MeasurementRow> measurementRows = designService.generateDesign(germplasmList, expDesign,workbook.getConditions(), workbook.getFactors(), workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
 
 		    			userSelection.setExpDesignParams(expDesign);
 		    			userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
 		    			
-		    			workbook.setObservations(combineNewlyGeneratedMeasurementsWithExisting(measurementRows, userSelection));
+		    			workbook.setObservations(combineNewlyGeneratedMeasurementsWithExisting(measurementRows, userSelection, expDesign.isHasMeasurementData()));
 		    			//should have at least 1 record
 		    			List<MeasurementVariable> currentNewFactors = new ArrayList<MeasurementVariable>();
 		    			List<MeasurementVariable> oldFactors = workbook.getFactors();
@@ -166,14 +166,14 @@ public class ExpDesignController extends
     }
     
     protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(
-			List<MeasurementRow> measurementRows, UserSelection userSelection) {
+			List<MeasurementRow> measurementRows, UserSelection userSelection, boolean hasMeasurementData) {
     	Workbook workbook = null;
     	if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
     		workbook = userSelection.getTemporaryWorkbook();
     	} else {
     		workbook = userSelection.getWorkbook();
     	}
-		if (workbook != null && workbook.getObservations() != null) {
+		if (workbook != null && workbook.getObservations() != null && hasMeasurementData) {
 			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 			observations.addAll(workbook.getObservations());
 			observations.addAll(measurementRows);
@@ -182,7 +182,7 @@ public class ExpDesignController extends
 		return measurementRows;
 	}
 
-    protected String countNewEnvironments(String noOfEnvironments, UserSelection userSelection) {
+    protected String countNewEnvironments(String noOfEnvironments, UserSelection userSelection, boolean hasMeasurementData) {
     	Workbook workbook = null;
     	if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
     		workbook = userSelection.getTemporaryWorkbook();
@@ -190,7 +190,7 @@ public class ExpDesignController extends
     		workbook = userSelection.getWorkbook();
     	}
     	
-		if (workbook != null && workbook.getObservations() != null) {
+		if (workbook != null && workbook.getObservations() != null && hasMeasurementData) {
 			return String.valueOf(Integer.parseInt(noOfEnvironments) - getMaxInstanceNo(workbook.getObservations()));
 		}
 		return noOfEnvironments;

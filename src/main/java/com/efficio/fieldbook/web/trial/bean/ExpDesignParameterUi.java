@@ -20,6 +20,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String nrlatin;
 	private String nblatin;
 	private String replatinGroups;
+	private boolean hasMeasurementData;
 /*
 	1 - single col
 	2 - single row
@@ -132,6 +133,12 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	}
 	public void setNoOfEnvironmentsToAdd(String noOfEnvironmentsToAdd) {
 		this.noOfEnvironmentsToAdd = noOfEnvironmentsToAdd;
+	}
+	public boolean isHasMeasurementData() {
+		return hasMeasurementData;
+	}
+	public void setHasMeasurementData(boolean hasMeasurementData) {
+		this.hasMeasurementData = hasMeasurementData;
 	}
 	
 	

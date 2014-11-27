@@ -99,8 +99,8 @@
 			</div>
 			<div class="row col-xs-12 remove-all-section">
 			  <div class="col-xs-12">
-			    <input class="remove-btn" type="checkbox" data-section="nurseryLevelSettings"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
-			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="1" data-section="nurseryLevelSettings">Remove</a>
+			    <input class="remove-btn" type="checkbox" data-section="nurseryLevelSettings"/>&nbsp;&nbsp;&nbsp;<label th:text="#{browse.nursery.select.all.variable}">Select All</label>&nbsp;&nbsp;&nbsp;
+			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="1" data-section="nurseryLevelSettings" th:text="#{browse.nursery.remove.all.variable}">Remove</a>
 			  </div>
 			</div>
 		</div>
@@ -140,8 +140,8 @@
 			
 			<div class="row col-xs-12 remove-all-section">
 			  <div class="col-xs-12">
-			    <input class="remove-btn" type="checkbox" data-section="plotLevelDetails"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
-			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="2" data-section="plotLevelDetails">Remove</a>
+			    <input class="remove-btn" type="checkbox" data-section="plotLevelDetails"/>&nbsp;&nbsp;&nbsp;<label th:text="#{browse.nursery.select.all.variable}">Select All</label>&nbsp;&nbsp;&nbsp;
+			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="2" data-section="plotLevelDetails" th:text="#{browse.nursery.remove.all.variable}">Remove</a>
 			  </div>
 			</div>
 		</div>
@@ -189,8 +189,8 @@
 			
 			<div class="row col-xs-12 remove-all-section">
 			  <div class="col-xs-12">
-			    <input class="remove-btn" type="checkbox" data-section="selectionVariatesDetails"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
-				<a href="javascript: void(0);" class="remove-all-vars" data-variable-type="6" data-section="selectionVariatesDetails">Remove</a>
+			    <input class="remove-btn" type="checkbox" data-section="selectionVariatesDetails"/>&nbsp;&nbsp;&nbsp;<label th:text="#{browse.nursery.select.all.variable}">Select All</label>&nbsp;&nbsp;&nbsp;
+				<a href="javascript: void(0);" class="remove-all-vars" data-variable-type="6" data-section="selectionVariatesDetails" th:text="#{browse.nursery.remove.all.variable}">Remove</a>
 			  </div>
 			</div>
 		</div>
@@ -297,8 +297,8 @@
 			
 			<div class="row col-xs-12 remove-all-section">
 			  <div class="col-xs-12">
-			    <input class="remove-btn" type="checkbox" data-section="nurseryConditionsDetails"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
-			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="7" data-section="nurseryConditionsDetails">Remove</a>
+			    <input class="remove-btn" type="checkbox" data-section="nurseryConditionsDetails"/>&nbsp;&nbsp;&nbsp;<label th:text="#{browse.nursery.select.all.variable}">Select All</label>&nbsp;&nbsp;&nbsp;
+			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="7" data-section="nurseryConditionsDetails" th:text="#{browse.nursery.remove.all.variable}">Remove</a>
 			  </div>
 			</div>
 		</div>
@@ -343,8 +343,8 @@
 			</table>
 			<div class="row col-xs-12 remove-all-section">
 			  <div class="col-xs-12">
-			    <input class="remove-btn" type="checkbox" data-section="baselineTraitDetails"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
-			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="3" data-section="baselineTraitDetails">Remove</a>
+			    <input class="remove-btn" type="checkbox" data-section="baselineTraitDetails"/>&nbsp;&nbsp;&nbsp;<label th:text="#{browse.nursery.select.all.variable}">Select All</label>&nbsp;&nbsp;&nbsp;
+			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="3" data-section="baselineTraitDetails" th:text="#{browse.nursery.remove.all.variable}">Remove</a>
 			  </div>
 			</div>
 		</div>
@@ -399,6 +399,7 @@ var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
 
 	selectionVariatesSegment = 6,
 	baselineTraitsSegment = 3;
+	inputChange = false;
 /* jshint ignore:end */
 
 var locationId = '',

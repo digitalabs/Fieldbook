@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Created by IntelliJ IDEA.
@@ -184,7 +185,7 @@ public abstract class BaseTrialController extends SettingsController {
 
         for (MeasurementVariable var : measurementVariables) {
             // this condition is required so that treatment factors are not included in the list of factors for the germplasm tab
-            if (var.getTreatmentLabel()!= null && !var.getTreatmentLabel().isEmpty()) {
+            if ((var.getTreatmentLabel()!= null && !var.getTreatmentLabel().isEmpty()) || (inRequiredExpDesignVar(var.getTermId()) && isUsePrevious)) {
                 continue;
             }
 
@@ -220,7 +221,18 @@ public abstract class BaseTrialController extends SettingsController {
         return info;
     }
 
-    protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables, boolean isUsePrevious) throws MiddlewareQueryException {
+    protected boolean inRequiredExpDesignVar(int termId) {
+    	StringTokenizer token = new StringTokenizer(AppConstants.EXP_DESIGN_REQUIRED_VARIABLES.getString(), ",");
+    	
+    	while (token.hasMoreTokens()) {
+    		if (Integer.parseInt(token.nextToken()) == termId) {
+    			return true;
+    		}
+    	}
+		return false;
+	}
+
+	protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables, boolean isUsePrevious) throws MiddlewareQueryException {
         Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
         Map<String, TreatmentFactorData> currentData = new HashMap<String, TreatmentFactorData>();
         Map<String, List<SettingDetail>> treatmentFactorPairs = new HashMap<String, List<SettingDetail>>();

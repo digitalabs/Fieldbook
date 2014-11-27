@@ -133,6 +133,18 @@ public class SettingsUtilTest {
     	Assert.assertFalse(checksHaveValues);
     }
 
+    @Test
+	public void testParseVariableIds(){
+		List<Integer> variableIds = settingsUtilParseVariableIds("1|2|3");
+		Assert.assertEquals("Should have 3 variable ids", 3, variableIds.size());
+		Assert.assertEquals("1st Id should be 1", new Integer(1), variableIds.get(0));
+		Assert.assertEquals("2nd Id should be 2", new Integer(2), variableIds.get(1));
+		Assert.assertEquals("3rd Id should be 3", new Integer(3), variableIds.get(2));
+	}
+	
+	private List<Integer> settingsUtilParseVariableIds(String variableIds){
+		return SettingsUtil.parseVariableIds(variableIds);
+	}
     private List<SettingDetail> createCheckVariables(boolean hasValue) {
 		List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
 		

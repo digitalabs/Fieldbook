@@ -120,11 +120,11 @@ public class EditNurseryControllerTest {
     public void testCheckMeasurementData() throws Exception {
         initializeMeasurementRowList();
 
-        Map<String, String> result1 = editNurseryController.checkMeasurementData(createNurseryForm, model, 0, DEFAULT_TERM_ID);
+        Map<String, String> result1 = editNurseryController.checkMeasurementData(createNurseryForm, model, 0, Integer.toString(DEFAULT_TERM_ID));
 
         assertTrue("the result of map with key HAS_MEASUREMENT_DATA_STR should be '1' ", result1.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR).equals(EditNurseryController.SUCCESS));
 
-        Map<String, String> result2 = editNurseryController.checkMeasurementData(createNurseryForm, model, 0, DEFAULT_TERM_ID_2);
+        Map<String, String> result2 = editNurseryController.checkMeasurementData(createNurseryForm, model, 0, Integer.toString(DEFAULT_TERM_ID_2));
 
         assertTrue("the result of map with key HAS_MEASUREMENT_DATA_STR should be '0' ", result2.get(EditNurseryController.HAS_MEASUREMENT_DATA_STR).equals(EditNurseryController.NO_MEASUREMENT));
     }

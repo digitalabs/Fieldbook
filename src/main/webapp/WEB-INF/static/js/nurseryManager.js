@@ -404,12 +404,10 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		var isDelete = '';
 
 		// include delete button if variable is deletable
-		if (settingDetail.deletable) {
-			isDelete = '<span style="font-size: 16px;" class="delete-icon" onclick="deleteVariable('
-					+ varType
-					+ ','
-					+ settingDetail.variable.cvTermId
-					+ ',$(this))"></span>';
+		if (settingDetail.deletable) {			
+			isDelete = '<input class="remove-indv-btn"' 
+				+ ' type="checkbox" data-variable-type="'+varType+'"' 
+				+ ' data-cv-term-id="'+settingDetail.variable.cvTermId+'"/>';
 		}
 
 		// create html elements dynamically
@@ -541,7 +539,11 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ '</div></div>';
 		}
         // the element will be appended to the dom
-		$('#' + tableId).append(newRow);
+		if(tableId === 'nurseryLevelSettings-dev' || tableId === 'nurseryConditionsSettings') {
+			$('#' + tableId + ' .remove-all-section').before(newRow);
+		} else {
+			$('#' + tableId).append(newRow);
+		}	
 
 		if (settingDetail.variable.widgetType === 'DROPDOWN') {
 			// initialize select 2 combo
@@ -570,6 +572,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 	});
 
 	initializeDateAndSliderInputs();
+	checkNurseryIfShowRemoveVariableLinks();
 }
 
 function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
@@ -692,11 +695,9 @@ function createTableSettingVariables(data, name, tableId, varType) {
 		var isDelete = '';
 
 		if (settingDetail.deletable) {
-			isDelete = '<span style="font-size: 16px;" class="delete-icon" onclick="deleteVariable('
-					+ varType
-					+ ','
-					+ settingDetail.variable.cvTermId
-					+ ',$(this))"></span>';
+			isDelete = '<input class="remove-indv-btn"' 
+				+ ' type="checkbox" data-variable-type="'+varType+'"' 
+				+ ' data-cv-term-id="'+settingDetail.variable.cvTermId+'"/>';
 		}
 		newRow = newRow
 				+ '<td style="text-align: center" class="fbk-delete-link '
@@ -719,6 +720,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 				+ '</td></tr>';
 		$('#' + tableId).append(newRow);
 	});
+	checkNurseryIfShowRemoveVariableLinks();
 }
 
 function sortByKey(array, key) {
@@ -863,23 +865,26 @@ function checkMeasurementData(variableType, variableId) {
 	});
 	return hasData;
 }
-
-function deleteVariable(variableType, variableId, deleteButton) {
+function deleteMultiVariable(variableType, variableIds, sectionDiv) {	
+	'use strict';
 	var hasMeasurementData = false;
 	if (variableType == selectionVariatesSegment
 			|| variableType == baselineTraitsSegment) {
-		hasMeasurementData = checkMeasurementData(variableType, variableId);
+		hasMeasurementData = checkMeasurementData(variableType, variableIds);
 	}
-
+	
 	// if no data for measurement rows is saved yet, proceed with delete
-	if (hasMeasurementData == '0') {
+	if (hasMeasurementData === '0') {
 		// remove row from UI
-		deleteButton.parent().parent().remove();
+		$('.'+sectionDiv+' .remove-indv-btn:checked').each(function(){
+			$(this).parent().parent().remove();
+		});	
+		
 		checkShowSettingsFormReminder();
 		// remove row from session
 		$.ajax({
 			url : '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
-					+ variableType + '/' + variableId,
+					+ variableType + '/' + variableIds,
 			cache : false,
 			type : 'POST',
 			success : function() {
@@ -909,7 +914,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
             document.disableActions();
             eval($(this).attr('onclick'));
         }
-
+        checkNurseryIfShowRemoveVariableLinks();
 		return true;
 	} else {
 		// show confirmation popup
@@ -917,9 +922,10 @@ function deleteVariable(variableType, variableId, deleteButton) {
 			backdrop : 'static',
 			keyboard : false
 		});
-		$('#varToDelete').val(variableId);
+		$('#varToDelete').val(variableIds);
 		$('#variableType').val(variableType);
-		buttonToDelete = deleteButton;
+		$('#variateDeleteConfirmationModal').data('section-delete', sectionDiv);
+		buttonToDelete = null;
 
 		return false;
 	}
@@ -931,7 +937,14 @@ function proceedWithDelete() {
 	var deleteButton = buttonToDelete;
 
 	// remove row from UI
-	deleteButton.parent().parent().remove();
+	if($('#variateDeleteConfirmationModal').data('section-delete') !== '') {
+		var sectionDiv = $('#variateDeleteConfirmationModal').data('section-delete');
+		$('.'+sectionDiv+' .remove-indv-btn:checked').each(function(){
+			$(this).parent().parent().remove();
+		});		
+	} else if(deleteButton !== null) {
+		deleteButton.parent().parent().remove();
+	}
 
 	// remove row from session
 	$.ajax({
@@ -952,6 +965,7 @@ function proceedWithDelete() {
 	// reinstantiate counters of ids and names
 	sortVariableIdsAndNames(variableType);
 	inputChange = true;
+	checkNurseryIfShowRemoveVariableLinks();
 }
 
 function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix) {
@@ -1788,4 +1802,19 @@ function checkFavoritesIfValIsAFavorite(rowIndex) {
             }
         });
     }
+}
+function checkNurseryIfShowRemoveVariableLinks(){
+	'use strict';
+	$('.remove-all-section .remove-all-vars').each(function(){
+		var sectionDiv = $(this).data('section');
+		var availableCheckboxes = $('.'+sectionDiv+' .remove-indv-btn');
+		if(availableCheckboxes.length !== 0) {
+			//we show the remove all
+			$(this).parents('.remove-all-section').removeClass('fbk-hide');
+			$(this).siblings('.remove-btn').prop('checked', false);
+		} else {
+			//we hide it
+			$(this).parents('.remove-all-section').addClass('fbk-hide');
+		}
+	});
 }

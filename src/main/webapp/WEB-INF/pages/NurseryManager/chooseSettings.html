@@ -34,9 +34,8 @@
         <div class="form-horizontal sectionContainer" id="nurseryLevelSettings-dev">
 
 			<div class="form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}!=*{breedingMethodId} and ${nurseryLevelVariable.variable.cvTermId}!=*{breedingMethodCode}">
-				<div class="col-xs-5 1st">
-						<span style="font-size: 16px;" th:if="${nurseryLevelVariable.deletable}" class="delete-icon"
-                              th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
+				<div class="col-xs-5 1st">						
+					<input class="remove-indv-btn" type="checkbox" th:if="${nurseryLevelVariable.deletable}" th:attr="data-variable-type=1" th:attrappend="data-cv-term-id=${nurseryLevelVariable.variable.cvTermId}"/>       
                     <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
                     &nbsp;&nbsp;&nbsp;                                        
                     <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
@@ -96,7 +95,13 @@
 								<span>
 									<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
 								</span>
-				</div>
+				</div>							
+			</div>
+			<div class="row col-xs-12 remove-all-section">
+			  <div class="col-xs-12">
+			    <input class="remove-btn" type="checkbox" data-section="nurseryLevelSettings"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
+			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="1" data-section="nurseryLevelSettings">Remove</a>
+			  </div>
 			</div>
 		</div>
 
@@ -119,10 +124,8 @@
 				</thead>
 				<tbody>
 				<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
-					<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
-						<span style="font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="delete-icon"
-							  th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
-
+					<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">						
+						<input class="remove-indv-btn" type="checkbox" th:if="${plotLevelVariable.deletable}" th:attr="data-variable-type=2" th:attrappend="data-cv-term-id=${plotLevelVariable.variable.cvTermId}"/>
 						<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 					</td>
 					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
@@ -134,8 +137,16 @@
 				</tr>
 				</tbody>
 			</table>
+			
+			<div class="row col-xs-12 remove-all-section">
+			  <div class="col-xs-12">
+			    <input class="remove-btn" type="checkbox" data-section="plotLevelDetails"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
+			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="2" data-section="plotLevelDetails">Remove</a>
+			  </div>
+			</div>
 		</div>
 
+		
 		<!-- selection variates -->
 		<div class="form-group chs-selection-variates">
 			<span class="fbk-font-icon bms-variates"></span>
@@ -163,9 +174,7 @@
                 </tr>
 				<tr th:each="selectionVariatesVariable, rowStat : *{selectionVariatesVariables}">
 					<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
-									<span style="font-size: 16px;" th:if="${selectionVariatesVariable.deletable}" class="delete-icon"
-										  th:onclick="'javascript: deleteVariable(6,\'' + ${selectionVariatesVariable.variable.cvTermId} + '\',$(this))'"></span>
-
+						<input class="remove-indv-btn" type="checkbox" th:if="${selectionVariatesVariable.deletable}" th:attr="data-variable-type=6" th:attrappend="data-cv-term-id=${selectionVariatesVariable.variable.cvTermId}"/>
 						<input class="cvTermIds" type="hidden" th:field="*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId}" />
 					</td>
 					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
@@ -177,6 +186,13 @@
 				</tr>
 				</tbody>
 			</table>
+			
+			<div class="row col-xs-12 remove-all-section">
+			  <div class="col-xs-12">
+			    <input class="remove-btn" type="checkbox" data-section="selectionVariatesDetails"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
+				<a href="javascript: void(0);" class="remove-all-vars" data-variable-type="6" data-section="selectionVariatesDetails">Remove</a>
+			  </div>
+			</div>
 		</div>
 
 		<div class=" row collapse in" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}" th:remove="tag">
@@ -233,8 +249,7 @@
 		<div class="form-horizontal sectionContainer collapse in nurseryConditionsDetails" id="nurseryConditionsSettings">
 			<div class="form-group nurseryConditionsSettings" th:each="nurseryCondition, rowStat : *{nurseryConditions}">
 				<div class="col-xs-5 col-md-5 1st">
-								<span style="font-size: 16px;" th:if="${nurseryCondition.deletable}" class="delete-icon"
-									  th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
+					<input class="remove-indv-btn" type="checkbox" th:if="${nurseryCondition.deletable}" th:attr="data-variable-type=7" th:attrappend="data-cv-term-id=${nurseryCondition.variable.cvTermId}"/>									  
 					<input class="cvTermIds nurseryConditionVariableIdClass" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
 					
 					
@@ -279,6 +294,13 @@
 							/>
 				</div>
 			</div>
+			
+			<div class="row col-xs-12 remove-all-section">
+			  <div class="col-xs-12">
+			    <input class="remove-btn" type="checkbox" data-section="nurseryConditionsDetails"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
+			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="7" data-section="nurseryConditionsDetails">Remove</a>
+			  </div>
+			</div>
 		</div>
 
 		<div class="form-group chs-traits">
@@ -307,9 +329,7 @@
                 </tr>
 				<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
 					<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'" >
-									<span style="font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="delete-icon"
-										  th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
-
+						<input class="remove-indv-btn" type="checkbox" th:if="${baselineTraitVariable.deletable}" th:attr="data-variable-type=3" th:attrappend="data-cv-term-id=${baselineTraitVariable.variable.cvTermId}"/>
 						<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 					</td>
 					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
@@ -321,6 +341,12 @@
 				</tr>
 				</tbody>
 			</table>
+			<div class="row col-xs-12 remove-all-section">
+			  <div class="col-xs-12">
+			    <input class="remove-btn" type="checkbox" data-section="baselineTraitDetails"/>&nbsp;&nbsp;&nbsp;<label>Select All</label>&nbsp;&nbsp;&nbsp;
+			    <a href="javascript: void(0);" class="remove-all-vars" data-variable-type="3" data-section="baselineTraitDetails">Remove</a>
+			  </div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -522,6 +548,31 @@ $(document).ready(function() {
             checkFavoritesIfValIsAFavorite(select2Index);
         });
     }
+    checkNurseryIfShowRemoveVariableLinks();
+    $('.remove-btn').on('click', function(){
+    	var sectionDiv = $(this).data('section');
+    	var isChecked = $(this).prop('checked');
+    	$('.'+sectionDiv+' .remove-indv-btn').prop('checked', isChecked);    		
+    });
+    $('.remove-all-vars').on('click', function(){
+    	var sectionDiv = $(this).data('section');
+    	var variableType = $(this).data('variable-type');
+    	var checkedInput = $('.'+sectionDiv+' .remove-indv-btn:checked');
+    	var deleteVarIds = '';
+    	if(checkedInput.length === 0) {
+    		showAlertMessage('', 'Please choose variables to be deleted');
+    		return false;
+    	} else {
+    		checkedInput.each(function(){
+    			if(deleteVarIds !== '') {
+    				deleteVarIds += '|';
+    			}	
+    			deleteVarIds += $(this).data('cv-term-id');    			
+    		});
+    		
+    		deleteMultiVariable(variableType, deleteVarIds, sectionDiv);
+    	}
+    });
 });
 //]]>
 </script>

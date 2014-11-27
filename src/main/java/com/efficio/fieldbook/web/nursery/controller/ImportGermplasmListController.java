@@ -693,6 +693,8 @@ public class ImportGermplasmListController extends SettingsController {
             model.addAttribute("listDataTable", dataTableDataList);
             model.addAttribute("type", type);
             model.addAttribute("tableHeaderList", getGermplasmTableHeader(type, userSelection.getPlotsLevelList()));
+            model.addAttribute("hasMeasurement", hasMeasurement());
+            
             
             
             form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());           
@@ -703,6 +705,11 @@ public class ImportGermplasmListController extends SettingsController {
         }
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
+    
+    protected Boolean hasMeasurement(){
+    	return userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty();
+    }
+    
     private String getCheckId(String checkCode,  List<Enumeration> checksList) throws MiddlewareQueryException{
          String checkId =  "";
          

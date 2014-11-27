@@ -867,12 +867,11 @@ function checkMeasurementData(variableType, variableId) {
 }
 function deleteMultiVariable(variableType, variableIds, sectionDiv) {	
 	'use strict';
-	var hasMeasurementData = false;
+	var hasMeasurementData = '0';
 	if (variableType == selectionVariatesSegment
 			|| variableType == baselineTraitsSegment) {
 		hasMeasurementData = checkMeasurementData(variableType, variableIds);
 	}
-	
 	// if no data for measurement rows is saved yet, proceed with delete
 	if (hasMeasurementData === '0') {
 		// remove row from UI

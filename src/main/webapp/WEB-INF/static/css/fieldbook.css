@@ -1696,3 +1696,16 @@ div.variable-details-popup {
 .fbk-export-advance-list-check-box{
 	text-align: center;
 }
+#chooseSettingsDiv .remove-indv-btn{
+	left: 9px; 
+	top: 2px; 
+	position:relative;
+} 
+#chooseSettingsDiv table .remove-indv-btn{
+	left: 0px; 	
+} 
+.remove-all-section .remove-btn{
+	left: -5px; 
+	top: 2px; 
+	position:relative;
+}

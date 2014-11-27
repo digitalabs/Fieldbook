@@ -17,6 +17,8 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 
@@ -31,6 +33,8 @@ import java.util.StringTokenizer;
  * User: Daniel Villafuerte
  */
 public abstract class BaseTrialController extends SettingsController {
+	private static final Logger LOG = LoggerFactory.getLogger(BaseTrialController.class);
+	
     public static final String URL_SETTINGS = "TrialManager/templates/trialSettings";
     public static final String URL_GERMPLASM = "TrialManager/templates/germplasmDetails";
     public static final String URL_ENVIRONMENTS = "TrialManager/templates/environments";
@@ -394,7 +398,7 @@ public abstract class BaseTrialController extends SettingsController {
                 MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
                 if (mData != null) {
                     String value;
-                    if (detail.getVariable().getWidgetType().getType().equals("DATE")) {
+                    if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
                         value = convertDateStringForUI(mData.getValue());
                     } else if (mData.getcValueId() != null) {
                         value = mData.getcValueId();
@@ -414,7 +418,7 @@ public abstract class BaseTrialController extends SettingsController {
                 MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
                 if (mData != null) {
                     String value;
-                    if (detail.getVariable().getWidgetType().getType().equals("DATE")) {
+                    if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
                         value = convertDateStringForUI(mData.getValue());
                     } else {
                         value = mData.getValue();
@@ -461,8 +465,7 @@ public abstract class BaseTrialController extends SettingsController {
             }
 
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
-
+        	LOG.error(e.getMessage(), e);
         }
 
         return output;
@@ -486,7 +489,7 @@ public abstract class BaseTrialController extends SettingsController {
 
                 initialDetailList.add(detail);
             } catch (MiddlewareQueryException e) {
-                e.printStackTrace();
+            	LOG.error(e.getMessage(), e);
             }
         }
 

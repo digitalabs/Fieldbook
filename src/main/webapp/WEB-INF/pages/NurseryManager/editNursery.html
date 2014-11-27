@@ -86,6 +86,10 @@
                                 <a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link"
                                    th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
                             </li>
+                            <li th:class="${advancedList.size() == 0 ? 'fbk-hide export-advance-list-action-button' : 'export-advance-list-action-button withMeasurementsOnly'}">
+                                <a href="javascript: showExportAdvanceOptions();" id="export-advance-list-url-link"
+                                   th:text="#{nursery.nurserydetails.action.export.advance}">Export Advance List</a>
+                            </li>
                             <li>
                                 <a href="javascript: submitEditForm();" id="save-study-url-link"
                                    th:text="#{nursery.option.save}">Save Nursery</a>
@@ -97,6 +101,11 @@
                             <li>
                                 <a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"
                                    th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a>
+                            </li>
+                            <li th:if="${createNurseryForm.measurementRowList.size() != 0}">
+
+                                <a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
+
                             </li>
                         </ul>
                     </div>
@@ -212,7 +221,7 @@
 	<li id="nursery-measurements-li">
 		<a href="#nursery-measurements" role="tab" class="measurements" data-toggle="tab" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
 	</li>
-	<li th:id="${'advance-list' + advanceItem.id + '-li'}" th:each="advanceItem : ${advancedList}">
+	<li class="advance-germplasm-items" th:attr="data-advance-germplasm-list-id=${advanceItem.id}" th:id="${'advance-list' + advanceItem.id + '-li'}" th:each="advanceItem : ${advancedList}">
 		<a th:attr="data-list-id=${advanceItem.id}" th:href="${'#list' + advanceItem.id}" role="tab" class="advanceList" data-toggle="tab">
 			<span th:text="${'Advance List: [' + advanceItem.name + ']'}"></span>
 			<i class="glyphicon glyphicon-remove fbk-close-tab" th:id="${advanceItem.id}" th:onclick="'javascript:closeAdvanceListTab(\'' + ${advanceItem.id} + '\');'"></i>
@@ -251,6 +260,11 @@
 	</div>	
 </div>
 
+<!-- Modal Dialog for Export Germplasm List -->
+<div class="row">
+	<div th:include="/Common/exportGermplasmList"></div>
+</div>
+
 <!-- Modal Dialog for Choosing Folder Location -->
 <div class="form-group" id="create-nursery">
 	<div th:include="/Common/includes/studyTree" />
@@ -274,8 +288,8 @@
 					</div>
 					<div class="modal-footer">
 						<button id="cancelDelete" data-dismiss="modal" th:text="#{common.form.cancel.text}" class="btn btn-default">Cancel</button>
-						<button id="continueDelete" data-dismiss="modal" th:text="#{common.form.continue.text}" onClick="javascript: proceedWithDelete();"
-							class="btn btn-primary">Continue</button>
+						<button id="continueDelete" data-dismiss="modal" th:text="#{common.form.confirm.text}" onClick="javascript: proceedWithDelete();"
+							class="btn btn-primary">Confirm</button>
 					</div>
 				</div>
 			</div>
@@ -298,6 +312,9 @@
 
 <div class="row">
 	<div id="import-study" th:include="/Common/includes/importStudy"></div>
+</div>
+<div class="row">
+	<div id="export-advance" th:include="/Common/includes/exportAdvanceList"></div>
 </div>
 
 <div class="row">
@@ -355,7 +372,7 @@
 	</div>
 </div>
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
+	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
 
 		// FIXME Should not be using global variables or functions

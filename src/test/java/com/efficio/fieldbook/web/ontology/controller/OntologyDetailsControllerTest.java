@@ -34,12 +34,12 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.PropertyTree;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 
-public class OntologyDetailsControllerTest  extends AbstractBaseControllerTest {
+public class OntologyDetailsControllerTest  extends AbstractBaseControllerIntegrationTest {
 	
 	public static final Logger log = LoggerFactory.getLogger(OntologyDetailsControllerTest.class);
 

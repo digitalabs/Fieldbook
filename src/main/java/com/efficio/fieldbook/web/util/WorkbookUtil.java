@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -440,7 +441,7 @@ public class WorkbookUtil {
         return observationVariables;
     }
     
-    public static void deleteDeletedVariablesInObservations(HashMap<Integer, MeasurementVariable> measurementDatasetVariables
+    public static void deleteDeletedVariablesInObservations(Map<Integer, MeasurementVariable> measurementDatasetVariables
             , List<MeasurementRow> observations) {
          
         List<Integer> deletedList = new ArrayList<Integer>();

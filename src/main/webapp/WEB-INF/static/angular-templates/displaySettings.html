@@ -1,4 +1,4 @@
-<table class="table table-curved table-condensed">
+<table class="table table-curved table-condensed fbk-table-with-check">
     <thead>
         <tr>
             <th class="fbk-delete-link"></th>
@@ -9,7 +9,7 @@
     <tbody>
         <tr ng-repeat="key in filteredKeys = ( settings.keys() | removeHiddenVariableFilter: settings.vals() ) track by key">
             <td ng-class="{even : $even, odd : $odd}" class="fbk-delete-link">
-                <span class="delete-icon" ng-click="removeSetting(key)" ng-show="settings.val(key).deletable && !hideDelete"></span>
+                <input type="checkbox" ng-model="settings.val(key).isChecked" ng-show="settings.val(key).deletable && !hideDelete" />
             </td>
             <td width="45%" ng-class="{even : $even, odd : $odd}">
                 <a href="javascript: void(0);">
@@ -25,3 +25,10 @@
         </tr>
     </tbody>
 </table>
+
+<div class="row form-group" ng-show="(settings.keys() | removeHiddenAndDeletablesVariableFilter: settings.vals() ).length &gt; 0">
+   <div class="col-md-12">
+       <label class="fbk-selectall-chk"><input type="checkbox" ng-model="options.selectAll" ng-change="doSelectAll()"/> Select All</label>
+       <a class="fbk-remove-link" href="javascript: void(0);" ng-click="removeSettings()" >Remove</a>
+   </div>
+</div>

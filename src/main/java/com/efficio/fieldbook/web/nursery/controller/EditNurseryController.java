@@ -21,6 +21,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -49,10 +50,12 @@ import org.springframework.web.util.WebUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * The Class CreateNurseryController.
@@ -500,31 +503,20 @@ public class EditNurseryController extends SettingsController {
      * @return the map
      */
     @ResponseBody
-    @RequestMapping(value = "/checkMeasurementData/{mode}/{variableId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/checkMeasurementData/{mode}/{variableIds}", method = RequestMethod.GET)
     public Map<String, String> checkMeasurementData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model,
-                                                    @PathVariable int mode, @PathVariable int variableId) {
+                                                    @PathVariable int mode, @PathVariable String variableIds) {
         Map<String, String> resultMap = new HashMap<String, String>();
 
         //if there are measurement rows, check if values are already entered
         if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty() &&
-                hasMeasurementDataEntered(variableId)) {
+        		hasMeasurementDataEnteredForVariables(SettingsUtil.parseVariableIds(variableIds), userSelection)) {
             resultMap.put(HAS_MEASUREMENT_DATA_STR, SUCCESS);
         } else {
             resultMap.put(HAS_MEASUREMENT_DATA_STR, NO_MEASUREMENT);
         }
 
         return resultMap;
-    }
-
-    protected boolean hasMeasurementDataEntered(int variableId) {
-        for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-            for (MeasurementData data : row.getDataList()) {
-                if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**

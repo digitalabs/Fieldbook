@@ -9,13 +9,14 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.SessionScope;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 
-public abstract class AbstractBaseControllerTest extends AbstractBaseIntegrationTest {
+public abstract class AbstractBaseControllerIntegrationTest extends AbstractBaseIntegrationTest {
 	
 	@Autowired
 	protected RequestMappingHandlerAdapter handleAdapter;
@@ -48,6 +49,22 @@ public abstract class AbstractBaseControllerTest extends AbstractBaseIntegration
 
 		Object handler = handlerMapping.getHandler(request).getHandler();
 		return handleAdapter.handle(request, response, handler);	
+	}
+
+	protected boolean verifyHandler(String url, String method, Class handlerClass, String methodName) throws Exception{
+		request.setRequestURI(url);
+		request.setMethod(method);
+
+		Object handler = handlerMapping.getHandler(request).getHandler();
+
+		if (handler instanceof HandlerMethod) {
+			HandlerMethod methodCalled = (HandlerMethod) handler;
+			boolean verified = handlerClass.isInstance(methodCalled.getBean());
+			verified &= methodCalled.getMethod().getName().equals(methodName);
+			return verified;
+		}
+
+		throw new UnsupportedOperationException();
 	}
 
 }

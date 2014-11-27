@@ -3,18 +3,7 @@
 		//<![CDATA[
 		/* jshint ignore:start */
 		var variableDetailsHeader = /*[[#{variable.details.heading}]]*/ '',	
-		startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '',
 		startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '',
-		addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-		addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
-		addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
-		addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
-		addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-		reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
-		reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
-		reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
-		reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
-		reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '',
 		startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '',
 		addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
 		addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
@@ -33,7 +22,7 @@
 		germplasmSelectError = /*[[#{seed.inventory.select.germplasm.error}]]*/ '',			
 		locationRequired = /*[[#{seed.inventory.location.required}]]*/ '',
 		scaleRequired = /*[[#{seed.inventory.scale.required}]]*/ '',
-		inventoryAmountRequired = /*[[#{seed.inventory.amount.required}]]*/ '',
+		inventoryAmountRequired = /*[[#{seed.inventory.amount.required.error}]]*/ '',
 		inventoryAmountPositiveRequired = /*[[#{seed.inventory.amount.required.error}]]*/ '',
 		commentLimitError = /*[[#{seed.inventory.comment.limit.error}]]*/ '',
 		programNurseriesText = /*[[#{program.nurseries}]]*/ '',
@@ -131,6 +120,9 @@
         standardVariableMaxLength = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).STANDARD_VARIABLE_NAME_LIMIT.getInt()}]]*/ '',
         variableNoValidValueNotification = /*[[#{common.warning.variable.no.valid.values}]]*/ '',
 		redirectErrorMessage = /*[[${redirectErrorMessage}]]*/ '',
+		labelPrintingPDF = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LABEL_PRINTING_PDF.getInt()}]]*/ '',
+        labelPrintingExcel = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LABEL_PRINTING_EXCEL.getInt()}]]*/ '',
+        labelPrintingCsv = /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LABEL_PRINTING_CSV.getInt()}]]*/ '',
 		expDesignMsgs = {
             0 : /*[[#{experiment.design.invalid.generic.error}]]*/ '',
             1: /*[[#{experiment.design.rows.per.replication.should.be.a.number}]]*/ '',
@@ -160,8 +152,12 @@
             25: unpairedTreatmentFactor,
             26: /*[[#{experiment.design.no.germplasm.list}]]*/'',
             27: /*[[#{experiment.design.nblatin.should.be.greater.than.zero}]]*/ ''
-        };
-
+        },
+        plotNoTermId = /*[[${T(org.generationcp.middleware.domain.oms.TermId).PLOT_NO.getId()}]]*/,
+        gidTermId = /*[[${T(org.generationcp.middleware.domain.oms.TermId).GID.getId()}]]*/ '',
+        entryNoTermId = /*[[${T(org.generationcp.middleware.domain.oms.TermId).ENTRY_NO.getId()}]]*/ '',
+        desigTermId = /*[[${T(org.generationcp.middleware.domain.oms.TermId).DESIG.getId()}]]*/ '',
+        requiredGermplasmColumnsMessage = /*[[#{germplasm.list.required.germplasm.hidden}]]*/ '';
 
 		/* jshint ignore:end */
 		//]]>

@@ -12,6 +12,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.common.service.ExperimentDesignService;
 import com.efficio.fieldbook.web.common.service.RandomizeCompleteBlockDesignService;
@@ -112,12 +114,13 @@ public class ExpDesignController extends
 		    		expParameterOutput = designService.validate(expDesign, germplasmList);
 		    		//we call the actual process
 		    		if(expParameterOutput.isValid()){
+		    			expDesign.setNoOfEnvironmentsToAdd(countNewEnvironments(expDesign.getNoOfEnvironments(), userSelection, expDesign.isHasMeasurementData()));
 		    			List<MeasurementRow> measurementRows = designService.generateDesign(germplasmList, expDesign,workbook.getConditions(), workbook.getFactors(), workbook.getGermplasmFactors(), workbook.getVariates(), workbook.getTreatmentFactors());
 
 		    			userSelection.setExpDesignParams(expDesign);
 		    			userSelection.setExpDesignVariables(designService.getExperimentalDesignVariables(expDesign));
 		    			
-		    			workbook.setObservations(measurementRows);
+		    			workbook.setObservations(combineNewlyGeneratedMeasurementsWithExisting(measurementRows, userSelection, expDesign.isHasMeasurementData()));
 		    			//should have at least 1 record
 		    			List<MeasurementVariable> currentNewFactors = new ArrayList<MeasurementVariable>();
 		    			List<MeasurementVariable> oldFactors = workbook.getFactors();
@@ -154,7 +157,7 @@ public class ExpDesignController extends
     		expParameterOutput = new ExpDesignValidationOutput(false,  messageSource.getMessage(
                     e.getBvErrorCode(), null, locale));
 		}catch(Exception e){
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 			expParameterOutput = new ExpDesignValidationOutput(false, messageSource.getMessage(
                     "experiment.design.invalid.generic.error", null, locale));
     	}
@@ -162,7 +165,62 @@ public class ExpDesignController extends
         return expParameterOutput;
     }
     
-    private ExperimentDesignService getExpDesignService(int designType){
+    protected List<MeasurementRow> combineNewlyGeneratedMeasurementsWithExisting(
+			List<MeasurementRow> measurementRows, UserSelection userSelection, boolean hasMeasurementData) {
+    	Workbook workbook = null;
+    	if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
+    		workbook = userSelection.getTemporaryWorkbook();
+    	} else {
+    		workbook = userSelection.getWorkbook();
+    	}
+		if (workbook != null && workbook.getObservations() != null && hasMeasurementData) {
+			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+			observations.addAll(workbook.getObservations());
+			observations.addAll(measurementRows);
+			return observations;
+		}
+		return measurementRows;
+	}
+
+    protected String countNewEnvironments(String noOfEnvironments, UserSelection userSelection, boolean hasMeasurementData) {
+    	Workbook workbook = null;
+    	if (userSelection.getTemporaryWorkbook() != null && userSelection.getTemporaryWorkbook().getObservations() != null) {
+    		workbook = userSelection.getTemporaryWorkbook();
+    	} else {
+    		workbook = userSelection.getWorkbook();
+    	}
+    	
+		if (workbook != null && workbook.getObservations() != null && hasMeasurementData) {
+			return String.valueOf(Integer.parseInt(noOfEnvironments) - getMaxInstanceNo(workbook.getObservations()));
+		}
+		return noOfEnvironments;
+	}
+
+	private int getMaxInstanceNo(List<MeasurementRow> observations) {
+		int maxTrialInstanceNo = 0;
+		
+		for (MeasurementRow row : observations) {
+			if (row.getDataList() != null) {
+				int trialNo = getTrialInstanceNo(row.getDataList());
+				if (maxTrialInstanceNo < trialNo) {
+					maxTrialInstanceNo = trialNo;
+				}
+			}
+		}
+		
+		return maxTrialInstanceNo;
+	}
+
+	private int getTrialInstanceNo(List<MeasurementData> dataList) {
+		for (MeasurementData data : dataList) {
+			if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				return Integer.valueOf(data.getValue());
+			} 
+		}
+		return 0;
+	}
+
+	private ExperimentDesignService getExpDesignService(int designType){
     	if(designType == 0){
     		return randomizeCompleteBlockDesign;
     	}else if(designType == 1){

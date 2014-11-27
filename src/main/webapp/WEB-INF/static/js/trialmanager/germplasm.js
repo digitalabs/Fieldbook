@@ -59,8 +59,9 @@
                 TrialManagerDataService.updateTrialMeasurementRowCount(0);
                 TrialManagerDataService.applicationData.germplasmListCleared = true;
                 TrialManagerDataService.applicationData.germplasmListSelected = false;
+                
             };
-
+         
             $(document).on('germplasmListUpdated', function () {
                 TrialManagerDataService.applicationData.germplasmListSelected = true;
             });
@@ -91,6 +92,8 @@
                     cache: false,
                     data: ''
                 }).success(function (html) {
+                	
+                	$('#liExportList').removeClass('fbk-dropdown-select-fade');
                     $('#imported-germplasm-list').html(html);
                     $('#entries-details').css('display', 'block');
                     $('#numberOfEntries').html($('#totalGermplasms').val());
@@ -107,6 +110,7 @@
 
 
             };
+            
         }]);
 })();
 

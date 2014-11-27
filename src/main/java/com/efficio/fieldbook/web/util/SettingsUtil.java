@@ -2223,4 +2223,14 @@ public class SettingsUtil {
 		}
 		return false;
 	}
+	
+
+    public static List<Integer> parseVariableIds(String variableIds){
+    	List<Integer> variableIdList = new ArrayList<Integer>();
+		StringTokenizer tokenizer = new StringTokenizer(variableIds, "|");
+		while (tokenizer.hasMoreTokens()) {
+			variableIdList.add(Integer.valueOf(tokenizer.nextToken()));
+		}
+		return variableIdList;
+    }
 }

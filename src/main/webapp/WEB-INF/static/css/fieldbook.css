@@ -1154,9 +1154,18 @@ a.fbk-edit-experiment{
 .tooltip-arrow {
     display: none;
 }
-.fbk-delete-link{
-    width: 30px;
+.fbk-table-with-check td.fbk-delete-link{
+    padding: 5px 8px;
 }
+
+.fbk-selectall-chk {
+    padding: 0 8px;
+}
+
+.fbk-remove-link {
+    margin-left: 20px;
+}
+
 .modal-footer{
     border-top: none;
 }
@@ -1683,4 +1692,20 @@ div.variable-details-popup {
 
 .fileupload-new .fileupload-preview-wrap {
     display: none;
+}
+.fbk-export-advance-list-check-box{
+	text-align: center;
+}
+#chooseSettingsDiv .remove-indv-btn{
+	left: 9px; 
+	top: 2px; 
+	position:relative;
+} 
+#chooseSettingsDiv table .remove-indv-btn{
+	left: 0px; 	
+} 
+.remove-all-section .remove-btn{
+	left: -5px; 
+	top: 2px; 
+	position:relative;
 }

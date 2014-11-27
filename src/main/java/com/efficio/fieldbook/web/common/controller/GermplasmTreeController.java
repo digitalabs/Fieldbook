@@ -143,12 +143,14 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
                 List<GermplasmListData> data = new ArrayList<GermplasmListData>();
                 data.addAll(germplasmListManager.getGermplasmListDataByListId(germplasmListId, 0, Integer.MAX_VALUE));                
                 List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
+                int advancedId = 0;
                 if(userSelection.getWorkbook() != null && userSelection.getWorkbook().getStudyDetails() != null && userSelection.getWorkbook().getStudyDetails().getId() != null){
-                	fieldbookMiddlewareService.saveOrUpdateListDataProject(userSelection.getWorkbook().getStudyDetails().getId(), GermplasmListType.ADVANCED, germplasmListId, listDataProject, getCurrentIbdbUserId());
+                	advancedId = fieldbookMiddlewareService.saveOrUpdateListDataProject(userSelection.getWorkbook().getStudyDetails().getId(), GermplasmListType.ADVANCED, germplasmListId, listDataProject, getCurrentIbdbUserId());
                 }
                 
         		results.put("isSuccess", 1);
         		results.put("germplasmListId", germplasmListId);
+        		results.put("advancedGermplasmListId", advancedId);
         		results.put("uniqueId", form.getListIdentifier());
         		results.put("listName", form.getListName());
         	}else{

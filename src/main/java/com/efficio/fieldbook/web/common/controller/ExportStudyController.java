@@ -16,19 +16,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.impl.ExportServiceImpl;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,9 +41,10 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
@@ -55,10 +61,12 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 @RequestMapping(ExportStudyController.URL)
 public class ExportStudyController extends AbstractBaseFieldbookController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
+    private static final String CSV_CONTENT_TYPE = "text/csv";
+	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
     public static final String URL = "/ExportManager";
     private static final int BUFFER_SIZE = 4096 * 4;
     private static String EXPORT_TRIAL_INSTANCE = "Common/includes/exportTrialInstance";
+    private static String DISPLAY_ADVANCE_GERMPLASM_LIST = "Common/includes/displayListOfAdvanceGermplasmList";
 
     @Resource
     private UserSelection studySelection;
@@ -71,6 +79,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     
     @Resource
     private ExcelExportStudyService excelExportStudyService;
+    
+    @Resource
+    private CsvExportStudyService csvExportStudyService;
     
     @Resource
     private DataKaptureExportStudyService dataKaptureExportStudyService;
@@ -87,12 +98,15 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     private OntologyService ontologyService;
     
     @Resource
-    private ExportOrderingRowColImpl exportOrderingRowColService;
-    @Resource
+    private ExportOrderingRowColImpl exportOrderingRowColService;  
+
+	@Resource
     private ExportOrderingSerpentineOverRangeImpl exportOrderingSerpentineOverRangeService;
     @Resource
     private ExportOrderingSerpentineOverColImpl exportOrderingSerpentineOverColumnService;
     
+    @Resource
+    private ExportAdvanceListService exportAdvanceListService;
     @Override
 	public String getContentName() {
 		return null;
@@ -137,34 +151,34 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     }
     
     @ResponseBody
-    @RequestMapping(value="/export/{exportType}/{selectedTraitTermId}/{exportWayType}", method = RequestMethod.GET)
-    public String exportRFileForNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,  
-@PathVariable int exportType, @PathVariable int selectedTraitTermId,
-@PathVariable int exportWayType,
-HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
-    	boolean isTrial = false;
-    	List<Integer> instancesList = new ArrayList<Integer>();
-    	instancesList.add(1);
-    	return doExport(exportType, selectedTraitTermId, response, isTrial,instancesList,exportWayType,req);
-    	
-    }
-    
-    @ResponseBody
-    @RequestMapping(value="/export/{exportType}/{exportWayType}", method = RequestMethod.GET)
-    public String exportFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, 
+    @RequestMapping(value="/export/{exportType}/{selectedTraitTermId}/{exportWayType}", method = RequestMethod.POST)
+    public String exportRFileForNursery(@RequestBody Map<String,String> data,  
     		@PathVariable int exportType, 
+    		@PathVariable int selectedTraitTermId,
     		@PathVariable int exportWayType,
     		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = false;
     	List<Integer> instancesList = new ArrayList<Integer>();
     	instancesList.add(1);
-        return doExport(exportType, 0, response, isTrial,instancesList, exportWayType,req);
+    	return doExport(exportType, selectedTraitTermId, response, isTrial,instancesList,exportWayType,data);
     	
     }
     
     @ResponseBody
-    @RequestMapping(value="/exportTrial/{exportType}/{selectedTraitTermId}/{instances}/{exportWayType}", method = RequestMethod.GET)
-    public String exportRFileForTrial(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, @PathVariable int exportType, 
+    @RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
+    public String exportFile(@RequestBody Map<String, String> data,
+    		@PathVariable int exportType,
+    		@PathVariable int exportWayType,
+    		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
+    	boolean isTrial = false;
+    	List<Integer> instancesList = new ArrayList<Integer>();
+    	instancesList.add(1);
+        return doExport(exportType, 0, response, isTrial,instancesList, exportWayType,data);
+    }
+
+	@ResponseBody
+    @RequestMapping(value="/exportTrial/{exportType}/{selectedTraitTermId}/{instances}/{exportWayType}", method = RequestMethod.POST)
+    public String exportRFileForTrial(@RequestBody Map<String,String> data, @PathVariable int exportType, 
     		@PathVariable int selectedTraitTermId, @PathVariable String instances, 
     		@PathVariable int exportWayType,
     		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
@@ -174,13 +188,13 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	while(tokenizer.hasMoreTokens()){
     		instancesList.add(Integer.valueOf(tokenizer.nextToken()));
     	}
-    	return doExport(exportType, selectedTraitTermId, response, isTrial, instancesList, exportWayType, req);
+    	return doExport(exportType, selectedTraitTermId, response, isTrial, instancesList, exportWayType, data);
     	
     }
     
     @ResponseBody
-    @RequestMapping(value="/exportTrial/{exportType}/{instances}/{exportWayType}", method = RequestMethod.GET)
-    public String exportFileTrial(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,  
+    @RequestMapping(value="/exportTrial/{exportType}/{instances}/{exportWayType}", method = RequestMethod.POST)
+    public String exportFileTrial(@RequestBody Map<String,String> data,  
     		@PathVariable int exportType,  @PathVariable String instances,
     		@PathVariable int exportWayType, 
     		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
@@ -190,7 +204,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	while(tokenizer.hasMoreTokens()){
     		instancesList.add(Integer.valueOf(tokenizer.nextToken()));
     	}
-        return doExport(exportType, 0, response, isTrial, instancesList, exportWayType, req);
+        return doExport(exportType, 0, response, isTrial, instancesList, exportWayType, data);
     	
     }
    
@@ -265,7 +279,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
      * @return the string
      */
     private String doExport(int exportType, int selectedTraitTermId, 
-    		HttpServletResponse response, boolean isTrial, List<Integer> instances, int exportWayType, HttpServletRequest req) 
+    		HttpServletResponse response, boolean isTrial, List<Integer> instances, int exportWayType, Map<String, String> data) 
     		        throws MiddlewareQueryException {
     	
     	/*
@@ -278,7 +292,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	
     	UserSelection userSelection = getUserSelection();
     	try {
-	    	String studyId = req.getParameter("studyExportId");
+	    	String studyId = getStudyId(data);
 	    	if(!"0".equalsIgnoreCase(studyId)){
 	    		//we need to get the workbook and set it in the userSelectionObject
 	    		Workbook workbookSession = null;
@@ -310,16 +324,16 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	
     	exportDataCollectionService.reorderWorkbook(workbook);
     	
-    	String filename = HtmlUtils.htmlUnescape(userSelection.getWorkbook().getStudyDetails().getStudyName());
+    	String filename = getFileName(userSelection);
     	String outputFilename = null;
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
     		outputFilename = fielddroidExportStudyService.export(userSelection.getWorkbook(), filename, instances);
-    		response.setContentType("text/csv");
+    		response.setContentType(CSV_CONTENT_TYPE);
     	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_R_SUFFIX.getString();
     		outputFilename = rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId, instances);    		
-    		response.setContentType("text/csv");
+    		response.setContentType(CSV_CONTENT_TYPE);
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename, instances);
@@ -347,6 +361,18 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     		int extensionIndex = filename.lastIndexOf(".");
     		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
     		response.setContentType("application/zip");
+    	}else if (AppConstants.EXPORT_CSV.getInt() == exportType) {
+    		List<Integer> visibleColumns = getVisibleColumns(data.get("visibleColumns"));
+    		filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
+    		outputFilename = csvExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
+    		if (instances != null && instances.size() > 1) {
+        		int extensionIndex = filename.lastIndexOf(".");
+        		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
+        		response.setContentType("application/zip");
+        	} else {
+        		filename = getOutputFileName(workbook.isNursery(), outputFilename, filename);
+        		response.setContentType(CSV_CONTENT_TYPE);
+        	}
     	}
     	Map<String, Object> results = new HashMap<String, Object>();
     	results.put("outputFilename", outputFilename);
@@ -357,6 +383,36 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	
     	return super.convertObjectToJson(results);
     }
+
+	protected String getFileName(UserSelection userSelection) {
+		return HtmlUtils.htmlUnescape(userSelection.getWorkbook().getStudyDetails().getStudyName());
+	}
+    
+    /***
+     * Return the list of headers's term id, otherwise null
+     * @param data
+     * @return
+     */
+    protected List<Integer> getVisibleColumns(String unparsedVisibleColumns) {
+		List<Integer> visibleColumns = null;
+		
+		if(unparsedVisibleColumns.trim().length() != 0){
+			visibleColumns = new ArrayList<Integer>();
+			
+			if(unparsedVisibleColumns.length() > 0){
+				String[] ids = unparsedVisibleColumns.split(",");
+				for(String id : ids){
+					visibleColumns.add(Integer.valueOf(id));
+				}
+			}
+		}
+		
+		return visibleColumns;
+	}
+
+	protected String getStudyId(Map<String, String> data) {
+		return data.get("studyExportId");
+	}
     
     protected String getOutputFileName(boolean isNursery, String outputFilename, String filename) {
     	if (!isNursery) {
@@ -365,11 +421,11 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
 		return filename;
 	}
 
-	private UserSelection getUserSelection() {
+	protected UserSelection getUserSelection() {
     	return this.studySelection;
     }
     
-    private ExportDataCollectionOrderService getExportOrderService(int exportWayType){
+    protected ExportDataCollectionOrderService getExportOrderService(int exportWayType){
     	if(exportWayType == 1){
     		return exportOrderingRowColService;
     	}else if(exportWayType == 2){
@@ -410,4 +466,111 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
         model.addAttribute("trialInstances", trialInstances);
         return super.showAjaxPage(model, EXPORT_TRIAL_INSTANCE);
     }
+    /*
+     * Returns the advances list using the study id
+     */
+    @RequestMapping(value = "/retrieve/advanced/lists/{studyId}", method = RequestMethod.GET)
+    public String getAdvanceListsOfStudy(
+    		@PathVariable int studyId,
+    		Model model, HttpSession session) {
+            
+        List<GermplasmList> germplasmList = new ArrayList<GermplasmList>();;
+		try {
+			germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(studyId), GermplasmListType.ADVANCED);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+        model.addAttribute("advancedList", germplasmList);        
+        return super.showAjaxPage(model, DISPLAY_ADVANCE_GERMPLASM_LIST);
+    }
+    
+    /**
+     * Do export.
+     *
+     * @param exportType the export type
+     * @param selectedTraitTermId the selected trait term id
+     * @param response the response
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/export/advanced/lists", method = RequestMethod.POST)
+    public String doAdvanceExport(HttpServletResponse response, HttpServletRequest req) 
+    		        throws MiddlewareQueryException {
+    	
+    	String advancedListIds = req.getParameter("exportAdvanceListGermplasmIds");
+    	String exportType = req.getParameter("exportAdvanceListGermplasmType");
+    	
+    	
+    	UserSelection userSelection = getUserSelection();    	
+    	StudyDetails studyDetails = userSelection.getWorkbook().getStudyDetails();
+    	
+    	String outputFilename = null;
+    	File file = exportAdvanceListItems(exportType, advancedListIds, studyDetails);
+    	  	
+    	outputFilename = file.getAbsolutePath();
+    	int extensionIndex = outputFilename.lastIndexOf(".");
+		String extensionName = outputFilename.substring(extensionIndex, outputFilename.length());
+		String contentType = "";
+    	if (extensionName.indexOf(AppConstants.ZIP_FILE_SUFFIX.getString()) != -1) {
+    		contentType = "application/zip";    		
+    	} else if (extensionName.indexOf(AppConstants.EXPORT_CSV_SUFFIX.getString()) != -1) {
+    		contentType = "text/csv";
+    	} else if (extensionName.indexOf(AppConstants.EXPORT_XLS_SUFFIX.getString()) != -1) {
+    		contentType = "application/vnd.ms-excel";
+    	}
+    	response.setContentType(contentType);;
+    	Map<String, Object> results = new HashMap<String, Object>();
+    	results.put("outputFilename", outputFilename);
+    	results.put("filename", SettingsUtil.cleanSheetAndFileName(file.getName()));
+    	results.put("contentType", contentType);
+    	
+    	return super.convertObjectToJson(results);
+    }
+    
+    protected File exportAdvanceListItems(String exportType, String advancedListIds, StudyDetails studyDetails){
+    	if(AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(exportType) 
+    			|| AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString().equalsIgnoreCase(exportType)){    	
+    		return exportAdvanceListService.exportAdvanceGermplasmList(advancedListIds, studyDetails.getStudyName(), getExportServiceImpl(), exportType);
+    	}  
+    	return null;
+    }    
+
+	protected void setExportAdvanceListService(ExportAdvanceListService exportAdvanceListService) {
+		this.exportAdvanceListService = exportAdvanceListService;
+	}
+    protected ExportService getExportServiceImpl(){
+    	return new ExportServiceImpl();
+    }
+    
+    protected void setUserSelection(UserSelection userSelection){
+    	this.studySelection = userSelection;
+    }
+    public void setExportOrderingRowColService(ExportOrderingRowColImpl exportOrderingRowColService) {
+		this.exportOrderingRowColService = exportOrderingRowColService;
+	}
+
+	public void setExportOrderingSerpentineOverRangeService(
+			ExportOrderingSerpentineOverRangeImpl exportOrderingSerpentineOverRangeService) {
+		this.exportOrderingSerpentineOverRangeService = exportOrderingSerpentineOverRangeService;
+	}
+
+	public void setExportOrderingSerpentineOverColumnService(
+			ExportOrderingSerpentineOverColImpl exportOrderingSerpentineOverColumnService) {
+		this.exportOrderingSerpentineOverColumnService = exportOrderingSerpentineOverColumnService;
+	}
+
+	protected void setCsvExportStudyService(CsvExportStudyService csvExportStudyService) {
+		this.csvExportStudyService = csvExportStudyService;
+	}
+
+	protected void setFieldbookMiddlewareService(
+			FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	protected void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
+	}
+	
+	
 }

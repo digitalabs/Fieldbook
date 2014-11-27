@@ -71,7 +71,7 @@
     angular.module('fieldbook-utils', ['ui.select2'])
         .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
         .constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
-        .directive('displaySettings', function () {
+        .directive('displaySettings',['TrialManagerDataService','$filter','_', function (TrialManagerDataService,$filter,_) {
             return {
                 restrict: 'E',
                 scope: {
@@ -81,36 +81,44 @@
                 },
                 templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
                 controller: function ($scope, $element, $attrs) {
-                    $scope.removeSetting = function (key) {
+                    $scope.options = {
+                        selectAll : false
+                    };
 
-                        var promise = $scope.predeleteFunction({
-                            variableType: $attrs.variableType,
-                            key: key});
+                    // when the selectAll checkbox is clicked, do this
+                    $scope.doSelectAll = function() {
+                        var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(),$scope.settings.vals());
 
-                        if (promise !== undefined) {
-                            promise.then(function (shouldContinue) {
-                                if (shouldContinue) {
-                                    $scope.performDelete(key);
+                        _.each(filteredVariables,function(cvTermID){
+                            $scope.settings.val(cvTermID).isChecked = $scope.options.selectAll;
+                        });
+
+                    };
+
+                    // when the delete button is clicked do this
+                    $scope.removeSettings = function() {
+
+                        if (typeof $scope.predeleteFunction() === 'undefined') {
+                            $scope.doDeleteSelectedSettings();
+                        } else {
+                            var promise = $scope.predeleteFunction()($attrs.variableType,$filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(),$scope.settings.vals()));
+                            promise.then(function (doContinue) {
+                                if (doContinue) {
+                                    $scope.doDeleteSelectedSettings();
                                 }
                             });
-                        } else {
-                            $scope.performDelete(key);
                         }
                     };
 
-                    $scope.performDelete = function (key) {
-                        $scope.settings.remove(key);
-                        $.ajax({
-                            url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + key,
-                            type: 'POST',
-                            cache: false,
-                            data: '',
-                            contentType: 'application/json',
-                            success: function () {
+                    $scope.doDeleteSelectedSettings = function() {
+                        TrialManagerDataService.removeSettings($attrs.variableType,$scope.settings).then(function(data) {
+                            if (data.length > 0) {
+                                $scope.$emit('deleteOccurred');
                             }
+
+                            $scope.options.selectAll = false;
                         });
 
-                        $scope.$emit('deleteOccurred');
                     };
 
                     $scope.showDetailsModal = function (setting) {
@@ -124,7 +132,7 @@
                     };
                 }
             };
-        })
+        }])
         .directive('showDetailsModal', function () {
             return {
                 scope: {
@@ -214,10 +222,8 @@
                                     // if retrieved data is an array of values
                                     if (data.length && data.length > 0) {
                                         $.each(data, function (key, value) {
-                                            scope.modeldata.push(value.variable.cvTermId, value);
-
+                                            scope.modeldata.push(value.variable.cvTermId, TrialManagerDataService.transformViewSettingsVariable(value));
                                             out[value.variable.cvTermId] = value;
-
                                             scope.callback({ result: out });
 
                                         });
@@ -619,8 +625,21 @@
 
                 return keys;
             };
-        });
+        })
 
+        .filter('removeHiddenAndDeletablesVariableFilter', function () {
+            return function (settingKeys, settingVals) {
+                var keys = [];
+
+                angular.forEach(settingKeys, function (val) {
+                    if (!settingVals[val].hidden && settingVals[val].deletable) {
+                        keys.push(val);
+                    }
+                });
+
+                return keys;
+            };
+        });
 
 
 })();

@@ -8,8 +8,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 (function () {
     'use strict';
 
-    angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$modal',
-        function ($scope, TrialManagerDataService, $modal) {
+    angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$modal' , '$stateParams',
+        function ($scope, TrialManagerDataService, $modal, $stateParams) {
 
             $scope.data = {};
 
@@ -65,7 +65,6 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             };
 
             $scope.addVariable = true;
-            
             $scope.findSetting = function(targetKey, type) {
                 if (! $scope.temp.settingMap[targetKey]) {
                     var targetSettingList = null;
@@ -87,6 +86,16 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                 return $scope.temp.settingMap[targetKey];
             };
 
+            $scope.addNewEnvironments = function(noOfEnvironments) {
+                for (var ctr=0;ctr<noOfEnvironments;ctr++) {
+                    $scope.data.environments.push({
+                        managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.managementDetails),
+                        trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
+                    });
+                }
+                TrialManagerDataService.indicateUnappliedChangesAvailable();
+            };
+
             $scope.$watch('data.noOfEnvironments', function (newVal, oldVal) {
 
                 if (newVal < oldVal) {
@@ -96,15 +105,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                     }
                     TrialManagerDataService.indicateUnappliedChangesAvailable();
                 } else if (oldVal < newVal) {
-                    // if new environment count is greater than old value, add new element to environments array
-                    while ($scope.data.environments.length < newVal) {
-                        $scope.data.environments.push({
-                            managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.managementDetails),
-                            trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails)
-                        });
-                    }
-                    TrialManagerDataService.indicateUnappliedChangesAvailable();
-                }   // else do nothing equal
+                	$scope.addNewEnvironments(newVal-oldVal);
+                }
             });
 
             $scope.$watch('settings.managementDetails', function (newVal, oldVal) {
@@ -146,5 +148,12 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                     }
                 });
             };
+
+            if($stateParams && $stateParams.addtlNumOfEnvironments && !isNaN(parseInt($stateParams.addtlNumOfEnvironments))) {
+                var addtlNumOfEnvironments = parseInt($stateParams.addtlNumOfEnvironments);
+                $scope.temp.noOfEnvironments += addtlNumOfEnvironments;
+                $scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
+                $scope.addNewEnvironments(addtlNumOfEnvironments);
+            }
         }]);
 })();

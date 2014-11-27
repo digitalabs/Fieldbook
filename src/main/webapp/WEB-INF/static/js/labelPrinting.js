@@ -4,11 +4,10 @@ function validateEnterLabelFieldsPage(type){
 	'use strict';
 	var leftSelectedFields = '';
 	$('#leftSelectedFields li').each(function(){
-		
 		leftSelectedFields += $(this).attr('id');
 		leftSelectedFields += ',';
 	});
-	
+
 	if(leftSelectedFields != ''){
 		leftSelectedFields = leftSelectedFields.substring(0,leftSelectedFields.length-1); 
 	}
@@ -44,7 +43,7 @@ function validateEnterLabelFieldsPage(type){
 	//we checked if something was checked
 	if($('#'+getJquerySafeId('userLabelPrinting.barcodeNeeded1')).is(':checked')){
 		//we need to check if either one is chosen in the drop downs
-		if($('#'+getJquerySafeId('userLabelPrinting.firstBarcodeField')).val() == ""
+		if($('#'+getJquerySafeId('userLabelPrinting.firstBarcodeField')).val() == ''
 				&& $('#'+getJquerySafeId('userLabelPrinting.secondBarcodeField')).val() == ''
 				&& $('#'+getJquerySafeId('userLabelPrinting.thirdBarcodeField')).val() == ''){
 			showInvalidInputMessage(barcodeFieldNeededError);
@@ -82,7 +81,11 @@ function validateEnterLabelFieldsPage(type){
 		showAlertMessage('', generateLabelsWarningMessage);
 	}
 	
-	$('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
+	if (type === labelPrintingExcel) {
+		$('#'+getJquerySafeId('userLabelPrinting.generateType')).val($('#export-type').val());
+	} else {
+		$('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
+	}
 	
 	setSelectedTrialInstanceOrder();
 	
@@ -165,4 +168,10 @@ function setSelectedTrialInstanceOrder() {
 		}
 	});
 	$('#'+getJquerySafeId('userLabelPrinting.order')).val(order.join(','));
+}
+
+function showExportModal() {
+	var selectedData = {'id': labelPrintingExcel, 'text': excelOption};
+	$('#export-type').select2('data', selectedData);
+	$('#export-label-data-modal').modal('show');
 }

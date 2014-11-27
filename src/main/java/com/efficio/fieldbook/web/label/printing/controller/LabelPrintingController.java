@@ -55,6 +55,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 
@@ -239,14 +240,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             if (getUserLabelPrinting().getFieldMapInfoList() != null) {
                 fileName = "Trial-Field-Map-Labels-" + currentDate;
             } else {
+            	//changed selected name to block name for now
                 fileName += "-" + userLabelPrinting.getNumberOfInstances() 
-                        + "-" + currentDate; //changed selected name to block name for now
+                        + "-" + currentDate; 
             }
         } else {
             if (getUserLabelPrinting().getFieldMapInfoList() != null) {
                 fileName = "Nursery-Field-Map-Labels-" + currentDate;
             } else {
-                fileName += "-" + currentDate; //changed selected name to block name for now
+            	//changed selected name to block name for now
+                fileName += "-" + currentDate; 
             }
         }
         
@@ -275,14 +278,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         }
         response.setHeader("Content-disposition","attachment; filename=" + fileName);
 
-        File xls = new File(getUserLabelPrinting().getFilenameDLLocation()); // the selected name + current date
+        // the selected name + current date
+        File xls = new File(getUserLabelPrinting().getFilenameDLLocation()); 
         FileInputStream in;
         
         try {
             in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();
 
-            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+            // use bigger if you want
+            byte[] buffer= new byte[BUFFER_SIZE]; 
             int length = 0;
 
             while ((length = in.read(buffer)) > 0){
@@ -336,43 +341,57 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
             }
         }
-        Map<String,Object> results = new HashMap<String, Object>();
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            String fileName  = "";
-            if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase("1")){
-            	fileName  =getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + ".pdf";
-            	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
-            	
-            	getUserLabelPrinting().setFilenameDL(fileName);
-            	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
-                fileName = labelPrintingService.generatePDFLabels(trialInstances, 
-                                getUserLabelPrinting(), baos);
-            }else{
-            	fileName  = getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + ".xls";
-            	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
-            	getUserLabelPrinting().setFilenameDL(fileName);
-            	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
-                fileName = labelPrintingService.generateXlSLabels(trialInstances, 
-                                getUserLabelPrinting(), baos);
-            }
-            results.put("isSuccess", 1);
-            results.put("fileName", fileName);
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-            results.put("isSuccess", 0);
-            results.put("message", e.getMessage());
-        } catch (LabelPrintingException e) {
-            LOG.error(e.getMessage(), e);
-            results.put("isSuccess", 0);
-            Locale locale = LocaleContextHolder.getLocale();
-            results.put("message", messageSource.getMessage(
-                    e.getErrorCode(), new String[]{e.getLabelError()}, locale));
-        }
-        return results;
+        
+        return generateLabels(trialInstances);
     } 
     
-    /**
+    protected Map<String,Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances) {
+    	Map<String,Object> results = new HashMap<String, Object>();
+    	try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    	String fileName = "";
+	    	if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())){
+	        	fileName = getFileNameAndSetFileLocations(".pdf"); 
+	            fileName = labelPrintingService.generatePDFLabels(trialInstances, 
+	                            getUserLabelPrinting(), baos);
+	        } else if (getUserLabelPrinting().getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
+	        	fileName  = getFileNameAndSetFileLocations(".xls");
+	            fileName = labelPrintingService.generateXlSLabels(trialInstances, 
+	                            getUserLabelPrinting(), baos);
+	        } else {
+	        	fileName = getFileNameAndSetFileLocations(".csv");
+	        	fileName = labelPrintingService.generateCSVLabels(trialInstances, userLabelPrinting, baos);
+	        }
+	        results.put("isSuccess", 1);
+	        results.put("fileName", fileName);
+	    } catch (MiddlewareQueryException e) {
+	        LOG.error(e.getMessage(), e);
+	        results.put("isSuccess", 0);
+	        results.put(AppConstants.MESSAGE.getString(), e.getMessage());
+	    } catch (LabelPrintingException e) {
+	        LOG.error(e.getMessage(), e);
+	        results.put("isSuccess", 0);
+	        Locale locale = LocaleContextHolder.getLocale();
+	        results.put(AppConstants.MESSAGE.getString(), messageSource.getMessage(
+	                e.getErrorCode(), new String[]{e.getLabelError()}, locale));
+	    } catch (IOException e) {
+	    	LOG.error(e.getMessage(), e);
+	    	results.put("isSuccess", 0);
+	        results.put(AppConstants.MESSAGE.getString(), e.getMessage());
+	    }
+    	return results;
+	}
+    
+    private String getFileNameAndSetFileLocations(String extension) {
+    	String fileName = getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + extension;
+    	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
+    	
+    	getUserLabelPrinting().setFilenameDL(fileName);
+    	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
+    	return fileName;
+	}
+
+	/**
      * Generate trial instances from field map.
      *
      * @return the list

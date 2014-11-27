@@ -5,19 +5,24 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.AbstractBaseControllerTest;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
-public class SettingsControllerTest extends AbstractBaseControllerTest {
+public class SettingsControllerTest extends AbstractBaseControllerIntegrationTest {
 	
 	private SettingsController controller;
 	
@@ -46,6 +51,53 @@ public class SettingsControllerTest extends AbstractBaseControllerTest {
 		
 		Assert.assertTrue("Expected only basic detail variables but the list has non basic detail variables as well.", 
 				WorkbookTestUtil.areDetailsFilteredVariables(basicDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString()));
+	}
+	
+	@Test
+	public void testHasMeasurementDataEnteredForVariablesWithAtLeast1WithData(){
+		EditNurseryController editNurseryController = new EditNurseryController();
+		List<Integer> variableIds = new ArrayList<Integer>();
+		variableIds.add(new Integer(1));
+		variableIds.add(new Integer(2));
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
+		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+		MeasurementRow measurementRow = new MeasurementRow();
+		dataList.add(getSampleMeasurementData(1, "Sample Data"));
+		dataList.add(getSampleMeasurementData(2, ""));
+		measurementRow.setDataList(dataList);
+		measurementRowList.add(measurementRow);
+		userSelection.setMeasurementRowList(measurementRowList);
+		boolean hasMeasurementData = editNurseryController.hasMeasurementDataEnteredForVariables(variableIds, userSelection);
+		Assert.assertTrue("Should return true since there is measuredData", hasMeasurementData);				
+	}
+	
+	@Test
+	public void testHasMeasurementDataEnteredForVariablesWithNoData(){
+		EditNurseryController editNurseryController = new EditNurseryController();
+		List<Integer> variableIds = new ArrayList<Integer>();
+		variableIds.add(new Integer(1));
+		variableIds.add(new Integer(2));
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
+		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+		MeasurementRow measurementRow = new MeasurementRow();
+		dataList.add(getSampleMeasurementData(1, ""));
+		dataList.add(getSampleMeasurementData(2, ""));
+		measurementRow.setDataList(dataList);
+		measurementRowList.add(measurementRow);
+		userSelection.setMeasurementRowList(measurementRowList);
+		boolean hasMeasurementData = editNurseryController.hasMeasurementDataEnteredForVariables(variableIds, userSelection);
+		Assert.assertFalse("Should return false since there is measuredData", hasMeasurementData);				
+	}
+		
+	private MeasurementData getSampleMeasurementData(Integer variableTermId, String data){
+		MeasurementData measurementData = new MeasurementData();
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(variableTermId);
+		measurementData.setValue(data);
+		measurementData.setMeasurementVariable(measurementVariable);
+		return measurementData;
 	}
 
 	private List<SettingDetail> createSettingDetailVariables() {

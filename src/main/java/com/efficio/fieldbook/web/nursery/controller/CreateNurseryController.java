@@ -249,7 +249,7 @@ public class CreateNurseryController extends SettingsController {
      * @param form the form
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
+    protected void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
         List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
         List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
@@ -629,32 +629,35 @@ public class CreateNurseryController extends SettingsController {
     }
     
     @ResponseBody
-    @RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/deleteVariable/{mode}/{variableIds}", method = RequestMethod.POST)
     public String deleteVariable(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
-            @PathVariable int mode, @PathVariable int variableId) {
+            @PathVariable int mode, @PathVariable String variableIds) {
+    	List<Integer> varIdList = SettingsUtil.parseVariableIds(variableIds);
     	Map<String, String> idNameRetrieveSaveMap = fieldbookService.getIdNamePairForRetrieveAndSave();
-        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-
-            addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId);
-            deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
-            if(idNameRetrieveSaveMap.get(variableId) != null){
-            	//special case so we must delete it as well
-            	addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
-                deleteVariableInSession(userSelection.getStudyLevelConditions(), Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
-            }
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-            addVariableInDeletedList(userSelection.getPlotsLevelList(), mode, variableId);
-            deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
-        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()){
-            addVariableInDeletedList(userSelection.getBaselineTraitsList(), mode, variableId);
-            deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
-        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()){
-            addVariableInDeletedList(userSelection.getSelectionVariates(), mode, variableId);
-            deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
-        } else {
-            addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId);
-            deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
-        }
+    	for(Integer variableId : varIdList) {
+	        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+	
+	            addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId);
+	            deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
+	            if(idNameRetrieveSaveMap.get(variableId) != null){
+	            	//special case so we must delete it as well
+	            	addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
+	                deleteVariableInSession(userSelection.getStudyLevelConditions(), Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
+	            }
+	        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+	            addVariableInDeletedList(userSelection.getPlotsLevelList(), mode, variableId);
+	            deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+	        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()){
+	            addVariableInDeletedList(userSelection.getBaselineTraitsList(), mode, variableId);
+	            deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
+	        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()){
+	            addVariableInDeletedList(userSelection.getSelectionVariates(), mode, variableId);
+	            deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
+	        } else {
+	            addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId);
+	            deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
+	        }
+    	}
         return "";
     }
     

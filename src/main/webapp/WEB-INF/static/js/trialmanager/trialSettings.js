@@ -9,29 +9,34 @@
 
     var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TrialSettingsCtrl', ['$scope', 'TrialManagerDataService', function ($scope, TrialManagerDataService) {
+    manageTrialApp.controller('TrialSettingsCtrl', ['$scope', 'TrialManagerDataService','_','$filter', function ($scope, TrialManagerDataService,_,$filter) {
 
         $scope.settings = TrialManagerDataService.settings.trialSettings;
-
         $scope.data = TrialManagerDataService.currentData.trialSettings;
-
         $scope.addVariable = true;
 
-        $scope.removeVariable = function (cvTermId) {
-            // remove the equivalent setting
-            $scope.settings.remove(cvTermId);
-            $.ajax({
-                url: '/Fieldbook/manageSettings/deleteVariable/1/' + cvTermId,
-                type: 'POST',
-                cache: false,
-                data: '',
-                contentType: 'application/json',
-                success: function () {
-                }
+        $scope.options = {
+            selectAll : false
+        };
+
+        $scope.doSelectAll = function() {
+            var filteredVariables = $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(),$scope.settings.vals());
+
+            _.each(filteredVariables,function(cvTermID){
+                $scope.settings.val(cvTermID).isChecked = $scope.options.selectAll;
             });
 
-            // remove the equivalent current data
-            delete $scope.data.userInput[cvTermId];
+        };
+
+        $scope.removeSettings = function() {
+            TrialManagerDataService.removeSettings(1,$scope.settings).then(function(data) {
+                _(data).each(function(ids) {
+                    delete $scope.data.userInput[ids];
+                });
+
+                $scope.options.selectAll = false;
+            });
+
         };
 
 

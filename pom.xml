@@ -1,17 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.efficio</groupId>
+	<groupId>org.generationcp</groupId>
 	<artifactId>Fieldbook</artifactId>
 	<packaging>war</packaging>
 	<name>Fieldbook Project</name>
-	<version>3.0.0.RELEASE</version>
-	
+	<version>3.1.0.SNAPSHOT</version>
+
 	<properties>
-        <ibpcommons.version>3.0.0.RELEASE</ibpcommons.version>
-		<spring.version>3.1.1.RELEASE</spring.version>
+        <ibpcommons.version>3.1.0.SNAPSHOT</ibpcommons.version>
+		<spring.version>3.2.11.RELEASE</spring.version>
 		<spring.security.version>3.1.7.RELEASE</spring.security.version>
     </properties>
+
+	<distributionManagement>
+		<repository>
+			<id>efficio-nexus</id>
+			<name>Releases</name>
+			<url>http://gcp.efficio.us.com:8081/nexus/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>efficio-nexus</id>
+			<name>Snapshots</name>
+			<url>http://gcp.efficio.us.com:8081/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<dependencies>
 		<!-- Spring Dependency -->	       
@@ -59,11 +72,6 @@
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.7.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-asm</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -261,13 +269,6 @@
             <version>1.4.01</version>
         </dependency>
 
-		<!-- AOP dependency -->
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>2.2</version>
-		</dependency>
-
 		<!-- ZXing dependency -->
 		<dependency>
 	      <groupId>com.google.zxing</groupId>
@@ -329,15 +330,16 @@
 						<executions>
 							<execution>
 							    <id>default-cli</id>
-								<phase>generate-resources</phase> 
+								<phase>generate-resources</phase>
 								<configuration>
 									<tasks>
 										<!-- Please do not change this, run mvn clean install -DenvConfig={your pilpeline folder name}
 										and make a folder under pipeline/config with property overrides as per your environment. -->
 										<copy todir="src/main/resources" overwrite="true">
-											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
+											<fileset dir="pipeline/config/${envConfig}"
+													 id="fromDir">
 												<include name="fieldbook.properties" />
-                                                <include name="workbench.properties"/>
+												<include name="workbench.properties"/>
 											</fileset>
 										</copy>
 									</tasks>

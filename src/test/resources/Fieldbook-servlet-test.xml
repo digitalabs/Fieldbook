@@ -4,13 +4,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-       		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
             http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/context/spring-context-3.2.xsd
             http://www.springframework.org/schema/mvc
             http://www.springframework.org/schema/mvc/spring-mvc.xsd
             http://www.springframework.org/schema/aop 
-			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+			http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
 	<!-- Declare property file locations  -->
 	<context:property-placeholder location="classpath:fieldbook.properties, classpath:test.properties" />
@@ -75,6 +75,9 @@
 		init-method="init">
 		<constructor-arg value="${upload.directory}" />
 	</bean>
+	
+	<bean id="exportAdvanceListService" class="com.efficio.fieldbook.web.common.service.impl.ExportAdvanceListServiceImpl">
+    </bean>    	
 	
 	<bean id="measurementsGeneratorService" class="com.efficio.fieldbook.web.nursery.service.impl.MeasurementsGeneratorServiceImpl">
 	</bean>
@@ -145,6 +148,9 @@
 		<aop:scoped-proxy />
 	</bean>
 	
+	<bean id="exportGermplasmListService" class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl">
+	</bean>
+	
 	<!-- **************************************************************** -->
 	<!-- RESTful Web Service -->
 	<!-- **************************************************************** -->
@@ -161,6 +167,8 @@
        		</list>
    		</property>    
 	</bean>
+	
+	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
 
 	<!-- **************************************************************** -->
 	<!-- MIDDLEWARE Database Managers -->

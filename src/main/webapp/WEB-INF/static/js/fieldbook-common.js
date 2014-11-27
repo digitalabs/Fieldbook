@@ -907,14 +907,11 @@ function openTreeStudy(id){
 
 function openDeleteConfirmation() {
 	'use strict';
-	
 	var deleteConfirmationText;
-	
 	if (isNursery() && !$('.edit-trial-page-identifier').length) {
 		$('#delete-nursery-heading-modal').text(deleteNurseryTitle);
 		deleteConfirmationText = deleteNurseryConfirmation;
-	}
-	else {
+	} else {
 		$('#delete-nursery-heading-modal').text(deleteTrialTitle);
 		deleteConfirmationText = deleteTrialConfirmation;
 	}
@@ -1020,7 +1017,6 @@ function advanceNursery(tableName) {
 					$('#advanceNurseryModal select.fbk-harvest-year').each(function(){
 						$(this).select2({minimumResultsForSearch: -1});
 					});
-					
 				}
 			});
 		}
@@ -1220,6 +1216,36 @@ function initTrialModalSelection() {
 	$('#selectedRTrait').prop('selectedIndex', 0);
 }
 
+function exportGermplasmList(){
+	'use strict';
+	
+	var submitExportUrl = '/Fieldbook/ExportManager/exportGermplasmList/',
+		formName = '#exportGermplasmListForm',
+		type = $('#exportGermplasmListFormat').val();
+	
+	var exportOptions = {
+			dataType: 'text',
+				success: showGermplasmExportResponse // post-submit callback
+			};
+	
+	if (type === '0') {
+		showMessage('Please choose export format');
+		return false;
+	}
+	
+	submitExportUrl = submitExportUrl + type;
+	if (isNursery()){
+		submitExportUrl = submitExportUrl + '/N';
+	}else{
+		submitExportUrl = submitExportUrl + '/T';
+	}
+	
+	
+	$(formName).attr('action', submitExportUrl);
+	$(formName).ajaxForm(exportOptions).submit();
+}
+
+
 function exportStudy() {
 	'use strict';
 	var type = $('#exportType').val();
@@ -1238,6 +1264,16 @@ function exportStudy() {
 function exportStudyToR(type) {
 	'use strict';
 	doExportContinue(type + '/' + $('#selectedRTrait').val(), isNursery());
+}
+function getExportCheckedAdvancedList(){
+	'use strict';
+	var advancedLists = [];
+	$('.export-advance-germplasm-lists-checkbox').each(function(){
+			if($(this).is(':checked')){
+				advancedLists.push($(this).data('advance-list-id'));
+			}
+		});
+	return advancedLists;
 }
 function getExportCheckedInstances(){
 	'use strict';
@@ -1265,7 +1301,13 @@ function validateTrialInstance() {
 	}
 	return additionalParam;
 }
-
+function exportAdvanceStudyList(advancedListIdParams){
+	'use strict';
+	
+	$('#exportAdvanceStudyForm #exportAdvanceListGermplasmIds').val(advancedListIdParams);
+	$('#exportAdvanceStudyForm #exportAdvanceListGermplasmType').val($('#exportAdvancedType').val());
+	$('#exportAdvanceStudyForm').ajaxForm(exportAdvanceOptions).submit();	
+}
 function doExportContinue(paramUrl, isNursery) {
 	var currentPage = $('#measurement-data-list-pagination .pagination .active a').html(),
 		additionalParams = '',
@@ -1293,8 +1335,7 @@ function doExportContinue(paramUrl, isNursery) {
 }
 
 function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
-	var formName = '#exportStudyForm',
-		action = submitExportUrl,
+	var action = submitExportUrl,
 		newAction = '',
 		studyId = '0';
 
@@ -1306,17 +1347,80 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 	}
 	newAction += exportWayType;
 
+	var visibleColumns = '';
 	if ($('#browser-nurseries').length !== 0) {
 		// Meaning we are on the landing page
 		studyId = getCurrentStudyIdInTab();
+	} else {
+		// the nursery is opened
+		visibleColumns = getMeasurementTableVisibleColumns();
+		
+		var exportType = $('#exportType').val();
+		if(exportType == 7 || exportType == 3 ){ // excel or csv
+			showWarningMessageForRequiredColumns(visibleColumns);
+		}
 	}
 
-	$('#exportStudyForm #studyExportId').val(studyId);
-	$(formName).attr('action', newAction);
+	$.ajax(newAction, {
+		headers : {
+			'Accept' : 'application/json',
+			'Content-Type' : 'application/json'
+		},
+		data : JSON.stringify({
+			'visibleColumns' : visibleColumns,
+			'studyExportId' : studyId
+		}),
+		type : 'POST',
+		dataType: 'text',
+		success: function(data){
+			showExportResponse(data);
+		}
+	});
+}
+
+function hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns){
+	var requiredColumns = [plotNoTermId, entryNoTermId, desigTermId];
+	var i = 0;
+	
+	var noOfRequiredColumns = 0;
+	for(i = 0; i < requiredColumns.length; i++){
+		if(visibleColumns.indexOf(requiredColumns[i]) >= 0){
+			noOfRequiredColumns++;
+		}
+	}
+	
+	return !(noOfRequiredColumns == requiredColumns.length);
+}
 
 
-	$(formName).ajaxForm(exportOptions).submit();
-	$('#exportStudyForm #studyExportId').val('0');
+function showWarningMessageForRequiredColumns(visibleColumns){
+	var warningMessage = 'The export file will leave out contain columns that you have marked ' + 
+					'as hidden in the table view, with the exception of key columns that are ' + 
+					'necessary to identify your data when you import it back into the system.';
+	if(hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns)){
+		showAlertMessage('', warningMessage);
+	};
+}
+
+function getMeasurementTableVisibleColumns() {
+	var visibleColumns = '';
+	var headers = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]');
+	var headerCount = headers.size();
+
+	var i = 0;	
+	for(i = 0; i < headerCount; i++){
+		var headerId = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]:eq('+i+')').attr('data-term-id');
+		
+		if($.isNumeric(headerId)){
+			if(visibleColumns.length == 0){
+				visibleColumns = headerId; 
+			} else {
+				visibleColumns = visibleColumns + "," + headerId;
+			}
+		}  
+	}
+	
+	return visibleColumns;
 }
 
 function importNursery(type) {
@@ -1599,7 +1703,6 @@ function doAdvanceNursery() {
 		cache: false,
 		success: function(data) {
 			var advanceGermplasmChangeDetail = [];
-			
 			if(data.isSuccess === '0'){
 				showErrorMessage('page-advance-modal-message', data.message);
 			}else{
@@ -1633,10 +1736,7 @@ function showAdvanceGermplasmInfo(uniqueId){
 			var uniqueId,
 				close,
 				aHtml;
-
-			
 				$('#advanceNurseryModal').modal('hide');
-
 				uniqueId = $(html).find('.uniqueId').attr('id');
 				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
 				aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + uniqueId + '" href="#advance-list' + uniqueId + '">Advance List' + close + '</a>';
@@ -1669,7 +1769,7 @@ function closeAdvanceListTab(uniqueId) {
 	}, 100);
 }
 
-function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault) {
+function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, advancedGermplasmListId) {
 	'use script';
 	var url = '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId; 
 	if(!isDefault){
@@ -1684,6 +1784,10 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault) {
 		cache: false,
 		success: function(html) {
 			$('#advance-list' + uniqueId).html(html);
+			//we just show the button
+			$('.export-advance-list-action-button').removeClass('fbk-hide');
+			$('#advance-list' + uniqueId+'-li').addClass('advance-germplasm-items');
+			$('#advance-list' + uniqueId+'-li').data('advance-germplasm-list-id', advancedGermplasmListId);
 		}
 	});
 }
@@ -2490,6 +2594,36 @@ function showManageCheckTypePopup() {
 		backdrop : 'static',
 		keyboard : false
 	});
+}
+function showExportGermplasmListPopup() {
+	'use strict';
+	$('.check-germplasm-list-items .popover').remove();
+	$('#exportGermplasmListModal').modal({
+		backdrop : 'static',
+		keyboard : false
+	});
+	
+	var visibleColumnTermIds = [];
+	
+	$("#imported-germplasm-list th[aria-label!='']").each(
+		function(){
+			var termId = $(this).attr('data-col-name').split('-')[0];
+			if ($.inArray(termId, visibleColumnTermIds) === -1){
+				visibleColumnTermIds.push(termId);
+			}
+		}	
+	);
+	
+	if (!isNursery() && $("#imported-germplasm-list").size() !== 0){
+		
+		if ($.inArray(gidTermId+'', visibleColumnTermIds) === -1
+				|| $.inArray(entryNoTermId+'', visibleColumnTermIds) === -1
+				|| $.inArray(desigTermId+'', visibleColumnTermIds) === -1
+		){
+			showAlertMessage('', requiredGermplasmColumnsMessage);
+		}
+		
+	}
 	
 }
 function addUpdateCheckType(operation) {
@@ -2812,13 +2946,11 @@ function reloadCheckListTable(){
 }
 function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	'use strict';
-	
 	if(isPreSelect){
 		$('body').data('doAutoSave', '1');
 	}else{
 		$('body').data('doAutoSave', '0');
 	}
-	
 	$('#page-study-tree-message-modal').html('');
 	  $('#addFolderDiv').hide();
 	  $('#renameFolderDiv').hide();
@@ -2907,8 +3039,7 @@ function addDetailsTab(studyId, title) {
 					$('#study-tabs div#study'+studyId).remove();
 				} else {
 					initializeStudyTabs();
-					$('li#li-study'+studyId + ' a').tab('show');			
-					
+					$('li#li-study'+studyId + ' a').tab('show');
 					$('.info#study' + studyId + ' select').each(function() {
 						$(this).select2({minimumResultsForSearch: 20});
 					});
@@ -3128,24 +3259,19 @@ function showGermplasmDetailsSection() {
 	$('.observation-exists-notif').hide();
 	$('.overwrite-germplasm-list').hide();
 	$('.browse-import-link').show();
-	
 	if ($('.germplasm-list-items tbody tr').length > 0) {
 		$('#imported-germplasm-list-reset-button').show();
 	}
-	
 	//flag to determine if existing measurements should be deleted
 	$('#chooseGermplasmAndChecks').data('replace', '1');
-	
 	if (isNursery()) {
 		//enable drag and drop
         makeDraggable(true);
         makeCheckDraggable(true);
-        
         if ($('.check-germplasm-list-items tbody tr').length > 0) {
 			//show clear button and specify checks section
 			$('#check-germplasm-list-reset-button').show();
-	        $('#specifyCheckSection').show();
-	        
+			$('#specifyCheckSection').show();
 	        //enable deletion of checks
 	        if (selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null) {
 	        	selectedCheckListDataTable.getDataTable().$('.delete-check').show();
@@ -3214,7 +3340,6 @@ function displaySelectedCheckGermplasmDetails() {
 			setSpinnerMaxValue();
 			itemsIndexAdded = [];
 			$('#check-details').removeClass('fbk-hide');
-			
 			//hide clear button, set list id used fror checks if from list, and set checksFromPrimary value based on checks
 			$('#check-germplasm-list-reset-button').hide();
 			lastDraggedChecksList = $('#lastDraggedChecksList').val();
@@ -3265,4 +3390,63 @@ function displaySelectedGermplasmDetails() {
 				$('#imported-germplasm-list-reset-button').hide();
 			}					
 	});	
+}
+function showAddEnvironmentsDialog(){
+	'use strict';
+	$('#numberOfEnvironments').val('');
+	$('#addEnvironmentsModal').modal({ backdrop: 'static', keyboard: true });
+}
+
+function checkBeforeAdvanceExport() {
+	'use strict';
+	var checkedAdvancedLists = getExportCheckedAdvancedList(),
+	counter = 0,
+	additionalAdvanceExportParams = '';
+
+	if(checkedAdvancedLists !== null && checkedAdvancedLists.length === 0){
+		showErrorMessage('', 'Please select at least 1 advance list');
+		return false;
+	}
+
+	
+	if(checkedAdvancedLists !== null && checkedAdvancedLists.length !== 0){
+
+		for(counter = 0 ; counter < checkedAdvancedLists.length ; counter++){
+			if(additionalAdvanceExportParams !== ''){
+				additionalAdvanceExportParams += '|';
+			}
+			additionalAdvanceExportParams += checkedAdvancedLists[counter];
+		}
+	}
+	
+	exportAdvanceStudyList(additionalAdvanceExportParams);			
+}
+
+function showExportAdvanceOptions() {
+	'use strict';
+	var studyId = $('#studyId').val();
+	$.ajax({
+		url: '/Fieldbook/ExportManager/retrieve/advanced/lists/'+studyId,
+		type: 'GET',
+		cache: false,
+		success: function (data) {
+			$('.export-advance-germplasm-list .advances-list').html(data);
+			$('.export-advance-germplasm-list').removeClass('fbk-hide');
+		}
+	});
+	
+	$('#exportAdvancedType').select2('destroy');
+	$('#exportAdvancedType').val("1");
+	$('#exportAdvanceListModal select').select2({width: 'copy', minimumResultsForSearch: 20});
+	$('#exportAdvanceListModal').modal({ backdrop: 'static', keyboard: true });
+
+}
+function showExportAdvanceResponse(responseText, statusText, xhr, $form) {
+	'use strict';
+	var resp = $.parseJSON(responseText);			
+	$('#exportAdvanceStudyDownloadForm #outputFilename').val(resp.outputFilename);
+	$('#exportAdvanceStudyDownloadForm #filename').val(resp.filename);
+	$('#exportAdvanceStudyDownloadForm #contentType').val(resp.contentType);
+	$('#exportAdvanceStudyDownloadForm').submit();
+	$('#exportAdvanceListModal').modal('hide');
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String noOfEnvironments;
+	private String noOfEnvironmentsToAdd;
 	private Integer designType;
 	private String replicationsCount;
 	private Boolean isResolvable;
@@ -19,6 +20,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String nrlatin;
 	private String nblatin;
 	private String replatinGroups;
+	private boolean hasMeasurementData;
 /*
 	1 - single col
 	2 - single row
@@ -125,6 +127,18 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	}
 	public void setReplicationsArrangement(Integer replicationsArrangement) {
 		this.replicationsArrangement = replicationsArrangement;
+	}
+	public String getNoOfEnvironmentsToAdd() {
+		return noOfEnvironmentsToAdd;
+	}
+	public void setNoOfEnvironmentsToAdd(String noOfEnvironmentsToAdd) {
+		this.noOfEnvironmentsToAdd = noOfEnvironmentsToAdd;
+	}
+	public boolean isHasMeasurementData() {
+		return hasMeasurementData;
+	}
+	public void setHasMeasurementData(boolean hasMeasurementData) {
+		this.hasMeasurementData = hasMeasurementData;
 	}
 	
 	

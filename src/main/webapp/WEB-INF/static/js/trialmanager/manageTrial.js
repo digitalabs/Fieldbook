@@ -68,7 +68,8 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
             })
 
             .state('environment', {
-                url: '/environment',
+                templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
+                params: ['addtlNumOfEnvironments','timestamp'],
                 views: {
                     'environment': {
                         controller: 'EnvironmentCtrl',
@@ -163,7 +164,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
     // THE parent controller for the manageTrial (create/edit) page
     manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout','_',
-        '$localStorage', function ($scope, $rootScope, TrialManagerDataService, $http, $timeout,_,$localStorage) {
+        '$localStorage', '$state', function ($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage, $state) {
             $scope.trialTabs = [
                 {   'name': 'Settings',
                     'state': 'trialSettings'
@@ -283,26 +284,36 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                     }
                 });
             };
-            
             $scope.refreshTabAfterImport = function () {
                 $http.get('/Fieldbook/TrialManager/createTrial/refresh/settings/tab').success(function (data) {
                     // update data and settings
 
                     var environmentData = TrialManagerDataService.extractData(data.environmentData);
-                    
                     TrialManagerDataService.updateCurrentData('trialSettings', TrialManagerDataService.extractData(data.trialSettingsData));
                     TrialManagerDataService.updateCurrentData('environments', environmentData);
-                    
                 });
             };
-
+            $scope.temp = {
+                noOfEnvironments : 0
+            };
+            $scope.refreshEnvironmentsAndExperimentalDesign = function () {
+                $state.go('environment', {addtlNumOfEnvironments:$scope.temp.noOfEnvironments, timestamp: new Date()});
+            };
 
             $scope.displayMeasurementOnlyActions = function () {
                 return TrialManagerDataService.trialMeasurement.count &&
                     TrialManagerDataService.trialMeasurement.count > 0 && !TrialManagerDataService.applicationData.unsavedGeneratedDesign &&
                     !TrialManagerDataService.applicationData.unsavedTraitsAvailable;
             };
-
+            $scope.hasMeasurementData = function () {
+                return TrialManagerDataService.trialMeasurement.count &&
+                    TrialManagerDataService.trialMeasurement.count > 0;
+            };
+            
+            $scope.displayGermplasmOnlyActions = function () {
+                return TrialManagerDataService.applicationData.germplasmListSelected;
+            };
+            
             $scope.performFunctionOnTabChange = function (targetState) {
                 if (targetState === 'editMeasurements') {
                     if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable() !== null) {
@@ -332,7 +343,6 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
                     }
                 }
             };
-
             $('body').on('DO_AUTO_SAVE', function () {
                 TrialManagerDataService.saveCurrentData();
             });

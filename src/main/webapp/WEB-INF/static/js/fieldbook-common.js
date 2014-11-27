@@ -1355,7 +1355,10 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		// the nursery is opened
 		visibleColumns = getMeasurementTableVisibleColumns();
 		
-		showWarningMessageForRequiredColumns(visibleColumns);
+		var exportType = $('#exportType').val();
+		if(exportType == 7 || exportType == 3 ){ // excel or csv
+			showWarningMessageForRequiredColumns(visibleColumns);
+		}
 	}
 
 	$.ajax(newAction, {

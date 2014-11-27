@@ -19,12 +19,17 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,9 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 public class ImportGermplasmListControllerTest extends AbstractBaseControllerIntegrationTest {
     
     /** The Constant LOG. */
@@ -43,6 +51,10 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
     /** The import germplasm file service. */
     @Autowired
     private ImportGermplasmFileService importGermplasmFileService;
+    
+    /** The user selection. */
+    @Mock
+    private UserSelection userSelection;
 
     /** The workbook basic. */
     private Workbook workbookBasic;
@@ -58,15 +70,22 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 
     /** The workbook invalid. */
     private Workbook workbookInvalid;
+    
+    @InjectMocks
+    ImportGermplasmListController importGermplasmListController;
 
     /**
      * Sets the up.
      */
     @Before
     public void setUp() {
-
+    	
+    	MockitoAnnotations.initMocks(this);
+    	
         try {
             // InputStream inp = new FileInputStream("");
+        	
+        	importGermplasmListController = spy(importGermplasmListController);
 
             InputStream inp = getClass().getClassLoader().getResourceAsStream(
                     "GermplasmImportTemplate-Basic-rev4b-with_data.xls");
@@ -316,6 +335,35 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
         userSelection.getWorkbook().setFactors(factors);
         // need to check if the CHECK was added
         assertEquals(1, userSelection.getWorkbook().getMeasurementDatasetVariables().size());
+    }
+    
+    @Test
+    public void testHasMeasurementTrialWithMeasurement() {
+    	
+    	when(userSelection.getMeasurementRowList()).thenReturn(mock(List.class));
+    	when(userSelection.getMeasurementRowList().isEmpty()).thenReturn(false);
+    	
+    	Boolean result = importGermplasmListController.hasMeasurement();
+    	assertTrue(result);
+    }
+    
+    @Test
+    public void testHasMeasurementWithNullMeasurementRowList() {
+    	
+    	when(userSelection.getMeasurementRowList()).thenReturn(null);
+    	
+    	Boolean result = importGermplasmListController.hasMeasurement();
+    	assertFalse(result);
+    }
+    
+    @Test
+    public void testHasMeasurementTrialWithoutMeasurement() {
+    	
+    	when(userSelection.getMeasurementRowList()).thenReturn(mock(List.class));
+    	when(userSelection.getMeasurementRowList().isEmpty()).thenReturn(true);
+    	
+    	Boolean result = importGermplasmListController.hasMeasurement();
+    	assertFalse(result);
     }
         
 }

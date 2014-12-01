@@ -1337,8 +1337,9 @@ function doExportContinue(paramUrl, isNursery) {
 function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 	var action = submitExportUrl,
 		newAction = '',
-		studyId = '0';
-
+		studyId = '0',
+		visibleColumns = '';
+	
 	if (isNursery) {
 		newAction = action + 'export/' + paramUrl;
 	} else {
@@ -1346,17 +1347,18 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		newAction = action + 'exportTrial/' + paramUrl + '/' + additionalParams;
 	}
 	newAction += exportWayType;
-
-	var visibleColumns = '';
+ 
+	
 	if ($('#browser-nurseries').length !== 0) {
 		// Meaning we are on the landing page
 		studyId = getCurrentStudyIdInTab();
 	} else {
-		// the nursery is opened
-		visibleColumns = getMeasurementTableVisibleColumns();
+		// the nursery/trial is opened
+		visibleColumns = getMeasurementTableVisibleColumns(isNursery);
 		
 		var exportType = $('#exportType').val();
-		if(exportType == 7 || exportType == 3 ){ // excel or csv
+		// excel or csv
+		if( (exportType == 7 || exportType == 3) && visibleColumns.length !==0 ){ 
 			showWarningMessageForRequiredColumns(visibleColumns);
 		}
 	}
@@ -1379,6 +1381,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 }
 
 function hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns){
+	'use strict';
 	var requiredColumns = [plotNoTermId, entryNoTermId, desigTermId];
 	var i = 0;
 	
@@ -1394,6 +1397,7 @@ function hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns){
 
 
 function showWarningMessageForRequiredColumns(visibleColumns){
+	'use strict';
 	var warningMessage = 'The export file will leave out contain columns that you have marked ' + 
 					'as hidden in the table view, with the exception of key columns that are ' + 
 					'necessary to identify your data when you import it back into the system.';
@@ -1402,8 +1406,14 @@ function showWarningMessageForRequiredColumns(visibleColumns){
 	};
 }
 
-function getMeasurementTableVisibleColumns() {
+function getMeasurementTableVisibleColumns(isNursery) {
+	'use strict';
 	var visibleColumns = '';
+	
+	if(!isNursery && $('[ui-view="editMeasurements"]').text().length === 0){
+		return visibleColumns;
+	}
+	
 	var headers = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]');
 	var headerCount = headers.size();
 
@@ -1415,11 +1425,11 @@ function getMeasurementTableVisibleColumns() {
 			if(visibleColumns.length == 0){
 				visibleColumns = headerId; 
 			} else {
-				visibleColumns = visibleColumns + "," + headerId;
+				visibleColumns = visibleColumns + ',' + headerId;
 			}
 		}  
 	}
-	
+
 	return visibleColumns;
 }
 

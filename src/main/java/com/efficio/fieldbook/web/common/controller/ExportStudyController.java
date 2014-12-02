@@ -335,8 +335,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     		outputFilename = rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId, instances);    		
     		response.setContentType(CSV_CONTENT_TYPE);
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
+    		List<Integer> visibleColumns = getVisibleColumns(data.get("visibleColumns"));
     		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
-    		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename, instances);
+    		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
     		if (instances != null && instances.size() > 1) {
         		int extensionIndex = filename.lastIndexOf(".");
         		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();

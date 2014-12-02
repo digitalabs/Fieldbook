@@ -11,6 +11,10 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.common.service;
 
-public interface ExcelExportStudyService extends ExportStudyService {
+import java.util.List;
 
+import org.generationcp.middleware.domain.etl.Workbook;
+
+public interface ExcelExportStudyService extends ExportStudyService {
+	String export(Workbook workbook, String filename, List<Integer> instances, List<Integer> visibleColumns);
 }

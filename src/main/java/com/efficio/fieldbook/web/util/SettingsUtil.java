@@ -62,12 +62,15 @@ import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
  */
 public class SettingsUtil {
 
-
-    /**
+	/**
      * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
 
+    private SettingsUtil() {
+		// do nothing
+	}
+    
     public static String cleanSheetAndFileName(String name) {
         if (name == null) {
             return null;

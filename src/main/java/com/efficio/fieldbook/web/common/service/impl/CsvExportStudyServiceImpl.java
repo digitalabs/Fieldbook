@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.ExportService;
@@ -48,8 +47,6 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 
 	@Resource
 	private ExportService exportService;
-	
-	protected static final Integer[] REQUIRED_COLUMNS = {TermId.PLOT_NO.getId(), TermId.ENTRY_NO.getId(), TermId.DESIG.getId()};
 
 	@Override
 	public String export(Workbook workbook, String filename,
@@ -130,41 +127,24 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 				+ File.separator + SettingsUtil.cleanSheetAndFileName(filename);
 		if (instances != null && (instances.size() > 1 || !isNursery)) {
 			int fileExtensionIndex = filenamePath.lastIndexOf(".");
+			String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation,fieldbookMiddlewareService);
 			if (instances.size() > 1) {
 				return filenamePath.substring(0, fileExtensionIndex)
 						+ "-"
 						+ index
 						+ SettingsUtil
-								.cleanSheetAndFileName(getSiteNameOfTrialInstance(trialObservation))
+								.cleanSheetAndFileName(siteName)
 						+ filenamePath.substring(fileExtensionIndex);
 			} else {
 				return filename.substring(0, filename.lastIndexOf("."))
 						+ "-"
 						+ index
 						+ SettingsUtil
-								.cleanSheetAndFileName(getSiteNameOfTrialInstance(trialObservation))
+								.cleanSheetAndFileName(siteName)
 						+ filenamePath.substring(fileExtensionIndex);
 			}
 		}
 		return filenamePath;
-	}
-
-	protected String getSiteNameOfTrialInstance(MeasurementRow trialObservation)
-			throws MiddlewareQueryException {
-		if (trialObservation != null && trialObservation.getMeasurementVariables() != null) {
-			for (MeasurementData data : trialObservation.getDataList()) {
-				if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_LOCATION.getId()) {
-					return "_" + data.getValue();
-				} else if (data.getMeasurementVariable().getTermId() == TermId.LOCATION_ID.getId()) {
-					if (data.getValue() != null && !data.getValue().isEmpty() && NumberUtils.isNumber(data.getValue())) {
-						return "_" + fieldbookMiddlewareService.getLocationById(Integer.parseInt(data.getValue())).getLname();
-					} else {
-						return "";
-					}
-				}
-			}
-		}
-		return "";
 	}
 
 	protected List<ExportColumnHeader> getExportColumnHeaders(
@@ -177,8 +157,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 				if(visibleColumns == null){
 					exportColumnHeaders.add(new ExportColumnHeader(variable
 							.getTermId(), variable.getName(), true));
-				}
-				else{
+				} else {
 					exportColumnHeaders.add(getColumnsBasedOnVisibility(visibleColumns,variable));			
 				}
 				
@@ -190,20 +169,11 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 
 	protected ExportColumnHeader getColumnsBasedOnVisibility(
 			List<Integer> visibleColumns, MeasurementVariable variable) {
-		if (visibleColumns.contains(variable.getTermId()) || partOfRequiredColumns(variable.getTermId())) {
+		if (visibleColumns.contains(variable.getTermId()) || ExportImportStudyUtil.partOfRequiredColumns(variable.getTermId())) {
 			return new ExportColumnHeader(variable.getTermId(), variable.getName(), true);
 		} else {
 			return new ExportColumnHeader(variable.getTermId(), variable.getName(), false);
 		}
-	}
-
-	protected boolean partOfRequiredColumns(int termId) {
-		for(int id : REQUIRED_COLUMNS){
-			if(termId == id){
-				return true;
-			}
-		}
-		return false;
 	}
 
 	protected List<Map<Integer, ExportColumnValue>> getExportColumnValues(
@@ -247,7 +217,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 			Integer termId) {
 		ExportColumnValue columnValue = null;
 
-		if (measurementVariableHasValue(dataCell)
+		if (ExportImportStudyUtil.measurementVariableHasValue(dataCell)
 				&& !dataCell.getMeasurementVariable().getPossibleValues()
 						.isEmpty()
 				&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE
@@ -255,7 +225,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 				&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE
 						.getId()
 				&& !dataCell.getMeasurementVariable().getProperty()
-						.equals(getPropertyName())) {
+						.equals(ExportImportStudyUtil.getPropertyName(ontologyService))) {
 
 			String value = getCategoricalCellValue(dataCell);
 			columnValue = new ExportColumnValue(termId, value);
@@ -285,36 +255,15 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 						.getPossibleValues());
 	}
 
-	protected String getPropertyName() {
-		String propertyName = "";
-		try {
-			propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId())
-					.getTerm()
-					.getName();
-		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return propertyName;
-	}
-
-	protected boolean measurementVariableHasValue(MeasurementData dataCell) {
-		return dataCell.getMeasurementVariable() != null
-				&& dataCell.getMeasurementVariable().getPossibleValues() != null;
-	}
-
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-
 	
 	public void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;
 	}
-
 	
 	public void setExportService(ExportService exportService) {
 		this.exportService = exportService;
-	}
-	
-	
+	}	
 }

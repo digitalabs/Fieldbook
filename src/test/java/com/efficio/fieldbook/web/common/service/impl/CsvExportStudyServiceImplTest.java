@@ -37,6 +37,7 @@ import org.mockito.exceptions.verification.NeverWantedButInvoked;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 public class CsvExportStudyServiceImplTest {
@@ -78,7 +79,6 @@ public class CsvExportStudyServiceImplTest {
 		Property prop = Mockito.mock(Property.class);
 		doReturn(prop).when(ontologyService).getProperty(TermId.BREEDING_METHOD_PROP.getId());
 		doReturn(new Term(1, PROPERTY_NAME, "Dummy defintion")).when(prop).getTerm();
-		
 		doReturn(Mockito.mock(File.class)).when(exportService).generateCSVFile(any(List.class),any(List.class), anyString());
 		doReturn(UPLOAD_DIRECTORY).when(fieldbookProperties).getUploadDirectory();
 	}
@@ -159,18 +159,6 @@ public class CsvExportStudyServiceImplTest {
 	}
 	
 	@Test
-	public void testGetSiteNameOfTrialInstance() throws MiddlewareQueryException{
-		String siteName = csvExportStudyService.getSiteNameOfTrialInstance(null);
-		Assert.assertTrue("The site name is '' ","".equalsIgnoreCase(siteName));
-		
-		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook workbook =  WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
-		MeasurementRow trialObservationWithTrialLocation = workbook.getTrialObservations().get(0);
-		siteName = csvExportStudyService.getSiteNameOfTrialInstance(trialObservationWithTrialLocation);
-		Assert.assertFalse("The site name for nursery is not empty.","".equalsIgnoreCase(siteName));
-	}
-
-	@Test
 	public void testGetExportColumnHeadersWhenVisibleColumnsIsNull(){
 		WorkbookDataUtil.setTestWorkbook(null);
 		Workbook workbook =  WorkbookDataUtil.getTestWorkbook(20, StudyType.N);
@@ -236,7 +224,7 @@ public class CsvExportStudyServiceImplTest {
 				noOfVisibleColumns++;
 				Assert.assertTrue("Expected that the generated export column header is visible but didn't. ",columnHeader.isDisplay());
 			} else {
-				if(csvExportStudyService.partOfRequiredColumns(columnHeader.getId())){
+				if(ExportImportStudyUtil.partOfRequiredColumns(columnHeader.getId())){
 					noOfVisibleColumns++;
 					Assert.assertTrue("Expected that the generated export column header for required columns are always visible but didn't.", columnHeader.isDisplay());
 				} else {
@@ -291,15 +279,6 @@ public class CsvExportStudyServiceImplTest {
 		return visibleColumns;
 	}
 
-	@Test
-	public void testPartOfRequiredColumns(){
-		Assert.assertTrue("Expecting to return true for a required termId but didn't.",csvExportStudyService.partOfRequiredColumns(TermId.ENTRY_NO.getId()));
-		Assert.assertTrue("Expecting to return true for a required termId but didn't.",csvExportStudyService.partOfRequiredColumns(TermId.DESIG.getId()));
-		Assert.assertTrue("Expecting to return true for a required termId but didn't.",csvExportStudyService.partOfRequiredColumns(TermId.PLOT_NO.getId()));
-		
-		Assert.assertFalse("Expecting to return false for a non-required termId but didn't.",csvExportStudyService.partOfRequiredColumns(TermId.BLOCK_NO.getId()));
-	}
-	
 	@Test
 	public void testGetExportColumnValues(){
 		WorkbookDataUtil.setTestWorkbook(null);
@@ -362,29 +341,19 @@ public class CsvExportStudyServiceImplTest {
 		Assert.assertNotNull("Expected that there is a newly created ExportColumnValue object but didn't.",columnValue);
 	}
 	
-	@Test
-	public void testGetPropertyName() throws MiddlewareQueryException{
-		Assert.assertNotNull("Expecting there is a property name returned after call getPropertyName() but didn't.",csvExportStudyService.getPropertyName());
-		
-		//returns error
-		Mockito.when(ontologyService.getProperty(Mockito.anyInt())).thenThrow(new MiddlewareQueryException("error"));
-		Assert.assertTrue("Expecting there is a property name returned after call getPropertyName() but didn't.",
-				"".equalsIgnoreCase(csvExportStudyService.getPropertyName()));
-	}
-	
-	@Test
-	public void testMeasurementVariableHasValue(){
-		MeasurementData data = getMeasurementData();
-		
-		Assert.assertFalse("Expected that the measurement variable of the given measurementData has no value but didn't.", csvExportStudyService.measurementVariableHasValue(data));
-		
-		data.setMeasurementVariable(getMeasurementVariableForCategoricalVariable());
-		
-		Assert.assertTrue("Expected that the measurement variable of the given measurementData has value but didn't.", csvExportStudyService.measurementVariableHasValue(data));
-	}
-	
 	private MeasurementData getMeasurementData(){
 		return new MeasurementData(WorkbookDataUtil.ENTRY, String.valueOf(1));
+	}
+	
+	private MeasurementVariable getMeasurementVariableForCategoricalVariable() {
+		MeasurementVariable variable = new MeasurementVariable(
+				TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL", "TRIAL NUMBER",
+				WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED,
+				WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "",
+				WorkbookDataUtil.TRIAL);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setPossibleValues(getValueReferenceList());
+		return variable;
 	}
 	
 	private MeasurementVariable getMeasureVariableForNumericalVariable(){
@@ -395,17 +364,6 @@ public class CsvExportStudyServiceImplTest {
 				WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		variable.setPossibleValues(new ArrayList<ValueReference>());
-		return variable;
-	}
-
-	private MeasurementVariable getMeasurementVariableForCategoricalVariable() {
-		MeasurementVariable variable = new MeasurementVariable(
-				TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL", "TRIAL NUMBER",
-				WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED,
-				WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "",
-				WorkbookDataUtil.TRIAL);
-		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
-		variable.setPossibleValues(getValueReferenceList());
 		return variable;
 	}
 	

@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
@@ -82,9 +81,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
-
-    @Resource
-    private WorkbenchService workbenchService;
     
     @Resource
     private OntologyService ontologyService;
@@ -106,7 +102,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
             ,@PathVariable String studyType
     		,@PathVariable int importType, BindingResult result, Model model) {
 
-    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
+    	boolean isTrial = ("TRIAL").equalsIgnoreCase(studyType);
     	ImportResult importResult = null;
     	UserSelection userSelection = getUserSelection(isTrial);
     	/**
@@ -188,6 +184,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
     	Locale locale = LocaleContextHolder.getLocale();
     	Map<String, Object> resultsMap = new HashMap<String,Object>();
+    	resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().isHasExistingDataOverwrite() ? "1" : "0");
     	if(!result.hasErrors()){
     		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 	    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
@@ -198,7 +195,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), userSelection.getTrialLevelVariableList()));
 	    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
 	    	
-	    	if(importResult.getErrorMessage() != null && !importResult.getErrorMessage().equalsIgnoreCase("")){
+	    	if(importResult.getErrorMessage() != null && !("").equalsIgnoreCase(importResult.getErrorMessage())){
 	    		resultsMap.put("isSuccess", 0);	    		
 	    		resultsMap.put("error", importResult.getErrorMessage());
 	    	}else{
@@ -235,6 +232,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     			resultsMap.put("error", messageSource.getMessage(errorCode, null, locale));
     		}catch(NoSuchMessageException e){    			
     			resultsMap.put("error", errorCode);
+    			LOG.error(e.getMessage(), e);
     		}
     	}
 	    	
@@ -319,7 +317,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
 				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
 				MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
-    			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
+    			if (responseDetail.getStatus() == 1) { 
+    				// add germplasm name to gid
     				String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
 					Integer dateInteger = Integer.valueOf(gDate); 
     				fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), 
@@ -343,13 +342,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     				
     			}
     			
-    			if (responseDetail.getStatus() > 0) {
-	    			if(entryNumData != null && entryNumData.getValue() != null){
-	    				Map<String, String> tempMap = new HashMap<String,String>();
-	    				tempMap.put(Integer.toString(TermId.GID.getId()), gidData.getValue());
-	    				tempMap.put(Integer.toString(TermId.DESIG.getId()), desigData.getValue());
-						changeMap.put(entryNumData.getValue(), tempMap);
-					}
+    			if (responseDetail.getStatus() > 0 && entryNumData != null && entryNumData.getValue() != null) {	    			
+    				Map<String, String> tempMap = new HashMap<String,String>();
+    				tempMap.put(Integer.toString(TermId.GID.getId()), gidData.getValue());
+    				tempMap.put(Integer.toString(TermId.DESIG.getId()), desigData.getValue());
+					changeMap.put(entryNumData.getValue(), tempMap);					
     			}
     		}
     	}

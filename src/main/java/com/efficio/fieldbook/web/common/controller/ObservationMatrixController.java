@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.util.Strings;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -239,13 +241,17 @@ public class ObservationMatrixController extends
     		MeasurementData data =  origRow.getDataList().get(index);
     		MeasurementData valueRowData = valueRow.getDataList().get(index);
     		if(data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()){
-    			if(valueRowData.getcValueId() != null){
+    				
+    			if (data.getcValueId() == null && !StringUtils.isEmpty(data.getValue()) && StringUtils.isEmpty(valueRowData.getcValueId())){
+    				//do nothing
+    			} else if (valueRowData.getcValueId() != null) {
 	    			data.setcValueId(valueRowData.getcValueId());
 	    			data.setValue(valueRowData.getcValueId());
-    			}else if(valueRowData.getValue() != null){
+    			} else if (valueRowData.getValue() != null) {
     				data.setcValueId(valueRowData.getValue());
 	    			data.setValue(valueRowData.getValue());
     			}
+    			
     		}else {
     			data.setValue(valueRowData.getValue());
     		}

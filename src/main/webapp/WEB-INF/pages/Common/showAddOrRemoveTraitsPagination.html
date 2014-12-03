@@ -22,9 +22,10 @@
 	<thead>
 		<tr>
 			<th th:if="${isExpDesignPreview != '1'}" nowrap="nowrap" data-term-id="Action" class="factors">Action</th>
-			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId}"
+			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString}"
 			th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
-			th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+			th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}"
+			th:utext="${measurementVariable.name}">.variable name</th>
 
 		</tr>
 	</thead>

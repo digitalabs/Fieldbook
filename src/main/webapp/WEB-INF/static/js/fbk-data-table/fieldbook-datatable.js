@@ -31,6 +31,23 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).html()});
+			
+			if ($(this).data('term-data-type-id') == '1130'){
+				var possibleValues = $(this).data('term-valid-values').split('|');
+				var termId = $(this).data('term-id');
+				
+				columnsDef.push({
+					targets: columns.length - 1,
+					createdCell: function (td, cellData, rowData, row, col) {
+					      if ($.inArray(cellData, possibleValues) === -1 ) {
+					    	$(td).addClass('invalid-value');
+					    	$(td).data('term-id', termId);
+					      }
+					}
+				});
+			}
+			
+			
 			if ($(this).data('term-id') == '8240') {
 				// For GID
 				columnsDef.push({
@@ -78,11 +95,34 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			bAutoWidth: true,
 			iDisplayLength: 100,
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
 				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
 				// Assuming ID is in last column
 				$(nRow).attr('id', aData.experimentId);
 				$(nRow).attr('title', toolTip);
 				$('td', nRow).attr('nowrap','nowrap');
+				
+				$(nRow).find('.invalid-value').each(function (){
+					var termId = $(this).data('term-id');
+					var cellData = $(this).text();
+					if (termId != undefined) {
+						
+						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
+						
+						if (possibleValues != undefined){
+							  var values = possibleValues.split('|');
+							  if ($.inArray(cellData, values) === -1 ) {
+						    	  $(this).addClass('invalid-value');
+						    	  $(this).data('term-id', $(this).data('term-id'));
+						      }else{
+						    	  $(this).removeClass('invalid-value');
+						      }
+						}
+						
+					}
+					
+				});
+				
 				return nRow;
 			},
 			fnInitComplete: function(oSettings, json) {

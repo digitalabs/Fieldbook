@@ -515,6 +515,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
 						&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 					
+					String tempVal = "";
+					
 					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
 						double doubleVal = Double.valueOf(cell.getNumericCellValue());
 						double intVal = Double.valueOf(cell.getNumericCellValue()).intValue();
@@ -523,13 +525,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 							getDoubleVal = true;
 						}
 						
-						String tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue());
+						tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue());
 						if(getDoubleVal){
 							tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()));
 						}
 						xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(tempVal, 
 								wData.getMeasurementVariable().getPossibleValues(), true);
 					} else {
+						tempVal = cell.getStringCellValue();
 						xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues(), true);
 					}
 					Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
@@ -537,7 +540,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						workbook.setHasExistingDataOverwrite(true);
 					}
 					
-					if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+					if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && !xlsValue.equals(tempVal)) {
 						wData.setcValueId(xlsValue);
 					}
 				} else {

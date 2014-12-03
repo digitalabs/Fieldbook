@@ -184,7 +184,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
     	Locale locale = LocaleContextHolder.getLocale();
     	Map<String, Object> resultsMap = new HashMap<String,Object>();
-    	resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().isHasExistingDataOverwrite() ? "1" : "0");
+    	resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().hasExistingDataOverwrite() ? "1" : "0");
     	if(!result.hasErrors()){
     		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 	    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());

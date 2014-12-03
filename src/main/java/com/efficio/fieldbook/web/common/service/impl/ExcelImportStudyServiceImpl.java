@@ -131,12 +131,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			workbook.getConstants();
 			workbook.getTrialObservations();
 			importDescriptionSheetToWorkbook(workbook, trialInstanceNumber, descriptionWorkbook, trialObservations, originalValueMap);
-			importDataToWorkbook(modes, xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations(), changeDetailsList);
+			importDataToWorkbook(modes, xlsBook, rowsMap, trialInstanceNumber, changeDetailsList, workbook);
 			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
 
 			try {
 				validationService.validateObservationValues(workbook, trialInstanceNumber);
 			} catch (MiddlewareQueryException e) {
+				LOG.error(e.getMessage(), e);
 				WorkbookUtil.resetWorkbookObservations(workbook);
 				return new ImportResult(e.getMessage());
 			}
@@ -144,7 +145,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			try {
 				
 				validationService.validateConditionAndConstantValues(workbook, trialInstanceNumber);				
-			} catch (MiddlewareQueryException e) {
+			} catch (MiddlewareQueryException e) {				
 				conditionsAndConstantsErrorMessage = e.getMessage();
 				WorkbookUtil.revertImportedConditionAndConstantsData(workbook);
 				LOG.error(e.getMessage(), e);
@@ -302,7 +303,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					MeasurementVariable tempVar = (MeasurementVariable) tempObj;
 					MeasurementVariable tempVarCode = tempObjCode != null ? (MeasurementVariable) tempObjCode : null;
 					MeasurementVariable tempVarName = tempObjName != null ? (MeasurementVariable) tempObjName : null;
-					if(tempVar.getValue() != null && !tempVar.getValue().equalsIgnoreCase("") && NumberUtils.isNumber(tempVar.getValue())){
+					if(tempVar.getValue() != null && !("").equalsIgnoreCase(tempVar.getValue()) && NumberUtils.isNumber(tempVar.getValue())){
 						Method method = fieldbookMiddlewareService.getMethodById(Integer.parseInt(tempVar.getValue()));
 						if(tempVarCode != null){
 							//we set the proper code
@@ -432,14 +433,20 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	}
 	
 	private void importDataToWorkbook(Set<ChangeType> modes, org.apache.poi.ss.usermodel.Workbook xlsBook, Map<String, MeasurementRow> rowsMap, 
-			List<MeasurementVariable> variables, String trialInstanceNumber, List<MeasurementRow> observations, List<GermplasmChangeDetail> changeDetailsList)
+			 String trialInstanceNumber,  List<GermplasmChangeDetail> changeDetailsList, Workbook workbook)
 	throws MiddlewareQueryException, WorkbookParserException {
-		
+		List<MeasurementVariable> variablesFactors = workbook.getFactors();
+		List<MeasurementRow> observations = workbook.getObservations();
+		Map<Integer, MeasurementVariable> factorVariableMap = new HashMap<Integer, MeasurementVariable>();
+		for(MeasurementVariable var : variablesFactors){
+			factorVariableMap.put(var.getTermId(), var);
+		}
 		if (rowsMap != null && !rowsMap.isEmpty()) {
+			workbook.setHasExistingDataOverwrite(false);
 			Sheet observationSheet = xlsBook.getSheetAt(1);
 			int lastXlsRowIndex = observationSheet.getLastRowNum();
-			String indexes = getColumnIndexesFromXlsSheet(observationSheet, variables, trialInstanceNumber);
-			int desigColumn = findColumn(observationSheet, getColumnLabel(variables, TermId.DESIG.getId()));
+			String indexes = getColumnIndexesFromXlsSheet(observationSheet, variablesFactors, trialInstanceNumber);
+			int desigColumn = findColumn(observationSheet, getColumnLabel(variablesFactors, TermId.DESIG.getId()));
 			Row headerRow = observationSheet.getRow(0);
 			int lastXlsColIndex = headerRow.getLastCellNum();
 			for (int i = 1; i <= lastXlsRowIndex; i++) {
@@ -485,47 +492,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						for (int j = 0; j <= lastXlsColIndex; j++) {
 							Cell headerCell = headerRow.getCell(j);
 							if (headerCell != null) {
-	
 								MeasurementData wData = wRow.getMeasurementData(headerCell.getStringCellValue());
-								if (wData != null && wData.isEditable()) {
-									Cell cell = xlsRow.getCell(j);
-									String xlsValue = "";
-									if(cell != null){
-										if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
-												&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
-											
-											if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-												double doubleVal = Double.valueOf(cell.getNumericCellValue());
-												double intVal = Double.valueOf(cell.getNumericCellValue()).intValue();
-												boolean getDoubleVal = false;
-												if((doubleVal - intVal) > 0){
-													getDoubleVal = true;
-												}
-												
-												String tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue());
-												if(getDoubleVal){
-													tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()));
-												}
-												xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(tempVal, 
-														wData.getMeasurementVariable().getPossibleValues(), true);
-											} else {
-												xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues(), true);
-											}
-											
-											if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-												wData.setcValueId(xlsValue);
-											}
-										} else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
-											xlsValue = getRealNumericValue(cell);																						
-										} else {
-											xlsValue = cell.getStringCellValue();
-										}
-										wData.setValue(xlsValue);
-									} else {
-										wData.setcValueId(null);
-										wData.setValue(null);
-									}
-								}
+								importDataCellValues(wData, xlsRow, j, workbook, factorVariableMap);
 							}
 						}
 					}
@@ -534,6 +502,56 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			if(!rowsMap.isEmpty()){
 				//meaning there are items in the original list, so there are items deleted
 				modes.add(ChangeType.DELETED_ROWS);								
+			}
+		}
+	}
+	
+	protected void importDataCellValues(MeasurementData wData, Row xlsRow, int columnIndex, 
+			Workbook workbook, Map<Integer, MeasurementVariable> factorVariableMap){
+		if (wData != null && wData.isEditable()) {
+			Cell cell = xlsRow.getCell(columnIndex);
+			String xlsValue = "";
+			if(cell != null){
+				if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
+						&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+					
+					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+						double doubleVal = Double.valueOf(cell.getNumericCellValue());
+						double intVal = Double.valueOf(cell.getNumericCellValue()).intValue();
+						boolean getDoubleVal = false;
+						if((doubleVal - intVal) > 0){
+							getDoubleVal = true;
+						}
+						
+						String tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue());
+						if(getDoubleVal){
+							tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()));
+						}
+						xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(tempVal, 
+								wData.getMeasurementVariable().getPossibleValues(), true);
+					} else {
+						xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues(), true);
+					}
+					Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
+					if(!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)){
+						workbook.setHasExistingDataOverwrite(true);
+					}
+					
+					if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+						wData.setcValueId(xlsValue);
+					}
+				} else {
+					if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+						xlsValue = getRealNumericValue(cell);																						
+					} else {
+						xlsValue = cell.getStringCellValue();
+					}
+					Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
+					if(!factorVariableMap.containsKey(termId) && (!"".equalsIgnoreCase(wData.getValue()) || wData.getcValueId() != null)){
+						workbook.setHasExistingDataOverwrite(true);
+					}
+				}
+				wData.setValue(xlsValue);
 			}
 		}
 	}
@@ -774,8 +792,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     private String getKeyIdentifierFromXlsRow(Row xlsRow, String indexes) throws WorkbookParserException{
     	if (indexes != null) {
 	    	String[] indexArray = indexes.split(",");
-	    	Cell plotCell = xlsRow.getCell(Integer.valueOf(indexArray[1])); //plot no
-	    	Cell entryCell = xlsRow.getCell(Integer.valueOf(indexArray[2])); //entry no
+	    	//plot no
+	    	Cell plotCell = xlsRow.getCell(Integer.valueOf(indexArray[1]));
+	    	//entry no
+	    	Cell entryCell = xlsRow.getCell(Integer.valueOf(indexArray[2])); 
 	    	
 	    	if(plotCell == null){
 	    		throw new WorkbookParserException("error.workbook.import.plot.no.empty.cell");
@@ -802,11 +822,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
                 if (cell != null && cell.getStringCellValue() != null) {
                 	String traitLabel = cell.getStringCellValue();
                 	Integer mvarId = WorkbookUtil.getMeasurementVariableId(workbookVariates, traitLabel);
-                	if (mvarId == null) { //new variates
+                	//new variates
+                	if (mvarId == null) {                 		
                 		MeasurementVariable mvar = null;
                 		try {
                 			mvar = getMeasurementVariable(row);
                 		} catch(MiddlewareQueryException e) {
+                			LOG.error(e.getMessage(), e);
                 			throw new WorkbookParserException(messageSource.getMessage("error.import.variate.duplicate.psmr", 
                 					new String[] {traitLabel}, LocaleContextHolder.getLocale()));
                 		}

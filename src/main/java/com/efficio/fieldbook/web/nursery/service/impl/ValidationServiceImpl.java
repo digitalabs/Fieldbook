@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -65,7 +65,7 @@ public class ValidationServiceImpl implements ValidationService {
 				return numericValue <= var.getMaxRange() && numericValue >= var.getMinRange();
 			}
 			
-		} else if(validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId() && value != null && !"".equals(value.trim())){
+		} else if(validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId() && !"".equals(value.trim())){
 			return DateUtil.isValidDate(value);			
 		}else if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {
 			return NumberUtils.isNumber(value.trim());
@@ -119,7 +119,7 @@ public class ValidationServiceImpl implements ValidationService {
 						if(var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null && !var.getValue().equalsIgnoreCase("")){
 							//we do the validation here
 							 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-				                HashMap<String, Method> methodMap = new HashMap<String, Method>();
+				                Map<String, Method> methodMap = new HashMap<String, Method>();
 				                //create a map to get method id based on given code
 				                if (methods != null) {
 				                    for (Method method : methods) {

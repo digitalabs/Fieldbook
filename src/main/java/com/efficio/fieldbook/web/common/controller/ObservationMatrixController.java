@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.util.Strings;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -41,7 +40,8 @@ import com.efficio.fieldbook.web.util.DateUtil;
 public class ObservationMatrixController extends
 		AbstractBaseFieldbookController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
+    private static final String TRIAL = "TRIAL";
+	private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
     public static final String URL = "/Common/addOrRemoveTraits";
     public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
     public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
@@ -76,7 +76,7 @@ public class ObservationMatrixController extends
     public String getPaginatedListAfterImport(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum
             , @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
 
-    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
+    	boolean isTrial = studyType.equalsIgnoreCase(TRIAL);
     	UserSelection userSelection = getUserSelection(isTrial);    	
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	form.setMeasurementRowList(userSelection.getWorkbook().getObservations());
@@ -92,7 +92,7 @@ public class ObservationMatrixController extends
     public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum,
             @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @RequestParam("listIdentifier") String datasetId) {
 
-    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
+    	boolean isTrial = studyType.equalsIgnoreCase(TRIAL);
     	UserSelection userSelection = getUserSelection(isTrial);
     	
     	List<MeasurementRow> rows = paginationListSelection.getReviewDetailsList(datasetId);
@@ -114,14 +114,12 @@ public class ObservationMatrixController extends
     public  Map<String, String> updateTraits(@ModelAttribute("createNurseryForm") CreateNurseryForm form,          
             @PathVariable String studyType, BindingResult result, Model model){
 
-    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
+    	boolean isTrial = studyType.equalsIgnoreCase(TRIAL);
     	UserSelection userSelection = getUserSelection(isTrial);
     	
     	Map<String, String> resultMap = new HashMap<String, String>();
         
         Workbook workbook = userSelection.getWorkbook();
-        
-        int previewPageNum = userSelection.getCurrentPage();       
         
         form.setMeasurementRowList(userSelection.getMeasurementRowList());
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
@@ -201,7 +199,7 @@ public class ObservationMatrixController extends
     @ResponseBody
     @RequestMapping(value="/data/table/ajax/submit/{index}", method = RequestMethod.POST)
     public Map<String, Object> dataTablesAjaxSubmit(@PathVariable int index, @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form) {
-    	HashMap<String, Object> map = new HashMap<String, Object>();
+    	Map<String, Object> map = new HashMap<String, Object>();
     	UserSelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
     	tempList.addAll(userSelection.getMeasurementRowList());
@@ -227,8 +225,7 @@ public class ObservationMatrixController extends
 			Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
 	    	map.put("data", dataMap);
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 			map.put("success", "0");
 			map.put("errorMessage", e.getMessage());
 		}
@@ -236,7 +233,7 @@ public class ObservationMatrixController extends
     	return map;
     }
     
-    private void copyMeasurementValue(MeasurementRow origRow, MeasurementRow valueRow){
+    protected void copyMeasurementValue(MeasurementRow origRow, MeasurementRow valueRow){
     	for(int index = 0 ; index < origRow.getDataList().size() ; index++){
     		MeasurementData data =  origRow.getDataList().get(index);
     		MeasurementData valueRowData = valueRow.getDataList().get(index);

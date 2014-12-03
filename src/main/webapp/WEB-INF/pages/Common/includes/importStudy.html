@@ -408,7 +408,7 @@
 						}
 				});
 		}
-		function doMeasurementsReload(){
+		function doMeasurementsReload(hasDataOverwrite){
 			'use strict';			
 			$('.import-study-data').data('data-import', '1');			
 			$.ajax(
@@ -418,8 +418,11 @@
 					success: function(html) {
 						$('#measurementsDiv').html(html);
 						$('.fbk-discard-imported-data').removeClass('fbk-hide');
-						
-						showSuccessfulMessage('', importSuccessReminderToSaveMessage);
+						if(hasDataOverwrite === '1'){
+							showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage);
+						} else {
+							showSuccessfulMessage('', importSuccessReminderToSaveMessage);
+						}
 					}
 			});
 			
@@ -428,12 +431,12 @@
 			$('#importOverwriteConfirmation').modal('hide');
 			return false;
 		}
-		function confirmStudyImport(){
+		function confirmStudyImport(hasDataOverwrite){
 			'use strict';
 			if(changeConfirmationDetails.length !== 0){
-				showDesigConfirmation();
+				showDesigConfirmation(hasDataOverwrite);
 			}else{
-				doMeasurementsReload();
+				doMeasurementsReload(hasDataOverwrite);
 			}			
 		}
 		
@@ -450,13 +453,14 @@
 					changeConfirmationDetails.push(resp.changeDetails[index]);
 				}
 				
-			}
+			}			
+			
 			if(resp.isSuccess === 1){
 				if(resp.conditionConstantsImportErrorMessage !== null && resp.conditionConstantsImportErrorMessage !== ''){
 					showAlertMessage('', resp.conditionConstantsImportErrorMessage);	
 				}
 				if(resp.modes != null && resp.modes.length === 0){
-					confirmStudyImport();
+					confirmStudyImport(resp.hasDataOverwrite);
 				}else{
 					$('#importStudyModal').modal('hide');
 					setTimeout(function(){$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
@@ -486,7 +490,7 @@
 				data: 'data=' + data,
 				success: function() {
 					$('#importStudyDesigConfirmationModal').modal('hide');
-					doMeasurementsReload();
+					doMeasurementsReload('0');
 				}
 			});
 		}		
@@ -526,9 +530,13 @@
 			//we do the reset here
 			resetDesigConfirmationFields();
 		}
-
-		function showDesigConfirmation(){
+		
+		function showDesigConfirmation(hasDataOverwrite){
 			'use strict';
+			if(hasDataOverwrite === '1'){
+				showAlertMessage('', importSuccessOverwriteDataWarningToSaveMessage);
+			}
+			
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
 			$('#importOverwriteConfirmation').modal('hide');

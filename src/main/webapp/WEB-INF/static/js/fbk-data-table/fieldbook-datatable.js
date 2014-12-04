@@ -169,12 +169,14 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		});
 		
 		// Activate an inline edit on click of a table cell
+		//console.log(tableIdentifier);
 	    $(tableIdentifier).on( 'click', 'tbody td:not(:first-child)', function (e) {
+	    	
 	    	var $tdCell = $(this);	    	
 	        var cellTdIndex =  $(this).index();
 	        var rowIndex = $(this).parent('tr').data('row-index');
-	        var $colHeader = $(tableIdentifier +' .dataTables_scrollHead table th:eq('+cellTdIndex+')');	        
-	        $('#measurement-table').data('show-inline-edit', '1');
+	        var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq('+cellTdIndex+')');	        
+	        $(tableIdentifier).data('show-inline-edit', '1');	       
 	        if($colHeader.hasClass('factors')){
 	        	//we should now submit it
 	        	processInlineEditInput();

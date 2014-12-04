@@ -515,6 +515,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
 						&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 					
+					wData.setAccepted(false);
+					
 					String tempVal = "";
 					
 					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {

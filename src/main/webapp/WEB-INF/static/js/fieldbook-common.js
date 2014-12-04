@@ -3506,11 +3506,74 @@ function saveInlineEdit(isDiscard){
 			}else if(jsonData.isNew == '0'){
 				$('.inline-input').parent('td').removeClass('accepted-value');
 			}
-			$('.inline-input').parent('td').data('is-inline-edit', '0');
 			if(data.success === '1'){
+				 $('.inline-input').parent('td').data('is-inline-edit', '0');
 				 var oTable = $('#measurement-table').dataTable();				
 				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
 				 oTable.fnAdjustColumnSizing();	
+			}else{
+				$('#measurement-table').data('show-inline-edit', '0');
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+			}
+		}
+    });
+}
+function markCellAsMissing(indexElem, indexTermId ,indexDataVal ,isNew, elem){
+	'use strict';
+	
+	var data = {
+			'index':indexElem, 
+			'termId':indexTermId, 
+			'value':indexDataVal, 
+			'isNew': isNew
+	};
+
+	$.ajax({
+		headers : {
+			'Accept' : 'application/json',
+			'Content-Type' : 'application/json'
+		},
+		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/data?isDiscard=0',
+		type: 'POST',
+		async: false,
+		data:   JSON.stringify(data),
+        contentType: "application/json",
+		success: function(data) {
+			if(data.success === '1'){
+				 var oTable = $('#measurement-table').dataTable();				
+				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
+				 $(elem).removeClass('accepted-value');
+				 $(elem).removeClass('invalid-value');
+			}else{
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+			}
+		}
+    });
+}
+function markCellAsAccepted(indexElem, indexTermId, elem){
+	'use strict';
+	
+	var data = {
+			'index':indexElem, 
+			'termId':indexTermId
+	};
+
+	$.ajax({
+		headers : {
+			'Accept' : 'application/json',
+			'Content-Type' : 'application/json'
+		},
+		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/accepted',
+		type: 'POST',
+		async: false,
+		data:   JSON.stringify(data),
+        contentType: "application/json",
+		success: function(data) {
+			if(data.success === '1'){
+				 var oTable = $('#measurement-table').dataTable();				
+				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
+				 $(elem).removeClass('invalid-value');
+				 $(elem).addClass('accepted-value');
 			}else{
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
 			}

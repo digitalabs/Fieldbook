@@ -825,7 +825,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
  * http://docs.jquery.com/UI/Menu#theming
  */
 
-.ui-menu { list-style:none; padding: 2px; margin: 0; display:block; float:left; outline: none; }
+.ui-menu { list-style:none; padding: 2px; margin: 0; display:block; float:left; outline: none; font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;}
 .ui-menu .ui-menu { margin-top: -3px; position: absolute; }
 .ui-menu .ui-menu-item { margin: 0; padding: 0; zoom: 1;float: left;clear: left; width: 100%; }
 .ui-menu .ui-menu-divider { margin: 5px -2px 5px -2px; height: 0; font-size: 0; line-height: 0; border-width: 1px 0 0 0; }
@@ -835,20 +835,8 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
   font-weight: normal; 
   margin: 0; 
   color: #ffffff;
-  background: #0064cd;
-  background-color: #0064cd;
-  background-repeat: repeat-x;
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
-  background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
-  background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
-  background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
-  background-image: -o-linear-gradient(top, #049cdb, #0064cd);
-  background-image: linear-gradient(top, #049cdb, #0064cd);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#049cdb', endColorstr='#0064cd', GradientType=0);
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  border-color: #0064cd #0064cd #003f81;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  background: #428BCA;
+  background-color: #428BCA;
 }
 /* Fix problem with border in ui-state-active */
 .ui-menu .ui-menu-item a.ui-state-active {

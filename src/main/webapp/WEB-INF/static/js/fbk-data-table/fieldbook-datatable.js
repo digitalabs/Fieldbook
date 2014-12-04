@@ -38,11 +38,23 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				
 				columnsDef.push({
 					targets: columns.length - 1,
-					createdCell: function (td, cellData, rowData, row, col) {
-					      if ($.inArray(cellData, possibleValues) === -1 ) {
-					    	$(td).addClass('accepted-value');					    	
-					      }
-					      $(td).data('term-id', termId);
+					createdCell: function (td, cellData, rowData, row, col) {  
+						var cellText = $(td).text();
+						if ($.inArray(cellText, possibleValues) === -1 && cellText !=='0'){
+							
+							$(td).removeClass('accepted-value');
+					    	$(td).removeClass('invalid-value');
+							
+							if ($(td).find("input[type='hidden']").val() === 'true'){
+								$(td).addClass('accepted-value');
+							}else{
+								$(td).addClass('invalid-value');
+							}
+					    }
+					    $(td).data('term-id', termId);
+					},
+					render: function ( data, type, full, meta ) {
+					      return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
 					}
 				});
 			}
@@ -99,11 +111,11 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
 				// Assuming ID is in last column
 				$(nRow).attr('id', aData.experimentId);
-				$(nRow).data('row-index', iDisplayIndexFull);
+				$(nRow).data('row-index', this.fnGetPosition( nRow ));
 				$(nRow).attr('title', toolTip);
 				$('td', nRow).attr('nowrap','nowrap');
 				
-				$(nRow).find('.accepted-value').each(function (){
+				$(nRow).find('.accepted-value, .invalid-value').each(function (){
 					var termId = $(this).data('term-id');
 					var cellData = $(this).text();
 					if (termId != undefined) {
@@ -111,30 +123,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						
 						if (possibleValues != undefined){
 							  var values = possibleValues.split('|');
-							  if ($.inArray(cellData, values) === -1 ) {
+							  
+							  $(this).removeClass('accepted-value');
+					    	  $(this).removeClass('invalid-value');
+							  
+							  if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
 						    	  $(this).addClass('invalid-value');
 						    	  $(this).data('term-id', $(this).data('term-id'));
 						      }else{
-						    	  $(this).removeClass('accepted-value');
-						      }
-						}
-						
-					}
-					
-				});
-				$(nRow).find('.invalid-value').each(function (){
-					var termId = $(this).data('term-id');
-					var cellData = $(this).text();
-					if (termId != undefined) {
-						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
-						
-						if (possibleValues != undefined){
-							  var values = possibleValues.split('|');
-							  if ($.inArray(cellData, values) === -1 ) {
-						    	  $(this).addClass('invalid-value');
-						    	  $(this).data('term-id', $(this).data('term-id'));
-						      }else{
-						    	  $(this).removeClass('invalid-value');
+						    	  $(this).addClass('accepted-value');
 						      }
 						}
 						
@@ -169,7 +166,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		});
 		
 		// Activate an inline edit on click of a table cell
-		//console.log(tableIdentifier);
 	    $(tableIdentifier).on( 'click', 'tbody td:not(:first-child)', function (e) {
 	    	
 	    	var $tdCell = $(this);	    	
@@ -797,3 +793,32 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 	return dataTableConstructor;
 
 })(jQuery);
+
+$(function(){
+	$(document).contextmenu({
+	    delegate: ".dataTable td[class*='invalid-value']",
+	    menu: [
+	      {title: "Accept Value", cmd: "markAccepted"},
+	      {title: "Mark Missing", cmd: "markMissing"}
+		],
+		select: function(event, ui) {
+			var colvindex = $(ui.target.parent()).data('row-index');
+			var termId = $(ui.target).data('term-id');
+			switch(ui.cmd){
+				case "markAccepted":
+					markCellAsAccepted(colvindex, termId, ui.target);
+					break;
+				case "markMissing":
+					markCellAsMissing(colvindex, termId , '0' , 1 , ui.target);
+					break;
+			}
+		},
+		beforeOpen: function(event, ui) {
+			var $menu = ui.menu,
+				$target = ui.target,
+				extraData = ui.extraData;
+			ui.menu.zIndex(9999);
+	    }
+	  });
+});
+

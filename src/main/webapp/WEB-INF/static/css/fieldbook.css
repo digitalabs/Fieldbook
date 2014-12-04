@@ -155,6 +155,11 @@ td.invalid-value {
   color: #7f484a;
 }
 
+td.accepted-value {
+  background-color: #E6F5FF;
+  color: #3366CC;
+}
+
 table .highlight, table .field-map-highlight {
 }
 table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{

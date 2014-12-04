@@ -253,6 +253,38 @@ public class ObservationMatrixController extends
     	
     	//return super.convertObjectToJson(results);
     }
+    
+    @ResponseBody
+    @RequestMapping(value="/update/experiment/cell/accepted", method = RequestMethod.POST)
+    public Map<String, Object> markExperimentCellDataAsAccepted( @RequestBody Map<String,String> data, HttpServletRequest req) {
+
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	
+    	int index = Integer.valueOf(data.get("index"));
+    	int termId = Integer.valueOf(data.get("termId"));
+    	
+    	map.put("index", index);
+    	
+    	UserSelection userSelection = getUserSelection(false);
+    	MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+
+		if(originalRow != null && originalRow.getMeasurementVariables() != null){
+    		for(MeasurementData var : originalRow.getDataList()){	    			
+    			if(var != null && var.getMeasurementVariable().getTermId() == termId){
+    				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty()){
+    					var.setAccepted(true);
+    				break;
+    				}
+    			}
+    		}
+    	}
+		
+		map.put("success", "1");
+		Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
+    	map.put("data", dataMap);
+		    			    	    	    
+    	return map;
+    }
         
    
     @RequestMapping(value="/update/experiment/cell/{index}/{termId}", method = RequestMethod.GET)
@@ -405,7 +437,13 @@ public class ObservationMatrixController extends
 			if(suffix != null) {
 				displayVal += suffix;
 			}
-			dataMap.put(data.getMeasurementVariable().getName(), displayVal);
+			
+			if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())){
+				Object[] categArray = new Object[] {displayVal, data.isAccepted()};
+				dataMap.put(data.getMeasurementVariable().getName(), categArray);
+			}else{
+				dataMap.put(data.getMeasurementVariable().getName(), displayVal);
+			}
 		}
 		UserSelection userSelection = getUserSelection(false);
 		if(userSelection != null && userSelection.getMeasurementDatasetVariable() != null && !userSelection.getMeasurementDatasetVariable().isEmpty()){

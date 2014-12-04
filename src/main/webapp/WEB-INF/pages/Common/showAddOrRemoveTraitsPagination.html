@@ -34,6 +34,32 @@
 <div class="row edit-experiment-section">
 </div>
 
+<div class="modal fade" id="inlineEditConfirmationModal" role="dialog" aria-labelledby="inlineEditConfirmationModal" aria-hidden="true">
+	<div class="modal-dialog modal-medium">
+		<div class="modal-content">				
+			<div class="modal-body" id="inlineEditConfirmationModalBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}">Confirmation</label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
+					</div>										
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label">Data inputted is out of range, do you want to keep or discard the value?</label>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default inline-edit-confirmation" aria-hidden="true" data-inline-edit="0" >Discard</button>
+				<button type="button" class="btn btn-primary inline-edit-confirmation" aria-hidden="true" data-inline-edit="1" >Keep</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
@@ -50,6 +76,17 @@
 				}
 			});
 		
+		$('.inline-edit-confirmation').off('click');
+		$('.inline-edit-confirmation').on('click', function(){
+			if(parseInt($(this).data('inline-edit'),10) === 1) {
+				//keep the changes
+				saveInlineEdit(0);
+			} else if(parseInt($(this).data('inline-edit'),10) === 0){
+				//discard the changes
+				saveInlineEdit(1);
+			}
+			$('#inlineEditConfirmationModal').modal('hide');
+		});
 	});
 //]]>
 </script>

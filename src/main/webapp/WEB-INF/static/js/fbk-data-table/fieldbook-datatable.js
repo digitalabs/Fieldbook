@@ -40,9 +40,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					targets: columns.length - 1,
 					createdCell: function (td, cellData, rowData, row, col) {
 					      if ($.inArray(cellData, possibleValues) === -1 ) {
-					    	$(td).addClass('invalid-value');
-					    	$(td).data('term-id', termId);
+					    	$(td).addClass('accepted-value');					    	
 					      }
+					      $(td).data('term-id', termId);
 					}
 				});
 			}
@@ -99,14 +99,33 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
 				// Assuming ID is in last column
 				$(nRow).attr('id', aData.experimentId);
+				$(nRow).data('row-index', iDisplayIndexFull);
 				$(nRow).attr('title', toolTip);
 				$('td', nRow).attr('nowrap','nowrap');
 				
+				$(nRow).find('.accepted-value').each(function (){
+					var termId = $(this).data('term-id');
+					var cellData = $(this).text();
+					if (termId != undefined) {
+						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
+						
+						if (possibleValues != undefined){
+							  var values = possibleValues.split('|');
+							  if ($.inArray(cellData, values) === -1 ) {
+						    	  $(this).addClass('invalid-value');
+						    	  $(this).data('term-id', $(this).data('term-id'));
+						      }else{
+						    	  $(this).removeClass('accepted-value');
+						      }
+						}
+						
+					}
+					
+				});
 				$(nRow).find('.invalid-value').each(function (){
 					var termId = $(this).data('term-id');
 					var cellData = $(this).text();
 					if (termId != undefined) {
-						
 						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
 						
 						if (possibleValues != undefined){
@@ -148,6 +167,32 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				fixedColumns: 1
 			}
 		});
+		
+		// Activate an inline edit on click of a table cell
+	    $(tableIdentifier).on( 'click', 'tbody td:not(:first-child)', function (e) {
+	    	var $tdCell = $(this);	    	
+	        var cellTdIndex =  $(this).index();
+	        var rowIndex = $(this).parent('tr').data('row-index');
+	        var $colHeader = $(tableIdentifier +' .dataTables_scrollHead table th:eq('+cellTdIndex+')');	        
+	        $('#measurement-table').data('show-inline-edit', '1');
+	        if($colHeader.hasClass('factors')){
+	        	//we should now submit it
+	        	processInlineEditInput();
+	        }else if($colHeader.hasClass('variates') && $tdCell.data('is-inline-edit') !== '1'){
+	        	processInlineEditInput();
+	        	if($('#measurement-table').data('show-inline-edit') === '1'){
+			        $.ajax({
+						url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/'+rowIndex+'/'+$colHeader.data('term-id'),
+						type: 'GET',
+						success: function(data) {
+							$tdCell.html(data);
+							$tdCell.data('is-inline-edit', '1');
+						}
+			        });
+	        	}
+	        }
+	        
+	    } );
 
 		
 		$(tableIdentifier).dataTable().bind('sort', function() {

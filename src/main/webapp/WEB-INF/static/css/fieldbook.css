@@ -1712,3 +1712,7 @@ div.variable-details-popup {
 	top: 2px; 
 	position:relative;
 }
+td.accepted-value {
+  background-color: #E6F5FF;
+  color: #3366CC;
+}

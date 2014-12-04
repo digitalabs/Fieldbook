@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -22,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +37,7 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.DateUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
 @RequestMapping(ObservationMatrixController.URL)
@@ -46,6 +50,7 @@ public class ObservationMatrixController extends
     public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
     public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
     public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";
+    public static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
     
 	@Resource
 	private UserSelection studySelection;
@@ -175,6 +180,118 @@ public class ObservationMatrixController extends
         return super.showAjaxPage(model, EDIT_EXPERIMENT_TEMPLATE);
     }
 
+    @ResponseBody
+    @RequestMapping(value="/update/experiment/cell/data", method = RequestMethod.POST)
+    public Map<String, Object> updateExperimentCellData( @RequestBody Map<String,String> data, HttpServletRequest req) {
+
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	
+    	int index = Integer.valueOf(data.get("index"));
+    	int termId = Integer.valueOf(data.get("termId"));
+    	String value = data.get("value");
+    	//for categorical
+    	int isNew = Integer.valueOf(data.get("isNew"));
+    	boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
+    	
+    	map.put("index", index);
+    	
+    	UserSelection userSelection = getUserSelection(false);
+    	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+    	tempList.addAll(userSelection.getMeasurementRowList());
+
+    
+    	MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+    	
+    	
+		try {
+			if(!isDiscard){				
+				MeasurementRow copyRow = originalRow.copy();
+		    	copyMeasurementValue(copyRow, originalRow, isNew == 1 ? true : false);
+				//we set the data to the copy row
+				if(copyRow != null && copyRow.getMeasurementVariables() != null){
+		    		for(MeasurementData var : copyRow.getDataList()){	    			
+		    			if(var != null && var.getMeasurementVariable().getTermId() == termId){
+		    				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty()){
+		    					if(isNew == 1){
+		    						var.setcValueId(null);
+		    						var.setCustomCategoricalValue(true);
+		    					} else{
+		    						var.setcValueId(value);
+		    					}
+		    					var.setValue(value);
+		    				}else{
+		    					var.setValue(value);
+		    				}
+		    				break;
+		    			}
+		    		}
+		    	}
+				
+				validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
+				//if there are no error, meaning everything is good, thats the time we copy it to the original
+				copyMeasurementValue(originalRow, copyRow, isNew == 1 ? true : false);
+				if(originalRow != null && originalRow.getMeasurementVariables() != null){
+		    		for(MeasurementData var : originalRow.getDataList()){
+		    			if(var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null && var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
+		    				//we change the date to the UI format
+		    				var.setValue(DateUtil.convertToDBDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
+		    			}
+		    		}
+		    	}
+			}
+			map.put("success", "1");
+			Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
+	    	map.put("data", dataMap);
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			map.put("success", "0");
+			map.put("errorMessage", e.getMessage());
+		}
+		    			    	    	    
+    	return map;
+    	
+    	//return super.convertObjectToJson(results);
+    }
+        
+   
+    @RequestMapping(value="/update/experiment/cell/{index}/{termId}", method = RequestMethod.GET)
+    public String editExperimentCells(@PathVariable int index, @PathVariable int termId,              
+            Model model) throws MiddlewareQueryException {
+    	
+    	UserSelection userSelection = getUserSelection(false);
+    	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+    	tempList.addAll(userSelection.getMeasurementRowList());
+
+    	MeasurementRow row = tempList.get(index);    
+    	MeasurementRow copyRow = row.copy();
+    	copyMeasurementValue(copyRow, row);
+    	MeasurementData editData = null;
+    	List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+    	if(copyRow != null && copyRow.getMeasurementVariables() != null){
+    		for(MeasurementData var : copyRow.getDataList()){
+    			if(var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null && var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
+    				//we change the date to the UI format
+    				var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
+    			}
+    			if(var != null && (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty())){
+    				possibleValues = var.getMeasurementVariable().getPossibleValues();
+    			}
+    			if(var != null && var.getMeasurementVariable().getTermId() == termId){
+    				editData = var;
+    				break;
+    			}
+    		}
+    	}
+    	model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
+    	model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
+    	model.addAttribute("isNursery", userSelection.getWorkbook().isNursery());
+    	model.addAttribute("measurementData", editData);
+    	model.addAttribute("index", index);
+    	model.addAttribute("termId", termId);
+    	model.addAttribute("possibleValues", possibleValues);
+        return super.showAjaxPage(model, EDIT_EXPERIMENT_CELL_TEMPLATE);
+    }
     
     @ResponseBody
     @RequestMapping(value="/data/table/ajax", method = RequestMethod.GET)
@@ -232,20 +349,41 @@ public class ObservationMatrixController extends
 		    			    	    	    
     	return map;
     }
-    
+
     protected void copyMeasurementValue(MeasurementRow origRow, MeasurementRow valueRow){
+    	this.copyMeasurementValue(origRow, valueRow, false);
+    }
+    protected void copyMeasurementValue(MeasurementRow origRow, MeasurementRow valueRow, boolean isNew){
+
     	for(int index = 0 ; index < origRow.getDataList().size() ; index++){
     		MeasurementData data =  origRow.getDataList().get(index);
     		MeasurementData valueRowData = valueRow.getDataList().get(index);
     		if(data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()){
-    				
-    			if (data.getcValueId() == null && !StringUtils.isEmpty(data.getValue()) && StringUtils.isEmpty(valueRowData.getcValueId())){
-    				//do nothing
-    			} else if (valueRowData.getcValueId() != null) {
-	    			data.setcValueId(valueRowData.getcValueId());
+				if (data.getcValueId() == null && !StringUtils.isEmpty(data.getValue()) && StringUtils.isEmpty(valueRowData.getcValueId())){
+					//do nothing
+					if(isNew){
+    					data.setCustomCategoricalValue(true);
+    					data.setcValueId(null);
+    					data.setValue(valueRowData.getValue());
+    				}
+				} else if(valueRowData.getcValueId() != null){
+    				if(isNew){
+    					data.setCustomCategoricalValue(true);
+    					data.setcValueId(null);
+    				}else{
+    					data.setCustomCategoricalValue(false);
+    					data.setcValueId(valueRowData.getcValueId());
+    				}
 	    			data.setValue(valueRowData.getcValueId());
-    			} else if (valueRowData.getValue() != null) {
-    				data.setcValueId(valueRowData.getValue());
+    			}else if(valueRowData.getValue() != null){
+    				if(isNew){
+    					data.setCustomCategoricalValue(true);
+    					data.setcValueId(null);
+    				}else{
+    					data.setCustomCategoricalValue(false);
+    					data.setcValueId(valueRowData.getValue());
+    				}
+
 	    			data.setValue(valueRowData.getValue());
     			}
     			

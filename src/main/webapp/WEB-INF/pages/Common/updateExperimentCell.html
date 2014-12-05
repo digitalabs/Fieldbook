@@ -23,6 +23,18 @@ th:field="*{measurementData.cValueId}" th:attrappend="data-cvalueid=${measuremen
 		//<![CDATA[		
 		$( document ).ready(function() {
 			'use strict';
+									
+					$('.inline-input input').on('click', function(){
+						$('body').data('last-td-time-clicked', new Date().getTime());
+					})
+			        $('body').on('click', function(){
+			        	var lastTdClicked = $('body').data('last-td-time-clicked') !== null ? $('body').data('last-td-time-clicked') : 0;
+			        	var timeDiff = new Date().getTime() - lastTdClicked;
+			        	if(timeDiff > 20){
+			        		processInlineEditInput();
+			        	}
+			        	
+			        });
 					
 					$('.inline-input .variates-select').each(function(){
 						 var possibleValuesSuggestions = /*[[${possibleValues}]]*/ [];
@@ -91,6 +103,7 @@ th:field="*{measurementData.cValueId}" th:attrappend="data-cvalueid=${measuremen
 								'format' : 'yyyy-mm-dd'
 							}).on('changeDate', function() {
 								$(this).datepicker('hide');
+								$('body').data('last-td-time-clicked', new Date().getTime());
 							}).on('change', function () {
 						    var curDate = $(this).val();
 						    try {

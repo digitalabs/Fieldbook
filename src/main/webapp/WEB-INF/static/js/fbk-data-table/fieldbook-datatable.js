@@ -33,28 +33,34 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			columns.push({data: $(this).html()});
 			
 			if ($(this).data('term-data-type-id') == '1130'){
+				if($(this).data('term-valid-values') == null){
+					$(this).data('term-valid-values', '');
+				}
 				var possibleValues = $(this).data('term-valid-values').split('|');
 				var termId = $(this).data('term-id');
-				
+				var isVariates = $(this).hasClass('variates');
 				columnsDef.push({
 					targets: columns.length - 1,
-					createdCell: function (td, cellData, rowData, row, col) {  
-						var cellText = $(td).text();
-						if ($.inArray(cellText, possibleValues) === -1 && cellText !=='0'){
-							
-							$(td).removeClass('accepted-value');
-					    	$(td).removeClass('invalid-value');
-							
-							if ($(td).find("input[type='hidden']").val() === 'true'){
-								$(td).addClass('accepted-value');
-							}else{
-								$(td).addClass('invalid-value');
-							}
-					    }
+					createdCell: function (td, cellData, rowData, row, col) {
+						if(isVariates){
+							var cellText = $(td).text();
+							if ($.inArray(cellText, possibleValues) === -1 && cellText !=='0'){
+								
+								$(td).removeClass('accepted-value');
+						    	$(td).removeClass('invalid-value');
+								
+								if ($(td).find("input[type='hidden']").val() === 'true'){
+									$(td).addClass('accepted-value');
+								}else{
+									$(td).addClass('invalid-value');
+								}
+						    }
+						}
 					    $(td).data('term-id', termId);
 					},
 					render: function ( data, type, full, meta ) {
 					      return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+
 					}
 				});
 			}
@@ -116,6 +122,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				$('td', nRow).attr('nowrap','nowrap');
 				
 				$(nRow).find('.accepted-value, .invalid-value').each(function (){
+
 					var termId = $(this).data('term-id');
 					var cellData = $(this).text();
 					if (termId != undefined) {
@@ -170,9 +177,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	    	
 	    	var $tdCell = $(this);	    	
 	        var cellTdIndex =  $(this).index();
-	        var rowIndex = $(this).parent('tr').data('row-index');
+	        var rowIndex = $(this).parent('tr').data('row-index');	         
+	        
 	        var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq('+cellTdIndex+')');	        
-	        $(tableIdentifier).data('show-inline-edit', '1');	       
+	        $(tableIdentifier).data('show-inline-edit', '1');	
+	        if($colHeader.hasClass('variates')){
+	        	$('body').data('last-td-time-clicked', new Date().getTime());
+	    	}
 	        if($colHeader.hasClass('factors')){
 	        	//we should now submit it
 	        	processInlineEditInput();

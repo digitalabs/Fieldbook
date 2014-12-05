@@ -3486,13 +3486,17 @@ function processInlineEditInput(){
         		keyboard : true
         	});
         	$('#measurement-table').data('show-inline-edit', '0');
+        	return false;
         }else{
         	saveInlineEdit(0);
         }
     }
+	
+	return true;
 }
-function saveInlineEdit(isDiscard){
+function saveInlineEdit(isDiscard){	
 	'use strict';
+	
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/data?isDiscard='+isDiscard,
 		type: 'POST',
@@ -3502,15 +3506,19 @@ function saveInlineEdit(isDiscard){
 		success: function(data) {
 			var jsonData = $.parseJSON($('#measurement-table').data('json-inline-edit-val'));
 			if(isDiscard == 0 && jsonData.isNew === '1'){
-				$('.inline-input').parent('td').addClass('accepted-value');
+				$('.inline-input').parent('td').addClass('accepted-value').removeClass('invalid-value');
 			}else if(jsonData.isNew == '0'){
-				$('.inline-input').parent('td').removeClass('accepted-value');
+				$('.inline-input').parent('td').removeClass('accepted-value').removeClass('invalid-value');
+				
 			}
 			if(data.success === '1'){
-				 $('.inline-input').parent('td').data('is-inline-edit', '0');
+			     $('.inline-input').parent('td').data('is-inline-edit', '0');
+
 				 var oTable = $('#measurement-table').dataTable();				
 				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
-				 oTable.fnAdjustColumnSizing();	
+				 oTable.fnAdjustColumnSizing();
+				 
+				 $('body').off('click');
 			}else{
 				$('#measurement-table').data('show-inline-edit', '0');
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
@@ -3576,7 +3584,15 @@ function markCellAsAccepted(indexElem, indexTermId, elem){
 				 $(elem).addClass('accepted-value');
 			}else{
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+				$('#measurement-table').data('show-inline-edit', '0');
 			}
 		}
     });
+}
+function hasMeasurementsInvalidValue(){
+	'use strict';
+	if($('#measurement-table').dataTable().$('.invalid-value').length === 0){
+		return false;
+	}
+	return true;
 }

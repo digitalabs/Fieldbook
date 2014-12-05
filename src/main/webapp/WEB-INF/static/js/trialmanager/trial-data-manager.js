@@ -292,6 +292,14 @@
                 extractSettings: extractSettings,
                 extractTreatmentFactorSettings : extractTreatmentFactorSettings,
                 saveCurrentData: function () {
+                	if(!processInlineEditInput()){				
+        				return false;
+        			}
+                	if(hasMeasurementsInvalidValue()){
+        				//we check if there is invalid value in the measurements
+        				showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
+        				return false;
+        			}
                     if (service.applicationData.unappliedChangesAvailable) {
                         showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
                             'regenerate the design on the Experimental Design tab', 10000);

@@ -1,20 +1,36 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
+import junit.framework.Assert;
+
+import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.ModelMap;
+
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
 
 public class ObservationMatrixControllerTest {
 
@@ -163,4 +179,117 @@ public class ObservationMatrixControllerTest {
 		return dataList;
 	}
 
+	@Test
+	public void testEditExperimentCells() throws MiddlewareQueryException{
+		int termId = 2000;
+		ExtendedModelMap model = new ExtendedModelMap();
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList();
+		dataList.add(generateTestMeasurementData(1000, "1st", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName1"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList();
+		dataList.add(generateTestMeasurementData(termId, "2nd", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		userSelection.setMeasurementRowList(measurementRowList);
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		observationMatrixController.setStudySelection(userSelection);
+		observationMatrixController.editExperimentCells(1, termId, model);
+		MeasurementData data = (MeasurementData) model.get("measurementData");
+		Assert.assertEquals("Should be able to return a copy of the measurement data, so the value should be the same", "2nd", data.getValue());
+		Assert.assertEquals("Should be able to return a copy of the measurement data, so the id should be the same", termId, data.getMeasurementVariable().getTermId());
+	}
+	
+	@Test
+	public void testUpdateExperimentCellDataIfNotDiscard(){
+		int termId = 2000;
+		String newValue = "new value";
+		ExtendedModelMap model = new ExtendedModelMap();
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList();
+		dataList.add(generateTestMeasurementData(1000, "1st", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName1"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList();
+		dataList.add(generateTestMeasurementData(termId, "2nd", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		userSelection.setMeasurementRowList(measurementRowList);
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		observationMatrixController.setStudySelection(userSelection);
+		observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+		Map<String, String> data = new HashMap();
+		data.put("index", "1");
+		data.put("termId", Integer.toString(termId));
+		data.put("value", newValue);
+		data.put("isNew", "1");
+    	int isNew = Integer.valueOf(data.get("isNew"));
+    	HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+    	Mockito.when(req.getParameter("isDiscard")).thenReturn("0");
+    	    	    	
+		Map<String, Object> results = observationMatrixController.updateExperimentCellData(data, req);
+		
+		Map<String, Object> dataMap =  (Map) results.get("data");
+		Assert.assertEquals("Should have the new value already",newValue, dataMap.get("TestVarName2"));		
+	}
+	
+	@Test
+	public void testUpdateExperimentCellDataIfDiscard(){
+		int termId = 2000;
+		String newValue = "new value";
+		ExtendedModelMap model = new ExtendedModelMap();
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList();
+		dataList.add(generateTestMeasurementData(1000, "1st", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList();
+		dataList.add(generateTestMeasurementData(termId, "2nd", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		userSelection.setMeasurementRowList(measurementRowList);
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		observationMatrixController.setStudySelection(userSelection);
+		observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+		Map<String, String> data = new HashMap();
+		data.put("index", "1");
+		data.put("termId", Integer.toString(termId));
+		data.put("value", newValue);
+		data.put("isNew", "1");
+    	int isNew = Integer.valueOf(data.get("isNew"));
+    	HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+    	Mockito.when(req.getParameter("isDiscard")).thenReturn("1");
+    	    	    	
+		Map<String, Object> results = observationMatrixController.updateExperimentCellData(data, req);
+		
+		Map<String, Object> dataMap =  (Map) results.get("data");
+		Assert.assertEquals("Should have the old value since we discard the saving","2nd", dataMap.get("TestVarName2"));
+	}
+	
+	private MeasurementData generateTestMeasurementData(int termId, String value, int dataTypeId, List<ValueReference> possibleValues, String varName){
+		MeasurementData emptyData = new MeasurementData();
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(termId);
+		measurementVariable.setDataTypeId(dataTypeId);
+		measurementVariable.setPossibleValues(possibleValues);
+		measurementVariable.setName(varName);
+		emptyData.setcValueId("");
+		emptyData.setDataType("");
+		emptyData.setEditable(false);
+		emptyData.setLabel("");
+		emptyData.setPhenotypeId(0);
+		emptyData.setValue(value);
+		emptyData.setMeasurementVariable(measurementVariable);
+		return emptyData;
+	}
 }

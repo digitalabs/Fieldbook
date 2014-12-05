@@ -149,7 +149,9 @@ public class ObservationMatrixController extends
     private UserSelection getUserSelection(boolean isTrial) {
     	return this.studySelection;
     }
-    
+    protected void setStudySelection(UserSelection userSelection) {
+    	this.studySelection = userSelection;
+    }
    
     @RequestMapping(value="/update/experiment/{index}", method = RequestMethod.GET)
     public String editExperimentModal(@PathVariable int index,
@@ -455,4 +457,9 @@ public class ObservationMatrixController extends
 		}
 		return dataMap;
     }
+
+	public void setValidationService(ValidationService validationService) {
+		this.validationService = validationService;
+	}
+    
 }

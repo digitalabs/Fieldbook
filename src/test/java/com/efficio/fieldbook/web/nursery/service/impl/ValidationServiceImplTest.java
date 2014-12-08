@@ -110,6 +110,12 @@ private ValidationService validationService;
 
 	}
 	
-	
-
+	@Test
+	public void testisValidValueIfCategorical(){
+		
+		MeasurementVariable var = new MeasurementVariable();
+		var.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
+		
+		assertTrue("The value should always be valid since we allow out of bounds value already", validationService.isValidValue(var, "xxx", false));
+	}
 }

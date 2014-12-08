@@ -134,6 +134,33 @@ public class ObservationMatrixControllerTest {
 		
 	}
 	
+	@Test
+	public void testCopyMeasurementValueWithCustomCategoricalValue(){
+	
+		
+		MeasurementRow origRow = new MeasurementRow();
+		origRow.setDataList(generateTestDataList());
+		origRow.getDataList().get(0).setAccepted(true);
+		
+		List<ValueReference> possibleValues = new ArrayList<>();
+		possibleValues.add(new ValueReference());
+		possibleValues.add(new ValueReference());
+		possibleValues.get(0).setId(1);
+		possibleValues.get(0).setKey("1");
+		possibleValues.get(1).setId(2);
+		possibleValues.get(1).setKey(origRow.getDataList().get(0).getValue());
+		
+		origRow.getDataList().get(0).getMeasurementVariable().setPossibleValues(possibleValues);
+		
+		MeasurementRow valueRow = new MeasurementRow();
+		valueRow.setDataList(generateTestDataList());
+		
+		observationMatrixController.copyMeasurementValue(origRow, valueRow);
+		
+		Assert.assertTrue(origRow.getDataList().get(0).isCustomCategoricalValue());
+		
+	}
+	
 	private List<MeasurementData> generateTestDataList(){
 		
 		List<MeasurementData> dataList = new ArrayList<>();
@@ -274,6 +301,56 @@ public class ObservationMatrixControllerTest {
 		
 		Map<String, Object> dataMap =  (Map) results.get("data");
 		Assert.assertEquals("Should have the old value since we discard the saving","2nd", dataMap.get("TestVarName2"));
+	}
+	
+	@Test
+	public void testMarkExperimentCellDataAsAccepted(){
+		int termId = 2000;
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList<>();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(1000, "1st", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName1"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(termId, "2nd", TermId.CATEGORICAL_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		userSelection.setMeasurementRowList(measurementRowList);
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		observationMatrixController.setStudySelection(userSelection);
+		observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+		Map<String, String> data = new HashMap<>();
+		
+		data.put("index", "1");
+		data.put("termId", Integer.toString(termId));
+	
+    	HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+    	    	    	
+		Map<String, Object> results = observationMatrixController.markExperimentCellDataAsAccepted(data, req);
+		
+		Map<String, Object> dataMap =  (Map) results.get("data");
+		
+		Assert.assertTrue("The Accepted flag should be true",(boolean)((Object[]) dataMap.get("TestVarName2"))[1]);
+		
+	}
+	
+	@Test
+	public void testIsCategoricalValueOutOfBounds(){
+		List<ValueReference> possibleValues = new ArrayList<>();
+		possibleValues.add(new ValueReference());
+		possibleValues.add(new ValueReference());
+		possibleValues.get(0).setId(1);
+		possibleValues.get(0).setKey("1");
+		possibleValues.get(1).setId(2);
+		possibleValues.get(1).setKey("2");
+
+		Assert.assertFalse("2 is in possible values so the return value should be false", observationMatrixController.isCategoricalValueOutOfBounds("2", "", possibleValues));
+		Assert.assertTrue("3 is NOT in possible values so the return value should be true",observationMatrixController.isCategoricalValueOutOfBounds("3", "", possibleValues));
+		Assert.assertFalse("2 is in possible values so the return value should be false", observationMatrixController.isCategoricalValueOutOfBounds(null, "2", possibleValues));
+		Assert.assertTrue("3 is NOT in possible values so the return value should be true",observationMatrixController.isCategoricalValueOutOfBounds(null, "3", possibleValues));
 	}
 	
 	private MeasurementData generateTestMeasurementData(int termId, String value, int dataTypeId, List<ValueReference> possibleValues, String varName){

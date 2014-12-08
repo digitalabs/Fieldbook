@@ -179,4 +179,21 @@ public class ExcelImportStudyServiceImplTest {
 		importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
 		Assert.assertFalse("Workbook flag for has existing data overwrite should be false", workbook.hasExistingDataOverwrite());
 	}
+	
+	@Test
+	public void testImportDataCellValuesWhenExcelCellIsNotNullAcceptedFlagMustAlwaysBeFalse(){
+		MeasurementData wData = new MeasurementData();
+		wData.setEditable(true);
+		int columnIndex = 1;
+		
+		Row xlsRow = Mockito.mock(Row.class);
+		Cell cell = Mockito.mock(Cell.class);
+		Mockito.when(xlsRow.getCell(columnIndex)).thenReturn(cell);
+		Mockito.when(cell.getCellType()).thenReturn(Cell.CELL_TYPE_STRING);
+		Mockito.when(cell.getStringCellValue()).thenReturn(testValue);
+		Workbook workbook = new Workbook();
+		wData.setMeasurementVariable(null);
+		importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
+		Assert.assertFalse("The Accepted Flag must be always set to false", wData.isAccepted());
+	}
 }

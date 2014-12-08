@@ -158,6 +158,12 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 				
+				if(this.$('.invalid-value').length !== 0) {
+					$('#review-out-of-bounds-data-list').show();
+				} else {
+					$('#review-out-of-bounds-data-list').hide();
+				}
+				
 			},
 			language: {
 				search: '<span class="mdt-filtering-label">Search:</span>'

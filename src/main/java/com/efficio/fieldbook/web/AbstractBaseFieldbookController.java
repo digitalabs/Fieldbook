@@ -26,7 +26,6 @@ import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.service.ProjectActivityService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
@@ -45,9 +44,6 @@ public abstract class AbstractBaseFieldbookController {
 	
 	@Resource
     private WorkbenchDataManager workbenchDataManager;
-	
-	@Resource
-	private ProjectActivityService projectActivityService;
 	
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
@@ -203,8 +199,4 @@ public abstract class AbstractBaseFieldbookController {
 	public void setPaginationListSelection(PaginationListSelection paginationListSelection) {
 		this.paginationListSelection = paginationListSelection;
 	}
-
-	public ProjectActivityService getProjectActivityService() {
-		return projectActivityService;
-	}	
 }

@@ -384,6 +384,22 @@ public class ObservationMatrixController extends
     	return map;
     }
 
+    protected boolean isCategoricalValueOutOfBounds(String cValueId, String value, List<ValueReference> possibleValues){
+    	
+    	String val = cValueId;
+    	if (val == null ){
+    		val = value;
+    	}
+    	
+    	for (ValueReference ref : possibleValues){
+    		if (ref.getKey().equals(val)){
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
+    
     protected void copyMeasurementValue(MeasurementRow origRow, MeasurementRow valueRow){
     	this.copyMeasurementValue(origRow, valueRow, false);
     }
@@ -393,19 +409,20 @@ public class ObservationMatrixController extends
     		MeasurementData data =  origRow.getDataList().get(index);
     		MeasurementData valueRowData = valueRow.getDataList().get(index);
     		if(data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()){
-				if (data.getcValueId() == null && !StringUtils.isEmpty(data.getValue()) && StringUtils.isEmpty(valueRowData.getcValueId())){
-					//do nothing
-					if(isNew){
-    					data.setCustomCategoricalValue(true);
-    					data.setcValueId(null);
-    					data.setValue(valueRowData.getValue());
-    				}
-				} else if(valueRowData.getcValueId() != null){
+    			
+    			if (!StringUtils.isEmpty(data.getValue()) 
+    					&& data.isAccepted() 
+    					&& isCategoricalValueOutOfBounds(data.getcValueId(), data.getValue(), data.getMeasurementVariable().getPossibleValues())){
+    				data.setCustomCategoricalValue(true);
+    			}else{
+    				data.setCustomCategoricalValue(false);
+    			}
+    			
+    			if(valueRowData.getcValueId() != null){
     				if(isNew){
     					data.setCustomCategoricalValue(true);
     					data.setcValueId(null);
     				}else{
-    					data.setCustomCategoricalValue(false);
     					data.setcValueId(valueRowData.getcValueId());
     				}
 	    			data.setValue(valueRowData.getcValueId());
@@ -414,7 +431,6 @@ public class ObservationMatrixController extends
     					data.setCustomCategoricalValue(true);
     					data.setcValueId(null);
     				}else{
-    					data.setCustomCategoricalValue(false);
     					data.setcValueId(valueRowData.getValue());
     				}
 

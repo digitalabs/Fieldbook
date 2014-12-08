@@ -44,7 +44,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					createdCell: function (td, cellData, rowData, row, col) {
 						if(isVariates){
 							var cellText = $(td).text();
-							if ($.inArray(cellText, possibleValues) === -1 && cellText !=='0'){
+							if ($.inArray(cellText, possibleValues) === -1){
 								
 								$(td).removeClass('accepted-value');
 						    	$(td).removeClass('invalid-value');
@@ -133,13 +133,16 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							  
 							  $(this).removeClass('accepted-value');
 					    	  $(this).removeClass('invalid-value');
+					    	  
+					    	  if (cellData != ''){
+					    		  if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
+							    	  $(this).addClass('invalid-value');
+							    	  $(this).data('term-id', $(this).data('term-id'));
+							      }else{
+							    	  $(this).addClass('accepted-value');
+							      }
+					    	  }
 							  
-							  if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
-						    	  $(this).addClass('invalid-value');
-						    	  $(this).data('term-id', $(this).data('term-id'));
-						      }else{
-						    	  $(this).addClass('accepted-value');
-						      }
 						}
 						
 					}

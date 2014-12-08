@@ -3550,7 +3550,7 @@ function markCellAsMissing(indexElem, indexTermId ,indexDataVal ,isNew, elem){
 			if(data.success === '1'){
 				 var oTable = $('#measurement-table').dataTable();				
 				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
-				 $(elem).removeClass('accepted-value');
+				 $(elem).addClass('accepted-value');
 				 $(elem).removeClass('invalid-value');
 			}else{
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);

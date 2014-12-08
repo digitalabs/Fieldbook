@@ -3596,3 +3596,12 @@ function hasMeasurementsInvalidValue(){
 	}
 	return true;
 }
+
+function reviewOutOfBoundsData() {
+	'use strict';
+	$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+}
+
+function proceedToReviewOutOfBoundsDataAction() {
+	var action = $('#review-out-of-bounds-data-action').select2('data').id;
+}

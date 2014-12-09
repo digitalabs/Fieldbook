@@ -23,7 +23,11 @@ th:field="*{measurementData.cValueId}" th:attrappend="data-cvalueid=${measuremen
 		//<![CDATA[		
 		$( document ).ready(function() {
 			'use strict';
-									
+					$('input.data-value').on('keydown', function(ev){
+						if(ev.which === 13) {
+							processInlineEditInput();
+					    }
+					});									
 					$('.inline-input input').on('click', function(){
 						$('body').data('last-td-time-clicked', new Date().getTime());
 					})
@@ -96,6 +100,8 @@ th:field="*{measurementData.cValueId}" th:attrappend="data-cvalueid=${measuremen
 						if(defaultJsonVal !== null){
 							$(this).select2('data', defaultJsonVal);
 						}
+					}).on('change', function(){
+						processInlineEditInput();
 					});
 					if ($('.inline-input .date-input').length > 0) {
 						$('.inline-input .date-input').each(function() {

@@ -221,6 +221,7 @@ public class ObservationMatrixController extends
 		    						var.setcValueId(value);
 		    					}
 		    					var.setValue(value);
+		    					var.setAccepted(true);
 		    				}else{
 		    					var.setValue(value);
 		    				}
@@ -462,6 +463,8 @@ public class ObservationMatrixController extends
     		MeasurementData data =  origRow.getDataList().get(index);
     		MeasurementData valueRowData = valueRow.getDataList().get(index);
     		if(data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()){
+    			
+    			data.setAccepted(valueRowData.isAccepted());
     			
     			if (!StringUtils.isEmpty(data.getValue()) 
     					&& data.isAccepted() 

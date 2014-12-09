@@ -1,19 +1,15 @@
 /**
  * @module measurements-datatable
  */
-
 if (typeof (BMS) === 'undefined') {
 	BMS = {};
 }
-
 if (typeof (BMS.Fieldbook) === 'undefined') {
 	BMS.Fieldbook = {};
 }
 
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
-
 	// FIXME Refactor to remove some of this code from the constructor function
-
 	/**
 	 * Creates a new MeasurementsDataTable.
 	 *
@@ -159,17 +155,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			},
 			fnInitComplete: function(oSettings, json) {
 				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
-				// There is a bug in datatable for now				
-				
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-				
 				if(this.$('.invalid-value').length !== 0) {
 					$('#review-out-of-bounds-data-list').show();
 				} else {
 					$('#review-out-of-bounds-data-list').hide();
 				}
-				
 			},
 			language: {
 				search: '<span class="mdt-filtering-label">Search:</span>'
@@ -218,14 +210,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		        }
 		        
 		    } );
-			}
-		
+		}
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
-
-		//new $.fn.dataTable.FixedColumns(table, {iLeftColumns: 3});
-
 		$('#measurementsDiv .mdt-columns').detach().insertBefore('.mdt-filtering');
 		$('.measurement-dropdown-menu a').click(function(e) {
 			var column;
@@ -239,13 +227,12 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				$(this).parent().addClass('fbk-dropdown-select-fade');
 				$(this).parent().removeClass('fbk-dropdown-select-highlight');
 			}
-
 			// Get the column API object
 			column = table.column($(this).attr('data-index'));
 			// Toggle the visibility
 			column.visible(!column.visible());			 
 		});
-	}
+	};
 
 	return dataTableConstructor;
 
@@ -269,7 +256,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 		
 		var columns = [],
 		columnsDef = [],
-		germplasmDataTable;				
+		germplasmDataTable;
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
@@ -326,7 +313,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
-				$(parentDiv).removeClass('fbk-hide-opacity');		
+				$(parentDiv).removeClass('fbk-hide-opacity');
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 				oSettings.oInstance.fnAdjustColumnSizing();
@@ -386,12 +373,11 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						var fieldName = 'selectedCheck',
-							count = 0,							
+							count = 0,
 							actualVal = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
 							actualCode = '',
 							domElem = '';
-													
-						for(count = 0 ; count < full.checkOptions.length ; count++){							
+						for(count = 0 ; count < full.checkOptions.length ; count++){
 							if(full.checkOptions[count].id == full['8255-key']){
 								actualVal = full.checkOptions[count].description;
 								actualCode = full.checkOptions[count].name;
@@ -532,7 +518,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 		
 		var columns = [],
 		columnsDef = [],
-		checkDataTable;		
+		checkDataTable;
 		
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
@@ -586,9 +572,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				});
 			}
 		});
-
-
-		this.checkDataTable = $(tableIdentifier).dataTable({	
+		this.checkDataTable = $(tableIdentifier).dataTable({
 			data: dataList,
 			columns: columns,
 			columnDefs: columnsDef,			
@@ -630,11 +614,9 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 					} 
 				);
 		this.checkDataTable.$('.delete-check').on('click', function(){
-			
 			var entryNumber = $(this).parent().parent().data('entry'),
 			gid = '' + $(this).parent().parent().data('gid');
-			deleteCheckGermplasmList(entryNumber, gid, $(this).parent().parent());	
-			
+			deleteCheckGermplasmList(entryNumber, gid, $(this).parent().parent());
 	  	});	
 		SelectedCheckListDataTable.prototype.getDataTable = function()
 		{
@@ -785,10 +767,10 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 
 		  iDisplayLength: 100,
 		  fnDrawCallback: function( oSettings ) {
-			  $(parentDiv + ' #selectAllAdvance').prop('checked', false)
-			  $(parentDiv + ' #selectAllAdvance').change()
+			  $(parentDiv + ' #selectAllAdvance').prop('checked', false);
+			  $(parentDiv + ' #selectAllAdvance').change();
 			  $(parentDiv + ' input.advancingListGid:checked').parent().parent().addClass('selected');
-			  $(parentDiv + ' .numberOfAdvanceSelected').html($(parentDiv + ' tr.primaryRow.selected').length);			
+			  $(parentDiv + ' .numberOfAdvanceSelected').html($(parentDiv + ' tr.primaryRow.selected').length);
 		    },
 		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {			
 				$(nRow).data('entry', aData.entry);

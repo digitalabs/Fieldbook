@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -335,6 +336,97 @@ public class ObservationMatrixControllerTest {
 		
 		Assert.assertTrue("The Accepted flag should be true",(boolean)((Object[]) dataMap.get("TestVarName2"))[1]);
 		
+	}
+	
+	@Test
+	public void testMarkAllExperimentDataAsAccepted(){
+		int termId = 2000;
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList<>();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(1000, "1st", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName1"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(termId, "2nd", TermId.CATEGORICAL_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(termId, "3rd", TermId.CATEGORICAL_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName3"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		
+		userSelection.setMeasurementRowList(measurementRowList);
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		
+		observationMatrixController.setStudySelection(userSelection);	    	
+		observationMatrixController.markAllExperimentDataAsAccepted();
+		
+		for (MeasurementRow measurementRow : userSelection.getMeasurementRowList())  {
+    		if(measurementRow != null && measurementRow.getMeasurementVariables() != null){
+        		for(MeasurementData var : measurementRow.getDataList()){	    			
+        			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
+            				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+            				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
+        					Assert.assertTrue(var.isAccepted());
+        			} else {
+        					Assert.assertFalse(var.isAccepted());
+        			}
+        		}
+        	}
+    	}
+	
+	}
+	
+	@Test
+	public void testMarkAllExperimentDataAsMissing(){
+		int termId = 2000;
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList<>();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(1000, "1st", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName1"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(termId, "2nd", TermId.CATEGORICAL_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(termId, "3rd", TermId.CATEGORICAL_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName3"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		
+		userSelection.setMeasurementRowList(measurementRowList);
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		
+		observationMatrixController.setStudySelection(userSelection);	    	
+		observationMatrixController.markAllExperimentDataAsMissing();
+		
+		for (MeasurementRow measurementRow : userSelection.getMeasurementRowList())  {
+    		if(measurementRow != null && measurementRow.getMeasurementVariables() != null){
+        		for(MeasurementData var : measurementRow.getDataList()){	    			
+        			if(var != null){
+        				if(var != null && !StringUtils.isEmpty(var.getValue()) && 
+                				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+                				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
+        					Assert.assertTrue(var.isAccepted());
+        					if (observationMatrixController.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
+        						Assert.assertEquals("0", var.getValue());
+        					}else{
+        						Assert.assertFalse("0".equals(var.getValue()));
+        					}
+        				}else{
+        					Assert.assertFalse(var.isAccepted());
+        				}
+        			}
+        		}
+        	}
+    	}
+	
 	}
 	
 	@Test

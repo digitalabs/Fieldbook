@@ -3589,6 +3589,54 @@ function markCellAsAccepted(indexElem, indexTermId, elem){
 		}
     });
 }
+function markAllCellAsAccepted(){
+	'use strict';
+
+	$.ajax({
+		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/accepted/all',
+		type: 'GET',
+		async: false,
+        contentType: "application/json",
+		success: function(data) {
+			if(data.success === '1'){
+				reloadMeasurementTable();
+			}else{
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+			}
+		}
+    });
+}
+function markAllCellAsMissing(){
+	'use strict';
+
+	$.ajax({
+		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/missing/all',
+		type: 'GET',
+		async: false,
+        contentType: "application/json",
+		success: function(data) {
+			if(data.success === '1'){
+				reloadMeasurementTable();
+			}else{
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+			}
+		}
+    });
+}
+function reloadMeasurementTable(){
+	'use strict';
+        if ($('#measurement-table').length !== 0) {		
+			$.ajax(
+				{ 
+					url: '/Fieldbook/ImportManager/import/preview',
+					type: 'POST',
+					success: function(html) {
+						$('#measurementsDiv').html(html);
+						$('.import-study-data').data('data-import', '1');	
+					}
+			});
+        }
+}
 function hasMeasurementsInvalidValue(){
 	'use strict';
 	if($('#measurement-table').dataTable().$('.invalid-value').length === 0){
@@ -3604,4 +3652,10 @@ function reviewOutOfBoundsData() {
 
 function proceedToReviewOutOfBoundsDataAction() {
 	var action = $('#review-out-of-bounds-data-action').select2('data').id;
+	if (action === '2'){
+		markAllCellAsAccepted();
+	}else if (action === '3'){
+		markAllCellAsMissing();
+	}
+	
 }

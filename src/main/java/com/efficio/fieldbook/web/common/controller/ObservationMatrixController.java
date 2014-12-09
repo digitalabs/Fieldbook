@@ -287,6 +287,59 @@ public class ObservationMatrixController extends
 		    			    	    	    
     	return map;
     }
+    
+    @ResponseBody
+    @RequestMapping(value="/update/experiment/cell/accepted/all", method = RequestMethod.GET)
+    public Map<String, Object> markAllExperimentDataAsAccepted() {
+
+    	Map<String, Object> map = new HashMap<String, Object>();
+
+    	
+    	UserSelection userSelection = getUserSelection(false);
+    	for (MeasurementRow row : userSelection.getMeasurementRowList())  {
+    		if(row != null && row.getMeasurementVariables() != null){
+        		for(MeasurementData var : row.getDataList()){	    			
+        			if(var != null){
+        				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty()){
+        					var.setAccepted(true);
+        				}
+        			}
+        		}
+        	}
+    	}
+    	
+		map.put("success", "1");
+		    			    	    	    
+    	return map;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/update/experiment/cell/missing/all", method = RequestMethod.GET)
+    public Map<String, Object> markAllExperimentDataAsMissing() {
+
+    	Map<String, Object> map = new HashMap<String, Object>();
+
+    	
+    	UserSelection userSelection = getUserSelection(false);
+    	for (MeasurementRow row : userSelection.getMeasurementRowList())  {
+    		if(row != null && row.getMeasurementVariables() != null){
+        		for(MeasurementData var : row.getDataList()){	    			
+        			if(var != null){
+        				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty()){
+        					var.setAccepted(true);
+        					if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
+        						var.setValue("0");
+        					}
+        				}
+        			}
+        		}
+        	}
+    	}
+    	
+		map.put("success", "1");
+		    			    	    	    
+    	return map;
+    }
         
    
     @RequestMapping(value="/update/experiment/cell/{index}/{termId}", method = RequestMethod.GET)

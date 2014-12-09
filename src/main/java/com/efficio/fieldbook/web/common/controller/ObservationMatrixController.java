@@ -37,7 +37,6 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.DateUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
 @RequestMapping(ObservationMatrixController.URL)
@@ -51,6 +50,12 @@ public class ObservationMatrixController extends
     public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
     public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";
     public static final String EDIT_EXPERIMENT_CELL_TEMPLATE = "/Common/updateExperimentCell";
+	private static final String STATUS = "status";
+	private static final String ERROR_MESSAGE = "errorMessage";
+	private static final String INDEX = "index";
+	private static final String SUCCESS = "success";
+	private static final String TERM_ID = "termId";
+	private static final String DATA = "data";
     
 	@Resource
 	private UserSelection studySelection;
@@ -136,11 +141,11 @@ public class ObservationMatrixController extends
         try { 
         	validationService.validateObservationValues(workbook, "");
             fieldbookMiddlewareService.saveMeasurementRows(workbook);
-            resultMap.put("status", "1");
+            resultMap.put(STATUS, "1");
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
-            resultMap.put("status", "-1");
-            resultMap.put("errorMessage", e.getMessage());
+            resultMap.put(STATUS, "-1");
+            resultMap.put(ERROR_MESSAGE, e.getMessage());
         }
         
         return resultMap;
@@ -188,103 +193,110 @@ public class ObservationMatrixController extends
 
     	Map<String, Object> map = new HashMap<String, Object>();
     	
-    	int index = Integer.valueOf(data.get("index"));
-    	int termId = Integer.valueOf(data.get("termId"));
+    	int index = Integer.valueOf(data.get(INDEX));
+    	int termId = Integer.valueOf(data.get(TERM_ID));
     	String value = data.get("value");
     	//for categorical
     	int isNew = Integer.valueOf(data.get("isNew"));
     	boolean isDiscard = "1".equalsIgnoreCase(req.getParameter("isDiscard")) ? true : false;
     	
-    	map.put("index", index);
+    	map.put(INDEX, index);
     	
     	UserSelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
     	tempList.addAll(userSelection.getMeasurementRowList());
-
     
     	MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
-    	
     	
 		try {
 			if(!isDiscard){				
 				MeasurementRow copyRow = originalRow.copy();
 		    	copyMeasurementValue(copyRow, originalRow, isNew == 1 ? true : false);
 				//we set the data to the copy row
-				if(copyRow != null && copyRow.getMeasurementVariables() != null){
-		    		for(MeasurementData var : copyRow.getDataList()){	    			
-		    			if(var != null && var.getMeasurementVariable().getTermId() == termId){
-		    				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty()){
-		    					if(isNew == 1){
-		    						var.setcValueId(null);
-		    						var.setCustomCategoricalValue(true);
-		    					} else{
-		    						var.setcValueId(value);
-		    					}
-		    					var.setValue(value);
-		    					var.setAccepted(true);
-		    				}else{
-		    					var.setValue(value);
-		    				}
-		    				break;
-		    			}
-		    		}
+		    	if(copyRow != null && copyRow.getMeasurementVariables() != null){
+		    		updatePhenotypeValues(copyRow.getDataList(),value,termId,isNew);
 		    	}
-				
 				validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
 				//if there are no error, meaning everything is good, thats the time we copy it to the original
 				copyMeasurementValue(originalRow, copyRow, isNew == 1 ? true : false);
-				if(originalRow != null && originalRow.getMeasurementVariables() != null){
-		    		for(MeasurementData var : originalRow.getDataList()){
-		    			if(var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null && var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
-		    				//we change the date to the UI format
-		    				var.setValue(DateUtil.convertToDBDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
-		    			}
-		    		}
-		    	}
+				updateDates(originalRow);
 			}
-			map.put("success", "1");
+			map.put(SUCCESS, "1");
 			Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
-	    	map.put("data", dataMap);
+	    	map.put(DATA, dataMap);
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			map.put("success", "0");
-			map.put("errorMessage", e.getMessage());
+			LOG.error(e.getMessage(),e);
+			map.put(SUCCESS, "0");
+			map.put(ERROR_MESSAGE, e.getMessage());
 		}
 		    			    	    	    
     	return map;
-    	
-    	//return super.convertObjectToJson(results);
     }
     
-    @ResponseBody
+    private void updateDates(MeasurementRow originalRow) {
+    	if(originalRow != null && originalRow.getMeasurementVariables() != null){
+    		for(MeasurementData var : originalRow.getDataList()){
+    			updateValueIfDate(var);
+    		}
+    	}
+	}
+    
+    private void updateValueIfDate(MeasurementData var) {
+    	if(var != null && var.getMeasurementVariable() != null && 
+    			var.getMeasurementVariable().getDataTypeId() != null && 
+    			var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
+			var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
+		}
+	}
+
+	private void updatePhenotypeValues(List<MeasurementData> measurementDataList, String value, int termId, int isNew) {
+		for(MeasurementData var : measurementDataList){
+			if(var != null && var.getMeasurementVariable().getTermId() == termId && 
+				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
+				if(isNew == 1){
+					var.setcValueId(null);
+					var.setCustomCategoricalValue(true);
+				} else{
+					var.setcValueId(value);
+				}
+				var.setValue(value);
+				var.setAccepted(true);
+			}else{
+				var.setValue(value);
+			}
+			break;
+		}
+	}
+
+	@ResponseBody
     @RequestMapping(value="/update/experiment/cell/accepted", method = RequestMethod.POST)
     public Map<String, Object> markExperimentCellDataAsAccepted( @RequestBody Map<String,String> data, HttpServletRequest req) {
 
     	Map<String, Object> map = new HashMap<String, Object>();
     	
-    	int index = Integer.valueOf(data.get("index"));
-    	int termId = Integer.valueOf(data.get("termId"));
+    	int index = Integer.valueOf(data.get(INDEX));
+    	int termId = Integer.valueOf(data.get(TERM_ID));
     	
-    	map.put("index", index);
+    	map.put(INDEX, index);
     	
     	UserSelection userSelection = getUserSelection(false);
     	MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
 
 		if(originalRow != null && originalRow.getMeasurementVariables() != null){
     		for(MeasurementData var : originalRow.getDataList()){	    			
-    			if(var != null && var.getMeasurementVariable().getTermId() == termId){
-    				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty()){
-    					var.setAccepted(true);
+    			if(var != null && var.getMeasurementVariable().getTermId() == termId && 
+    				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+    				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
+    				var.setAccepted(true);
     				break;
-    				}
     			}
     		}
     	}
 		
-		map.put("success", "1");
+		map.put(SUCCESS, "1");
 		Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
-    	map.put("data", dataMap);
+    	map.put(DATA, dataMap);
 		    			    	    	    
     	return map;
     }
@@ -295,50 +307,51 @@ public class ObservationMatrixController extends
 
     	Map<String, Object> map = new HashMap<String, Object>();
 
-    	
     	UserSelection userSelection = getUserSelection(false);
     	for (MeasurementRow row : userSelection.getMeasurementRowList())  {
     		if(row != null && row.getMeasurementVariables() != null){
-        		for(MeasurementData var : row.getDataList()){	    			
-        			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
-        				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
-        				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
-        				var.setAccepted(true);
-        			}
-        		}
+        		markNonEmptyCategoricalValuesAsAccepted(row.getDataList());
         	}
     	}
     	
-		map.put("success", "1");
+		map.put(SUCCESS, "1");
 		    			    	    	    
     	return map;
     }
     
-    @ResponseBody
+    private void markNonEmptyCategoricalValuesAsAccepted(List<MeasurementData> measurementDataList) {
+    	for(MeasurementData var : measurementDataList){	    			
+			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
+				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
+				var.setAccepted(true);
+			}
+		}
+	}
+    private void markNonEmptyCategoricalValuesAsMissing(List<MeasurementData> measurementDataList) {
+    	for(MeasurementData var : measurementDataList){	    			
+			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
+				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
+				var.setAccepted(true);
+				if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
+					var.setValue("0");
+				}
+			}
+		}
+	}
+
+	@ResponseBody
     @RequestMapping(value="/update/experiment/cell/missing/all", method = RequestMethod.GET)
     public Map<String, Object> markAllExperimentDataAsMissing() {
-
     	Map<String, Object> map = new HashMap<String, Object>();
-
-    	
     	UserSelection userSelection = getUserSelection(false);
     	for (MeasurementRow row : userSelection.getMeasurementRowList())  {
     		if(row != null && row.getMeasurementVariables() != null){
-        		for(MeasurementData var : row.getDataList()){	    			
-        			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
-        				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
-        				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
-    					var.setAccepted(true);
-    					if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
-    						var.setValue("0");
-    					}
-        			}
-        		}
+    			markNonEmptyCategoricalValuesAsMissing(row.getDataList());
         	}
     	}
-    	
-		map.put("success", "1");
-		    			    	    	    
+		map.put(SUCCESS, "1");    	    
     	return map;
     }
         
@@ -358,10 +371,7 @@ public class ObservationMatrixController extends
     	List<ValueReference> possibleValues = new ArrayList<ValueReference>();
     	if(copyRow != null && copyRow.getMeasurementVariables() != null){
     		for(MeasurementData var : copyRow.getDataList()){
-    			if(var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null && var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
-    				//we change the date to the UI format
-    				var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
-    			}
+    			updateValueIfDate(var);
     			if(var != null && (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty())){
     				possibleValues = var.getMeasurementVariable().getPossibleValues();
     			}
@@ -371,17 +381,22 @@ public class ObservationMatrixController extends
     			}
     		}
     	}
-    	model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
-    	model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
-    	model.addAttribute("isNursery", userSelection.getWorkbook().isNursery());
-    	model.addAttribute("measurementData", editData);
-    	model.addAttribute("index", index);
-    	model.addAttribute("termId", termId);
-    	model.addAttribute("possibleValues", possibleValues);
+    	updateModel(model,userSelection.getWorkbook().isNursery(),editData, index, termId, possibleValues);
         return super.showAjaxPage(model, EDIT_EXPERIMENT_CELL_TEMPLATE);
     }
-    
-    @ResponseBody
+
+	private void updateModel(Model model, boolean isNursery, MeasurementData measurementData,
+    		int index, int termId, List<ValueReference> possibleValues) {
+    	model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
+    	model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
+    	model.addAttribute("isNursery", isNursery);
+    	model.addAttribute("measurementData", measurementData);
+    	model.addAttribute(INDEX, index);
+    	model.addAttribute(TERM_ID, termId);
+    	model.addAttribute("possibleValues", possibleValues);
+	}
+
+	@ResponseBody
     @RequestMapping(value="/data/table/ajax", method = RequestMethod.GET)
     public List<Map<String, Object>> getPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	
@@ -418,21 +433,14 @@ public class ObservationMatrixController extends
 			validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
 			//if there are no error, meaning everything is good, thats the time we copy it to the original
 			copyMeasurementValue(originalRow, row);
-			if(originalRow != null && originalRow.getMeasurementVariables() != null){
-	    		for(MeasurementData var : originalRow.getDataList()){
-	    			if(var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null && var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
-	    				//we change the date to the UI format
-	    				var.setValue(DateUtil.convertToDBDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
-	    			}
-	    		}
-	    	}
-			map.put("success", "1");
+			updateDates(originalRow);
+			map.put(SUCCESS, "1");
 			Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
-	    	map.put("data", dataMap);
+	    	map.put(DATA, dataMap);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
-			map.put("success", "0");
-			map.put("errorMessage", e.getMessage());
+			map.put(SUCCESS, "0");
+			map.put(ERROR_MESSAGE, e.getMessage());
 		}
 		    			    	    	    
     	return map;
@@ -462,44 +470,45 @@ public class ObservationMatrixController extends
     	for(int index = 0 ; index < origRow.getDataList().size() ; index++){
     		MeasurementData data =  origRow.getDataList().get(index);
     		MeasurementData valueRowData = valueRow.getDataList().get(index);
-    		if(data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()){
-    			
-    			data.setAccepted(valueRowData.isAccepted());
-    			
-    			if (!StringUtils.isEmpty(data.getValue()) 
-    					&& data.isAccepted() 
-    					&& isCategoricalValueOutOfBounds(data.getcValueId(), data.getValue(), data.getMeasurementVariable().getPossibleValues())){
-    				data.setCustomCategoricalValue(true);
-    			}else{
-    				data.setCustomCategoricalValue(false);
-    			}
-    			
-    			if(valueRowData.getcValueId() != null){
-    				if(isNew){
-    					data.setCustomCategoricalValue(true);
-    					data.setcValueId(null);
-    				}else{
-    					data.setcValueId(valueRowData.getcValueId());
-    				}
-	    			data.setValue(valueRowData.getcValueId());
-    			}else if(valueRowData.getValue() != null){
-    				if(isNew){
-    					data.setCustomCategoricalValue(true);
-    					data.setcValueId(null);
-    				}else{
-    					data.setcValueId(valueRowData.getValue());
-    				}
-
-	    			data.setValue(valueRowData.getValue());
-    			}
-    			
-    		}else {
-    			data.setValue(valueRowData.getValue());
-    		}
+    		copyMeasurementDataValue(data,valueRowData,isNew);
     	}
     }
     
-    private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix){
+    private void copyMeasurementDataValue(MeasurementData oldData,
+			MeasurementData newData, boolean isNew) {
+    	if(oldData.getMeasurementVariable().getPossibleValues() != null && !oldData.getMeasurementVariable().getPossibleValues().isEmpty()){		
+    		oldData.setAccepted(newData.isAccepted());
+    		if (!StringUtils.isEmpty(oldData.getValue()) 
+					&& oldData.isAccepted() 
+					&& isCategoricalValueOutOfBounds(oldData.getcValueId(), oldData.getValue(), 
+							oldData.getMeasurementVariable().getPossibleValues())){
+				oldData.setCustomCategoricalValue(true);
+			}else{
+				oldData.setCustomCategoricalValue(false);
+			}
+			if(newData.getcValueId() != null){
+				if(isNew){
+					oldData.setCustomCategoricalValue(true);
+					oldData.setcValueId(null);
+				}else{
+					oldData.setcValueId(newData.getcValueId());
+				}
+				oldData.setValue(newData.getcValueId());
+			}else if(newData.getValue() != null){
+				if(isNew){
+					oldData.setCustomCategoricalValue(true);
+					oldData.setcValueId(null);
+				}else{
+					oldData.setcValueId(newData.getValue());
+				}
+				oldData.setValue(newData.getValue());
+			}
+		}else {
+			oldData.setValue(newData.getValue());
+		}
+	}
+
+	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix){
     	Map<String, Object> dataMap = new HashMap<String, Object>();
     	//the 4 attributes are needed always
     	dataMap.put("Action", Integer.toString(row.getExperimentId()));

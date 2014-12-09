@@ -3507,9 +3507,10 @@ function saveInlineEdit(isDiscard){
 			var jsonData = $.parseJSON($('#measurement-table').data('json-inline-edit-val'));
 			if(isDiscard == 0 && jsonData.isNew === '1'){
 				$('.inline-input').parent('td').addClass('accepted-value').removeClass('invalid-value');
-			}else if(jsonData.isNew == '0'){
+				$('.inline-input').parent('td').data('is-accepted', '1');
+			}else if(jsonData.isNew == '0'){				
 				$('.inline-input').parent('td').removeClass('accepted-value').removeClass('invalid-value');
-				
+				$('.inline-input').parent('td').data('is-accepted', '0');
 			}
 			if(data.success === '1'){
 			     $('.inline-input').parent('td').data('is-inline-edit', '0');
@@ -3517,7 +3518,6 @@ function saveInlineEdit(isDiscard){
 				 var oTable = $('#measurement-table').dataTable();				
 				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
 				 oTable.fnAdjustColumnSizing();
-				 
 				 $('body').off('click');
 			}else{
 				$('#measurement-table').data('show-inline-edit', '0');

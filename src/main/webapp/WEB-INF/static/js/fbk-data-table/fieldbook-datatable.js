@@ -136,7 +136,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					    	  
 					    	  if (cellData != ''){
 					    		  if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
-							    	  $(this).addClass('invalid-value');
+					    			  	if($(this).data('is-accepted') === '1'){
+					    			  		$(this).addClass('accepted-value');
+										}else if($(this).data('is-accepted') === '0'){
+											$(this).removeClass('invalid-value').removeClass('accepted-value');
+										}else{
+											$(this).addClass('invalid-value');
+										}							    	  
 							    	  $(this).data('term-id', $(this).data('term-id'));
 							      }else{
 							    	  $(this).addClass('accepted-value');

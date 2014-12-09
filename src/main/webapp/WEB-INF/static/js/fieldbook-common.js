@@ -920,9 +920,9 @@ function openDeleteConfirmation() {
 	if (!idVal) {
 		idVal = $('#studyId').val();
 	}
-	var name = $('#study' + idVal + ' .review-study-name').text();
+	var name = $('#study' + idVal + ' .fieldmap-study-name').text();
 	if (!name) {
-		name = $('.nursery-name-display').text();
+		name = $('.nursery-name-display .fieldmap-study-name').text();
 	}
 	$('#delete-study-confirmation').html(deleteConfirmationText + ' ' + name + '?');
 }

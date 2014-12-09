@@ -3600,8 +3600,9 @@ function markAllCellAsAccepted(){
 		success: function(data) {
 			if(data.success === '1'){
 				reloadMeasurementTable();
+				$('#reviewOutOfBoundsDataModal').modal('hide');
 			}else{
-				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
 			}
 		}
     });
@@ -3617,8 +3618,9 @@ function markAllCellAsMissing(){
 		success: function(data) {
 			if(data.success === '1'){
 				reloadMeasurementTable();
+				$('#reviewOutOfBoundsDataModal').modal('hide');
 			}else{
-				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+				showErrorMessage('page-review-out-of-bounds-data-message-modal', data.errorMessage);
 			}
 		}
     });
@@ -3652,9 +3654,11 @@ function reviewOutOfBoundsData() {
 
 function proceedToReviewOutOfBoundsDataAction() {
 	var action = $('#review-out-of-bounds-data-action').select2('data').id;
-	if (action === '2'){
+	if(action === '0') {
+		showErrorMessage('page-review-out-of-bounds-data-message-modal', reviewOutOfBoundsDataActionRequiredError);
+	} else if (action === '2'){
 		markAllCellAsAccepted();
-	}else if (action === '3'){
+	} else if (action === '3'){
 		markAllCellAsMissing();
 	}
 	

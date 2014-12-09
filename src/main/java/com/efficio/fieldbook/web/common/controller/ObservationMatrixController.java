@@ -299,10 +299,10 @@ public class ObservationMatrixController extends
     	for (MeasurementRow row : userSelection.getMeasurementRowList())  {
     		if(row != null && row.getMeasurementVariables() != null){
         		for(MeasurementData var : row.getDataList()){	    			
-        			if(var != null){
-        				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty()){
-        					var.setAccepted(true);
-        				}
+        			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
+        				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+        				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
+        				var.setAccepted(true);
         			}
         		}
         	}
@@ -324,13 +324,13 @@ public class ObservationMatrixController extends
     	for (MeasurementRow row : userSelection.getMeasurementRowList())  {
     		if(row != null && row.getMeasurementVariables() != null){
         		for(MeasurementData var : row.getDataList()){	    			
-        			if(var != null){
-        				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty()){
-        					var.setAccepted(true);
-        					if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
-        						var.setValue("0");
-        					}
-        				}
+        			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
+        				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+        				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
+    					var.setAccepted(true);
+    					if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
+    						var.setValue("0");
+    					}
         			}
         		}
         	}

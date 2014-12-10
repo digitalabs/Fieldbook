@@ -150,7 +150,15 @@ table .even{
     border-bottom: none;
 }
 
+td.invalid-value {
+  background-color: #ffdfdf;
+  color: #7f484a;
+}
 
+td.accepted-value {
+  background-color: #E6F5FF;
+  color: #3366CC;
+}
 
 table .highlight, table .field-map-highlight {
 }
@@ -1708,4 +1716,8 @@ div.variable-details-popup {
 	left: -5px; 
 	top: 2px; 
 	position:relative;
+}
+td.accepted-value {
+  background-color: #E6F5FF;
+  color: #3366CC;
 }

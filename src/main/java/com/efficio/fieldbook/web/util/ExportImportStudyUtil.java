@@ -42,7 +42,7 @@ public class ExportImportStudyUtil {
 				}
 			}
 		}
-		return "";
+		return idValue;
 	}
 	
     public static String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues) {

@@ -70,31 +70,9 @@ public class ValidationServiceImpl implements ValidationService {
 		}else if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {
 			return NumberUtils.isNumber(value.trim());
 			
-		}  else if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()) {
-			Integer valueToCompare = null;
-			try{
-				valueToCompare = Integer.valueOf(value);
-			}catch(NumberFormatException e){
-				if (cValueId != null && NumberUtils.isNumber(cValueId) && isValidInteger(cValueId)) {
-					valueToCompare = Integer.parseInt(cValueId);
-				} else {
-					return false;
-				}
-			}
-
-			if (valueToCompare == null) {
-				return false;
-			}
-			
-			for (ValueReference ref : var.getPossibleValues()) {
-				if(ref.getId().intValue()  == valueToCompare) {
-					return true;
-				}
-			}
 		} else {
 			return true;
 		}
-		return false;
 	}
 	
 	private boolean isValidInteger(String val){

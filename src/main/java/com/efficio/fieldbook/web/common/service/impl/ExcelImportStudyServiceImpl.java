@@ -46,6 +46,7 @@ import org.generationcp.middleware.operation.parser.WorkbookParser;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.util.PoiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -506,14 +507,27 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
+	protected boolean hasCellValue(Cell cell){
+		if (cell == null){
+			return false;
+		} else if ("".equals(PoiUtil.getCellValue(cell).toString())){
+			return false;
+		}
+		return true;
+	}
+	
 	protected void importDataCellValues(MeasurementData wData, Row xlsRow, int columnIndex, 
 			Workbook workbook, Map<Integer, MeasurementVariable> factorVariableMap){
 		if (wData != null && wData.isEditable()) {
 			Cell cell = xlsRow.getCell(columnIndex);
 			String xlsValue = "";
-			if(cell != null){
+			if(cell != null && hasCellValue(cell)){
 				if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
 						&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+					
+					wData.setAccepted(false);
+					
+					String tempVal = "";
 					
 					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
 						double doubleVal = Double.valueOf(cell.getNumericCellValue());
@@ -523,13 +537,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 							getDoubleVal = true;
 						}
 						
-						String tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue());
+						tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue());
 						if(getDoubleVal){
 							tempVal = String.valueOf(Double.valueOf(cell.getNumericCellValue()));
 						}
 						xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(tempVal, 
 								wData.getMeasurementVariable().getPossibleValues(), true);
 					} else {
+						tempVal = cell.getStringCellValue();
 						xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues(), true);
 					}
 					Integer termId = wData.getMeasurementVariable() != null ? wData.getMeasurementVariable().getTermId() : new Integer(0);
@@ -537,9 +552,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						workbook.setHasExistingDataOverwrite(true);
 					}
 					
-					if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+					if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && !xlsValue.equals(tempVal)) {
 						wData.setcValueId(xlsValue);
+					}else{
+						wData.setcValueId(null);
 					}
+						
 				} else {
 					if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
 						xlsValue = getRealNumericValue(cell);																						

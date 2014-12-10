@@ -236,16 +236,24 @@ public class ObservationMatrixController extends
     private void updateDates(MeasurementRow originalRow) {
     	if(originalRow != null && originalRow.getMeasurementVariables() != null){
     		for(MeasurementData var : originalRow.getDataList()){
-    			updateValueIfDate(var);
+    			convertToDBDateIfDate(var);
     		}
     	}
 	}
     
-    private void updateValueIfDate(MeasurementData var) {
+    private void convertToUIDateIfDate(MeasurementData var) {
     	if(var != null && var.getMeasurementVariable() != null && 
     			var.getMeasurementVariable().getDataTypeId() != null && 
     			var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
 			var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
+		}
+	}
+    
+    private void convertToDBDateIfDate(MeasurementData var) {
+    	if(var != null && var.getMeasurementVariable() != null && 
+    			var.getMeasurementVariable().getDataTypeId() != null && 
+    			var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
+			var.setValue(DateUtil.convertToDBDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
 		}
 	}
 
@@ -372,7 +380,7 @@ public class ObservationMatrixController extends
     	List<ValueReference> possibleValues = new ArrayList<ValueReference>();
     	if(copyRow != null && copyRow.getMeasurementVariables() != null){
     		for(MeasurementData var : copyRow.getDataList()){
-    			updateValueIfDate(var);
+    			convertToUIDateIfDate(var);
     			if(var != null && (var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || !var.getMeasurementVariable().getPossibleValues().isEmpty())){
     				possibleValues = var.getMeasurementVariable().getPossibleValues();
     			}

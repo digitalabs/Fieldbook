@@ -29,11 +29,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Location;
@@ -141,7 +139,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLineSelected("1");
     	form.setAllPlotsChoice("1");
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
-    	List<Variable> varList = study.getConditions().getVariables();
     	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
     	
     	advancingNursery.setStudy(study);
@@ -192,11 +189,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         
         try {
 			List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-			Project project = new Project();
-			project.setProjectId(Long.valueOf(this.getCurrentProjectId()));
-			
 			List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods();
-
 			List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);						
 			List<Method> allNonGenerativeMethods = fieldbookMiddlewareService.getAllBreedingMethods(true);
                                    
@@ -293,7 +286,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.POST)
     public Map<String, Object>  postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , BindingResult result, Model model) throws MiddlewareQueryException{
-        Map<String, Object> results = new HashMap();
+        Map<String, Object> results = new HashMap<String, Object>();
         advancingNursery.setMethodChoice(form.getMethodChoice());
         advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
         advancingNursery.setLineChoice(form.getLineChoice());
@@ -340,7 +333,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/apply/change/details", method=RequestMethod.POST)
     public Map<String, Object> applyChangeDetails(@RequestParam(value="data") String userResponses) throws Exception {
-    	Map<String, Object> results = new HashMap();
+    	Map<String, Object> results = new HashMap<String, Object>();
     	ObjectMapper objectMapper = new ObjectMapper();
     	AdvanceGermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, AdvanceGermplasmChangeDetail[].class);
     	List<ImportedGermplasm> importedGermplasmListTemp = userSelection.getImportedAdvancedGermplasmList();
@@ -488,33 +481,5 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		}
     	}
     	return messageSource.getMessage("nursery.advance.nursery.empty.method.error", new String[] {name}, locale);
-    }
-    
-    private String getBreedingMethodIdFromStudy(List<Variable> varList) throws MiddlewareQueryException {
-    	String code = null;
-    	String name = null;
-    	for(Variable var : varList){
-    		if (var.getValue() != null && !var.getValue().equalsIgnoreCase("") && !var.getValue().equalsIgnoreCase("0")) {
-	    		if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_ID.getId()){    			
-	    			return var.getValue();
-	    		} else if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_CODE.getId()) {
-	    			code = var.getValue();
-	    		} else if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD.getId()) {
-	    			name = var.getValue();
-	    		}
-    		}
-    	}
-    	Method method = null;
-    	if (code != null) {
-    		method = fieldbookMiddlewareService.getMethodByCode(code);
-    	}
-    	if (method == null && name != null) {
-    		method = fieldbookMiddlewareService.getMethodByName(name);
-    	}
-    	
-    	if (method != null) {
-    		return String.valueOf(method.getMid());
-    	}
-    	return null;
     }
 }

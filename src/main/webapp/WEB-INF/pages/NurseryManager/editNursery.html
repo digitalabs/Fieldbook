@@ -22,7 +22,7 @@
 			<div class="pull-left">
                 <img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="" />
 
-                <span class="fbk-nursery-heading">
+                <span class="fbk-nursery-heading nursery-name-display">
                     <span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
                     <span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
                     <span class="heading fieldmap-study-name fbk-hide" th:text="*{basicDetails[0].value}"></span>

@@ -130,16 +130,16 @@
 	
 	<bean id="exportOrderingSerpentineOverRangeService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl">
 	</bean>
+	
 	<bean id="exportOrderingSerpentineOverColumnService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl">
 	</bean>
+	
 	<bean id="exportOrderingRowColService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl">
 	</bean>
+	
 	<bean id="exportGermplasmListService" class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl">
 	</bean>
 	
-	<bean id="projectActivityService" class="com.efficio.fieldbook.web.common.service.impl.ProjectActivityServiceImpl">
-	</bean>
-
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<!-- one of the properties available; the maximum file size in bytes -->

@@ -251,21 +251,22 @@ public class ObservationMatrixController extends
 
 	private void updatePhenotypeValues(List<MeasurementData> measurementDataList, String value, int termId, int isNew) {
 		for(MeasurementData var : measurementDataList){
-			if(var != null && var.getMeasurementVariable().getTermId() == termId && 
-				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
-				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
-				if(isNew == 1){
-					var.setcValueId(null);
-					var.setCustomCategoricalValue(true);
-				} else{
-					var.setcValueId(value);
+			if(var != null && var.getMeasurementVariable().getTermId() == termId) {
+				if(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
+					!var.getMeasurementVariable().getPossibleValues().isEmpty()){
+					if(isNew == 1){
+						var.setcValueId(null);
+						var.setCustomCategoricalValue(true);
+					} else{
+						var.setcValueId(value);
+					}
+					var.setValue(value);
+					var.setAccepted(true);
+				}else{
+					var.setValue(value);
 				}
-				var.setValue(value);
-				var.setAccepted(true);
-			}else{
-				var.setValue(value);
+				break;
 			}
-			break;
 		}
 	}
 

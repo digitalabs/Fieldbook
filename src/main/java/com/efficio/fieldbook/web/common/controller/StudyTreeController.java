@@ -10,12 +10,15 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.dms.DmsProject;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
+
 import org.springframework.web.util.HtmlUtils;
 
 @Controller
@@ -47,6 +51,12 @@ public class StudyTreeController {
 	private StudyDataManager studyDataManager;
 	@Autowired
     public MessageSource messageSource;
+	
+	@Autowired
+	WorkbenchDataManager workbenchDataManager;
+	
+	@Autowired
+	HttpServletRequest request;
 
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
@@ -88,7 +98,7 @@ public class StudyTreeController {
 							instance = Database.CENTRAL;
 						}
 
-						List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
+						List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance, getProgramInContext().getUniqueID());
 						childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, isNursery, false, true,
 								fieldbookMiddlewareService, isFolderOnly);
 					
@@ -114,7 +124,7 @@ public class StudyTreeController {
 	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException{
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		int parentId = Integer.valueOf(parentKey);
-		List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId);
+		List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId, getProgramInContext().getUniqueID());
 		// convert reference to folder refence
 		List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
 		childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folRefs, isNursery, false, true, fieldbookMiddlewareService,
@@ -149,7 +159,7 @@ public class StudyTreeController {
 						instance = Database.CENTRAL;
 					}
 
-					List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
+					List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance, getProgramInContext().getUniqueID());
 					String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true,
 							fieldbookMiddlewareService, isFolderOnlyBool);
 					return jsonResponse;
@@ -161,7 +171,7 @@ public class StudyTreeController {
 			} else if (NumberUtils.isNumber(parentKey)) {
 
 				int parentId = Integer.valueOf(parentKey);
-				List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId);
+				List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId, getProgramInContext().getUniqueID());
 				// convert reference to folder refence
 				List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
 				return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, false, true, fieldbookMiddlewareService, isFolderOnlyBool);
@@ -180,7 +190,7 @@ public class StudyTreeController {
 	@ResponseBody
 	@RequestMapping(value = "/has/observations/{studyId}/{studyName}", method = RequestMethod.GET)
 	public Map<String, String> hasObservations(@PathVariable int studyId, @PathVariable String studyName) {
-		Map<String, String> dataResults = new HashMap();
+		Map<String, String> dataResults = new HashMap<String, String>();
 		
 		int datasetId;
 		try {
@@ -298,7 +308,7 @@ public class StudyTreeController {
 		Locale locale = LocaleContextHolder.getLocale();
 		try {
 			String folderId = req.getParameter("folderId");
-			studyDataManager.deleteEmptyFolder(Integer.parseInt(folderId));
+			studyDataManager.deleteEmptyFolder(Integer.parseInt(folderId), getProgramInContext().getUniqueID());
 			resultsMap.put("isSuccess", "1");
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.toString() + "\n" + e.getStackTrace());
@@ -324,5 +334,9 @@ public class StudyTreeController {
 			throw new Error(e.getMessage());
 		}
 		return resultsMap;
+	}
+	
+	private Project getProgramInContext() throws MiddlewareQueryException {
+		return ContextUtil.getProjectInContext(this.workbenchDataManager, this.request);
 	}
 }

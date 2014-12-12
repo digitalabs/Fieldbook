@@ -2449,6 +2449,27 @@ function editExperiment(tableIdentifier, expId, rowIndex) {
 	}
 }
 
+function isAllowedEditMeasurementDataCell(isShowErrorMessage){
+	'use strict';
+	var canEdit = $('body').data('needGenerateExperimentalDesign') === '1' ? false : true,
+			needToSaveFirst = $('body').data('needToSave') === '1' ? true : false;
+	if(isNursery() || canEdit){
+		// We show the ajax page here		
+		if(needToSaveFirst){
+			if(isShowErrorMessage){
+				showAlertMessage('', measurementsTraitsChangeWarning);
+			}
+		}else{
+			return true;
+		}
+	}else{
+		if(showErrorMessage){
+			showAlertMessage('', measurementWarningNeedGenExpDesign);
+		}
+	}
+	return false;
+}
+
 function showListTreeToolTip(node, nodeSpan) {
 	'use strict';
 	$.ajax({

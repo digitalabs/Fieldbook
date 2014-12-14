@@ -971,9 +971,9 @@ function doEnterFieldDetailsPageLoad() {
 
     });
 
-    if (locationSuggestionsFav.length > 0) {
-        $('#showFavoriteLocation').click();
-    }
+    //if (locationSuggestionsFav.length > 0) {
+    //    $('#showFavoriteLocation').click();
+    //}
 
     doPreselectValues(prevFieldLocationId, prevFieldId, prevBlockId);
 }
@@ -1009,13 +1009,13 @@ function doPreselectValues(locationId, fieldId, blockId) {
         //we now pre select it
         if(isFound){
             if(isFoundInFav){
+            	$('#'+getJquerySafeId('fieldLocationIdFavorite')).select2('data', locationDefaultData);
                 $('#showFavoriteLocation').prop('checked', true);
                 $('#showFavoriteLocation').change();
-                $('#'+getJquerySafeId('fieldLocationIdFavorite')).select2('data', locationDefaultData);
             }else{
+            	$('#'+getJquerySafeId('fieldLocationIdAll')).select2('data', locationDefaultData);
                 $('#showFavoriteLocation').prop('checked', false);
                 $('#showFavoriteLocation').change();
-                $('#'+getJquerySafeId('fieldLocationIdAll')).select2('data', locationDefaultData);
             }
             $('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val(locationDefaultData.id);
             //we preselect the fieldId

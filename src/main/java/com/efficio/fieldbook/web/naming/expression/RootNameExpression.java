@@ -1,3 +1,11 @@
+/**
+ Snametype: is null or contains a name type id number from the UDFLDS table. See below for some example Snametypes. 
+If not null and if the germplasm being advanced has a name of the specified type, then this is used as the root name of the advanced strain
+otherwise the preferred name of the source is used.
+If the root name is a cross string (contains one or more /s not enclosed within the range of a pair of parentheses) 
+then enclose the root name in parentheses. 
+*/
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;

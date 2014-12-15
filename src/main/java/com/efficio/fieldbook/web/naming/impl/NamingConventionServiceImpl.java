@@ -40,6 +40,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
+//    @Resource
+//    private RulesService rulesService;
+    
     @Resource
     private GermplasmDataManager germplasmDataManger;
     
@@ -53,8 +56,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 	
     @Override
-	public AdvanceResult advanceNursery(AdvancingNursery info,
-			Workbook workbook) throws MiddlewareQueryException {
+	public AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException {
 		
         Map<Integer, Method> breedingMethodMap = new HashMap<Integer, Method>();
         Map<String, Method> breedingMethodCodeMap = new HashMap<String, Method>();
@@ -189,22 +191,29 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
     	
             	Method method = row.getBreedingMethod();
+            	
+            	// setup Rules Here
+            	// 1. Snametype
+            	// FIXME : SnameType is not used!!!
             	String germplasmName = getGermplasmRootName(method.getSnametype(), row);
+            	// 2. Separator
+            	// 3. Prefix            	
             	String countPrefixExpression = germplasmName 
 									+ getNonNullValue(method.getSeparator()) 
 									+ getNonNullValue(method.getPrefix());
+            	// 4. Count
             	String countExpression = getNonNullValue(method.getCount());
+            	
+            	// 5. Suffix
             	String countSuffixExpression = getNonNullValue(method.getSuffix());
             	row.setRootName(germplasmName);
             	
-            	//prefix and suffix to count expects only 1 row
+            	// prefix and suffix to count expects only 1 row
             	String countPrefix = processCodeService.applyToName(countPrefixExpression, row).get(0);
             	String countSuffix = processCodeService.applyToName(countSuffixExpression, row).get(0);            	            
             	
-            	//may return more than 1 record, esp if sequence is used.
-            	List<String> names = processCodeService.applyToName(countExpression, row);
-
-            	
+            	// may return more than 1 record, esp if sequence is used.
+            	List<String> names = processCodeService.applyToName(countExpression, row);            	
             	
             	int lastCount = -1;
             	for (String evaluatedCount : names) {
@@ -212,7 +221,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             		if(!isCheckForDuplicateName){           			
                 		addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
             		}else{
-            			//this is for checking of duplicate name always in the DB, (checking of standardized and un-standardized)
+            			// this is for checking of duplicate name always in the DB, (checking of standardized and un-standardized)
 	            		Integer currentCount = getCount(evaluatedCount);
 	            		if (currentCount != null) {
 	            			if (currentCount <= lastCount) {
@@ -229,7 +238,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			            			} else {
 			            				if (row.getChangeDetail() == null) {
 				                    		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
-				                    		//index in java (starts at 0)
+				                    		// index in java (starts at 0)
 				                			row.getChangeDetail().setIndex(index-1); 
 				                			row.getChangeDetail().setOldAdvanceName(name);
 				                			Locale locale = LocaleContextHolder.getLocale();
@@ -261,8 +270,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	return value != null ? value : "";
     }
     
-    protected String getGermplasmRootName(Integer snametype, AdvancingSource row)
-    throws MiddlewareQueryException {
+    // 1. RootNameGeneratorRule
+    // FIXME : breedingMethodNameType NOT USED : hard coded 1 in the 'Expression'
+    protected String getGermplasmRootName(Integer breedingMethodSnameType, AdvancingSource row) throws MiddlewareQueryException {
     	
     	RootNameExpression expression = new RootNameExpression();
     	List<StringBuilder> builders = new ArrayList<StringBuilder>();
@@ -274,6 +284,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     				new Object[] {row.getGermplasm().getEntryId()}, LocaleContextHolder.getLocale())); 
     	}
     	return name;
+    	
     }
     
     private Integer getCount(String countStr) {

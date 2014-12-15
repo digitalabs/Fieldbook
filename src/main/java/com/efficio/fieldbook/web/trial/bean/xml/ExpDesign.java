@@ -70,4 +70,15 @@ public class ExpDesign  implements Serializable {
 		}
 		return "";
 	}
+	
+	public List<ListItem> getParameterList(String name){
+		if(parameters != null){
+			for(ExpDesignParameter param : parameters){
+				if(name != null && param.getName() != null && param.getName().equalsIgnoreCase(name)){
+					return param.getListItem();
+				}
+			}
+		}
+		return new ArrayList<ListItem>();
+	}
 }

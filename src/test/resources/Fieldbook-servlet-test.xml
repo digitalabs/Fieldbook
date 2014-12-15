@@ -67,8 +67,13 @@
 
 	<!-- Application Beans -->
 
-	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl" />
+	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl">
+		<property name="designRunner" ref="designRunner"></property>
+		<!-- <property name="designRunner" value="${design.runner}"></property> -->
+	</bean>
 
+	<bean id="designRunner" class="${design.runner}" />
+	
 	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
 
 	<bean id="fileService" class="com.efficio.fieldbook.service.FileServiceImpl"

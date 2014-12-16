@@ -241,11 +241,19 @@ public class OpenTrialControllerTest {
 	}
 	
 	@Test
-	public void testIsPreviewEditableIfStudyDetailsIsNotNullAndIdIsNukk(){
+	public void testIsPreviewEditableIfStudyDetailsIsNotNullAndIdIsNull(){
 		final OpenTrialController moleOpenTrialController = setupOpenTrialController();
 		Workbook originalWorkbook = new Workbook();		
 		StudyDetails studyDetails = new StudyDetails();
 		originalWorkbook.setStudyDetails(studyDetails);
+		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
+		Assert.assertEquals("Should return 1 since there is no existing study", "1", isPreviewEditable);
+	}
+	
+	@Test
+	public void testIsPreviewEditableIfOriginalWorkbookIsNull(){
+		final OpenTrialController moleOpenTrialController = setupOpenTrialController();
+		Workbook originalWorkbook = null;				
 		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
 		Assert.assertEquals("Should return 1 since there is no existing study", "1", isPreviewEditable);
 	}

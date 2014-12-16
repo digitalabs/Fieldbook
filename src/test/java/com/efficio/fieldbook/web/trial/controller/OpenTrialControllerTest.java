@@ -5,12 +5,14 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
+
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -219,6 +221,36 @@ public class OpenTrialControllerTest {
 		}
 	}
 
+	@Test
+	public void testIsPreviewEditableIfStudyDetailsIsExisting(){
+		final OpenTrialController moleOpenTrialController = setupOpenTrialController();
+		Workbook originalWorkbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setId(1);
+		originalWorkbook.setStudyDetails(studyDetails);
+		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
+		Assert.assertEquals("Should return 0 since there is already existing study", "0", isPreviewEditable);
+	}
+	
+	@Test
+	public void testIsPreviewEditableIfStudyDetailsIsNull(){
+		final OpenTrialController moleOpenTrialController = setupOpenTrialController();
+		Workbook originalWorkbook = new Workbook();		
+		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
+		Assert.assertEquals("Should return 1 since there is no existing study", "1", isPreviewEditable);
+	}
+	
+	@Test
+	public void testIsPreviewEditableIfStudyDetailsIsNotNullAndIdIsNukk(){
+		final OpenTrialController moleOpenTrialController = setupOpenTrialController();
+		Workbook originalWorkbook = new Workbook();		
+		StudyDetails studyDetails = new StudyDetails();
+		originalWorkbook.setStudyDetails(studyDetails);
+		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
+		Assert.assertEquals("Should return 1 since there is no existing study", "1", isPreviewEditable);
+	}
+	
+	
 	protected void handleUnexpectedException(Exception e) {
 		fail("Unexpected error during unit test : " + e.getMessage());
 	}

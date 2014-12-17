@@ -14,13 +14,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.rules.CountRule;
-import com.efficio.fieldbook.web.naming.rules.PrefixRule;
-import com.efficio.fieldbook.web.naming.rules.RootNameGeneratorRule;
 import com.efficio.fieldbook.web.naming.rules.Rule;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
-import com.efficio.fieldbook.web.naming.rules.SeparatorRule;
-import com.efficio.fieldbook.web.naming.rules.SuffixRule;
+import com.efficio.fieldbook.web.naming.rules.naming.CountRule;
+import com.efficio.fieldbook.web.naming.rules.naming.PrefixRule;
+import com.efficio.fieldbook.web.naming.rules.naming.RootNameGeneratorRule;
+import com.efficio.fieldbook.web.naming.rules.naming.SeparatorRule;
+import com.efficio.fieldbook.web.naming.rules.naming.SuffixRule;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 

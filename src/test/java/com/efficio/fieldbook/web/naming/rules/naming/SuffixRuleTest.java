@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.naming.rules;
+package com.efficio.fieldbook.web.naming.rules.naming;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.efficio.fieldbook.web.naming.impl.ProcessCodeServiceImpl;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 

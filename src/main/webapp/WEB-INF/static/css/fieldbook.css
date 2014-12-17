@@ -345,6 +345,9 @@ div.dataTables_scrollBody table.table-curved {
 #spinner-wrap img{
     padding-top: 45px;
 }
+.modal-autofit {
+	width: 90%;
+}
 .modal-extra-large {
     width: 950px;
 }

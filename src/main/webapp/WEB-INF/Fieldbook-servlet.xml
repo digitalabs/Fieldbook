@@ -296,6 +296,12 @@
     	scope="request">
     	<aop:scoped-proxy/>
     </bean>
+    
+    <bean id="userDataManager" factory-bean="managerFactory"
+    	factory-method="getUserDataManager"
+    	scope="request">
+    	<aop:scoped-proxy/>
+    </bean>
    	
    	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
    	

@@ -24,10 +24,18 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.efficio.pojos.treeview.TreeNode;
+import com.efficio.pojos.treeview.TreeTableNode;
 import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
 
 /**
@@ -35,6 +43,8 @@ import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
  */
 public class TreeViewUtil {
 	
+	private static final Logger LOG = LoggerFactory.getLogger(TreeViewUtil.class);
+    
 	/**
 	 * Convert references to json.
 	 *
@@ -196,6 +206,41 @@ public class TreeViewUtil {
         }
         return treeNodes;
     }
+    
+    /**
+     * Convert list of germplasmList to tree table nodes.
+     *
+     * @param germplasmLists the germplasm lists
+     * @return the list
+     */
+    public static List<TreeTableNode> convertGermplasmListToTreeTableNodes(
+    		List<GermplasmList> germplasmLists, 
+    		UserDataManager userDataManager,
+    		GermplasmListManager germplasmListManager) {
+        List<TreeTableNode> treeTableNodes = new ArrayList<TreeTableNode>();
+        if (germplasmLists != null && !germplasmLists.isEmpty()) {
+            for (GermplasmList germplasmList : germplasmLists) {
+            	TreeTableNode node = convertGermplasmListToTreeTableNode(germplasmList, 
+            			userDataManager, germplasmListManager);
+            	if(node != null) {
+            		treeTableNodes.add(node);
+            	}
+            }
+        }
+        return treeTableNodes;
+    }
+    
+    private static String getDescriptionForDisplay(GermplasmList germplasmList){
+        String description = "-";
+        if(germplasmList != null && germplasmList.getDescription() != null && germplasmList.getDescription().length() != 0){
+            description = germplasmList.getDescription().replaceAll("<", "&lt;");
+            description = description.replaceAll(">", "&gt;");
+            if(description.length() > 27){
+                description = description.substring(0, 27) + "...";
+            }
+        }
+        return description;
+    }
 
 	/**
 	 * Convert reference to tree node.
@@ -306,6 +351,82 @@ public class TreeViewUtil {
 	    
 	    return treeNode;
 	}
+	
+	/**
+	 * Convert germplasm list to tree node.
+	 *
+	 * @param germplasmList the germplasm list
+	 * @return the tree node
+	 */
+	private static TreeTableNode convertGermplasmListToTreeTableNode(
+			GermplasmList germplasmList, 
+			UserDataManager userDataManager,
+			GermplasmListManager germplasmListManager) {
+	    TreeTableNode treeTableNode = new TreeTableNode();
+	    
+	    treeTableNode.setId(germplasmList.getId().toString());
+	    treeTableNode.setName(germplasmList.getName());
+	    treeTableNode.setDescription(getDescriptionForDisplay(germplasmList));
+	    treeTableNode.setType(getTypeString(germplasmList.getType(), germplasmListManager));
+	    treeTableNode.setOwner(getOwnerListName(germplasmList.getUserId(),userDataManager));
+	    
+	    treeTableNode.setIsFolder(germplasmList.getType() != null 
+	            && "FOLDER".equals(germplasmList.getType()) ? "1" : "0");
+	    int noOfEntries = germplasmList.getListData().size();
+	    treeTableNode.setNoOfEntries(noOfEntries==0?"":String.valueOf(noOfEntries));
+	    treeTableNode.setParentId(getParentId(germplasmList));
+	    return treeTableNode;
+	}
+	
+	private static String getParentId(GermplasmList germplasmList) {
+		Integer parentId = germplasmList.getParentId();
+		if(parentId==null) {
+			if(germplasmList.getId()>0) {
+				return "CENTRAL";
+			} else {
+				return "LOCAL";
+			}
+		}
+		return String.valueOf(parentId);
+	}
+
+	private static String getTypeString(String typeCode, GermplasmListManager germplasmListManager) {
+        try{
+            List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
+
+            for (UserDefinedField listType : listTypes) {
+                if(typeCode.equals(listType.getFcode())){
+                    return listType.getFname();
+                }
+            }
+        }catch(MiddlewareQueryException ex){
+            LOG.error("Error in getting list types.", ex);
+            return "Error in getting list types.";
+        }
+
+        return "Germplasm List";
+    }
+	
+	private static String getOwnerListName(Integer userId, UserDataManager userDataManager) {
+        try{
+            User user=userDataManager.getUserById(userId);
+            if(user != null){
+                int personId=user.getPersonid();
+                Person p =userDataManager.getPersonById(personId);
+
+                if(p!=null){
+                    return p.getFirstName()+" "+p.getMiddleName() + " "+p.getLastName();
+                }else{
+                    return user.getName();
+                }
+            } else {
+                return "";
+            }
+        } catch(MiddlewareQueryException ex){
+            LOG.error("Error with getting list owner name of user with id: " + userId, ex);
+            return "";
+        }
+    }
 	
 	/**
 	 * Convert tree view to json.

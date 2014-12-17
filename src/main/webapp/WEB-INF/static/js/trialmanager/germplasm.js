@@ -122,16 +122,12 @@
 
     document.onLoadGermplasmDetails = function () {
 
-
-        displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
-            var currentFolderName = node.data.title;
-            $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
-        });
+    	displayGermplasmListTreeTable('germplasmTree');
 
         changeBrowseGermplasmButtonBehavior(false);
 
         $('#listTreeModal').on('hide.bs.modal', function () {
-            $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
+        	displayGermplasmListTreeTable('germplasmTree');
             changeBrowseGermplasmButtonBehavior(false);
             $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').hide();
             $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').hide();

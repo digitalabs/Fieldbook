@@ -52,6 +52,7 @@ import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
@@ -69,7 +70,7 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 public class LabelPrintingController extends AbstractBaseFieldbookController{
  
      /** The Constant LOG. */
-     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
     
     /** The Constant URL. */
     public static final String URL = "/LabelPrinting/specifyLabelDetails";
@@ -92,6 +93,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     
     /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
+    
+    private static final int STANDARD_PRESET = 0;
+    private static final int USER_PRESET = 1;
     
     /** The message source. */
     @Resource
@@ -381,6 +385,30 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
 	    }
     	return results;
 	}
+    
+    @ResponseBody
+    @RequestMapping(value="/presets/list", method = RequestMethod.GET)
+    public List<LabelPrintingPresets> getLabelPrintingPresets(){
+    	List<LabelPrintingPresets> presetLists = new ArrayList<LabelPrintingPresets>();
+    	presetLists.addAll(getStandardPresets());
+    	presetLists.addAll(getUserPresets());
+    	return presetLists;
+    }
+    
+    protected List<LabelPrintingPresets> getStandardPresets(){
+    	List<LabelPrintingPresets> presetLists = new ArrayList<LabelPrintingPresets>();
+    	for(int i = 0 ; i < 5 ; i++){
+    		presetLists.add(new LabelPrintingPresets(i, "Name-"+i, STANDARD_PRESET));
+    	}
+    	return presetLists;
+    }
+    protected List<LabelPrintingPresets> getUserPresets(){
+    	List<LabelPrintingPresets> presetLists = new ArrayList<LabelPrintingPresets>();
+    	for(int i = 0 ; i < 5 ; i++){
+    		presetLists.add(new LabelPrintingPresets(i, "Name-"+i, USER_PRESET));
+    	}
+    	return presetLists;
+    }
     
     private String getFileNameAndSetFileLocations(String extension) {
     	String fileName = getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + extension;

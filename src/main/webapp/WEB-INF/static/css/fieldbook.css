@@ -1721,3 +1721,12 @@ td.accepted-value {
   background-color: #E6F5FF;
   color: #3366CC;
 }
+.fb-delete-settings{
+	color: #000000;
+}
+.select2-results .select2-disabled{
+	background-color: #ffffff;
+}
+.fbk-left-padding{
+	padding-left: 10px;
+}

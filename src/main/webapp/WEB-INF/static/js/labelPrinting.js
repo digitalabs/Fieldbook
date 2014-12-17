@@ -175,3 +175,42 @@ function showExportModal() {
 	$('#export-type').select2('data', selectedData);
 	$('#export-label-data-modal').modal('show');
 }
+
+showDeleteSavedSettings = function(){
+		'use strict';
+		var savedSettingsVal = $('#savedSettings').val();
+		if(savedSettingsVal === ''){
+			$('.fb-delete-settings').addClass('fbk-hide');
+		} else{
+			var settings = savedSettingsVal.split(':')
+			if(settings[0] === '1'){
+				//meaning user preset, we show the delete
+				$('.fb-delete-settings').removeClass('fbk-hide');
+			}else{
+				$('.fb-delete-settings').addClass('fbk-hide');
+			}
+		}		 				 
+};
+
+initializeUserPresets = function(){
+	'use strict';
+	$.ajax({
+		url: '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/list',
+		type: 'GET',
+		data: '',
+	    success: function(data){
+	    	$('#savedSettings').append(new Option('Please Choose', ''));
+	    	var type =  null;
+	    	for(var i = 0 ; i < data.length ; i++){
+	    		if(i !== 0 && type !== data[i].type){
+	    			type = data[i].type;
+	    			$('#savedSettings').append(new Option('-----------------------------------', ''));	    			
+	    		}else if(i === 0){
+	    			type = data[i].type;
+	    		}
+	    		$('#savedSettings').append(new Option(data[i].name, data[i].type + ':' + data[i].id ));
+	    	}
+	    	
+	   }
+	});
+};

@@ -89,3 +89,4 @@ ehthumbs.db
 Thumbs.db
 *.iml
 atlassian-ide-plugin.xml
+/bin

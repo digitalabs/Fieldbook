@@ -1,7 +1,6 @@
 /**
  * Created by cyrus on 7/2/14.
  */
-
 /*global angular, displayStudyGermplasmSection, openListTree, displaySelectedGermplasmDetails*/
 
 
@@ -18,15 +17,12 @@
                 displaySelectedGermplasmDetails();
             }
             
-            
             $scope.labels = {};
             $scope.labels.germplasmFactors = {
                 label: 'Temp label here',
                 placeholderLabel: 'Temp placeholder here'
             };
 
-            
-            
             $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
 
             displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement,
@@ -59,9 +55,8 @@
                 TrialManagerDataService.updateTrialMeasurementRowCount(0);
                 TrialManagerDataService.applicationData.germplasmListCleared = true;
                 TrialManagerDataService.applicationData.germplasmListSelected = false;
-                
             };
-         
+            
             $(document).on('germplasmListUpdated', function () {
                 TrialManagerDataService.applicationData.germplasmListSelected = true;
             });
@@ -92,7 +87,6 @@
                     cache: false,
                     data: ''
                 }).success(function (html) {
-                	
                 	$('#liExportList').removeClass('fbk-dropdown-select-fade');
                     $('#imported-germplasm-list').html(html);
                     $('#entries-details').css('display', 'block');
@@ -110,7 +104,6 @@
 
 
             };
-            
         }]);
 })();
 
@@ -122,16 +115,12 @@
 
     document.onLoadGermplasmDetails = function () {
 
-
-        displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
-            var currentFolderName = node.data.title;
-            $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
-        });
+    	displayGermplasmListTreeTable('germplasmTree');
 
         changeBrowseGermplasmButtonBehavior(false);
 
         $('#listTreeModal').on('hide.bs.modal', function () {
-            $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
+        	displayGermplasmListTreeTable('germplasmTree');
             changeBrowseGermplasmButtonBehavior(false);
             $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').hide();
             $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').hide();

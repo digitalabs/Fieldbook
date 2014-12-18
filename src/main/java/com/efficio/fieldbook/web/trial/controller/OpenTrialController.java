@@ -425,13 +425,22 @@ public class OpenTrialController extends
     @RequestMapping(value = "/load/preview/measurement", method = RequestMethod.GET)
     public String loadPreviewMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
         Workbook workbook = userSelection.getTemporaryWorkbook();
+        Workbook originalWorkbook = userSelection.getWorkbook();
         List<MeasurementVariable> variates = workbook.getVariates();
         List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariables();
         List<MeasurementRow> observations = workbook.getObservations();
         Integer measurementDatasetId = workbook.getMeasurementDatesetId();
-        userSelection.setMeasurementRowList(workbook.getObservations());
-        model.addAttribute(IS_EXP_DESIGN_PREVIEW, "0");
+        userSelection.setMeasurementRowList(workbook.getObservations());  
+        model.addAttribute(IS_EXP_DESIGN_PREVIEW, isPreviewEditable(originalWorkbook));
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations, measurementDatasetId, variates, model);
+    }
+    
+    protected String isPreviewEditable(Workbook originalWorkbook){
+    	String isPreviewEditable = "0";
+        if(originalWorkbook == null || originalWorkbook.getStudyDetails() == null || originalWorkbook.getStudyDetails().getId() == null){
+        	isPreviewEditable = "1";
+        }
+        return isPreviewEditable;
     }
 
     @RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)

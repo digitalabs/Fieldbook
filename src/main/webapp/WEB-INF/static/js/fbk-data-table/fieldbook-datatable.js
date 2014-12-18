@@ -819,7 +819,7 @@ $(function(){
 					markCellAsAccepted(colvindex, termId, ui.target);
 					break;
 				case "markMissing":
-					markCellAsMissing(colvindex, termId , '0' , 1 , ui.target);
+					markCellAsMissing(colvindex, termId , 'missing' , 1 , ui.target);
 					break;
 			}
 		},

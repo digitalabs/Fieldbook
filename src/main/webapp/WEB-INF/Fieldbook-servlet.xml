@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
        		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-3.2.xsd
@@ -12,300 +14,326 @@
             http://www.springframework.org/schema/aop 
 			http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
-	<!-- Declare property file locations  -->
-	<context:property-placeholder location="classpath:fieldbook.properties, classpath:workbench.properties" />
+    <!-- Declare property file locations  -->
+    <context:property-placeholder
+            location="classpath:fieldbook.properties, classpath:workbench.properties"/>
 
-	<!-- **************************************************************** -->
-	<!--  RESOURCE FOLDERS CONFIGURATION                                  -->
-	<!--  Dispatcher configuration for serving static resources           -->
-	<!-- **************************************************************** -->
-	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
+    <!-- **************************************************************** -->
+    <!--  RESOURCE FOLDERS CONFIGURATION                                  -->
+    <!--  Dispatcher configuration for serving static resources           -->
+    <!-- **************************************************************** -->
+    <mvc:resources mapping="/static/**" location="/WEB-INF/static/"/>
 
 
-	<mvc:interceptors>
-       <bean class="com.efficio.fieldbook.web.interceptor.FieldbookHandlerInterceptor" />
-    	
-	    <bean id="webContentInterceptor" 
-          class="org.springframework.web.servlet.mvc.WebContentInterceptor">
-        <property name="cacheSeconds" value="0"/>
-        <property name="useExpiresHeader" value="true"/>
-        <property name="useCacheControlHeader" value="true"/>
-        <property name="useCacheControlNoStore" value="true"/>
+    <mvc:interceptors>
+        <bean class="com.efficio.fieldbook.web.interceptor.FieldbookHandlerInterceptor"/>
+
+        <bean id="webContentInterceptor"
+              class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+            <property name="cacheSeconds" value="0"/>
+            <property name="useExpiresHeader" value="true"/>
+            <property name="useCacheControlHeader" value="true"/>
+            <property name="useCacheControlNoStore" value="true"/>
+        </bean>
+    </mvc:interceptors>
+
+
+    <!-- **************************************************************** -->
+    <!--  SPRING ANNOTATION PROCESSING                                    -->
+    <!-- **************************************************************** -->
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.efficio.fieldbook"/>
+
+    <!-- **************************************************************** -->
+    <!-- MESSAGE EXTERNALIZATION/INTERNATIONALIZATION -->
+    <!-- Standard Spring MessageSource implementation -->
+    <!-- **************************************************************** -->
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="Messages"/>
     </bean>
-    </mvc:interceptors> 
-    
-    
-   
 
-	<!-- **************************************************************** -->
-	<!--  SPRING ANNOTATION PROCESSING                                    -->
-	<!-- **************************************************************** -->
-	<mvc:annotation-driven />
-	<context:component-scan base-package="com.efficio.fieldbook" />
+    <!-- **************************************************************** -->
+    <!-- THYMELEAF-SPECIFIC ARTIFACTS -->
+    <!-- TemplateResolver <- TemplateEngine <- ViewResolver -->
+    <!-- **************************************************************** -->
 
-	<!-- **************************************************************** -->
-	<!-- MESSAGE EXTERNALIZATION/INTERNATIONALIZATION -->
-	<!-- Standard Spring MessageSource implementation -->
-	<!-- **************************************************************** -->
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename" value="Messages" />
-	</bean>
+    <bean id="templateResolver"
+          class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".html"/>
+        <property name="templateMode" value="HTML5"/>
+        <!-- Template cache is true by default. Set to false if you want -->
+        <!-- templates to be automatically updated when modified. -->
+        <property name="cacheable" value="false"/>
+    </bean>
 
-	<!-- **************************************************************** -->
-	<!-- THYMELEAF-SPECIFIC ARTIFACTS -->
-	<!-- TemplateResolver <- TemplateEngine <- ViewResolver -->
-	<!-- **************************************************************** -->
-
-	<bean id="templateResolver"
-		class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-		<property name="prefix" value="/WEB-INF/pages/" />
-		<property name="suffix" value=".html" />
-		<property name="templateMode" value="HTML5" />
-		<!-- Template cache is true by default. Set to false if you want -->
-		<!-- templates to be automatically updated when modified. -->
-		<property name="cacheable" value="false" />
-	</bean>
-
-	<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
-		<property name="templateResolver" ref="templateResolver" />
-		<property name="additionalDialects">
-	        <set>
-	            <bean class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect"/>
-	            <bean class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
-	        </set>
+    <bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="templateResolver" ref="templateResolver"/>
+        <property name="additionalDialects">
+            <set>
+                <bean class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect"/>
+                <bean class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect"/>
+            </set>
         </property>
-	</bean>
+    </bean>
 
-	<bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
-		<property name="templateEngine" ref="templateEngine" />
-	</bean>
+    <bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
+        <property name="templateEngine" ref="templateEngine"/>
+    </bean>
 
 
-	<!-- Application Beans -->
-	
-	<bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
-		<property name="programLocationsUrl" value="${url.program.locations}" />
-		<property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}" />
-		<property name="germplasmImportUrl" value="${url.germplasm.import}" />
-		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />	
-		<property name="uploadDirectory" value="${upload.directory}" />	
-	</bean>
+    <!-- Application Beans -->
 
-	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl">
-		<property name="designRunner" ref="designRunner"></property>
-	</bean>
+    <bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
+        <property name="programLocationsUrl" value="${url.program.locations}"/>
+        <property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}"/>
+        <property name="germplasmImportUrl" value="${url.germplasm.import}"/>
+        <property name="germplasmDetailsUrl" value="${url.germplasm.details}"/>
+        <property name="uploadDirectory" value="${upload.directory}"/>
+    </bean>
 
-	<bean id="designRunner" class="${design.runner}"/>
+    <bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl">
+        <property name="designRunner" ref="designRunner"></property>
+    </bean>
 
-	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
+    <bean id="designRunner" class="${design.runner}"/>
 
-	<bean id="fileService" class="com.efficio.fieldbook.service.FileServiceImpl"
-		init-method="init">
-		<constructor-arg value="${upload.directory}" />
-	</bean>
-	
-	<bean id="exportAdvanceListService" class="com.efficio.fieldbook.web.common.service.impl.ExportAdvanceListServiceImpl">
-	</bean>
-	
-	<bean id="measurementsGeneratorService" class="com.efficio.fieldbook.web.nursery.service.impl.MeasurementsGeneratorServiceImpl">
-	</bean>
-	
-	<bean id="importGermplasmfileService" class="com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl">
-	</bean>
+    <bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl"/>
 
-	<bean id="importWorkbookFileService" class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl">
-	</bean>
+    <bean id="fileService" class="com.efficio.fieldbook.service.FileServiceImpl"
+          init-method="init">
+        <constructor-arg value="${upload.directory}"/>
+    </bean>
 
-	<bean id="fieldmapService" class="com.efficio.fieldbook.service.FieldMapServiceImpl">
-	</bean>
-	
-	<bean id="verticalFieldMapLayoutIterator" class="com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator">
-	</bean>
-	
-	<bean id="horizontalFieldMapLayoutIterator" class="com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator">
-	</bean>
-	
-	<bean id="labelPrintingService" class="com.efficio.fieldbook.service.LabelPrintingServiceImpl">
-	</bean>
+    <bean id="exportAdvanceListService"
+          class="com.efficio.fieldbook.web.common.service.impl.ExportAdvanceListServiceImpl">
+    </bean>
 
-	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl">
-	</bean>
-	
-	<bean id="exportOrderingSerpentineOverRangeService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl">
-	</bean>
-	
-	<bean id="exportOrderingSerpentineOverColumnService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl">
-	</bean>
-	
-	<bean id="exportOrderingRowColService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl">
-	</bean>
-	
-	<bean id="exportGermplasmListService" class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl">
-	</bean>
-	
-	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<!-- one of the properties available; the maximum file size in bytes -->
-		<property name="maxUploadSize" value="10000000" />
-	</bean>
+    <bean id="measurementsGeneratorService"
+          class="com.efficio.fieldbook.web.nursery.service.impl.MeasurementsGeneratorServiceImpl">
+    </bean>
 
-	
-	<bean id="advancingNursery" class="com.efficio.fieldbook.web.nursery.bean.AdvancingNursery"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-	
-	<bean id="userSelection" class="com.efficio.fieldbook.web.common.bean.UserSelection"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-	
-	<bean id="seedSelection" class="com.efficio.fieldbook.web.inventory.bean.SeedSelection"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-	
-	<bean id="userFieldmap" class="com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-	
-	<bean id="userLabelPrinting" class="com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
+    <bean id="importGermplasmfileService"
+          class="com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl">
+    </bean>
 
-	
-	<bean id="paginationListSelection" class="com.efficio.fieldbook.web.common.bean.PaginationListSelection"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-	
-	<bean id="possibleValuesCache" class="com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-	<!-- **************************************************************** -->
-	<!-- RESTful Web Service -->
-	<!-- **************************************************************** -->
+    <bean id="importWorkbookFileService"
+          class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl">
+    </bean>
 
-	<bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-   		<property name="supportedMediaTypes" value="application/json" />
-	</bean>
+    <bean id="fieldmapService" class="com.efficio.fieldbook.service.FieldMapServiceImpl">
+    </bean>
 
-	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-   		<property name="messageConverters">
-       		<list>
-           		<ref bean="jsonConverter" />
-           		<bean class="org.springframework.http.converter.StringHttpMessageConverter" />
-       		</list>
-   		</property>    
-	</bean>
+    <bean id="verticalFieldMapLayoutIterator"
+          class="com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator">
+    </bean>
 
-	<!-- **************************************************************** -->
-	<!-- MIDDLEWARE Database Managers -->
-	<!-- **************************************************************** -->
-	
-	  <bean id="workbenchDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean id="horizontalFieldMapLayoutIterator"
+          class="com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator">
+    </bean>
+
+    <bean id="labelPrintingService" class="com.efficio.fieldbook.service.LabelPrintingServiceImpl">
+    </bean>
+
+    <bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl">
+    </bean>
+
+    <bean id="exportOrderingSerpentineOverRangeService"
+          class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl">
+    </bean>
+
+    <bean id="exportOrderingSerpentineOverColumnService"
+          class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl">
+    </bean>
+
+    <bean id="exportOrderingRowColService"
+          class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl">
+    </bean>
+
+    <bean id="exportGermplasmListService"
+          class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl">
+    </bean>
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="10000000"/>
+    </bean>
+
+
+    <bean id="advancingNursery" class="com.efficio.fieldbook.web.nursery.bean.AdvancingNursery"
+          scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="userSelection" class="com.efficio.fieldbook.web.common.bean.UserSelection"
+          scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="seedSelection" class="com.efficio.fieldbook.web.inventory.bean.SeedSelection"
+          scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="userFieldmap" class="com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap"
+          scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="userLabelPrinting"
+          class="com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting"
+          scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
+
+    <bean id="paginationListSelection"
+          class="com.efficio.fieldbook.web.common.bean.PaginationListSelection"
+          scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="possibleValuesCache"
+          class="com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache"
+          scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+    <!-- **************************************************************** -->
+    <!-- RESTful Web Service -->
+    <!-- **************************************************************** -->
+
+    <bean id="jsonConverter"
+          class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="supportedMediaTypes" value="application/json"/>
+    </bean>
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <property name="messageConverters">
+            <list>
+                <ref bean="jsonConverter"/>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- **************************************************************** -->
+    <!-- MIDDLEWARE Database Managers -->
+    <!-- **************************************************************** -->
+
+    <bean id="workbenchDataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${workbench.driver}"/>
         <property name="url" value="${workbench.url}"/>
         <property name="username" value="${workbench.username}"/>
         <property name="password" value="${workbench.password}"/>
     </bean>
-    
-    <bean id="workbenchSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+
+    <bean id="workbenchSessionFactory"
+          class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="workbenchDataSource"/>
-        <property name="configLocation" value="classpath:ibpworkbench_hib.cfg.xml"/>
+        <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
     </bean>
-    
-    
-    <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request"  destroy-method="close">
+
+
+    <bean id="workbenchHibernateSessionProvider"
+          class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider"
+          scope="request" destroy-method="close">
         <property name="sessionFactory" ref="workbenchSessionFactory"/>
-        
+
         <!-- JDK Standard Proxy around this request scoped bean, so we can use it on longer scoped beans -->
         <aop:scoped-proxy proxy-target-class="false"/>
     </bean>
-    
-    <bean id="managerFactoryProvider" 
-    	class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency"  destroy-method="closeAllSessionFactories">
-    	<constructor-arg ref="workbenchDataManager" />
-    	<property name="maxCachedLocalSessionFactories" value="1" />
-    	<property name="localPort" value="${workbench.port}" />
-    	<property name="localHost" value="${workbench.host}" />
-    	<property name="localUsername" value="${workbench.username}"/>
+
+    <bean id="managerFactoryProvider"
+          class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency"
+          destroy-method="closeAllSessionFactories">
+        <constructor-arg ref="workbenchDataManager"/>
+        <property name="maxCachedLocalSessionFactories" value="1"/>
+        <property name="localPort" value="${workbench.port}"/>
+        <property name="localHost" value="${workbench.host}"/>
+        <property name="localUsername" value="${workbench.username}"/>
         <property name="localPassword" value="${workbench.password}"/>
-    	<property name="centralPort" value="${workbench.port}" />
-    	<property name="centralHost" value="${workbench.host}" />
-    	<property name="centralUsername" value="${workbench.username}"/>
+        <property name="centralPort" value="${workbench.port}"/>
+        <property name="centralHost" value="${workbench.host}"/>
+        <property name="centralUsername" value="${workbench.username}"/>
         <property name="centralPassword" value="${workbench.password}"/>
     </bean>
 
     <bean id="managerFactory" name="managerFactory"
-    	factory-bean="managerFactoryProvider"
-    	factory-method="createInstance"
-    	scope="request" destroy-method="close">
-    	<aop:scoped-proxy/>
+          factory-bean="managerFactoryProvider"
+          factory-method="createInstance"
+          scope="request" destroy-method="close">
+        <aop:scoped-proxy/>
     </bean>
-    
-    <bean id="workbenchDataManager"
-        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl" destroy-method="close">
-        <constructor-arg ref="workbenchHibernateSessionProvider"  />
-    </bean>
-    
-     <bean id="ontologyDataManagerV2" factory-bean="managerFactory"
-    	factory-method="getNewOntologyDataManager"
-    	scope="request">
-    	<aop:scoped-proxy/>
-    </bean>
-    
-    <bean id="germplasmDataManagerV2" factory-bean="managerFactory"
-    	factory-method="getGermplasmDataManager"
-    	scope="request">
-    	<aop:scoped-proxy/>
-    </bean>
-    
-    <bean id="dataImportService" factory-bean="managerFactory"
-    	factory-method="getDataImportService"
-    	scope="request" >
-    	<aop:scoped-proxy/>
-    </bean>
-    
-    <bean id="fieldbookMiddlewareService" factory-bean="managerFactory"
-    	factory-method="getFieldbookMiddlewareService"
-    	scope="request">
-    	<aop:scoped-proxy/>
-    </bean>
-    
-    <bean id="inventoryMiddlewareService" factory-bean="managerFactory"
-    	factory-method="getInventoryMiddlewareService"
-    	scope="request">
-    	<aop:scoped-proxy/>
-    </bean>
-    
-    <bean id="ontologyService" factory-bean="managerFactory"
-    	factory-method="getOntologyService"
-    	scope="request" >
-    	<aop:scoped-proxy/>
-    </bean>
-    
-    <bean id="studyDataManagerV2" factory-bean="managerFactory"
-    	factory-method="getNewStudyDataManager"
-    	scope="request">
-    	<aop:scoped-proxy/>
-    </bean>
-    
-    <bean id="germplasmListManager" factory-bean="managerFactory"
-    	factory-method="getGermplasmListManager"
-    	scope="request">
-    	<aop:scoped-proxy/>
-    </bean>
-   	
-   	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
-   	
-   	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
 
-    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
+    <bean id="workbenchDataManager"
+          class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl"
+          destroy-method="close">
+        <constructor-arg ref="workbenchHibernateSessionProvider"/>
+    </bean>
+
+    <bean id="presetDataManager" factory-bean="managerFactory" factory-method="getPresetDataManager"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="ontologyDataManagerV2" factory-bean="managerFactory"
+          factory-method="getNewOntologyDataManager"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="germplasmDataManagerV2" factory-bean="managerFactory"
+          factory-method="getGermplasmDataManager"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="dataImportService" factory-bean="managerFactory"
+          factory-method="getDataImportService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="fieldbookMiddlewareService" factory-bean="managerFactory"
+          factory-method="getFieldbookMiddlewareService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="inventoryMiddlewareService" factory-bean="managerFactory"
+          factory-method="getInventoryMiddlewareService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="ontologyService" factory-bean="managerFactory"
+          factory-method="getOntologyService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="studyDataManagerV2" factory-bean="managerFactory"
+          factory-method="getNewStudyDataManager"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="germplasmListManager" factory-bean="managerFactory"
+          factory-method="getGermplasmListManager"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="springAppContextProvider"
+          class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
+
+    <bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
+
+    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory"
+          init-method="init">
         <!--TODO : possibly find a way to make list based on component scan of a certain package-->
         <property name="registeredExpressions">
             <list>
@@ -319,5 +347,5 @@
                 <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
             </list>
         </property>
-    </bean>    
+    </bean>
 </beans>

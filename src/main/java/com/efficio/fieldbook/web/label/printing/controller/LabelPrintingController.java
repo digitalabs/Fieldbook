@@ -11,12 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +24,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
+import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
+import org.generationcp.commons.context.ContextConstants;
+import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
@@ -59,6 +60,7 @@ import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
+import org.springframework.web.util.WebUtils;
 
 /**
  * The Class LabelPrintingController.
@@ -94,9 +96,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
     
-    private static final int STANDARD_PRESET = 0;
-    private static final int USER_PRESET = 1;
-    
     /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
@@ -129,7 +128,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             
             for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
                 fieldMapInfo = fieldMapInfoDetail;
-                hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(getUserLabelPrinting(), fieldMapInfoDetail);                
+                hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(
+						getUserLabelPrinting(), fieldMapInfoDetail);
             }
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -280,7 +280,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         } else {
         	response.setContentType("application/vnd.ms-excel");
         }
-        response.setHeader("Content-disposition","attachment; filename=" + fileName);
+        response.setHeader("Content-disposition", "attachment; filename=" + fileName);
 
         // the selected name + current date
         File xls = new File(getUserLabelPrinting().getFilenameDLLocation()); 
@@ -385,31 +385,46 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
 	    }
     	return results;
 	}
-    
-    @ResponseBody
-    @RequestMapping(value="/presets/list", method = RequestMethod.GET)
-    public List<LabelPrintingPresets> getLabelPrintingPresets(){
-    	List<LabelPrintingPresets> presetLists = new ArrayList<LabelPrintingPresets>();
-    	presetLists.addAll(getStandardPresets());
-    	presetLists.addAll(getUserPresets());
-    	return presetLists;
-    }
-    
-    protected List<LabelPrintingPresets> getStandardPresets(){
-    	List<LabelPrintingPresets> presetLists = new ArrayList<LabelPrintingPresets>();
-    	for(int i = 0 ; i < 5 ; i++){
-    		presetLists.add(new LabelPrintingPresets(i, "Name-"+i, STANDARD_PRESET));
-    	}
-    	return presetLists;
-    }
-    protected List<LabelPrintingPresets> getUserPresets(){
-    	List<LabelPrintingPresets> presetLists = new ArrayList<LabelPrintingPresets>();
-    	for(int i = 0 ; i < 5 ; i++){
-    		presetLists.add(new LabelPrintingPresets(i, "Name-"+i, USER_PRESET));
-    	}
-    	return presetLists;
-    }
-    
+
+	@ResponseBody
+	@RequestMapping(value = "/presets/list", method = RequestMethod.GET)
+	public List<LabelPrintingPresets> getLabelPrintingPresets(HttpServletRequest request) {
+		ContextInfo contextInfo = (ContextInfo) WebUtils
+				.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
+
+		try {
+			return labelPrintingService
+					.getAllLabelPrintingPresets(contextInfo.getSelectedProjectId().intValue());
+		} catch (LabelPrintingException e) {
+			LOG.error(e.getMessage(), e);
+		}
+
+		return new ArrayList<LabelPrintingPresets>();
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/presets/{presetType}/{presetId}", method = RequestMethod.GET, produces = "application/json")
+	public LabelPrintingSetting getLabelPrintingSetting(@PathVariable int presetType,
+			@PathVariable int presetId) {
+		try {
+			final Unmarshaller parseXML = JAXBContext.newInstance(LabelPrintingSetting.class)
+					.createUnmarshaller();
+
+			// retrieve appropriate setting
+			String xmlToRead = labelPrintingService.getLabelPrintingPresetConfig(presetType,presetId);
+
+			return (LabelPrintingSetting) parseXML
+					.unmarshal(new StringReader(xmlToRead));
+
+		} catch (JAXBException e) {
+			LOG.error(e.getMessage(), e);
+		} catch (LabelPrintingException e) {
+			LOG.error(e.getMessage(), e);
+		}
+
+		return null;
+	}
+
     private String getFileNameAndSetFileLocations(String extension) {
     	String fileName = getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + extension;
     	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;

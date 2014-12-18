@@ -26,6 +26,8 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -43,6 +45,10 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.pojos.presets.ProgramPreset;
+import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.pojos.workbench.StandardPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -94,10 +100,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
     @Resource
     private ExportService exportService;
-    
-    /* (non-Javadoc)
-     * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
-     */
+
+	@Resource
+	private WorkbenchService workbenchService;
+
+	@Resource
+	private PresetDataManager presetDataManager;
+
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
+	 */
     @Override
     public String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances
             , UserLabelPrinting userLabelPrinting,
@@ -829,4 +841,55 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         	return false;
         }
     }
+
+	@Override
+	public List<LabelPrintingPresets> getAllLabelPrintingPresets(Integer programId)
+			throws LabelPrintingException {
+		try {
+			List<LabelPrintingPresets> allLabelPrintingPresets = new ArrayList<LabelPrintingPresets>();
+
+			// get all standard presets
+			// 1. get the crop name of the particular programId
+			final Project project = workbenchService.getProjectById(programId.longValue());
+			final String cropName = project.getCropType().getCropName();
+
+			// 2. retrieve the standard presets
+			for (StandardPreset preset : workbenchService.getStandardPresetByCrop(cropName)) {
+				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
+						LabelPrintingPresets.STANDARD_PRESET));
+			}
+
+			// add all program presets for fieldbook
+			final Integer fieldbookToolId = workbenchService.getFieldbookWebTool().getToolId().intValue();
+
+			for (ProgramPreset preset : presetDataManager
+					.getProgramPresetFromProgramAndTool(programId, fieldbookToolId)) {
+				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetsId(), preset.getName(),
+						LabelPrintingPresets.PROGRAM_PRESET));
+			}
+
+			return allLabelPrintingPresets;
+
+		} catch (MiddlewareQueryException e) {
+			throw new LabelPrintingException("label.printing.cannot.retrieve.presets",
+					"database.connectivity.error", e.getMessage());
+		}
+	}
+
+	@Override
+	public String getLabelPrintingPresetConfig(int presetType, int presetId) throws LabelPrintingException {
+		try {
+			if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
+				return workbenchService.getStandardPresetById(presetId).getConfiguration();
+			} else {
+				return presetDataManager.getProgramPresetById(presetId).getConfiguration();
+			}
+		} catch (MiddlewareQueryException e) {
+			throw new LabelPrintingException("label.printing.cannot.retrieve.presets",
+					"database.connectivity.error",e.getMessage());
+		} catch (NullPointerException e) {
+			throw new LabelPrintingException("label.printing.preset.does.not.exists",
+					"label.printing.preset.does.not.exists",e.getMessage());
+		}
+	}
 }

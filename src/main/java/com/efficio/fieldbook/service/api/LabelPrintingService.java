@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
@@ -86,4 +87,8 @@ public interface LabelPrintingService {
      * @return true, if successful
      */
     boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail);
+
+    List<LabelPrintingPresets> getAllLabelPrintingPresets(Integer programId) throws LabelPrintingException;
+
+    String getLabelPrintingPresetConfig(int presetType, int presetId) throws LabelPrintingException;
 }

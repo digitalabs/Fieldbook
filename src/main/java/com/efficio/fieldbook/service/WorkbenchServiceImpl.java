@@ -17,10 +17,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
-import org.generationcp.middleware.pojos.workbench.IbdbUserMap;
-import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.pojos.workbench.Tool;
+import org.generationcp.middleware.pojos.workbench.*;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 
@@ -45,6 +42,31 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     public List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) 
             throws MiddlewareQueryException{
         return workbenchDataManager.getTemplateSettings(templateSettingFilter);
+    }
+
+    @Override
+    public List<StandardPreset> getAllStandardPresets() throws MiddlewareQueryException {
+        return workbenchDataManager.getStandardPresetDAO().getAll();
+    }
+
+    @Override
+    public List<StandardPreset> getStandardPresetByCrop(String cropName) throws MiddlewareQueryException {
+        return workbenchDataManager.getStandardPresetFromCropAndTool(cropName,this.getFieldbookWebTool().getToolId().intValue());
+    }
+
+    @Override
+    public Tool getFieldbookWebTool() throws MiddlewareQueryException {
+        return workbenchDataManager.getToolWithName("fieldbook_web");
+    }
+
+    @Override
+    public StandardPreset getStandardPresetById(Integer id) throws MiddlewareQueryException {
+        return workbenchDataManager.getStandardPresetDAO().getById(id);
+    }
+
+    @Override
+    public StandardPreset saveOrUpdateStandardPresets(StandardPreset preset) throws MiddlewareQueryException{
+        return  workbenchDataManager.addStandardPreset(preset);
     }
     
     @Override

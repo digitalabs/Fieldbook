@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.pojos.workbench.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 
@@ -44,6 +45,16 @@ public interface WorkbenchService {
      */
     List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) 
             throws MiddlewareQueryException;
+
+    List<StandardPreset> getAllStandardPresets() throws MiddlewareQueryException;
+
+    List<StandardPreset> getStandardPresetByCrop(String cropName) throws MiddlewareQueryException;
+
+    Tool getFieldbookWebTool() throws MiddlewareQueryException;
+
+    StandardPreset getStandardPresetById(Integer id) throws MiddlewareQueryException;
+
+    StandardPreset saveOrUpdateStandardPresets(StandardPreset preset) throws MiddlewareQueryException;
 
     /**
      * Adds the template setting.

@@ -227,6 +227,11 @@
         <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
+    
+    <bean id="userDataManager" class="org.generationcp.middleware.manager.UserDataManagerImpl">
+    	<property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
+        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+    </bean>
 
     <bean id="centralHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="singleton" destroy-method="close">
         <property name="sessionFactory" ref="centralSessionFactory"/>

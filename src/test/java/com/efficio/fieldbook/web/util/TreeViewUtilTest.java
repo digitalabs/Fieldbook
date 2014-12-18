@@ -9,10 +9,11 @@ import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.UserDefinedField;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.pojos.treeview.TreeTableNode;
@@ -68,15 +69,15 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
     
     private static void mockUserDataManagerAndSomeOfItsMethods() 
     		throws MiddlewareQueryException {
-    	userDataManager = Mockito.mock(UserDataManager.class);
-		Mockito.when(userDataManager.getUserById(LIST_USER_ID)).thenReturn(null);
+    	userDataManager = mock(UserDataManager.class);
+		when(userDataManager.getUserById(LIST_USER_ID)).thenReturn(null);
 	}
 
 	private static void mockGermplasmListManagerAndSomeOfItsMethods() 
 			throws MiddlewareQueryException {
-		germplasmListManager = Mockito.mock(GermplasmListManager.class);
+		germplasmListManager = mock(GermplasmListManager.class);
 		userDefinedFields = createGermplasmListUserDefinedFields();
-        Mockito.when(germplasmListManager.getGermplasmListTypes())
+        when(germplasmListManager.getGermplasmListTypes())
         	.thenReturn(userDefinedFields);
 	}
 	
@@ -89,9 +90,9 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 		List<TreeTableNode> treeTableNodes = TreeViewUtil.convertGermplasmListToTreeTableNodes(
 				germplasmLists, userDataManager, germplasmListManager);
 		
-		Assert.assertTrue("The list should not be null",treeTableNodes!=null);
-		Assert.assertTrue("The list should not be empty",!treeTableNodes.isEmpty());
-		Assert.assertEquals("The list should have 5 items",5,treeTableNodes.size());
+		assertTrue("The list should not be null",treeTableNodes!=null);
+		assertTrue("The list should not be empty",!treeTableNodes.isEmpty());
+		assertEquals("The list should have 5 items",germplasmLists.size(),treeTableNodes.size());
 		for (TreeTableNode treeTableNode : treeTableNodes) {
 			GermplasmList germplasmList = null;
 			switch(Integer.parseInt(treeTableNode.getId())) {
@@ -101,31 +102,31 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 				case 1: germplasmList = CENTRAL_LIST_1; break;
 				case 2: germplasmList = CENTRAL_LIST_2; break;
 			}
-			Assert.assertEquals("The id should be " + germplasmList.getId(),
+			assertEquals("The id should be " + germplasmList.getId(),
 					Integer.toString(germplasmList.getId()),treeTableNode.getId());
-			Assert.assertEquals("The name should be " + germplasmList.getName(),
+			assertEquals("The name should be " + germplasmList.getName(),
 					germplasmList.getName(),treeTableNode.getName());
 			String descriptionForDisplay = getDescriptionForDisplay(germplasmList.getDescription());
-			Assert.assertEquals("The description should be " + descriptionForDisplay,
+			assertEquals("The description should be " + descriptionForDisplay,
 					descriptionForDisplay,treeTableNode.getDescription());
 			String isFolder = "0";
 			if(germplasmList.getType()!=null && "FOLDER".equals(germplasmList.getType())){
 				isFolder = "1";
 			}
-			Assert.assertTrue("The tree table node should be a folder",
+			assertTrue("The tree table node should be a folder",
 					isFolder.equals(treeTableNode.getIsFolder()));
 			int noOfEntries = germplasmList.getListData().size();
 			String noOfEntriesDisplay = noOfEntries==0?"":String.valueOf(noOfEntries);
-			Assert.assertEquals("The no of entries should be " + noOfEntriesDisplay,
+			assertEquals("The no of entries should be " + noOfEntriesDisplay,
 					noOfEntriesDisplay,treeTableNode.getNoOfEntries());
 			String parentId = getParentId(germplasmList);
-			Assert.assertEquals("The parent id should be "+parentId,
+			assertEquals("The parent id should be "+parentId,
 					parentId,treeTableNode.getParentId());
 			String type = getType(germplasmList.getType());
-			Assert.assertEquals("The type should be "+type,
+			assertEquals("The type should be "+type,
 					type,treeTableNode.getType());
 			String owner = getOwnerListName(germplasmList.getUserId());
-			Assert.assertEquals("The owner should be "+owner,
+			assertEquals("The owner should be "+owner,
 					owner,treeTableNode.getOwner());
 		}
 	}
@@ -187,14 +188,14 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 	public void testConvertGermplasmListToTreeTableNodes_NullList() {
 		List<TreeTableNode> treeTableNodes = TreeViewUtil.convertGermplasmListToTreeTableNodes(
 				NULL_GERMPLASM_LIST_TEST_DATA, userDataManager, germplasmListManager);
-		Assert.assertTrue("The list should be empty",treeTableNodes.isEmpty());
+		assertTrue("The list should be empty",treeTableNodes.isEmpty());
 	}
     
     @Test
 	public void testConvertGermplasmListToTreeTableNodes_EmptyList() {
 		List<TreeTableNode> treeTableNodes = TreeViewUtil.convertGermplasmListToTreeTableNodes(
 				EMPTY_GERMPLASM_LIST_TEST_DATA, userDataManager, germplasmListManager);
-		Assert.assertTrue("The list should be empty",treeTableNodes.isEmpty());
+		assertTrue("The list should be empty",treeTableNodes.isEmpty());
 	}
 	
 }

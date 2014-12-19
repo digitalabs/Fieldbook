@@ -553,8 +553,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  		 	$('.saved-settings').on('change', showDeleteSavedSettings);
 	 		$('.fb-delete-settings').on('click', function(){
 	 			var savedSettingsVal = $('#savedSettings').val();
-	 			var settings = savedSettingsVal.split(':')				
- 		 		alert('delete ' + settings[1]);
+	 			var settings = savedSettingsVal.split(':');				 		 		
  		 	});
  		 	$('.includeTrial').on('click', function(){
  		 		setTotalLabels($(this));	
@@ -580,8 +579,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  		 				$('.non-pdf-type').html('XLS');	
  		 			}else if($('#label-format').val() === '3'){
  		 				$('.non-pdf-type').html('CSV');
- 		 			}
- 		 			
+ 		 			} 		 			
  		 		}else{
  		 			$('.label-printing-details').hide();
  		 		}

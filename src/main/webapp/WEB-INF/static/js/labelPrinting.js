@@ -147,7 +147,7 @@ var LabelPrinting = {
     LabelPrinting.setTotalLabels = function(checkbox) {
         //count total number of labels to be generated based on selected trial/nursery instance
         var labelCount = '';
-        if (isTrial) {
+        if (LabelPrinting.isTrial) {
             labelCount = $(checkbox).parents('tr').find('td.plot-count').html();
         } else {
             labelCount = $(checkbox).parents('tr').find('td.entry-count').html();
@@ -350,7 +350,7 @@ var LabelPrinting = {
      * show export modal
      */
     LabelPrinting.showExportModal = function() {
-        var selectedData = {'id': labelPrintingExcel, 'text': excelOption};
+        var selectedData = {'id': labelPrintingExcel, 'text': LabelPrinting.excelOption};
         $('#export-type').select2('data', selectedData);
         $('#export-label-data-modal').modal('show');
     };

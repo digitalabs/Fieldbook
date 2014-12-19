@@ -526,99 +526,22 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <script type="text/javascript" th:src="@{/static/js/labelPrinting.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
 <script type="text/javascript" th:inline="javascript">
-	//<![CDATA[    
-		/*globals setSelectedTrialsAsDraggable*/   
-		/*exported setTotalLabels*/
-		
-		var isTrial = /*[[${labelPrintingForm.isTrial}]]*/;
-		var excelOption = /*[[#{label.printing.export.excel}]]*/;
-		
-		
-		 
- 		 $(function() {
- 		 	'use strict';
- 		 	initializeUserPresets();
- 		 	showOrHideBarcodeFields();
- 		 	$('.loadSavedSettings').on('change', function(){
- 		 		if($(this).is(':checked')){
- 		 			$('.saved-settings').removeClass('fbk-hide');
- 		 			showDeleteSavedSettings();
- 		 		} else {
- 		 			$('.saved-settings').addClass('fbk-hide');
- 		 		}
- 		 	});
- 		 	$('.saved-settings').on('change', showDeleteSavedSettings);
-	 		$('.fb-delete-settings').on('click', function(){
-	 			var savedSettingsVal = $('#savedSettings').val();
-	 			var settings = savedSettingsVal.split(':');				 		 		
- 		 	});
- 		 	$('.includeTrial').on('click', function(){
- 		 		setTotalLabels($(this));	
- 		 	});
- 		 	$('input[name='+getJquerySafeId('userLabelPrinting.barcodeNeeded')+']').on('change',function(){
- 		 		showOrHideBarcodeFields();
- 		 	})
- 		 	$('#export-label-data').on('click', function(){ 		 		
- 		 		validateEnterLabelFieldsPage($('#label-format').val()); 		 		
- 		 	});
+//<![CDATA[
+	/*globals setSelectedTrialsAsDraggable*/
+	/*exported setTotalLabels*/
 
- 		 	$('#label-format').on('change', function(){
- 		 		if($('#label-format').val() === '1'){
- 		 			//means pdf
- 		 			$('.pdf-fields').show();
- 		 			$('.non-pdf-fields').hide(); 		 			
- 		 			$('.label-printing-details').show();
- 		 		}else if($('#label-format').val() !== ''){
- 		 			$('.pdf-fields').hide();
- 		 			$('.non-pdf-fields').show();
- 		 			$('.label-printing-details').show();
- 		 			if($('#label-format').val() === '2'){
- 		 				$('.non-pdf-type').html('XLS');	
- 		 			}else if($('#label-format').val() === '3'){
- 		 				$('.non-pdf-type').html('CSV');
- 		 			} 		 			
- 		 		}else{
- 		 			$('.label-printing-details').hide();
- 		 		}
- 		 	});
- 			setSelectedTrialsAsDraggable();
+	 $(function() {
+		'use strict';
 
- 			$( 'ul.droptrue' ).sortable({
- 				connectWith: 'ul',
-				receive: function(event, ui) {
-		            // so if > 10
-		            if ($(this).hasClass('pdf-selected-fields') &&
-	            		$(this).children().length > 5) {
-		                //ui.sender: will cancel the change.
-		                //Useful in the 'receive' callback.
-		                $(ui.sender).sortable('cancel');
-		            }
-		        }
- 			});
- 			if($('.includeTrial').length === 1) {
- 				$('.includeTrial').trigger('click');
- 			}
-			
- 		});
+		 var isTrial = /*[[${labelPrintingForm.isTrial}]]*/ '';
+		 var excelOption = /*[[#{label.printing.export.excel}]]*/ '';
 
- 		 function setTotalLabels(checkbox) {
- 		 	 'use strict';
- 			 //count total number of labels to be generated based on selected trial/nursery instance
- 			 var labelCount = '';
- 			 if (isTrial) {
- 				labelCount = $(checkbox).parents('tr').find('td.plot-count').html();
- 			 } else {
- 				labelCount = $(checkbox).parents('tr').find('td.entry-count').html();
- 			 }
- 			 var totalCount = $('#totalLabelCount').text();
+		 LabelPrinting.onPageLoad(isTrial,excelOption);
 
- 			 if ($(checkbox).is(':checked')) {
- 				 $('#totalLabelCount').text(parseInt(totalCount, 10) + parseInt(labelCount, 10));
- 			 } else {
- 				$('#totalLabelCount').text(parseInt(totalCount, 10) - parseInt(labelCount, 10));
- 			 }
- 		 }
-      //]]>
-    </script>
+	});
+
+
+//]]>
+</script>
 
 </div>

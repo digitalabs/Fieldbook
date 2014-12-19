@@ -137,7 +137,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         
         getUserLabelPrinting().setStudy(study);
         getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
-        getUserLabelPrinting().setBarcodeNeeded("1");
+        getUserLabelPrinting().setBarcodeNeeded("0");
+        getUserLabelPrinting().setIncludeColumnHeadinginNonPdf("1");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
         
         getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), true));
@@ -182,7 +183,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         }
         getUserLabelPrinting().setStudy(study);
         getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
-        getUserLabelPrinting().setBarcodeNeeded("1");
+        getUserLabelPrinting().setBarcodeNeeded("0");
+        getUserLabelPrinting().setIncludeColumnHeadinginNonPdf("1");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
         
         getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), false));
@@ -209,7 +211,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         
         getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
         getUserLabelPrinting().setFieldMapInfoList(fieldMapInfoList);
-        getUserLabelPrinting().setBarcodeNeeded("1");
+        getUserLabelPrinting().setBarcodeNeeded("0");
+        getUserLabelPrinting().setIncludeColumnHeadinginNonPdf("1");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
         
         getUserLabelPrinting().setFirstBarcodeField("");
@@ -328,6 +331,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
         getUserLabelPrinting().setLeftSelectedLabelFields(form.getUserLabelPrinting().getLeftSelectedLabelFields());
         getUserLabelPrinting().setRightSelectedLabelFields(form.getUserLabelPrinting().getRightSelectedLabelFields());
+        getUserLabelPrinting().setMainSelectedLabelFields(form.getUserLabelPrinting().getMainSelectedLabelFields());
+        getUserLabelPrinting().setIncludeColumnHeadinginNonPdf(form.getUserLabelPrinting().getIncludeColumnHeadinginNonPdf());
+        getUserLabelPrinting().setSettingsName(form.getUserLabelPrinting().getSettingsName());
         getUserLabelPrinting().setFirstBarcodeField(form.getUserLabelPrinting().getFirstBarcodeField());        
         getUserLabelPrinting().setSecondBarcodeField(form.getUserLabelPrinting().getSecondBarcodeField());
         getUserLabelPrinting().setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());

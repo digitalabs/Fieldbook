@@ -444,6 +444,9 @@ td.validValueDesc {
     margin-right: 10px; background: #eee; padding: 5px; width: 100%;
     min-height: 50px;
 }
+.field-group .list-group-item label{
+	text-transform: uppercase;
+}
 #availableFields li, #leftSelectedFields li, #rightSelectedFields li, .non-pdf-selected-fields li
 { margin: 5px; padding: 5px; font-size: 13px; }
 

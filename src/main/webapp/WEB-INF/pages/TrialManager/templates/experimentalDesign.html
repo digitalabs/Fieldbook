@@ -3,7 +3,7 @@
         <section-container name="content" heading="CHOOSE A DESIGN TYPE">
             <div class="row" name="content">
                 <div class="col-md-12 add-bottom-padding">
-                    <label class="control-label" style="vertical-align: top; position: relative; top: 6px;"><strong>Select the design type you would like to use for this trial:</strong></label>
+                    <label class="control-label" style="vertical-align: top; position: relative; top: 6px;"><strong th:text="#{trial.experimental.design.select}">Select the design type you would like to use for this trial:</strong></label>
 
                     <div style="display:inline-block">
                         <div  style="width: 350px !important;">
@@ -21,7 +21,8 @@
                             <div class="col-xs-2 add-top-padding-small">
                             <span class="bms-fa-question-circle help-tooltip-nursery"
                                   tooltip-placement="right" tooltip-append-to-body="true"
-                                  tooltip="The Resolvable Incomplete Block Design type is also known as an Alpha Lattice Design."></span>
+                                  th:attr="tooltip=#{trial.experimental.design.incomplete.block.design.tooltip}"
+                                  ></span>
                             </div>
                         </div>
                         <div ng-show="currentDesignType.withResolvable &amp;&amp; false">
@@ -49,9 +50,9 @@
         <div class="col-md-6 col-sm-5">
             <section-container heading="SUMMARY OF DESIGN DETAILS">
                 <div name="content">
-                    <div class="add-bottom-padding" ng-show="data.noOfEnvironments &gt;= 0"><b>Number of trial environments:</b> <span>{{data.noOfEnvironments}}</span></div>
-                    <div class="add-bottom-padding" ng-show="currentDesignType.id > 0"><b>Number of treatments:</b> <span>{{totalGermplasmEntryListCount}}</span></div>
-                    <div class="add-bottom-padding" ng-show="currentDesignType.id == 1"><b>Number of blocks per Replication :</b> <span>{{(data.blockSize > 0) ? ((totalGermplasmEntryListCount % data.blockSize === 0) ? totalGermplasmEntryListCount / data.blockSize : '') : 0}} <b class="text-danger" ng-show="data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % data.blockSize > 0">Invalid block size</b></span></div>
+                    <div class="add-bottom-padding" ng-show="data.noOfEnvironments &gt;= 0"><b th:text="#{trial.experimental.design.number.of.environments}"></b> <span>{{data.noOfEnvironments}}</span></div>
+                    <div class="add-bottom-padding" ng-show="currentDesignType.id > 0"><b th:text="#{trial.experimental.design.number.of.treatments}"></b> <span>{{totalGermplasmEntryListCount}}</span></div>
+                    <div class="add-bottom-padding" ng-show="currentDesignType.id == 1"><b th:text="#{trial.experimental.design.number.of.blocks}"></b> <span>{{(data.blockSize > 0) ? ((totalGermplasmEntryListCount % data.blockSize === 0) ? totalGermplasmEntryListCount / data.blockSize : '') : 0}} <b class="text-danger" ng-show="data.blockSize > 0 &amp;&amp; totalGermplasmEntryListCount % data.blockSize > 0">Invalid block size</b></span></div>
                     <div class="add-bottom-padding" ng-repeat="key in settings.factors.keys() | filterFactors : currentDesignType.id" >
                         <b>{{settings.factors.val(key).label}}</b> - <a show-details-modal="key">{{settings.factors.val(key).variable.name}}</a>
                     </div>

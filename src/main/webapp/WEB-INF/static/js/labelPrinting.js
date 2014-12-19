@@ -8,22 +8,36 @@ function validateEnterLabelFieldsPage(type){
 		leftSelectedFields += ',';
 	});
 
-	if(leftSelectedFields != ''){
-		leftSelectedFields = leftSelectedFields.substring(0,leftSelectedFields.length-1); 
+	if(leftSelectedFields !== ''){
+		leftSelectedFields = leftSelectedFields.substring(0,leftSelectedFields.length-1);
 	}
 	
 	var rightSelectedFields = '';
 	$('#rightSelectedFields li').each(function(){
-		
 		rightSelectedFields += $(this).attr('id');
 		rightSelectedFields += ',';
 	});
 	
-	if(rightSelectedFields != ''){
-		rightSelectedFields = rightSelectedFields.substring(0,rightSelectedFields.length-1); 
+	if(rightSelectedFields !== ''){
+		rightSelectedFields = rightSelectedFields.substring(0,rightSelectedFields.length-1);
 	}
 	
-	if(leftSelectedFields == '' && rightSelectedFields == ''){
+	var mainSelectedFields = '';
+	$('#mainSelectedFields li').each(function(){
+		
+		mainSelectedFields += $(this).attr('id');
+		mainSelectedFields += ',';
+	});
+	
+	if(mainSelectedFields !== ''){
+		mainSelectedFields = mainSelectedFields.substring(0,mainSelectedFields.length-1); 
+	}
+	
+	if(leftSelectedFields === '' && rightSelectedFields === '' && parseInt(type, 10) === labelPrintingPDF){
+		showInvalidInputMessage(selectedFieldsError);
+		moveToTopScreen();
+		return false;
+	}else if(mainSelectedFields === '' && (parseInt(type, 10) === labelPrintingCsv || parseInt(type, 10) === labelPrintingExcel )){
 		showInvalidInputMessage(selectedFieldsError);
 		moveToTopScreen();
 		return false;
@@ -31,6 +45,7 @@ function validateEnterLabelFieldsPage(type){
 	
 	$('#'+getJquerySafeId('userLabelPrinting.leftSelectedLabelFields')).val(leftSelectedFields);
 	$('#'+getJquerySafeId('userLabelPrinting.rightSelectedLabelFields')).val(rightSelectedFields);
+	$('#'+getJquerySafeId('userLabelPrinting.mainSelectedLabelFields')).val(mainSelectedFields);
 	
 	
 	var barcodeNeeded = $('input[type="radio"]:checked').length;
@@ -67,7 +82,7 @@ function validateEnterLabelFieldsPage(type){
 		
 	}
 	var data = $('#'+getJquerySafeId('userLabelPrinting.filename')).val();
-     var isValid = /^[ A-Za-z0-9_@.\.&''@{}$!\-#()%.+~_=^\s]*$/i.test(data);
+    var isValid = /^[ A-Za-z0-9_@.\.&''@{}$!\-#()%.+~_=^\s]*$/i.test(data);
 	    
 	
 	if (!isValid){
@@ -79,14 +94,9 @@ function validateEnterLabelFieldsPage(type){
 	if ($('#'+getJquerySafeId('userLabelPrinting.fieldMapsExisting')).val().toString() === 'false' 
 		&& hasFieldMapFieldsSelected()) {
 		showAlertMessage('', generateLabelsWarningMessage);
-	}
+	} 
 	
-	if (type === labelPrintingExcel) {
-		$('#'+getJquerySafeId('userLabelPrinting.generateType')).val($('#export-type').val());
-	} else {
-		$('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
-	}
-	
+	$('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
 	setSelectedTrialInstanceOrder();
 	
 	var $form = $('#specifyLabelDetailsForm'),
@@ -213,4 +223,13 @@ initializeUserPresets = function(){
 	    	
 	   }
 	});
+};
+showOrHideBarcodeFields = function(){
+	'use strict';
+	var barcodeNeeded = $('input[name='+getJquerySafeId('userLabelPrinting.barcodeNeeded')+']:checked').val();
+	if(barcodeNeeded === '1'){
+		$('.barcode-fields').show();
+	}else{
+		$('.barcode-fields').hide();
+	}
 };

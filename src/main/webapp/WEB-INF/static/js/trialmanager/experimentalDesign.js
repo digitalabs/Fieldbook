@@ -20,7 +20,7 @@
                     },
                     {
                         id: 1,
-                        name: 'Incomplete Block Design', params: 'incompleteBlockParams.html',
+                        name: 'Resolvable incomplete Block Design', params: 'incompleteBlockParams.html',
                         withResolvable: true
                     },
                     {

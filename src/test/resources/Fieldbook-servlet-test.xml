@@ -183,9 +183,6 @@
     	<property name="localUsername" value="${local.username}"/>
     	<property name="localPassword" value="${local.password}"/>
     	<property name="localPort"     value="${workbench.port}"/>
-    	<property name="centralUsername" value="${central.username}"/>
-    	<property name="centralPassword" value="${central.password}"/>
-    	<property name="centralPort"     value="${workbench.port}"/>
     </bean>
     
      <bean id="ontologyDataManagerV2" class="org.generationcp.middleware.manager.OntologyDataManagerImpl">

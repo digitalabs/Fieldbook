@@ -439,12 +439,12 @@ td.validValueDesc {
 }
 
 
-#availableFields, #leftSelectedFields, #rightSelectedFields
+#availableFields, #leftSelectedFields, #rightSelectedFields, .non-pdf-selected-fields
 { list-style-type: none; margin: 0; padding: 0; float: left;
     margin-right: 10px; background: #eee; padding: 5px; width: 100%;
     min-height: 50px;
 }
-#availableFields li, #leftSelectedFields li, #rightSelectedFields li
+#availableFields li, #leftSelectedFields li, #rightSelectedFields li, .non-pdf-selected-fields li
 { margin: 5px; padding: 5px; font-size: 13px; }
 
 .field-group{
@@ -452,6 +452,7 @@ td.validValueDesc {
 }
 .field-group .list-group-item{
     padding: 5px 10px;
+    background-color: #c8c6c6;
 }
 tr.trialInstance {
     background-color: #dff0d8;

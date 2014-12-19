@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.*;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -55,6 +56,13 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     }
 
     @Override
+    public List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName,
+            String toolSection) throws MiddlewareQueryException {
+        return workbenchDataManager.getStandardPresetFromCropAndTool(cropName,
+                toolId,toolSection);
+    }
+
+    @Override
     public Tool getFieldbookWebTool() throws MiddlewareQueryException {
         return workbenchDataManager.getToolWithName("fieldbook_web");
     }
@@ -65,8 +73,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     }
 
     @Override
-    public StandardPreset saveOrUpdateStandardPresets(StandardPreset preset) throws MiddlewareQueryException{
-        return  workbenchDataManager.addStandardPreset(preset);
+    public StandardPreset saveOrUpdateStandardPreset(StandardPreset preset) throws MiddlewareQueryException{
+        return  workbenchDataManager.saveOrUpdateStandardPreset(preset);
     }
     
     @Override

@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.StandardPreset;
+import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 
@@ -46,15 +46,53 @@ public interface WorkbenchService {
     List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) 
             throws MiddlewareQueryException;
 
+    /**
+     * Return all standard presets
+     * @return
+     * @throws MiddlewareQueryException
+     */
     List<StandardPreset> getAllStandardPresets() throws MiddlewareQueryException;
 
+    /**
+     * Return all standard preset specified by crop name
+     * @param cropName
+     * @return
+     * @throws MiddlewareQueryException
+     */
     List<StandardPreset> getStandardPresetByCrop(String cropName) throws MiddlewareQueryException;
 
+    /**
+     * Returns all standard preset specified by crop,tool,and tool_section
+     * @param toolId
+     * @param cropName
+     * @param toolSection
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName, String toolSection) throws MiddlewareQueryException;
+
+    /**
+     * Returns the specific fieldbook web tool
+     * @return
+     * @throws MiddlewareQueryException
+     */
     Tool getFieldbookWebTool() throws MiddlewareQueryException;
 
+    /**
+     * Returns the standard preset specified by id
+     * @param id
+     * @return
+     * @throws MiddlewareQueryException
+     */
     StandardPreset getStandardPresetById(Integer id) throws MiddlewareQueryException;
 
-    StandardPreset saveOrUpdateStandardPresets(StandardPreset preset) throws MiddlewareQueryException;
+    /**
+     * Save new or update existing standard preset
+     * @param preset
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    StandardPreset saveOrUpdateStandardPreset(StandardPreset preset) throws MiddlewareQueryException;
 
     /**
      * Adds the template setting.

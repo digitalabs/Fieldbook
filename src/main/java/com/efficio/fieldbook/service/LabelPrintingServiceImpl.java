@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.ExportService;
@@ -48,7 +49,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
-import org.generationcp.middleware.pojos.workbench.StandardPreset;
+import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -88,10 +89,10 @@ import com.lowagie.text.pdf.PdfWriter;
 @Service
 public class LabelPrintingServiceImpl implements LabelPrintingService{
 
-    /** The Constant LOG. */
+	/** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceImpl.class);
-    
-    /** The delimiter. */
+
+	/** The delimiter. */
     private String delimiter = " | ";
     
     /** The message source. */
@@ -761,14 +762,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	}
 
 	/**
-     * Gets the available label fields.
-     *
-     * @param isTrial the is trial
-     * @param isFromFieldMap the is from field map
-     * @param locale the locale
-     * @return the available label fields
-     */
-    public List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, Locale locale){
+	 * Gets the available label fields.
+	 * @param isTrial     the is trial
+	 * @param hasFieldMap the has field map
+	 * @param locale      the locale
+	 * @return
+	 */
+	public List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, Locale locale){
         List<LabelFields> labelFieldsList = new ArrayList<LabelFields>();
         
         labelFieldsList.add(new LabelFields(
@@ -848,22 +848,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 		try {
 			List<LabelPrintingPresets> allLabelPrintingPresets = new ArrayList<LabelPrintingPresets>();
 
-			// get all standard presets
-			// 1. get the crop name of the particular programId
+			// 1. get the crop name of the particular programId,
 			final Project project = workbenchService.getProjectById(programId.longValue());
 			final String cropName = project.getCropType().getCropName();
+            final Integer fieldbookToolId = workbenchService.getFieldbookWebTool().getToolId().intValue();
 
-			// 2. retrieve the standard presets
-			for (StandardPreset preset : workbenchService.getStandardPresetByCrop(cropName)) {
+            // 2. retrieve the standard presets
+			for (StandardPreset preset : workbenchService.getStandardPresetByCrop(
+                    fieldbookToolId,cropName,ToolSection.FBK_LABEL_PRINTING.name())) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
 						LabelPrintingPresets.STANDARD_PRESET));
 			}
 
-			// add all program presets for fieldbook
-			final Integer fieldbookToolId = workbenchService.getFieldbookWebTool().getToolId().intValue();
-
-			for (ProgramPreset preset : presetDataManager
-					.getProgramPresetFromProgramAndTool(programId, fieldbookToolId)) {
+            // 3. add all program presets for fieldbook
+			for (ProgramPreset preset : presetDataManager.getProgramPresetFromProgramAndTool(
+                    programId, fieldbookToolId,ToolSection.FBK_LABEL_PRINTING.name())) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetsId(), preset.getName(),
 						LabelPrintingPresets.PROGRAM_PRESET));
 			}

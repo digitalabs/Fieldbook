@@ -403,7 +403,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     	Cell cell = Mockito.mock(Cell.class);
     	Mockito.doReturn(cell).when(row).createCell(Mockito.anyInt());
     	labelPrintingServiceImpl.printHeaderFields(false, "1,2,3", row, 0, Mockito.mock(CellStyle.class));
-    	Mockito.verify(cell, Mockito.times(0)).setCellValue(Mockito.anyString());
+    	Mockito.verify(cell, Mockito.never()).setCellValue(Mockito.anyString());
     	
     }
     

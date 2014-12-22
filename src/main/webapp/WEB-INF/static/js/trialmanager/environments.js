@@ -8,8 +8,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 (function () {
     'use strict';
 
-    angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$modal' , '$stateParams',
-        function ($scope, TrialManagerDataService, $modal, $stateParams) {
+    angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', 'TrialManagerDataService', '$modal' , '$stateParams', '$http',
+        function ($scope, TrialManagerDataService, $modal, $stateParams, $http) {
 
             $scope.data = {};
 
@@ -34,35 +34,84 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             $scope.shouldDisableEnvironmentCountUpdate = function() {
                 return TrialManagerDataService.trialMeasurement.hasMeasurement;
             };
+            
+            $scope.getModalInstance = function(){
+            	return $modal.open({
+                    templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
+                    controller: 'ConfirmModalController',
+                    resolve: {
+                        MODAL_TITLE : function() {
+                            return modalConfirmationTitle;
+                        },
+                        MODAL_TEXT : function() {
+                            return environmentModalConfirmationText;
+                        },
+                        CONFIRM_BUTTON_LABEL : function() {
+                            return environmentConfirmLabel;
+                        }
+                    }
+                });
+            };
 
             $scope.updateEnvironmentCount = function() {
                 if ($scope.temp.noOfEnvironments > $scope.data.environments.length) {
                     $scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
                 } else if ($scope.temp.noOfEnvironments < $scope.data.environments.length) {
-                    var modalInstance = $modal.open({
-                        templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
-                        controller: 'ConfirmModalController',
-                        resolve: {
-                            MODAL_TITLE : function() {
-                                return modalConfirmationTitle;
-                            },
-                            MODAL_TEXT : function() {
-                                return environmentModalConfirmationText;
-                            },
-                            CONFIRM_BUTTON_LABEL : function() {
-                                return environmentConfirmLabel;
-                            }
-                        }
-                    });
-
+                    var modalInstance = $scope.getModalInstance();
                     modalInstance.result.then(function(shouldContinue) {
                         if (shouldContinue) {
                             $scope.data.noOfEnvironments = $scope.temp.noOfEnvironments;
                         }
                     });
                 }
-
             };
+            
+            $scope.deleteEnvironment = function(index) {
+            	if(!TrialManagerDataService.isOpenTrial() || 
+            			(TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement)){
+            		// For New Trial and Existing Trial w/o measurement data
+            		$scope.confirmDeleteEnvironmet(index);
+            		
+            	} else if(TrialManagerDataService.trialMeasurement.hasMeasurement){
+            		// For Existing Trial with measurement data
+            		var environmentNo = index + 1;
+            		$scope.hasMeasurementDataOnEnvironment(environmentNo).success(function(data) {
+						if ('true' === data) {
+							var warningMessage = 'This environment cannot be removed because it contains measurement data.'; 
+							showAlertMessage('', warningMessage);
+						} else {
+							$scope.confirmDeleteEnvironmet(index);
+						}
+					});
+            	}
+            };
+            
+            $scope.confirmDeleteEnvironmet = function(index){
+            	// Existing Trial with measurement data
+        		var modalInstance = $scope.getModalInstance();         
+        		modalInstance.result.then(function(shouldContinue) {
+                    if (shouldContinue) {
+                    	$scope.updateDeletedEnvironment(index);
+                    }
+                });
+            };
+            
+            $scope.updateDeletedEnvironment = function(index){
+            	// remove 1 environment
+            	$scope.temp.noOfEnvironments -= 1;
+            	$scope.data.environments.splice(index,1);
+            	$scope.data.noOfEnvironments -= 1;
+            	TrialManagerDataService.deletedEnvironment = index + 1;
+            	
+            	//update the no of environments in experimental design tab
+            	TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
+            };
+            
+			$scope.hasMeasurementDataOnEnvironment = function(environmentNo){
+				var variableIds = TrialManagerDataService.settings.measurements.m_keys;
+				return $http.post('/Fieldbook/manageSettings/hasMeasurementData/environmentNo/' + environmentNo,variableIds,{cache: false});
+					
+			};
 
             $scope.addVariable = true;
             $scope.findSetting = function(targetKey, type) {
@@ -97,13 +146,20 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             };
 
             $scope.$watch('data.noOfEnvironments', function (newVal, oldVal) {
-
+            	
                 if (newVal < oldVal) {
                     // if new environment count is less than previous value, splice array
                     while ($scope.data.environments.length > newVal) {
                         $scope.data.environments.pop();
                     }
-                    TrialManagerDataService.indicateUnappliedChangesAvailable();
+                    
+                    if ($('#measurementsDiv').length !== 0) {
+                    	TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.data.environments.length;
+                    	
+                    	if(!TrialManagerDataService.trialMeasurement.hasMeasurement){
+                    		TrialManagerDataService.refreshMeasurementTableAfterDeletingEnvironment();
+                    	}
+					}
                 } else if (oldVal < newVal) {
                 	$scope.addNewEnvironments(newVal-oldVal);
                 }

@@ -19,7 +19,29 @@
                         angular.copy(newValue, $scope.settings);
                     }
                 });
-
+                
+                $scope.deletedEnvironment = 0;
+                
+				$scope.$watch(function(){
+					return TrialManagerDataService.deletedEnvironment;
+				}, function(newValue){
+					if(newValue !== 0){
+						$scope.deletedEnvironment = TrialManagerDataService.deletedEnvironment;
+						if ($('#measurement-table').length !== 0) {
+							if(TrialManagerDataService.trialMeasurement.hasMeasurement){
+								$scope.reloadMeasurementPage();
+								TrialManagerDataService.clearUnappliedChangesFlag();
+                                TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+							} else {
+								TrialManagerDataService.refreshMeasurementTableAfterDeletingEnvironment();
+							}
+						}
+						
+						TrialManagerDataService.deletedEnvironment = 0;
+						$scope.updateOccurred = true;
+					}
+				});
+				
                 $scope.beforeDelete = function(variableType,variableIds) {
                     var deferred = $q.defer();
 
@@ -81,7 +103,7 @@
                         $.ajax({
                             url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
                             type: 'POST',
-                            data: 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys,
+                            data: 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys + "&deletedEnvironment="+$scope.deletedEnvironment,
                             cache: false,
                             success: function (html) {
                                 $('#measurementsDiv').html(html);

@@ -48,7 +48,13 @@
     <section-container th:attr="heading=#{trial.managesettings.trial.environment.specify.level}">
         <div name="content">
             <div class="horizontal-level-item" ng-repeat="environment in data.environments">
-                <section-container heading="ENVIRONMENT {{$index + 1}}" icon="bms-environments">
+                <section-container heading="ENVIRONMENT {{$index + 1}}" icon="bms-environments" action-button-direction="pull-left">
+					
+					<span name="action-buttons">
+						<span ng-click="deleteEnvironment($index)" ng-show="data.noOfEnvironments > 1" class='glyphicon glyphicon-minus-sign delete-factor' 
+						style="cursor: pointer; color: #CE453C; position: relative; top: 6px; width: 25px;">&nbsp;</span>
+		            </span>
+					
                     <div name="content" class="row form-horizontal">
                         <div class="col-xs-6 col-md-6">
                             <div class="form-group" ng-repeat="key in settings.managementDetails.keys()" ng-show="!settings.managementDetails.val(key).hidden">

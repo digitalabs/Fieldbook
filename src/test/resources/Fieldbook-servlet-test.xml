@@ -277,8 +277,21 @@
 		<property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}" />
 		<property name="germplasmImportUrl" value="${url.germplasm.import}" />
 		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />	
-		<property name="uploadDirectory" value="${upload.directory}" />	
+		<property name="uploadDirectory" value="${upload.directory}" />		
 	</bean>
+	
+	<bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory" init-method="init">
+		<property name="orderedRulesToRun" value="${naming.rules}"/>
+		<property name="availableRules">
+        	<map>
+            	<entry key="RootNameGenerator"><bean class="com.efficio.fieldbook.web.naming.rules.naming.RootNameGeneratorRule"/></entry>
+            	<entry key="Separator"><bean class="com.efficio.fieldbook.web.naming.rules.naming.SeparatorRule"/></entry>
+            	<entry key="Prefix"><bean class="com.efficio.fieldbook.web.naming.rules.naming.PrefixRule"/></entry>
+            	<entry key="Count"><bean class="com.efficio.fieldbook.web.naming.rules.naming.CountRule"/></entry>
+            	<entry key="Suffix"><bean class="com.efficio.fieldbook.web.naming.rules.naming.SuffixRule"/></entry>
+       		 </map>
+    	</property>
+    </bean>
 
     <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
         <!--TODO : possibly find a way to make list based on component scan of a certain package-->

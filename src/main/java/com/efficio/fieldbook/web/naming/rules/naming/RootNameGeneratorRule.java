@@ -4,6 +4,8 @@ package com.efficio.fieldbook.web.naming.rules.naming;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import com.efficio.fieldbook.web.naming.expression.Expression;
@@ -15,7 +17,9 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class RootNameGeneratorRule implements Rule {
 	
+	@Resource
 	private ProcessCodeService processCodeService;
+	
 	private Expression rootNameExpression;
 	private AdvancingSource advancingSource;
 
@@ -23,7 +27,7 @@ public class RootNameGeneratorRule implements Rule {
 	}
 	
 	@Override
-	public void init(ProcessCodeService processCodeService, Object advancingSource) {
+	public void init(Object advancingSource) {
 		rootNameExpression = new RootNameExpression();
 		this.advancingSource = (AdvancingSource) advancingSource;
 	}
@@ -44,6 +48,16 @@ public class RootNameGeneratorRule implements Rule {
 		input.add(name);
 
 		return input;
+	}
+
+	
+	public ProcessCodeService getProcessCodeService() {
+		return processCodeService;
+	}
+
+	
+	public void setProcessCodeService(ProcessCodeService processCodeService) {
+		this.processCodeService = processCodeService;
 	}
 
 }

@@ -361,6 +361,18 @@
    	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
    	
    	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
+   	
+   	<bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory">
+		<property name="availableRules">
+        	<map>
+            	<entry key="RootNameGenerator"><bean class="com.efficio.fieldbook.web.naming.rules.naming.RootNameGeneratorRule"/></entry>
+            	<entry key="Separator"><bean class="com.efficio.fieldbook.web.naming.rules.naming.SeparatorRule"/></entry>
+            	<entry key="Prefix"><bean class="com.efficio.fieldbook.web.naming.rules.naming.PrefixRule"/></entry>
+            	<entry key="Count"><bean class="com.efficio.fieldbook.web.naming.rules.naming.CountRule"/></entry>
+            	<entry key="Suffix"><bean class="com.efficio.fieldbook.web.naming.rules.naming.SuffixRule"/></entry>
+       		 </map>
+    	</property>
+    </bean>
 
     <bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
 

@@ -70,7 +70,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             	if(!TrialManagerDataService.isOpenTrial() || 
             			(TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement)){
             		// For New Trial and Existing Trial w/o measurement data
-            		$scope.confirmDeleteEnvironmet(index);
+            		$scope.confirmDeleteEnvironment(index);
             		
             	} else if(TrialManagerDataService.trialMeasurement.hasMeasurement){
             		// For Existing Trial with measurement data
@@ -80,13 +80,13 @@ environmentModalConfirmationText,environmentConfirmLabel*/
 							var warningMessage = 'This environment cannot be removed because it contains measurement data.'; 
 							showAlertMessage('', warningMessage);
 						} else {
-							$scope.confirmDeleteEnvironmet(index);
+							$scope.confirmDeleteEnvironment(index);
 						}
 					});
             	}
             };
             
-            $scope.confirmDeleteEnvironmet = function(index){
+            $scope.confirmDeleteEnvironment = function(index){
             	// Existing Trial with measurement data
         		var modalInstance = $scope.getModalInstance();         
         		modalInstance.result.then(function(shouldContinue) {
@@ -104,7 +104,9 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             	TrialManagerDataService.deletedEnvironment = index + 1;
             	
             	//update the no of environments in experimental design tab
-            	TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
+            	if(TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments != undefined){
+            		TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
+            	}
             };
             
 			$scope.hasMeasurementDataOnEnvironment = function(environmentNo){
@@ -153,13 +155,14 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                         $scope.data.environments.pop();
                     }
                     
-                    if ($('#measurementsDiv').length !== 0) {
-                    	TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.data.environments.length;
-                    	
-                    	if(!TrialManagerDataService.trialMeasurement.hasMeasurement){
-                    		TrialManagerDataService.refreshMeasurementTableAfterDeletingEnvironment();
-                    	}
-					}
+                    // if the trial has no measurement data regardless if it is saved or not, 
+                    // regenerate the experimental design and measurement table
+                    if( (TrialManagerDataService.isOpenTrial() && !TrialManagerDataService.trialMeasurement.hasMeasurement) || 
+                    		(!TrialManagerDataService.isOpenTrial() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments != undefined)){
+                    	TrialManagerDataService.refreshMeasurementTableAfterDeletingEnvironment();
+                    } else if(TrialManagerDataService.isOpenTrial() && TrialManagerDataService.trialMeasurement.hasMeasurement) {
+                    	loadInitialMeasurements(); // trigger the showMeasurementsPreview in the background
+                    }
                 } else if (oldVal < newVal) {
                 	$scope.addNewEnvironments(newVal-oldVal);
                 }

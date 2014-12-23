@@ -81,7 +81,7 @@ public class ManageSettingsController extends SettingsController {
 				List<TraitClassReference> traitRefList = userSelection.getTraitRefList();
 
 				//we convert it to map so that it would be easier to chekc if there is a record or not
-				HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
+				Map<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
 				if (standardVariableList != null && !standardVariableList.isEmpty()) {
 					for (StandardVariableReference varRef : standardVariableList) {
 						mapVariableRef.put(varRef.getId().toString(), varRef);
@@ -440,18 +440,26 @@ public class ManageSettingsController extends SettingsController {
         for(MeasurementRow row : observations){	
         	List<MeasurementData> dataList = row.getDataList();
         	for(MeasurementData data : dataList){
-        		if (data.getMeasurementVariable() != null) {
-        			MeasurementVariable var = data.getMeasurementVariable();
-                    if (var != null && var.getName() != null 
-                    		&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())
-                    		&& data.getValue().equals(String.valueOf(environmentNo)) ) {
-                    	filteredObservations.add(row);                    	
-                    	break;
-                    }
-                }
+        		if(isEnvironmentNotDeleted(data, environmentNo)){
+        			filteredObservations.add(row);                    	
+                	break;
+        		}
+        		
         	}
         }
 		return filteredObservations;
+	}
+
+	private boolean isEnvironmentNotDeleted(MeasurementData data, int environmentNo) {
+		if (data.getMeasurementVariable() != null) {
+			MeasurementVariable var = data.getMeasurementVariable();
+            if (var != null && var.getName() != null 
+            		&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())
+            		&& data.getValue().equals(String.valueOf(environmentNo)) ) {
+            	return true;
+            }
+        }
+		return false;
 	}
 
 	protected boolean checkModeAndHasMeasurementData(int mode, int variableId) {

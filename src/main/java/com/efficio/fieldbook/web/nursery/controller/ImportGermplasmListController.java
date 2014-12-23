@@ -640,18 +640,16 @@ public class ImportGermplasmListController extends SettingsController {
     		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.source", null, locale), SOURCE));
     		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.entrycode", null, locale), ENTRY_CODE));
     		
-    	}else if(type != null && type.equalsIgnoreCase(StudyType.T.getName())){
-    		if(factorsList != null){
-    			//we iterate the map for dynamic header of trial
-    			for(int counter = 0 ; counter < factorsList.size() ; counter++){
-    				SettingDetail factorDetail= factorsList.get(counter);
-    				if(factorDetail != null && factorDetail.getVariable() != null &&
-    						!SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(), AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString())){		    					
-    					tableHeaderList.add(new TableHeader(factorDetail.getVariable().getName(), factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));
-    				}
-					    				
-    			}
-    		}
+    	}else if(type != null && type.equalsIgnoreCase(StudyType.T.getName()) && factorsList != null){
+			//we iterate the map for dynamic header of trial
+			for(int counter = 0 ; counter < factorsList.size() ; counter++){
+				SettingDetail factorDetail= factorsList.get(counter);
+				if(factorDetail != null && factorDetail.getVariable() != null &&
+						!SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(), AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString())){		    					
+					tableHeaderList.add(new TableHeader(factorDetail.getVariable().getName(), factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));
+				}
+				    				
+			}
     	}
     	return tableHeaderList;
     }

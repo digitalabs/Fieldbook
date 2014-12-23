@@ -10,7 +10,7 @@
 	</thead>
 	<tbody>
 		<tr class="germplasm-list-row" th:each="germplasmList, row : ${germplasmListRootNodes}" 
-			th:attr="data-tt-id=${germplasmList.id},data-tt-parent-id=${germplasmList.parentId},is-folder=${germplasmList.isFolder},has-children=${germplasmList.hasChildren}">
+			th:attr="data-tt-id=${germplasmList.id},data-tt-parent-id=${germplasmList.parentId},is-folder=${germplasmList.isFolder},num-of-children=${germplasmList.numOfChildren}">
 			<td th:class="${row.even}? 'even' : 'odd'">
 				<span th:class="${germplasmList.isFolder=='1'}? 'folder name' : 'file name'" th:text="${germplasmList.name}"></span>
 			</td>
@@ -22,7 +22,7 @@
 	</tbody>
 </table>
 
-<script type='text/javascript' th:inline="javascript">
+<script type="text/javascript" th:inline="javascript">
 //<![CDATA[
 	$( document ).ready(function() {  
 		'use strict';

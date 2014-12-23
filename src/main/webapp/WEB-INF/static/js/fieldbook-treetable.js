@@ -17,11 +17,9 @@ function expandGermplasmListNode(node) {
 		});
 		$('#germplasmTreeTable').treetable('unloadBranch', node);
 	 	$('#germplasmTreeTable').treetable('loadBranch', node, rows);
-	 	
 	 	if(!$('tr[data-tt-id='+node.id+']').hasClass('expanded')) {
 	 		$('#germplasmTreeTable').treetable('expandNode', node.id);
 		}
-	 	
 		updateTableRowsBgColor();
 		updateTools();
 		updateDroppableTableRows();
@@ -29,10 +27,11 @@ function expandGermplasmListNode(node) {
 	});
 }
 function updateExpandEventIfHasChildren(obj) {
-	if(obj.attr('has-children')==='1') {
-		obj.attr('data-tt-branch', true);
-	} else {
+	if(obj.attr('num-of-children')==='0') {
 		obj.attr('data-tt-branch', false);
+		obj.find('span.indenter').html('');
+	} else {
+		obj.attr('data-tt-branch', true);
 	}
 }
 function updateDoubleClickEvent(obj) {
@@ -55,23 +54,17 @@ function updateTableRowsBgColor() {
 }
 function initializeGermplasmListTreeTable() {
 	$( '.germplasm-list-row').each(function(index) {
-		if($(this).attr('has-children')==='1') {
-			$(this).attr('data-tt-branch', true);
-		} else {
+		if($(this).attr('num-of-children')==='0') {
 			$(this).attr('data-tt-branch', false);
+		} else {
+			$(this).attr('data-tt-branch', true);
 		}
 	});
-
 	updateTools();
-	
 	updateDraggableTableRows();
-	
 	updateDroppableTableRows();
-	
 	$('#germplasmTreeTable').treetable('unloadBranch', $('#germplasmTreeTable').treetable('node','LOCAL'));
-	
 	updateTableRowsBgColor();
-	
 	$('#germplasmTreeTable .file').each(function() {
 		updateDoubleClickEvent($(this));
 	});
@@ -90,7 +83,7 @@ function updateTools() {
 			$('.edit-germplasm-folder').addClass('disable-image');
 			$('.delete-germplasm-folder').addClass('disable-image');
 			hideRenameGermplasmFolderDiv();
-		} else if($(this).attr('has-children')==='1') {
+		} else if($(this).attr('num-of-children')!=='0') {
 			changeBrowseGermplasmButtonBehavior(true);
 			$('.delete-germplasm-folder').addClass('disable-image');
 		} else {
@@ -101,7 +94,6 @@ function updateTools() {
 function updateDraggableTableRows() {
 	$('#germplasmTreeTable .folder, #germplasmTreeTable .file').each(function() {
 		var rowId = $(this).parents('tr').attr('data-tt-id');
-		var hasChildren = $(this).parents('tr').attr('has-children');
 		if(rowId !== 'CENTRAL' && rowId !== 'LOCAL' && rowId < '0') {
 			germplasmTreeTableDraggableSetup.apply(this);
 		}
@@ -132,14 +124,15 @@ function germplasmTreeTableDroppableSetup() {
 		 	droppedEl = ui.draggable.parents('tr');
 		 	sourceNode = $('#germplasmTreeTable').treetable('node', droppedEl.data('ttId'));
 		 	var sourceNodeObj = $('tr[data-tt-id='+sourceNode.id+']');
-		 	var hasChildren = sourceNodeObj.attr('has-children');
+		 	var sourceParentId = sourceNodeObj.attr('data-tt-parent-id');
+		 	var numOfChildren = sourceNodeObj.attr('num-of-children');
 		 	var sourceNodeName = sourceNodeObj.find('.name').first().text();
-		 	if(hasChildren === '1') {
+		 	if(numOfChildren !== '0') {
 		 		showErrorMessage(getMessageErrorDiv(), cannotMove + ' ' + sourceNodeName + ' ' + hasChildrenString);
 		 		return false;
 		 	}
 		 	targetNode = $('#germplasmTreeTable').treetable('node', $(this).data('ttId'));
-		 	moveGermplasmListInTreeTable(sourceNode, targetNode);
+		 	moveGermplasmListInTreeTable(sourceNode, targetNode,sourceParentId);
 		},
 		hoverClass: 'accept',
 		over: function(e, ui) {
@@ -150,7 +143,7 @@ function germplasmTreeTableDroppableSetup() {
 		}
 	});
 }
-function moveGermplasmListInTreeTable(sourceNode, targetNode) {
+function moveGermplasmListInTreeTable(sourceNode, targetNode, sourceParentId) {
 	'use strict';
 	var sourceId = sourceNode.id,
 		targetId = targetNode.id;
@@ -167,10 +160,28 @@ function moveGermplasmListInTreeTable(sourceNode, targetNode) {
 		success: function(data) {
 			$('#germplasmTreeTable').treetable('move', sourceNode.id, targetNode.id);
 			updateTableRowsBgColor();
-			var targetNodeObj = $('tr[data-tt-id='+targetNode.id+']').attr('has-children', '1');
+			var sourceNodeObj = $('tr[data-tt-id='+sourceNode.id+']');
+			updateParentId(sourceNodeObj,targetNode.id);
+			var targetNodeObj = $('tr[data-tt-id='+targetNode.id+']');
+			incrementNumberOfChildren(targetNodeObj);
 			updateExpandEventIfHasChildren(targetNodeObj);
+			var sourceParentObj = $('tr[data-tt-id='+sourceParentId+']');
+			decrementNumberOfChildren(sourceParentObj);
+			updateExpandEventIfHasChildren(sourceParentObj);
 		}
 	});
+}
+function updateParentId(obj,parentId) {
+	obj.attr('data-tt-parent-id', parentId); 
+}
+function incrementNumberOfChildren(obj) {
+	var numOfChildren = parseInt(obj.attr('num-of-children')) + 1;
+	obj.attr('num-of-children', ''+numOfChildren);
+}
+
+function decrementNumberOfChildren(obj) {
+	var numOfChildren = parseInt(obj.attr('num-of-children')) - 1;
+	obj.attr('num-of-children', ''+numOfChildren);
 }
 function submitDeleteGermplasmFolderInTreeTable() {
 	'use strict';
@@ -276,7 +287,7 @@ function renameGermplasmFolerInTreeTable(object) {
     var currentFolderName;
 
     if (!$(object).hasClass('disable-image')) {
-        hideAddGermplasmFolderDiv();
+    	hideAddGermplasmFolderDiv();
 
         currentFolderName = getSelectedGermplasmListName();
         $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);

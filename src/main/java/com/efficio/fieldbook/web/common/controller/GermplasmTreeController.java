@@ -394,11 +394,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     
     protected void markIfHasChildren(TreeTableNode node) throws MiddlewareQueryException {
     	List<GermplasmList> children = getGermplasmListChildren(node.getId());
-    	if(children.isEmpty()) {
-			node.setHasChildren("0");
-		}else{
-			node.setHasChildren("1");
-		}
+    	node.setNumOfChildren(Integer.toString(children.size()));
 	}
 
     protected List<GermplasmList> getGermplasmListChildren(String id) throws MiddlewareQueryException {
@@ -419,10 +415,10 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 	
     protected List<TreeTableNode> getGermplasmListFolderChildNodes(TreeTableNode node) throws MiddlewareQueryException{
 		List<TreeTableNode> childNodes = getGermplasmListFolderChildNodes(node.getId());
-		if(childNodes!=null && !childNodes.isEmpty()) {
-			node.setHasChildren("1");
+		if(childNodes!=null) {
+			node.setNumOfChildren(Integer.toString(childNodes.size()));
 		} else {
-			node.setHasChildren("0");
+			node.setNumOfChildren("0");
 		}
 		return childNodes;
 	}

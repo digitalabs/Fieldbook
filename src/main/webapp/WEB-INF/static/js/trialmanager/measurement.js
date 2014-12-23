@@ -25,21 +25,22 @@
 				$scope.$watch(function(){
 					return TrialManagerDataService.deletedEnvironment;
 				}, function(newValue){
-					if(newValue !== 0){
+					
+					// this scenario only covered the update of measurement table 
+					// when the user delete an environment for a existing trial with measurement data
+					
+					if(newValue !== 0 && TrialManagerDataService.trialMeasurement.hasMeasurement){
 						$scope.deletedEnvironment = TrialManagerDataService.deletedEnvironment;
-						if ($('#measurement-table').length !== 0) {
-							if(TrialManagerDataService.trialMeasurement.hasMeasurement){
-								$scope.reloadMeasurementPage();
-								TrialManagerDataService.clearUnappliedChangesFlag();
-                                TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
-							} else {
-								TrialManagerDataService.refreshMeasurementTableAfterDeletingEnvironment();
-							}
-						}
+						
+						// update the measurement tab
+						$scope.reloadMeasurementPage();
+						TrialManagerDataService.clearUnappliedChangesFlag();
+                        TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
 						
 						TrialManagerDataService.deletedEnvironment = 0;
 						$scope.updateOccurred = true;
 					}
+					
 				});
 				
                 $scope.beforeDelete = function(variableType,variableIds) {

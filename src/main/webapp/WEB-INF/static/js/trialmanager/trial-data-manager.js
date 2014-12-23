@@ -388,7 +388,6 @@
                                 });
                             }
                             else {
-                            	console.log(service.currentData);
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
                                     success(function () {
                                         submitGermplasmList().then(function (trialID) {

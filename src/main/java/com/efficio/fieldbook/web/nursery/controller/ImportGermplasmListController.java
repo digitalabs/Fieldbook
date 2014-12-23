@@ -231,11 +231,7 @@ public class ImportGermplasmListController extends SettingsController {
             Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil.createVariableList(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
             WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables, userSelection.getWorkbook().getObservations());
             userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-            
-            if(userSelection.getTemporaryWorkbook().getTrialObservations() != null){
-            	userSelection.getWorkbook().setTrialObservations(userSelection.getTemporaryWorkbook().getTrialObservations());
-            }
-            
+            WorkbookUtil.updateTrialObservations(userSelection.getWorkbook(),userSelection.getTemporaryWorkbook());
             userSelection.setTemporaryWorkbook(null);
             isDeleteObservations = true;
         

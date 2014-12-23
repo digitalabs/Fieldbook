@@ -522,10 +522,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @param variableId, List<MeasurementRow>
      * @return
      */
-    public boolean hasMeasurementDataEntered(int variableId, List<MeasurementRow> measurementRow) {
+    public static boolean hasMeasurementDataEntered(int variableId, List<MeasurementRow> measurementRow) {
         for (MeasurementRow row : measurementRow) {
             for (MeasurementData data : row.getDataList()) {
-                if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
+                if (data.getMeasurementVariable() != null  &&
+                		data.getMeasurementVariable().getTermId() == variableId 
+                		&& data.getValue() != null && !data.getValue().isEmpty()) {
                     return true;
                 }
             }

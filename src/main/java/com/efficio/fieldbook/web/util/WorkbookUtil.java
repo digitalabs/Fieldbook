@@ -503,4 +503,11 @@ public class WorkbookUtil {
     	}
     	return expDesignVariables;
     }
+
+	public static void updateTrialObservations(Workbook workbook,
+			Workbook temporaryWorkbook) {
+		if(temporaryWorkbook.getTrialObservations() != null){
+			workbook.setTrialObservations(temporaryWorkbook.getTrialObservations());
+        }
+	}
 }

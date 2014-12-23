@@ -545,7 +545,6 @@ public class OpenTrialController extends
             userSelection.setMeasurementRowList(observations);
         }
         //remove deleted environment from existing observation
-        System.out.println("Deleted Environment Index: " + deletedEnvironments);
         if(deletedEnvironments.length() > 0 ){
         	Workbook tempWorkbook = processDeletedEnvironments(deletedEnvironments, measurementDatasetVariables, workbook);
         	form.setMeasurementRowList(tempWorkbook.getObservations());
@@ -565,7 +564,7 @@ public class OpenTrialController extends
     		tempWorkbook = generateTemporaryWorkbook();
     	}
 		
-    	List<MeasurementRow> filteredObservations = getFilteredObservations(userSelection.getMeasurementRowList(),measurementDatasetVariables,deletedEnvironment);
+    	List<MeasurementRow> filteredObservations = getFilteredObservations(userSelection.getMeasurementRowList(),deletedEnvironment);
     	List<MeasurementRow> filteredTrialObservations = getFilteredTrialObservations(workbook.getTrialObservations(),deletedEnvironment);
     	
     	tempWorkbook.setTrialObservations(filteredTrialObservations);
@@ -606,7 +605,7 @@ public class OpenTrialController extends
 		return tempWorkbook;
 	}
 
-	private List<MeasurementRow> getFilteredTrialObservations(
+	protected List<MeasurementRow> getFilteredTrialObservations(
 			List<MeasurementRow> trialObservations, String deletedEnvironment) {
 		
 		if("0".equalsIgnoreCase(deletedEnvironment) || "".equalsIgnoreCase(deletedEnvironment)){
@@ -633,10 +632,24 @@ public class OpenTrialController extends
                     }
                 }
         	}
+        	
+        	if(filteredTrialObservations.size() == (trialObservations.size() - 1)){
+        		break;
+        	}
         }
 		
-		//update the remaining trial instance no
-		for(MeasurementRow row : filteredTrialObservations){	
+		filteredTrialObservations = updateTrialInstanceNoAfterDelete(deletedEnvironment,filteredTrialObservations);
+		
+		return filteredTrialObservations;
+	}
+
+	protected List<MeasurementRow> updateTrialInstanceNoAfterDelete(String deletedEnvironment,
+			List<MeasurementRow> filteredMeasurementRowList) {
+		
+		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
+		measurementRowList.addAll(filteredMeasurementRowList);
+		
+		for(MeasurementRow row : measurementRowList){	
         	List<MeasurementData> dataList = row.getDataList();
         	for(MeasurementData data : dataList){
         		if (data.getMeasurementVariable() != null) {
@@ -657,27 +670,10 @@ public class OpenTrialController extends
         	}
         }
 		
-		for(MeasurementRow row : filteredTrialObservations){	
-        	List<MeasurementData> dataList = row.getDataList();
-        	for(MeasurementData data : dataList){
-        		if (data.getMeasurementVariable() != null) {
-                    MeasurementVariable var = data.getMeasurementVariable();
-                    
-                    if (var != null && data.getMeasurementVariable().getName() != null
-                    		&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())){
-                    	System.out.println("New Trial Instance Nos: " + data.getValue());
-                    	break;
-                    }
-                }
-        		
-        	}
-        }
-		
-		return filteredTrialObservations;
+		return measurementRowList;
 	}
 
-	private List<MeasurementRow> getFilteredObservations(List<MeasurementRow> observations, 
-						List<MeasurementVariable> measurementDatasetVariables, String deletedEnvironment) {
+	protected List<MeasurementRow> getFilteredObservations(List<MeasurementRow> observations, String deletedEnvironment) {
 		
 		if("0".equalsIgnoreCase(deletedEnvironment) || "".equalsIgnoreCase(deletedEnvironment)){
 			return observations;
@@ -689,7 +685,6 @@ public class OpenTrialController extends
         	for(MeasurementData data : dataList){
         		if (data.getMeasurementVariable() != null) {
                     MeasurementVariable var = data.getMeasurementVariable();
-                    System.out.println(data.getMeasurementVariable().getName() + " | " + data.getValue());
                     if (var != null && data.getMeasurementVariable().getName() != null
                     		&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())){
                     	
@@ -701,31 +696,9 @@ public class OpenTrialController extends
                     }
                 }
         	}
-        	System.out.println("row counter: " + filteredObservations.size());
         }
         
-        for(MeasurementRow row : filteredObservations){	
-        	List<MeasurementData> dataList = row.getDataList();
-        	for(MeasurementData data : dataList){
-        		if (data.getMeasurementVariable() != null) {
-                    MeasurementVariable var = data.getMeasurementVariable();
-                    if (var != null && data.getMeasurementVariable().getName() != null
-                    		&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())){
-                    	
-                    	Integer deletedInstanceNo = Integer.valueOf(deletedEnvironment);
-                    	Integer currentInstanceNo = Integer.valueOf(data.getValue());
-                    	
-                    	if(deletedInstanceNo < currentInstanceNo){
-                    		data.setValue(String.valueOf(--currentInstanceNo));
-                    	}
-
-                    	System.out.println("new: " + data.getMeasurementVariable().getName() + " | " + data.getValue());
-                    	break;
-                    }
-                }
-        	}
-        }
-        
+        filteredObservations = updateTrialInstanceNoAfterDelete(deletedEnvironment, filteredObservations);
 
 		return filteredObservations;
 	}

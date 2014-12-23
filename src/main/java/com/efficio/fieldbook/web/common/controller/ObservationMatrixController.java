@@ -344,7 +344,7 @@ public class ObservationMatrixController extends
 				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
 				var.setAccepted(true);
 				if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
-					var.setValue("0");
+					var.setValue("missing");
 				}
 			}
 		}

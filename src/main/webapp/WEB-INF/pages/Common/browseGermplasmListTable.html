@@ -1,0 +1,222 @@
+<div class="modal fade" id="listTreeModal" tabindex="-1" role="dialog" aria-labelledby="listTreeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-autofit">
+		<div class="modal-content">
+			
+			<div class="modal-body">							
+				
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<label class="control-label fbk-modal-title" th:text="#{browse.for.list.browse.for.list}">Browse For Lists</label>
+					</div>
+					<div class="col-xs-1 col-md-1 ">
+						<button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" style="padding-top: 5px"></button>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div id="page-import-message-modal" class="col-xs-12 col-md-12">
+					</div>
+				</div>
+
+				<div class="row form-group modal-popover ">
+					<div class="col-xs-7 col-md-7">
+						<img th:src="@{/static/img/build-new-list.png}" class="fbk-icon-header" />
+						<label class="control-label fbk-modal-title" th:text="#{browse.for.list.all.lists}">All Lists</label>
+					</div>
+					<div class="col-xs-5 col-md-5">
+						<div class="pull-right">
+							<img onclick="javascript: addGermplasmFolderInTreeTable(this)" th:src="@{/static/img/add 2.png}" class="image-padding browse-germplasm-action" />
+							<img onclick="javascript: renameGermplasmFolerInTreeTable(this)" th:src="@{/static/img/edit.png}" class="image-padding browse-germplasm-action edit-germplasm-folder" />
+							<img onclick="javascript: deleteGermplasmFolderInTreeTable(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
+						</div>
+					</div>
+				</div>
+
+                <div class="form-horizontal form-group">
+                    <div id="addGermplasmFolderDiv" class="fbk-hide">
+                        <div class="col-xs-2 col-md-2 nopadding">
+                            <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name: <span class="required">*</span></label>
+                        </div>
+                        <div class="col-xs-4 col-md-4 nopadding">
+                            <div class="input-group">
+                                <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '1');"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-success" id="addGermplasmFolderOkButton" onclick="javascript: createGermplasmFolderInTreeTable()">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                    </button>
+                                    <button class="btn btn-danger" id="addGermplasmFolderCancelButton" onclick="javascript: hideAddGermplasmFolderDiv()">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="renameGermplasmFolderDiv" class="fbk-hide">
+                        <div class="col-xs-2 col-md-2 nopadding">
+                            <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name: <span class="required">*</span></label>
+                        </div>
+                        <div class="col-xs-4 col-md-4 nopadding">
+                            <div class="input-group">
+                                <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '2');"/>
+                                 <span class="input-group-btn">
+                                     <button class="btn btn-success" id="renameGermplasmFolderOkButton" onclick="javascript: submitRenameGermplasmFolderInTreeTable()">
+                                         <span class="glyphicon glyphicon-ok"></span>
+                                     </button>
+                                     <button class="btn btn-danger" id="renameGermplasmFolderCancelButton" onclick="javascript: hideRenameGermplasmFolderDiv()">
+                                         <span class="glyphicon glyphicon-remove"></span>
+                                     </button>
+                                 </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+
+				<div class="row form-group" >
+					<!-- Germplasm List Tree View -->
+					<div class="col-md-12 col-xs-12 germplasm-tree-section" id="germplasmTree" style="height:350px; overflow:auto;"></div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" th:text="#{common.form.select.text}" onclick="javascript: chooseList();">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div id="open-germplasm-list" th:include="/Common/includes/manageGermplasmListTableOperation"></div>
+</div>
+<div id="list-tree-include" th:include="/Common/includes/listTreeTableInclude"></div>
+
+<div layout:fragment="page-script">
+	
+	<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[
+		/*exported startIndex,germplasmStartingEntry,importLocationUrl,importIframeOpened,overwriteChecksList*/
+		/*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
+		/*exported additionalLazyLoadUrl, chooseList*/
+		
+		var addedGid = {},
+			listId = 0,
+			makeDraggableBool = true,
+
+			startIndex = 0,
+			lastDraggedPrimaryList = 0,
+			lastDraggedChecksList = 0,
+
+			itemsToAdd = [],
+			checksFromPrimary = 0,
+
+			importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/ '',
+			importIframeOpened = false,
+			itemsIndexAdded = [];
+		
+
+		var makeCheckDraggableBool = true;
+		
+		//to be use as reference to the data table object
+		var germplasmDataTable= null,
+		selectedCheckListDataTable = null;
+		
+		function resetGermplasmList() {
+			'use strict';
+
+			$('#imported-germplasm-list').html('<h3></h3>');
+			$('#imported-germplasm-list-reset-button').css('opacity', '0');
+			$('#entries-details').css('display', 'none');
+			listId = 0;
+			lastDraggedPrimaryList = 0;
+
+			$.ajax({
+				url: '/Fieldbook/NurseryManager/importGermplasmList/resetNurseryGermplasmDetails',
+				type: 'GET',
+				cache: false,
+				async: false,
+				success: function() {
+				}
+			});
+			if(isNursery()){
+				addFakeCheckTable();
+			}
+            else {
+                if (angular && angular.element("#manage-trial-tabs [ui-view='germplasm']").length === 1) {
+                   var _scope = angular.element("#manage-trial-tabs [ui-view='germplasm']").scope();
+
+                    setTimeout(function() {
+                       _scope.$apply(function(){
+                           _scope.germplasmListCleared();
+                           _scope.updateOccurred = false;
+                       })
+                    },1);
+
+                }
+            }
+
+		}
+		
+		function showPopoverCheck(index, sectionContainer, bodyContainer){
+			'use strict';
+			//if replace has been clicked or if new nursery/trial or if there are no measurement rows saved yet for trial
+			var isShowPopOver = ($('#chooseGermplasmAndChecks').data('replace') && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1)  
+				|| ($('#studyId').length === 0 && isNursery()) || (!isOpenTrial() && !isNursery())  
+				|| (isOpenTrial() && $('body').data('service.trialMeasurement.count') === 0)
+				|| ($('#studyId').length !== 0 && isNursery() && measurementRowCount === 0);
+			
+			if (isShowPopOver) {
+				var currentCheckVal = $(sectionContainer + ' #selectedCheck'+index).val(),
+					realIndex = index,
+					suffix = '/N',
+					popoverOptions = {},
+					listDataTable = selectedCheckListDataTable;
+		    		if(!isNursery()){
+		    			suffix = '/T'; 
+		    			listDataTable = germplasmDataTable;
+		    		}
+		    	
+				//we need to get the real index of the check
+				
+				if(listDataTable != null){
+					listDataTable.getDataTable().$('.check-hidden').each(function(indexCount){
+						if($(this).attr('id') === 'selectedCheck'+index){
+							realIndex = indexCount;
+							return;
+						}
+					})
+				}
+				$.ajax({
+					url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex + suffix,
+					type: 'GET',
+					data: 'currentVal='+currentCheckVal,
+					cache: false,
+					success: function(data) {		
+						
+			    		if(!isNursery()){
+			    			popoverOptions = {
+			    					html: true,
+			    					title: 'Edit Check',
+			    					content: data,
+			    					trigger: 'manual',
+			    					placement: 'right'
+			    				};
+			    		}else{
+			    			popoverOptions = {
+									html: true,
+									title: 'Edit Check',
+									content: data,
+									trigger: 'manual',
+									placement: 'left'
+							};
+			    		}
+						$(sectionContainer +' .popover').remove();
+						$(sectionContainer +' .edit-check'+index).popover('destroy');				
+						$(sectionContainer +' .edit-check'+index).popover(popoverOptions);
+						$(sectionContainer +' .edit-check'+index).popover('show');
+					}
+				});
+			}
+		}
+
+	//]]>
+	</script>
+</div>

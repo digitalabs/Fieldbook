@@ -26,11 +26,12 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
@@ -40,7 +41,6 @@ import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -50,8 +50,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
@@ -62,6 +60,7 @@ import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
+import com.efficio.pojos.treeview.TreeTableNode;
 
 /**
  * The Class GermplasmTreeController.
@@ -73,21 +72,35 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(GermplasmTreeController.class);
     
+    private static final String GERMPLASM_LIST_TABLE_PAGE = "Common/includes/germplasmListTable";
+    public static final String GERMPLASM_LIST_ROOT_NODES = "germplasmListRootNodes";
+    private static final String GERMPLASM_LIST_TABLE_ROWS_PAGE = "Common/includes/germplasmListTableRows";
+    public static final String GERMPLASM_LIST_CHILD_NODES = "germplasmListChildNodes";
+    private static final String LOCAL = "LOCAL";
+    private static final String CENTRAL = "CENTRAL";
+	
     /** The Constant BATCH_SIZE. */
-    private static final int BATCH_SIZE = 50;
+    public static final int BATCH_SIZE = 50;
+	
     
     /** The germplasm list manager. */
     @Resource
     private GermplasmListManager germplasmListManager;
     @Resource
     private FieldbookService fieldbookMiddlewareService;
-    @Autowired
-    private WorkbenchDataManager manager;
     @Resource
-    private WorkbenchService workbenchService;
+    private UserDataManager userDataManager;
     
-    private String NAME_NOT_UNIQUE = "Name not unique";
-    private String HAS_CHILDREN = "Folder has children";
+    private static final String NAME_NOT_UNIQUE = "Name not unique";
+    private static final String HAS_CHILDREN = "Folder has children";
+	private static final String FOLDER = "FOLDER";
+
+	private static final String IS_SUCCESS = "isSuccess";
+
+	private static final String MESSAGE = "message";
+
+	private static final String DATE_FORMAT = "yyyyMMdd";
+	
     @Resource
     private ResourceBundleMessageSource messageSource;
     @Resource
@@ -148,23 +161,23 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
                 	advancedId = fieldbookMiddlewareService.saveOrUpdateListDataProject(userSelection.getWorkbook().getStudyDetails().getId(), GermplasmListType.ADVANCED, germplasmListId, listDataProject, getCurrentIbdbUserId());
                 }
                 
-        		results.put("isSuccess", 1);
+        		results.put(IS_SUCCESS, 1);
         		results.put("germplasmListId", germplasmListId);
         		results.put("advancedGermplasmListId", advancedId);
         		results.put("uniqueId", form.getListIdentifier());
         		results.put("listName", form.getListName());
         	}else{
-        		results.put("isSuccess", 0);
+        		results.put(IS_SUCCESS, 0);
         		String nameUniqueError = "germplasm.save.list.name.unique.error";
         		Locale locale = LocaleContextHolder.getLocale();
-        		results.put("message", messageSource.getMessage(
+        		results.put(MESSAGE, messageSource.getMessage(
         				nameUniqueError, null, locale));
         	}
         	
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);
-            results.put("isSuccess", 0);
-            results.put("message", e.getMessage());
+            results.put(IS_SUCCESS, 0);
+            results.put(MESSAGE, e.getMessage());
         }
         
         return results;
@@ -201,13 +214,12 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         GermplasmList parent = null;
         Integer parentId = null;
         GermplasmList gpList = null;
-        if (saveListForm.getParentId() != null && !"LOCAL".equals(saveListForm.getParentId())) {
+        if (saveListForm.getParentId() != null && !LOCAL.equals(saveListForm.getParentId())) {
         	parentId = Integer.valueOf(saveListForm.getParentId());
 			try {
 				gpList = germplasmListManager.getGermplasmListById(parentId);
 			} catch (MiddlewareQueryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.error(e.getMessage(),e);
 			}
         }
         
@@ -226,7 +238,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         Integer lgid = 0;
         Integer locationId = 0;
         String harvestLocationId = form.getHarvestLocationId();
-        if (harvestLocationId != null && !harvestLocationId.equals("")){
+        if (harvestLocationId != null && !"".equals(harvestLocationId)){
             locationId = Integer.valueOf(harvestLocationId); 
         }
         Integer gDate = Integer.valueOf(DateUtil.getCurrentDate()); 
@@ -264,7 +276,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
                 // If crop == CIMMYT WHEAT (crop with more than one name saved)
                 // Germplasm name is the Names entry with NType = 1027, NVal = table.desig, NStat = 0
-                if (names.size() > 0 && name.getNstat() == 0
+                if (!names.isEmpty() && name.getNstat() == 0
                         && name.getTypeId() == GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID()) {
                     preferredName = name;
                 }
@@ -280,7 +292,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
                 }
             }
             
-            Integer trueGdate = (harvestDate != null && !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate);
+            Integer trueGdate = harvestDate != null && !"".equals(harvestDate.trim()) ? 
+            		Integer.valueOf(harvestDate) : gDate;
             Germplasm germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2
                     , userId, lgid, locationId, trueGdate, preferredName);
             
@@ -293,7 +306,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
             String designation = importedGermplasm.getDesig(); 
             String groupName = importedGermplasm.getCross(); 
             if (groupName == null){
-                groupName = "-"; // Default value if null
+            	// Default value if null
+            	groupName = "-"; 
             }
             
             GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource,
@@ -337,11 +351,10 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value = "/loadInitGermplasmTree/{isFolderOnly}", method = RequestMethod.GET)
     public String loadInitialGermplasmTree(@PathVariable String isFolderOnly) {
-    	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
-        try {
+    	try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            TreeNode localNode = new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
-            TreeNode centralNode = new TreeNode("CENTRAL", AppConstants.GERMPLASM_LIST_CENTRAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
+            TreeNode localNode = new TreeNode(LOCAL, AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
+            TreeNode centralNode = new TreeNode(CENTRAL, AppConstants.GERMPLASM_LIST_CENTRAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
             rootNodes.add(localNode);
             rootNodes.add(centralNode);
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
@@ -353,12 +366,78 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         return "[]";
     }
     
+    /**
+     * Load initial germplasm tree.
+     *
+     * @return the string
+     */
+    @RequestMapping(value = "/loadInitGermplasmTreeTable", method = RequestMethod.GET)
+    public String loadInitialGermplasmTreeTable(Model model) {
+    	try {
+            List<TreeTableNode> rootNodes = new ArrayList<TreeTableNode>();
+            TreeTableNode localNode = new TreeTableNode(
+            		LOCAL, AppConstants.GERMPLASM_LIST_LOCAL.getString(), 
+            		null, null, null, null, "1");
+            TreeTableNode centralNode = new TreeTableNode(
+            		CENTRAL, AppConstants.GERMPLASM_LIST_CENTRAL.getString(), 
+            		null, null, null, null, "1");
+            rootNodes.add(localNode);
+            rootNodes.addAll(getGermplasmListFolderChildNodes(localNode));
+            rootNodes.add(centralNode);
+            rootNodes.addAll(getGermplasmListFolderChildNodes(centralNode));
+            model.addAttribute(GERMPLASM_LIST_ROOT_NODES,rootNodes);
+        } catch(Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+    	return super.showAjaxPage(model, GERMPLASM_LIST_TABLE_PAGE);
+    }
+    
+    protected void markIfHasChildren(TreeTableNode node) throws MiddlewareQueryException {
+    	List<GermplasmList> children = getGermplasmListChildren(node.getId());
+    	node.setNumOfChildren(Integer.toString(children.size()));
+	}
+
+    protected List<GermplasmList> getGermplasmListChildren(String id) throws MiddlewareQueryException {
+		List<GermplasmList> children = new ArrayList<GermplasmList>();
+		if (Database.LOCAL.toString().equals(id) 
+                || Database.CENTRAL.toString().equals(id)) {
+    		children = germplasmListManager
+                        .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(id));
+        } else if (NumberUtils.isNumber(id)) {
+        	int parentId = Integer.valueOf(id);
+        	children = germplasmListManager
+                    .getGermplasmListByParentFolderIdBatched(parentId, BATCH_SIZE);
+        } else {
+        	LOG.error("germplasm id = " + id + " is not a number");
+        }
+		return children;
+	}
+	
+    protected List<TreeTableNode> getGermplasmListFolderChildNodes(TreeTableNode node) throws MiddlewareQueryException{
+		List<TreeTableNode> childNodes = getGermplasmListFolderChildNodes(node.getId());
+		if(childNodes!=null) {
+			node.setNumOfChildren(Integer.toString(childNodes.size()));
+		} else {
+			node.setNumOfChildren("0");
+		}
+		return childNodes;
+	}
+
+    protected List<TreeTableNode> getGermplasmListFolderChildNodes(String id) throws MiddlewareQueryException{
+		List<TreeTableNode> childNodes = new ArrayList<TreeTableNode>();
+		if(id!=null && !"".equals(id)){
+			childNodes = getGermplasmFolderChildrenNode(id);
+			for(TreeTableNode newNode : childNodes){
+				markIfHasChildren(newNode);
+			}
+		}
+		return childNodes;
+	}
+    
     private List<TreeNode> getGermplasmChildNodes(String parentKey, boolean isFolderOnly) throws MiddlewareQueryException{
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
-		if(parentKey != null && !parentKey.equalsIgnoreCase("")){
-			
+		if(parentKey != null && !"".equals(parentKey)){
 			try {
-	        	
 	            if (Database.LOCAL.toString().equals(parentKey) 
 	                    || Database.CENTRAL.toString().equals(parentKey)) {
 	                List<GermplasmList> rootLists = germplasmListManager
@@ -377,7 +456,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
 		for(TreeNode newNode : childNodes){
 			List<TreeNode> childOfChildNode = getGermplasmChildrenNode(newNode.getKey(), isFolderOnly);
-			if(childOfChildNode.size() == 0) {
+			if(childOfChildNode.isEmpty()) {
 				newNode.setIsLazy(false);
 			}else{
 				newNode.setIsLazy(true);
@@ -395,6 +474,11 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     	return childNodes;
     }
     
+    private List<TreeTableNode> getGermplasmFolderChildrenNode(String id) throws MiddlewareQueryException{
+    	return TreeViewUtil.convertGermplasmListToTreeTableNodes(
+    			getGermplasmListChildren(id), userDataManager, germplasmListManager);
+    }
+    
     /**
      * Load initial germplasm tree.
      *
@@ -406,7 +490,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
         try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            TreeNode localNode = new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
+            TreeNode localNode = new TreeNode(LOCAL, AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
             rootNodes.add(localNode);            
             localNode.setChildren(getGermplasmChildNodes(localNode.getKey(), isFolderOnlyBool));
             
@@ -426,7 +510,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value = "/germplasm/list/header/details/{listId}", method = RequestMethod.GET)
     public Map<String, Object> getGermplasmListHeaderDetails(@PathVariable int listId) {
-    	HashMap<String, Object> dataResults = new HashMap<String, Object>();
+    	Map<String, Object> dataResults = new HashMap<String, Object>();
         try {
         	GermplasmList germplasmList = fieldbookMiddlewareService.getGermplasmListById(listId);
         	dataResults.put("name", germplasmList.getName());
@@ -477,6 +561,24 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     }
     
     /**
+     * Expand germplasm list folder.
+     *
+     * @param id the germplasm list ID
+     * @return the response page
+     */
+    @RequestMapping(value = "/expandGermplasmListFolder/{id}", method = RequestMethod.GET)
+    public String expandGermplasmListFolder(@PathVariable String id, Model model) {
+    	try {
+        	List<TreeTableNode> childNodes = getGermplasmListFolderChildNodes(id);
+        	model.addAttribute(GERMPLASM_LIST_CHILD_NODES, childNodes);       
+        } catch(Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+    	return super.showAjaxPage(model, GERMPLASM_LIST_TABLE_ROWS_PAGE);
+    }
+    
+    /**
      * Expand germplasm tree.
      *
      * @param parentKey the parent key
@@ -502,20 +604,20 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         return expandGermplasmTree(parentKey, "0");
     }
 
-    private void checkIfUnique(String folderName) throws MiddlewareQueryException, Exception {
+    private void checkIfUnique(String folderName) throws MiddlewareQueryException, MiddlewareException {
     	List<GermplasmList> centralDuplicate = germplasmListManager.
             	getGermplasmListByName(folderName, 0, 1, null, Database.CENTRAL);
         if(centralDuplicate!=null && !centralDuplicate.isEmpty()) {
-        	throw new Exception(NAME_NOT_UNIQUE);
+        	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }
         List<GermplasmList> localDuplicate = germplasmListManager.
             	getGermplasmListByName(folderName, 0, 1, null, Database.LOCAL);
         if(localDuplicate!=null && !localDuplicate.isEmpty()) {
-        	throw new Exception(NAME_NOT_UNIQUE);
+        	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }
         if(folderName.equalsIgnoreCase(AppConstants.GERMPLASM_LIST_LOCAL.getString()) ||
         		folderName.equalsIgnoreCase(AppConstants.GERMPLASM_LIST_CENTRAL.getString())){
-        	throw new Exception(NAME_NOT_UNIQUE);
+        	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }
 	}
     
@@ -535,7 +637,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         	Integer userId = this.getCurrentIbdbUserId();
 
             if (id == null) {
-                newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,null,0);
+                newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat(DATE_FORMAT)).format(Calendar.getInstance().getTime())),FOLDER,userId,folderName,null,0);
             } else {
                 gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(id));
 
@@ -545,23 +647,24 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
                     parent = gpList.getParent();
 
                     if (parent == null) {
-                        newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,null,0);
+                        newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat(DATE_FORMAT)).format(Calendar.getInstance().getTime())),FOLDER,userId,folderName,null,0);
                     } else {
-                        newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,parent,0);
+                        newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat(DATE_FORMAT)).format(Calendar.getInstance().getTime())),FOLDER,userId,folderName,parent,0);
                     }
                 } else {
-                    newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,gpList,0);
+                    newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat(DATE_FORMAT)).format(Calendar.getInstance().getTime())),FOLDER,userId,folderName,gpList,0);
                 }
 
             }
 
             newList.setDescription("(NEW FOLDER) " + folderName);
             Integer germplasmListFolderId =  germplasmListManager.addGermplasmList(newList);
-            resultsMap.put("isSuccess", "1");
+            resultsMap.put("id",germplasmListFolderId);
+            resultsMap.put(IS_SUCCESS, "1");
         } catch (Exception e) {
-            e.printStackTrace();
-            resultsMap.put("isSuccess", "0");
-        	resultsMap.put("message", e.getMessage());
+        	LOG.error(e.getMessage(),e);
+            resultsMap.put(IS_SUCCESS, "0");
+        	resultsMap.put(MESSAGE, e.getMessage());
         }
         return resultsMap;
     }
@@ -582,11 +685,11 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
             germplasmListManager.updateGermplasmList(gpList);
 
-            resultsMap.put("isSuccess", "1");
+            resultsMap.put(IS_SUCCESS, "1");
         } catch (Exception e) {
-            e.printStackTrace();
-            resultsMap.put("isSuccess", "0");
-        	resultsMap.put("message", e.getMessage());
+            LOG.error(e.getMessage(),e);
+            resultsMap.put(IS_SUCCESS, "0");
+        	resultsMap.put(MESSAGE, e.getMessage());
         }
         return resultsMap;
     }
@@ -607,17 +710,17 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
        
         
             if (hasChildren(gpList.getId())) {
-                throw new Exception(HAS_CHILDREN);
+                throw new MiddlewareException(HAS_CHILDREN);
             }
        
 
        
             germplasmListManager.deleteGermplasmList(gpList);
-            resultsMap.put("isSuccess", "1");
+            resultsMap.put(IS_SUCCESS, "1");
         } catch (Exception e) {
-            e.printStackTrace();
-            resultsMap.put("isSuccess", "0");
-        	resultsMap.put("message", e.getMessage());
+        	LOG.error(e.getMessage(),e);
+            resultsMap.put(IS_SUCCESS, "0");
+        	resultsMap.put(MESSAGE, e.getMessage());
         }
         return resultsMap;
     }
@@ -645,7 +748,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
             germplasmListManager.updateGermplasmList(gpList);
 
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        	LOG.error(e.getMessage(),e);
         }
         return resultsMap;
     }
@@ -653,7 +756,6 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
 	@Override
 	public String getContentName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

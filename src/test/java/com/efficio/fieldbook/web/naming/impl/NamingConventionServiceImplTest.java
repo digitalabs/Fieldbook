@@ -5,7 +5,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -16,6 +15,7 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
 public class NamingConventionServiceImplTest {
@@ -25,6 +25,7 @@ public class NamingConventionServiceImplTest {
 	private AdvancingSource row;
 	private String testGermplasmName; 
 	private Integer breedingMethodSnameType;
+	
 	@Before
 	public void setUp(){
 		breedingMethodSnameType = 5;
@@ -88,5 +89,34 @@ public class NamingConventionServiceImplTest {
 			throwsException = true;
 		}
 		Assert.assertTrue("Should throw an exception if there is no germplasm root name retrieved", throwsException);
+	}
+	
+	@Test
+	public void testGenerateGermplasmList(){
+		// create AdvancingSourceList (rows)
+		List<AdvancingSource> rows = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			rows.add(createRow());
+		}
+		AdvancingSourceList rowsList = new AdvancingSourceList();
+		rowsList.setRows(rows);		
+		
+		List<ImportedGermplasm> result = new ArrayList<>();
+		try {
+			result = namingConventionService.generateGermplasmList(rowsList, false);
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(result);
+				
+	}
+
+	private AdvancingSource createRow() {
+		// TODO Auto-generated method stub
+		AdvancingSource source = new AdvancingSource();
+		return source;
+
 	}
 }

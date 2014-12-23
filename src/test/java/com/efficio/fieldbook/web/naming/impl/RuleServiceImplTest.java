@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.junit.Before;
@@ -22,14 +21,14 @@ import com.efficio.fieldbook.web.naming.rules.naming.RootNameGeneratorRule;
 import com.efficio.fieldbook.web.naming.rules.naming.SeparatorRule;
 import com.efficio.fieldbook.web.naming.rules.naming.SuffixRule;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.naming.service.RulesService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class RuleServiceImplTest extends AbstractBaseIntegrationTest{
 	
 	@Resource
-	ProcessCodeService processCodeService;
+	RulesService rulesService;
 	
-	private RulesServiceImpl rulesServiceImpl = new RulesServiceImpl();
 	private Method breedingMethod;
 	private AdvancingSource row;
 	private String testGermplasmName; 
@@ -66,31 +65,12 @@ public class RuleServiceImplTest extends AbstractBaseIntegrationTest{
 		names.add(generateNewName(breedingMethodSnameType, 1));
 		row.setNames(names);
 		
-		Rule rngr = new RootNameGeneratorRule();
-		rngr.init(processCodeService, row);
-		Rule separatorRule = new SeparatorRule();
-		separatorRule.init(processCodeService, row);
-		Rule prefixRule = new PrefixRule();
-		prefixRule.init(processCodeService, row);
-		Rule countRule = new CountRule();
-		countRule.init(processCodeService, row);
-		Rule suffixRule = new SuffixRule();
-		suffixRule.init(processCodeService, row);		
-		
-		List<Rule> rules = new ArrayList<>();
-		rules.add(rngr);
-		rules.add(separatorRule);
-		rules.add(prefixRule);
-		rules.add(countRule);
-		rules.add(suffixRule);
-		
-		rulesServiceImpl.setRules(rules);
-		
 		try {
-			List<String> results = rulesServiceImpl.runRules();
+			rulesService.setInitObject(row);
+			List<String> results = rulesService.runRules();
 			Assert.assertFalse(results.isEmpty());
 			System.out.println(results);
-			Assert.assertEquals("test-germplasm-name-pre2suff", results.get(0));
+			Assert.assertEquals("test-germplasm-name-pre1suff", results.get(0));
 		} catch (RuleException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

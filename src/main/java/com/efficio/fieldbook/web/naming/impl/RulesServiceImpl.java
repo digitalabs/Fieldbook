@@ -5,33 +5,37 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Service;
+
 import com.efficio.fieldbook.web.naming.rules.Rule;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.naming.service.RulesService;
 
-
+@Service
 public class RulesServiceImpl implements RulesService{
 	
 	@Resource
-	ProcessCodeService processCodeService;
+	RuleFactory ruleFactory;
+
+	private Object initObject;
 	
 	private List<Rule> rules = new ArrayList<Rule>();
 	
 	private List<String> starter = new ArrayList<>();
 	
-	public void init(String ruleNamespace){}
-
-	public void init(String ruleNamespace, String starter){}
+	public RulesServiceImpl(){}
 	
 	// FIXME : catch RuleExceptions here?
 	public List<String> runRules() throws RuleException {
+		
+		rules = ruleFactory.getRulesToRun();
 		
 		List<String> input = new ArrayList<>();
 		if(!starter.isEmpty()) {
 			input = starter;
 		}
 		for (Rule rule : rules) {
+			rule.init(initObject);
 			input = rule.runRule(input);
 		}
 		return input;
@@ -40,6 +44,11 @@ public class RulesServiceImpl implements RulesService{
 	
 	public void setRules(List<Rule> rules) {
 		this.rules = rules;
+	}
+
+	
+	public void setInitObject(Object initObject) {
+		this.initObject = initObject;
 	}
 	
 

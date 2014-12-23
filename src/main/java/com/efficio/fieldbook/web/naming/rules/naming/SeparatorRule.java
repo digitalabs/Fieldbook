@@ -2,6 +2,8 @@ package com.efficio.fieldbook.web.naming.rules.naming;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import com.efficio.fieldbook.web.naming.rules.Rule;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
@@ -10,13 +12,13 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class SeparatorRule implements Rule {
 	
+	@Resource
 	ProcessCodeService processCodeService;
 	
 	private String separator;
 	
 	@Override
-	public void init(ProcessCodeService processCodeService, Object source) {
-		this.processCodeService = processCodeService;
+	public void init(Object source) {
 		separator = ((AdvancingSource) source).getBreedingMethod().getSeparator();
 	}
 

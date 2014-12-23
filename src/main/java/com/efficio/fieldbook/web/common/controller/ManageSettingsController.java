@@ -417,7 +417,6 @@ public class ManageSettingsController extends SettingsController {
 		return false;
 	}
 	
-	///Fieldbook/manageSettings/hasMeasurementData/environmentNo/
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/environmentNo/{environmentNo}", method = RequestMethod.POST)
 	public boolean hasMeasurementDataOnEnvironment(@RequestBody List<Integer> ids,@PathVariable int environmentNo) {
@@ -433,7 +432,7 @@ public class ManageSettingsController extends SettingsController {
 		return false;
 	}
 
-	private List<MeasurementRow> getObservationsOnEnvironment(Workbook workbook, int environmentNo) {
+	protected List<MeasurementRow> getObservationsOnEnvironment(Workbook workbook, int environmentNo) {
 		List<MeasurementRow> observations = workbook.getObservations();
 		List<MeasurementRow> filteredObservations = new ArrayList<MeasurementRow>();
 		

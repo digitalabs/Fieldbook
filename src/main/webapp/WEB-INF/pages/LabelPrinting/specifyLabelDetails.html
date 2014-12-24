@@ -290,9 +290,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 							<ul class="list-group field-group"  >
 						      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.available.fields}">Available Fields</label></li>
 							</ul>
-							<ul id="availableFields" class="list-group droptrue" >
-							  <li class="list-group-item" th:each="fields: ${availableFields}" th:text="${fields.name}" th:id="${fields.id}">Cras justo odio</li>
-							</ul>	
+							<ul id="pdf-available-fields" class="list-group droptrue" >
+							</ul>
 						</div>
 						<div class="col-xs-3 col-md-3">&nbsp;</div>								
 					</div>
@@ -367,9 +366,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 							<ul class="list-group field-group"  >
 						      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.available.fields}">Available Fields</label></li>
 							</ul>
-							<ul id="availableFields" class="list-group droptrue" >
-							  <li class="list-group-item" th:each="fields: ${availableFields}" th:text="${fields.name}" th:id="${fields.id}">Cras justo odio</li>
-							</ul>	
+							<ul id="non-pdf-available-fields" class="list-group droptrue" >
+							</ul>
 						</div>
 						<div class="col-xs-3 col-md-3">&nbsp;</div>								
 					</div>
@@ -525,18 +523,18 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/labelPrinting.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
+
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
 	/*globals setSelectedTrialsAsDraggable*/
 	/*exported setTotalLabels*/
-
-	 $(function() {
+$(function() {
 		'use strict';
 
-		 var isTrial = /*[[${labelPrintingForm.isTrial}]]*/ '';
-		 var excelOption = /*[[#{label.printing.export.excel}]]*/ '';
-
-		 LabelPrinting.onPageLoad(isTrial,excelOption);
+		 var isTrial = /*[[${labelPrintingForm.isTrial}]]*/ false;
+		 var excelOption = /*[[#{label.printing.export.excel}]]*/ false;
+		 var availableFields = /*[[${availableFields}]]*/ [];
+		 LabelPrinting.onPageLoad(isTrial,excelOption,availableFields);
 
 	});
 

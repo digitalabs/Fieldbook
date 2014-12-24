@@ -1,7 +1,21 @@
-var LabelPrinting = {
-  allPresets : [],
-  isTrial : '',
-  excelOption : ''
+var LabelPrinting;
+
+LabelPrinting = {
+    allPresets: [],
+    isTrial: '',
+    excelOption: '',
+    availableFieldIds : [],
+    availableFieldMap : {},
+    labelFormat: {
+        'PDF': 1,
+        'CSV': 2,
+        'EXCEL': 3
+    },
+
+    pdfLabelSheet : {
+        'A4' : 1,
+        'Letter' : 2
+    }
 };
 
 (function() {
@@ -10,12 +24,22 @@ var LabelPrinting = {
     /**
      * This is called when LabelPrinting page is initialized
      */
-    LabelPrinting.onPageLoad = function(isTrial,excelOption) {
+    LabelPrinting.onPageLoad = function(isTrial,excelOption,availableFields) {
         LabelPrinting.isTrial = isTrial;
         LabelPrinting.excelOption = excelOption;
 
+        // pluck only the ids
+        for (var i = 0; i < availableFields.length; i++) {
+            LabelPrinting.availableFieldIds.push(availableFields[i].id);
+            LabelPrinting.availableFieldMap[availableFields[i].id] = availableFields[i].name;
+        }
+
+        addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.availableFieldMap,LabelPrinting.availableFieldIds);
+        addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.availableFieldMap,LabelPrinting.availableFieldIds);
+
         LabelPrinting.initializeUserPresets();
         LabelPrinting.showOrHideBarcodeFields();
+
         $('.loadSavedSettings').on('change', function(){
             if($(this).is(':checked')){
                 $('.saved-settings').removeClass('fbk-hide');
@@ -24,7 +48,8 @@ var LabelPrinting = {
                 $('.saved-settings').addClass('fbk-hide');
             }
         });
-        $('.saved-settings').on('change', LabelPrinting.showDeleteSavedSettings);
+
+        $('.saved-settings').on('change', LabelPrinting.doSelectPreset);
 
         $('.fb-delete-settings').on('click', function(){
             var savedSettingsVal = $('#savedSettings').val();
@@ -87,7 +112,7 @@ var LabelPrinting = {
      *  initialize program presets
      */
     LabelPrinting.initializeUserPresets = function(){
-        $.ajax({
+        return $.ajax({
             url: '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/list',
             type: 'GET',
             data: '',
@@ -123,20 +148,26 @@ var LabelPrinting = {
     };
 
     /**
+     * returns the currently selected values already parsed into preset type and id (still string)
+     * @returns {Array}
+     */
+    LabelPrinting.getSelectedPreset = function() {
+        var savedSettingsVal = $('#savedSettings').val();
+        return ('' === savedSettingsVal) ? [] : savedSettingsVal.split(':');
+    };
+
+    /**
      *  Display delete saved settings button
      */
     LabelPrinting.showDeleteSavedSettings = function(){
-        var savedSettingsVal = $('#savedSettings').val();
-        if(savedSettingsVal === ''){
+        var savedSettingsVal = LabelPrinting.getSelectedPreset().length;
+        if (savedSettingsVal.length > 0) {
             $('.fb-delete-settings').addClass('fbk-hide');
-        } else{
-            var settings = savedSettingsVal.split(':');
-            if(settings[0] === '1'){
-                //meaning user preset, we show the delete
-                $('.fb-delete-settings').removeClass('fbk-hide');
-            }else{
-                $('.fb-delete-settings').addClass('fbk-hide');
-            }
+        } else if ('1' === savedSettingsVal[0]) {
+            //meaning user preset, we show the delete
+            $('.fb-delete-settings').removeClass('fbk-hide');
+        } else {
+            $('.fb-delete-settings').addClass('fbk-hide');
         }
     };
 
@@ -367,18 +398,141 @@ var LabelPrinting = {
     /**
      * Update LabelPrinting UI via jquery when a preset has been selected
      */
-    LabelPrinting.onPresetSelect = function() {
+    LabelPrinting.doSelectPreset = function() {
+        // show delete btn if applicable
+        LabelPrinting.showDeleteSavedSettings();
+
         // retrieve via jquery the current presetId and presetType
+        var selectedPreset = LabelPrinting.getSelectedPreset();
 
-        // FIX-ME: Placeholder values
-        var presetType = 1;
-        var presetId = 1;
+        if (selectedPreset.length === 0) {
+            $('#label-format').val('').change();
+            return;
+        }
 
-        LabelPrinting.getLabelPrintingSettings(presetType,presetId).done(
+        LabelPrinting.getLabelPrintingSettings(selectedPreset[0],selectedPreset[1]).done(
             function(data) {
+                /** @namespace data.name */
+                /** @namespace data.outputType */
+                /** @namespace data.csvExcelSetting */
+                /** @namespace data.pdfSetting */
+                /** @namespace data.barcodeSetting */
+
                 // FIX-ME: UI manpulation: jquery here to update all UI setting fields
+                console.log('successfully retrieved label printing settings');
+                console.log(data);
+
+                // set the label output
+                $('#label-format').val(LabelPrinting.labelFormat[data.outputType]).change();
+
+                if (data.outputType === 'PDF') {
+                    LabelPrinting.updatePDFFields(data.pdfSetting);
+                } else {
+                    LabelPrinting.updateCSVExcelFields(data.csvExcelSetting);
+                }
+
+                // set the barcode options
+                LabelPrinting.updateBarcodeOptions(data.barcodeSetting);
+
+                // set the setting name
+                $('input[name="userLabelPrinting.settingsName"]').val(data.name);
+
             }
         );
     };
+
+    /**
+     * Updates PDF form fields
+     * @param pdfSetting
+     */
+    LabelPrinting.updatePDFFields = function(pdfSetting) {
+        /** @namespace pdfSetting.sizeOfLabelSheet */
+        /** @namespace pdfSetting.numberOfRowsPerPage */
+        /** @namespace pdfSetting.selectedLeftFieldsList */
+        /** @namespace pdfSetting.selectedRightFieldsList */
+
+        $('#userLabelPrinting\\.sizeOfLabelSheet').val(LabelPrinting.pdfLabelSheet[pdfSetting.sizeOfLabelSheet]).change();
+        $('#userLabelPrinting\\.numberOfRowsPerPageOfLabel').val(pdfSetting.numberOfRowsPerPage).change();
+
+        var diff = $(LabelPrinting.availableFieldIds).not(pdfSetting.selectedLeftFieldsList).get();
+        diff = $(diff).not(pdfSetting.selectedRightFieldsList).get();
+
+        //add diff to the pdf available fields list
+        addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.availableFieldMap,diff);
+        addToUIFieldsList($('#leftSelectedFields'),LabelPrinting.availableFieldMap,pdfSetting.selectedLeftFieldsList);
+        addToUIFieldsList($('#rightSelectedFields'),LabelPrinting.availableFieldMap,pdfSetting.selectedRightFieldsList);
+
+    };
+
+    /**
+     * Updates CSV/Excel form fields
+     * @param pdfSetting
+     */
+    LabelPrinting.updateCSVExcelFields = function(setting) {
+        /** @namespace setting.includeColumnHeadingsInOutput */
+        /** @namespace setting.selectedFieldsList */
+
+        // toggle the column heading radio btn
+        var selectedValue = (setting.includeColumnHeadingsInOutput) ? '1' : '0';
+        $('input[name="userLabelPrinting.includeColumnHeadinginNonPdf"][value="' + selectedValue + '"]').prop('checked', true).change();
+
+        var diff = $(LabelPrinting.availableFieldIds).not(setting.selectedFieldsList).get();
+
+        addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.availableFieldMap,diff);
+        addToUIFieldsList($('#mainSelectedFields'),LabelPrinting.availableFieldMap,setting.selectedFieldsList);
+
+    };
+
+    /**
+     * Update Barcode form fields
+     * @param barcodeSetting
+     */
+    LabelPrinting.updateBarcodeOptions = function(barcodeSetting) {
+        /** @namespace barcodeSetting.barcodeFieldsList */
+        /** @namespace barcodeSetting.barcodeFormat */
+        /** @namespace barcodeSetting.barcodeNeeded */
+
+        //set the radio btns
+        var selectedValue = (barcodeSetting.barcodeNeeded) ? '1' : '0';
+        $('input[name="userLabelPrinting.barcodeNeeded"][value="' + selectedValue + '"]').prop('checked', true).change();
+
+        // set the fields
+        doUISafeSelect($('#userLabelPrinting\\.firstBarcodeField'),barcodeSetting.barcodeFieldsList[0]);
+        doUISafeSelect($('#userLabelPrinting\\.secondBarcodeField'),barcodeSetting.barcodeFieldsList[1]);
+        doUISafeSelect($('#userLabelPrinting\\.thirdBarcodeField'),barcodeSetting.barcodeFieldsList[2]);
+    };
+
+    // private functions
+
+    /**
+     * Adds '<li/>' items to the UI given a map and the list
+     * @param listElem
+     * @param listMap
+     * @param fieldsList
+     */
+    function addToUIFieldsList(listElem,listMap,fieldsList) {
+        listElem.empty();
+
+        $.each(fieldsList, function(i,item) {
+            if ('undefined' === typeof listMap[item]) {
+                // continue
+                return;
+            }
+
+            $('<li/>').addClass('list-group-item').attr('id',item).text(listMap[item]).appendTo(listElem);
+        });
+    }
+
+    /**
+     * Checks if value is existing in the '<select>' before changing the value
+     * @param selectElem
+     * @param value
+     */
+    function doUISafeSelect(selectElem,value) {
+        if (selectElem.children('option[value="' + value + '"]').length > 0) {
+            selectElem.val(value).change();
+        }
+    }
+
 
 })();

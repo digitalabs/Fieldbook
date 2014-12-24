@@ -894,7 +894,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             // 3. add all program presets for fieldbook
 			for (ProgramPreset preset : presetDataManager.getProgramPresetFromProgramAndTool(
                     programId, fieldbookToolId,ToolSection.FBK_LABEL_PRINTING.name())) {
-				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetsId(), preset.getName(),
+				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
 						LabelPrintingPresets.PROGRAM_PRESET));
 			}
 

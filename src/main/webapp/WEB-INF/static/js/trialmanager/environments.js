@@ -100,6 +100,7 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             	// remove 1 environment
             	$scope.temp.noOfEnvironments -= 1;
             	$scope.data.environments.splice(index,1);
+            	$scope.updateTrialInstanceNo($scope.data.environments,index);
             	$scope.data.noOfEnvironments -= 1;
             	TrialManagerDataService.deletedEnvironment = index + 1;
             	
@@ -108,6 +109,17 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             		TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments = $scope.temp.noOfEnvironments;
             	}
             };
+            
+            $scope.updateTrialInstanceNo = function(environments,index){
+            	for(var i = 0; i <  environments.length; i++){
+            		var environment = environments[i];
+            		var trialInstanceNo = environment.managementDetailValues[8170];
+            		if(trialInstanceNo > index){
+            			trialInstanceNo -= 1;
+            			environment.managementDetailValues[8170] = trialInstanceNo;
+            		}
+            	}
+            }
             
 			$scope.hasMeasurementDataOnEnvironment = function(environmentNo){
 				var variableIds = TrialManagerDataService.settings.measurements.m_keys;
@@ -161,7 +173,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
                     		(!TrialManagerDataService.isOpenTrial() && TrialManagerDataService.currentData.experimentalDesign.noOfEnvironments != undefined)){
                     	TrialManagerDataService.refreshMeasurementTableAfterDeletingEnvironment();
                     } else if(TrialManagerDataService.isOpenTrial() && TrialManagerDataService.trialMeasurement.hasMeasurement) {
-                    	loadInitialMeasurements(); // trigger the showMeasurementsPreview in the background
+                    	// trigger the showMeasurementsPreview in the background
+                    	loadInitialMeasurements(); 
                     }
                 } else if (oldVal < newVal) {
                 	$scope.addNewEnvironments(newVal-oldVal);

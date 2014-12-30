@@ -3,6 +3,8 @@ package com.efficio.fieldbook.web.naming.rules.naming;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import junit.framework.Assert;
 
 import org.generationcp.middleware.pojos.Method;
@@ -16,7 +18,9 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class SuffixRuleTest {
 	
-	private ProcessCodeService processCodeService;	
+	@Resource
+	private ProcessCodeService processCodeService;
+	
 	private SuffixRule rule;
 	private Method breedingMethod;
 	private AdvancingSource row;
@@ -34,7 +38,7 @@ public class SuffixRuleTest {
 		row.setBreedingMethod(breedingMethod);
 		testGermplasmName = "CMT1234-B-3-"; 
 		rule = new SuffixRule();
-		rule.init(processCodeService, row);
+		rule.init(row);
 	}
 	
 	@Test

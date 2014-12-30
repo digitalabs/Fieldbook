@@ -39,7 +39,8 @@ public class CountRuleTest extends AbstractBaseIntegrationTest {
 		row  = new AdvancingSource();
 		row.setBreedingMethod(breedingMethod);
 		rule = new CountRule();
-		rule.init(processCodeService, row);
+		rule.init(row);
+		rule.setProcessCodeService(processCodeService);
 		name = "TestGP";
 	}
 	

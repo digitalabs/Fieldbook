@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
@@ -39,7 +40,7 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 	
 	// Testing without unique name checking in order to be 
 	@Test
-	public void testGenerateGermplasmList() throws MiddlewareQueryException {
+	public void testGenerateGermplasmList() throws MiddlewareQueryException, RuleException {
 		
 		AdvancingSourceList rows = new AdvancingSourceList();
 		rows.setRows(new ArrayList<AdvancingSource>());
@@ -115,33 +116,5 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		Assert.assertEquals("BARRA DE ORO DULCE-B", resultName.getNval());
 		
 	}
-	
-	@Test
-	public void testGenerateGermplasmList(){
-		// create AdvancingSourceList (rows)
-		List<AdvancingSource> rows = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			rows.add(createRow());
-		}
-		AdvancingSourceList rowsList = new AdvancingSourceList();
-		rowsList.setRows(rows);		
-		
-		List<ImportedGermplasm> result = new ArrayList<>();
-		try {
-			result = namingConventionService.generateGermplasmList(rowsList, false);
-		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println(result);
-				
-	}
 
-	private AdvancingSource createRow() {
-		// TODO Auto-generated method stub
-		AdvancingSource source = new AdvancingSource();
-		return source;
-
-	}
 }

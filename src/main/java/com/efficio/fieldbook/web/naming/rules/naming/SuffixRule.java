@@ -19,6 +19,9 @@ public class SuffixRule implements Rule {
 	@Override
 	public void init(Object source) {
 		advancingSource = (AdvancingSource) source;		
+		if(advancingSource.getBreedingMethod().getSuffix() == null) {
+			advancingSource.getBreedingMethod().setSuffix("");
+		}
 	}
 
 	@Override
@@ -28,6 +31,11 @@ public class SuffixRule implements Rule {
 			input.set(i, input.get(i) + processCodeService.applyToName(advancingSource.getBreedingMethod().getSuffix(), advancingSource).get(0));
 		}
 		return input;
+	}
+
+	@Override
+	public void setProcessCodeService(ProcessCodeService processCodeService) {
+		this.processCodeService = processCodeService;
 	}
 
 }

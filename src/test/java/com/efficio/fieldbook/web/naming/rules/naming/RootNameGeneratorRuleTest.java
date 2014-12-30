@@ -37,7 +37,7 @@ public class RootNameGeneratorRuleTest extends AbstractBaseIntegrationTest {
 		row.setBreedingMethod(breedingMethod);
 		testGermplasmName = "advance-germplasm-name"; 
 		rootNameGeneratorRule = new RootNameGeneratorRule();
-		rootNameGeneratorRule.init(processCodeService, row);
+		rootNameGeneratorRule.init(row);
 	}
 	
 	private Name generateNewName(Integer typeId, Integer nStat){

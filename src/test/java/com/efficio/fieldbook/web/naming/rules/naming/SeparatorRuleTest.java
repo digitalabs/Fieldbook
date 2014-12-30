@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import junit.framework.Assert;
 
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.Name;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +36,7 @@ public class SeparatorRuleTest {
 		row.setBreedingMethod(breedingMethod);
 		testGermplasmName = "CMT1234"; 
 		rule = new SeparatorRule();
-		rule.init(processCodeService, row);
+		rule.init(row);
 	}
 	
 	@Test

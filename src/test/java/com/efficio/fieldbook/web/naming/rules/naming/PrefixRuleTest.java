@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.impl.ProcessCodeServiceImpl;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
@@ -38,7 +37,7 @@ public class PrefixRuleTest extends AbstractBaseIntegrationTest{
 		row.setBreedingMethod(breedingMethod);
 		testGermplasmName = "CMT1234-"; 
 		rule = new PrefixRule();
-		rule.init(processCodeService, row);
+		rule.init(row);
 	}
 	
 	@Test

@@ -34,4 +34,9 @@ public class CountRule implements Rule {
 		return counts;
 	}
 
+	
+	public void setProcessCodeService(ProcessCodeService processCodeService) {
+		this.processCodeService = processCodeService;
+	}
+
 }

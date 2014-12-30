@@ -31,4 +31,9 @@ public class SeparatorRule implements Rule {
 		return input;
 	}
 
+	@Override
+	public void setProcessCodeService(ProcessCodeService processCodeService) {
+		this.processCodeService = processCodeService;		
+	}
+
 }

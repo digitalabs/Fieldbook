@@ -29,6 +29,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
@@ -58,8 +59,9 @@ public interface FieldbookService {
      * @param workbook the workbook
      * @return the list
      * @throws MiddlewareQueryException the middleware query exception
+     * @throws RuleException 
      */
-    AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException;
+    AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException, RuleException;
     
     /**
      * Filters the variables based on the current setting mode and excludes the selected ones.

@@ -31,4 +31,9 @@ public class PrefixRule implements Rule {
 		return input;
 	}
 
+	
+	public void setProcessCodeService(ProcessCodeService processCodeService) {
+		this.processCodeService = processCodeService;
+	}
+
 }

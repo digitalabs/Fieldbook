@@ -13,7 +13,7 @@ public class TreeTableNode {
 	private String noOfEntries;
 	private String isFolder;
 	private String parentId;
-	private String hasChildren;
+	private String numOfChildren;
 	
 	public TreeTableNode() {
 		
@@ -79,10 +79,10 @@ public class TreeTableNode {
 	public void setIsFolder(String isFolder) {
 		this.isFolder = isFolder;
 	}
-	public String getHasChildren() {
-		return hasChildren;
+	public String getNumOfChildren() {
+		return numOfChildren;
 	}
-	public void setHasChildren(String hasChildren) {
-		this.hasChildren = hasChildren;
+	public void setNumOfChildren(String numOfChildren) {
+		this.numOfChildren = numOfChildren;
 	}
 }

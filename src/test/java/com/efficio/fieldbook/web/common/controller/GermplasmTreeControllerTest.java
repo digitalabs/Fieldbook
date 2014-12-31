@@ -235,14 +235,14 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 	    		null, null, null, null, "1");
 		controller.markIfHasChildren(anyChildNode);
 		assertTrue(TEST_GERMPLASM_LIST+" should not have children",
-				anyChildNode.getHasChildren().equals("0"));
+				anyChildNode.getNumOfChildren().equals("0"));
 		
 		TreeTableNode localRootNode = new TreeTableNode(
 	    		LOCAL, AppConstants.GERMPLASM_LIST_LOCAL.getString(), 
 	    		null, null, null, null, "1");
 		controller.markIfHasChildren(localRootNode);
-		assertTrue(AppConstants.GERMPLASM_LIST_LOCAL.getString()+
-				" should have children",localRootNode.getHasChildren().equals("1"));
+		assertFalse(AppConstants.GERMPLASM_LIST_LOCAL.getString()+
+				" should have children",localRootNode.getNumOfChildren().equals("0"));
 	}
 	
 	@Test
@@ -275,7 +275,9 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 	    		null, null, null, null, "1");
 		List<TreeTableNode> childNodes = controller.getGermplasmListFolderChildNodes(localRootNode);
 		assertTrue(AppConstants.GERMPLASM_LIST_LOCAL.getString()+
-					" should have children",localRootNode.getHasChildren().equals("1"));
+					" should have "+LOCAL_GERMPLASM_LIST_TEST_DATA.size()+" children",
+					localRootNode.getNumOfChildren().equals(
+							Integer.toString(LOCAL_GERMPLASM_LIST_TEST_DATA.size())));
 		assertTrue(AppConstants.GERMPLASM_LIST_LOCAL.getString()+
 				" should have "+childNodes.size()+" children",!childNodes.isEmpty());
 		
@@ -285,7 +287,7 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 	    		null, null, null, null, "1");
 		childNodes = controller.getGermplasmListFolderChildNodes(anyChildNode);
 		assertTrue(TEST_GERMPLASM_LIST+
-					" should have children",anyChildNode.getHasChildren().equals("0"));
+					" should have children",anyChildNode.getNumOfChildren().equals("0"));
 		assertTrue(TEST_GERMPLASM_LIST+
 				" should have no children",childNodes.isEmpty());
 	}

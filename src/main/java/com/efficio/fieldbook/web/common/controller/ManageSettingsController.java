@@ -454,7 +454,7 @@ public class ManageSettingsController extends SettingsController {
 		if (data.getMeasurementVariable() != null) {
 			MeasurementVariable var = data.getMeasurementVariable();
             if (var != null && var.getName() != null 
-            		&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())
+            		&& ("TRIAL_INSTANCE".equalsIgnoreCase(var.getName()) || "TRIAL".equalsIgnoreCase(var.getName()))
             		&& data.getValue().equals(String.valueOf(environmentNo)) ) {
             	return true;
             }

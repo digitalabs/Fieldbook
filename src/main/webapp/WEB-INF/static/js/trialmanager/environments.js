@@ -87,18 +87,22 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             };
             
             $scope.confirmDeleteEnvironment = function(index){
+            	// put a custom delay here to make sure the user will not do other action 
+            	// until the measurement table is fully loaded after delete
+            	SpinnerManager.addActiveWithCustomDelay(0);
             	// Existing Trial with measurement data
         		var modalInstance = $scope.getModalInstance();         
         		modalInstance.result.then(function(shouldContinue) {
                     if (shouldContinue) {
                     	$scope.updateDeletedEnvironment(index);
                     }
+                    else{
+                    	SpinnerManager.resolveActive();
+                    }
                 });
             };
             
             $scope.updateDeletedEnvironment = function(index){
-            	SpinnerManager.addActive();
-            	
             	// remove 1 environment
             	$scope.temp.noOfEnvironments -= 1;
             	$scope.data.environments.splice(index,1);

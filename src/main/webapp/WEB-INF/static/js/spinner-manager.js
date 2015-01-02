@@ -2,7 +2,7 @@
 window.SpinnerManager = (function() {
     'use strict';
     var activeConnectionsAvailable = false;
-    var DELAY = 1000;
+    var DELAY = 500;
 
     function startSpinnerIfNecessary() {
         if (activeConnectionsAvailable) {

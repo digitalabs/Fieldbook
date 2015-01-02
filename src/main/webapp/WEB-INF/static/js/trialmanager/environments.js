@@ -97,6 +97,8 @@ environmentModalConfirmationText,environmentConfirmLabel*/
             };
             
             $scope.updateDeletedEnvironment = function(index){
+            	SpinnerManager.addActive();
+            	
             	// remove 1 environment
             	$scope.temp.noOfEnvironments -= 1;
             	$scope.data.environments.splice(index,1);

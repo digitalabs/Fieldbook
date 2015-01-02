@@ -381,11 +381,7 @@ public class TreeViewUtil {
 	private static String getParentId(GermplasmList germplasmList) {
 		Integer parentId = germplasmList.getParentId();
 		if(parentId==null) {
-			if(germplasmList.getId()>0) {
-				return "CENTRAL";
-			} else {
-				return "LOCAL";
-			}
+			return "LISTS";
 		}
 		return String.valueOf(parentId);
 	}

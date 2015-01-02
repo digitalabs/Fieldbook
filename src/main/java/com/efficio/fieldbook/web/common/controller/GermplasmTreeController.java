@@ -78,6 +78,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     public static final String GERMPLASM_LIST_CHILD_NODES = "germplasmListChildNodes";
     private static final String LOCAL = "LOCAL";
     private static final String CENTRAL = "CENTRAL";
+    private static final String LISTS = "LISTS";
 	
     /** The Constant BATCH_SIZE. */
     public static final int BATCH_SIZE = 50;
@@ -376,15 +377,10 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     	try {
             List<TreeTableNode> rootNodes = new ArrayList<TreeTableNode>();
             TreeTableNode localNode = new TreeTableNode(
-            		LOCAL, AppConstants.GERMPLASM_LIST_LOCAL.getString(), 
-            		null, null, null, null, "1");
-            TreeTableNode centralNode = new TreeTableNode(
-            		CENTRAL, AppConstants.GERMPLASM_LIST_CENTRAL.getString(), 
+            		LISTS, AppConstants.LISTS.getString(), 
             		null, null, null, null, "1");
             rootNodes.add(localNode);
             rootNodes.addAll(getGermplasmListFolderChildNodes(localNode));
-            rootNodes.add(centralNode);
-            rootNodes.addAll(getGermplasmListFolderChildNodes(centralNode));
             model.addAttribute(GERMPLASM_LIST_ROOT_NODES,rootNodes);
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);
@@ -399,10 +395,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
     protected List<GermplasmList> getGermplasmListChildren(String id) throws MiddlewareQueryException {
 		List<GermplasmList> children = new ArrayList<GermplasmList>();
-		if (Database.LOCAL.toString().equals(id) 
-                || Database.CENTRAL.toString().equals(id)) {
+		if (LISTS.equals(id)) {
     		children = germplasmListManager
-                        .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(id));
+                        .getAllTopLevelListsBatched(BATCH_SIZE);
         } else if (NumberUtils.isNumber(id)) {
         	int parentId = Integer.valueOf(id);
         	children = germplasmListManager
@@ -438,10 +433,10 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		if(parentKey != null && !"".equals(parentKey)){
 			try {
-	            if (Database.LOCAL.toString().equals(parentKey) 
+	            if (LISTS.equals(parentKey) || Database.LOCAL.toString().equals(parentKey) 
 	                    || Database.CENTRAL.toString().equals(parentKey)) {
 	                List<GermplasmList> rootLists = germplasmListManager
-	                            .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(parentKey));
+	                            .getAllTopLevelListsBatched(BATCH_SIZE);
 	                childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
 	            } else if (NumberUtils.isNumber(parentKey)) {
 	                childNodes = getGermplasmChildrenNode(parentKey, isFolderOnly);	                
@@ -606,12 +601,12 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
     private void checkIfUnique(String folderName) throws MiddlewareQueryException, MiddlewareException {
     	List<GermplasmList> centralDuplicate = germplasmListManager.
-            	getGermplasmListByName(folderName, 0, 1, null, Database.CENTRAL);
+            	getGermplasmListByName(folderName, 0, 1, null);
         if(centralDuplicate!=null && !centralDuplicate.isEmpty()) {
         	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }
         List<GermplasmList> localDuplicate = germplasmListManager.
-            	getGermplasmListByName(folderName, 0, 1, null, Database.LOCAL);
+            	getGermplasmListByName(folderName, 0, 1, null);
         if(localDuplicate!=null && !localDuplicate.isEmpty()) {
         	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }

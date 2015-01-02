@@ -27,7 +27,9 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -41,11 +43,14 @@ import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.ExportService;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -108,6 +113,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
 	@Resource
 	private PresetDataManager presetDataManager;
+
+    @Resource
+    private org.generationcp.middleware.service.api.FieldbookService fieldbookService;
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
@@ -854,7 +862,36 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         }
         return labelFieldsList;
     }
-    
+
+
+    public List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap,
+            Locale locale, int studyID) {
+        List<LabelFields> labelFieldsList = new ArrayList<LabelFields>();
+
+        if (hasFieldMap) {
+            labelFieldsList.add(new LabelFields(
+                    messageSource
+                            .getMessage("label.printing.available.fields.block.name", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()));
+            labelFieldsList.add(new LabelFields(
+                    messageSource
+                            .getMessage("label.printing.available.fields.plot.coordinates", null,
+                                    locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()));
+            labelFieldsList.add(new LabelFields(
+                    messageSource
+                            .getMessage("label.printing.available.fields.field.name", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()));
+        }
+
+        return labelFieldsList;
+    }
+
+    protected List<LabelFields> extractTrialSettingsDetails(Workbook trialWorkbook) {
+
+    }
+
+
     public boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail) {
     	//if there are datasets with fieldmap, check if all trial instances of the study have fieldmaps
         if (!fieldMapInfoDetail.getDatasetsWithFieldMap().isEmpty()) {

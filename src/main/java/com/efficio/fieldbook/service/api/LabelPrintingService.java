@@ -80,6 +80,16 @@ public interface LabelPrintingService {
 	List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, Locale locale);
 
 	/**
+	 * Gets the available label fields.
+	 *
+	 * @param isTrial     the is trial
+	 * @param hasFieldMap the has field map
+	 * @param locale      the locale
+	 * @return the available label fields
+	 */
+	List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, Locale locale, int studyID);
+
+	/**
 	 * Check and set fieldmap properties.
 	 *
 	 * @param userLabelPrinting  the user label printing

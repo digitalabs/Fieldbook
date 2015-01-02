@@ -215,7 +215,7 @@ public interface FieldbookService {
 	/**
 	 * Add/Updates/Deletes check variables.
 	 *
-	 * @param UserSelection the userSelection
+	 * @param userSelection the userSelection
 	 * @param form the form
 	 */
 	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) throws MiddlewareQueryException;

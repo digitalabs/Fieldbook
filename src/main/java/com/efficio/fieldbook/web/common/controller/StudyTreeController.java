@@ -14,7 +14,6 @@ import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.dms.DmsProject;
@@ -43,6 +42,7 @@ public class StudyTreeController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(StudyTreeController.class);
 	public static final String URL = "/StudyTreeManager";
+	public static final String LOCAL = "LOCAL";
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -60,26 +60,14 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
-	public String loadInitialTree(@PathVariable String isFolderOnly, @PathVariable String type, HttpServletRequest req) {
-		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
+	public String loadInitialTree(@PathVariable String isFolderOnly, @PathVariable String type) {
 		boolean isNursery = (type != null && type.equalsIgnoreCase("N")) ? true : false;
-		boolean showCentral = true;
-		String hasCentral = req.getParameter("hasCentral");
-		if(hasCentral != null && hasCentral.equalsIgnoreCase("0")){
-			showCentral = false;
-		}
 		try {
 			List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-			String localName = isNursery ? AppConstants.PROGRAM_NURSERIES.getString() : AppConstants.PROGRAM_TRIALS.getString();
-			String centralName = isNursery ? AppConstants.PUBLIC_NURSERIES.getString() : AppConstants.PUBLIC_TRIALS.getString();
-			TreeNode localTreeNode = new TreeNode("LOCAL", localName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString());			
+			String localName = isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
+			TreeNode localTreeNode = new TreeNode(LOCAL, localName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString());			
 			rootNodes.add(localTreeNode);
-			if(showCentral && isFolderOnlyBool == false){
-				TreeNode centralTreeNode = new TreeNode("CENTRAL", centralName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
-				rootNodes.add(centralTreeNode);
-			}
 			return TreeViewUtil.convertTreeViewToJson(rootNodes);
-
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
@@ -89,19 +77,13 @@ public class StudyTreeController {
 	private List<TreeNode> getChildNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException{
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		if(parentKey != null && !parentKey.equalsIgnoreCase("")){
-			
 			try {
-				if (Database.LOCAL.toString().equals(parentKey) || Database.CENTRAL.toString().equals(parentKey)) {
-					
-						Database instance = Database.LOCAL;
-						if (Database.CENTRAL.toString().equals(parentKey)) {
-							instance = Database.CENTRAL;
-						}
-
-						List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance, getProgramInContext().getUniqueID());
-						childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, isNursery, false, true,
+				if (LOCAL.equals(parentKey)) {
+					List<FolderReference> rootFolders = fieldbookMiddlewareService.
+							getRootFolders(getProgramInContext().getUniqueID());
+						childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(
+								rootFolders, isNursery, false, true,
 								fieldbookMiddlewareService, isFolderOnly);
-					
 				} else if (NumberUtils.isNumber(parentKey)) {
 					childNodes = getChildrenTreeNodes(parentKey, isNursery, isFolderOnly);
 				} else {
@@ -134,15 +116,14 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/expandTree/{type}/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
-	public String expandNurseryTree(@PathVariable String parentKey, @PathVariable String isFolderOnly, @PathVariable String type) {
+	public String expandTree(@PathVariable String parentKey, @PathVariable String isFolderOnly, @PathVariable String type) {
 		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
 		boolean isNursery = (type != null && type.equalsIgnoreCase("N")) ? true : false;
 		try {
 			List<TreeNode> childNodes = getChildNodes(parentKey, isNursery, isFolderOnlyBool);
 			return TreeViewUtil.convertTreeViewToJson(childNodes);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(),e);
 		}
 		return "[]";
 	}
@@ -152,18 +133,13 @@ public class StudyTreeController {
 	public String retrieveChildren(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
 		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
 		try {
-			if (Database.LOCAL.toString().equals(parentKey) || Database.CENTRAL.toString().equals(parentKey)) {
+			if (LOCAL.equals(parentKey)) {
 				try {
-					Database instance = Database.LOCAL;
-					if (Database.CENTRAL.toString().equals(parentKey)) {
-						instance = Database.CENTRAL;
-					}
-
-					List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance, getProgramInContext().getUniqueID());
-					String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true,
+					List<FolderReference> rootFolders = fieldbookMiddlewareService.
+							getRootFolders(getProgramInContext().getUniqueID());
+					return TreeViewUtil.convertStudyFolderReferencesToJson(
+							rootFolders, true, false, true,
 							fieldbookMiddlewareService, isFolderOnlyBool);
-					return jsonResponse;
-
 				} catch (Exception e) {
 					LOG.error(e.getMessage());
 				}
@@ -252,9 +228,8 @@ public class StudyTreeController {
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
 		 Locale locale = LocaleContextHolder.getLocale();
 		try {
-			if(folderName.equalsIgnoreCase(AppConstants.PROGRAM_NURSERIES.getString()) ||
-					folderName.equalsIgnoreCase(AppConstants.PUBLIC_NURSERIES.getString())){
-				
+			if(folderName.equalsIgnoreCase(AppConstants.NURSERIES.getString()) ||
+				folderName.equalsIgnoreCase(AppConstants.TRIALS.getString())){
 				 throw new MiddlewareQueryException(messageSource.getMessage("folder.name.not.unique", null, locale));
 			}
 			Integer parentFolderId = Integer.parseInt(parentKey);
@@ -285,12 +260,10 @@ public class StudyTreeController {
 		try {
 			String newFolderName = req.getParameter("newFolderName");
 			String folderId = req.getParameter("folderId");
-			if(newFolderName.equalsIgnoreCase(AppConstants.PROGRAM_NURSERIES.getString()) ||
-					newFolderName.equalsIgnoreCase(AppConstants.PUBLIC_NURSERIES.getString())){
-				
+			if(newFolderName.equalsIgnoreCase(AppConstants.NURSERIES.getString()) ||
+			   newFolderName.equalsIgnoreCase(AppConstants.TRIALS.getString())){
 				 throw new MiddlewareQueryException(messageSource.getMessage("folder.name.not.unique", null, locale));
 			}
-			
 			this.studyDataManager.renameSubFolder(newFolderName, Integer.parseInt(folderId));
 			resultsMap.put("isSuccess", "1");
 		} catch (MiddlewareQueryException e) {
@@ -336,7 +309,7 @@ public class StudyTreeController {
 		return resultsMap;
 	}
 	
-	private Project getProgramInContext() throws MiddlewareQueryException {
+	protected Project getProgramInContext() throws MiddlewareQueryException {
 		return ContextUtil.getProjectInContext(this.workbenchDataManager, this.request);
 	}
 }

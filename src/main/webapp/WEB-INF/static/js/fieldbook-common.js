@@ -2194,7 +2194,7 @@ function createFolder() {
     }else {
     	var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
 
-    	if(activeStudyNode == null || activeStudyNode.data.isFolder === false || activeStudyNode.data.key > 1 || activeStudyNode.data.key === 'CENTRAL'){
+    	if(activeStudyNode == null || activeStudyNode.data.isFolder === false){
     		showErrorMessage('', studyProgramFolderRequired);
     		return false;
     	}
@@ -2310,12 +2310,6 @@ function moveStudy(sourceNode, targetNode) {
 		isStudy = sourceNode.data.isFolder === true ? 0 : 1,
 		title;
 
-	if (targetId === 'CENTRAL' || targetId > 0) {
-		title = $('#studyTree').dynatree('getTree').getNodeByKey('CENTRAL').data.title;
-		showErrorMessage('page-study-tree-message-modal', 'Can not move to ' + title);
-		return false;
-	}
-
 	if (targetId === 'LOCAL') {
 		targetId = 1;
 	}
@@ -2379,12 +2373,6 @@ function moveGermplasm(sourceNode, targetNode) {
 	var sourceId = sourceNode.data.key,
 		targetId = targetNode.data.key,
 		title;
-
-	if (targetId === 'CENTRAL' || targetId > 0) {
-		title = $('#' + getDisplayedTreeName()).dynatree('getTree').getNodeByKey('CENTRAL').data.title;
-		showErrorMessage('page-import-message-modal', 'Can not move to ' + title);
-		return false;
-	}
 
 	if (targetId === 'LOCAL') {
 		targetId = 1;

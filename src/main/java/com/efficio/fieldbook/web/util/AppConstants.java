@@ -231,6 +231,8 @@ public enum AppConstants {
     ,PROGRAM_TRIALS
     ,PUBLIC_NURSERIES
     ,PUBLIC_TRIALS
+    ,NURSERIES
+    ,TRIALS
     
     ,FOLDER_ICON_PNG
     ,STUDY_ICON_PNG

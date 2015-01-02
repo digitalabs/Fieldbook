@@ -46,8 +46,7 @@ function submitRenameFolder() {
 
     var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
     
-    if(activeStudyNode == null || activeStudyNode.data.isFolder === false ||
-		activeStudyNode.data.key > 1 || activeStudyNode.data.key === 'CENTRAL' || activeStudyNode.data.key === 'LOCAL'){
+    if(activeStudyNode == null || activeStudyNode.data.isFolder === false || activeStudyNode.data.key === 'LOCAL'){
 		showErrorMessage('', studyProgramFolderRequired);
 		return false;
 	}
@@ -79,7 +78,7 @@ function submitRenameFolder() {
                 if (data.isSuccess === '1') {
                     hideRenameFolderDiv();
                     node = $('#studyTree').dynatree('getTree').getActiveNode();
-                    node.data.title = folderName
+                    node.data.title = folderName;
                     $(node.span).find('a').html(folderName);
                     node.focus();
                     showSuccessfulMessage('',renameFolderSuccessful);

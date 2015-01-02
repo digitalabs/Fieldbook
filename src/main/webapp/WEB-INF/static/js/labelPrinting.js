@@ -418,10 +418,6 @@ LabelPrinting = {
                 /** @namespace data.pdfSetting */
                 /** @namespace data.barcodeSetting */
 
-                // FIX-ME: UI manpulation: jquery here to update all UI setting fields
-                console.log('successfully retrieved label printing settings');
-                console.log(data);
-
                 // set the label output
                 $('#label-format').val(LabelPrinting.labelFormat[data.outputType]).change();
 

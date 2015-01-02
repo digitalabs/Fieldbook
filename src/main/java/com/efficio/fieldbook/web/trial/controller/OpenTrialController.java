@@ -62,6 +62,7 @@ public class OpenTrialController extends
         BaseTrialController {
 
     private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
+    private static final String TRIAL = "TRIAL";
 	public static final String URL = "/TrialManager/openTrial";
     public static final String IS_EXP_DESIGN_PREVIEW = "isExpDesignPreview";
     public static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
@@ -639,7 +640,7 @@ public class OpenTrialController extends
 		if (data.getMeasurementVariable() != null) {
             MeasurementVariable var = data.getMeasurementVariable();
             if (var != null && data.getMeasurementVariable().getName() != null
-            		&& TRIAL_INSTANCE.equalsIgnoreCase(var.getName())){
+            		&& (TRIAL_INSTANCE.equalsIgnoreCase(var.getName()) || TRIAL.equalsIgnoreCase(var.getName()))){
             	return true;
             }
 		}

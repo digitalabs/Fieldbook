@@ -4,14 +4,12 @@
 /* global deleteNurseryConfirmation */
 /* global deleteFolderTitle */
 /* global deleteNurseryTitle */
-
 function addFolder(object) {
     'use strict';
     if (!$(object).hasClass('disable-image')) {
         hideRenameFolderDiv();
         $('#addFolderName').val('');
         $('#addFolderDiv').slideDown('fast');
-
     }
 }
 
@@ -46,8 +44,8 @@ function submitRenameFolder() {
 
     var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
     
-    if(activeStudyNode == null || activeStudyNode.data.isFolder === false || activeStudyNode.data.key === 'LOCAL'){
-		showErrorMessage('', studyProgramFolderRequired);
+    if(activeStudyNode === null || activeStudyNode.data.isFolder === false || activeStudyNode.data.key === 'LOCAL'){
+    	showErrorMessage('', studyProgramFolderRequired);
 		return false;
 	}
     

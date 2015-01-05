@@ -295,7 +295,7 @@ function createFieldMap(tableName) {
 		id = getCurrentStudyIdInTab();
 		name = $('#div-study-tab-' + getCurrentStudyIdInTab() + ' .fieldmap-study-name').html();
 	}
-	openStudyFieldmapTree(id, name);	
+	openStudyFieldmapTree(id, name);
 }
 
 // FIXME obsolete
@@ -1027,13 +1027,11 @@ function showInvalidInputMessage(message){
 	createErrorNotification(invalidInputMsgHeader,message);
 }
 function showErrorMessage(messageDivId, message) {
-    // TODO : change showErrorMessage and calling functions to remove unnecessary div parameter
 	'use strict';
 	createErrorNotification(errorMsgHeader,message);
 }
 
 function showSuccessfulMessage(messageDivId, message) {
-    // TODO : change showSuccessfulMessage and calling functions to remove unnecessary div parameter
 	'use strict';
 	createSuccessNotification(successMsgHeader,message);
 }
@@ -1299,7 +1297,7 @@ function exportAdvanceStudyList(advancedListIdParams){
 	'use strict';
 	$('#exportAdvanceStudyForm #exportAdvanceListGermplasmIds').val(advancedListIdParams);
 	$('#exportAdvanceStudyForm #exportAdvanceListGermplasmType').val($('#exportAdvancedType').val());
-	$('#exportAdvanceStudyForm').ajaxForm(exportAdvanceOptions).submit();	
+	$('#exportAdvanceStudyForm').ajaxForm(exportAdvanceOptions).submit();
 }
 function doExportContinue(paramUrl, isNursery) {
 	var currentPage = $('#measurement-data-list-pagination .pagination .active a').html(),
@@ -1385,7 +1383,7 @@ function hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns){
 
 function showWarningMessageForRequiredColumns(visibleColumns){
 	'use strict';
-	var warningMessage = 'The export file will leave out contain columns that you have marked ' + 
+	var warningMessage = 'The export file will leave out contain columns that you have marked ' +
 		'as hidden in the table view, with the exception of key columns that are ' + 
 		'necessary to identify your data when you import it back into the system.';
 	if(hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns)){
@@ -1484,7 +1482,7 @@ function moveToTopScreen() {
 
 function openImportGermplasmList(type) {
 	'use strict';
-	$('.germplasmAndCheckSection').data('import-from', type);	
+	$('.germplasmAndCheckSection').data('import-from', type);
 	$.ajax({
 		url: '/Fieldbook/ListTreeManager/germplasm/import/url',
 		type: 'GET',
@@ -1699,7 +1697,7 @@ function doAdvanceNursery() {
 				showErrorMessage('page-advance-modal-message', data.message);
 			}else{
 				if(data.listSize === 0){
-					showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);	
+					showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
 				}else{
 					advanceGermplasmChangeDetail = (data.advanceGermplasmChangeDetails);
 					$('#advanceNurseryModal').modal('hide');
@@ -3008,7 +3006,7 @@ function initializeStudyTabs() {
 function addDetailsTab(studyId, title) {
 	// if the study is already existing, we show that tab
 	'use strict';
-
+	
 	if ($('li#li-study' + studyId).length !== 0) {
 		$('li#li-study'+studyId + ' a').tab('show');
 	} else {
@@ -3484,7 +3482,6 @@ function processInlineEditInput(){
         	saveInlineEdit(0);
         }
     }
-	
 	return true;
 }
 function saveInlineEdit(isDiscard){	
@@ -3495,7 +3492,7 @@ function saveInlineEdit(isDiscard){
 		type: 'POST',
 		async: false,
 		data:   $('#measurement-table').data('json-inline-edit-val'),
-        contentType: "application/json",
+        contentType: 'application/json',
 		success: function(data) {
 			var jsonData = $.parseJSON($('#measurement-table').data('json-inline-edit-val'));
 			if(isDiscard == 0 && jsonData.isNew === '1'){
@@ -3506,7 +3503,7 @@ function saveInlineEdit(isDiscard){
 				$('.inline-input').parent('td').data('is-accepted', '0');
 			}
 			if(data.success === '1'){
-			     $('.inline-input').parent('td').data('is-inline-edit', '0');
+				$('.inline-input').parent('td').data('is-inline-edit', '0');
 
 				 var oTable = $('#measurement-table').dataTable();				
 				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
@@ -3521,7 +3518,6 @@ function saveInlineEdit(isDiscard){
 }
 function markCellAsMissing(indexElem, indexTermId ,indexDataVal ,isNew, elem){
 	'use strict';
-	
 	var data = {
 			'index':indexElem, 
 			'termId':indexTermId, 
@@ -3538,8 +3534,8 @@ function markCellAsMissing(indexElem, indexTermId ,indexDataVal ,isNew, elem){
 		type: 'POST',
 		async: false,
 		data:   JSON.stringify(data),
-        contentType: "application/json",
-		success: function(data) {
+		contentType: "application/json",
+        success: function(data) {
 			if(data.success === '1'){
 				 var oTable = $('#measurement-table').dataTable();				
 				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
@@ -3568,7 +3564,7 @@ function markCellAsAccepted(indexElem, indexTermId, elem){
 		type: 'POST',
 		async: false,
 		data:   JSON.stringify(data),
-        contentType: "application/json",
+		contentType: 'application/json',
 		success: function(data) {
 			if(data.success === '1'){
 				 var oTable = $('#measurement-table').dataTable();				
@@ -3589,7 +3585,7 @@ function markAllCellAsAccepted(){
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/accepted/all',
 		type: 'GET',
 		async: false,
-        contentType: "application/json",
+        contentType: 'application/json',
 		success: function(data) {
 			if(data.success === '1'){
 				reloadMeasurementTable();
@@ -3620,17 +3616,17 @@ function markAllCellAsMissing(){
 }
 function reloadMeasurementTable(){
 	'use strict';
-        if ($('#measurement-table').length !== 0) {		
-			$.ajax(
-				{ 
-					url: '/Fieldbook/ImportManager/import/preview',
-					type: 'POST',
-					success: function(html) {
-						$('#measurementsDiv').html(html);
-						$('.import-study-data').data('data-import', '1');	
-					}
-			});
-        }
+	if ($('#measurement-table').length !== 0) {		
+		$.ajax(
+			{ 
+				url: '/Fieldbook/ImportManager/import/preview',
+				type: 'POST',
+				success: function(html) {
+					$('#measurementsDiv').html(html);
+					$('.import-study-data').data('data-import', '1');	
+				}
+		});
+    }
 }
 function hasMeasurementsInvalidValue(){
 	'use strict';

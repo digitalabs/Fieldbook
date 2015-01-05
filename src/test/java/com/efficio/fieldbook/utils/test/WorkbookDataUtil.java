@@ -47,7 +47,7 @@ public class WorkbookDataUtil {
 
 	// PROPERTIES
 	private static final String PERSON = "PERSON";
-	public static final String TRIAL_INSTANCE = "TRIAL INSTANCE";
+	public static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
 	private static final String LOCATION = "LOCATION";
 	private static final String GERMPLASM_ENTRY = "GERMPLASM ENTRY";
 	private static final String GERMPLASM_ID = "GERMPLASM ID";
@@ -109,7 +109,7 @@ public class WorkbookDataUtil {
 	private static final String GYLD = "GYLD";
 	private static final String CHALK_PCT = "CHALK_PCT";
 	private static final int GYLD_ID = 18000;
-	private static final int CHALK_PCT_ID = 22768;
+	public static final int CHALK_PCT_ID = 22768;
 
 	// CONDITIONS
 	private static final String PI_NAME = "PI Name";
@@ -192,7 +192,7 @@ public class WorkbookDataUtil {
 		List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
 
 		MeasurementVariable variable = new MeasurementVariable(
-				TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL", "TRIAL NUMBER",
+				TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "TRIAL NUMBER",
 				WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED,
 				WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "",
 				WorkbookDataUtil.TRIAL);

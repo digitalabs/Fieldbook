@@ -517,6 +517,24 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         return false;
     }
     
+    /**
+     * Checks if the measurement table has user input data for a particular variable id
+     * @param variableId, List<MeasurementRow>
+     * @return
+     */
+    public static boolean hasMeasurementDataEntered(int variableId, List<MeasurementRow> measurementRow) {
+        for (MeasurementRow row : measurementRow) {
+            for (MeasurementData data : row.getDataList()) {
+                if (data.getMeasurementVariable() != null  &&
+                		data.getMeasurementVariable().getTermId() == variableId 
+                		&& data.getValue() != null && !data.getValue().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     public boolean hasMeasurementDataEnteredForVariables(List<Integer> variableIds, UserSelection userSelectionTemp) {
     	for(Integer variableId : variableIds){
 	        for (MeasurementRow row : userSelectionTemp.getMeasurementRowList()) {

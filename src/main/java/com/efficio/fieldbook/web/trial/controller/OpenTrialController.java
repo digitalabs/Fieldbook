@@ -613,7 +613,7 @@ public class OpenTrialController extends
 	protected List<MeasurementRow> getFilteredTrialObservations(
 			List<MeasurementRow> trialObservations, String deletedEnvironment) {
 		
-		if("0".equalsIgnoreCase(deletedEnvironment) || "".equalsIgnoreCase(deletedEnvironment)){
+		if("0".equalsIgnoreCase(deletedEnvironment) || "".equalsIgnoreCase(deletedEnvironment) || trialObservations == null){
 			return trialObservations;
 		}
 		

@@ -311,7 +311,8 @@
    	
    	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
    	
-   	<bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory">
+	<bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory" init-method="init">
+		<property name="orderedRulesToRun" value="${naming.rules}"/>
 		<property name="availableRules">
         	<map>
             	<entry key="RootNameGenerator"><bean class="com.efficio.fieldbook.web.naming.rules.naming.RootNameGeneratorRule"/></entry>

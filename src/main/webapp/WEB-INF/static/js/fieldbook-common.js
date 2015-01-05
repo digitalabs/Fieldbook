@@ -3320,6 +3320,21 @@ function showMeasurementsPreview(){
     });
 }
 
+function loadInitialMeasurements(){
+	'use strict';
+	var domElemId = '#measurementsDiv';
+	$.ajax({
+        url: '/Fieldbook/TrialManager/openTrial/load/measurement',
+        type: 'GET',
+        data: '',
+        cache: false,
+        success: function (html) {
+            $(domElemId).html(html);
+            $('body').data('expDesignShowPreview', '0');
+        }
+    });
+}
+
 function displaySelectedCheckGermplasmDetails() {
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/importGermplasmList/displaySelectedCheckGermplasmDetails',

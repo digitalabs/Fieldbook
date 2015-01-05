@@ -1,5 +1,5 @@
 /* global Spinner */
-window.SpinnerManager = (function() {
+window.SpinnerManager = (function () {
     'use strict';
     var activeConnectionsAvailable = false;
     var DELAY = 1000;
@@ -10,19 +10,26 @@ window.SpinnerManager = (function() {
         }
     }
 
+    var service = {
+        addActive: function () {
+            service.addActiveWithCustomDelay(DELAY);
+        },
 
-    return {
-        addActive : function() {
+        addActiveWithCustomDelay: function (timeoutDelay) {
             if (!activeConnectionsAvailable) {
-                setTimeout(startSpinnerIfNecessary, DELAY);
+                setTimeout(startSpinnerIfNecessary, timeoutDelay);
                 activeConnectionsAvailable = true;
             }
         },
 
-        resolveActive : function() {
+        resolveActive: function () {
             activeConnectionsAvailable = false;
 
             Spinner.stop();
         }
     };
+
+    return service;
+
+
 }());

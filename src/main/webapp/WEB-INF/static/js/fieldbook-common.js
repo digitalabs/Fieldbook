@@ -2360,7 +2360,7 @@ function submitDeleteGermplasmFolder() {
 				$('#deleteGermplasmFolder').modal('hide');
 				node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 				node.remove();
-                showSuccessfulMessage('',deleteFolderSuccessful);
+                showSuccessfulMessage('',deleteItemSuccessful);
 			} else {
 				showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
 			}

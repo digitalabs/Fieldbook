@@ -194,7 +194,7 @@ function submitDeleteGermplasmFolderInTreeTable() {
 				node.remove();
 				updateTableRowsBgColor();
 				changeBrowseGermplasmButtonBehavior(false);
-                showSuccessfulMessage('',deleteFolderSuccessful);
+                showSuccessfulMessage('',deleteItemSuccessful);
 			} else {
 				showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
 			}
@@ -335,7 +335,7 @@ function submitRenameGermplasmFolderInTreeTable() {
                 if (data.isSuccess === '1') {
                     hideRenameGermplasmFolderDiv();
                     setSelectedGermplasmListName(folderName);
-                    showSuccessfulMessage('', renameFolderSuccessful);
+                    showSuccessfulMessage('', renameItemSuccessful);
                 } else {
                     showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
                 }

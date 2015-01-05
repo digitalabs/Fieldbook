@@ -81,7 +81,7 @@ function submitRenameFolder() {
                     node.data.title = folderName;
                     $(node.span).find('a').html(folderName);
                     node.focus();
-                    showSuccessfulMessage('',renameFolderSuccessful);
+                    showSuccessfulMessage('',renameItemSuccessful);
                 } else {
                     showErrorMessage('page-rename-study-folder-message-modal', data.message);
                 }

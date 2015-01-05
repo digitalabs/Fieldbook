@@ -8,8 +8,8 @@ LabelPrinting = {
     availableFieldMap : {},
     labelFormat: {
         'PDF': 1,
-        'CSV': 2,
-        'EXCEL': 3
+        'EXCEL': 2,
+        'CSV': 3
     },
 
     pdfLabelSheet : {

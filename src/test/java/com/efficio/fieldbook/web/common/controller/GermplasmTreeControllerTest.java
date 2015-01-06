@@ -19,7 +19,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.easymock.EasyMock;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -93,9 +92,8 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
         List<TreeNode> treeNodes = objectMapper.readValue(
                 jsonResponse, new TypeReference<List<TreeNode>>(){});
         
-        assertEquals(2, treeNodes.size());
-        assertEquals("LOCAL", treeNodes.get(0).getKey());
-        assertEquals("CENTRAL", treeNodes.get(1).getKey());
+        assertEquals(1, treeNodes.size());
+        assertEquals(LISTS, treeNodes.get(0).getKey());
     }
     
     /**

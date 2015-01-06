@@ -156,11 +156,6 @@
 				var lazyLoadUrlGetChildren = '/Fieldbook/ListTreeManager/expandGermplasmTree/';
 				var initLoadUrl = '/Fieldbook/ListTreeManager/loadInitGermplasmTree';
 
-				if(isLocalOnly === true) {
-					initLoadUrl = '/Fieldbook/ListTreeManager/loadInitGermplasmLocalTree';
-				}
-
-				
 				initLoadUrl += '/' + isFolderOnly;
 
                 var dynaTreeOptions = {
@@ -177,7 +172,7 @@
                         doGermplasmLazyLoad(node);
                     },
                     onRender: function (node, nodeSpan) {
-                    	if(node.data.key !== 'LOCAL' && node.data.key !== 'CENTRAL' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
+                    	if(node.data.key !== 'LISTS' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
 								//showListTreeToolTip(node, nodeSpan);
 							$(nodeSpan).find('a.dynatree-title').hover(function(){
 								if($(nodeSpan).find('a.dynatree-title').hasClass('has-popover') === false){
@@ -199,7 +194,7 @@
                     },
                     onFocus: function (node) {
                     	var nodeSpan = node.span;
-						if(node.data.key !== 'LOCAL' && node.data.key !== 'CENTRAL' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
+						if(node.data.key !== 'LISTS' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
 							$(nodeSpan).find('a.dynatree-title').hover(function(){
 								if($(nodeSpan).find('a.dynatree-title').hasClass('has-popover') === false){
 									$(nodeSpan).find('a.dynatree-title').addClass('has-popover');
@@ -221,9 +216,7 @@
                         if (node.data.isFolder === false) {
                             changeBrowseGermplasmButtonBehavior(false);
                         } else {
-                            if (node.data.key > 1 || node.data.key === 'CENTRAL') {
-                                changeBrowseGermplasmButtonBehavior(false);
-                            } else if (node.data.key === 'LOCAL') {
+                            if (node.data.key === 'LISTS') {
                                 changeBrowseGermplasmButtonBehavior(true);
                                 $('.edit-germplasm-folder').addClass('disable-image');
                                 $('.delete-germplasm-folder').addClass('disable-image');
@@ -244,12 +237,6 @@
                     },
                     dnd: {
                         onDragStart: function (node) {
-                            /** This function MUST be defined to enable dragging for the tree.
-                             * Return false to cancel dragging of node.
-                             */
-                            if (node.data.key > 0) {
-                                return false;
-                            }
                             return true;
                         },
                         preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.

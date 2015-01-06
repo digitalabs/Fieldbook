@@ -147,9 +147,7 @@ function chooseStudyNodeInFieldMap(node, fromEnterKey) {
     'use strict';
     
         if (node.data.isFolder === false) {             
-           		if(parseInt(node.data.key, 10) < 0){
-           			addStudyInFieldMap(node.data.key, node.data.title);
-           		}            		
+           		addStudyInFieldMap(node.data.key, node.data.title);
         } else {
             if (fromEnterKey === false) {
                 showErrorMessage('page-study-tree-message-modal', chooseStudyError);

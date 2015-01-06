@@ -174,7 +174,7 @@ function setCorrespondingTraitClass(propertyId) {
 
 function getOntologySuffix(id){
 	'use strict';
-	return (id > -1 ? ' (Shared)' : '');
+	return '';
 }
 
 //function to create the select2 combos
@@ -298,11 +298,7 @@ function setOnChangeSettingsOfOntologyCombos(name, allowTypedValues) {
             
             if (name == 'ManageProperty') {
                 setCorrespondingTraitClass($('#combo' + name).select2('data').id);
-                if (parseInt($('#combo' + name).select2('data').id) > 0) {
-                    disablePropertyFields();
-                } else {
-                    enablePropertyFields();
-                }
+                enablePropertyFields();                
             }
 
         } else { //add mode
@@ -771,13 +767,9 @@ function populateFields(data, variableId) {
 	setDeleteOperation(2);
 
 	//disable other fields except valid values if selected variable is from central db
-	if (parseInt(variableId) > 0) {
-		disableFieldsForCentralUpdate();
-		$('#traitClassBrowserTree').dynatree('disable');
-	}else{
+	
 		enableFieldsForUpdate();
-		$('#traitClassBrowserTree').dynatree('enable');
-	}
+		$('#traitClassBrowserTree').dynatree('enable');	
 
 }
 
@@ -1152,7 +1144,6 @@ function addCategoricalValidValue(id, label, description) {
 	}
 
 	//if new valid value, add a delete button
-	if (id < 0 || id == null) {
 		deleteButton= '<button class="btn btn-info" type="button" onClick="delCatVar($(this))">' +
 		'<span class="glyphicon glyphicon-remove"></span>' +
 	    '</button>';
@@ -1161,17 +1152,7 @@ function addCategoricalValidValue(id, label, description) {
 			  'description' : description,
 			  'operation' : operation
 		});
-	} else {
-		deleteButton= '<button style="display: none" class="btn btn-info delete-valid-val-btn" type="button" onClick="delCatVar($(this))">' +
-		'<span class="glyphicon glyphicon-remove"></span>' +
-	    '</button>';
-		//read-only
-		enumerations_central.push({ 'id' : id,
-			  'name' : label,
-			  'description' : description,
-			  'operation' : operation
-		});
-	}
+
 
 	var newValidValue = '<tr><td class="validValueLabel">' + label +
 						'</td><td class="validValueDesc">' + description +

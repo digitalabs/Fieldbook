@@ -290,8 +290,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         //validations for delete and update
         if (form.getIsDelete().equals(1)) {
             validateDelete(form, result);
-        } else if (form.getIsDelete().equals(0) 
-                || (form.getIsDelete().equals(0) && form.getVariableId() > -1)) {
+        } else if (form.getIsDelete().equals(0)) {
             LOG.debug("hallow");
             validator.validate(form, result);
         } 
@@ -315,14 +314,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     StandardVariable standardVariable = new StandardVariable();
                     //if variable is from local, add/update the variable
                     //if it's from central, get the standard variable object only for update of valid value
-                    if (form.getVariableId() == null || form.getVariableId() < 0) {
                         standardVariable = createStandardVariableObject(form, operation);
                         ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
                         standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
-                    } else {
-                        standardVariable = ontologyService.getStandardVariable(form.getVariableId());
-                        form.setNewVariableName(standardVariable.getName());
-                    }
+                    
                     saveConstraintsAndValidValues(form, standardVariable);
                     form.setVariableId(standardVariable.getId());
                     form.setVariableName(standardVariable.getName());
@@ -369,7 +364,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     //if it's from central, get the standard variable object only for update of valid value
                     
                     Integer standardVariableId = null;
-                    if (form.getVariableId() == null || form.getVariableId() < 0) {
+                    if (form.getVariableId() == null) {
                         standardVariable = createStandardVariableObject(form, operation);
                         standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(standardVariable.getProperty().getName(), standardVariable.getScale().getName(), standardVariable.getMethod().getName(),standardVariable.getPhenotypicType());
                     }                                      
@@ -919,15 +914,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @param o the o
      * @param errors the errors
      */
-    private void validateDelete(Object o, Errors errors) {
+    protected void validateDelete(Object o, Errors errors) {
         OntologyBrowserForm form = (OntologyBrowserForm) o;
         try {
-            if (form.getVariableId() > -1) {
-                errors.rejectValue("variableName", "ontology.browser.cannot.delete.central.variable"
-                        , new String[] {
-                                ontologyService.getStandardVariable(form.getVariableId()).getName()}
-                                    , "ontology.browser.cannot.delete.central.variable");
-            } else if (ontologyService.countProjectsByVariable(form.getVariableId()) > 0) {
+        	if (ontologyService.countProjectsByVariable(form.getVariableId()) > 0) {
                 errors.rejectValue("variableName", "ontology.browser.cannot.delete.linked.variable"
                         , new String[] {
                             ontologyService.getStandardVariable(form.getVariableId()).getName()}

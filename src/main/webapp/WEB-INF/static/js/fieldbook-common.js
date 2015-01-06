@@ -3510,7 +3510,7 @@ function saveInlineEdit(isDiscard){
         contentType: "application/json",
 		success: function(data) {
 			var jsonData = $.parseJSON($('#measurement-table').data('json-inline-edit-val'));
-			if(isDiscard == 0 && jsonData.isNew === '1'){
+			if(isDiscard == 0 && jsonData.isNew === '1' && jsonData.value !== 'missing'){
 				$('.inline-input').parent('td').addClass('accepted-value').removeClass('invalid-value');
 				$('.inline-input').parent('td').data('is-accepted', '1');
 			}else if(jsonData.isNew == '0'){				
@@ -3555,7 +3555,6 @@ function markCellAsMissing(indexElem, indexTermId ,indexDataVal ,isNew, elem){
 			if(data.success === '1'){
 				 var oTable = $('#measurement-table').dataTable();				
 				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
-				 $(elem).addClass('accepted-value');
 				 $(elem).removeClass('invalid-value');
 			}else{
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);

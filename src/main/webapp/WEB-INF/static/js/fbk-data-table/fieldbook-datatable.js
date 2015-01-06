@@ -44,12 +44,16 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 								
 								$(td).removeClass('accepted-value');
 						    	$(td).removeClass('invalid-value');
+						    	
+						    	if ($(td).text() !== 'missing' ){
+						    		if ($(td).find("input[type='hidden']").val() === 'true'){
+										$(td).addClass('accepted-value');
+									}else{
+										$(td).addClass('invalid-value');
+									}
+						    	}
 								
-								if ($(td).find("input[type='hidden']").val() === 'true'){
-									$(td).addClass('accepted-value');
-								}else{
-									$(td).addClass('invalid-value');
-								}
+								
 						    }
 						}
 					    $(td).data('term-id', termId);
@@ -130,7 +134,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							  $(this).removeClass('accepted-value');
 					    	  $(this).removeClass('invalid-value');
 					    	  
-					    	  if (cellData != ''){
+					    	  if (cellData !== '' && cellData !== 'missing'){
 					    		  if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
 					    			  	if($(this).data('is-accepted') === '1'){
 					    			  		$(this).addClass('accepted-value');

@@ -391,7 +391,7 @@ LabelPrinting = {
      * returns a promise obj
      */
     LabelPrinting.getLabelPrintingSettings = function(presetType,presetId) {
-        var url = 'http://localhost:8080/Fieldbook/LabelPrinting/specifyLabelDetails/presets/' + presetType + '/' + presetId;
+        var url = '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/' + presetType + '/' + presetId;
         return $.getJSON(url);
     };
 

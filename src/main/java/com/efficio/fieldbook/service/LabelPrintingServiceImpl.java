@@ -390,7 +390,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      * @param firstField the first field
      * @param secondField the second field
      * @param thirdField the third field
-     * @param barcodeNeeded the barcode needed
      * @return the string
      */
     private String generateBarcodeField(Map<String,String> moreFieldInfo
@@ -873,6 +872,55 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         }
     }
 
+    @Override
+    public LabelPrintingPresets getLabelPrintingPreset(Integer presetId, Integer presetType)
+            throws MiddlewareQueryException {
+        if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
+            StandardPreset standardPreset = workbenchService.getStandardPresetById(presetId);
+
+            return new LabelPrintingPresets(presetId,standardPreset.getName(),LabelPrintingPresets.STANDARD_PRESET);
+
+        } else {
+            ProgramPreset programPreset = presetDataManager.getProgramPresetById(presetId);
+
+            return new LabelPrintingPresets(presetId,programPreset.getName(),LabelPrintingPresets.PROGRAM_PRESET);
+        }
+    }
+
+    @Override
+    public ProgramPreset getLabelPrintingProgramPreset(Integer programPresetId)
+            throws MiddlewareQueryException {
+        return  presetDataManager.getProgramPresetById(programPresetId);
+    }
+
+    @Override
+    public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName,
+            Integer programId, Integer presetType)
+            throws MiddlewareQueryException {
+        final List<LabelPrintingPresets> out = new ArrayList<>();
+
+        final Project project = workbenchService.getProjectById(programId.longValue());
+
+        if (LabelPrintingPresets.PROGRAM_PRESET == presetType) {
+            List<ProgramPreset> presets = presetDataManager.getProgramPresetFromProgramAndToolByName(
+                    presetName, programId, 23, ToolSection.FBK_LABEL_PRINTING.name());
+
+            for (ProgramPreset preset : presets) {
+                out.add(new LabelPrintingPresets(preset.getProgramPresetId(),preset.getName(),LabelPrintingPresets.PROGRAM_PRESET));
+            }
+        } else {
+            final String cropName = project.getCropType().getCropName();
+
+            List<StandardPreset> standardPresets = workbenchService.getStandardPresetByCropAndPresetName(presetName,23,cropName,ToolSection.FBK_LABEL_PRINTING.name());
+
+            for (StandardPreset preset : standardPresets) {
+                out.add(new LabelPrintingPresets(preset.getStandardPresetId(),preset.getName(),LabelPrintingPresets.STANDARD_PRESET));
+            }
+        }
+
+        return out;
+    }
+
 	@Override
 	public List<LabelPrintingPresets> getAllLabelPrintingPresets(Integer programId)
 			throws LabelPrintingException {
@@ -922,6 +970,35 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 					"label.printing.preset.does.not.exists",e.getMessage());
 		}
 	}
+
+    @Override
+    public void saveOrUpdateLabelPrintingPresetConfig(String settingsName,
+            String xmlConfig,
+            Integer programId) throws MiddlewareQueryException {
+        // check if exists, override if true else add new
+        List<LabelPrintingPresets> searchPresetList = this.getAllLabelPrintingPresetsByName(
+                settingsName, programId, LabelPrintingPresets.PROGRAM_PRESET);
+
+        if (searchPresetList.size() > 0) {
+            // update
+            ProgramPreset currentLabelPrintingPreset = this.getLabelPrintingProgramPreset(
+                    searchPresetList.get(0).getId());
+            currentLabelPrintingPreset.setConfiguration(xmlConfig);
+
+            presetDataManager.saveOrUpdateProgramPreset(currentLabelPrintingPreset);
+        } else {
+            // add new
+            ProgramPreset preset = new ProgramPreset();
+            preset.setName(settingsName);
+            preset.setProgramUuid(programId);
+            //FIXME: search for a way for this to be not hard-coded. 23 = fieldbook-web
+            preset.setToolId(23);
+            preset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
+            preset.setConfiguration(xmlConfig);
+
+            presetDataManager.saveOrUpdateProgramPreset(preset);
+        }
+    }
 
 	public void setMessageSource(ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;

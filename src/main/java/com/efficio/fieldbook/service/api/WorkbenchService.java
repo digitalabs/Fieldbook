@@ -74,6 +74,10 @@ public interface WorkbenchService {
 	List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName, String toolSection)
 			throws MiddlewareQueryException;
 
+	List<StandardPreset> getStandardPresetByCropAndPresetName(String presetName, int toolId,
+			String cropName,
+			String toolSection) throws MiddlewareQueryException;
+
 	/**
 	 * Returns the specific fieldbook web tool
 	 *

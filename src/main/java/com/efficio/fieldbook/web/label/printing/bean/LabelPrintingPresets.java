@@ -3,6 +3,8 @@ package com.efficio.fieldbook.web.label.printing.bean;
 public class LabelPrintingPresets {
 	public static final int STANDARD_PRESET = 0;
 	public static final int PROGRAM_PRESET = 1;
+	public static final String LABELPRINTING_CURRENT_PRESET_ID_ATTR = "LABELPRINTING_CURRENT_PRESET_ID";
+	public static final String LABELPRINTING_CURRENT_PRESET_TYPE_ATTR = "LABELPRINTING_CURRENT_PRESET_TYPE";
 
 	private int id;
 	private String name;

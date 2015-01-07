@@ -18,6 +18,7 @@ import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.presets.ProgramPreset;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -88,8 +89,63 @@ public interface LabelPrintingService {
 	boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting,
 			FieldMapInfo fieldMapInfoDetail);
 
+	/**
+	 *
+	 * @param presetId
+	 * @param presetType
+	 * @return
+	 * @throws MiddlewareQueryException
+	 */
+	LabelPrintingPresets getLabelPrintingPreset(Integer presetId, Integer presetType)
+			throws MiddlewareQueryException;
+
+	/**
+	 *
+	 * @param programPresetId
+	 * @return
+	 * @throws MiddlewareQueryException
+	 */
+	ProgramPreset getLabelPrintingProgramPreset(Integer programPresetId)
+			throws MiddlewareQueryException;
+
+	/**
+	 *
+	 * @param presetName
+	 * @param programId
+	 * @param presetType
+	 * @return
+	 * @throws MiddlewareQueryException
+	 */
+	List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName,
+			Integer programId, Integer presetType)
+			throws MiddlewareQueryException;
+
+	/**
+	 *
+	 * @param programId
+	 * @return
+	 * @throws LabelPrintingException
+	 */
 	List<LabelPrintingPresets> getAllLabelPrintingPresets(Integer programId)
 			throws LabelPrintingException;
 
+	/**
+	 *
+	 * @param presetType
+	 * @param presetId
+	 * @return
+	 * @throws LabelPrintingException
+	 */
 	String getLabelPrintingPresetConfig(int presetType, int presetId) throws LabelPrintingException;
+
+	/**
+	 *
+	 * @param settingsName
+	 * @param xmlConfig
+	 * @param programId
+	 * @throws MiddlewareQueryException
+	 */
+	void saveOrUpdateLabelPrintingPresetConfig(String settingsName,
+			String xmlConfig,
+			Integer programId) throws MiddlewareQueryException;
 }

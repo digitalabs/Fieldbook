@@ -67,6 +67,13 @@ public class WorkbenchServiceImpl implements WorkbenchService {
 	}
 
 	@Override
+	public List<StandardPreset> getStandardPresetByCropAndPresetName(String presetName,int toolId, String cropName,
+			String toolSection) throws MiddlewareQueryException {
+		return workbenchDataManager.getStandardPresetFromCropAndToolByName(presetName,cropName,toolId,toolSection);
+	}
+
+
+	@Override
 	public Tool getFieldbookWebTool() throws MiddlewareQueryException {
 		return workbenchDataManager.getToolWithName("fieldbook_web");
 	}
@@ -109,6 +116,7 @@ public class WorkbenchServiceImpl implements WorkbenchService {
 		}
 		return ibdbUserId;
 	}
+
 
 	@Override
 	public Project getProjectById(Long projectId)

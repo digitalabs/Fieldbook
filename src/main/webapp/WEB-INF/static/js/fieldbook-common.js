@@ -3656,10 +3656,44 @@ function reviewOutOfBoundsData() {
 	$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
 }
 
+function displayDetailsOutOfBoundsData(){
+	'use strict';
+		
+	removeDetailsOutOfBoundDataInSessionStorage();
+	
+        if ($('#reviewDetailsOutOfBoundsDataModalBody').length !== 0) {		
+			$.ajax(
+				{ 
+					url: '/Fieldbook/Common/ReviewDetailsOutOfBounds/showDetails',
+					type: 'GET',
+					success: function(html) {
+						$('#reviewOutOfBoundsDataModal').modal('hide');
+						$('#reviewDetailsOutOfBoundsDataModalBody').html(html);
+						$('#reviewDetailsOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+					}
+			});
+        }
+}
+
+function removeDetailsOutOfBoundDataInSessionStorage(){
+	'use strict';
+	if (sessionStorage){
+		for(var i in sessionStorage)
+		{
+		    if (i.indexOf('reviewDetailsFormData') === 0){
+		    	sessionStorage.removeItem(i);
+		    }
+		}
+	}
+	
+}
+
 function proceedToReviewOutOfBoundsDataAction() {
 	var action = $('#review-out-of-bounds-data-action').select2('data').id;
 	if(action === '0') {
 		showErrorMessage('page-review-out-of-bounds-data-message-modal', reviewOutOfBoundsDataActionRequiredError);
+	} else if (action === '1'){
+		displayDetailsOutOfBoundsData();
 	} else if (action === '2'){
 		markAllCellAsAccepted();
 	} else if (action === '3'){

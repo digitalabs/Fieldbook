@@ -30,6 +30,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
@@ -37,6 +38,7 @@ import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -101,7 +103,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     @Resource
     private ResourceBundleMessageSource messageSource;
 
-
+    @Resource
+    private UserSelection userSelection;
+    
     /**
      * Show trial label details.
      *
@@ -145,7 +149,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), true));
         form.setUserLabelPrinting(getUserLabelPrinting());
 
-        model.addAttribute("availableFields", labelPrintingService.getAvailableLabelFields(true, hasFieldMap, locale));
+        model.addAttribute("availableFields", labelPrintingService.getAvailableLabelFields(true, hasFieldMap, locale, id));
 
         form.setIsTrial(true);
         return super.show(model);
@@ -190,7 +194,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
         getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), false));
         form.setUserLabelPrinting(getUserLabelPrinting());
-        model.addAttribute("availableFields", labelPrintingService.getAvailableLabelFields(false, hasFieldMap, locale));
+        model.addAttribute("availableFields", labelPrintingService.getAvailableLabelFields(false, hasFieldMap, locale, id));
         form.setIsTrial(false);
         return super.show(model);
     }
@@ -343,11 +347,21 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         getUserLabelPrinting().setGenerateType(form.getUserLabelPrinting().getGenerateType());
 
         List<FieldMapInfo> fieldMapInfoList = getUserLabelPrinting().getFieldMapInfoList();
+        Workbook workbook = userSelection.getWorkbook();
+
+        if (workbook != null) {
+            labelPrintingService.populateUserSpecifiedLabelFields(getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0).getTrialInstances()
+                    , workbook, getUserLabelPrinting().getMainSelectedLabelFields(), userFieldmap.isTrial());
+        }
+
         List<StudyTrialInstanceInfo> trialInstances = null;
+
         if (fieldMapInfoList != null) {
             trialInstances = generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
         } else {
+            // initial implementation of BMS-186 will be for single studies only, not for cases where multiple studies partcipating in a single fieldmap
             trialInstances = generateTrialInstancesFromFieldMap();
+
             for(StudyTrialInstanceInfo trialInstance : trialInstances){
                 FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
                 fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
@@ -363,15 +377,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    	String fileName = "";
 	    	if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())){
-	        	fileName = getFileNameAndSetFileLocations(".pdf");
-	            fileName = labelPrintingService.generatePDFLabels(trialInstances,
+	        	getFileNameAndSetFileLocations(".pdf");
+	            fileName = labelPrintingService.generatePDFLabels(trialInstances, 
 	                            getUserLabelPrinting(), baos);
 	        } else if (getUserLabelPrinting().getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
-	        	fileName  = getFileNameAndSetFileLocations(".xls");
+	        	getFileNameAndSetFileLocations(".xls");
 	            fileName = labelPrintingService.generateXlSLabels(trialInstances,
 	                            getUserLabelPrinting(), baos);
 	        } else {
-	        	fileName = getFileNameAndSetFileLocations(".csv");
+	        	getFileNameAndSetFileLocations(".csv");
 	        	fileName = labelPrintingService.generateCSVLabels(trialInstances, userLabelPrinting, baos);
 	        }
 	        results.put("isSuccess", 1);
@@ -407,7 +421,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			LOG.error(e.getMessage(), e);
 		}
 
-		return new ArrayList<LabelPrintingPresets>();
+		return new ArrayList<>();
 	}
 
 	@ResponseBody
@@ -537,7 +551,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     private List<StudyTrialInstanceInfo> generateTrialInstancesFromFieldMap() {
         List<FieldMapTrialInstanceInfo> trialInstances =
                 getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0).getTrialInstances();
-        List<StudyTrialInstanceInfo> studyTrial = new ArrayList<StudyTrialInstanceInfo>();
+        List<StudyTrialInstanceInfo> studyTrial = new ArrayList<>();
+
         for (FieldMapTrialInstanceInfo trialInstance : trialInstances) {
             StudyTrialInstanceInfo studyTrialInstance = new StudyTrialInstanceInfo(
                         trialInstance, getUserLabelPrinting().getFieldMapInfo().getFieldbookName());

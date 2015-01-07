@@ -327,6 +327,8 @@
         <aop:scoped-proxy/>
     </bean>
 
+    <bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
+
     <bean id="springAppContextProvider"
           class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
 

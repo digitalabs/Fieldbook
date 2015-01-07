@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.service.api;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import org.generationcp.middleware.domain.etl.Workbook;
 
 import java.util.List;
@@ -12,4 +13,12 @@ import java.util.List;
 public interface SettingsService {
 
 	public List<SettingDetail> retrieveTrialSettings(Workbook workbook);
+
+	public List<LabelFields> retrieveTrialSettingsAsLabels(Workbook workbook);
+
+	public List<LabelFields> retrieveGermplasmDescriptorsAsLabels(Workbook workbook);
+
+	public List<LabelFields> retrieveTrialEnvironmentSettingsAsLabels(Workbook workbook);
+
+	public List<LabelFields> retrieveNurseryManagementDetailsAsLabels(Workbook workbook);
 }

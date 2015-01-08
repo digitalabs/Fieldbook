@@ -322,7 +322,7 @@ public abstract class BaseTrialController extends SettingsController {
                 AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
         List<Integer> requiredFields = buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
         List<Integer> filterFields = buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
-        HashMap<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
+        Map<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
         for (MeasurementVariable var : workbook.getTrialConditions()) {
             SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
 
@@ -545,7 +545,7 @@ public abstract class BaseTrialController extends SettingsController {
         
         List<Integer> hiddenFields = buildVariableIDList(AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
         List<Integer> basicDetailIDList = buildVariableIDList(AppConstants.HIDE_TRIAL_FIELDS.getString());
-        HashMap<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
+        Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
         for (MeasurementVariable var : measurementVariables) {
             if (!basicDetailIDList.contains(var.getTermId())) {
                 SettingDetail detail = createSettingDetail(var.getTermId(), var.getName());
@@ -571,7 +571,7 @@ public abstract class BaseTrialController extends SettingsController {
                 }
 
                 String value;
-                if (detail.getVariable().getWidgetType().getType().equals("DATE")) {
+                if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
                     value = convertDateStringForUI(var.getValue());
                 } else {
                     value = var.getValue();

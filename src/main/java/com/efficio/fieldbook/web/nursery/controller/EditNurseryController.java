@@ -29,7 +29,6 @@ import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -55,7 +54,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * The Class CreateNurseryController.
@@ -122,11 +120,11 @@ public class EditNurseryController extends SettingsController {
     public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
                                      @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2,
                                      @PathVariable int nurseryId, @RequestParam(required = false) String isAjax,
-                                     Model model, HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
+                                     Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
 
         final String contextParams = retrieveContextInfo(request);
 
-        this.clearSessionData(session);
+        this.clearSessionData(request.getSession());
 
         try {
             Workbook workbook = null;

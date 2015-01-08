@@ -90,7 +90,7 @@ public class EditNurseryControllerTest {
         doNothing().when(moleEditNurseryController).removeBasicDetailsVariables(basicDetails);
         doNothing().when(moleEditNurseryController).setFormStaticData(eq(createNurseryForm), anyString(), eq(workbook));
         // test
-        String out = moleEditNurseryController.useExistingNursery(createNurseryForm, importGermplasmListForm, NURSERY_ID, "context-info", model, session, request, redirectAttributes);
+        String out = moleEditNurseryController.useExistingNursery(createNurseryForm, importGermplasmListForm, NURSERY_ID, "context-info", model, request, redirectAttributes);
 
         verify(fieldbookMiddlewareService).getNurseryDataSet(anyInt());
         assertEquals("should return the URL of the base_template", EditNurseryController.BASE_TEMPLATE_NAME, out);
@@ -105,7 +105,7 @@ public class EditNurseryControllerTest {
         doNothing().when(moleEditNurseryController).clearSessionData(session);
         when(fieldbookMiddlewareService.getNurseryDataSet(NURSERY_ID)).thenThrow(MiddlewareQueryException.class);
 
-        String out = moleEditNurseryController.useExistingNursery(createNurseryForm, importGermplasmListForm, NURSERY_ID, "context-info", model, session, request, redirectAttributes);
+        String out = moleEditNurseryController.useExistingNursery(createNurseryForm, importGermplasmListForm, NURSERY_ID, "context-info", model, request, redirectAttributes);
         assertEquals("should redirect to manage nurseries page", "redirect:" + ManageNurseriesController.URL, out);
 
         // assert that we should have produced a redirectErrorMessage

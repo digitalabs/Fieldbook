@@ -7,7 +7,7 @@
             	&nbsp;&nbsp;&nbsp;
                 <span th:text="#{advancing.nursery.entries.total}" class="control-label">Total Entries:</span>
                 <span class="control-label control-label-bold advance-list-size" th:text="*{#lists.size(germplasmList)}"></span>
-                <button style="margin-left: 20px" th:id="*{uniqueId}" type="button" class="btn btn-primary uniqueId btn-save-advance-list" aria-hidden="true" onclick="javascript: openSaveListModal(this);" th:text="#{nursery.save.advanced.list}">
+                <button style="margin-left: 20px" th:id="*{uniqueId}" type="button" class="btn btn-primary uniqueId btn-save-advance-list" aria-hidden="true" onclick="javascript: SaveAdvanceList.openSaveListModal(this);" th:text="#{nursery.save.advanced.list}">
                     Save
                 </button>
             </div>

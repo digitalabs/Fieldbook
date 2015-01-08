@@ -63,6 +63,7 @@ import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -452,64 +453,74 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         Locale locale = LocaleContextHolder.getLocale();
 
         StringBuilder buffer = new StringBuilder();
-        int headerID = Integer.parseInt(headerIdString);
-        if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.entry.num", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.gid", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.germplasm.name", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.year", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.season", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.nursery.name", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.trial.name", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.trial.instance.num", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.rep", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.location", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.block.name", null, locale));
-        } else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.plot", null, locale));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.parentage", null, locale));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
-            buffer.append(messageSource.getMessage(
-                    "label.printing.available.fields.plot.coordinates", null, locale));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
-        	buffer.append(messageSource.getMessage(
-        			"label.printing.available.fields.field.name", null, locale));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
-        	buffer.append(messageSource.getMessage(
-        			"label.printing.available.fields.barcode", null, locale));
-        } else {
-            try {
-                buffer.append(fieldbookMiddlewareService.getStandardVariable(headerID).getName());
-            } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
-            }
+
+        if (headerIdString == null) {
+            return "";
         }
 
-        return buffer.toString();
+        try {
+            int headerID = Integer.parseInt(headerIdString);
+            if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.entry.num", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.gid", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.germplasm.name", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.year", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.season", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.nursery.name", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.trial.name", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.trial.instance.num", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.rep", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.location", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.block.name", null, locale));
+			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.plot", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.parentage", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.plot.coordinates", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.field.name", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
+				buffer.append(messageSource.getMessage(
+						"label.printing.available.fields.barcode", null, locale));
+			} else {
+				try {
+					buffer.append(fieldbookMiddlewareService.getStandardVariable(headerID).getName());
+				} catch (MiddlewareQueryException e) {
+					LOG.error(e.getMessage());
+				}
+			}
+
+            return buffer.toString();
+        } catch (NumberFormatException e) {
+            LOG.error(e.getMessage());
+            return "";
+        }
     }
     
     /**
@@ -523,60 +534,68 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     private String getSpecificInfo(
             Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel, boolean includeHeaderLabel){
         StringBuilder buffer = new StringBuilder();
-        
-        int headerID = Integer.parseInt(barcodeLabel);
-        if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
-            buffer.append(fieldMapLabel.getEntryNumber());
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
-            String gidTemp = fieldMapLabel.getGid() == null 
-                            ? "" : fieldMapLabel.getGid().toString();
-            buffer.append(gidTemp);
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()) {
-            buffer.append(fieldMapLabel.getGermplasmName());
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()) {
-            buffer.append(fieldMapLabel.getStartYear());
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
-            buffer.append(fieldMapLabel.getSeason());
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
-            buffer.append(moreFieldInfo.get("selectedName"));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
-            buffer.append(moreFieldInfo.get("selectedName"));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
-            buffer.append(moreFieldInfo.get("trialInstanceNumber"));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()) {
-            buffer.append(fieldMapLabel.getRep());
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
-            buffer.append(moreFieldInfo.get("locationName"));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
-            buffer.append(moreFieldInfo.get("blockName"));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()) {
-            buffer.append(fieldMapLabel.getPlotNo());
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()) {
-            buffer.append(fieldMapLabel.getPedigree() == null ? "" : fieldMapLabel.getPedigree());
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
-            buffer.append(fieldMapLabel.getPlotCoordinate());
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
-        	buffer.append(moreFieldInfo.get("fieldName"));
-        } else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
-        	buffer.append(moreFieldInfo.get("barcode"));
-        } else {
-            String value = fieldMapLabel.getUserFields().get(headerID);
-            if (value != null) {
-                buffer.append(value);
-            }
 
-        }
+        try {
+            int headerID = Integer.parseInt(barcodeLabel);
 
-        String stemp = buffer.toString();
-        if(stemp != null && "null".equalsIgnoreCase(stemp)) {
-        	stemp = " ";
+            String headerName = getHeader(barcodeLabel);
+
+            if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
+				buffer.append(fieldMapLabel.getEntryNumber());
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+				String gidTemp = fieldMapLabel.getGid() == null
+								? "" : fieldMapLabel.getGid().toString();
+				buffer.append(gidTemp);
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()) {
+				buffer.append(fieldMapLabel.getGermplasmName());
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()) {
+				buffer.append(fieldMapLabel.getStartYear());
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
+				buffer.append(fieldMapLabel.getSeason());
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
+				buffer.append(moreFieldInfo.get("selectedName"));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
+				buffer.append(moreFieldInfo.get("selectedName"));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
+				buffer.append(moreFieldInfo.get("trialInstanceNumber"));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()) {
+				buffer.append(fieldMapLabel.getRep());
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
+				buffer.append(moreFieldInfo.get("locationName"));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
+				buffer.append(moreFieldInfo.get("blockName"));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()) {
+				buffer.append(fieldMapLabel.getPlotNo());
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()) {
+				buffer.append(fieldMapLabel.getPedigree() == null ? "" : fieldMapLabel.getPedigree());
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
+				buffer.append(fieldMapLabel.getPlotCoordinate());
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
+				buffer.append(moreFieldInfo.get("fieldName"));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
+				buffer.append(moreFieldInfo.get("barcode"));
+			} else {
+				String value = fieldMapLabel.getUserFields().get(headerID);
+				if (value != null) {
+					buffer.append(value);
+				}
+
+			}
+
+            String stemp = buffer.toString();
+            if(stemp != null && "null".equalsIgnoreCase(stemp)) {
+				stemp = " ";
+			}
+
+            if(includeHeaderLabel && headerName != null){
+				stemp = headerName + " : " + stemp;
+			}
+
+            return stemp;
+        } catch (NumberFormatException e) {
+            LOG.error(e.getMessage());
+            return "";
         }
-        
-        if(includeHeaderLabel && headerName != null){
-        	stemp = headerName + " : " + stemp;
-        }
-        
-    	return stemp;
     }
     
     /* (non-Javadoc)
@@ -901,10 +920,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         
         StringTokenizer token = new StringTokenizer(leftSelectedFields, ",");
         while(token.hasMoreTokens()){
-            String headerId = token.nextToken();
-            String value = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId, false);
-            ExportColumnValue columnValue = new ExportColumnValue(Integer.parseInt(headerId), value);
-            rowMap.put(Integer.parseInt(headerId), columnValue);
+            String headerString = token.nextToken();
+            try {
+                Integer headerID = Integer.parseInt(headerString);
+                String value = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerString, false);
+                ExportColumnValue columnValue = new ExportColumnValue(headerID, value);
+                rowMap.put(headerID, columnValue);
+            } catch (NumberFormatException e) {
+                LOG.error(e.getMessage());
+            }
         }
         
         return rowMap;
@@ -916,9 +940,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     	
     	while (token.hasMoreTokens()) {
     		String headerId = token.nextToken();
-            String headerName = getHeader(headerId);
-            ExportColumnHeader columnHeader = new ExportColumnHeader(Integer.parseInt(headerId), headerName, true);
-            columnHeaders.add(columnHeader);
+
+            if (headerId != null && !headerId.equals("null")) {
+                String headerName = getHeader(headerId);
+                ExportColumnHeader columnHeader = new ExportColumnHeader(Integer.parseInt(headerId),
+                        headerName, true);
+                columnHeaders.add(columnHeader);
+            }
+
     	}
     	return columnHeaders;
 	}

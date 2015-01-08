@@ -322,5 +322,6 @@
             </list>
         </property>
     </bean>
-    
+
+	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
 </beans>

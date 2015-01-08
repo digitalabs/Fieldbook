@@ -152,19 +152,14 @@ public class EditNurseryControllerTest {
 
     @Test
     public void testGetNurseryFolderName() throws Exception {
-        // case nurseryId = positive
-        String out = editNurseryController.getNurseryFolderName(ROOT_FOLDER_ID, PUBLIC_NURSERY_ID);
+        // case folder id = root folder 
+        String out = editNurseryController.getNurseryFolderName(ROOT_FOLDER_ID);
         verify(fieldbookMiddlewareService,never()).getFolderNameById(ROOT_FOLDER_ID);
-        assertEquals("should be public folder", AppConstants.PUBLIC_NURSERIES.getString(), out);
-
-        // case nurseryId = negative (local)
-        String out2 = editNurseryController.getNurseryFolderName(ROOT_FOLDER_ID, LOCAL_NURSERY_ID);
-        verify(fieldbookMiddlewareService,never()).getFolderNameById(ROOT_FOLDER_ID);
-        assertEquals("should be a program local folder", AppConstants.PROGRAM_NURSERIES.getString(), out2);
+        assertEquals("should be Nurseries", AppConstants.NURSERIES.getString(), out);
 
         // case not a root folder
         when(fieldbookMiddlewareService.getFolderNameById(anyInt())).thenReturn(anyString());
-        editNurseryController.getNurseryFolderName(CHILD_FOLDER_ID, LOCAL_NURSERY_ID);
+        editNurseryController.getNurseryFolderName(CHILD_FOLDER_ID);
         verify(fieldbookMiddlewareService).getFolderNameById(CHILD_FOLDER_ID);
     }
 

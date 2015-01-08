@@ -226,11 +226,6 @@ public enum AppConstants {
     
     ,OBJECTIVE_ID
     ,OCC
-    
-    ,PROGRAM_NURSERIES
-    ,PROGRAM_TRIALS
-    ,PUBLIC_NURSERIES
-    ,PUBLIC_TRIALS
     ,NURSERIES
     ,TRIALS
     

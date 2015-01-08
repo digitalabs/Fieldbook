@@ -164,7 +164,7 @@ public class EditNurseryController extends SettingsController {
                 form.setLoadSettings(SUCCESS);
                 form.setFolderId(Integer.valueOf((int) workbook.getStudyDetails().getParentFolderId()));
 
-                form.setFolderName(getNurseryFolderName(form.getFolderId(), nurseryId));
+                form.setFolderName(getNurseryFolderName(form.getFolderId()));
 
                 //measurements part
                 SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
@@ -201,13 +201,10 @@ public class EditNurseryController extends SettingsController {
 
     }
 
-    protected String getNurseryFolderName(int folderId, int nurseryId) throws MiddlewareQueryException {
-        if (folderId == 1 && nurseryId > 0) {
-            return AppConstants.PUBLIC_NURSERIES.getString();
-        } else if (folderId == 1) {
-            return AppConstants.PROGRAM_NURSERIES.getString();
+    protected String getNurseryFolderName(int folderId) throws MiddlewareQueryException {
+        if (folderId == 1) {
+            return AppConstants.NURSERIES.getString();
         }
-
         return fieldbookMiddlewareService.getFolderNameById(folderId);
     }
 

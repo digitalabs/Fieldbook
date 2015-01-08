@@ -507,7 +507,7 @@ public abstract class BaseTrialController extends SettingsController {
         String folderName;
 
         if (folderId == 1) {
-            folderName = AppConstants.PROGRAM_TRIALS.getString();
+            folderName = AppConstants.TRIALS.getString();
         } else {
             folderName = fieldbookMiddlewareService.getFolderNameById(folderId);
         }

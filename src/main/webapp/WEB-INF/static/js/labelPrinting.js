@@ -237,8 +237,8 @@ LabelPrinting = {
      *  Display delete saved settings button
      */
     LabelPrinting.showDeleteSavedSettings = function(){
-        var savedSettingsVal = LabelPrinting.getSelectedPreset().length;
-        if (savedSettingsVal.length > 0) {
+        var savedSettingsVal = LabelPrinting.getSelectedPreset();
+        if (0 === savedSettingsVal.length) {
             $('.fb-delete-settings').addClass('fbk-hide');
         } else if ('1' === savedSettingsVal[0]) {
             //meaning user preset, we show the delete

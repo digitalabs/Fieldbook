@@ -133,8 +133,7 @@ public class SettingsServiceImpl implements SettingsService {
 		List<Integer> hiddenFields = util.buildVariableIDList(
 				AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," +
 						AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
-		List<Integer> requiredFields = util.buildVariableIDList(
-				AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString());
+
 		List<Integer> filterFields = util.buildVariableIDList(
 				AppConstants.EXP_DESIGN_VARIABLES.getString());
 

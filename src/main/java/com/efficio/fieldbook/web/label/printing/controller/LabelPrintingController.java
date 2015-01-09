@@ -33,7 +33,6 @@ import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
-import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.StringUtil;
@@ -41,7 +40,6 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -421,7 +419,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 					.createUnmarshaller();
 
 			// retrieve appropriate setting
-			String xmlToRead = labelPrintingService.getLabelPrintingPresetConfig(presetType,presetId);
+			String xmlToRead = labelPrintingService.getLabelPrintingPresetConfig(presetId,presetType);
 
 			return (LabelPrintingSetting) parseXML
 					.unmarshal(new StringReader(xmlToRead));
@@ -547,7 +545,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         }
         return studyTrial;
     }
-
     /**
      * Generate trial instances from selected field maps.
      *

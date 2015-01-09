@@ -903,7 +903,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
         if (LabelPrintingPresets.PROGRAM_PRESET == presetType) {
             List<ProgramPreset> presets = presetDataManager.getProgramPresetFromProgramAndToolByName(
-                    presetName, programId, 23, ToolSection.FBK_LABEL_PRINTING.name());
+                    presetName, programId, workbenchService.getFieldbookWebTool().getToolId().intValue(), ToolSection.FBK_LABEL_PRINTING.name());
 
             for (ProgramPreset preset : presets) {
                 out.add(new LabelPrintingPresets(preset.getProgramPresetId(),preset.getName(),LabelPrintingPresets.PROGRAM_PRESET));
@@ -911,7 +911,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         } else {
             final String cropName = project.getCropType().getCropName();
 
-            List<StandardPreset> standardPresets = workbenchService.getStandardPresetByCropAndPresetName(presetName,23,cropName,ToolSection.FBK_LABEL_PRINTING.name());
+            List<StandardPreset> standardPresets = workbenchService.getStandardPresetByCropAndPresetName(presetName,workbenchService.getFieldbookWebTool().getToolId().intValue(),cropName,ToolSection.FBK_LABEL_PRINTING.name());
 
             for (StandardPreset preset : standardPresets) {
                 out.add(new LabelPrintingPresets(preset.getStandardPresetId(),preset.getName(),LabelPrintingPresets.STANDARD_PRESET));
@@ -955,7 +955,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	}
 
 	@Override
-	public String getLabelPrintingPresetConfig(int presetType, int presetId) throws LabelPrintingException {
+	public String getLabelPrintingPresetConfig(int presetId,int presetType) throws LabelPrintingException {
 		try {
 			if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
 				return workbenchService.getStandardPresetById(presetId).getConfiguration();
@@ -991,8 +991,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             ProgramPreset preset = new ProgramPreset();
             preset.setName(settingsName);
             preset.setProgramUuid(programId);
-            //FIXME: search for a way for this to be not hard-coded. 23 = fieldbook-web
-            preset.setToolId(23);
+            preset.setToolId(workbenchService.getFieldbookWebTool().getToolId().intValue());
             preset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
             preset.setConfiguration(xmlConfig);
 

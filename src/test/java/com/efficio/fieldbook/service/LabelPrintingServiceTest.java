@@ -56,7 +56,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 			AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
     
     private static final String PLOT_COORDINATES = "Plot Coordinates";
-        
+
     @Resource
     private LabelPrintingService labelPrintingService;
     
@@ -445,25 +445,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 	@Test
 	public void testPopulateUserSpecifiedLabelFieldsForNurseryEnvironmentDataOnly() {
 		String testDesigValue = "123";
-		Workbook workbook = mock(Workbook.class);
-		doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getStudyConditions();
-		doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getFactors();
-		List<MeasurementRow> sampleData = new ArrayList<>();
-		MeasurementRow row = new MeasurementRow();
-		row.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
-		List<MeasurementData> dataList = new ArrayList<>();
-		MeasurementData data = new MeasurementData();
-		MeasurementVariable var = new MeasurementVariable();
-		var.setTermId(TermId.DESIG.getId());
-		data.setMeasurementVariable(var);
-		data.setValue(testDesigValue);
-		dataList.add(data);
-		row.setDataList(dataList);
-		sampleData.add(row);
-		doReturn(sampleData).when(workbook).getObservations();
-
 		LabelPrintingService printingService = new LabelPrintingServiceImpl();
-		LabelPrintingService mocked = spy(printingService);
 
 		String testSelectedFields = Integer.toString(TermId.DESIG.getId());
 
@@ -471,8 +453,35 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
 		input.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
 
-		printingService.populateUserSpecifiedLabelFields(input, workbook, testSelectedFields, false);
+		printingService.populateUserSpecifiedLabelFields(input, setupTestWorkbook(), testSelectedFields, false);
 
-		assertEquals(testDesigValue, input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG));
+		assertEquals(testDesigValue, input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));
+	}
+
+	protected Workbook setupTestWorkbook() {
+		Workbook workbook = mock(Workbook.class);
+		doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getStudyConditions();
+		doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getFactors();
+
+		// prepare measurement rows simulating experiment data
+		List<MeasurementRow> sampleData = new ArrayList<>();
+
+		// add a row with measurement data for the DESIG term
+		MeasurementRow row = new MeasurementRow();
+		// experiment ID here is set to be the same as the one used when creating the sample instance data, since they need to correlate.
+		row.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
+
+		List<MeasurementData> dataList = new ArrayList<>();
+		MeasurementData data = new MeasurementData();
+		MeasurementVariable var = new MeasurementVariable();
+		var.setTermId(TermId.DESIG.getId());
+		data.setMeasurementVariable(var);
+		data.setValue("123");
+		dataList.add(data);
+		row.setDataList(dataList);
+		sampleData.add(row);
+		doReturn(sampleData).when(workbook).getObservations();
+
+		return workbook;
 	}
 }

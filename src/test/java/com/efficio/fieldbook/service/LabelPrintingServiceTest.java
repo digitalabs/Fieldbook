@@ -3,6 +3,7 @@ package com.efficio.fieldbook.service;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -15,10 +16,15 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -37,6 +43,9 @@ import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.lowagie.text.pdf.PdfReader;
+
+import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     
@@ -431,5 +440,39 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		int headerLength = userLabelPrinting.getLeftSelectedLabelFields().split(",").length + 
 				userLabelPrinting.getRightSelectedLabelFields().split(",").length;
 		return headers.length == headerLength;
+	}
+
+	@Test
+	public void testPopulateUserSpecifiedLabelFieldsForNurseryEnvironmentDataOnly() {
+		String testDesigValue = "123";
+		Workbook workbook = mock(Workbook.class);
+		doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getStudyConditions();
+		doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getFactors();
+		List<MeasurementRow> sampleData = new ArrayList<>();
+		MeasurementRow row = new MeasurementRow();
+		row.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
+		List<MeasurementData> dataList = new ArrayList<>();
+		MeasurementData data = new MeasurementData();
+		MeasurementVariable var = new MeasurementVariable();
+		var.setTermId(TermId.DESIG.getId());
+		data.setMeasurementVariable(var);
+		data.setValue(testDesigValue);
+		dataList.add(data);
+		row.setDataList(dataList);
+		sampleData.add(row);
+		doReturn(sampleData).when(workbook).getObservations();
+
+		LabelPrintingService printingService = new LabelPrintingServiceImpl();
+		LabelPrintingService mocked = spy(printingService);
+
+		String testSelectedFields = Integer.toString(TermId.DESIG.getId());
+
+
+		List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
+		input.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
+
+		printingService.populateUserSpecifiedLabelFields(input, workbook, testSelectedFields, false);
+
+		assertEquals(testDesigValue, input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG));
 	}
 }

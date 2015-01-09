@@ -15,6 +15,11 @@ LabelPrinting = {
     pdfLabelSheet : {
         'A4' : 1,
         'Letter' : 2
+    },
+
+    TYPES: {
+        STANDARD : 0,
+        PROGRAM : 1
     }
 };
 
@@ -65,7 +70,11 @@ LabelPrinting = {
         });
 
         $('#export-label-data').on('click', function(){
-            LabelPrinting.validateEnterLabelFieldsPage($('#label-format').val());
+            LabelPrinting.doExportLabel($('#label-format').val());
+        });
+
+        $('#fbk-lbl-printing-save-preset').on('click',function() {
+            LabelPrinting.onSavePreset();
         });
 
         $('#label-format').on('change', function(){
@@ -88,6 +97,20 @@ LabelPrinting = {
             }
         });
 
+        $('#fbk-lbl-printing-save-preset-override-modal .yes').on('click',function() {
+            LabelPrinting.doSavePreset($('#label-format').val()).done(function() {
+                // close modal
+                $('#fbk-lbl-printing-save-preset-override-modal').modal('hide');
+                moveToTopScreen();
+            });
+        });
+
+        $('#fbk-lbl-printing-save-preset-override-modal .no').on('click',function() {
+            // close modal
+            $('#fbk-lbl-printing-save-preset-override-modal').modal('hide');
+        });
+
+
         setSelectedTrialsAsDraggable();
 
         $( 'ul.droptrue' ).sortable({
@@ -106,6 +129,60 @@ LabelPrinting = {
         if($('.includeTrial').length === 1) {
             $('.includeTrial').trigger('click');
         }
+    };
+
+    /**
+     * action on saving presets
+     */
+    LabelPrinting.onSavePreset = function() {
+        var presetNameInput = $('input[name='+getJquerySafeId('userLabelPrinting.settingsName')+']').val();
+
+        // 1. validate presetName, should not be empty
+        if ( !LabelPrinting.validateEnterLabelFieldsPage($('#label-format').val()) ) {
+            return false;
+        }
+
+        // 2. call service to check if preset name already exists
+        LabelPrinting.searchLabelPrintingPresetByName(presetNameInput).done(function(data) {
+            // we have existing data view an overwrite modal
+            if (data.length > 0) {
+                $('#fbk-lbl-printing-save-preset-override-modal').modal('show');
+            } else {
+                // no existing preset, we add a new one
+                LabelPrinting.doSavePreset($('#label-format').val()).done(function(data) {
+                    // update the dropdown
+                    $('#savedSettings').empty();
+
+                    LabelPrinting.initializeUserPresets().done(function(data) {
+                        // select the newly added preset
+                        doUISafeSelect($('#savedSettings'),'1:' + (data.length - 1));
+
+                        moveToTopScreen();
+
+                    });
+
+                });
+            }
+        });
+    };
+
+    /**
+     * Saves the preset, also returns the promise so we can chain
+     */
+    LabelPrinting.doSavePreset = function(type) {
+        // update form for necessary details
+        LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
+
+        // prepare the from that we will be saving, should be similar with label export
+        return LabelPrinting.saveLabelPrintingSetting($('#specifyLabelDetailsForm').serialize()).done(function(data) {
+            if (!data) {
+                showErrorMessage('',ajaxGenericErrorMsg);
+                return;
+            }
+
+            showSuccessfulMessage('', 'Successfully saved preset');
+
+        });
     };
 
     /**
@@ -292,25 +369,36 @@ LabelPrinting = {
             showAlertMessage('', generateLabelsWarningMessage);
         }
 
-        $('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
-        LabelPrinting.setSelectedTrialInstanceOrder();
+        return true;
+    };
 
-        var $form = $('#specifyLabelDetailsForm'),
-            serializedData = $form.serialize();
-        $.ajax({
-            url: $('#specifyLabelDetailsForm').attr('action'),
-            type: 'POST',
-            data: serializedData,
-            success: function(data){
-                if(data.isSuccess === 1){
-                    $('#specifyLabelDetailsDownloadForm').submit();
-                }else{
-                    showErrorMessage('', data.message);
-                }
+    LabelPrinting.doExportLabel = function(type) {
+        // 1. validate
+        if (!LabelPrinting.validateEnterLabelFieldsPage(type)) {
+            return false;
+        }
 
+        // 2. update #specifyLabelDetailsForm for other hidden details
+        LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
+
+        // perform export
+        var formElm = $('#specifyLabelDetailsForm');
+        LabelPrinting.exportLabel(formElm.attr('action'),formElm.serialize()).done(function(data) {
+            if(data.isSuccess === 1){
+                $('#specifyLabelDetailsDownloadForm').submit();
+            }else{
+                showErrorMessage('', data.message);
             }
         });
+    };
 
+    /**
+     * Update update #specifyLabelDetailsForm hidden fields for additional details details
+     * @param type
+     */
+    LabelPrinting.updateAdditionalLabelSettingsFormDetails = function(type) {
+        $('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
+        LabelPrinting.setSelectedTrialInstanceOrder();
     };
 
     LabelPrinting.hasFieldMapFieldsSelected = function() {
@@ -387,6 +475,35 @@ LabelPrinting = {
     };
 
     /**
+     * Search for all presets (standard and program) given presetName
+     * Returns list of presets as array
+     * @param presetName
+     *
+     */
+    LabelPrinting.searchLabelPrintingPresetByName = function(presetName) {
+        var url = '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/searchLabelPrintingPresetByName';
+
+        return $.getJSON(url,{'name' : presetName});
+
+    };
+
+    LabelPrinting.saveLabelPrintingSetting = function(formSerializedData) {
+        var url = '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/save';
+
+        return $.post(url, formSerializedData,'json');
+    };
+
+    /**
+     * Do Export label printing service call
+     * @param formUrl
+     * @param formSerialData
+     * @returns {*} jquery promise
+     */
+    LabelPrinting.exportLabel = function(formUrl,formSerialData) {
+        return $.ajax({url: formUrl, type: 'POST', data: formSerialData});
+    };
+
+    /**
      * Retrieve LabelPrinting presets via service call
      * returns a promise obj
      */
@@ -431,7 +548,8 @@ LabelPrinting = {
                 LabelPrinting.updateBarcodeOptions(data.barcodeSetting);
 
                 // set the setting name
-                $('input[name="userLabelPrinting.settingsName"]').val(data.name);
+                $('input[name='+getJquerySafeId('userLabelPrinting.settingsName')+']').val(data.name);
+
 
             }
         );
@@ -529,6 +647,5 @@ LabelPrinting = {
             selectElem.val(value).change();
         }
     }
-
 
 })();

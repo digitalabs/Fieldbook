@@ -510,8 +510,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="form-group">&nbsp;</div>
 		<div class="form-group">
 		    <div class="col-xs-12 col-md-12 fbk-center">
-		      <input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>		      
-		      <input type="button" id="export-label-data" value="Export Label" th:value="#{common.form.export.label.text}" class="btn btn-primary"/>	
+				<input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>
+				<input type="button" id="fbk-lbl-printing-save-preset"  value="Save Preset" class="btn btn-info"/>
+				<input type="button" id="export-label-data" value="Export Label" th:value="#{common.form.export.label.text}" class="btn btn-primary"/>
 		    </div>
 	    </div>
     </div>
@@ -519,6 +520,30 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 </div>
 </div></div>
 </form>
+
+<!-- modal dialog for preset override confirmation -->
+<div class="modal fade" id="fbk-lbl-printing-save-preset-override-modal" tabindex="-1" role="dialog" aria-labelledby="fbk-lbl-printing-save-preset-override-modal" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Confirmation</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-offset-1 col-xs-11 col-md-offset-1 col-md-11">
+						<p th:text="#{label.printing.confirmation.override.preset}">Do you wish to override the existing program preset?</p>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary yes" th:value="#{common.form.no.text}">Yes</button>
+				<button type="button" class="btn btn-default no" th:value="#{common.form.yes.text}">No</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/labelPrinting.js}"></script>

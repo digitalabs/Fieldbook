@@ -471,6 +471,27 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     }
 
     /**
+     * Delete's program preset
+     * @param programPresetId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/presets/delete", method= RequestMethod.GET)
+    public Boolean deleteLabelPrintingPreset(@RequestParam("programPresetId") Integer programPresetId) {
+
+        try {
+            labelPrintingService.deleteProgramPreset(programPresetId);
+
+            return true;
+
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(),e);
+        }
+
+        return false;
+    }
+
+    /**
      * Saves the label printing setting.
      * Note that the fields should be pre-validated before calling this service
      * @param labelPrintingPresetSetting

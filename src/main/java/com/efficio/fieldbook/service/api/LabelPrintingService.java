@@ -162,4 +162,6 @@ public interface LabelPrintingService {
 			Integer programId) throws MiddlewareQueryException;
 
 	public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields, boolean isTrial);
+
+	void deleteProgramPreset(Integer programPresetId) throws MiddlewareQueryException;
 }

@@ -57,15 +57,33 @@ LabelPrinting = {
         $('.saved-settings').on('change', LabelPrinting.doSelectPreset);
 
         $('.fb-delete-settings').on('click', function(){
-            var savedSettingsVal = $('#savedSettings').val();
-            var settings = savedSettingsVal.split(':');
+            var selectedPreset = LabelPrinting.getSelectedPreset();
+
+            if (selectedPreset.length > 1 && LabelPrinting.TYPES.PROGRAM.toString() === selectedPreset[0]) {
+                var presetNameInput = $safeId('input[name=userLabelPrinting.settingsName]').val();
+
+                var deleteModalElm = $('#fbk-lbl-printing-delete-preset-confirm');
+                var deleteModalDialogTxtElm = deleteModalElm.find('.modal-dialog-text');
+
+                // replace {0} with the proper name
+                deleteModalDialogTxtElm.text(deleteModalDialogTxtElm.text().replace('{0}',presetNameInput));
+
+                deleteModalElm.modal('show');
+            }
+
+        });
+
+        $('#fbk-lbl-printing-delete-preset-confirm .yes').on('click',LabelPrinting.onDeletePresetOk);
+
+        $('#fbk-lbl-printing-delete-preset-confirm .no').on('click',function() {
+            $('#fbk-lbl-printing-delete-preset-confirm').modal('hide');
         });
 
         $('.includeTrial').on('click', function(){
             LabelPrinting.setTotalLabels($(this));
         });
 
-        $('input[name='+getJquerySafeId('userLabelPrinting.barcodeNeeded')+']').on('change',function(){
+        $safeId('input[name=userLabelPrinting.barcodeNeeded]').on('change',function(){
             LabelPrinting.showOrHideBarcodeFields();
         });
 
@@ -135,7 +153,7 @@ LabelPrinting = {
      * action on saving presets
      */
     LabelPrinting.onSavePreset = function() {
-        var presetNameInput = $('input[name='+getJquerySafeId('userLabelPrinting.settingsName')+']').val();
+        var presetNameInput = $safeId('input[name=userLabelPrinting.settingsName]').val();
 
         // 1. validate presetName, should not be empty
         if ( !LabelPrinting.validateEnterLabelFieldsPage($('#label-format').val()) ) {
@@ -167,6 +185,32 @@ LabelPrinting = {
     };
 
     /**
+     * Perform delete preset
+     */
+    LabelPrinting.onDeletePresetOk = function() {
+        var deleteModalElm = $('#fbk-lbl-printing-delete-preset-confirm');
+        var selectedPresetId = LabelPrinting.getSelectedPreset()[1];
+
+        // delete the label printing preset
+        LabelPrinting.deleteLabelPrintingPreset(selectedPresetId).done(function(data) {
+
+            if (true === data) {
+                // refresh the preset drop-down
+                LabelPrinting.initializeUserPresets().done(function(data) {
+
+                    doUISafeSelect($('#savedSettings'),'');
+                    deleteModalElm.modal('hide');
+
+                    showSuccessfulMessage('', 'Successfully deleted preset');
+                });
+
+            }
+        });
+
+
+    };
+
+    /**
      * Saves the preset, also returns the promise so we can chain
      */
     LabelPrinting.doSavePreset = function(type) {
@@ -193,10 +237,11 @@ LabelPrinting = {
             url: '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/list',
             type: 'GET',
             data: '',
+            cache: false,
             success: function(data){
                 LabelPrinting.allPresets = data;
 
-                $('#savedSettings').append(new Option('Please Choose', ''));
+                $('#savedSettings').empty().append(new Option('Please Choose', ''));
                 var type =  null;
                 for(var i = 0 ; i < data.length ; i++){
                     if(i !== 0 && type !== data[i].type){
@@ -216,7 +261,7 @@ LabelPrinting = {
      * Toggle for barcode fields
      */
     LabelPrinting.showOrHideBarcodeFields = function(){
-        var barcodeNeeded = $('input[name='+getJquerySafeId('userLabelPrinting.barcodeNeeded')+']:checked').val();
+        var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeNeeded]:checked').val();
         if(barcodeNeeded === '1'){
             $('.barcode-fields').show();
         }else{
@@ -316,9 +361,9 @@ LabelPrinting = {
             return false;
         }
 
-        $('#'+getJquerySafeId('userLabelPrinting.leftSelectedLabelFields')).val(leftSelectedFields);
-        $('#'+getJquerySafeId('userLabelPrinting.rightSelectedLabelFields')).val(rightSelectedFields);
-        $('#'+getJquerySafeId('userLabelPrinting.mainSelectedLabelFields')).val(mainSelectedFields);
+        $safeId('#userLabelPrinting.leftSelectedLabelFields').val(leftSelectedFields);
+        $safeId('#userLabelPrinting.rightSelectedLabelFields').val(rightSelectedFields);
+        $safeId('#userLabelPrinting.mainSelectedLabelFields').val(mainSelectedFields);
 
 
         var barcodeNeeded = $('input[type="radio"]:checked').length;
@@ -329,11 +374,11 @@ LabelPrinting = {
         }
 
         //we checked if something was checked
-        if($('#'+getJquerySafeId('userLabelPrinting.barcodeNeeded1')).is(':checked')){
+        if($safeId('#userLabelPrinting.barcodeNeeded1').is(':checked')){
             //we need to check if either one is chosen in the drop downs
-            if($('#'+getJquerySafeId('userLabelPrinting.firstBarcodeField')).val() == ''
-                && $('#'+getJquerySafeId('userLabelPrinting.secondBarcodeField')).val() == ''
-                && $('#'+getJquerySafeId('userLabelPrinting.thirdBarcodeField')).val() == ''){
+            if($safeId('#userLabelPrinting.firstBarcodeField').val() == ''
+                && $safeId('#userLabelPrinting.secondBarcodeField').val() == ''
+                && $safeId('#userLabelPrinting.thirdBarcodeField').val() == ''){
                 showInvalidInputMessage(barcodeFieldNeededError);
                 moveToTopScreen();
                 return false;
@@ -346,7 +391,7 @@ LabelPrinting = {
             return false;
         }
 
-        if($('#'+getJquerySafeId('userLabelPrinting.filename')).val() == ''){
+        if($safeId('#userLabelPrinting.filename').val() == ''){
             //we need to check if either one is chosen in the drop downs
 
             showInvalidInputMessage(filenameError);
@@ -354,7 +399,7 @@ LabelPrinting = {
             return false;
 
         }
-        var data = $('#'+getJquerySafeId('userLabelPrinting.filename')).val();
+        var data = $safeId('#userLabelPrinting.filename').val();
         var isValid = /^[ A-Za-z0-9_@.\.&''@{}$!\-#()%.+~_=^\s]*$/i.test(data);
 
 
@@ -364,13 +409,13 @@ LabelPrinting = {
             return false;
         }
 
-        if ($('#'+getJquerySafeId('userLabelPrinting.fieldMapsExisting')).val().toString() === 'false'
+        if ($safeId('#userLabelPrinting.fieldMapsExisting').val().toString() === 'false'
             && LabelPrinting.hasFieldMapFieldsSelected()) {
             showAlertMessage('', generateLabelsWarningMessage);
         }
 
         return true;
-    };
+    } ;
 
     LabelPrinting.doExportLabel = function(type) {
         // 1. validate
@@ -397,7 +442,7 @@ LabelPrinting = {
      * @param type
      */
     LabelPrinting.updateAdditionalLabelSettingsFormDetails = function(type) {
-        $('#'+getJquerySafeId('userLabelPrinting.generateType')).val(type);
+        $safeId('#userLabelPrinting.generateType').val(type);
         LabelPrinting.setSelectedTrialInstanceOrder();
     };
 
@@ -428,7 +473,7 @@ LabelPrinting = {
     LabelPrinting.checkFieldMapLabelInBarcodeFields = function(hasFieldNameLabel, bardcodeId) {
         //if not yet found, check if selected barcode is a fieldmap label
         if (!hasFieldNameLabel) {
-            hasFieldNameLabel = LabelPrinting.isLabelInFieldMapLabels(hasFieldNameLabel, $('#'+getJquerySafeId(bardcodeId)).val());
+            hasFieldNameLabel = LabelPrinting.isLabelInFieldMapLabels(hasFieldNameLabel, $safeId('#' + bardcodeId).val());
         }
         return hasFieldNameLabel;
     };
@@ -461,7 +506,7 @@ LabelPrinting = {
                 order.push(orderId+'|'+$(this).val());
             }
         });
-        $('#'+getJquerySafeId('userLabelPrinting.order')).val(order.join(','));
+        $safeId('#userLabelPrinting.order').val(order.join(','));
     };
 
     /**
@@ -482,11 +527,26 @@ LabelPrinting = {
      */
     LabelPrinting.searchLabelPrintingPresetByName = function(presetName) {
         var url = '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/searchLabelPrintingPresetByName';
-
         return $.getJSON(url,{'name' : presetName});
 
     };
 
+    /**
+     * Deletes a label printing program preset
+     * @param presetId
+     * @returns {*}
+     */
+    LabelPrinting.deleteLabelPrintingPreset = function(presetId) {
+        var url = '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/delete';
+        return $.getJSON(url,{'programPresetId':presetId});
+
+    };
+
+    /**
+     * Perform a save preset ajax operation
+     * @param formSerializedData
+     * @returns {*}
+     */
     LabelPrinting.saveLabelPrintingSetting = function(formSerializedData) {
         var url = '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/save';
 
@@ -548,7 +608,7 @@ LabelPrinting = {
                 LabelPrinting.updateBarcodeOptions(data.barcodeSetting);
 
                 // set the setting name
-                $('input[name='+getJquerySafeId('userLabelPrinting.settingsName')+']').val(data.name);
+                $safeId('input[name=userLabelPrinting.settingsName]').val(data.name);
 
 
             }
@@ -565,8 +625,8 @@ LabelPrinting = {
         /** @namespace pdfSetting.selectedLeftFieldsList */
         /** @namespace pdfSetting.selectedRightFieldsList */
 
-        $('#userLabelPrinting\\.sizeOfLabelSheet').val(LabelPrinting.pdfLabelSheet[pdfSetting.sizeOfLabelSheet]).change();
-        $('#userLabelPrinting\\.numberOfRowsPerPageOfLabel').val(pdfSetting.numberOfRowsPerPage).change();
+        $safeId('#userLabelPrinting.sizeOfLabelSheet').val(LabelPrinting.pdfLabelSheet[pdfSetting.sizeOfLabelSheet]).change();
+        $safeId('#userLabelPrinting.numberOfRowsPerPageOfLabel').val(pdfSetting.numberOfRowsPerPage).change();
 
         var diff = $(LabelPrinting.availableFieldIds).not(pdfSetting.selectedLeftFieldsList).get();
         diff = $(diff).not(pdfSetting.selectedRightFieldsList).get();
@@ -611,9 +671,9 @@ LabelPrinting = {
         $('input[name="userLabelPrinting.barcodeNeeded"][value="' + selectedValue + '"]').prop('checked', true).change();
 
         // set the fields
-        doUISafeSelect($('#userLabelPrinting\\.firstBarcodeField'),barcodeSetting.barcodeFieldsList[0]);
-        doUISafeSelect($('#userLabelPrinting\\.secondBarcodeField'),barcodeSetting.barcodeFieldsList[1]);
-        doUISafeSelect($('#userLabelPrinting\\.thirdBarcodeField'),barcodeSetting.barcodeFieldsList[2]);
+        doUISafeSelect($safeId('#userLabelPrinting.firstBarcodeField'),barcodeSetting.barcodeFieldsList[0]);
+        doUISafeSelect($safeId('#userLabelPrinting.secondBarcodeField'),barcodeSetting.barcodeFieldsList[1]);
+        doUISafeSelect($safeId('#userLabelPrinting.thirdBarcodeField'),barcodeSetting.barcodeFieldsList[2]);
     };
 
     // private functions

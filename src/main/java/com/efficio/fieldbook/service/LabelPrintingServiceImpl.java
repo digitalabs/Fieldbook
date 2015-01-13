@@ -808,6 +808,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         }
     }
 
+    @Override
+    public void deleteProgramPreset(Integer programPresetId)
+            throws MiddlewareQueryException {
+
+        presetDataManager.deleteProgramPreset(programPresetId);
+
+    }
+
     protected void processUserSpecificLabelsForInstance(FieldMapTrialInstanceInfo instance,
             List<MeasurementRow> instanceMeasurements,
             List<Integer> selectedFieldIDs, Map<Integer, MeasurementVariable> variableMap) {

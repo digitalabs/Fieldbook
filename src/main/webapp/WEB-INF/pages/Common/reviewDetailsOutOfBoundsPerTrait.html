@@ -92,8 +92,11 @@
 			var cells = $('#review-details-table').DataTable().cells().nodes();
 			$(cells).find(':checkbox').prop('checked', $(this).is(':checked'));
 		});
-		$('#traitDetailLink').on('click',function(){
+		$('#traitDetailLink').on('click',function(e){
+			
 			showBaselineTraitDetailsModal($('#traitTermId').val());
+			e.preventDefault();
+			e.stopPropagation();
 		});
 		$('#previousTraitLink').on('click',function(e){
 			

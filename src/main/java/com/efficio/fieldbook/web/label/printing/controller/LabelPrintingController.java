@@ -461,8 +461,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
         try {
 
-            return labelPrintingService.getAllLabelPrintingPresetsByName(presetName,contextInfo.getSelectedProjectId().intValue(),LabelPrintingPresets.PROGRAM_PRESET);
+            List<LabelPrintingPresets> standardPresets = labelPrintingService.getAllLabelPrintingPresetsByName(presetName,contextInfo.getSelectedProjectId().intValue(),LabelPrintingPresets.STANDARD_PRESET);
 
+            if (!standardPresets.isEmpty()) {
+                return standardPresets;
+            }
+            else {
+                return labelPrintingService.getAllLabelPrintingPresetsByName(presetName,contextInfo.getSelectedProjectId().intValue(),LabelPrintingPresets.PROGRAM_PRESET);
+            }
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(),e);
             return new ArrayList<>();

@@ -66,7 +66,7 @@ LabelPrinting = {
                 var deleteModalDialogTxtElm = deleteModalElm.find('.modal-dialog-text');
 
                 // replace {0} with the proper name
-                deleteModalDialogTxtElm.text(deleteModalDialogTxtElm.text().replace('{0}',presetNameInput));
+                deleteModalDialogTxtElm.text(labelPrintingDeletePresetText.replace('{0}',presetNameInput));
 
                 deleteModalElm.modal('show');
             }
@@ -155,7 +155,12 @@ LabelPrinting = {
     LabelPrinting.onSavePreset = function() {
         var presetNameInput = $safeId('input[name=userLabelPrinting.settingsName]').val();
 
-        // 1. validate presetName, should not be empty
+        // 1. validate preset settings
+        if (!presetNameInput || 0 === presetNameInput.length) {
+            showErrorMessage('',labelPrintingPresetNameIsEmpty);
+            return false;
+        }
+
         if ( !LabelPrinting.validateEnterLabelFieldsPage($('#label-format').val()) ) {
             return false;
         }
@@ -163,8 +168,16 @@ LabelPrinting = {
         // 2. call service to check if preset name already exists
         LabelPrinting.searchLabelPrintingPresetByName(presetNameInput).done(function(data) {
             // we have existing data view an overwrite modal
-            if (data.length > 0) {
+            if (data.length > 0 && LabelPrinting.TYPES.PROGRAM === data[0].type) {
+                var presetOverwriteModalElm = $('#fbk-lbl-printing-save-preset-override-modal');
+                var presetOverwriteModalTxt = presetOverwriteModalElm.find('.modal-dialog-text');
+                var updatedModalText = labelPrintingConfirmationPresetText.replace('{0}',$safeId('input[name=userLabelPrinting.settingsName]').val());
+
+                presetOverwriteModalTxt.text(updatedModalText);
+
                 $('#fbk-lbl-printing-save-preset-override-modal').modal('show');
+            } else if (data.length > 0 && LabelPrinting.TYPES.STANDARD === data[0].type) {
+                showErrorMessage('',labelPrintingCannotSaveStandardPreset);
             } else {
                 // no existing preset, we add a new one
                 LabelPrinting.doSavePreset($('#label-format').val()).done(function(data) {
@@ -201,7 +214,7 @@ LabelPrinting = {
                     doUISafeSelect($('#savedSettings'),'');
                     deleteModalElm.modal('hide');
 
-                    showSuccessfulMessage('', 'Successfully deleted preset');
+                    showSuccessfulMessage('', labelPrintingDeletePresetSuccess);
                 });
 
             }
@@ -224,7 +237,7 @@ LabelPrinting = {
                 return;
             }
 
-            showSuccessfulMessage('', 'Successfully saved preset');
+            showSuccessfulMessage('', labelPrintingSavePresetSuccess);
 
         });
     };

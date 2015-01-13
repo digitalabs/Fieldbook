@@ -447,7 +447,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		String testDesigValue = "123";
 		LabelPrintingService printingService = new LabelPrintingServiceImpl();
 
-		String testSelectedFields = Integer.toString(TermId.DESIG.getId());
+		String testSelectedFields = Integer.toString(TermId.DESIG.getId()) + "," + Integer.toString(TermId.ENTRY_NO.getId());
 
 
 		List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
@@ -456,6 +456,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		printingService.populateUserSpecifiedLabelFields(input, setupTestWorkbook(), testSelectedFields, false);
 
 		assertEquals(testDesigValue, input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));
+		assertEquals("1", input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.ENTRY_NO.getId()));
 	}
 
 	protected Workbook setupTestWorkbook() {
@@ -466,7 +467,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		// prepare measurement rows simulating experiment data
 		List<MeasurementRow> sampleData = new ArrayList<>();
 
-		// add a row with measurement data for the DESIG term
+		// add a row with measurement data for the DESIG and ENTRY_NO terms
 		MeasurementRow row = new MeasurementRow();
 		// experiment ID here is set to be the same as the one used when creating the sample instance data, since they need to correlate.
 		row.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
@@ -478,6 +479,14 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		data.setMeasurementVariable(var);
 		data.setValue("123");
 		dataList.add(data);
+
+		data = new MeasurementData();
+		var = new MeasurementVariable();
+		var.setTermId(TermId.ENTRY_NO.getId());
+		data.setMeasurementVariable(var);
+		data.setValue("1");
+		dataList.add(data);
+
 		row.setDataList(dataList);
 		sampleData.add(row);
 		doReturn(sampleData).when(workbook).getObservations();

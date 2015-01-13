@@ -181,12 +181,10 @@ LabelPrinting = {
             } else {
                 // no existing preset, we add a new one
                 LabelPrinting.doSavePreset($('#label-format').val()).done(function(data) {
-                    // update the dropdown
-                    $('#savedSettings').empty();
-
                     LabelPrinting.initializeUserPresets().done(function(data) {
+                        var settingsListElm = $('#savedSettings');
                         // select the newly added preset
-                        doUISafeSelect($('#savedSettings'),'1:' + (data.length - 1));
+                        doUISafeSelect(settingsListElm,settingsListElm.children('option:last-child').val());
 
                         moveToTopScreen();
 

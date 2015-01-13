@@ -1734,3 +1734,7 @@ td.accepted-value {
 .fbk-left-padding{
 	padding-left: 10px;
 }
+
+#fbk-lbl-printing-delete-preset-confirm .modal-dialog {
+    width: 40%;
+}

@@ -136,7 +136,7 @@ public class SettingsServiceImpl implements SettingsService {
 
 		for (MeasurementVariable var : workbook.getTrialConditions()) {
 
-			if (!hiddenFields.contains(var.getTermId()))  {
+			if (!hiddenFields.contains(var.getTermId()) && TermId.EXPERIMENT_DESIGN_FACTOR.getId() != var.getTermId())  {
 				LabelFields field = new LabelFields(var.getName(), var.getTermId());
 
 				//set local name of id variable to local name of name variable

@@ -41,9 +41,17 @@ LabelPrinting = {
         }
 
         if (unavailableFields) {
+            var warningMsg = '<div><b>'+labelPrintingUnavailableFieldsMsg+'</b></div><br/>';
+            var unavailableFieldsList = '';
+
             for (var j = 0; j < unavailableFields.length; j++) {
                 LabelPrinting.labelPrintingFields[unavailableFields[j].id] = unavailableFields[j].name;
+                unavailableFieldsList += '<li>' + unavailableFields[j].name + '</li>';
             }
+
+            warningMsg = warningMsg + '<ul>' + unavailableFieldsList + '</ul>';
+
+            createWarningNotification(labelPrintingDataNotAvailableMsg,warningMsg,6000);
         }
 
         addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);

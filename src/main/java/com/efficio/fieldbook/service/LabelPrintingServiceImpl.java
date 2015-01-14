@@ -879,7 +879,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                 MeasurementData data = measurementRow.getMeasurementData(termID);
                 if (data != null) {
-                    String value = measurementRow.getMeasurementData(termID).getValue();
+                    String value = measurementRow.getMeasurementData(termID).getDisplayValue();
                     values.put(termID, value);
                 }
 

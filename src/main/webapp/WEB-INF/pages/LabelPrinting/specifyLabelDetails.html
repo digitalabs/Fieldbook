@@ -582,8 +582,9 @@ $(function() {
 		 var isTrial = /*[[${labelPrintingForm.isTrial}]]*/ false;
 		 var excelOption = /*[[#{label.printing.export.excel}]]*/ false;
 		 var availableFields = /*[[${availableFields}]]*/ [];
-		 LabelPrinting.onPageLoad(isTrial,excelOption,availableFields);
+		 var unavailableFields = /*[[${unavailableFields}]]*/ [];
 
+		 LabelPrinting.onPageLoad(isTrial,excelOption,availableFields,unavailableFields);
 	});
 
 

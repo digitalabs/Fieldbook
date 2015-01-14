@@ -5,7 +5,8 @@ LabelPrinting = {
     isTrial: '',
     excelOption: '',
     availableFieldIds : [],
-    availableFieldMap : {},
+    labelPrintingFields : {},
+
     labelFormat: {
         'PDF': 1,
         'EXCEL': 2,
@@ -29,18 +30,24 @@ LabelPrinting = {
     /**
      * This is called when LabelPrinting page is initialized
      */
-    LabelPrinting.onPageLoad = function(isTrial,excelOption,availableFields) {
+    LabelPrinting.onPageLoad = function(isTrial,excelOption,availableFields,unavailableFields) {
         LabelPrinting.isTrial = isTrial;
         LabelPrinting.excelOption = excelOption;
 
         // pluck only the ids
         for (var i = 0; i < availableFields.length; i++) {
             LabelPrinting.availableFieldIds.push(availableFields[i].id);
-            LabelPrinting.availableFieldMap[availableFields[i].id] = availableFields[i].name;
+            LabelPrinting.labelPrintingFields[availableFields[i].id] = availableFields[i].name;
         }
 
-        addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.availableFieldMap,LabelPrinting.availableFieldIds);
-        addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.availableFieldMap,LabelPrinting.availableFieldIds);
+        if (unavailableFields) {
+            for (var j = 0; j < unavailableFields.length; j++) {
+                LabelPrinting.labelPrintingFields[unavailableFields[j].id] = unavailableFields[j].name;
+            }
+        }
+
+        addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
+        addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
 
         LabelPrinting.initializeUserPresets();
         LabelPrinting.showOrHideBarcodeFields();
@@ -643,9 +650,9 @@ LabelPrinting = {
         diff = $(diff).not(pdfSetting.selectedRightFieldsList).get();
 
         //add diff to the pdf available fields list
-        addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.availableFieldMap,diff);
-        addToUIFieldsList($('#leftSelectedFields'),LabelPrinting.availableFieldMap,pdfSetting.selectedLeftFieldsList);
-        addToUIFieldsList($('#rightSelectedFields'),LabelPrinting.availableFieldMap,pdfSetting.selectedRightFieldsList);
+        addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.labelPrintingFields,diff);
+        addToUIFieldsList($('#leftSelectedFields'),LabelPrinting.labelPrintingFields,pdfSetting.selectedLeftFieldsList);
+        addToUIFieldsList($('#rightSelectedFields'),LabelPrinting.labelPrintingFields,pdfSetting.selectedRightFieldsList);
 
     };
 
@@ -663,8 +670,8 @@ LabelPrinting = {
 
         var diff = $(LabelPrinting.availableFieldIds).not(setting.selectedFieldsList).get();
 
-        addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.availableFieldMap,diff);
-        addToUIFieldsList($('#mainSelectedFields'),LabelPrinting.availableFieldMap,setting.selectedFieldsList);
+        addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.labelPrintingFields,diff);
+        addToUIFieldsList($('#mainSelectedFields'),LabelPrinting.labelPrintingFields,setting.selectedFieldsList);
 
     };
 

@@ -76,15 +76,12 @@ public class SettingsServiceImpl implements SettingsService {
 		FieldbookUtil util = FieldbookUtil.getInstance();
 
 		List<Integer> hiddenFields = util.buildVariableIDList(
-				AppConstants.HIDE_NURSERY_FIELDS.getString());
-		List<Integer> basicDetailIDList = util.buildVariableIDList(
-				AppConstants.NURSERY_BASIC_DETAIL_FIELDS.getString());
+				AppConstants.NURSERY_BASIC_DETAIL_FIELDS_HIDDEN_LABELS.getString());
 		List<MeasurementVariable> measurementVariables = workbook.getStudyConditions();
 		HashMap<String, MeasurementVariable> settingsMap = SettingsUtil
 				.buildMeasurementVariableMap(measurementVariables);
 		for (MeasurementVariable var : measurementVariables) {
-			if (!basicDetailIDList.contains(var.getTermId()) && !hiddenFields
-					.contains(var.getTermId())) {
+			if (!hiddenFields.contains(var.getTermId())) {
 				LabelFields field = new LabelFields(var.getName(), var.getTermId());
 
 				//set local name of id variable to local name of name variable
@@ -132,8 +129,7 @@ public class SettingsServiceImpl implements SettingsService {
 		List<LabelFields> managementDetailList = new ArrayList<>();
 		FieldbookUtil util = FieldbookUtil.getInstance();
 		List<Integer> hiddenFields = util.buildVariableIDList(
-				AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," +
-						AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
+				AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
 
 		HashMap<String, MeasurementVariable> factorsMap = SettingsUtil
 				.buildMeasurementVariableMap(workbook.getTrialConditions());

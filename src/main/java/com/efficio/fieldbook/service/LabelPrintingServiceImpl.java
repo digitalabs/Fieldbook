@@ -112,6 +112,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
     
     private static final String BARCODE = "Barcode";
+
+    private static final String TRIAL_INSTANCE_STRING = "TRIAL_INSTANCE";
     
     public LabelPrintingServiceImpl(){
     	super();
@@ -264,9 +266,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             PdfPTable innerTableInfo = new PdfPTable(2);
                             innerTableInfo.setWidths(new float[] { 1, 1 });
                             innerTableInfo.setWidthPercentage(85);
-
+                            List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(leftSelectedFields);
                             String leftText = generateBarcodeLabel(
-                                    moreFieldInfo, fieldMapLabel, leftSelectedFields, row);
+                                    moreFieldInfo, fieldMapLabel, leftSelectedFieldIDs, row);
                             PdfPCell cellInnerLeft = new PdfPCell(
                                     new Paragraph(leftText, fontNormal));
 
@@ -277,8 +279,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                             innerTableInfo.addCell(cellInnerLeft);
 
+                            List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(rightSelectedFields);
                             String rightText = generateBarcodeLabel(
-                                    moreFieldInfo, fieldMapLabel, rightSelectedFields,
+                                    moreFieldInfo, fieldMapLabel, rightSelectedFieldIDs,
                                     row);
                             PdfPCell cellInnerRight = new PdfPCell(
                                     new Paragraph(rightText, fontNormal));
@@ -396,20 +399,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             , FieldMapLabel fieldMapLabel, String firstField, String secondField
             , String thirdField, boolean includeLabel){
         StringBuilder buffer = new StringBuilder();
-        List<String> fieldList = new ArrayList<String>();
-        fieldList.add(firstField);
-        fieldList.add(secondField);
-        fieldList.add(thirdField);
-        
-        for(String barcodeLabel : fieldList){
-            if(("").equalsIgnoreCase(barcodeLabel)){
-                continue;
-            }
-            if(!("").equalsIgnoreCase(buffer.toString())){
+        String fieldList = firstField + "," + secondField + "," + thirdField;
+
+        List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
+
+        for (Integer selectedFieldID : selectedFieldIDs) {
+            if (!("").equalsIgnoreCase(buffer.toString())) {
                 buffer.append(delimiter);
             }
-            buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel, includeLabel));
+
+            buffer.append(
+                    getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, includeLabel));
         }
+
+
         return buffer.toString();
     }
     
@@ -418,48 +421,39 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      *
      * @param moreFieldInfo the more field info
      * @param fieldMapLabel the field map label
-     * @param selectedFields the selected fields
+     * @param selectedFieldIDs the selected fields
      * @param rowNumber the row number
      * @return the string
      */
     private String generateBarcodeLabel(Map<String,String> moreFieldInfo, 
-            FieldMapLabel fieldMapLabel, String selectedFields, int rowNumber){
+            FieldMapLabel fieldMapLabel, List<Integer> selectedFieldIDs, int rowNumber){
         StringBuilder buffer = new StringBuilder();
-        StringTokenizer token = new StringTokenizer(selectedFields, ",");
+
         int i = 0;
-        while(token.hasMoreTokens()){
-            String barcodeLabel = token.nextToken();
-            
-            if(i == rowNumber){
-                if(barcodeLabel != null && !("").equalsIgnoreCase(barcodeLabel)){                    
-                    buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel, true));
-                    break;
-                }
+
+        for (Integer selectedFieldID : selectedFieldIDs) {
+            if (i == rowNumber) {
+                buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, true));
+                break;
             }
             i++;
-            
-            
         }
+
         return buffer.toString();
     }
     
     /**
      * Gets the header.
      *
-     * @param headerIdString the header id
+     * @param headerID the header id
      * @return the header
      */
-    private String getHeader(String headerIdString){
+    private String getHeader(Integer headerID){
         Locale locale = LocaleContextHolder.getLocale();
 
         StringBuilder buffer = new StringBuilder();
 
-        if (headerIdString == null) {
-            return "";
-        }
-
         try {
-            int headerID = Integer.parseInt(headerIdString);
             if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
 				buffer.append(messageSource.getMessage(
 						"label.printing.available.fields.entry.num", null, locale));
@@ -528,17 +522,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      *
      * @param moreFieldInfo the more field info
      * @param fieldMapLabel the field map label
-     * @param barcodeLabel the barcode label
+     * @param headerID the barcode label
      * @return the specific info
      */
     private String getSpecificInfo(
-            Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel, boolean includeHeaderLabel){
+            Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, Integer headerID, boolean includeHeaderLabel){
         StringBuilder buffer = new StringBuilder();
 
         try {
-            int headerID = Integer.parseInt(barcodeLabel);
 
-            String headerName = getHeader(barcodeLabel);
+            String headerName = getHeader(headerID);
 
             if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
 				buffer.append(fieldMapLabel.getEntryNumber());
@@ -664,10 +657,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             Row row = null;
             mainSelectedFields = appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
+            List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+
             if (includeHeader) {
                 row = labelPrintingSheet.createRow(rowIndex++);
                 //we add all the selected fields header
-                printHeaderFields(includeHeader, mainSelectedFields, row, columnIndex, labelStyle);
+                printHeaderFields(includeHeader, selectedFieldIDs, row, columnIndex, labelStyle);
             }
 
             //we populate the info now
@@ -687,10 +682,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             secondBarcodeField, thirdBarcodeField, false);
                     moreFieldInfo.put("barcode", barcodeLabelForCode);
 
-                    StringTokenizer token = new StringTokenizer(mainSelectedFields, ",");
-                    while (token.hasMoreTokens()) {
-                        String headerId = token.nextToken();
-                        String leftText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId,
+                    for (Integer selectedFieldID : selectedFieldIDs) {
+                        String leftText = getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID,
                                 false);
                         Cell summaryCell = row.createCell(columnIndex++);
                         summaryCell.setCellValue(leftText);
@@ -719,16 +712,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     	return mainSelectedFields;
     }
 
-    protected void printHeaderFields(boolean includeHeader, String mainSelectedFields, Row row, int columnIndex, CellStyle labelStyle){
+    protected void printHeaderFields(boolean includeHeader, List<Integer> selectedFieldIDs, Row row, int columnIndex, CellStyle labelStyle){
     	if(includeHeader){
-            StringTokenizer token = new StringTokenizer(mainSelectedFields, ",");
-            while(token.hasMoreTokens()){
-                String headerId = token.nextToken();
-                String headerName = getHeader(headerId);
+            for (Integer selectedFieldID : selectedFieldIDs) {
+                String headerName = getHeader(selectedFieldID);
                 Cell summaryCell = row.createCell(columnIndex++);
                 summaryCell.setCellValue(headerName);
                 summaryCell.setCellStyle(labelStyle);
-            }                 
+            }
         }
     }
     
@@ -745,16 +736,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         boolean isBarcodeNeeded = "1".equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded()) ? true : false;        
         
         mainSelectedFields = appendBarcode(isBarcodeNeeded, mainSelectedFields);
-    	List<ExportColumnHeader> exportColumnHeaders = generateColumnHeaders(mainSelectedFields);
+
+        List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+    	List<ExportColumnHeader> exportColumnHeaders = generateColumnHeaders(selectedFieldIDs);
     	
-		List<Map<Integer, ExportColumnValue>> exportColumnValues = generateColumnValues(trialInstances, mainSelectedFields, userLabelPrinting);
+		List<Map<Integer, ExportColumnValue>> exportColumnValues = generateColumnValues(trialInstances, selectedFieldIDs, userLabelPrinting);
 		
 		exportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
     	
     	return fileName;
     }
     
-    private List<Map<Integer, ExportColumnValue>> generateColumnValues(List<StudyTrialInstanceInfo> trialInstances, String mainSelectedFields, UserLabelPrinting userLabelPrinting) {
+    private List<Map<Integer, ExportColumnValue>> generateColumnValues(List<StudyTrialInstanceInfo> trialInstances, List<Integer> selectedFieldIDs, UserLabelPrinting userLabelPrinting) {
     	List<Map<Integer, ExportColumnValue>> columnValues = new ArrayList<>();
     	
         String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
@@ -773,7 +766,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         secondBarcodeField, thirdBarcodeField, false);
                 moreFieldInfo.put("barcode", barcodeLabelForCode);
                 
-            	Map<Integer, ExportColumnValue> rowMap = generateRowMap(mainSelectedFields, moreFieldInfo, fieldMapLabel);
+            	Map<Integer, ExportColumnValue> rowMap = generateRowMap(selectedFieldIDs, moreFieldInfo, fieldMapLabel);
             	columnValues.add(rowMap);
             }
         }
@@ -782,27 +775,33 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	}
 
     public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields, boolean isTrial) {
+        Map<Integer, MeasurementVariable> variableMap = convertToMap(workbook.getStudyConditions(), workbook.getFactors());
         Map<String, List<MeasurementRow>> measurementData = null;
 
+        // this variable is defined as a map with list of measurementrow as data, but in actuality we are expecting only one
+        // a list is used so that existing procedure can be reused
+        Map<String, MeasurementRow> environmentData = null;
+
         if (isTrial) {
-            measurementData = extractMeasurementRowsPerTrialInstance(workbook);
+            environmentData = extractEnvironmentMeasurementDataPerTrialInstance(workbook);
+            measurementData = extractMeasurementRowsPerTrialInstance(
+                    workbook.getObservations());
         }
 
-        Map<Integer, MeasurementVariable> variableMap = convertToMap(workbook.getStudyConditions(), workbook.getFactors());
 
-        List<Integer> selectedFieldIDs = new ArrayList<>();
 
-        String[] split = selectedFields.split(",");
-        for (String s : split) {
-            selectedFieldIDs.add(new Integer(s));
-        }
+        List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(selectedFields);
 
         for (FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
             if (isTrial) {
-                List<MeasurementRow> trialMeasurements = measurementData.get(instanceInfo.getTrialInstanceNo());
-                processUserSpecificLabelsForInstance(instanceInfo, trialMeasurements, selectedFieldIDs, variableMap);
+                List<MeasurementRow> trialMeasurements = measurementData
+                        .get(instanceInfo.getTrialInstanceNo());
+
+                processUserSpecificLabelsForInstance(instanceInfo, trialMeasurements,
+                        selectedFieldIDs, variableMap, environmentData.get(instanceInfo.getTrialInstanceNo()));
             } else {
-                processUserSpecificLabelsForInstance(instanceInfo, workbook.getObservations(), selectedFieldIDs, variableMap);
+                processUserSpecificLabelsForInstance(instanceInfo, workbook.getObservations(),
+                        selectedFieldIDs, variableMap, null);
             }
 
         }
@@ -816,9 +815,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
     }
 
+    protected Map<String, MeasurementRow> extractEnvironmentMeasurementDataPerTrialInstance(Workbook workbook) {
+        Map<String, MeasurementRow> data = new HashMap<>();
+
+        for (MeasurementRow row : workbook.getTrialObservations()) {
+            String trialInstance = row.getMeasurementData(TRIAL_INSTANCE_STRING).getValue();
+            data.put(trialInstance, row);
+        }
+
+        return data;
+    }
+
+
     protected void processUserSpecificLabelsForInstance(FieldMapTrialInstanceInfo instance,
             List<MeasurementRow> instanceMeasurements,
-            List<Integer> selectedFieldIDs, Map<Integer, MeasurementVariable> variableMap) {
+            List<Integer> selectedFieldIDs, Map<Integer, MeasurementVariable> variableMap, MeasurementRow environmentData) {
         for (MeasurementRow measurement : instanceMeasurements) {
             FieldMapLabel label = instance.getFieldMapLabel(measurement.getExperimentId());
             Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(
@@ -831,6 +842,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             .containsKey(selectedFieldID)) {
                         userSpecifiedLabels
                                 .put(selectedFieldID, variableMap.get(selectedFieldID).getValue());
+                    }
+                }
+            }
+
+            if (environmentData != null) {
+                for (Integer selectedFieldID : selectedFieldIDs) {
+                    MeasurementData data = environmentData.getMeasurementData(selectedFieldID);
+                    if (!userSpecifiedLabels.containsKey(selectedFieldID) && data != null) {
+                        userSpecifiedLabels.put(selectedFieldID, data.getValue());
                     }
                 }
             }
@@ -873,14 +893,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         return values;
     }
 
-    protected Map<String, List<MeasurementRow>> extractMeasurementRowsPerTrialInstance(Workbook workbook) {
-        List<MeasurementRow> observations = workbook.getObservations();
-
+    protected Map<String, List<MeasurementRow>> extractMeasurementRowsPerTrialInstance(List<MeasurementRow> dataRows) {
         // sort the observations by instance number, and then by experiment ID to simplify later process
-        Collections.sort(observations, new Comparator<MeasurementRow>() {
+        Collections.sort(dataRows, new Comparator<MeasurementRow>() {
             @Override public int compare(MeasurementRow o1, MeasurementRow o2) {
-                String instanceID1 = o1.getMeasurementData("TRIAL_INSTANCE").getValue();
-                String instanceID2 = o2.getMeasurementData("TRIAL_INSTANCE").getValue();
+                String instanceID1 = o1.getMeasurementData(TRIAL_INSTANCE_STRING).getValue();
+                String instanceID2 = o2.getMeasurementData(TRIAL_INSTANCE_STRING).getValue();
 
                 if (instanceID1.equals(instanceID2)) {
                     return new Integer(o1.getExperimentId()).compareTo(new Integer(o2.getExperimentId()));
@@ -892,8 +910,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
         Map<String, List<MeasurementRow>> measurements = new HashMap<>();
 
-        for (MeasurementRow row : observations) {
-            String trialInstance = row.getMeasurementData("TRIAL_INSTANCE").getValue();
+        for (MeasurementRow row : dataRows) {
+            String trialInstance = row.getMeasurementData(TRIAL_INSTANCE_STRING).getValue();
             List<MeasurementRow> list = measurements.get(trialInstance);
 
             if (list == null) {
@@ -922,41 +940,36 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
          return moreFieldInfo;
     }
 
-	private Map<Integer, ExportColumnValue> generateRowMap(String leftSelectedFields,
+	private Map<Integer, ExportColumnValue> generateRowMap(List<Integer> selectedFieldIDs,
 			Map<String, String> moreFieldInfo, FieldMapLabel fieldMapLabel) {
-		Map<Integer, ExportColumnValue> rowMap = new HashMap<Integer, ExportColumnValue>();    
-        
-        StringTokenizer token = new StringTokenizer(leftSelectedFields, ",");
-        while(token.hasMoreTokens()){
-            String headerString = token.nextToken();
+		Map<Integer, ExportColumnValue> rowMap = new HashMap<Integer, ExportColumnValue>();
+
+        for (Integer selectedFieldID : selectedFieldIDs) {
+
             try {
-                Integer headerID = Integer.parseInt(headerString);
-                String value = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerString, false);
-                ExportColumnValue columnValue = new ExportColumnValue(headerID, value);
-                rowMap.put(headerID, columnValue);
+
+                String value = getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, false);
+                ExportColumnValue columnValue = new ExportColumnValue(selectedFieldID, value);
+                rowMap.put(selectedFieldID, columnValue);
             } catch (NumberFormatException e) {
                 LOG.error(e.getMessage());
             }
         }
-        
+
         return rowMap;
 	}
 
-	private List<ExportColumnHeader> generateColumnHeaders(String selectedFields) {
+	private List<ExportColumnHeader> generateColumnHeaders(List<Integer> selectedFieldIDs) {
     	List<ExportColumnHeader> columnHeaders = new ArrayList<ExportColumnHeader>();
-    	StringTokenizer token = new StringTokenizer(selectedFields, ",");
-    	
-    	while (token.hasMoreTokens()) {
-    		String headerId = token.nextToken();
 
-            if (headerId != null && !headerId.equals("null")) {
-                String headerName = getHeader(headerId);
-                ExportColumnHeader columnHeader = new ExportColumnHeader(Integer.parseInt(headerId),
-                        headerName, true);
-                columnHeaders.add(columnHeader);
-            }
+        for (Integer selectedFieldID : selectedFieldIDs) {
+            String headerName = getHeader(selectedFieldID);
+            ExportColumnHeader columnHeader = new ExportColumnHeader(selectedFieldID,
+                    headerName, true);
+            columnHeaders.add(columnHeader);
+        }
 
-    	}
+
     	return columnHeaders;
 	}
 

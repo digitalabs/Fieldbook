@@ -73,7 +73,7 @@ public class PDFLabelPrintingSetting implements Serializable {
 		List<Integer> selectedLeftFieldsList = new ArrayList<Integer>();
 		if (!selectedLeftFieldsString.isEmpty()){
 			for (String traitId : selectedLeftFieldsString.split(DELIMITER)){
-				if (NumberUtils.isDigits(traitId)){
+				if (NumberUtils.isNumber(traitId)){
 					selectedLeftFieldsList.add(Integer.parseInt(traitId));
 				}
 			}
@@ -85,7 +85,7 @@ public class PDFLabelPrintingSetting implements Serializable {
 		List<Integer> selectedRightFieldsList = new ArrayList<Integer>();
 		if (!selectedRightFieldsString.isEmpty()){
 			for (String traitId : selectedRightFieldsString.split(DELIMITER)){
-				if (NumberUtils.isDigits(traitId)){
+				if (NumberUtils.isNumber(traitId)){
 					selectedRightFieldsList.add(Integer.parseInt(traitId));
 				}
 			}

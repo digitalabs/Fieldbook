@@ -40,7 +40,7 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 		List<Integer> selectedFieldsList = new ArrayList<Integer>();
 		if (!selectedFieldsString.isEmpty()){
 			for (String traitId : selectedFieldsString.split(DELIMITER)){
-				if (NumberUtils.isDigits(traitId)){
+				if (NumberUtils.isNumber(traitId)){
 					selectedFieldsList.add(Integer.parseInt(traitId));
 				}
 			}

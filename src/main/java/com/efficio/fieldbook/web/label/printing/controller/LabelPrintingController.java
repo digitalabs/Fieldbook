@@ -351,7 +351,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
         if (workbook != null) {
             labelPrintingService.populateUserSpecifiedLabelFields(getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0).getTrialInstances()
-                    , workbook, getUserLabelPrinting().getMainSelectedLabelFields(), userFieldmap.isTrial());
+                    , workbook, getUserLabelPrinting().getMainSelectedLabelFields(), form.getIsTrial());
         }
 
         List<StudyTrialInstanceInfo> trialInstances = null;

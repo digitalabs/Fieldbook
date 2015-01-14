@@ -63,7 +63,6 @@ import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -1067,7 +1066,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 Workbook workbook = fieldbookMiddlewareService.getTrialDataSet(studyID);
 
                 labelFieldsList.addAll(settingsService.retrieveTrialSettingsAsLabels(workbook));
-                labelFieldsList.addAll(settingsService.retrieveTrialEnvironmentSettingsAsLabels(
+                labelFieldsList.addAll(settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(
                         workbook));
                 labelFieldsList.addAll(settingsService.retrieveGermplasmDescriptorsAsLabels(
                         workbook));

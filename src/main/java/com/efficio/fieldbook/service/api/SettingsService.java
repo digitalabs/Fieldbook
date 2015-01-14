@@ -18,7 +18,8 @@ public interface SettingsService {
 
 	public List<LabelFields> retrieveGermplasmDescriptorsAsLabels(Workbook workbook);
 
-	public List<LabelFields> retrieveTrialEnvironmentSettingsAsLabels(Workbook workbook);
+	public List<LabelFields> retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(
+			Workbook workbook);
 
 	public List<LabelFields> retrieveNurseryManagementDetailsAsLabels(Workbook workbook);
 }

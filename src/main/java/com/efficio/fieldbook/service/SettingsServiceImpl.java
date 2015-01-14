@@ -125,7 +125,8 @@ public class SettingsServiceImpl implements SettingsService {
 		return detailList;
 	}
 
-	public List<LabelFields> retrieveTrialEnvironmentSettingsAsLabels(Workbook workbook) {
+	public List<LabelFields> retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(
+			Workbook workbook) {
 
 
 		List<LabelFields> managementDetailList = new ArrayList<>();
@@ -134,15 +135,12 @@ public class SettingsServiceImpl implements SettingsService {
 				AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString() + "," +
 						AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
 
-		List<Integer> filterFields = util.buildVariableIDList(
-				AppConstants.EXP_DESIGN_VARIABLES.getString());
-
 		HashMap<String, MeasurementVariable> factorsMap = SettingsUtil
 				.buildMeasurementVariableMap(workbook.getTrialConditions());
 
 		for (MeasurementVariable var : workbook.getTrialConditions()) {
 
-			if (!filterFields.contains(var.getTermId()) && !hiddenFields.contains(var.getTermId()))  {
+			if (!hiddenFields.contains(var.getTermId()))  {
 				LabelFields field = new LabelFields(var.getName(), var.getTermId());
 
 				//set local name of id variable to local name of name variable

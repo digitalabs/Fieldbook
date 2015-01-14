@@ -56,6 +56,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
@@ -112,8 +113,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
     private static final String BARCODE = "Barcode";
 
-    private static final String TRIAL_INSTANCE_STRING = "TRIAL_INSTANCE";
-    
     public LabelPrintingServiceImpl(){
     	super();
     }
@@ -818,7 +817,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         Map<String, MeasurementRow> data = new HashMap<>();
 
         for (MeasurementRow row : workbook.getTrialObservations()) {
-            String trialInstance = row.getMeasurementData(TRIAL_INSTANCE_STRING).getValue();
+            String trialInstance = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
             data.put(trialInstance, row);
         }
 
@@ -896,8 +895,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         // sort the observations by instance number, and then by experiment ID to simplify later process
         Collections.sort(dataRows, new Comparator<MeasurementRow>() {
             @Override public int compare(MeasurementRow o1, MeasurementRow o2) {
-                String instanceID1 = o1.getMeasurementData(TRIAL_INSTANCE_STRING).getValue();
-                String instanceID2 = o2.getMeasurementData(TRIAL_INSTANCE_STRING).getValue();
+                String instanceID1 = o1.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
+                String instanceID2 = o2.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
 
                 if (instanceID1.equals(instanceID2)) {
                     return new Integer(o1.getExperimentId()).compareTo(new Integer(o2.getExperimentId()));
@@ -910,7 +909,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         Map<String, List<MeasurementRow>> measurements = new HashMap<>();
 
         for (MeasurementRow row : dataRows) {
-            String trialInstance = row.getMeasurementData(TRIAL_INSTANCE_STRING).getValue();
+            String trialInstance = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
             List<MeasurementRow> list = measurements.get(trialInstance);
 
             if (list == null) {

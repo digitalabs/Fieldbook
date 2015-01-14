@@ -399,7 +399,11 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     	Row row = Mockito.mock(Row.class);
     	Cell cell = Mockito.mock(Cell.class);
     	Mockito.doReturn(cell).when(row).createCell(Mockito.anyInt());
-    	labelPrintingServiceImpl.printHeaderFields(true, "1,2,3", row, 0, Mockito.mock(CellStyle.class));
+		List<Integer> selectedFieldIDs = new ArrayList<>();
+				selectedFieldIDs.add(1);
+				selectedFieldIDs.add(2);
+				selectedFieldIDs.add(3);
+    	labelPrintingServiceImpl.printHeaderFields(true, selectedFieldIDs, row, 0, Mockito.mock(CellStyle.class));
     	Mockito.verify(cell, Mockito.times(3)).setCellValue(Mockito.anyString());
     	
     }
@@ -411,7 +415,11 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
     	Row row = Mockito.mock(Row.class);
     	Cell cell = Mockito.mock(Cell.class);
     	Mockito.doReturn(cell).when(row).createCell(Mockito.anyInt());
-    	labelPrintingServiceImpl.printHeaderFields(false, "1,2,3", row, 0, Mockito.mock(CellStyle.class));
+		List<Integer> selectedFieldIDs = new ArrayList<>();
+		selectedFieldIDs.add(1);
+		selectedFieldIDs.add(2);
+		selectedFieldIDs.add(3);
+    	labelPrintingServiceImpl.printHeaderFields(false, selectedFieldIDs, row, 0, Mockito.mock(CellStyle.class));
     	Mockito.verify(cell, Mockito.never()).setCellValue(Mockito.anyString());
     	
     }

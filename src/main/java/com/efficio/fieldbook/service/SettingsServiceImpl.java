@@ -107,7 +107,8 @@ public class SettingsServiceImpl implements SettingsService {
 
 		for (MeasurementVariable var : workbook.getFactors()) {
 			// this condition is required so that treatment factors are not included in the list of factors for the germplasm tab
-			if ((var.getTreatmentLabel() != null && !var.getTreatmentLabel().isEmpty()) || ( experimentalDesignVariables.contains(var.getTermId()))) {
+			if ((var.getTreatmentLabel() != null && !var.getTreatmentLabel().isEmpty()) || ( experimentalDesignVariables.contains(var.getTermId()))
+					|| var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				continue;
 			}
 

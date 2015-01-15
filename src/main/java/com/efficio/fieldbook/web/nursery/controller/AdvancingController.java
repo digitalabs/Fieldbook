@@ -189,7 +189,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         
         try {
 			List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-			List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods();
+			List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods(this.getCurrentProject().getUniqueID());
 			List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);						
 			List<Method> allNonGenerativeMethods = fieldbookMiddlewareService.getAllBreedingMethods(true);
                                    
@@ -220,7 +220,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         
         try {
             List<Long> locationsIds = fieldbookMiddlewareService
-                                .getFavoriteProjectLocationIds();
+                                .getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
             List<Location> faveLocations = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
             List<Location> allBreedingLocations = fieldbookMiddlewareService.getAllBreedingLocations();

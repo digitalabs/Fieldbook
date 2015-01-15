@@ -336,17 +336,17 @@ public class FieldbookServiceImpl implements FieldbookService {
     }
     
     @Override
-    public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {
+    public List<ValueReference> getAllPossibleValuesFavorite(int id, String programUUID) throws MiddlewareQueryException {
         List<ValueReference> possibleValuesFavorite = null;
         if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
-            List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods();
+            List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods(programUUID);
             List<ValueReference> list = new ArrayList<ValueReference>();
             list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
             possibleValuesFavorite = list;
             possibleValuesFavorite.addAll(getFavoriteBreedingMethods(methodIds, false));
 
         } else if (TermId.LOCATION_ID.getId() == id) {
-            List<Long> locationIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds();
+            List<Long> locationIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID);
             possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService
                     .getFavoriteLocationByProjectId(locationIds));
         }

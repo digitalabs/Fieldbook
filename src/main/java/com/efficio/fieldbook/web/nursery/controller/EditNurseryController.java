@@ -213,7 +213,7 @@ public class EditNurseryController extends SettingsController {
     protected void convertToXmlDatasetPojo(Workbook workbook) throws MiddlewareQueryException {
         Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 
-        SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, false);
+        SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProject().getUniqueID(), false, false);
     }
 
     protected void clearSessionData(HttpSession session) {

@@ -103,7 +103,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public List<Location> getFavoriteLocationList() {
         try {
             
-            List<Long> locationsIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds();
+            List<Long> locationsIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
             List<Location> dataTypes = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
             

@@ -130,7 +130,7 @@ public class ManageSettingsController extends SettingsController {
 					SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
 					List<ValueReference> possibleValuesFavorite = fieldbookService
 							.getAllPossibleValuesFavorite(var.getCvTermId(),
-									this.getCurrentProjectId());
+									this.getCurrentProject().getUniqueID());
 					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
 					newSettings.add(newSetting);
 				}

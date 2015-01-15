@@ -72,7 +72,7 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		name1.setReferenceId(1);
 		as1.getNames().add(name1);
 		
-		Method breedingMethod = new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490, 1, 0, 19980708);
+		Method breedingMethod = new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490, 1, 0, 19980708,"");
 		breedingMethod.setSnametype(5);
 		breedingMethod.setSeparator("-");
 		breedingMethod.setPrefix("B");

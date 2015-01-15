@@ -651,7 +651,16 @@ LabelPrinting = {
         /** @namespace pdfSetting.selectedLeftFieldsList */
         /** @namespace pdfSetting.selectedRightFieldsList */
 
-        $safeId('#userLabelPrinting.sizeOfLabelSheet').val(LabelPrinting.pdfLabelSheet[pdfSetting.sizeOfLabelSheet]).change();
+        if (!pdfSetting.sizeOfLabelSheet) {
+            pdfSetting.sizeOfLabelSheet = '1';
+        }
+
+        if (!pdfSetting.numberOfRowsPerPageOfLabel) {
+            pdfSetting.numberOfRowsPerPageOfLabel = '7';
+        }
+
+
+        $safeId('#userLabelPrinting.sizeOfLabelSheet').val(pdfSetting.sizeOfLabelSheet).change();
         $safeId('#userLabelPrinting.numberOfRowsPerPageOfLabel').val(pdfSetting.numberOfRowsPerPage).change();
 
         var diff = $(LabelPrinting.availableFieldIds).not(pdfSetting.selectedLeftFieldsList).get();

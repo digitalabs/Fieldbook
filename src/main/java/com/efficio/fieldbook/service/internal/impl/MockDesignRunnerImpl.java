@@ -1,9 +1,5 @@
 package com.efficio.fieldbook.service.internal.impl;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +9,6 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
@@ -30,7 +24,6 @@ public class MockDesignRunnerImpl implements DesignRunner {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MockDesignRunnerImpl.class);
 
-	private static String XML_EXTENSION = ".xml";
 	private static String CSV_EXTENSION = ".csv";
 	private static String BV_PREFIX = "-bv";
 	private static String OUTPUT_FILE_PARAMETER_NAME = "outputfile";
@@ -39,11 +32,11 @@ public class MockDesignRunnerImpl implements DesignRunner {
 	public BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design)
 			throws IOException {
 
-		int returnCode = -1;
 		String outputFilePath = System.currentTimeMillis() + BV_PREFIX + CSV_EXTENSION;
 
 		design.getDesign().setParameterValue(OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
 
+		@SuppressWarnings("unused")
 		String xml = "";
 		try {
 			xml = ExpDesignUtil.getXmlStringForSetting(design);
@@ -76,10 +69,6 @@ public class MockDesignRunnerImpl implements DesignRunner {
 				}
 			}
 		}		
-		
-		for (String[] line : csvLines) {			
-			System.out.println(line[0] + "," + line[1] + "," + line[2]);
-		}
 		
 		BVDesignOutput output = new BVDesignOutput(0);
 		output.setResults(csvLines);

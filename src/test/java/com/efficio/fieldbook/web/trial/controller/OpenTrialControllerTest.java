@@ -1,19 +1,34 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.SessionUtility;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -25,15 +40,17 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
-
-import java.util.ArrayList;
-
-import static junit.framework.Assert.*;
-import static org.mockito.Mockito.*;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.SessionUtility;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenTrialControllerTest {
+	private static final int NO_OF_TRIAL_INSTANCES = 3;
+	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int TRIAL_ID = 1;
 	public static final String TEST_TRIAL_NAME = "dummyTrial";
 
@@ -256,6 +273,86 @@ public class OpenTrialControllerTest {
 		Workbook originalWorkbook = null;				
 		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
 		Assert.assertEquals("Should return 1 since there is no existing study", "1", isPreviewEditable);
+	}
+	
+	@Test
+	public void testGetFilteredTrialObservations(){
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		
+		OpenTrialController controller = setupOpenTrialController();
+		List<MeasurementRow> filteredTrialObservations = controller.getFilteredTrialObservations(workbook.getTrialObservations(),"2");
+		
+		Assert.assertEquals("Expecting the number of trial observations is decreased by one.", (workbook.getTotalNumberOfInstances() - 1), filteredTrialObservations.size());
+		
+		//expecting the trial instance no are in incremental order
+		Integer trialInstanceNo = 1;
+		for(MeasurementRow row : filteredTrialObservations){	
+        	List<MeasurementData> dataList = row.getDataList();
+        	for(MeasurementData data : dataList){
+        		if (data.getMeasurementVariable() != null) {
+                    MeasurementVariable var = data.getMeasurementVariable();
+                    
+                    if (var != null && data.getMeasurementVariable().getName() != null
+                    		&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())){
+                    	Integer currentTrialInstanceNo = Integer.valueOf(data.getValue());
+                    	Assert.assertEquals("Expecting trial instance the next trial instance no is " + trialInstanceNo + " but returned " 
+                    				+ currentTrialInstanceNo,trialInstanceNo,currentTrialInstanceNo);
+                    	trialInstanceNo++;
+                    	break;
+                    }
+                }
+        	}
+        }
+	}
+	
+	@Test
+	public void testGetFilteredTrialObservationsWithNoDeletedEnvironmentId(){
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		
+		OpenTrialController controller = setupOpenTrialController();
+		List<MeasurementRow> filteredTrialObservations = controller.getFilteredTrialObservations(workbook.getTrialObservations(),"");
+		
+		Assert.assertEquals("Expecting the number of trial observations is the same after the method call.", (workbook.getTotalNumberOfInstances()), filteredTrialObservations.size());
+	}
+	
+	@Test
+	public void testGetFilteredObservations(){
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		
+		OpenTrialController controller = setupOpenTrialController();
+		List<MeasurementRow> filteredObservations = controller.getFilteredObservations(workbook.getObservations(),"2");
+		
+		Assert.assertEquals("Expecting the number of observations is decreased by " + NO_OF_OBSERVATIONS, (workbook.getObservations().size() - NO_OF_OBSERVATIONS), filteredObservations.size());
+		
+		//expecting the trial instance no are in incremental order
+		Integer noOfTrialInstances = NO_OF_TRIAL_INSTANCES - 1;
+		for(MeasurementRow row : filteredObservations){	
+        	List<MeasurementData> dataList = row.getDataList();
+        	for(MeasurementData data : dataList){
+        		if (data.getMeasurementVariable() != null) {
+                    MeasurementVariable var = data.getMeasurementVariable();
+                    
+                    if (var != null && data.getMeasurementVariable().getName() != null
+                    		&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())){
+                    	Integer currentTrialInstanceNo = Integer.valueOf(data.getValue());
+                    	Assert.assertTrue("Expecting trial instance the next trial instance no is within the "
+                    			+ "possible range of trial instance no but didn't.",currentTrialInstanceNo <= noOfTrialInstances);
+                    }
+                }
+        	}
+        }
+	}
+	
+	@Test
+	public void testGetFilteredObservationsWithNoDeletedEnvironmentId(){
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		
+		OpenTrialController controller = setupOpenTrialController();
+		List<MeasurementRow> filteredObservations = controller.getFilteredObservations(workbook.getObservations(),"");
+		
+		Assert.assertEquals("Expecting the number of observations is the same after the method call.", workbook.getObservations().size(), filteredObservations.size());
 	}
 	
 	

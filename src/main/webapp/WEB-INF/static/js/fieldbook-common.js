@@ -3336,6 +3336,21 @@ function showMeasurementsPreview(){
     });
 }
 
+function loadInitialMeasurements(){
+	'use strict';
+	var domElemId = '#measurementsDiv';
+	$.ajax({
+        url: '/Fieldbook/TrialManager/openTrial/load/measurement',
+        type: 'GET',
+        data: '',
+        cache: false,
+        success: function (html) {
+            $(domElemId).html(html);
+            $('body').data('expDesignShowPreview', '0');
+        }
+    });
+}
+
 function displaySelectedCheckGermplasmDetails() {
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/importGermplasmList/displaySelectedCheckGermplasmDetails',
@@ -3499,7 +3514,7 @@ function saveInlineEdit(isDiscard){
         contentType: "application/json",
 		success: function(data) {
 			var jsonData = $.parseJSON($('#measurement-table').data('json-inline-edit-val'));
-			if(isDiscard == 0 && jsonData.isNew === '1'){
+			if(isDiscard == 0 && jsonData.isNew === '1' && jsonData.value !== 'missing'){
 				$('.inline-input').parent('td').addClass('accepted-value').removeClass('invalid-value');
 				$('.inline-input').parent('td').data('is-accepted', '1');
 			}else if(jsonData.isNew == '0'){				
@@ -3544,7 +3559,6 @@ function markCellAsMissing(indexElem, indexTermId ,indexDataVal ,isNew, elem){
 			if(data.success === '1'){
 				 var oTable = $('#measurement-table').dataTable();				
 				 oTable.fnUpdate( data.data, data.index, null, false); // Row				
-				 $(elem).addClass('accepted-value');
 				 $(elem).removeClass('invalid-value');
 			}else{
 				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
@@ -3646,10 +3660,44 @@ function reviewOutOfBoundsData() {
 	$('#reviewOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
 }
 
+function displayDetailsOutOfBoundsData(){
+	'use strict';
+		
+	removeDetailsOutOfBoundDataInSessionStorage();
+	
+        if ($('#reviewDetailsOutOfBoundsDataModalBody').length !== 0) {		
+			$.ajax(
+				{ 
+					url: '/Fieldbook/Common/ReviewDetailsOutOfBounds/showDetails',
+					type: 'GET',
+					success: function(html) {
+						$('#reviewOutOfBoundsDataModal').modal('hide');
+						$('#reviewDetailsOutOfBoundsDataModalBody').html(html);
+						$('#reviewDetailsOutOfBoundsDataModal').modal({ backdrop: 'static', keyboard: true });
+					}
+			});
+        }
+}
+
+function removeDetailsOutOfBoundDataInSessionStorage(){
+	'use strict';
+	if (sessionStorage){
+		for(var i in sessionStorage)
+		{
+		    if (i.indexOf('reviewDetailsFormData') === 0){
+		    	sessionStorage.removeItem(i);
+		    }
+		}
+	}
+	
+}
+
 function proceedToReviewOutOfBoundsDataAction() {
 	var action = $('#review-out-of-bounds-data-action').select2('data').id;
 	if(action === '0') {
 		showErrorMessage('page-review-out-of-bounds-data-message-modal', reviewOutOfBoundsDataActionRequiredError);
+	} else if (action === '1'){
+		displayDetailsOutOfBoundsData();
 	} else if (action === '2'){
 		markAllCellAsAccepted();
 	} else if (action === '3'){

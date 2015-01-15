@@ -25,62 +25,64 @@
     <mvc:resources mapping="/static/**" location="/WEB-INF/static/"/>
 
 
-    <mvc:interceptors>
-        <bean class="com.efficio.fieldbook.web.interceptor.FieldbookHandlerInterceptor"/>
-
-        <bean id="webContentInterceptor"
-              class="org.springframework.web.servlet.mvc.WebContentInterceptor">
-            <property name="cacheSeconds" value="0"/>
-            <property name="useExpiresHeader" value="true"/>
-            <property name="useCacheControlHeader" value="true"/>
-            <property name="useCacheControlNoStore" value="true"/>
-        </bean>
-    </mvc:interceptors>
-
-
-    <!-- **************************************************************** -->
-    <!--  SPRING ANNOTATION PROCESSING                                    -->
-    <!-- **************************************************************** -->
-    <mvc:annotation-driven/>
-    <context:component-scan base-package="com.efficio.fieldbook"/>
-
-    <!-- **************************************************************** -->
-    <!-- MESSAGE EXTERNALIZATION/INTERNATIONALIZATION -->
-    <!-- Standard Spring MessageSource implementation -->
-    <!-- **************************************************************** -->
-    <bean id="messageSource"
-          class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="Messages"/>
+	<mvc:interceptors>
+       <bean class="com.efficio.fieldbook.web.interceptor.FieldbookHandlerInterceptor" />
+    	
+	    <bean id="webContentInterceptor" 
+          class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+        <property name="cacheSeconds" value="0"/>
+        <property name="useExpiresHeader" value="true"/>
+        <property name="useCacheControlHeader" value="true"/>
+        <property name="useCacheControlNoStore" value="true"/>
     </bean>
+    </mvc:interceptors> 
+    
+    
+   
 
-    <!-- **************************************************************** -->
-    <!-- THYMELEAF-SPECIFIC ARTIFACTS -->
-    <!-- TemplateResolver <- TemplateEngine <- ViewResolver -->
-    <!-- **************************************************************** -->
+	<!-- **************************************************************** -->
+	<!--  SPRING ANNOTATION PROCESSING                                    -->
+	<!-- **************************************************************** -->
+	<mvc:annotation-driven />
+	<context:component-scan base-package="com.efficio.fieldbook" />
 
-    <bean id="templateResolver"
-          class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-        <property name="prefix" value="/WEB-INF/pages/"/>
-        <property name="suffix" value=".html"/>
-        <property name="templateMode" value="HTML5"/>
-        <!-- Template cache is true by default. Set to false if you want -->
-        <!-- templates to be automatically updated when modified. -->
-        <property name="cacheable" value="false"/>
-    </bean>
+	<!-- **************************************************************** -->
+	<!-- MESSAGE EXTERNALIZATION/INTERNATIONALIZATION -->
+	<!-- Standard Spring MessageSource implementation -->
+	<!-- **************************************************************** -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="Messages" />
+	</bean>
 
-    <bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
-        <property name="templateResolver" ref="templateResolver"/>
-        <property name="additionalDialects">
-            <set>
-                <bean class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect"/>
-                <bean class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect"/>
-            </set>
+	<!-- **************************************************************** -->
+	<!-- THYMELEAF-SPECIFIC ARTIFACTS -->
+	<!-- TemplateResolver <- TemplateEngine <- ViewResolver -->
+	<!-- **************************************************************** -->
+
+	<bean id="templateResolver"
+		class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".html" />
+		<property name="templateMode" value="HTML5" />
+		<!-- Template cache is true by default. Set to false if you want -->
+		<!-- templates to be automatically updated when modified. -->
+		<property name="cacheable" value="false" />
+	</bean>
+
+	<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+		<property name="templateResolver" ref="templateResolver" />
+		<property name="additionalDialects">
+	        <set>
+	            <bean class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect"/>
+	            <bean class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
+	        </set>
         </property>
-    </bean>
+	</bean>
 
-    <bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
-        <property name="templateEngine" ref="templateEngine"/>
-    </bean>
+	<bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
+		<property name="templateEngine" ref="templateEngine" />
+	</bean>
 
 
     <!-- Application Beans -->
@@ -326,16 +328,20 @@
           scope="request">
         <aop:scoped-proxy/>
     </bean>
+	
+	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
+	
+	<bean id="userDataManager" factory-bean="managerFactory"
+	    	factory-method="getUserDataManager"
+	    	scope="request">
+	    	<aop:scoped-proxy/>
+	    </bean>
+   	
+   	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
+   	
+   	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
 
-    <bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
-
-    <bean id="springAppContextProvider"
-          class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
-
-    <bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
-
-    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory"
-          init-method="init">
+    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
         <!--TODO : possibly find a way to make list based on component scan of a certain package-->
         <property name="registeredExpressions">
             <list>
@@ -349,5 +355,5 @@
                 <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
             </list>
         </property>
-    </bean>
+    </bean>    
 </beans>

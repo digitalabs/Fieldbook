@@ -44,12 +44,16 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 								
 								$(td).removeClass('accepted-value');
 						    	$(td).removeClass('invalid-value');
+						    	
+						    	if ($(td).text() !== 'missing' ){
+						    		if ($(td).find("input[type='hidden']").val() === 'true'){
+										$(td).addClass('accepted-value');
+									}else{
+										$(td).addClass('invalid-value');
+									}
+						    	}
 								
-								if ($(td).find("input[type='hidden']").val() === 'true'){
-									$(td).addClass('accepted-value');
-								}else{
-									$(td).addClass('invalid-value');
-								}
+								
 						    }
 						}
 					    $(td).data('term-id', termId);
@@ -130,7 +134,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							  $(this).removeClass('accepted-value');
 					    	  $(this).removeClass('invalid-value');
 					    	  
-					    	  if (cellData != ''){
+					    	  if (cellData !== '' && cellData !== 'missing'){
 					    		  if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
 					    			  	if($(this).data('is-accepted') === '1'){
 					    			  		$(this).addClass('accepted-value');
@@ -233,6 +237,99 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			// Toggle the visibility
 			column.visible(!column.visible());			 
 		});
+	};
+
+	return dataTableConstructor;
+
+})(jQuery);
+
+BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
+	// FIXME Refactor to remove some of this code from the constructor function
+	/**
+	 * Creates a new ReviewDetailsOutOfBoundsDataTable.
+	 *
+	 * @constructor
+	 * @alias module:fieldbook-datatable
+	 * @param {string} tableIdentifier the id of the table container
+	 * @param {string} ajaxUrl the URL from which to retrieve table data
+	 */
+	var dataTableConstructor = function ReviewDetailsOutOfBoundsDataTable(tableIdentifier, dataList) {
+		'use strict';
+
+		var columns = [],
+			columnsDef = [],
+			table;
+
+		$(tableIdentifier + ' thead tr th').each(function() {
+			
+			if (($(this).data('term-id') === 'Check')){
+				columns.push({
+		            data:   "active",
+		            render: function ( data, type, row ) {
+		            	return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="checkbox" class="editor-active" data-binding>';
+		            },
+					className:"fbk-center"
+		        });
+			} else if (($(this).data('term-id') === 'NewValue')){
+				columns.push({
+		            data:   "newValue",
+		            render: function ( data, type, row ) {
+		            	return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="text" class="form-control" data-binding />';
+		            }
+		        });
+			} else {
+				columns.push({data: $(this).html()});
+			}
+			
+			if ($(this).data('term-data-type-id') == '1130'){
+				columnsDef.push({
+					targets: columns.length - 1,
+					render: function ( data, type, full, meta ) {
+					    return ((data[0] != null) ? data[0] :  '');
+					}
+				});
+			}
+		});
+		table = $(tableIdentifier).DataTable({
+			data: dataList,
+			columns: columns,
+			scrollY: '400px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			columnDefs: columnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			bAutoWidth: true,
+			iDisplayLength: 100,
+			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+				// Assuming ID is in last column
+				$(nRow).attr('id', aData.experimentId);
+				$(nRow).data('row-index', this.fnGetPosition( nRow ));
+
+				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap','nowrap');
+				
+				return nRow;
+			},
+			fnInitComplete: function(oSettings, json) {
+				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+			},
+			language: {
+				search: '<span class="mdt-filtering-label">Search:</span>'
+			},
+			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+			// Problem with reordering plugin and fixed column for column re-ordering
+			colReorder: {
+				fixedColumns: 1
+			}
+		});
+		
+		$(tableIdentifier).dataTable().bind('sort', function() {
+			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
+		});
+
 	};
 
 	return dataTableConstructor;
@@ -819,7 +916,7 @@ $(function(){
 					markCellAsAccepted(colvindex, termId, ui.target);
 					break;
 				case "markMissing":
-					markCellAsMissing(colvindex, termId , '0' , 1 , ui.target);
+					markCellAsMissing(colvindex, termId , 'missing' , 1 , ui.target);
 					break;
 			}
 		},

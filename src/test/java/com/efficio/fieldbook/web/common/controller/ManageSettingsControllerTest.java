@@ -1,19 +1,31 @@
 package com.efficio.fieldbook.web.common.controller;
 
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
+
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.Assert;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyList;
@@ -22,6 +34,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ManageSettingsControllerTest {
 
+	private static final int NO_OF_TRIAL_INSTANCES = 2;
+	private static final int NO_OF_OBSERVATIONS = 10;
 	public static final int TEST_VARIABLE_ID_0 = 1234;
 	public static final int TEST_VARIABLE_ID_1 = 3456;
 	public static final int TEST_VARIABLE_ID_2 = 4567;
@@ -103,4 +117,40 @@ public class ManageSettingsControllerTest {
 
 		verify(spyController).hasMeasurementDataEntered(TEST_VARIABLE_ID_0);
 	}
+	
+	@Test
+	public void testGetObservationsOnEnvironment(){
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		
+		Assert.assertEquals("Expecting that the return size of observation is " + NO_OF_OBSERVATIONS + 
+				" but returned " + controller.getObservationsOnEnvironment(workbook, 1).size(),controller.getObservationsOnEnvironment(workbook, 1).size(), NO_OF_OBSERVATIONS);	
+	}
+	
+	@Test
+	public void testHasMeasurementDataOnEnvronmentReturnsTrueForExistingTraits(){
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		
+		doReturn(workbook).when(userSelection).getWorkbook();
+		
+		List<Integer> ids = new ArrayList<Integer>();
+		ids.add(TermId.PLOT_NO.getId());
+		
+		Assert.assertTrue("Expected that the set of observations on the given environment has measurement data.",controller.hasMeasurementDataOnEnvironment(ids, 1));
+	}
+	
+	@Test
+	public void testHasMeasurementDataOnEnvronmentReturnsFalseForNonExistingTraits(){
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		
+		doReturn(workbook).when(userSelection).getWorkbook();
+		
+		List<Integer> ids = new ArrayList<Integer>();
+		ids.add(TermId.ENTRY_CODE.getId());
+		
+		Assert.assertFalse("Expected that the set of observations on the given environment has no measurement data.",controller.hasMeasurementDataOnEnvironment(ids, 1));
+	}
+
 }

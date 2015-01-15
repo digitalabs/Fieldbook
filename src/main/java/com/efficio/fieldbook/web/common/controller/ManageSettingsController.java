@@ -1,12 +1,18 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -15,10 +21,18 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import java.util.*;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 /**
  * Created by IntelliJ IDEA.
@@ -67,7 +81,7 @@ public class ManageSettingsController extends SettingsController {
 				List<TraitClassReference> traitRefList = userSelection.getTraitRefList();
 
 				//we convert it to map so that it would be easier to chekc if there is a record or not
-				HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
+				Map<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
 				if (standardVariableList != null && !standardVariableList.isEmpty()) {
 					for (StandardVariableReference varRef : standardVariableList) {
 						mapVariableRef.put(varRef.getId().toString(), varRef);
@@ -400,6 +414,51 @@ public class ManageSettingsController extends SettingsController {
 				return true;
 			}
 		}
+		return false;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/hasMeasurementData/environmentNo/{environmentNo}", method = RequestMethod.POST)
+	public boolean hasMeasurementDataOnEnvironment(@RequestBody List<Integer> ids,@PathVariable int environmentNo) {
+		Workbook workbook = userSelection.getWorkbook();
+		List<MeasurementRow> observationsOnEnvironment = getObservationsOnEnvironment(workbook,environmentNo);
+		
+		for(Integer variableId : ids){
+			if(hasMeasurementDataEntered(variableId,observationsOnEnvironment)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	protected List<MeasurementRow> getObservationsOnEnvironment(Workbook workbook, int environmentNo) {
+		List<MeasurementRow> observations = workbook.getObservations();
+		List<MeasurementRow> filteredObservations = new ArrayList<MeasurementRow>();
+		
+        //we do a matching of the name here so there won't be a problem in the data table
+        for(MeasurementRow row : observations){	
+        	List<MeasurementData> dataList = row.getDataList();
+        	for(MeasurementData data : dataList){
+        		if(isEnvironmentNotDeleted(data, environmentNo)){
+        			filteredObservations.add(row);                    	
+                	break;
+        		}
+        		
+        	}
+        }
+		return filteredObservations;
+	}
+
+	private boolean isEnvironmentNotDeleted(MeasurementData data, int environmentNo) {
+		if (data.getMeasurementVariable() != null) {
+			MeasurementVariable var = data.getMeasurementVariable();
+            if (var != null && var.getName() != null 
+            		&& ("TRIAL_INSTANCE".equalsIgnoreCase(var.getName()) || "TRIAL".equalsIgnoreCase(var.getName()))
+            		&& data.getValue().equals(String.valueOf(environmentNo)) ) {
+            	return true;
+            }
+        }
 		return false;
 	}
 

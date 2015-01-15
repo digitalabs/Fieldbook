@@ -269,5 +269,14 @@ public class AdvancingSource {
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
 	}
+
+	@Override
+	public String toString() {
+		return "AdvancingSource [germplasm=" + germplasm + ", names=" + names + ", plantsSelected=" + plantsSelected + ", breedingMethod="
+				+ breedingMethod + ", isCheck=" + isCheck + ", isBulk=" + isBulk + ", nurseryName=" + nurseryName + ", season=" + season
+				+ ", locationAbbreviation=" + locationAbbreviation + ", rootName=" + rootName + ", sourceMethod=" + sourceMethod
+				+ ", currentMaxSequence=" + currentMaxSequence + ", changeDetail=" + changeDetail + ", prefix=" + prefix + ", suffix="
+				+ suffix + "]";
+	}
     
 }

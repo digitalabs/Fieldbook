@@ -383,44 +383,19 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     protected Map<String,Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances) {
     	Map<String,Object> results = new HashMap<String, Object>();
     	try {
-            UserLabelPrinting copy = new UserLabelPrinting();
-            copy.setBarcodeNeeded(this.userLabelPrinting.getBarcodeNeeded());
-            copy.setSizeOfLabelSheet(
-                    this.userLabelPrinting.getSizeOfLabelSheet());
-            copy.setNumberOfLabelPerRow(
-                    this.userLabelPrinting.getNumberOfLabelPerRow());
-            copy.setNumberOfRowsPerPageOfLabel(
-                    this.userLabelPrinting.getNumberOfRowsPerPageOfLabel());
-            copy.setLeftSelectedLabelFields(
-                    this.userLabelPrinting.getLeftSelectedLabelFields());
-            copy.setRightSelectedLabelFields(
-                    this.userLabelPrinting.getRightSelectedLabelFields());
-            copy.setMainSelectedLabelFields(
-                    this.userLabelPrinting.getMainSelectedLabelFields());
-            copy.setIncludeColumnHeadinginNonPdf(
-                    this.userLabelPrinting.getIncludeColumnHeadinginNonPdf());
-            copy.setSettingsName(this.userLabelPrinting.getSettingsName());
-            copy.setFirstBarcodeField(
-                    this.userLabelPrinting.getFirstBarcodeField());
-            copy.setSecondBarcodeField(this.userLabelPrinting.getSecondBarcodeField());
-            copy.setThirdBarcodeField(
-                    this.userLabelPrinting.getThirdBarcodeField());
-            copy.setFilename(this.userLabelPrinting.getFilename());
-            copy.setGenerateType(this.userLabelPrinting.getGenerateType());
-
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    	String fileName = "";
 	    	if(this.userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())){
 	        	getFileNameAndSetFileLocations(".pdf");
 	            fileName = labelPrintingService.generatePDFLabels(trialInstances,
-                        copy, baos);
+                        userLabelPrinting, baos);
 	        } else if (this.userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
 	        	getFileNameAndSetFileLocations(".xls");
 	            fileName = labelPrintingService.generateXlSLabels(trialInstances,
-                        copy, baos);
+                        userLabelPrinting, baos);
 	        } else {
 	        	getFileNameAndSetFileLocations(".csv");
-	        	fileName = labelPrintingService.generateCSVLabels(trialInstances, copy, baos);
+	        	fileName = labelPrintingService.generateCSVLabels(trialInstances, userLabelPrinting, baos);
 	        }
 	        results.put("isSuccess", 1);
 	        results.put("fileName", fileName);

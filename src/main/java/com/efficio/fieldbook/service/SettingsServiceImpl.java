@@ -78,6 +78,7 @@ public class SettingsServiceImpl implements SettingsService {
 		List<Integer> hiddenFields = util.buildVariableIDList(
 				AppConstants.NURSERY_BASIC_DETAIL_FIELDS_HIDDEN_LABELS.getString());
 		List<MeasurementVariable> measurementVariables = workbook.getStudyConditions();
+		measurementVariables.addAll(workbook.getTrialConditions());
 		HashMap<String, MeasurementVariable> settingsMap = SettingsUtil
 				.buildMeasurementVariableMap(measurementVariables);
 		for (MeasurementVariable var : measurementVariables) {

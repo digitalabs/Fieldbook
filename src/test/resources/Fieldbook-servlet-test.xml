@@ -67,8 +67,13 @@
 
 	<!-- Application Beans -->
 
-	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl" />
+	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl">
+		<property name="designRunner" ref="designRunner"></property>
+		<!-- <property name="designRunner" value="${design.runner}"></property> -->
+	</bean>
 
+	<bean id="designRunner" class="${design.runner}" />
+	
 	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
 
 	<bean id="fileService" class="com.efficio.fieldbook.service.FileServiceImpl"
@@ -112,6 +117,8 @@
 		<!-- one of the properties available; the maximum file size in bytes -->
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
+
+
 
 	<bean id="advancingNursery" class="com.efficio.fieldbook.web.nursery.bean.AdvancingNursery"
 		scope="session">
@@ -192,6 +199,11 @@
         <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
+
+	<bean id="presetDataManager" class="org.generationcp.middleware.manager.PresetDataManagerImpl">
+		<property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
+		<property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+	</bean>
     
     <bean id="dataImportService" class="org.generationcp.middleware.service.DataImportServiceImpl">
         <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
@@ -225,6 +237,11 @@
     
     <bean id="germplasmListManager" class="org.generationcp.middleware.manager.GermplasmListManagerImpl">
         <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
+        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+    </bean>
+    
+    <bean id="userDataManager" class="org.generationcp.middleware.manager.UserDataManagerImpl">
+    	<property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
 
@@ -310,5 +327,6 @@
             </list>
         </property>
     </bean>
-    
+
+	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
 </beans>

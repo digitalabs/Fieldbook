@@ -50,6 +50,7 @@ public class LabelPrintingDataUtil {
     private static final String PLOT_COORDINATE = "col 1 range 1";
     private static final int RANGE = 1;
     private static final String STUDY_NAME = "labelPrintingTest";
+	public static final int SAMPLE_EXPERIMENT_NO = -2;
     
     //data for FieldMapDatasetInfo
     private static final String DATASET_NAME = "labelPrintingTest-PLOT";
@@ -185,6 +186,7 @@ public class LabelPrintingDataUtil {
     	label.setPlotCoordinate(PLOT_COORDINATE);
     	label.setRange(RANGE);
     	label.setStudyName(STUDY_NAME);
+		label.setExperimentId(SAMPLE_EXPERIMENT_NO);
     	labels.add(label);
     	
     	return labels;

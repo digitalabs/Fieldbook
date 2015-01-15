@@ -1,0 +1,124 @@
+<div class="list-details">
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="popover-label-padding">
+			<label class="control-label control-label-bold " th:text="#{germplasm.list.name}">List Name:</label>
+		</div>
+		<label class="germplasm-header-details" id="list-name"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="popover-label-padding">
+			<label class="control-label control-label-bold" th:text="#{germplasm.list.owner}">List Owner:</label>
+		</div>
+		<label class="germplasm-header-details" id="list-owner"></label>
+	</div>		
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="popover-label-padding">
+			<label class="control-label control-label-bold" th:text="#{germplasm.list.status}">Status:</label>
+		</div>
+		<label class="germplasm-header-details" id="list-status"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="popover-label-padding">
+			<label class="control-label control-label-bold" th:text="#{germplasm.list.description}">Description:</label>
+		</div>
+		<label class="germplasm-header-details" id="list-description"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="popover-label-padding">
+			<label class="control-label control-label-bold" th:text="#{germplasm.list.type}">Type:</label>
+		</div>
+		<label class="germplasm-header-details" id="list-type"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="popover-label-padding">
+			<label class="control-label control-label-bold" th:text="#{germplasm.list.date}">Date:</label>
+		</div>
+		<label class="germplasm-header-details" id="list-date"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="popover-label-padding">
+			<label class="control-label control-label-bold " th:text="#{germplasm.list.notes}">Notes:</label>
+		</div>
+		<label class="germplasm-header-details" id="list-notes"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="popover-label-padding">
+			<label class="control-label control-label-bold" th:text="#{germplasm.list.total.entries}">Total Entries:</label>
+		</div>
+		<label class="germplasm-header-details" id="list-total-entries"></label>
+	</div>	
+</div>
+</div>
+
+<div layout:fragment="page-script">
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+		/*globals console, changeBrowseGermplasmButtonBehavior, chooseListNode, chooseList, showListTreeToolTip*/
+		/*glboals getMessageErrorDiv, showErrorMessage, moveGermplasm*/
+		/*exported displayGermplasmListTree, cannotMove,hasChildrenString,pleaseChooseFolder,openTreeType*/
+		/*exported getDisplayedTreeName*/
+
+			var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/ '',
+				hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/ '',
+				pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/ '',
+				lazyLoadUrl = '/Fieldbook/ListTreeManager/expandGermplasmListFolder/',
+				additionalLazyLoadUrl = '',
+				germplasmFocusNode = null,
+				openTreeType = 0,
+                selectListFunction;
+			
+			function getDisplayedTreeName(){
+				'use strict';
+				if($('#listTreeModal').hasClass('in') === true){
+					return 'germplasmTree';
+				}
+				else if($('#saveListTreeModal').hasClass('in') === true){
+					return 'germplasmFolderTree';
+				}
+			}
+			function getDisplayedModalSelector(){
+				'use strict';
+				if($('#listTreeModal').hasClass('in') === true){
+					return '#listTreeModal';
+				}
+				else if($('#saveListTreeModal').hasClass('in') === true){
+					return '#saveListTreeModal';
+				}
+			}
+			function getMessageErrorDiv(){
+				'use strict';
+				 var msgDiv = 'page-import-message-modal';
+				 if(getDisplayedTreeName() === 'germplasmFolderTree'){
+				 	msgDiv = 'page-save-list-message-modal';
+				 }					
+				 return msgDiv;
+			}
+			function displayGermplasmListTreeTable(divId) {
+				'use strict';
+				$.ajax({
+					url : '/Fieldbook/ListTreeManager/loadInitGermplasmTreeTable',
+					type : 'GET',
+					cache : false,
+					success : function(html) {
+						$('#'+divId).html(html);
+					}
+				});
+			}
+	//]]>
+	</script>
+</div>

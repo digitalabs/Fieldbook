@@ -1,22 +1,24 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import com.efficio.fieldbook.web.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -29,25 +31,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.*;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.TrialData;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
 public class OpenTrialController extends
         BaseTrialController {
 
-    public static final String URL = "/TrialManager/openTrial";
+    private static final String TRIAL_INSTANCE = "TRIAL_INSTANCE";
+    private static final String TRIAL = "TRIAL";
+	public static final String URL = "/TrialManager/openTrial";
     public static final String IS_EXP_DESIGN_PREVIEW = "isExpDesignPreview";
     public static final String MEASUREMENT_ROW_COUNT = "measurementRowCount";
     public static final String ENVIRONMENT_DATA_TAB = "environmentData";
     public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
     private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
+    
     @Resource
     private OntologyService ontologyService;
 
@@ -331,6 +353,7 @@ public class OpenTrialController extends
                 userSelection.setWorkbook(workbook);
 
                 fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
+                
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
 
                 returnVal.put(MEASUREMENT_DATA_EXISTING, fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
@@ -400,7 +423,7 @@ public class OpenTrialController extends
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
 
         resetSessionVariablesAfterSave(workbook, false);
-        return loadMeasurementDataPage(false, form, workbook, workbook.getMeasurementDatasetVariablesView(), workbook.getObservations(), workbook.getMeasurementDatesetId(), workbook.getVariates(), model);
+        return loadMeasurementDataPage(false, form, workbook, workbook.getMeasurementDatasetVariablesView(), model,"");
     }
 
     /**
@@ -414,24 +437,26 @@ public class OpenTrialController extends
     @RequestMapping(value = "/load/measurement", method = RequestMethod.GET)
     public String loadMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
         Workbook workbook = userSelection.getWorkbook();
-        List<MeasurementVariable> variates = workbook.getVariates();
         List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariablesView();
-        List<MeasurementRow> observations = workbook.getObservations();
-        Integer measurementDatasetId = workbook.getMeasurementDatesetId();
-        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(measurementDatasetId, SettingsUtil.buildVariates(variates)));
-        return loadMeasurementDataPage(false, form, workbook, measurementDatasetVariables, observations, measurementDatasetId, variates, model);
+        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
+        return loadMeasurementDataPage(false, form, workbook, measurementDatasetVariables, model,"");
     }
 
     @RequestMapping(value = "/load/preview/measurement", method = RequestMethod.GET)
     public String loadPreviewMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
         Workbook workbook = userSelection.getTemporaryWorkbook();
-        List<MeasurementVariable> variates = workbook.getVariates();
-        List<MeasurementVariable> measurementDatasetVariables = workbook.getMeasurementDatasetVariables();
-        List<MeasurementRow> observations = workbook.getObservations();
-        Integer measurementDatasetId = workbook.getMeasurementDatesetId();
-        userSelection.setMeasurementRowList(workbook.getObservations());
-        model.addAttribute(IS_EXP_DESIGN_PREVIEW, "0");
-        return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations, measurementDatasetId, variates, model);
+        Workbook originalWorkbook = userSelection.getWorkbook();
+        userSelection.setMeasurementRowList(workbook.getObservations());  
+        model.addAttribute(IS_EXP_DESIGN_PREVIEW, isPreviewEditable(originalWorkbook));
+        return loadMeasurementDataPage(true, form, workbook, workbook.getMeasurementDatasetVariables(), model, "");
+    }
+    
+    protected String isPreviewEditable(Workbook originalWorkbook){
+    	String isPreviewEditable = "0";
+        if(originalWorkbook == null || originalWorkbook.getStudyDetails() == null || originalWorkbook.getStudyDetails().getId() == null){
+        	isPreviewEditable = "1";
+        }
+        return isPreviewEditable;
     }
 
     @RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
@@ -443,11 +468,12 @@ public class OpenTrialController extends
             isInPreviewMode = true;
             workbook = userSelection.getTemporaryWorkbook();
         }
-        List<MeasurementVariable> variates = workbook.getVariates();
+        
         List<MeasurementVariable> measurementDatasetVariables = new ArrayList<MeasurementVariable>();
-        measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariables());
+        measurementDatasetVariables.addAll(workbook.getMeasurementDatasetVariablesView());
         //we show only traits that are being passed by the frontend
         String traitsListCsv = request.getParameter("traitsList");
+        
         List<MeasurementVariable> newMeasurementDatasetVariables = new ArrayList<MeasurementVariable>();
 
         List<SettingDetail> traitList = userSelection.getBaselineTraitsList();
@@ -478,20 +504,22 @@ public class OpenTrialController extends
             measurementDatasetVariables = newMeasurementDatasetVariables;
         }
 
-
-        List<MeasurementRow> observations = workbook.getObservations();
-        Integer measurementDatasetId = workbook.getMeasurementDatesetId();
-        userSelection.setMeasurementRowList(workbook.getObservations());
         //we do a cleanup here
         if (isInPreviewMode) {
             model.addAttribute(IS_EXP_DESIGN_PREVIEW, "0");
         }
 
-        return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, observations, measurementDatasetId, variates, model);
+        return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, model, request.getParameter("deletedEnvironment"));
     }
 
-    private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, List<MeasurementVariable> measurementDatasetVariables,
-                                           List<MeasurementRow> observations, Integer measurementDatasetId, List<MeasurementVariable> variates, Model model) throws MiddlewareQueryException {
+	private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, 
+    								List<MeasurementVariable> measurementDatasetVariables, Model model, 
+    								String deletedEnvironments) throws MiddlewareQueryException {
+    	
+    	List<MeasurementRow> observations = workbook.getObservations();
+    	Integer measurementDatasetId = workbook.getMeasurementDatesetId();
+    	List<MeasurementVariable> variates = workbook.getVariates();
+    	
         //set measurements data
         userSelection.setMeasurementRowList(observations);
         if (!isTemporary) {
@@ -506,22 +534,170 @@ public class OpenTrialController extends
         if (observations != null && !observations.isEmpty()) {
             List<MeasurementData> dataList = observations.get(0).getDataList();
             for (MeasurementData data : dataList) {
-                if (data.getMeasurementVariable() != null) {
-                    MeasurementVariable var = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, data.getMeasurementVariable().getTermId());
-                    if (var != null && data.getMeasurementVariable().getName() != null) {
-                        var.setName(data.getMeasurementVariable().getName());
-                    }
-                }
+                processMeasurementVariable(measurementDatasetVariables, data);
             }
             userSelection.setMeasurementRowList(observations);
         }
-
-
-        form.setMeasurementVariables(measurementDatasetVariables);
+        //remove deleted environment from existing observation
+        if(deletedEnvironments.length() > 0  && !"0".equals(deletedEnvironments)){
+        	Workbook tempWorkbook = processDeletedEnvironments(deletedEnvironments, measurementDatasetVariables, workbook);
+        	form.setMeasurementRowList(tempWorkbook.getObservations());
+        	model.addAttribute(MEASUREMENT_ROW_COUNT, tempWorkbook.getObservations() != null ? tempWorkbook.getObservations().size() : 0);
+        }
+        
+        form.setMeasurementVariables(measurementDatasetVariables); 
         userSelection.setMeasurementDatasetVariable(measurementDatasetVariables);
-
         model.addAttribute("createNurseryForm", form);
-
         return super.showAjaxPage(model, URL_DATATABLE);
     }
+
+	private void processMeasurementVariable(
+			List<MeasurementVariable> measurementDatasetVariables,
+			MeasurementData data) {
+		if (data.getMeasurementVariable() != null) {
+		    MeasurementVariable var = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, data.getMeasurementVariable().getTermId());
+		    if (var != null && data.getMeasurementVariable().getName() != null) {
+		        var.setName(data.getMeasurementVariable().getName());
+		    }
+		}
+	}
+	
+	private Workbook processDeletedEnvironments(String deletedEnvironment, List<MeasurementVariable> measurementDatasetVariables, Workbook workbook) {
+    	
+		Workbook tempWorkbook = userSelection.getTemporaryWorkbook();
+    	if(tempWorkbook == null){
+    		tempWorkbook = generateTemporaryWorkbook();
+    	}
+		
+    	List<MeasurementRow> filteredObservations = getFilteredObservations(userSelection.getMeasurementRowList(),deletedEnvironment);
+    	List<MeasurementRow> filteredTrialObservations = getFilteredTrialObservations(workbook.getTrialObservations(),deletedEnvironment);
+    	
+    	tempWorkbook.setTrialObservations(filteredTrialObservations);
+    	tempWorkbook.setObservations(filteredObservations);
+    	tempWorkbook.setMeasurementDatasetVariables(measurementDatasetVariables);
+    	
+        userSelection.setTemporaryWorkbook(tempWorkbook);
+    	userSelection.setMeasurementRowList(filteredObservations);
+        userSelection.getWorkbook().setTrialObservations(filteredTrialObservations);
+        userSelection.getWorkbook().setObservations(filteredObservations);
+        userSelection.getWorkbook().setMeasurementDatasetVariables(measurementDatasetVariables);
+
+		return tempWorkbook;
+	}
+
+	private Workbook generateTemporaryWorkbook() {
+		List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
+        List<SettingDetail> basicDetails = userSelection.getBasicDetails();
+        // transfer over data from user input into the list of setting details stored in the session
+        List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+        combinedList.addAll(basicDetails);
+
+        if (studyLevelConditions != null) {             
+            combinedList.addAll(studyLevelConditions);
+        }
+
+        String name = "";
+
+        Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
+               userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
+               userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
+
+        Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+        StudyDetails details = new StudyDetails();
+        details.setStudyType(StudyType.T);
+        tempWorkbook.setStudyDetails(details);
+        
+		return tempWorkbook;
+	}
+
+	protected List<MeasurementRow> getFilteredTrialObservations(
+			List<MeasurementRow> trialObservations, String deletedEnvironment) {
+		
+		if("0".equalsIgnoreCase(deletedEnvironment) || "".equalsIgnoreCase(deletedEnvironment) || trialObservations == null){
+			return trialObservations;
+		}
+		
+		List<MeasurementRow> filteredTrialObservations = new ArrayList<MeasurementRow>();
+		filteredTrialObservations.addAll(trialObservations);
+		
+		//remove the deleted trial instance
+		for(MeasurementRow row : trialObservations){	
+        	List<MeasurementData> dataList = row.getDataList();
+        	for(MeasurementData data : dataList){
+        		if(isATrialInstanceMeasurementVariable(data) && deletedEnvironment.equalsIgnoreCase(data.getValue())){
+        			filteredTrialObservations.remove(row);
+        			break;
+        		}
+        	}
+        }
+		
+		filteredTrialObservations = updateTrialInstanceNoAfterDelete(deletedEnvironment,filteredTrialObservations);
+		
+		return filteredTrialObservations;
+	}
+
+	private boolean isATrialInstanceMeasurementVariable(MeasurementData data) {
+		if (data.getMeasurementVariable() != null) {
+            MeasurementVariable var = data.getMeasurementVariable();
+            if (var != null && data.getMeasurementVariable().getName() != null
+            		&& (TRIAL_INSTANCE.equalsIgnoreCase(var.getName()) || TRIAL.equalsIgnoreCase(var.getName()))){
+            	return true;
+            }
+		}
+		return false;
+	}
+
+	protected List<MeasurementRow> updateTrialInstanceNoAfterDelete(String deletedEnvironment,
+			List<MeasurementRow> filteredMeasurementRowList) {
+		
+		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
+		measurementRowList.addAll(filteredMeasurementRowList);
+		
+		for(MeasurementRow row : measurementRowList){	
+        	List<MeasurementData> dataList = row.getDataList();
+        	for(MeasurementData data : dataList){
+        		if(isATrialInstanceMeasurementVariable(data)){
+            		updateEnvironmentThatIsGreaterThanDeletedEnvironment(
+							deletedEnvironment, data);
+                	break;
+        		}
+        	}
+        }
+		
+		return measurementRowList;
+	}
+
+	private void updateEnvironmentThatIsGreaterThanDeletedEnvironment(
+			String deletedEnvironment, MeasurementData data) {
+		Integer deletedInstanceNo = Integer.valueOf(deletedEnvironment);
+		Integer currentInstanceNo = Integer.valueOf(data.getValue());
+		
+		if(deletedInstanceNo < currentInstanceNo){
+			data.setValue(String.valueOf(--currentInstanceNo));
+		}
+	}
+
+	protected List<MeasurementRow> getFilteredObservations(List<MeasurementRow> observations, String deletedEnvironment) {
+		
+		if("0".equalsIgnoreCase(deletedEnvironment) || "".equalsIgnoreCase(deletedEnvironment)){
+			return observations;
+		}
+		
+        List<MeasurementRow> filteredObservations = new ArrayList<MeasurementRow>();
+        for(MeasurementRow row : observations){	
+        	List<MeasurementData> dataList = row.getDataList();
+        	for(MeasurementData data : dataList){
+        		if(isATrialInstanceMeasurementVariable(data) && 
+        				!deletedEnvironment.equalsIgnoreCase(data.getValue()) 
+        				&& !"0".equalsIgnoreCase(data.getValue()) ){
+        			filteredObservations.add(row);
+                	break;
+        		}
+        	}
+        }
+        
+        filteredObservations = updateTrialInstanceNoAfterDelete(deletedEnvironment, filteredObservations);
+
+		return filteredObservations;
+	}
 }

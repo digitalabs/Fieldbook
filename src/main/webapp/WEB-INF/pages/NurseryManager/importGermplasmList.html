@@ -171,7 +171,7 @@
 	</div>
 </div>
 
-<div th:include="/Common/browseGermplasmList"></div>
+<div th:include="/Common/browseGermplasmListTable"></div>
 
 <div class="row">
 	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListModal"></div>
@@ -665,16 +665,13 @@
 
             $('#entries-details').css('display', 'none');
 
-            displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
-                var currentFolderName = node.data.title;
-                $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
-            });
+            displayGermplasmListTreeTable('germplasmTree');
 
             activateDroppable();
             changeBrowseGermplasmButtonBehavior(false);
 
             $('#listTreeModal').on('hide.bs.modal', function () {
-                $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
+            	displayGermplasmListTreeTable('germplasmTree');
                 changeBrowseGermplasmButtonBehavior(false);
                 $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').hide();
                 $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').hide();

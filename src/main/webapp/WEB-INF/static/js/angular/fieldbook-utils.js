@@ -470,8 +470,8 @@
                     callback: '&',
                     hideVariable: '=',
                     useExactProperties: '@',
-                    collapsible: '='
-
+                    collapsible: '=',
+                    actionButtonDirection: '@'
                 },
                 transclude: true,
                 templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',

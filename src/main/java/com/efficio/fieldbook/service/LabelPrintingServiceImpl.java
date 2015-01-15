@@ -191,14 +191,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             .getFieldMapLabels()) {
 
                         i++;
-                        String barcodeLabelForCode = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField,secondBarcodeField, thirdBarcodeField, false);
-                        String barcodeLabel = generateBarcodeField(
-                                moreFieldInfo, fieldMapLabel, firstBarcodeField,
-                                secondBarcodeField, thirdBarcodeField, true);
+                        String barcodeLabelForCode = "";
+                        String barcodeLabel = "";
+
                         if ("0".equalsIgnoreCase(barcodeNeeded)) {
                             barcodeLabel = " ";
                             barcodeLabelForCode = " ";
+                        } else {
+                            barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel,
+                                    firstBarcodeField, secondBarcodeField, thirdBarcodeField,
+                                    false);
+                            barcodeLabelForCode = generateBarcodeField(
+                                    moreFieldInfo, fieldMapLabel, firstBarcodeField,
+                                    secondBarcodeField, thirdBarcodeField, true);
                         }
+
                         if (barcodeLabelForCode != null && barcodeLabelForCode.length() > 80) {
                             throw new LabelPrintingException("label.printing.label.too.long",
                                     barcodeLabelForCode, "label.printing.label.too.long");

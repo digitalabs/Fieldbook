@@ -72,6 +72,8 @@ public class UserLabelPrinting implements Serializable{
     /** The right selected label fields. */
     private String rightSelectedLabelFields;
     
+    private String mainSelectedLabelFields;
+    
     /** The first barcode field. */
     private String firstBarcodeField;
     
@@ -98,6 +100,10 @@ public class UserLabelPrinting implements Serializable{
     
     /** The is field maps existing. */
     private boolean isFieldMapsExisting;
+    
+    private String settingsName;
+    
+    private String includeColumnHeadinginNonPdf;
     
     /**
      * Gets the field map info.
@@ -543,4 +549,29 @@ public class UserLabelPrinting implements Serializable{
 	public void setFieldMapsExisting(boolean isFieldMapsExisting) {
 		this.isFieldMapsExisting = isFieldMapsExisting;
 	}
+
+	public String getSettingsName() {
+		return settingsName;
+	}
+
+	public void setSettingsName(String settingsName) {
+		this.settingsName = settingsName;
+	}
+
+	public String getMainSelectedLabelFields() {
+		return mainSelectedLabelFields;
+	}
+
+	public void setMainSelectedLabelFields(String mainSelectedLabelFields) {
+		this.mainSelectedLabelFields = mainSelectedLabelFields;
+	}
+
+	public String getIncludeColumnHeadinginNonPdf() {
+		return includeColumnHeadinginNonPdf;
+	}
+
+	public void setIncludeColumnHeadinginNonPdf(String includeColumnHeadinginNonPdf) {
+		this.includeColumnHeadinginNonPdf = includeColumnHeadinginNonPdf;
+	}
+		
 }

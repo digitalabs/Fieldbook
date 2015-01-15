@@ -348,6 +348,10 @@ function proceedToGenerateFieldMap() {
 		$('#fieldmapDatasetId').val() + '/' + $('#fieldmapGeolocationId').val();
 }
 
+function $safeId(fieldId) {
+	return $(getJquerySafeId(fieldId));
+}
+
 function getJquerySafeId(fieldId) {
 	return replaceall(fieldId, '.', '\\.');
 }

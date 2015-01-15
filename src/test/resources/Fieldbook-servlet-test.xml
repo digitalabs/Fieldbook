@@ -118,6 +118,8 @@
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
 
+
+
 	<bean id="advancingNursery" class="com.efficio.fieldbook.web.nursery.bean.AdvancingNursery"
 		scope="session">
 		<aop:scoped-proxy />
@@ -197,6 +199,11 @@
         <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
+
+	<bean id="presetDataManager" class="org.generationcp.middleware.manager.PresetDataManagerImpl">
+		<property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
+		<property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+	</bean>
     
     <bean id="dataImportService" class="org.generationcp.middleware.service.DataImportServiceImpl">
         <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
@@ -320,5 +327,6 @@
             </list>
         </property>
     </bean>
-    
+
+	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
 </beans>

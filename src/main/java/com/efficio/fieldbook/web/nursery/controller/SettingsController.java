@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -182,12 +183,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @return the list
      */
     protected List<Integer> buildVariableIDList(String requiredFields) {
-        List<Integer> requiredVariables = new ArrayList<Integer>();
-        StringTokenizer token = new StringTokenizer(requiredFields, ",");
-        while(token.hasMoreTokens()){
-            requiredVariables.add(Integer.valueOf(token.nextToken()));
-        }        
-        return requiredVariables;
+        return FieldbookUtil.getInstance().buildVariableIDList(requiredFields);
     }
     
     /**

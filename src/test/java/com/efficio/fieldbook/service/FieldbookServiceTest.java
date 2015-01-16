@@ -2,6 +2,7 @@ package com.efficio.fieldbook.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import junit.framework.Assert;
 
@@ -18,7 +19,6 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.service.api.FieldbookService;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -30,6 +30,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 public class FieldbookServiceTest {
        
@@ -398,4 +399,18 @@ public class FieldbookServiceTest {
     	Assert.assertFalse("Expected no check variables in the conditions but found one.", 
     			fieldbookServiceImpl.hasCheckVariables(conditions));
     }
+	
+	@Test
+	public void testHideExpDesignVariableInManagementSettings(){
+		String expDesignVars = "8135,8131,8132,8133,8134,8136,8137,8138,8139,8142";
+		StringTokenizer tokenizer = new StringTokenizer(expDesignVars, ",");
+		boolean allIsHidden = true;
+		while(tokenizer.hasMoreTokens()){			
+			if (!FieldbookServiceImpl.inHideVariableFields(Integer.parseInt(tokenizer.nextToken()), AppConstants.FILTER_NURSERY_FIELDS.getString())) {
+				allIsHidden = false;
+				break;
+	        }
+		}
+		Assert.assertTrue("Exp Design Variables should all be captured as hidden", allIsHidden);
+	}
 }

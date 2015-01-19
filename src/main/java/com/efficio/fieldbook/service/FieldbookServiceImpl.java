@@ -299,7 +299,7 @@ public class FieldbookServiceImpl implements FieldbookService {
         return list;
     }
 
-    private static boolean inHideVariableFields(Integer stdVarId, String variableList) {
+    protected static boolean inHideVariableFields(Integer stdVarId, String variableList) {
         StringTokenizer token = new StringTokenizer(variableList, ",");
         boolean inList = false;
         while (token.hasMoreTokens()) {

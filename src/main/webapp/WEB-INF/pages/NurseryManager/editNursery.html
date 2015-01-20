@@ -76,6 +76,10 @@
                                 <a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link"
                                    th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
                             </li>
+                            <li>
+                                <a href="javascript: void(0)" class="import-crosses"
+                                   th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
+                            </li>
                             <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
                                 <a href="" style="display: none" id="open-study-url"></a>
                                 <a href="javascript: showImportOptions();" id="open-study-url-link"
@@ -357,6 +361,9 @@
 <div class="row">
 	<div id="study-fieldmap" th:include="/Common/selectStudyFieldmap"></div>
 </div>
+<div class="row">
+	<div id="import-crosses-screen" th:include="/Common/includes/importCrosses"></div>
+</div>
 
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -388,6 +395,7 @@
 	</div>
 </div>
 <div layout:fragment="page-script">
+<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
 

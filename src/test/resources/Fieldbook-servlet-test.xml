@@ -196,8 +196,7 @@
     </bean>
 
 	<bean id="presetDataManager" class="org.generationcp.middleware.manager.PresetDataManagerImpl">
-		<property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-		<property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+		<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
 	</bean>
     
     <bean id="dataImportService" class="org.generationcp.middleware.service.DataImportServiceImpl">

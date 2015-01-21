@@ -25,7 +25,7 @@
 							<div style="float: right; ">
 								<img onclick="javascript: addGermplasmFolder(this)" th:src="@{/static/img/add 2.png}" class="image-padding browse-germplasm-action" />
 								<img onclick="javascript: renameGermplasmFolder(this)" th:src="@{/static/img/edit.png}" class="image-padding browse-germplasm-action edit-germplasm-folder" />
-								<img onclick="javascript: deleteGermplasmFolder(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
+								<img onclick="javascript: FolderOperation.deleteGermplasmFolder(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
 							</div>
 						</div>
 					</div>
@@ -94,7 +94,40 @@
 	</div>
 </div>
 
+<div class="modal fade" id="oldDeleteGermplasmFolder" role="dialog" aria-labelledby="oldDeleteGermplasmFolder" aria-hidden="true" style="overflow: hidden">
+	<div class="modal-dialog modal-extra-small">
+		<div class="modal-content">
+			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<label class="modal-title fbk-modal-title" id="heading-delete-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeDeleteGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('oldDeleteGermplasmFolder')"/>
+					</div>
+				</div>
+
+				<div class="row">
+					<div id="page-delete-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
+					</div>
+				</div>
+				<div class="row form-group">
+						<div class="col-xs-12 col-md-12 add_top_padding">
+							<label class="control-label" id="oldDelete-folder-confirmation"></label>
+						</div>
+				</div>
+
+			</div>
+			<div class="modal-footer addVariable-footer">
+				<button type="button" class="btn btn-default" onclick="javascript: closeModal('oldDeleteGermplasmFolder')" th:text="#{common.form.no.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: FolderOperation.submitDeleteGermplasmFolder();">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="list-tree-include" th:include="/Common/includes/listTreeInclude"></div>
+<div id="list-operation-include" th:include="/Common/includes/manageGermplasmListOperation"></div>
 
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
@@ -102,6 +135,46 @@
 	/*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList*/
 	/*globals showErrorMessage, showInvalidInputMessage, getDisplayedTreeName*/
 	/*exported nameDuplicateError, saveGermplasmList, openSaveListModal*/
+
+	var FolderOperation = {};
+
+	FolderOperation.deleteGermplasmFolder = function (object) {
+		var currentFolderName;
+
+		if (!$(object).hasClass('disable-image')) {
+			$('#oldDeleteGermplasmFolder').modal('show');
+			$('#addGermplasmFolderDiv').slideUp('fast');
+			$('#renameGermplasmFolderDiv').slideUp('fast');
+			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
+			$('#oldDelete-folder-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');
+
+			$('#page-delete-germplasm-folder-message-modal').html('');
+		}
+	};
+
+	FolderOperation.submitDeleteGermplasmFolder = function() {
+		'use strict';
+
+		var folderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
+
+		$.ajax({
+			url: '/Fieldbook/ListTreeManager/deleteGermplasmFolder',
+			type: 'POST',
+			data: 'folderId=' + folderId,
+			cache: false,
+			success: function (data) {
+				var node;
+				if (data.isSuccess === '1') {
+					$('#oldDeleteGermplasmFolder').modal('hide');
+					node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+					node.remove();
+					showSuccessfulMessage('', deleteFolderSuccessful);
+				} else {
+					showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
+				}
+			}
+		});
+	};
 
 	var folderRequired = /*[[#{germplasm.save.list.folder.error}]]*/ '',
 		nameRequired = /*[[#{germplasm.save.list.name.error}]]*/ '',

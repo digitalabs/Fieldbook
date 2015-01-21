@@ -5,11 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -22,9 +17,16 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+
 public class WorkbookUtil {
 
 	
+	private static final String DUMMY_PROGRAM_UUID = "1234567890";
+
 	public static Integer getMeasurementVariableId(List<MeasurementVariable> variables, String name) {
     	if (variables != null && !variables.isEmpty()) {
 			for (MeasurementVariable variable : variables) {
@@ -296,7 +298,7 @@ public class WorkbookUtil {
                     }
                     
                     if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
-                        variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true));
+                        variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, DUMMY_PROGRAM_UUID));
                     } else {
                         variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
                     }
@@ -323,7 +325,7 @@ public class WorkbookUtil {
                 }
                 
                 if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
-                    variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true));
+                    variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true,DUMMY_PROGRAM_UUID));
                 } else {
                     variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
                 }

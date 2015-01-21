@@ -355,5 +355,10 @@
                 <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
             </list>
         </property>
-    </bean>    
+    </bean>
+
+    <bean id="programUUIDFactory" class="org.generationcp.commons.spring.util.ProgramUUIDFactory"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
 </beans>

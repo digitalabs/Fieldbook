@@ -3,6 +3,7 @@ package com.efficio.fieldbook.service;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import org.generationcp.commons.constant.ToolSection;
+import org.generationcp.commons.spring.util.ProgramUUIDFactory;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
@@ -34,12 +35,16 @@ public class LabelPrintingServiceImplTest {
 	public static final int TEST_PRESET_ID = 1;
 	public static final String PROGRAM_PRESET_CONFIG = "program_preset_config";
 	public static final String STANDARD_PRESET_CONFIG = "standard_preset_config";
-
+	public static final String DUMMY_PROGRAM_UUID = "1234567890";
+	
 	@Mock
 	WorkbenchService workbenchService;
 
 	@Mock
 	PresetDataManager presetDataManager;
+	
+    @Mock
+    private ProgramUUIDFactory uuidFactory;
 
 	@InjectMocks
 	LabelPrintingServiceImpl serviceDUT;
@@ -61,7 +66,7 @@ public class LabelPrintingServiceImplTest {
 
 		final ArrayList<ProgramPreset> notEmptySearchResult = new ArrayList<>();
 		final ProgramPreset searchResultPreset = new ProgramPreset();
-		searchResultPreset.setProgramUuid(1);
+		searchResultPreset.setProgramUuid(DUMMY_PROGRAM_UUID);
 		searchResultPreset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
 		searchResultPreset.setToolId(23);
 		searchResultPreset.setName(TEST_EXISTING_PRESET_NAME);
@@ -69,15 +74,15 @@ public class LabelPrintingServiceImplTest {
 		notEmptySearchResult.add(searchResultPreset);
 
 		when(presetDataManager.getProgramPresetFromProgramAndToolByName(TEST_EXISTING_PRESET_NAME,
-				TEST_PROJECT_ID.intValue(), 23,
+				DUMMY_PROGRAM_UUID, 23,
 				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(notEmptySearchResult);
 
 		when(presetDataManager.getProgramPresetFromProgramAndToolByName(
 				TEST_NON_EXISTING_PRESET_NAME,
-				TEST_PROJECT_ID.intValue(), 23,
+				DUMMY_PROGRAM_UUID, 23,
 				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(new ArrayList<ProgramPreset>());
 
-		when(presetDataManager.getProgramPresetFromProgramAndTool(TEST_PROJECT_ID.intValue(), 23,
+		when(presetDataManager.getProgramPresetFromProgramAndTool(DUMMY_PROGRAM_UUID, 23,
 				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
 				notEmptySearchResult);
 
@@ -104,6 +109,8 @@ public class LabelPrintingServiceImplTest {
 
 		when(workbenchService.getStandardPresetById(TEST_PRESET_ID)).thenReturn(sp);
 		when(presetDataManager.getProgramPresetById(TEST_PRESET_ID)).thenReturn(searchResultPreset);
+		
+		when(uuidFactory.getCurrentProgramUUID()).thenReturn(DUMMY_PROGRAM_UUID);
 	}
 
 	@Test

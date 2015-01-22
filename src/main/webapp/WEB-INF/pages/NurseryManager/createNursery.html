@@ -230,6 +230,11 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row">
 	<div id="import-crosses-screen" th:include="/Common/includes/importCrosses"></div>
 </div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="open-crosses" th:include="/Common/includes/openCrossesListModal"></div>
+	</div>
+</div>
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type='text/javascript' th:inline="javascript">

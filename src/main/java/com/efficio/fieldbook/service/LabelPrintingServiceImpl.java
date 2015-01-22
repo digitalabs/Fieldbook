@@ -35,6 +35,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -70,6 +71,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -80,6 +82,30 @@ import java.util.List;
  */
 @Service
 public class LabelPrintingServiceImpl implements LabelPrintingService{
+
+	private static final String SELECTED_NAME = "selectedName";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_YEAR = "label.printing.available.fields.year";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME = "label.printing.available.fields.trial.name";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_SEASON = "label.printing.available.fields.season";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES = "label.printing.available.fields.plot.coordinates";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_PLOT = "label.printing.available.fields.plot";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE = "label.printing.available.fields.parentage";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME = "label.printing.available.fields.nursery.name";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION = "label.printing.available.fields.location";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME = "label.printing.available.fields.field.name";
+
+	private static final String LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME = "label.printing.available.fields.block.name";
+
+	private static final String BARCODE = "barcode";
 
 	/** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceImpl.class);
@@ -113,9 +139,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
 	 */
-
-    
-    private static final String BARCODE = "Barcode";
 
     public LabelPrintingServiceImpl(){
     	super();
@@ -474,16 +497,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 						"label.printing.available.fields.germplasm.name", null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.year", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_YEAR, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.season", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_SEASON, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.nursery.name", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.trial.name", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
 				buffer.append(messageSource.getMessage(
 						"label.printing.available.fields.trial.instance.num", null, locale));
@@ -492,22 +515,22 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 						"label.printing.available.fields.rep", null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.location", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.block.name", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.plot", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_PLOT, null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.parentage", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE, null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.plot.coordinates", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES, null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.field.name", null, locale));
+						LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME, null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
 				buffer.append(messageSource.getMessage(
 						"label.printing.available.fields.barcode", null, locale));
@@ -515,7 +538,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 				try {
 					buffer.append(fieldbookMiddlewareService.getStandardVariable(headerID).getName());
 				} catch (MiddlewareQueryException e) {
-					LOG.error(e.getMessage());
+					LOG.error(e.getMessage(),e);
 				}
 			}
 
@@ -555,9 +578,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
 				buffer.append(fieldMapLabel.getSeason());
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
-				buffer.append(moreFieldInfo.get("selectedName"));
+				buffer.append(moreFieldInfo.get(SELECTED_NAME));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
-				buffer.append(moreFieldInfo.get("selectedName"));
+				buffer.append(moreFieldInfo.get(SELECTED_NAME));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
 				buffer.append(moreFieldInfo.get("trialInstanceNumber"));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()) {
@@ -575,7 +598,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
 				buffer.append(moreFieldInfo.get("fieldName"));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
-				buffer.append(moreFieldInfo.get("barcode"));
+				buffer.append(moreFieldInfo.get(BARCODE));
 			} else {
 				String value = fieldMapLabel.getUserFields().get(headerID);
 				if (value != null) {
@@ -689,7 +712,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     String barcodeLabelForCode = generateBarcodeField(
                             moreFieldInfo, fieldMapLabel, firstBarcodeField,
                             secondBarcodeField, thirdBarcodeField, false);
-                    moreFieldInfo.put("barcode", barcodeLabelForCode);
+                    moreFieldInfo.put(BARCODE, barcodeLabelForCode);
 
                     for (Integer selectedFieldID : selectedFieldIDs) {
                         String leftText = getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID,
@@ -714,7 +737,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         } 
         return fileName;
     }
-    protected String appendBarcode(boolean isBarcodeNeeded, String mainSelectedFields){
+    protected String appendBarcode(boolean isBarcodeNeeded, String selectedFields){
+    	String mainSelectedFields = selectedFields;
     	if(isBarcodeNeeded){
     		mainSelectedFields += "," + AppConstants.AVAILABLE_LABEL_BARCODE.getInt();
     	}
@@ -773,7 +797,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             	String barcodeLabelForCode = generateBarcodeField(
                         moreFieldInfo, fieldMapLabel, firstBarcodeField,
                         secondBarcodeField, thirdBarcodeField, false);
-                moreFieldInfo.put("barcode", barcodeLabelForCode);
+                moreFieldInfo.put(BARCODE, barcodeLabelForCode);
                 
             	Map<Integer, ExportColumnValue> rowMap = generateRowMap(selectedFieldIDs, moreFieldInfo, fieldMapLabel);
             	columnValues.add(rowMap);
@@ -941,10 +965,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
          moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
          moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
          moreFieldInfo.put("fieldName", fieldMapTrialInstanceInfo.getFieldName());
-         moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
+         moreFieldInfo.put(SELECTED_NAME, trialInstance.getFieldbookName());
          moreFieldInfo.put("trialInstanceNumber", 
                  fieldMapTrialInstanceInfo.getTrialInstanceNo());
-         moreFieldInfo.put("barcode", barCode);
+         moreFieldInfo.put(BARCODE, barCode);
          
          return moreFieldInfo;
     }
@@ -1002,21 +1026,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.parentage", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.year", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_YEAR, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.season", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_SEASON, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.location", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()));
         
         if(isTrial){
             labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage("label.printing.available.fields.trial.name", null, locale)
+                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()));
             labelFieldsList.add(new LabelFields(
                     messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale)
@@ -1026,21 +1050,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     , AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()));
         }else{
             labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale)
+                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()));
         }
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.plot", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()));
         if(hasFieldMap){
             labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage("label.printing.available.fields.block.name", null, locale)
+                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()));
             labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale)
+                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()));
             labelFieldsList.add(new LabelFields(
-            		messageSource.getMessage("label.printing.available.fields.field.name", null, locale)
+            		messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME, null, locale)
             		, AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()));
         }
         return labelFieldsList;
@@ -1052,25 +1076,25 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         List<LabelFields> labelFieldsList = new ArrayList<>();
 
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.parentage", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.year", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_YEAR, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.season", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_SEASON, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.location", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()));
 
         labelFieldsList.add(new LabelFields(
-                        messageSource.getMessage("label.printing.available.fields.plot", null, locale)
+                        messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT, null, locale)
                         , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()));
 
         if (isTrial) {
             labelFieldsList.add(new LabelFields(
-                                messageSource.getMessage("label.printing.available.fields.trial.name", null, locale)
+                                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME, null, locale)
                                 , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()));
             try {
                 Workbook workbook = fieldbookMiddlewareService.getTrialDataSet(studyID);
@@ -1086,7 +1110,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             }
         } else {
             labelFieldsList.add(new LabelFields(
-                                messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale)
+                                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME, null, locale)
                                 , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()));
             try {
                 Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(studyID);
@@ -1102,16 +1126,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         if (hasFieldMap) {
             labelFieldsList.add(new LabelFields(
                     messageSource
-                            .getMessage("label.printing.available.fields.block.name", null, locale)
+                            .getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()));
             labelFieldsList.add(new LabelFields(
                     messageSource
-                            .getMessage("label.printing.available.fields.plot.coordinates", null,
+                            .getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES, null,
                                     locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()));
             labelFieldsList.add(new LabelFields(
                     messageSource
-                            .getMessage("label.printing.available.fields.field.name", null, locale)
+                            .getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()));
         }
 
@@ -1243,7 +1267,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         List<LabelPrintingPresets> searchPresetList = this.getAllLabelPrintingPresetsByName(
                 settingsName, programId, LabelPrintingPresets.PROGRAM_PRESET);
 
-        if (searchPresetList.size() > 0) {
+        if (!searchPresetList.isEmpty()) {
             // update
             ProgramPreset currentLabelPrintingPreset = this.getLabelPrintingProgramPreset(
                     searchPresetList.get(0).getId());

@@ -142,9 +142,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         try {
         	AdvancingNurseryForm advancingNurseryForm = getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
         	
-        	
-        	GermplasmList germplasmListIsNew = fieldbookMiddlewareService.getGermplasmListByName(form.getListName());
-        	if(germplasmListIsNew == null){
+        	String germplasmListName = form.getListName();
+        	GermplasmList germplasmListIsNew = fieldbookMiddlewareService.getGermplasmListByName(germplasmListName);
+        	if(germplasmListIsNew == null && !isSimilarToRootFolderName(germplasmListName)){
         		//we do the saving
         		Map<Germplasm, List<Name>> germplasms = new HashMap<Germplasm, List<Name>>();
                 Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
@@ -575,10 +575,18 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         if(duplicate!=null && !duplicate.isEmpty()) {
         	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }
-        if(folderName.equalsIgnoreCase(AppConstants.LISTS.getString())){
+        if(isSimilarToRootFolderName(folderName)){
         	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }
 	}
+    
+    protected boolean isSimilarToRootFolderName(String itemName){
+    	if(itemName.equalsIgnoreCase(AppConstants.LISTS.getString())){
+    		return true;
+    	}
+    	
+    	return false;
+    }
     
     @ResponseBody
     @RequestMapping(value = "/addGermplasmFolder", method = RequestMethod.POST)
@@ -666,14 +674,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         try {
             gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(folderId));
 
-       
-        
             if (hasChildren(gpList.getId())) {
                 throw new MiddlewareException(HAS_CHILDREN);
             }
-       
-
-       
             germplasmListManager.deleteGermplasmList(gpList);
             resultsMap.put(IS_SUCCESS, "1");
         } catch (Exception e) {

@@ -42,7 +42,9 @@ import static org.mockito.Mockito.*;
 
 public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrationTest {
 
-    /** The controller. */
+    private static final String ROOT_FOLDER_NAME = "Lists";
+
+	/** The controller. */
     @Autowired
     private GermplasmTreeController controller;
     
@@ -283,7 +285,7 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 	@Test
 	public void testCheckIfUniqueUsingTheRootFolderAsAnInput() throws MiddlewareQueryException{
 		try {
-			controller.checkIfUnique("Lists");
+			controller.checkIfUnique(ROOT_FOLDER_NAME);
 		} catch (MiddlewareException e) {
 			Assert.assertEquals(NAME_NOT_UNIQUE, e.getMessage());
 		}
@@ -303,5 +305,15 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 		} catch (MiddlewareQueryException | MiddlewareException e) {
 			Assert.assertEquals(NAME_NOT_UNIQUE, e.getMessage());
 		}
+	}
+	
+	@Test
+	public void testIsSimilarToRootFolderNameReturnsTrueForItemNameSimilarToRootFolder(){
+		Assert.assertTrue("Expecting to return true for item name similar to \"Lists\" ", controller.isSimilarToRootFolderName(ROOT_FOLDER_NAME));
+	}
+	
+	@Test
+	public void testIsSimilarToRootFolderNameReturnsTrueForItemNameNotSimilarToRootFolder(){
+		Assert.assertFalse("Expecting to return true for item name not similar to \"Lists\" ", controller.isSimilarToRootFolderName("Dummy Folder Name"));
 	}
 }

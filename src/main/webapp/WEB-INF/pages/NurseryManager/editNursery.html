@@ -93,7 +93,7 @@
                                 <a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
                                 <a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link"
                                    th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
-                            </li>
+                            </li>                            
                             <li th:class="${advancedList.size() == 0 ? 'fbk-hide export-advance-list-action-button' : 'export-advance-list-action-button withMeasurementsOnly'}">
                                 <a href="javascript: showExportAdvanceOptions();" id="export-advance-list-url-link"
                                    th:text="#{nursery.nurserydetails.action.export.advance}">Export Advance List</a>
@@ -229,6 +229,13 @@
 	<li id="nursery-measurements-li">
 		<a href="#nursery-measurements" role="tab" class="measurements" data-toggle="tab" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
 	</li>
+	<li class="advance-germplasm-items crosses-list" th:attr="data-advance-germplasm-list-id=${crossesItem.id}" th:id="${'advance-list' + crossesItem.id + '-li'}" th:each="crossesItem : ${crossesList}">
+		<a th:attr="data-list-id=${crossesItem.id}" th:href="${'#list' + crossesItem.id}" role="tab" class="advanceList crossesList" data-toggle="tab">
+			<span th:text="${'Crosses'}"></span>
+			<i class="glyphicon glyphicon-remove fbk-hide fbk-close-tab" th:id="${crossesItem.id}" th:onclick="'javascript:closeAdvanceListTab(\'' + ${crossesItem.id} + '\');'"></i>
+		</a>
+		
+	</li>
 	<li class="advance-germplasm-items" th:attr="data-advance-germplasm-list-id=${advanceItem.id}" th:id="${'advance-list' + advanceItem.id + '-li'}" th:each="advanceItem : ${advancedList}">
 		<a th:attr="data-list-id=${advanceItem.id}" th:href="${'#list' + advanceItem.id}" role="tab" class="advanceList" data-toggle="tab">
 			<span th:text="${'Advance List: [' + advanceItem.name + ']'}"></span>
@@ -268,6 +275,11 @@
 			</div>
 		</div>
 	</div>
+	<div th:id="${'list' + crossesItem.id}" class="tab-pane info" th:each="crossesItem : ${crossesList}">
+		<div th:id="${'advance-list' + crossesItem.id}" th:class="${'crosses-list' + crossesItem.id}">
+			
+		</div>
+	</div>	
 	<div th:id="${'list' + advanceItem.id}" class="tab-pane info" th:each="advanceItem : ${advancedList}">
 		<div th:id="${'advance-list' + advanceItem.id}">
 			
@@ -555,6 +567,9 @@
 			    	if($('#measurement-table').length !== 0 && $('#measurement-table').dataTable()){
 			    		$('#measurement-table').dataTable().fnAdjustColumnSizing()
 			    	}
+			    }else if($(this).hasClass('crossesList') && $(this).data('has-loaded') !== '1'){
+			    	$(this).data('has-loaded', '1');
+			    	ImportCrosses.displayCrossesList($(this).data('list-id'), $(this).data('list-id'), '', true);
 			    }else if($(this).hasClass('advanceList') && $(this).data('has-loaded') !== '1'){
 			    	$(this).data('has-loaded', '1');
 			    	displayAdvanceList($(this).data('list-id'), $(this).data('list-id'), '', true);

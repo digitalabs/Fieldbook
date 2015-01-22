@@ -180,8 +180,9 @@ public class EditNurseryController extends SettingsController {
                 form.setPlotLevelVariables(userSelection.getPlotsLevelList());
 
                 List<GermplasmList> germplasmList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.ADVANCED);
-
+                List<GermplasmList> germplasmCrossesList = fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(nurseryId), GermplasmListType.CROSSES);
                 model.addAttribute("advancedList", germplasmList);
+                model.addAttribute("crossesList", germplasmCrossesList);
             }
 
             setFormStaticData(form, contextParams, workbook);

@@ -36,7 +36,38 @@ var ImportCrosses = {
 			}
 
 			$('.import-crosses-section').ajaxForm(this.importOptions).submit();			
-		},		
+		},	
+		displayCrossesGermplasmDetails: function (listId) {
+			'use strict';
+			$.ajax({
+				url: "/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/" + listId,
+				type: "GET",
+				cache: false,
+				success: function(html) {
+					$('.crosses-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
+				}
+			});
+		},
+		displayCrossesList: function (uniqueId, germplasmListId, listName, isDefault, crossesListId) {
+			'use script';
+			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
+			if(!isDefault){
+				$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
+				url += '?isSnapshot=0';
+			}else{
+				url += '?isSnapshot=1';
+			}
+			$.ajax({
+				url: url,
+				type: 'GET',
+				cache: false,
+				success: function(html) {
+					$('.crosses-list' + uniqueId).html(html);
+					$('.crosses-list' + uniqueId+'-li').addClass('crosses-germplasm-items');
+					$('.crosses-list' + uniqueId+'-li').data('crosses-germplasm-list-id', crossesListId);
+				}
+			});
+		}
 }
 
 $(document).ready(function() {

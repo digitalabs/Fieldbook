@@ -544,7 +544,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
             return buffer.toString();
         } catch (NumberFormatException e) {
-            LOG.error(e.getMessage());
+            LOG.error(e.getMessage(),e);
             return "";
         }
     }
@@ -618,7 +618,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
             return stemp;
         } catch (NumberFormatException e) {
-            LOG.error(e.getMessage());
+            LOG.error(e.getMessage(),e);
             return "";
         }
     }
@@ -918,7 +918,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
 
             } catch (NumberFormatException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(),e);
             }
 
         }
@@ -985,7 +985,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 ExportColumnValue columnValue = new ExportColumnValue(selectedFieldID, value);
                 rowMap.put(selectedFieldID, columnValue);
             } catch (NumberFormatException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(),e);
             }
         }
 
@@ -1106,7 +1106,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         workbook));
 
             } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(),e);
             }
         } else {
             labelFieldsList.add(new LabelFields(
@@ -1119,7 +1119,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 labelFieldsList.addAll(settingsService.retrieveGermplasmDescriptorsAsLabels(
                                         workbook));
             } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(),e);
             }
         }
 

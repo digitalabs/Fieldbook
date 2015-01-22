@@ -569,19 +569,13 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         return expandGermplasmTree(parentKey, "0");
     }
 
-    private void checkIfUnique(String folderName) throws MiddlewareQueryException, MiddlewareException {
-    	List<GermplasmList> centralDuplicate = germplasmListManager.
+    protected void checkIfUnique(String folderName) throws MiddlewareQueryException, MiddlewareException {
+    	List<GermplasmList> duplicate = germplasmListManager.
             	getGermplasmListByName(folderName, 0, 1, null);
-        if(centralDuplicate!=null && !centralDuplicate.isEmpty()) {
+        if(duplicate!=null && !duplicate.isEmpty()) {
         	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }
-        List<GermplasmList> localDuplicate = germplasmListManager.
-            	getGermplasmListByName(folderName, 0, 1, null);
-        if(localDuplicate!=null && !localDuplicate.isEmpty()) {
-        	throw new MiddlewareException(NAME_NOT_UNIQUE);
-        }
-        if(folderName.equalsIgnoreCase(AppConstants.GERMPLASM_LIST_LOCAL.getString()) ||
-        		folderName.equalsIgnoreCase(AppConstants.GERMPLASM_LIST_CENTRAL.getString())){
+        if(folderName.equalsIgnoreCase(AppConstants.LISTS.getString())){
         	throw new MiddlewareException(NAME_NOT_UNIQUE);
         }
 	}

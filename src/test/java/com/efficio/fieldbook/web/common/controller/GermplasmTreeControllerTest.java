@@ -15,9 +15,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.easymock.EasyMock;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -46,6 +49,7 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
     private static final Integer LIST_USER_ID = 1;
     private static final String TEST_GERMPLASM_LIST = "Test Germplasm List";
     private static final String LISTS = "LISTS";
+    private static final String NAME_NOT_UNIQUE = "Name not unique";
     
     /** The Constant LIST_1. */
     private static final GermplasmList LIST_1 = 
@@ -273,6 +277,31 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
         for (TreeTableNode treeTableNode : treeNodes) {
         	assertEquals("The parent id of "+treeTableNode.getName()+
         			" should be "+LISTS, LISTS, treeTableNode.getParentId());
+		}
+	}
+	
+	@Test
+	public void testCheckIfUniqueUsingTheRootFolderAsAnInput() throws MiddlewareQueryException{
+		try {
+			controller.checkIfUnique("Lists");
+		} catch (MiddlewareException e) {
+			Assert.assertEquals(NAME_NOT_UNIQUE, e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testCheckIfUniqueUsingExistingListAsInput() throws MiddlewareQueryException{
+		GermplasmListManager germplasmListManager = mock(GermplasmListManager.class);
+		String folderName = "Sample Folder Name";
+		
+		when(germplasmListManager.getGermplasmListByName(folderName, 0, 1, null))
+        			.thenReturn(GERMPLASM_LIST_TEST_DATA);
+        ReflectionTestUtils.setField(controller, "germplasmListManager"
+                , germplasmListManager, GermplasmListManager.class);        
+		try {
+			controller.checkIfUnique(folderName);
+		} catch (MiddlewareQueryException | MiddlewareException e) {
+			Assert.assertEquals(NAME_NOT_UNIQUE, e.getMessage());
 		}
 	}
 }

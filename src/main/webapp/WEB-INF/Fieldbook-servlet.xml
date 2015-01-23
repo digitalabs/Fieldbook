@@ -120,6 +120,10 @@
           class="com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl">
     </bean>
 
+    <bean id="crossingService"
+          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingServiceImpl">
+    </bean>
+
     <bean id="importWorkbookFileService"
           class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl">
     </bean>

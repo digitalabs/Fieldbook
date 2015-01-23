@@ -3716,7 +3716,7 @@ function displayCrossesListTable(){
 	'use strict';
 	$.ajax(
 			{ 
-			url: '/Fieldbook/Common/ImportCrosses/data/table/ajax',
+			url: '/Fieldbook/import/crosses/data/table/ajax',
 			type: 'GET',
 			cache: false,
 			success: function(response) {

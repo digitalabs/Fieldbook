@@ -12,9 +12,7 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * The Class ImportedCrossesList.
@@ -37,15 +35,25 @@ public class ImportedCrossesList implements Serializable {
     
     /** The date. */
     private Date date;
-    
+
+
+    /** The imported conditions. */
+    private List<ImportedCondition> importedConditions;
+
     /** The imported factors. */
     private List<ImportedFactor> importedFactors;
     
     /** The imported variates. */
     private List<ImportedVariate> importedVariates;
-    
+
+
+    private List<ImportedConstant> importedConstants;
+
     /** The imported crosses. */
     private List<ImportedCrosses> importedCrosses;
+
+    private Set<String> errorMessages = new HashSet<>();
+
     
     public ImportedCrossesList() {
     }
@@ -65,9 +73,11 @@ public class ImportedCrossesList implements Serializable {
         this.title = title;
         this.type = type;
         this.date = date;
-        this.importedFactors = new ArrayList<ImportedFactor>();
-        this.importedVariates = new ArrayList<ImportedVariate>();
-        this.importedCrosses = new ArrayList<ImportedCrosses>();
+        this.importedConditions = new ArrayList<>();
+        this.importedFactors = new ArrayList<>();
+        this.importedConstants = new ArrayList<>();
+        this.importedVariates = new ArrayList<>();
+        this.importedCrosses = new ArrayList<>();
     }
     
     /**
@@ -268,4 +278,31 @@ public class ImportedCrossesList implements Serializable {
         this.importedCrosses.add(importedCrosses);
     }
 
+    /**
+     * Retrieves the list of imported conditions
+     * @return
+     */
+    public List<ImportedCondition> getImportedConditions() {
+        return importedConditions;
+    }
+
+    public void addImportedCondition(ImportedCondition importedCondition) {
+        this.importedConditions.add(importedCondition);
+    }
+
+    public List<ImportedConstant> getImportedConstants() {
+        return importedConstants;
+    }
+
+    public void addImportedConstant(ImportedConstant importedConstant) {
+        this.importedConstants.add(importedConstant);
+    }
+
+    public Set<String> getErrorMessages() {
+        return errorMessages;
+    }
+
+    public void addErrorMessages(String errorMsg) {
+        errorMessages.add(errorMsg);
+    }
 }

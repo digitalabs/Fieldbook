@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+import com.efficio.fieldbook.web.nursery.service.CrossingService;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -32,13 +34,16 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImportCrossesController.class);
 
-    public static final String URL = "/Common/ImportCrosses";
+    public static final String URL = "/import/crosses";
 
     @Resource
     private UserSelection studySelection;
     
     @Resource
     private FileService fileService;
+
+    @Resource
+    private CrossingService crossingService;
     
     @Resource
     private FieldroidImportStudyService fieldroidImportStudyService;
@@ -69,36 +74,34 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 
     	Map<String, Object> resultsMap = new HashMap<String,Object>();
     	resultsMap.put("isSuccess", "1");
+
+		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
+        studySelection.setimportedCrossesList(crossingService.parseFile(form.getFile()));
+        // 2. Store the crosses to
+
+
     	return super.convertObjectToJson(resultsMap);
     }
 
     
     @ResponseBody
-    @RequestMapping(value="/data/table/ajax", method = RequestMethod.GET)
-    public List<Map<String, Object>> getPageDataTablesAjax() {
+    @RequestMapping(value="/getImportedCrossesList", method = RequestMethod.GET)
+    public List<Map<String, Object>> getImportedCrossesList() {
     	
-    	List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
-    	
-    	List<ImportedCrosses> importedCrossesList = new ArrayList<>();
-    	
+    	List<Map<String, Object>> masterList = new ArrayList<>();
+
+
     	for (int x = 0; x < 300; x++){
-    		ImportedCrosses test = new ImportedCrosses();
-        	test.setEntryId(x);
-        	test.setEntryCode(String.valueOf(x));
-        	test.setFemaleDesig("FEMALE PARENT " + x);
-        	test.setFemaleGid(String.valueOf(123456+x));
-        	test.setMaleDesig("MALE PARENT " + x);
-        	test.setMaleGid(String.valueOf(654321+x));
-        	test.setSource("FILENAME SOURCE");
-        	
-        	importedCrossesList.add(test);
-    	}
-    	
-    	
-    	
-		for (ImportedCrosses importedCrosses : importedCrossesList) {
-			Map<String, Object> dataMap = generateDatatableDataMap(importedCrosses);
-			masterList.add(dataMap);
+    		ImportedCrosses crosses = new ImportedCrosses();
+        	crosses.setEntryId(x);
+        	crosses.setEntryCode(String.valueOf(x));
+        	crosses.setFemaleDesig("FEMALE PARENT " + x);
+        	crosses.setFemaleGid(String.valueOf(123456 + x));
+        	crosses.setMaleDesig("MALE PARENT " + x);
+        	crosses.setMaleGid(String.valueOf(654321 + x));
+        	crosses.setSource("FILENAME SOURCE");
+
+			masterList.add(generateDatatableDataMap(crosses));
 		}
 
 		return masterList;
@@ -120,11 +123,7 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 		return dataMap;
 
 	}
-    
-    private UserSelection getUserSelection(boolean isTrial) {
-    	return this.studySelection;
-    }
-    
+
     public String show(Model model, boolean isTrial) {
         setupModelInfo(model);
         model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName(isTrial));        

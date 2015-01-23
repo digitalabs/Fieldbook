@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -153,8 +154,9 @@ public class UserSelection implements Serializable {
     private List<Integer> expDesignVariables;
     /** The List of experimental design variables (new, edit, or deleted) since the workbook was retrieved from the db, will be reset upon save  */
     private List<MeasurementVariable> experimentalDesignVariables;
-	
-	/**
+    private ImportedCrossesList importedCrossesList;
+
+    /**
      * Gets the current page germplasm list.
      *
      * @return the current page germplasm list
@@ -893,4 +895,11 @@ public class UserSelection implements Serializable {
 			this.experimentalDesignVariables = experimentalDesignVariables;
 		}
 
+    public ImportedCrossesList getImportedCrossesList() {
+        return importedCrossesList;
+    }
+
+    public void setimportedCrossesList(ImportedCrossesList importedCrossesList) {
+        this.importedCrossesList = importedCrossesList;
+    }
 }

@@ -233,6 +233,11 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
 	public void setSeedSelection(SeedSelection seedSelection) {
 		this.seedSelection = seedSelection;
 	}
-    
-   
+	public void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
+	}
+       
 }

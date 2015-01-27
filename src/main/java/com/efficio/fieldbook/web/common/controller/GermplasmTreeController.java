@@ -206,11 +206,28 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     public String saveList(@ModelAttribute("saveListForm") SaveListForm form,
     		Model model, HttpSession session) {
 
-        try {
-        	form.setListDate(DateUtil.getCurrentDateInUIFormat());
-        	List<UserDefinedField> germplasmListTypes = germplasmListManager.getGermplasmListTypes();
-        	form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
-        	model.addAttribute("germplasmListTypes", germplasmListTypes);
+    	try {
+            String listName = "";
+            String listDescription = "";
+            String listType = "LST"; 
+            String listDate = DateUtil.getCurrentDateInUIFormat(); 
+            
+            if(userSelection.getImportedCrossesList() != null){
+                listName = userSelection.getImportedCrossesList().getName();
+                listDescription = userSelection.getImportedCrossesList().getTitle();
+                listType = userSelection.getImportedCrossesList().getType();
+                listDate = DateUtil.showUiDateFormat(userSelection.getImportedCrossesList().getDate());
+            }
+            
+            form.setListName(listName);
+            form.setListDescription(listDescription);
+            form.setListType(listType);
+            form.setListDate(listDate);
+            
+            form.setListDate(DateUtil.getCurrentDateInUIFormat());
+            List<UserDefinedField> germplasmListTypes = germplasmListManager.getGermplasmListTypes();
+            //form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
+            model.addAttribute("germplasmListTypes", germplasmListTypes);
             
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);

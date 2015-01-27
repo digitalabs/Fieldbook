@@ -127,12 +127,12 @@ var ImportCrosses = {
 					$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
 					$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="advance-list' + uniqueId + '">' + html + '</div>');
 					$('a#advance-list'+uniqueId).tab('show');
-					$('#advance-list'+uniqueId+".tab-pane.info").addClass('active');
+					$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
 					$('.nav-tabs').tabdrop('layout');
 					
 					$('a#advance-list'+uniqueId).on('click', function(){
 						$('#create-nursery-tabs .tab-pane.info').removeClass('active');
-						$('#advance-list'+uniqueId+".tab-pane.info").addClass('active');
+						$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
 					});
 				}
 			});
@@ -157,7 +157,7 @@ var ImportCrosses = {
 						//we preselect the program lists
 						if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null){
 							germplasmTreeNode.getNodeByKey('LOCAL').activate();
-							germplasmTreeNode.getNodeByKey('LOCAL').expand()
+							germplasmTreeNode.getNodeByKey('LOCAL').expand();
 						}
 					}
 				}

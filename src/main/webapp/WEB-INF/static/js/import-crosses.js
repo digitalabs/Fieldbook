@@ -82,6 +82,148 @@ var ImportCrosses = {
 				}
 			});
 		},
+
+		showImportSettingsPopup : function() {
+			var crossSettingsPopupModal = $('#crossSettingsModal');
+			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
+
+		},
+
+		processImportSettingsDropdown : function(dropdownID, useSettingsCheckboxID) {
+
+			ImportCrosses.retrieveAvailableImportSettings().done(function(settingList) {
+				ImportCrosses.createSettingsDropdown(dropdownID, settingList);
+				$('#' + getJquerySafeId(dropdownID)).on('change', function() {
+					if ($('#' + getJquerySafeId(useSettingsCheckboxID)).is(':checked')) {
+						var currentSelectedItem = $(this).select2('val');
+
+						$.each(settingList, function (index, setting) {
+							if (setting.name === currentSelectedItem) {
+								ImportCrosses.updateImportSettingsFromSavedSetting(setting);
+							}
+						})
+					}
+
+				})
+			}).fail(function(data) {
+			});
+		},
+
+		updateImportSettingsFromSavedSetting : function(setting) {
+
+			$('#presetName').val(setting.name);
+			$('#breedingMethodDropdown').select2('val', setting.breedingMethodSetting.methodId);
+			$('#useSelectedMethodCheckbox').prop('checked', setting.breedingMethodSetting.basedOnStatusOfParentalLines);
+
+			$('#crossPrefix').val(setting.crossNameSetting.prefix);
+			$('#crossSuffix').val(setting.crossNameSetting.suffix);
+			$('input:radio[name=hasPrefixSpace]').val(setting.crossNameSetting.addSpaceBetweenPrefixAndCode);
+			$('input:radio[name=hasSuffixSpace]').val(setting.crossNameSetting.addSpaceBetweenSuffixAndCode);
+			$('#sequenceNumberDigits').val(setting.crossNameSetting.numOfDigits);
+			$('#parentageDesignationSeparator').val(setting.crossNameSetting.separator);
+			$('#startingSequenceNumber').val(setting.crossNameSetting.startNumber);
+		},
+
+		createSettingsDropdown : function(dropdownID, settingList) {
+			var possibleValues = [];
+			$.each(settingList, function(index, setting) {
+				// possibleValues.push(ImportCrosses.convertSettingToSelect2Item(setting));
+			});
+
+			$('#' + getJquerySafeId(dropdownID)).select2(
+				{
+					initSelection: function (element, callback) {
+						$.each(possibleValues, function (index, value) {
+							if (value.id == element.val()) {
+								callback(value);
+							}
+						});
+					},
+					query: function (query) {
+						var data = {
+							results: possibleValues
+						};
+						// return the array that matches
+						data.results = $.grep(data.results, function (item) {
+							return ($.fn.select2.defaults.matcher(query.term,
+								item.text));
+
+						});
+						query.callback(data);
+					}
+				});
+		},
+
+		convertSettingToSelect2Item : function(setting) {
+			return {
+				'id': setting.name,
+				'text': setting.name,
+				'description': setting.name
+			};
+		},
+
+		retrieveAvailableImportSettings : function() {
+			return $.ajax({
+				url: "/Fieldbook/import/crosses/retrieveSettings",
+				type: "GET",
+				cache: false
+			});
+		},
+
+		submitCrossImportSettings : function() {
+			var settingData = JSON.stringify(ImportCrosses.constructSettingsObjectFromForm());
+			var targetURL;
+			if ($('#saveSettingsCheckbox').is(':checked')) {
+				targetURL = '/Fieldbook/import/crosses/submitAndSaveSetting';
+			} else {
+				targetURL = '/Fieldbook/import/crosses/submit';
+			}
+
+			$.ajax({
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				url: targetURL,
+				type: 'POST',
+				cache: false,
+				data: settingData,
+				success: function (data) {
+					if (data.success == '0') {
+						alert('error');
+					} else {
+						ImportCrosses.openSaveListModal();
+					}
+				}
+			});
+
+		},
+
+		constructSettingsObjectFromForm : function() {
+			var settingObject = {};
+			settingObject.name = $('#presetName').val();
+
+			settingObject.breedingMethodSetting = {};
+			settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
+			settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').is(':checked');
+
+			settingObject.crossNameSetting = {};
+			settingObject.crossNameSetting.prefix = $('#crossPrefix').val();
+			settingObject.crossNameSetting.suffix = $('#crossSuffix').val();
+			settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = $('input:radio[name=hasPrefixSpace]:checked').val() == 'true';
+			settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode= $('input:radio[name=hasSuffixSpace]:checked').val() == 'true';
+			settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
+			settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
+			settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
+
+			settingObject.additionalDetailsSetting = {};
+			settingObject.additionalDetailsSetting.harvestLocationId = 0;
+			settingObject.additionalDetailsSetting.harvestDate = '';
+
+			return settingObject;
+
+		},
+
 		displayCrossesList: function (uniqueId, germplasmListId, listName, isDefault, crossesListId) {
 			'use strict';
 			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;

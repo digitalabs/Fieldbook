@@ -4,7 +4,12 @@ package com.efficio.fieldbook.web.common.bean;
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
  */
+
+@Deprecated
 public class CrossImportSettings {
+
+
+	private String name;
 	private String crossPrefix;
 	private Integer breedingMethodID;
 	private String crossSuffix;
@@ -17,7 +22,7 @@ public class CrossImportSettings {
 	public CrossImportSettings() {
 	}
 
-	public CrossImportSettings(String crossPrefix, Integer breedingMethodID,
+	public CrossImportSettings(String name, String crossPrefix, Integer breedingMethodID,
 			String crossSuffix, Integer sequenceNumberDigits, Boolean hasSuffixSpace,
 			Boolean hasPrefixSpace, Integer startingSequenceNumber,
 			String parentageDesignationSeparator) {
@@ -29,6 +34,14 @@ public class CrossImportSettings {
 		this.hasPrefixSpace = hasPrefixSpace;
 		this.startingSequenceNumber = startingSequenceNumber;
 		this.parentageDesignationSeparator = parentageDesignationSeparator;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getCrossPrefix() {

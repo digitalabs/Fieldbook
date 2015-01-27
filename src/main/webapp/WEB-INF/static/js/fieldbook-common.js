@@ -3704,23 +3704,3 @@ function proceedToReviewOutOfBoundsDataAction() {
 		markAllCellAsMissing();
 	}
 }
-
-function openCrossesList() {
-	'use strict';
-	$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
-	setTimeout(displayCrossesListTable ,500);
-	
-}
-
-function displayCrossesListTable(){
-	'use strict';
-	$.ajax(
-			{ 
-			url: '/Fieldbook/import/crosses/data/table/ajax',
-			type: 'GET',
-			cache: false,
-			success: function(response) {
-				new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response);
-			}
-		});
-}

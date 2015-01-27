@@ -6,6 +6,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import com.efficio.fieldbook.web.nursery.service.CrossingService;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -66,18 +67,28 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 	}
     
     @ResponseBody
-    @RequestMapping(value="/germplasm", method = RequestMethod.POST)
-    public String importFile(Model model, @ModelAttribute("importCrossesForm") ImportCrossesForm form) {
+    @RequestMapping(value="/germplasm", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> importFile(Model model, @ModelAttribute("importCrossesForm") ImportCrossesForm form) {
 
     	Map<String, Object> resultsMap = new HashMap<String,Object>();
-    	resultsMap.put("isSuccess", "1");
 
 		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
-        studySelection.setimportedCrossesList(crossingService.parseFile(form.getFile()));
-        // 2. Store the crosses to
+        ImportedCrossesList parseResults = crossingService.parseFile(form.getFile());
+
+        // 2. Store the crosses to study selection if all validated
+        if (parseResults.getErrorMessages().isEmpty()) {
+            studySelection.setimportedCrossesList(parseResults);
+
+            resultsMap.put("isSuccess", 1);
+
+        } else {
+            resultsMap.put("isSuccess", 0);
+            resultsMap.put("error",parseResults.getErrorMessages());
+        }
 
 
-    	return super.convertObjectToJson(resultsMap);
+
+    	return resultsMap;
     }
 
     
@@ -87,19 +98,13 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
     	
     	List<Map<String, Object>> masterList = new ArrayList<>();
 
+        if (null == studySelection.getImportedCrossesList()) {
+            return masterList;
+        }
 
-    	for (int x = 0; x < 300; x++){
-    		ImportedCrosses crosses = new ImportedCrosses();
-        	crosses.setEntryId(x);
-        	crosses.setEntryCode(String.valueOf(x));
-        	crosses.setFemaleDesig("FEMALE PARENT " + x);
-        	crosses.setFemaleGid(String.valueOf(123456 + x));
-        	crosses.setMaleDesig("MALE PARENT " + x);
-        	crosses.setMaleGid(String.valueOf(654321 + x));
-        	crosses.setSource("FILENAME SOURCE");
-
-			masterList.add(generateDatatableDataMap(crosses));
-		}
+        for (ImportedCrosses cross : studySelection.getImportedCrossesList().getImportedCrosses()) {
+            masterList.add(generateDatatableDataMap(cross));
+        }
 
 		return masterList;
     }

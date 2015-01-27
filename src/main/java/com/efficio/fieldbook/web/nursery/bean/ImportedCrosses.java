@@ -175,7 +175,7 @@ public class ImportedCrosses implements Serializable {
 	 * @param entryId
 	 */
 	public ImportedCrosses(ListDataProject femaleListData, ListDataProject maleListData,
-			String maleStudyName, String rawBreedingMethod, String crossingDate,
+			String femaleStudyName, String maleStudyName, String rawBreedingMethod, String crossingDate,
 			String seedsHarvested, String notes, int entryId) {
 		this.setFemaleDesig(femaleListData.getDesignation());
 		this.setMaleDesig(maleListData.getDesignation());
@@ -183,10 +183,10 @@ public class ImportedCrosses implements Serializable {
 		this.setMaleGid(maleListData.getGermplasmId().toString());
 
 		this.setEntryId(entryId);
-		//DESIGNATION: "female designation / male designation"
-		this.setDesig(femaleListData.getDesignation() + " / " + maleListData.getDesignation());
-		// <Source Female Nursery>: "<Source Female Entry ID> / <Male Nursery>:<Source Male Entry ID>"
-		this.setSource(femaleListData.getEntryId() + " / " + maleStudyName + ":" + maleListData
+		//Parentage: "female designation / male designation"
+		this.setCross(femaleListData.getDesignation() + " / " + maleListData.getDesignation());
+		// <Source Female Nursery>: "<female Nursery>:<Source Female Entry ID> / <Male Nursery>:<Source Male Entry ID>"
+		this.setSource(femaleStudyName + ":" + femaleListData.getEntryId() + " / " + maleStudyName + ":" + maleListData
 				.getEntryId());
 
 		this.setEntryCode(String.valueOf(entryId));

@@ -4,6 +4,7 @@ import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -48,14 +49,12 @@ public class CrossingTemplateParser {
 		STUDY_TYPE_TO_LIST_TYPE_MAP.put(StudyType.T, GermplasmListType.TRIAL);
 	}
 
-	private ImportedCrossesList importedCrossesList;
-	private boolean importFileIsValid = true;
-
-	private Workbook workbook;
-	private int currentRow = 0;
-	private String originalFilename;
 	private final Map<String, Integer> observationColumnMap = new HashMap<>();
-
+	private ImportedCrossesList importedCrossesList;
+	private boolean importFileIsValid;
+	private Workbook workbook;
+	private int currentRow;
+	private String originalFilename;
 	/**
 	 * Resources
 	 */
@@ -73,6 +72,9 @@ public class CrossingTemplateParser {
 
 	public ImportedCrossesList parseFile(MultipartFile multipartFile) {
 		try {
+			// initial values
+			importFileIsValid = true;
+			currentRow = 0;
 
 			this.workbook = storeImportGermplasmWorkbook(multipartFile);
 
@@ -152,9 +154,14 @@ public class CrossingTemplateParser {
 					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
 							observationColumnMap.get(AppConstants.NOTES.getString()));
 
-			//FIXME: validate fields: femaleNursery, femaleEntry, maleNursery, maleEntry (required, format correctness)
+			if (!isObservationRowValid(femaleNursery, femaleEntry, maleNursery, maleEntry,
+					crossingDate,
+					seedsHarvested)) {
+				addParseErrorMsg(FILE_INVALID);
+				LOG.debug("Invalid Observation on row: " + currentRow);
 
-
+				return;
+			}
 
 			// proceess female + male parent entries, will throw middleware query exception if no study valid or null
 			ListDataProject femaleListData = this
@@ -163,11 +170,23 @@ public class CrossingTemplateParser {
 					.getCrossingListProjectData(maleNursery, Integer.valueOf(maleEntry));
 
 			this.importedCrossesList.addImportedCrosses(
-					new ImportedCrosses(femaleListData, maleListData, maleNursery, breedingMethod,
+					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery, breedingMethod,
 							crossingDate, seedsHarvested, notes, currentRow));
 
 			currentRow++;
 		}
+	}
+
+	protected boolean isObservationRowValid(String femaleNursery, String femaleEntry,
+			String maleNursery, String maleEntry, String crossingDate, String seedsHarvested) {
+		return StringUtils.isNotBlank(femaleNursery) && StringUtils.isNotBlank(femaleEntry)
+				&& StringUtils.isNotBlank(maleNursery) && StringUtils
+				.isNotBlank(maleEntry) && StringUtils.isNumeric(femaleEntry)
+				&& StringUtils.isNumeric(maleEntry) && (
+				(!StringUtils.isNotBlank(seedsHarvested)) || StringUtils
+						.isNumeric(seedsHarvested)) && (
+				(!StringUtils.isNotBlank(crossingDate)) || DateUtil
+						.isValidDate(crossingDate));
 	}
 
 	public void parseCrossingListDetails() throws ParseException {
@@ -180,13 +199,13 @@ public class CrossingTemplateParser {
 		int listTypeColNo = AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
 
 		Date listDate = DateUtil.parseDate(
-			PoiUtil.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO, listDateColNo, 1));
-	String listType = PoiUtil
-			.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO, listTypeColNo, 1);
+				PoiUtil.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO, listDateColNo, 1));
+		String listType = PoiUtil
+				.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO, listTypeColNo, 1);
 
-	this.importedCrossesList = new ImportedCrossesList(this.originalFilename, listName,
-			listTitle, listType, listDate);
-}
+		this.importedCrossesList = new ImportedCrossesList(this.originalFilename, listName,
+				listTitle, listType, listDate);
+	}
 
 	public void parseConditions() {
 		// condition headers start at row = 5 (+ 1 : count starts from 0 )
@@ -494,12 +513,12 @@ public class CrossingTemplateParser {
 	/**
 	 * Returns the ListProjectData given a female or male entries using the current entry position on the template.
 	 *
-	 * @param studyName   - femaleNursery/maleNursery equivalent from the template
-	 * @param genderEntry - femaleEntry/maleEntry equivalent from the template
+	 * @param studyName     - femaleNursery/maleNursery equivalent from the template
+	 * @param genderEntryNo - femaleEntry/maleEntry equivalent from the template
 	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
 	 * @throws MiddlewareQueryException
 	 */
-	protected ListDataProject getCrossingListProjectData(String studyName, Integer genderEntry)
+	protected ListDataProject getCrossingListProjectData(String studyName, Integer genderEntryNo)
 			throws MiddlewareQueryException {
 		// 1 get the particular study's list
 		final Integer studyId = studyDataManager.getStudyIdByName(studyName);
@@ -520,9 +539,7 @@ public class CrossingTemplateParser {
 					"Study with \"" + studyName + "\" has no list.");
 		}
 
-		// assume only single item we get (since its not a crossing or advanced list types)
-		// TODO: create separate middleware query
-		return fieldbookMiddlewareService.getListDataProject(germplasmList.get(0).getId())
-				.get(genderEntry - 1);
+		return fieldbookMiddlewareService.getListDataProjectByListIdAndEntryNo(
+				germplasmList.get(0).getId(), genderEntryNo);
 	}
 }

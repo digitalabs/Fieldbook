@@ -1,47 +1,81 @@
 var ImportCrosses = {
-		
-		importOptions : {
-				dataType: 'text',
-				success: this.showImportCrossesResponse // post-submit callback
-			},
-		
 		showPopup : function(){
 			$('#fileupload-import-crosses').val('');
 			$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
 					
 		},
-		showImportCrossesResponse : function(responseText) {
-			//reload the screen
+
+		doSubmitImport : function() {
 			'use strict';
-			var resp = $.parseJSON(responseText),
-				importError = '',
-				errorIndex = 0;
-								
-			
-			if(resp.isSuccess === 1){
-				if(resp.conditionConstantsImportErrorMessage !== null && resp.conditionConstantsImportErrorMessage !== ''){
-					showAlertMessage('', resp.conditionConstantsImportErrorMessage);	
-				}				
-			}else{
-				showErrorMessage('', resp.error);
-				$('.import-crosses-section .modal').modal('hide');
-			}
-		},
-		submitImport : function() {
-			'use strict';
-			
+
 			if ($('#fileupload-import-crosses').val() === '') {
 				showErrorMessage('', 'Please choose a file to import');
 				return false;
 			}
 
-			$('.import-crosses-section').ajaxForm(this.importOptions).submit();			
+			ImportCrosses.submitImport($('.import-crosses-section')).done(function(resp) {
+				//reload the screen
+				var	importError = '',
+					errorIndex = 0;
+
+
+				if(resp.isSuccess === 1){
+
+					$('.import-crosses-section .modal').modal('hide');
+
+					// show  aldrins page
+					ImportCrosses.openCrossesList();
+
+				}else{
+					showErrorMessage('', resp.error);
+				}
+
+
+			});
+
+		},
+
+		openCrossesList : function() {
+			'use strict';
+			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
+
+			ImportCrosses.getImportedCrossesTable().done(function(response) {
+				setTimeout(function() {
+					new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response);
+				},500);
+			});
+
+		},
+
+		getImportedCrossesTable : function(){
+			'use strict';
+			return $.ajax(
+			{
+				url: '/Fieldbook/import/crosses/getImportedCrossesList',
+				type: 'GET',
+				cache: false
+			});
+		},
+
+		submitImport : function($importCrossesForm) {
+			'use strict';
+
+			var deferred = $.Deferred();
+
+			$importCrossesForm.ajaxForm({
+				dataType: 'text',
+				success: function(responseText) {
+					deferred.resolve($.parseJSON(responseText));
+				}
+			}).submit();
+
+			return deferred.promise();
 		},	
 		displayCrossesGermplasmDetails: function (listId) {
 			'use strict';
 			$.ajax({
-				url: "/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/" + listId,
-				type: "GET",
+				url: '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + listId,
+				type: 'GET',
 				cache: false,
 				success: function(html) {
 					$('.crosses-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
@@ -49,7 +83,7 @@ var ImportCrosses = {
 			});
 		},
 		displayCrossesList: function (uniqueId, germplasmListId, listName, isDefault, crossesListId) {
-			'use script';
+			'use strict';
 			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
 			if(!isDefault){
 				$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
@@ -129,11 +163,11 @@ var ImportCrosses = {
 				}
 			);
 		}
-}
+};
 
 $(document).ready(function() {
 	$('.import-crosses').on('click', ImportCrosses.showPopup);
-	$('.btn-import-crosses').on('click', ImportCrosses.submitImport);
+	$('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);
 	$('.import-crosses-section .modal').on('hide.bs.modal', function() {
 		$('div.import-crosses-file-upload').parent().parent().removeClass('has-error');
 		$('.import-crosses-section .modal .fileupload-exists').click();

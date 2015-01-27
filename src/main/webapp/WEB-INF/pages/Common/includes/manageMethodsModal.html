@@ -35,18 +35,18 @@
 	$(function() {
 		'use strict';
 		$('#manageMethodModal').on('hidden.bs.modal', function () {
-			if(ManageMethodsModalFunctions.isModalAvailableAndForOpening('advanceNurseryModal')){
-				ManageMethodsModalFunctions.openModal('advanceNurseryModal');
+			if(BreedingMethodsFunctions.isModalAvailableAndForOpening('advanceNurseryModal')){
+				BreedingMethodsFunctions.openModal('advanceNurseryModal');
 				recreateMethodCombo();
-			} else if( ManageMethodsModalFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')){
-				ManageMethodsModalFunctions.openModal('importStudyDesigConfirmationModal');
+			} else if( BreedingMethodsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')){
+				BreedingMethodsFunctions.openModal('importStudyDesigConfirmationModal');
 				recreateMethodCombo();
-			} else if (ManageMethodsModalFunctions.isModalAvailableAndForOpening('crossSettingsModal')){
+			} else if (BreedingMethodsFunctions.isModalAvailableAndForOpening('crossSettingsModal')){
 				$.event.trigger({
 					type: 'breeding-method-update'
 				});
 
-				ManageMethodsModalFunctions.openModal('crossSettingsModal');
+				BreedingMethodsFunctions.openModal('crossSettingsModal');
 			}
 	    });
 	});

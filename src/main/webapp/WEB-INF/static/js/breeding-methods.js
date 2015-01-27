@@ -1,10 +1,10 @@
 /* globals getJquerySafeId */
 
-var ManageMethodsModalFunctions = window.ManageMethodsModalFunctions;
+var BreedingMethodsFunctions = window.BreedingMethodsFunctions;
 
 // undefined check is performed to avoid overwriting the state / functionality of the object
-if (typeof (ManageMethodsModalFunctions) === 'undefined') {
-    ManageMethodsModalFunctions = {
+if (typeof (BreedingMethodsFunctions) === 'undefined') {
+    BreedingMethodsFunctions = {
         isModalAvailableAndForOpening: function (modalID) {
             return $('#' + getJquerySafeId(modalID)).length !== 0 && $('#' + getJquerySafeId(modalID)).data('open') == '1';
         },
@@ -20,14 +20,14 @@ if (typeof (ManageMethodsModalFunctions) === 'undefined') {
         openMethodsModal: function () {
             $('#manageMethodModal').modal({backdrop: 'static', keyboard: true});
 
-            ManageMethodsModalFunctions.retrieveCurrentProjectID().done(function (projectID) {
-                if (ManageMethodsModalFunctions.sourceURL === '') {
-                    ManageMethodsModalFunctions.retrieveProgramMethodURL().done(function (data) {
-                        ManageMethodsModalFunctions.sourceURL = data;
-                        $('#methodFrame').attr('src', ManageMethodsModalFunctions.sourceURL + projectID);
+            BreedingMethodsFunctions.retrieveCurrentProjectID().done(function (projectID) {
+                if (BreedingMethodsFunctions.sourceURL === '') {
+                    BreedingMethodsFunctions.retrieveProgramMethodURL().done(function (data) {
+                        BreedingMethodsFunctions.sourceURL = data;
+                        $('#methodFrame').attr('src', BreedingMethodsFunctions.sourceURL + projectID);
                     });
                 } else {
-                    $('#methodFrame').attr('src', ManageMethodsModalFunctions.sourceURL + projectID);
+                    $('#methodFrame').attr('src', BreedingMethodsFunctions.sourceURL + projectID);
                 }
             });
 
@@ -37,15 +37,15 @@ if (typeof (ManageMethodsModalFunctions) === 'undefined') {
         // methods or no. methodConversionFunction is provided as a parameter in case developers wish to change the construction of each select2 item, tho built-in function
         // will be used by default if this is not provided
         processMethodDropdownAndFavoritesCheckbox : function(methodSelectID, favoritesCheckboxID, methodConversionFunction) {
-            ManageMethodsModalFunctions.retrieveBreedingMethods().done(function(data) {
+            BreedingMethodsFunctions.retrieveBreedingMethods().done(function(data) {
                 if (! methodConversionFunction) {
-                    methodConversionFunction = ManageMethodsModalFunctions.convertMethodToSelectItem;
+                    methodConversionFunction = BreedingMethodsFunctions.convertMethodToSelectItem;
                 }
 
-                var possibleValues = ManageMethodsModalFunctions.convertMethodsToSelectItemList(data.allMethods, methodConversionFunction);
-                var favoritePossibleValues = ManageMethodsModalFunctions.convertMethodsToSelectItemList(data.favoriteMethods, methodConversionFunction);
+                var possibleValues = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.allMethods, methodConversionFunction);
+                var favoritePossibleValues = BreedingMethodsFunctions.convertMethodsToSelectItemList(data.favoriteMethods, methodConversionFunction);
 
-                ManageMethodsModalFunctions.createSelect2Dropdown(possibleValues, methodSelectID);
+                BreedingMethodsFunctions.createSelect2Dropdown(possibleValues, methodSelectID);
 
                 // attach change handler to checkbox for switching between favorite only and all breeding methods
                 $('#' + getJquerySafeId(favoritesCheckboxID)).on('change', function() {
@@ -53,16 +53,16 @@ if (typeof (ManageMethodsModalFunctions) === 'undefined') {
                     var currentSelected = $('#' + getJquerySafeId(methodSelectID)).select2('data');
 
                     if (this.checked) {
-                        ManageMethodsModalFunctions.createSelect2Dropdown(favoritePossibleValues, methodSelectID);
+                        BreedingMethodsFunctions.createSelect2Dropdown(favoritePossibleValues, methodSelectID);
                     } else {
-                        ManageMethodsModalFunctions.createSelect2Dropdown(possibleValues, methodSelectID);
+                        BreedingMethodsFunctions.createSelect2Dropdown(possibleValues, methodSelectID);
                     }
 
                     $('#' + getJquerySafeId(methodSelectID)).select2('val', currentSelected.id);
                 });
 
                 $(document).on('breeding-method-update', function() {
-                    ManageMethodsModalFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID, methodConversionFunction);
+                    BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox(methodSelectID, favoritesCheckboxID, methodConversionFunction);
                 })
             });
         },
@@ -143,5 +143,6 @@ if (typeof (ManageMethodsModalFunctions) === 'undefined') {
         retrieveCurrentProjectID: function () {
             return $.get("/Fieldbook/breedingMethod/programID");
         }
+
     };
 }

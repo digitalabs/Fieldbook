@@ -1,6 +1,5 @@
 package com.efficio.fieldbook.web.nursery.service.impl;
 
-import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import com.efficio.fieldbook.web.nursery.service.CrossingService;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,12 +12,11 @@ import javax.annotation.Resource;
 public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
-	private FileService fileService;
+	private CrossingTemplateParser crossingTemplateParser;
 
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) {
-		CrossingTemplateParser crossingTemplateParser = new CrossingTemplateParser(fileService);
-
 		return crossingTemplateParser.parseFile(file);
 	}
+
 }

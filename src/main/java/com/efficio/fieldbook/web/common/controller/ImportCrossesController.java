@@ -1,13 +1,11 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
 import com.efficio.fieldbook.web.nursery.service.CrossingService;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -21,12 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(ImportCrossesController.URL)
@@ -110,7 +107,7 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
     protected Map<String, Object> generateDatatableDataMap(ImportedCrosses importedCrosses) {
 
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-	
+
 		dataMap.put("ENTRY", importedCrosses.getEntryId());
 		dataMap.put("PARENTAGE", importedCrosses.getCross());
 		dataMap.put("ENTRY CODE", importedCrosses.getEntryCode());

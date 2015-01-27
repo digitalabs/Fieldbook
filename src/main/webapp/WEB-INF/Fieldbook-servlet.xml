@@ -124,6 +124,11 @@
           class="com.efficio.fieldbook.web.nursery.service.impl.CrossingServiceImpl">
     </bean>
 
+    <bean id="crossingTemplateParser"
+          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingTemplateParser"
+          scope="prototype">
+    </bean>
+
     <bean id="importWorkbookFileService"
           class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl">
     </bean>

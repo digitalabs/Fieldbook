@@ -189,8 +189,7 @@ public class ImportedCrosses implements Serializable {
 		this.setSource(femaleListData.getEntryId() + " / " + maleStudyName + ":" + maleListData
 				.getEntryId());
 
-		// TODO: ENTRY_CODE: ???
-		this.setEntryCode("???");
+		this.setEntryCode(String.valueOf(entryId));
 
 		// the optionals
 		this.rawBreedingMethod = rawBreedingMethod;

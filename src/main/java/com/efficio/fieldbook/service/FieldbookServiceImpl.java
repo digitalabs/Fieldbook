@@ -353,10 +353,10 @@ public class FieldbookServiceImpl implements FieldbookService {
         return possibleValuesFavorite;
     }
 
-    private List<ValueReference> getFavoriteBreedingMethods(List<Integer> projectIdList, boolean isFilterOutGenerative)
+    private List<ValueReference> getFavoriteBreedingMethods(List<Integer> methodIDList, boolean isFilterOutGenerative)
             throws MiddlewareQueryException {
         List<ValueReference> list = new ArrayList<ValueReference>();
-        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(projectIdList, isFilterOutGenerative);
+        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList, isFilterOutGenerative);
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {

@@ -49,7 +49,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
                             <li>
                                 <a href="javascript: void(0)" class="import-crosses"
                                    th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
-                            </li>                           
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -233,6 +233,11 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row">
 	<div class="col-xs-12 col-md-12">
 		<div id="open-crosses" th:include="/Common/includes/openCrossesListModal"></div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="crossImport" th:include="/Common/includes/crossingImportPresets"/>
 	</div>
 </div>
 <div layout:fragment="page-script">

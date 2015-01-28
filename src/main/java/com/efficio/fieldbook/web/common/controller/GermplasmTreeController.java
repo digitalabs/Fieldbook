@@ -247,15 +247,14 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     	Map<String,Object> results = new HashMap<String, Object>();
         try {
         	
-        	
         	CrossSetting crossSetting = userSelection.getCrossSettings();
         	ImportedCrossesList importedCrossesList = userSelection.getImportedCrossesList();
-        	
-        	crossingServce.applyCrossSetting(crossSetting, importedCrossesList, getCurrentIbdbUserId());
         	
         	GermplasmList germplasmListIsNew = fieldbookMiddlewareService.getGermplasmListByName(form.getListName());
         	if(germplasmListIsNew == null){
         		//we do the saving
+        		crossingServce.applyCrossSetting(crossSetting, importedCrossesList, getCurrentIbdbUserId());
+        		
                 Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
                 GermplasmList germplasmList = createCrossesGermplasmList(crossSetting, form, listDataItems, importedCrossesList);
                 Integer germplasmListId = fieldbookMiddlewareService.saveCrossesGermplasmList(listDataItems, germplasmList);

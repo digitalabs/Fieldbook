@@ -83,7 +83,6 @@ public class CrossingServiceImpl implements CrossingService {
 				cross.setEntryCode(String.valueOf(entryIdCounter));
 				cross.setDesig(buildDesignationNameInSequence(nextNumberInSequence++, setting));
 				cross.setCross(buildCrossName(cross, setting));
-				cross.setSource("");
 			}
 	} 
 	

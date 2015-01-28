@@ -24,6 +24,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
+import org.generationcp.commons.settings.BreedingMethodSetting;
+import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -254,10 +256,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         	GermplasmList germplasmListIsNew = fieldbookMiddlewareService.getGermplasmListByName(form.getListName());
         	if(germplasmListIsNew == null){
         		//we do the saving
-        		Map<Germplasm, List<Name>> germplasms = new HashMap<Germplasm, List<Name>>();
                 Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
-                GermplasmList germplasmList = createCrossesGermplasmList(crossSetting, form, germplasms, listDataItems, importedCrosssesList);
-                Integer germplasmListId = fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
+                GermplasmList germplasmList = createCrossesGermplasmList(crossSetting, form, listDataItems, importedCrossesList);
+                Integer germplasmListId = fieldbookMiddlewareService.saveCrossesGermplasmList(listDataItems, germplasmList);
 
                 List<GermplasmListData> data = new ArrayList<GermplasmListData>();
                 data.addAll(germplasmListManager.getGermplasmListDataByListId(germplasmListId, 0, Integer.MAX_VALUE));                
@@ -290,11 +291,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     }
     
     private GermplasmList createCrossesGermplasmList(CrossSetting crossSetting,
-			SaveListForm saveListForm, Map<Germplasm, List<Name>> germplasms,
-			Map<Germplasm, GermplasmListData> listDataItems, ImportedCrossesList importedCrossesList) {
+			SaveListForm saveListForm, Map<Germplasm, GermplasmListData> listDataItems, ImportedCrossesList importedCrossesList) {
 		
     	// Create germplasm list
-    	AdditionalDetailsSetting additionalDetailsSetting = crossSetting.getAdditionalDetailsSetting();
         String listName =  saveListForm.getListName();
         String listType = saveListForm.getListType(); 
     	
@@ -332,71 +331,20 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         Long dateLong = Long.valueOf(DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), saveListForm.getListDate()));
         GermplasmList germplasmList = new GermplasmList(null, listName, dateLong, listType, userId,
                 description, parent, status, saveListForm.getListNotes());
-
-        //Common germplasm fields
-        Integer lgid = 0;
-        Integer locationId = 0;
-        String harvestLocationId = additionalDetailsSetting.getHarvestLocationId().toString();
-        if (harvestLocationId != null && !"".equals(harvestLocationId)){
-            locationId = Integer.valueOf(harvestLocationId); 
-        }
-        Integer gDate = Integer.valueOf(DateUtil.getCurrentDate()); 
         
         //Common germplasm list data fields
         Integer listDataId = null; 
         Integer listDataStatus = 0;
         Integer localRecordId = 0;
-        
-        //Common name fields
-        Integer nDate = gDate;
-        Integer nRef = 0;
 
         // Create germplasms to save - Map<Germplasm, List<Name>> 
         for (ImportedCrosses importedCrosses : importedCrossesList.getImportedCrosses()){
-   
-            Integer gid = null;
-            if (importedCrosses.getGid() != null){
-                gid = Integer.valueOf(importedCrosses.getGid());
-            }
-            Integer methodId = importedCrosses.getBreedingMethodId();
-            Integer gnpgs = importedCrosses.getGnpgs();
-            Integer gpid1 = importedCrosses.getGpid1();
-            Integer gpid2 = importedCrosses.getGpid2();
-            
-            List<Name> names = importedCrosses.getNames();
-            Name preferredName = names.get(0);
-
-            for (Name name : names) {
-                
-                name.setLocationId(locationId);
-                name.setNdate(nDate);
-                name.setUserId(userId);
-                name.setReferenceId(nRef);
-
-                // If crop == CIMMYT WHEAT (crop with more than one name saved)
-                // Germplasm name is the Names entry with NType = 1027, NVal = table.desig, NStat = 0
-                if (!names.isEmpty() && name.getNstat() == 0
-                        && name.getTypeId() == GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID()) {
-                    preferredName = name;
-                }
-            }
-            
-            if (names.size() > 1){
-                for (Name name : names) {
-                    if (name.getTypeId() == GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID()
-                            && name.getNstat() == 0) {
-                        preferredName = name;
-                        break;
-                    }
-                }
-            }
-            
-            Germplasm germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2
-                    , userId, lgid, locationId, 0, preferredName);
-            
-            germplasms.put(germplasm, names);
+        	
+        	Integer gid = Integer.valueOf(importedCrosses.getGid());
+        	
+            Germplasm germplasm = new Germplasm();
+            germplasm.setGid(gid);
       
-                    
             // Create list data items to save - Map<Germplasm, GermplasmListData> 
             Integer entryId = importedCrosses.getEntryId();  
             String entryCode = importedCrosses.getEntryCode(); 

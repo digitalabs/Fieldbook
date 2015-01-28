@@ -29,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 public class CrossingServiceImplTest {
 
@@ -226,7 +227,7 @@ public class CrossingServiceImplTest {
 		ImportedCrosses cross1 = importedCrossesList.getImportedCrosses().get(0);
 		
 		assertEquals(null ,germplasm1.getGid());
-		assertEquals(0 ,germplasm1.getGdate().intValue());
+		assertEquals(Integer.valueOf(DateUtil.getCurrentDate()).intValue() ,germplasm1.getGdate().intValue());
 		assertEquals(2 ,germplasm1.getGnpgs().intValue());
 		assertEquals(cross1.getFemaleGid() ,germplasm1.getGpid1().toString());
 		assertEquals(cross1.getMaleGid() ,germplasm1.getGpid2().toString());
@@ -258,7 +259,7 @@ public class CrossingServiceImplTest {
 		ImportedCrosses cross2 = importedCrossesList.getImportedCrosses().get(1);
 		
 		assertEquals(null ,germplasm2.getGid());
-		assertEquals(0 ,germplasm2.getGdate().intValue());
+		assertEquals(Integer.valueOf(DateUtil.getCurrentDate()).intValue() ,germplasm2.getGdate().intValue());
 		assertEquals(2 ,germplasm2.getGnpgs().intValue());
 		assertEquals(cross2.getFemaleGid() ,germplasm2.getGpid1().toString());
 		assertEquals(cross2.getMaleGid() ,germplasm2.getGpid2().toString());

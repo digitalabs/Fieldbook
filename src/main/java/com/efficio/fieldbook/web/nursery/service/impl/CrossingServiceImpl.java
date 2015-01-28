@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import com.efficio.fieldbook.web.nursery.service.CrossingService;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 /**
  * Created by cyrus on 1/23/15.
@@ -100,8 +101,9 @@ public class CrossingServiceImpl implements CrossingService {
             
             germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
             germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
-            germplasm.setGdate(0);
+            germplasm.setGdate(Integer.valueOf(DateUtil.getCurrentDate()));
             germplasm.setLocationId(0); 
+            germplasm.setMethodId(0);
             
             Method breedingMethod = germplasmDataManager.getMethodByName(cross.getRawBreedingMethod());
             if (breedingMethod.getMid()!= null && breedingMethod.getMid() != 0){

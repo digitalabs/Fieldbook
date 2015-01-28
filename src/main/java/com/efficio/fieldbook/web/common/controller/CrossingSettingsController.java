@@ -60,26 +60,23 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	}
 
 	@ResponseBody
-	@RequestMapping(value="/retrieveSettings", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/retrieveSettings", method = RequestMethod.GET, produces = "application/json")
 	public List<CrossImportSettings> getAvailableCrossImportSettings(HttpServletRequest request) {
 		List<CrossImportSettings> settings = new ArrayList<>();
-		/*settings.add(new CrossSetting());*/
-		try {
-		List<ProgramPreset> presets;
 
-			presets = presetDataManager.getProgramPresetFromProgramAndTool(getCurrentProgramID(request),
-					workbenchService.getFieldbookWebTool().getToolId().intValue(),
-					ToolSection.FBK_CROSS_IMPORT.name());
+		try {
+			List<ProgramPreset> presets = presetDataManager
+					.getProgramPresetFromProgramAndTool(getCurrentProgramID(request),
+							workbenchService.getFieldbookWebTool().getToolId().intValue(),
+							ToolSection.FBK_CROSS_IMPORT.name());
 
 			if (presets != null) {
 				for (ProgramPreset preset : presets) {
-					CrossSetting crossSetting = (CrossSetting) settingsPresetService.convertPresetFromXmlString(preset.getConfiguration(), CrossSetting.class);
-					CrossImportSettings importSettings = new CrossImportSettings(crossSetting.getName(), crossSetting.getCrossNameSetting().getPrefix(),
-							crossSetting.getBreedingMethodSetting().getMethodId(),
-							crossSetting.getCrossNameSetting().getSuffix(),
-							crossSetting.getCrossNameSetting().getNumOfDigits(),crossSetting.getCrossNameSetting().isAddSpaceBetweenSuffixAndCode(),
-							crossSetting.getCrossNameSetting().isAddSpaceBetweenPrefixAndCode(), crossSetting.getCrossNameSetting().getStartNumber(),
-							crossSetting.getCrossNameSetting().getSeparator());
+					CrossSetting crossSetting = (CrossSetting) settingsPresetService
+							.convertPresetFromXmlString(preset.getConfiguration(),
+									CrossSetting.class);
+					CrossImportSettings importSettings = new CrossImportSettings();
+					importSettings.populate(crossSetting);
 					settings.add(importSettings);
 				}
 			}
@@ -135,6 +132,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			if (preset.getName().equals(setting.getName())) {
 				preset.setConfiguration(settingsPresetService.convertPresetSettingToXml(setting, CrossSetting.class));
 				found = true;
+				forSaving = preset;
 				break;
 			}
 		}

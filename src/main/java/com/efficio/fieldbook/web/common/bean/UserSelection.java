@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -155,6 +156,8 @@ public class UserSelection implements Serializable {
     /** The List of experimental design variables (new, edit, or deleted) since the workbook was retrieved from the db, will be reset upon save  */
     private List<MeasurementVariable> experimentalDesignVariables;
     private ImportedCrossesList importedCrossesList;
+
+    private CrossSetting crossSettings;
 
     /**
      * Gets the current page germplasm list.
@@ -901,5 +904,13 @@ public class UserSelection implements Serializable {
 
     public void setimportedCrossesList(ImportedCrossesList importedCrossesList) {
         this.importedCrossesList = importedCrossesList;
+    }
+
+    public CrossSetting getCrossSettings() {
+        return crossSettings;
+    }
+
+    public void setCrossSettings(CrossSetting crossSettings) {
+        this.crossSettings = crossSettings;
     }
 }

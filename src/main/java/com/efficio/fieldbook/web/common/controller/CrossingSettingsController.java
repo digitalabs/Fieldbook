@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
-import com.efficio.fieldbook.web.common.bean.UserCrossImportSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -50,6 +50,9 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@Resource
 	private SettingsPresetService settingsPresetService;
+
+	@Resource
+	private UserSelection studySelection;
 
 
 	@Override public String getContentName() {
@@ -113,6 +116,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	public Map<String, Object> submitCrossSettings(@RequestBody CrossSetting settings) {
 		Map<String, Object> returnVal = new HashMap<>();
 
+		studySelection.setCrossSettings(settings);
 		returnVal.put("success", new Integer(1));
 		return returnVal;
 	}

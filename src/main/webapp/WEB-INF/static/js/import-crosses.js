@@ -192,6 +192,7 @@ var ImportCrosses = {
 					if (data.success == '0') {
 						alert('error');
 					} else {
+						$('#crossSettingsModal').modal('hide');
 						ImportCrosses.openSaveListModal();
 					}
 				}
@@ -205,6 +206,11 @@ var ImportCrosses = {
 
 			settingObject.breedingMethodSetting = {};
 			settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
+
+			if ( !settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId == '') {
+				settingObject.breedingMethodSetting.methodId = null;
+			}
+
 			settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = ! $('#useSelectedMethodCheckbox').is(':checked');
 
 			settingObject.crossNameSetting = {};
@@ -282,7 +288,6 @@ var ImportCrosses = {
 		openSaveListModal: function(){
 			'use strict';
 			var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
-			additionalLazyLoadUrl = '/1';
 			$.ajax(
 				{ 
 					url: '/Fieldbook/ListTreeManager/saveCrossesList/',

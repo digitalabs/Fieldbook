@@ -279,16 +279,6 @@
     <script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
     <script type='text/javascript' th:inline="javascript">
 
-        //<![CDATA[
-        // initialize the dropdown and checkbox
-        BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox');
-        ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
-
-        $('#parentageDesignationSeparator').on('change', function() {
-            var value = $(this).val();
-            $('#sampleParentageDesignation').text('ABC-123' + value + 'DEF-456');
-        });
-
         function openMethodsModal() {
             var crossSettingsPopupModal = $('#crossSettingsModal');
             crossSettingsPopupModal.modal('hide');
@@ -301,6 +291,5 @@
             ImportCrosses.submitCrossImportSettings();
         }
 
-        //]]>
     </script>
 </div>

@@ -126,7 +126,8 @@
 
     <bean id="crossingTemplateParser"
           class="com.efficio.fieldbook.web.nursery.service.impl.CrossingTemplateParser"
-          scope="prototype">
+          scope="request">
+        <aop:scoped-proxy/>
     </bean>
 
     <bean id="importWorkbookFileService"

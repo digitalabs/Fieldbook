@@ -14,22 +14,16 @@ var ImportCrosses = {
 			}
 
 			ImportCrosses.submitImport($('.import-crosses-section')).done(function(resp) {
-				//reload the screen
-				var	importError = '',
-					errorIndex = 0;
 
-
-				if(resp.isSuccess === 1){
-
-					$('.import-crosses-section .modal').modal('hide');
-
-					// show  aldrins page
-					ImportCrosses.openCrossesList();
-
-				}else{
-					showErrorMessage('', resp.error);
+				if (!resp.isSuccess) {
+					createErrorNotification(crossingImportErrorHeader,resp.error.join('<br/>'));
+					return;
 				}
 
+				$('.import-crosses-section .modal').modal('hide');
+
+				// show review crosses page
+				ImportCrosses.openCrossesList();
 
 			});
 
@@ -63,9 +57,15 @@ var ImportCrosses = {
 			var deferred = $.Deferred();
 
 			$importCrossesForm.ajaxForm({
-				dataType: 'text',
-				success: function(responseText) {
-					deferred.resolve($.parseJSON(responseText));
+				dataType: 'json',
+				success: function(response) {
+					deferred.resolve(response);
+				},
+				error: function(response) {
+
+					showErrorMessage(null,generalAjaxErrorMessage);
+
+					deferred.reject(response);
 				}
 			}).submit();
 
@@ -101,10 +101,10 @@ var ImportCrosses = {
 							if (setting.name === currentSelectedItem) {
 								ImportCrosses.updateImportSettingsFromSavedSetting(setting);
 							}
-						})
+						});
 					}
 
-				})
+				});
 			}).fail(function(data) {
 			});
 		},
@@ -164,8 +164,8 @@ var ImportCrosses = {
 
 		retrieveAvailableImportSettings : function() {
 			return $.ajax({
-				url: "/Fieldbook/import/crosses/retrieveSettings",
-				type: "GET",
+				url: '/Fieldbook/import/crosses/retrieveSettings',
+				type: 'GET',
 				cache: false
 			});
 		},
@@ -251,7 +251,7 @@ var ImportCrosses = {
 			});
 		},
 		displayTabCrossesList: function (germplasmListId, crossesListId) {
-			'use script';			
+			'use strict';
 			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
 			url += '?isSnapshot=0';
 			
@@ -302,7 +302,7 @@ var ImportCrosses = {
 						});
 						$('#saveListTreeModal').data('is-save-crosses', '1');
 						//we preselect the program lists
-						if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null){
+						if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {
 							germplasmTreeNode.getNodeByKey('LOCAL').activate();
 							germplasmTreeNode.getNodeByKey('LOCAL').expand();
 						}

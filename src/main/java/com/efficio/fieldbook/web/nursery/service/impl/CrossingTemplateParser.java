@@ -33,6 +33,7 @@ public class CrossingTemplateParser {
 	 * The Constant FILE_INVALID.
 	 */
 	public final static String FILE_INVALID = "common.error.invalid.file";
+	public final static String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
 
 	protected static final int DESCRIPTION_SHEET_NO = 0;
 	protected static final int OBSERVATION_SHEET_NO = 1;
@@ -49,11 +50,13 @@ public class CrossingTemplateParser {
 		STUDY_TYPE_TO_LIST_TYPE_MAP.put(StudyType.T, GermplasmListType.TRIAL);
 	}
 
+	public static final String TEMPLATE_LIST_TYPE = "LST";
+
 	private final Map<String, Integer> observationColumnMap = new HashMap<>();
 	private ImportedCrossesList importedCrossesList;
-	private boolean importFileIsValid;
+	private boolean importFileIsValid = true;
 	private Workbook workbook;
-	private int currentRow;
+	private int currentRow = 0;
 	private String originalFilename;
 	/**
 	 * Resources
@@ -72,20 +75,17 @@ public class CrossingTemplateParser {
 
 	public ImportedCrossesList parseFile(MultipartFile multipartFile) {
 		try {
-			// initial values
-			importFileIsValid = true;
-			currentRow = 0;
-
 			this.workbook = storeImportGermplasmWorkbook(multipartFile);
 
 			parseDescriptionSheet();
 
 			parseObservationSheet();
 
-		} catch (IOException | ParseException | MiddlewareQueryException e) {
-			addParseErrorMsg(e.getMessage());
+		} catch (IOException | ParseException e) {
+			addParseErrorMsg(FILE_INVALID);
+		} catch (MiddlewareQueryException e) {
+			addParseErrorMsg(NO_REFERENCES_ERROR_DESC);
 		}
-
 		return importedCrossesList;
 
 	}
@@ -205,6 +205,10 @@ public class CrossingTemplateParser {
 
 		this.importedCrossesList = new ImportedCrossesList(this.originalFilename, listName,
 				listTitle, listType, listDate);
+
+		if (!TEMPLATE_LIST_TYPE.equalsIgnoreCase(listType)) {
+			addParseErrorMsg(FILE_INVALID);
+		}
 	}
 
 	public void parseConditions() {

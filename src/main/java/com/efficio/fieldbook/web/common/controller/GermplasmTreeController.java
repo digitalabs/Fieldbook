@@ -24,8 +24,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
-import org.generationcp.commons.settings.BreedingMethodSetting;
-import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -34,7 +32,6 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.GermplasmNameType;
-import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
@@ -249,11 +246,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         try {
         	
         	
-        	CrossSetting crossSetting = new CrossSetting();
-        	crossSetting.setCrossNameSetting(new CrossNameSetting("", "",false, false,10, "/"));
-        	crossSetting.setBreedingMethodSetting(new BreedingMethodSetting());
-        	crossSetting.setAdditionalDetailsSetting(new AdditionalDetailsSetting(0, "101"));
-        	
+        	CrossSetting crossSetting = userSelection.getCrossSettings();
         	ImportedCrossesList importedCrosssesList = userSelection.getImportedCrossesList();
         	
         	crossingServce.applyCrossSetting(crossSetting, importedCrosssesList, getCurrentIbdbUserId());
@@ -410,6 +403,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
             String seedSource = importedCrosses.getSource(); 
             String designation = importedCrosses.getDesig(); 
             String groupName = importedCrosses.getCross(); 
+            
             if (groupName == null){
             	// Default value if null
             	groupName = "-"; 

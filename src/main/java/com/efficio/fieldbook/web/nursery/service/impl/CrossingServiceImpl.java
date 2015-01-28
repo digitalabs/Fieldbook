@@ -12,10 +12,12 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.Germplasm;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,8 +101,12 @@ public class CrossingServiceImpl implements CrossingService {
             germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
             germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
             germplasm.setGdate(0);
-            germplasm.setLocationId(0);  
-            germplasm.setMethodId(0);
+            germplasm.setLocationId(0); 
+            
+            Method breedingMethod = germplasmDataManager.getMethodByName(cross.getRawBreedingMethod());
+            if (breedingMethod.getMid()!= null && breedingMethod.getMid() != 0){
+            	germplasm.setMethodId(breedingMethod.getMid());
+            }
 
             name.setNval(cross.getCross()+","+cross.getSource());
             name.setNdate(0);
@@ -114,6 +120,9 @@ public class CrossingServiceImpl implements CrossingService {
 			germplasmNameMap.put(germplasm, name);
 			
 		}	
+		
+		CrossingUtil.applyBreedingMethodSetting(germplasmDataManager, crossSetting, germplasmNameMap);
+		
 		return germplasmNameMap;
 	}
 

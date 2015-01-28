@@ -39,6 +39,12 @@ var ImportCrosses = {
 				},500);
 			});
 
+			$('#openCrossListNextButton').off('click');
+			$('#openCrossListNextButton').on('click', function() {
+				$('#openCrossesListModal').modal('hide');
+				ImportCrosses.showImportSettingsPopup();
+			});
+
 		},
 
 		getImportedCrossesTable : function(){
@@ -86,48 +92,62 @@ var ImportCrosses = {
 		showImportSettingsPopup : function() {
 			var crossSettingsPopupModal = $('#crossSettingsModal');
 			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
+			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox');
+			ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 
+			$('#parentageDesignationSeparator').on('change', function () {
+				var value = $(this).val();
+				$('#sampleParentageDesignation').text('ABC-123' + value + 'DEF-456');
+			});
 		},
 
 		processImportSettingsDropdown : function(dropdownID, useSettingsCheckboxID) {
 
 			ImportCrosses.retrieveAvailableImportSettings().done(function(settingList) {
 				ImportCrosses.createSettingsDropdown(dropdownID, settingList);
+
 				$('#' + getJquerySafeId(dropdownID)).on('change', function() {
-					if ($('#' + getJquerySafeId(useSettingsCheckboxID)).is(':checked')) {
-						var currentSelectedItem = $(this).select2('val');
+					ImportCrosses.triggerImportSettingUpdate(settingList, dropdownID, useSettingsCheckboxID);
+				});
 
-						$.each(settingList, function (index, setting) {
-							if (setting.name === currentSelectedItem) {
-								ImportCrosses.updateImportSettingsFromSavedSetting(setting);
-							}
-						});
-					}
-
+				$('#' + getJquerySafeId(useSettingsCheckboxID)).on('change', function() {
+					ImportCrosses.triggerImportSettingUpdate(settingList, dropdownID, useSettingsCheckboxID);
 				});
 			}).fail(function(data) {
 			});
 		},
 
+		triggerImportSettingUpdate : function(settingList, dropdownID, useSettingsCheckboxID) {
+			if ($('#' + getJquerySafeId(useSettingsCheckboxID)).is(':checked')) {
+				var currentSelectedItem = $('#' + dropdownID).select2('val');
+
+				$.each(settingList, function (index, setting) {
+					if (setting.name === currentSelectedItem) {
+						ImportCrosses.updateImportSettingsFromSavedSetting(setting);
+					}
+				})
+			}
+		},
+
 		updateImportSettingsFromSavedSetting : function(setting) {
 
 			$('#presetName').val(setting.name);
-			$('#breedingMethodDropdown').select2('val', setting.breedingMethodSetting.methodId);
-			$('#useSelectedMethodCheckbox').prop('checked', setting.breedingMethodSetting.basedOnStatusOfParentalLines);
+			$('#breedingMethodDropdown').select2('val', setting.breedingMethodID);
+			$('#useSelectedMethodCheckbox').prop('checked', !setting.basedOnStatusOfParentalLines);
 
-			$('#crossPrefix').val(setting.crossNameSetting.prefix);
-			$('#crossSuffix').val(setting.crossNameSetting.suffix);
-			$('input:radio[name=hasPrefixSpace]').val(setting.crossNameSetting.addSpaceBetweenPrefixAndCode);
-			$('input:radio[name=hasSuffixSpace]').val(setting.crossNameSetting.addSpaceBetweenSuffixAndCode);
-			$('#sequenceNumberDigits').val(setting.crossNameSetting.numOfDigits);
-			$('#parentageDesignationSeparator').val(setting.crossNameSetting.separator);
-			$('#startingSequenceNumber').val(setting.crossNameSetting.startNumber);
+			$('#crossPrefix').val(setting.crossPrefix);
+			$('#crossSuffix').val(setting.crossSuffix);
+			$('input:radio[name=hasPrefixSpace]').val(setting.hasPrefixSpace);
+			$('input:radio[name=hasSuffixSpace]').val(setting.hasSuffixSpace);
+			$('#sequenceNumberDigits').val(setting.sequenceNumberDigits);
+			$('#parentageDesignationSeparator').val(setting.parentageDesignationSeparator);
+			$('#startingSequenceNumber').val(setting.startingSequenceNumber);
 		},
 
 		createSettingsDropdown : function(dropdownID, settingList) {
 			var possibleValues = [];
 			$.each(settingList, function(index, setting) {
-				// possibleValues.push(ImportCrosses.convertSettingToSelect2Item(setting));
+				possibleValues.push(ImportCrosses.convertSettingToSelect2Item(setting));
 			});
 
 			$('#' + getJquerySafeId(dropdownID)).select2(

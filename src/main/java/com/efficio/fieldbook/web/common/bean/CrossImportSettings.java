@@ -1,17 +1,20 @@
 package com.efficio.fieldbook.web.common.bean;
 
+import org.generationcp.commons.settings.CrossSetting;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
  */
 
-@Deprecated
+
 public class CrossImportSettings {
 
 
 	private String name;
 	private String crossPrefix;
 	private Integer breedingMethodID;
+	private Boolean basedOnStatusOfParentalLines;
 	private String crossSuffix;
 	private Integer sequenceNumberDigits;
 	private Boolean hasSuffixSpace;
@@ -106,5 +109,27 @@ public class CrossImportSettings {
 
 	public void setParentageDesignationSeparator(String parentageDesignationSeparator) {
 		this.parentageDesignationSeparator = parentageDesignationSeparator;
+	}
+
+	public void populate(CrossSetting setting) {
+		this.name = setting.getName();
+		this.breedingMethodID = setting.getBreedingMethodSetting().getMethodId();
+		this.crossPrefix = setting.getCrossNameSetting().getPrefix();
+		this.crossSuffix = setting.getCrossNameSetting().getSuffix();
+		this.hasPrefixSpace = setting.getCrossNameSetting().isAddSpaceBetweenPrefixAndCode();
+		this.hasSuffixSpace = setting.getCrossNameSetting().isAddSpaceBetweenSuffixAndCode();
+		this.basedOnStatusOfParentalLines = setting.getBreedingMethodSetting()
+				.isBasedOnStatusOfParentalLines();
+		this.sequenceNumberDigits = setting.getCrossNameSetting().getNumOfDigits();
+		this.startingSequenceNumber = setting.getCrossNameSetting().getStartNumber();
+		this.parentageDesignationSeparator = setting.getCrossNameSetting().getSeparator();
+	}
+
+	public Boolean getBasedOnStatusOfParentalLines() {
+		return basedOnStatusOfParentalLines;
+	}
+
+	public void setBasedOnStatusOfParentalLines(Boolean basedOnStatusOfParentalLines) {
+		this.basedOnStatusOfParentalLines = basedOnStatusOfParentalLines;
 	}
 }

@@ -249,9 +249,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         	
         	
         	CrossSetting crossSetting = userSelection.getCrossSettings();
-        	ImportedCrossesList importedCrosssesList = userSelection.getImportedCrossesList();
+        	ImportedCrossesList importedCrossesList = userSelection.getImportedCrossesList();
         	
-        	crossingServce.applyCrossSetting(crossSetting, importedCrosssesList, getCurrentIbdbUserId());
+        	crossingServce.applyCrossSetting(crossSetting, importedCrossesList, getCurrentIbdbUserId());
         	
         	GermplasmList germplasmListIsNew = fieldbookMiddlewareService.getGermplasmListByName(form.getListName());
         	if(germplasmListIsNew == null){

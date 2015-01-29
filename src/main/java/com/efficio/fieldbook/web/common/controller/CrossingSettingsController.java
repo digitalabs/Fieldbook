@@ -7,6 +7,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -53,6 +54,9 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@Resource
 	private UserSelection studySelection;
+
+	@Resource
+	private CrossNameService crossNameService;
 
 
 	@Override public String getContentName() {
@@ -109,6 +113,22 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	}
 
 	@ResponseBody
+	@RequestMapping(value="/generateSequenceValue", method = RequestMethod.POST,consumes = "application/json", produces = "application/json")
+	public Map<String, String> generateSequenceValue(@RequestBody CrossSetting setting, HttpServletRequest request) {
+		Map<String, String> returnVal = new HashMap<>();
+		try {
+			String sequenceValue = crossNameService.getNextNameInSequence(setting.getCrossNameSetting());
+			returnVal.put("success", "1");
+			returnVal.put("sequenceValue", sequenceValue);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage());
+			returnVal.put("success", "0");
+		}
+
+		return returnVal;
+	}
+
+	@ResponseBody
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
 	public Map<String, Object> submitCrossSettings(@RequestBody CrossSetting settings) {
 		Map<String, Object> returnVal = new HashMap<>();
@@ -160,7 +180,4 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			return 2;
 		}
 	}
-
-
-
 }

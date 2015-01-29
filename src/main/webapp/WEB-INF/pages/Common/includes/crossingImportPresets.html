@@ -134,7 +134,7 @@
                                        th:text="#{study.import.crosses.prefix.label}"></label>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <input type="text" id="crossPrefix" name="crossPrefix"/>
+                                <input class="cross-import-name-setting" type="text" id="crossPrefix" name="crossPrefix"/>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -143,7 +143,7 @@
                                        th:text="#{study.import.crosses.sequence.digits.label}"></label>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <input type="text" id="sequenceNumberDigits"
+                                <input type="text" id="sequenceNumberDigits" class="cross-import-name-setting"
                                        name="sequenceNumberDigits"/>
                             </div>
                         </div>
@@ -153,7 +153,7 @@
                                        th:text="#{study.import.crosses.suffix.label}"></label>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <input type="text" id="crossSuffix" name="crossSuffix"/>
+                                <input type="text" id="crossSuffix" name="crossSuffix" class="cross-import-name-setting" />
                             </div>
                         </div>
                         <div class="row form-group">
@@ -162,10 +162,10 @@
                                        th:text="#{study.import.crosses.prefix.space.label}"></label>
                             </div>
                             <div class="btn-group col-xs-6 col-md-6 text-left">
-                                <input type="radio" name="hasPrefixSpace" value="true">
+                                <input type="radio" name="hasPrefixSpace" value="true" class="cross-import-name-setting" >
                                 <label class="label-bold">Yes</label>
                                 </input>
-                                <input type="radio" name="hasPrefixSpace" value="false">
+                                <input type="radio" name="hasPrefixSpace" value="false" class="cross-import-name-setting" >
                                 <label class="label-bold">No</label>
                                 </input>
                             </div>
@@ -176,10 +176,10 @@
                                        th:text="#{study.import.crosses.suffix.space.label}"></label>
                             </div>
                             <div class="btn-group col-xs-6 col-md-6 text-left">
-                                <input type="radio" name="hasSuffixSpace" value="true">
+                                <input type="radio" name="hasSuffixSpace" value="true" class="cross-import-name-setting" >
                                 <label class="label-bold">Yes</label>
                                 </input>
-                                <input type="radio" name="hasSuffixSpace" value="false">
+                                <input type="radio" name="hasSuffixSpace" value="false" class="cross-import-name-setting" >
                                 <label class="label-bold">No</label>
                                 </input>
                             </div>
@@ -190,7 +190,7 @@
                                        th:text="#{study.import.crosses.next.name}"></label>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                &nbsp;
+                                <label id="importNextSequenceName"/>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -200,7 +200,7 @@
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
                                 <input type="text" id="startingSequenceNumber"
-                                       name="startingSequenceNumber"/>
+                                       name="startingSequenceNumber" class="cross-import-name-setting" />
                             </div>
                         </div>
                         <div class="row form-group">

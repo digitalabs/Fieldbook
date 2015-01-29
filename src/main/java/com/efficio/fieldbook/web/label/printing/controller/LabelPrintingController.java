@@ -594,8 +594,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
         String[] generatedTypes = {"PDF","EXCEL","CSV"};
 
-        //FIXME the constant: is PDF
-        if ("1".equals(rawSettings.getGenerateType())) {
+        if (AppConstants.LABEL_PRINTING_PDF.getString().equals(rawSettings.getGenerateType())) {
             pdfSettings = new PDFLabelPrintingSetting(rawSettings.getSizeOfLabelSheet(),Integer.parseInt(rawSettings.getNumberOfRowsPerPageOfLabel(),10),rawSettings.getLeftSelectedLabelFields(),rawSettings.getRightSelectedLabelFields());
         } else {
             nonPDFSettings = new CSVExcelLabelPrintingSetting("1".equals(rawSettings.getIncludeColumnHeadinginNonPdf()),rawSettings.getMainSelectedLabelFields());

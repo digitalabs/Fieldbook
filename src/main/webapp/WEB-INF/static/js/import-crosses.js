@@ -238,12 +238,12 @@ var ImportCrosses = {
 
 		isCrossImportSettingsValid : function(importSettings) {
 			var valid = true;
-			if (!importSettings.crossPrefix || importSettings.crossPrefix === '') {
+			if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
 				valid = false;
 				showErrorMessage('', 'Cross name prefix is required');
 			}
 
-			if (!importSettings.parentageDesignationSeparator || importSettings.parentageDesignationSeparator === '') {
+			if (!importSettings.crossNameSetting.separator || importSettings.crossNameSetting.separator === '') {
 				valid = false;
 				showErrorMessage('', 'Separator for parentage designation is required');
 			}

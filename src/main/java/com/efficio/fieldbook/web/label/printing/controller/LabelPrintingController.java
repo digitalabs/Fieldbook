@@ -218,7 +218,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     public String showFieldmapLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form,
             Model model, HttpSession session, Locale locale) {
         List<FieldMapInfo> fieldMapInfoList = userFieldmap.getSelectedFieldMaps();
-        FieldMapInfo fieldMapInfo = null;
+        
+        // sets the initial fieldMapInfo from fieldMapInfoList
+        // this will be used later for the generation of labels in label printing
+        FieldMapInfo fieldMapInfo = fieldMapInfoList.get(0);
 
         this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
         this.userLabelPrinting.setFieldMapInfoList(fieldMapInfoList);

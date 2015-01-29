@@ -34,6 +34,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
+
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.StringUtil;
@@ -63,6 +64,7 @@ import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
+
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -74,7 +76,11 @@ import org.springframework.web.util.WebUtils;
 @RequestMapping({LabelPrintingController.URL})
 public class LabelPrintingController extends AbstractBaseFieldbookController {
 
-     /** The Constant LOG. */
+     private static final String IS_SUCCESS = "isSuccess";
+
+	private static final String AVAILABLE_FIELDS = "availableFields";
+
+	/** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingController.class);
 
     /** The Constant URL. */
@@ -149,7 +155,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, true));
         form.setUserLabelPrinting(this.userLabelPrinting);
 
-        model.addAttribute("availableFields", labelPrintingService.getAvailableLabelFields(true, hasFieldMap, locale, id));
+        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(true, hasFieldMap, locale, id));
 
         form.setIsTrial(true);
         return super.show(model);
@@ -194,7 +200,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
         this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, false));
         form.setUserLabelPrinting(this.userLabelPrinting);
-        model.addAttribute("availableFields", labelPrintingService.getAvailableLabelFields(false, hasFieldMap, locale, id));
+        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(false, hasFieldMap, locale, id));
         form.setIsTrial(false);
         return super.show(model);
     }
@@ -229,7 +235,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
                 generateDefaultFilename(this.userLabelPrinting, userFieldmap.isTrial()));
         form.setUserLabelPrinting(this.userLabelPrinting);
 
-        model.addAttribute("availableFields"
+        model.addAttribute(AVAILABLE_FIELDS
                 , labelPrintingService.getAvailableLabelFields(userFieldmap.isTrial(), true, locale));
 
         form.setIsTrial(userFieldmap.isTrial());
@@ -408,21 +414,21 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	        	getFileNameAndSetFileLocations(".csv");
 	        	fileName = labelPrintingService.generateCSVLabels(trialInstances, userLabelPrinting, baos);
 	        }
-	        results.put("isSuccess", 1);
+	        results.put(IS_SUCCESS, 1);
 	        results.put("fileName", fileName);
 	    } catch (MiddlewareQueryException e) {
 	        LOG.error(e.getMessage(), e);
-	        results.put("isSuccess", 0);
+	        results.put(IS_SUCCESS, 0);
 	        results.put(AppConstants.MESSAGE.getString(), e.getMessage());
 	    } catch (LabelPrintingException e) {
 	        LOG.error(e.getMessage(), e);
-	        results.put("isSuccess", 0);
+	        results.put(IS_SUCCESS, 0);
 	        Locale locale = LocaleContextHolder.getLocale();
 	        results.put(AppConstants.MESSAGE.getString(), messageSource.getMessage(
 	                e.getErrorCode(), new String[]{e.getLabelError()}, locale));
 	    } catch (IOException e) {
 	    	LOG.error(e.getMessage(), e);
-	    	results.put("isSuccess", 0);
+	    	results.put(IS_SUCCESS, 0);
 	        results.put(AppConstants.MESSAGE.getString(), e.getMessage());
 	    }
     	return results;
@@ -485,8 +491,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
             if (!standardPresets.isEmpty()) {
                 return standardPresets;
-            }
-            else {
+            } else {
                 return labelPrintingService.getAllLabelPrintingPresetsByName(presetName,contextInfo.getSelectedProjectId().intValue(),LabelPrintingPresets.PROGRAM_PRESET);
             }
         } catch (MiddlewareQueryException e) {

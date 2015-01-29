@@ -415,7 +415,8 @@ public class EditNurseryController extends SettingsController {
                 workbook.setTrialObservations(
                         fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));
                 workbook.setOriginalObservations(workbook.getObservations());
-
+                	                
+                fieldbookService.saveStudyImportedCrosses(userSelection.getImportedCrossesId(), form.getStudyId());
                 resultMap.put(STATUS, SUCCESS);
                 resultMap.put(HAS_MEASUREMENT_DATA_STR, String.valueOf(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates()))));
             } catch (MiddlewareQueryException e) {

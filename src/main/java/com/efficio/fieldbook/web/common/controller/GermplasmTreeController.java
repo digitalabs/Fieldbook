@@ -262,10 +262,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
                 List<GermplasmListData> data = new ArrayList<GermplasmListData>();
                 data.addAll(germplasmListManager.getGermplasmListDataByListId(germplasmListId, 0, Integer.MAX_VALUE));                
                 List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
-                int crossesId = 0;
-                if(userSelection.getWorkbook() != null && userSelection.getWorkbook().getStudyDetails() != null && userSelection.getWorkbook().getStudyDetails().getId() != null){
-                	crossesId = fieldbookMiddlewareService.saveOrUpdateListDataProject(userSelection.getWorkbook().getStudyDetails().getId(), GermplasmListType.CROSSES, germplasmListId, listDataProject, getCurrentIbdbUserId());
-                }
+                
+                int crossesId = saveCrossesList(germplasmListId, listDataProject, getCurrentIbdbUserId());               
                 
         		results.put(IS_SUCCESS, 1);
         		results.put("germplasmListId", germplasmListId);
@@ -287,6 +285,17 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         }
         
         return results;
+    }
+    
+    protected int saveCrossesList(Integer germplasmListId, List<ListDataProject> listDataProject, Integer userId) throws MiddlewareQueryException{
+    	int studyId = 0;
+    	int crossesId = 0;
+        if(userSelection.getWorkbook() != null && userSelection.getWorkbook().getStudyDetails() != null && userSelection.getWorkbook().getStudyDetails().getId() != null){
+        	studyId = userSelection.getWorkbook().getStudyDetails().getId() ;
+        }
+        crossesId = fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CROSSES, germplasmListId, listDataProject, userId);
+    	userSelection.addImportedCrossesId(crossesId);
+    	return crossesId;
     }
     
     private GermplasmList createCrossesGermplasmList(CrossSetting crossSetting,
@@ -942,6 +951,14 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 	@Override
 	public String getContentName() {
 		return null;
+	}
+
+	protected void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	protected void setUserSelection(UserSelection userSelection) {
+		this.userSelection = userSelection;
 	}
 	
 }

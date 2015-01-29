@@ -359,8 +359,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         Workbook workbook = userSelection.getWorkbook();
 
         if (workbook != null) {
+        	String selectedLabelFields = getSelectedLabelFields(userLabelPrinting);
             labelPrintingService.populateUserSpecifiedLabelFields(this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances()
-                    , workbook, this.userLabelPrinting.getMainSelectedLabelFields(), form.getIsTrial());
+                    , workbook, selectedLabelFields, form.getIsTrial());
         }
 
         List<StudyTrialInstanceInfo> trialInstances = null;
@@ -379,6 +380,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
         return generateLabels(trialInstances);
     }
+
+	protected String getSelectedLabelFields(UserLabelPrinting userLabelPrinting) {
+		String selectedLabelFields = "";
+		if(userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())){
+			selectedLabelFields = userLabelPrinting.getLeftSelectedLabelFields() + "," + userLabelPrinting.getRightSelectedLabelFields();
+		} else {
+			selectedLabelFields = userLabelPrinting.getMainSelectedLabelFields();
+		}
+		return selectedLabelFields;
+	}
 
     protected Map<String,Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances) {
     	Map<String,Object> results = new HashMap<String, Object>();

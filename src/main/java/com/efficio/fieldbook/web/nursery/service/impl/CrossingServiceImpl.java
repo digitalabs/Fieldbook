@@ -209,7 +209,7 @@ public class CrossingServiceImpl implements CrossingService {
         return sb.toString();
     }
     
-	protected Integer getIDForUserDefinedFieldCrossingName() throws MiddlewareQueryException  {
+	public Integer getIDForUserDefinedFieldCrossingName() throws MiddlewareQueryException  {
         
         List<UserDefinedField> nameTypes = germplasmListManager.getGermplasmNameTypes();
         for (UserDefinedField type : nameTypes){
@@ -224,11 +224,11 @@ public class CrossingServiceImpl implements CrossingService {
         return null;
     }
 	
-	protected void setGermplasmListManager(GermplasmListManager germplasmListManager) {
+	public void setGermplasmListManager(GermplasmListManager germplasmListManager) {
 		this.germplasmListManager = germplasmListManager;
 	}
 
-	protected void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+	public void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
 		
 	}

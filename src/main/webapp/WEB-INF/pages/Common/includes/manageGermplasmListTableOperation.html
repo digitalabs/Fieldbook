@@ -222,66 +222,68 @@
 				}
 			}
 		}
-
-		function chooseList(){
-			'use strict';
-			var node = getSelectedGermplasmList();
-			chooseListNode(node, false);
-		}
-
-		function chooseListNode(node, fromEnterKey) {
-			'use strict';		
-
-			if (node === null || isSelectedGermplasmListAFolder()) {
-				if(fromEnterKey === false){
-					showErrorMessage('page-import-message-modal', pleaseChooseFolder);
-				}
-			} else {
-				var id = getSelectedGermplasmListId();
-				if (openTreeType === 1) {
-					// Load in main list
-					if (lastDraggedChecksList != id) {
-						// Loads the primary germplasm list
-						lastDraggedPrimaryList = id;
-						displayGermplasmDetails(id);
-
-                        if (selectListFunction) {
-                            selectListFunction(id);
-                        }
-
-					} else {
-						if(fromEnterKey === false){
-							showErrorMessage('page-import-message-modal', sameListErr);
-							return;	
-						}
-						
+		
+		var ListTable = {
+			chooseList: function(){
+				'use strict';
+				var node = getSelectedGermplasmList();
+				ListTable.chooseListNode(node, false);
+			},
+	
+			chooseListNode : function (node, fromEnterKey) {
+				'use strict';		
+	
+				if (node === null || isSelectedGermplasmListAFolder()) {
+					if(fromEnterKey === false){
+						showErrorMessage('page-import-message-modal', pleaseChooseFolder);
 					}
-				} else if(openTreeType === 2) {
-					// Load in check list
-					if (lastDraggedPrimaryList != id) {
-						// Loads the check list
-						$('#lastCheckSourcePrimary').val(0);
-						lastDraggedChecksList = id;
-
-						// Set primary germplasm list rows' opacity to 1
-						$('.germplasm-list-items tbody tr').css('opacity', '1');
-
-						// If there is an existing list already, ask user if data should be overwritten
-						if ($('.check-germplasm-list-items tbody tr').length > 0) {
-							$('#keyForOverwrite').val(id);
-							$('#confirmationModal').modal('show');
+				} else {
+					var id = getSelectedGermplasmListId();
+					if (openTreeType === 1) {
+						// Load in main list
+						if (lastDraggedChecksList != id) {
+							// Loads the primary germplasm list
+							lastDraggedPrimaryList = id;
+							displayGermplasmDetails(id);
+	
+	                        if (selectListFunction) {
+	                            selectListFunction(id);
+	                        }
+	
 						} else {
-							displayGermplasmCheckDetails(id);
+							if(fromEnterKey === false){
+								showErrorMessage('page-import-message-modal', sameListErr);
+								return;	
+							}
+							
 						}
-						makeCheckDraggable(false);
-					} else {
-						if(fromEnterKey === false){
-							showErrorMessage('page-import-message-modal', sameListErr);
-							return;
+					} else if(openTreeType === 2) {
+						// Load in check list
+						if (lastDraggedPrimaryList != id) {
+							// Loads the check list
+							$('#lastCheckSourcePrimary').val(0);
+							lastDraggedChecksList = id;
+	
+							// Set primary germplasm list rows' opacity to 1
+							$('.germplasm-list-items tbody tr').css('opacity', '1');
+	
+							// If there is an existing list already, ask user if data should be overwritten
+							if ($('.check-germplasm-list-items tbody tr').length > 0) {
+								$('#keyForOverwrite').val(id);
+								$('#confirmationModal').modal('show');
+							} else {
+								displayGermplasmCheckDetails(id);
+							}
+							makeCheckDraggable(false);
+						} else {
+							if(fromEnterKey === false){
+								showErrorMessage('page-import-message-modal', sameListErr);
+								return;
+							}
 						}
 					}
+					$('#listTreeModal').modal('hide');
 				}
-				$('#listTreeModal').modal('hide');
 			}
 		}
 

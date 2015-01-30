@@ -349,7 +349,6 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
 		Integer crossesId = 5;
 		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Mockito.anyInt(), Mockito.any(GermplasmListType.class), Mockito.anyInt(), Mockito.anyListOf(ListDataProject.class), Mockito.anyInt())).thenReturn(crossesId);
-		//Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).saveOrUpdateListDataProject(0, GermplasmListType.CROSSES, germplasmListId, listDataProject, userId);
 		treeController.setUserSelection(userSelection);
 		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);
@@ -372,7 +371,6 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
 		Integer crossesId = 88;
 		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Mockito.anyInt(), Mockito.any(GermplasmListType.class), Mockito.anyInt(), Mockito.anyListOf(ListDataProject.class), Mockito.anyInt())).thenReturn(crossesId);
-		//Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).saveOrUpdateListDataProject(0, GermplasmListType.CROSSES, germplasmListId, listDataProject, userId);
 		treeController.setUserSelection(userSelection);
 		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);

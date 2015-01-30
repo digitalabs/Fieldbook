@@ -23,9 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.settings.AdditionalDetailsSetting;
-import org.generationcp.commons.settings.BreedingMethodSetting;
-import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -95,13 +92,11 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     @Resource
     private GermplasmListManager germplasmListManager;
     @Resource
-    private GermplasmListManager germplasmDataManager;
-    @Resource
     private FieldbookService fieldbookMiddlewareService;
     @Resource
     private UserDataManager userDataManager;
     @Resource
-    private CrossingService crossingServce;
+    private CrossingService crossingService;
     
     private static final String NAME_NOT_UNIQUE = "Name not unique";
     private static final String HAS_CHILDREN = "Folder has children";
@@ -225,7 +220,6 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
             
             form.setListDate(DateUtil.getCurrentDateInUIFormat());
             List<UserDefinedField> germplasmListTypes = germplasmListManager.getGermplasmListTypes();
-            //form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
             model.addAttribute("germplasmListTypes", germplasmListTypes);
             
         } catch(Exception e) {
@@ -253,7 +247,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         	GermplasmList germplasmListIsNew = fieldbookMiddlewareService.getGermplasmListByName(form.getListName());
         	if(germplasmListIsNew == null){
         		//we do the saving
-        		crossingServce.applyCrossSetting(crossSetting, importedCrossesList, getCurrentIbdbUserId());
+        		crossingService.applyCrossSetting(crossSetting, importedCrossesList, getCurrentIbdbUserId());
         		
                 Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
                 GermplasmList germplasmList = createCrossesGermplasmList(crossSetting, form, listDataItems, importedCrossesList);

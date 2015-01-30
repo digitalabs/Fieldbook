@@ -231,8 +231,8 @@
 	</li>
 	<li class="advance-germplasm-items crosses-list" th:attr="data-advance-germplasm-list-id=${crossesItem.id}" th:id="${'advance-list' + crossesItem.id + '-li'}" th:each="crossesItem : ${crossesList}">
 		<a th:attr="data-list-id=${crossesItem.id}" th:href="${'#list' + crossesItem.id}" role="tab" class="advanceList crossesList" data-toggle="tab">
-			<span th:text="${'Crosses'}"></span>
-			<i class="glyphicon glyphicon-remove fbk-hide fbk-close-tab" th:id="${crossesItem.id}" th:onclick="'javascript:closeAdvanceListTab(\'' + ${crossesItem.id} + '\');'"></i>
+			<span th:text="${'Crosses: [' + crossesItem.name + ']'}"></span>
+			<i class="glyphicon glyphicon-remove fbk-close-tab" th:id="${crossesItem.id}" th:onclick="'javascript:closeAdvanceListTab(\'' + ${crossesItem.id} + '\');'"></i>
 		</a>
 		
 	</li>

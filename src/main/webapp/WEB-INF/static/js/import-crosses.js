@@ -328,10 +328,11 @@ var ImportCrosses = {
 				}
 			});
 		},
-		displayTabCrossesList: function (germplasmListId, crossesListId) {
+		displayTabCrossesList: function (germplasmListId, crossesListId, listName) {
 			'use strict';
 			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
 			url += '?isSnapshot=0';
+			
 			
 			$.ajax({
 				url: url,
@@ -348,8 +349,8 @@ var ImportCrosses = {
 					close,
 					aHtml;
 					uniqueId = germplasmListId;
-					close = '<i class="glyphicon glyphicon-remove fbk-close-tab fbk-hide" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
-					aHtml = '<a id="advance-list'+uniqueId+'" role="tab" class="advanceList crossesList crossesList'+uniqueId+'" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses' + close + '</a>';
+					close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
+					aHtml = '<a id="advance-list'+uniqueId+'" role="tab" class="advanceList crossesList crossesList'+uniqueId+'" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
 					$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
 					$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="advance-list' + uniqueId + '">' + html + '</div>');
 					$('a#advance-list'+uniqueId).tab('show');

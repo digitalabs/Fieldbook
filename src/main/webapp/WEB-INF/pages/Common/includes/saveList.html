@@ -200,7 +200,7 @@
 						if(data.isSuccess === 1){
 							$('#saveListTreeModal').modal('hide');
 							if(isCrosses){
-								ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId);								
+								ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);								
 								$('#saveListTreeModal').data('is-save-crosses', '0');
 							}else{
 								displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false, data.advancedGermplasmListId);

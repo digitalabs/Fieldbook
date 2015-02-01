@@ -58,6 +58,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	@Resource
 	private CrossNameService crossNameService;
 
+	public static final String SUCCESS_KEY = "success";
+
 
 	@Override public String getContentName() {
 		return null;
@@ -71,19 +73,18 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		try {
 			List<ProgramPreset> presets = presetDataManager
 					.getProgramPresetFromProgramAndTool(getCurrentProgramID(request),
-							workbenchService.getFieldbookWebTool().getToolId().intValue(),
+							getFieldbookToolID(),
 							ToolSection.FBK_CROSS_IMPORT.name());
 
-			if (presets != null) {
-				for (ProgramPreset preset : presets) {
-					CrossSetting crossSetting = (CrossSetting) settingsPresetService
-							.convertPresetFromXmlString(preset.getConfiguration(),
-									CrossSetting.class);
-					CrossImportSettings importSettings = new CrossImportSettings();
-					importSettings.populate(crossSetting);
-					settings.add(importSettings);
-				}
+			for (ProgramPreset preset : presets) {
+				CrossSetting crossSetting = (CrossSetting) settingsPresetService
+						.convertPresetFromXmlString(preset.getConfiguration(),
+								CrossSetting.class);
+				CrossImportSettings importSettings = new CrossImportSettings();
+				importSettings.populate(crossSetting);
+				settings.add(importSettings);
 			}
+
 
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage());
@@ -108,7 +109,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			LOG.error(e.getMessage());
 		}
 
-		returnVal.put("success", "0");
+		returnVal.put(SUCCESS_KEY, "0");
 		return returnVal;
 	}
 
@@ -116,13 +117,14 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	@RequestMapping(value="/generateSequenceValue", method = RequestMethod.POST,consumes = "application/json", produces = "application/json")
 	public Map<String, String> generateSequenceValue(@RequestBody CrossSetting setting, HttpServletRequest request) {
 		Map<String, String> returnVal = new HashMap<>();
+
 		try {
 			String sequenceValue = crossNameService.getNextNameInSequence(setting.getCrossNameSetting());
-			returnVal.put("success", "1");
+			returnVal.put(SUCCESS_KEY, "1");
 			returnVal.put("sequenceValue", sequenceValue);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage());
-			returnVal.put("success", "0");
+			returnVal.put(SUCCESS_KEY, "0");
 		}
 
 		return returnVal;
@@ -134,7 +136,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		Map<String, Object> returnVal = new HashMap<>();
 
 		studySelection.setCrossSettings(settings);
-		returnVal.put("success", new Integer(1));
+		returnVal.put(SUCCESS_KEY, new Integer(1));
 		return returnVal;
 	}
 
@@ -143,7 +145,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 		List<ProgramPreset> presets = presetDataManager
 				.getProgramPresetFromProgramAndTool(programID,
-						workbenchService.getFieldbookWebTool().getToolId().intValue(),
+						getFieldbookToolID(),
 						ToolSection.FBK_CROSS_IMPORT.name());
 
 		boolean found = false;
@@ -160,7 +162,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		if (!found) {
 			forSaving = new ProgramPreset();
 			forSaving.setName(setting.getName());
-			forSaving.setToolId(workbenchService.getFieldbookWebTool().getToolId().intValue());
+			forSaving.setToolId(getFieldbookToolID());
 			forSaving.setProgramUuid(programID);
 			forSaving.setToolSection(ToolSection.FBK_CROSS_IMPORT.name());
 			forSaving.setConfiguration(settingsPresetService.convertPresetSettingToXml(setting, CrossSetting.class));
@@ -168,6 +170,10 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 
 		presetDataManager.saveOrUpdateProgramPreset(forSaving);
+	}
+
+	protected Integer getFieldbookToolID() throws MiddlewareQueryException{
+		return workbenchService.getFieldbookWebTool().getToolId().intValue();
 	}
 
 	protected Integer getCurrentProgramID(HttpServletRequest request) {
@@ -179,5 +185,13 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		} else {
 			return 2;
 		}
+	}
+
+	public SettingsPresetService getSettingsPresetService() {
+		return settingsPresetService;
+	}
+
+	public void setSettingsPresetService(SettingsPresetService settingsPresetService) {
+		this.settingsPresetService = settingsPresetService;
 	}
 }

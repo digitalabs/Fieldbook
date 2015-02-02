@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
@@ -29,7 +30,6 @@ import org.mockito.MockitoAnnotations;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
-import com.efficio.fieldbook.web.util.DateUtil;
 
 public class CrossingServiceImplTest {
 
@@ -70,8 +70,10 @@ public class CrossingServiceImplTest {
 		CrossSetting crossSetting = new CrossSetting();
 		CrossNameSetting crossNameSetting = createCrossNameSetting();
 		BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
+		AdditionalDetailsSetting additionalDetailsSetting = new AdditionalDetailsSetting();
 		crossSetting.setCrossNameSetting(crossNameSetting);
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
+		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 		
 		crossingService.applyCrossSetting(crossSetting, importedCrossesList, USER_ID);
 		
@@ -215,8 +217,10 @@ public class CrossingServiceImplTest {
 		CrossSetting crossSetting = new CrossSetting();
 		CrossNameSetting crossNameSetting = createCrossNameSetting();
 		BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
+		AdditionalDetailsSetting additionalDetailsSetting = createAdditionalDetailsSetting();
 		crossSetting.setCrossNameSetting(crossNameSetting);
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
+		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 		
 		Map<Germplasm, Name> germplasmNameMap = crossingService.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), USER_ID);
 	
@@ -227,7 +231,7 @@ public class CrossingServiceImplTest {
 		ImportedCrosses cross1 = importedCrossesList.getImportedCrosses().get(0);
 		
 		assertEquals(null ,germplasm1.getGid());
-		assertEquals(Integer.valueOf(DateUtil.getCurrentDate()).intValue() ,germplasm1.getGdate().intValue());
+		assertEquals(20150101 ,germplasm1.getGdate().intValue());
 		assertEquals(2 ,germplasm1.getGnpgs().intValue());
 		assertEquals(cross1.getFemaleGid() ,germplasm1.getGpid1().toString());
 		assertEquals(cross1.getMaleGid() ,germplasm1.getGpid2().toString());
@@ -235,7 +239,7 @@ public class CrossingServiceImplTest {
 		assertEquals(0 ,germplasm1.getLgid().intValue());
 		assertEquals(0 ,germplasm1.getGrplce().intValue());
 		assertEquals(0 ,germplasm1.getLgid().intValue());
-		assertEquals(0 ,germplasm1.getLocationId().intValue());
+		assertEquals(99 ,germplasm1.getLocationId().intValue());
 		assertEquals(null ,germplasm1.getMethodId());
 		assertEquals(0 ,germplasm1.getMgid().intValue());
 		assertEquals(null ,germplasm1.getPreferredAbbreviation());
@@ -244,8 +248,8 @@ public class CrossingServiceImplTest {
 		assertEquals(USER_ID ,germplasm1.getUserId());
 		
 		assertEquals(null, name1.getGermplasmId());
-		assertEquals(0, name1.getLocationId().intValue());
-		assertEquals(0, name1.getNdate().intValue());
+		assertEquals(99, name1.getLocationId().intValue());
+		assertEquals(20150101, name1.getNdate().intValue());
 		assertEquals(null, name1.getNid());
 		assertEquals(null, name1.getNstat());
 		assertEquals("CROSS,SOURCE", name1.getNval());
@@ -259,7 +263,7 @@ public class CrossingServiceImplTest {
 		ImportedCrosses cross2 = importedCrossesList.getImportedCrosses().get(1);
 		
 		assertEquals(null ,germplasm2.getGid());
-		assertEquals(Integer.valueOf(DateUtil.getCurrentDate()).intValue() ,germplasm2.getGdate().intValue());
+		assertEquals(20150101 ,germplasm2.getGdate().intValue());
 		assertEquals(2 ,germplasm2.getGnpgs().intValue());
 		assertEquals(cross2.getFemaleGid() ,germplasm2.getGpid1().toString());
 		assertEquals(cross2.getMaleGid() ,germplasm2.getGpid2().toString());
@@ -267,7 +271,7 @@ public class CrossingServiceImplTest {
 		assertEquals(0 ,germplasm2.getLgid().intValue());
 		assertEquals(0 ,germplasm2.getGrplce().intValue());
 		assertEquals(0 ,germplasm2.getLgid().intValue());
-		assertEquals(0 ,germplasm2.getLocationId().intValue());
+		assertEquals(99 ,germplasm2.getLocationId().intValue());
 		assertEquals(null ,germplasm2.getMethodId());
 		assertEquals(0 ,germplasm2.getMgid().intValue());
 		assertEquals(null ,germplasm2.getPreferredAbbreviation());
@@ -276,8 +280,8 @@ public class CrossingServiceImplTest {
 		assertEquals(USER_ID ,germplasm2.getUserId());
 		
 		assertEquals(null, name2.getGermplasmId());
-		assertEquals(0, name2.getLocationId().intValue());
-		assertEquals(0, name2.getNdate().intValue());
+		assertEquals(99, name2.getLocationId().intValue());
+		assertEquals(20150101, name2.getNdate().intValue());
 		assertEquals(null, name2.getNid());
 		assertEquals(null, name2.getNstat());
 		assertEquals("CROSS,SOURCE", name1.getNval());
@@ -396,6 +400,15 @@ public class CrossingServiceImplTest {
     	setting.setSeparator("|");
     	setting.setStartNumber(100);
     	setting.setNumOfDigits(7);
+    	
+    	return setting;
+	}
+	
+	private AdditionalDetailsSetting createAdditionalDetailsSetting(){
+		AdditionalDetailsSetting setting = new AdditionalDetailsSetting();
+		
+    	setting.setHarvestDate("20150101");
+    	setting.setHarvestLocationId(99);
     	
     	return setting;
 	}

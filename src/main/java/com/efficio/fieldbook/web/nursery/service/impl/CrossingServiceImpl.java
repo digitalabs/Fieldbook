@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.CrossingUtil;
@@ -90,6 +91,18 @@ public class CrossingServiceImpl implements CrossingService {
 		
 		Map<Germplasm, Name> germplasmNameMap = new LinkedHashMap<>();
 		Integer crossingNameTypeId = getIDForUserDefinedFieldCrossingName();
+		AdditionalDetailsSetting additionalDetailsSetting = crossSetting.getAdditionalDetailsSetting();
+		
+		Integer dateIntValue = 0;
+        Integer harvestLocationId = 0;
+        
+        if(additionalDetailsSetting.getHarvestLocationId() != null){
+            harvestLocationId = additionalDetailsSetting.getHarvestLocationId();
+        }
+        
+        if(additionalDetailsSetting.getHarvestDate() != null){
+            dateIntValue = Integer.parseInt(additionalDetailsSetting.getHarvestDate());
+        }
 		
 		for (ImportedCrosses cross : importedCrosses){
                         
@@ -100,8 +113,9 @@ public class CrossingServiceImpl implements CrossingService {
             
             germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
             germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
-            germplasm.setGdate(Integer.valueOf(DateUtil.getCurrentDate()));
-            germplasm.setLocationId(0); 
+            germplasm.setGdate(dateIntValue);
+            germplasm.setLocationId(harvestLocationId); 
+
             germplasm.setMethodId(0);
             
             Method breedingMethod = germplasmDataManager.getMethodByName(cross.getRawBreedingMethod());
@@ -110,9 +124,9 @@ public class CrossingServiceImpl implements CrossingService {
             }
 
             name.setNval(cross.getCross()+","+cross.getSource());
-            name.setNdate(0);
+            name.setNdate(dateIntValue);
             name.setTypeId(crossingNameTypeId);
-            name.setLocationId(0);
+            name.setLocationId(harvestLocationId);
             
             List<Name> names = new ArrayList<>();
             names.add(name);

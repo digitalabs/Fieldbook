@@ -272,7 +272,7 @@ public class ImportedCrossesList implements Serializable {
     /**
      * Adds the imported crosses
      *
-     * @param importedGermplasm the imported crosses
+     * @param ImportedCrosses the imported crosses
      */
     public void addImportedCrosses(ImportedCrosses importedCrosses){
         this.importedCrosses.add(importedCrosses);

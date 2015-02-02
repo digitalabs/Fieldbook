@@ -51,7 +51,7 @@ public class CrossingTemplateParser {
 		STUDY_TYPE_TO_LIST_TYPE_MAP.put(StudyType.T, GermplasmListType.TRIAL);
 	}
 
-	private final Map<String, Integer> observationColumnMap = new HashMap<>();
+	private Map<String, Integer> observationColumnMap = new HashMap<>();
 	private ImportedCrossesList importedCrossesList;
 	private boolean importFileIsValid = true;
 	private Workbook workbook;
@@ -86,7 +86,6 @@ public class CrossingTemplateParser {
 			addParseErrorMsg(NO_REFERENCES_ERROR_DESC);
 		}
 		return importedCrossesList;
-
 	}
 
 	protected Workbook storeImportGermplasmWorkbook(MultipartFile multipartFile)
@@ -108,10 +107,10 @@ public class CrossingTemplateParser {
 	/**
 	 * FIXME: For now, the headers are referenced to a static (APP_CONSTANTS) lookup
 	 *
-	 * @throws ParseException
+	 * @throws MiddlewareQueryException
 	 */
 	protected void parseObservationSheet()
-			throws ParseException, MiddlewareQueryException {
+			throws MiddlewareQueryException {
 		if (isObservationsHeaderInvalid()) {
 			addParseErrorMsg(FILE_INVALID);
 			LOG.debug("Invalid Observation headers");
@@ -120,34 +119,25 @@ public class CrossingTemplateParser {
 		}
 
 		currentRow = 1;
-		final int headerSize = importedCrossesList.getImportedFactors().size() + importedCrossesList
-				.getImportedVariates().size();
-		while (importFileIsValid && !isRowEmpty(OBSERVATION_SHEET_NO, currentRow, headerSize)) {
+		while (importFileIsValid && !isRowEmpty(OBSERVATION_SHEET_NO, currentRow,
+				sizeOfObservationHeader())) {
 
-			String femaleNursery = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
-							observationColumnMap.get(AppConstants.FEMALE_NURSERY.getString()));
-			String femaleEntry = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
-							observationColumnMap.get(AppConstants.FEMALE_ENTRY.getString()));
-			String maleNursery = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
-							observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
-			String maleEntry = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
-							observationColumnMap.get(AppConstants.MALE_ENTRY.getString()));
-			String breedingMethod = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
-							observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
-			String crossingDate = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
-							observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
-			String seedsHarvested = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
-							observationColumnMap.get(AppConstants.SEEDS_HARVESTED.getString()));
-			String notes = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, currentRow,
-							observationColumnMap.get(AppConstants.NOTES.getString()));
+			String femaleNursery = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.FEMALE_NURSERY.getString()));
+			String femaleEntry = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.FEMALE_ENTRY.getString()));
+			String maleNursery = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
+			String maleEntry = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.MALE_ENTRY.getString()));
+			String breedingMethod = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
+			String crossingDate = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.CROSSING_DATE.getString()));
+			String seedsHarvested = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.SEEDS_HARVESTED.getString()));
+			String notes = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.NOTES.getString()));
 
 			if (!isObservationRowValid(femaleNursery, femaleEntry, maleNursery, maleEntry,
 					crossingDate,
@@ -173,6 +163,11 @@ public class CrossingTemplateParser {
 		}
 	}
 
+	protected int sizeOfObservationHeader() {
+		return importedCrossesList.getImportedFactors().size() + importedCrossesList
+				.getImportedVariates().size();
+	}
+
 	protected boolean isObservationRowValid(String femaleNursery, String femaleEntry,
 			String maleNursery, String maleEntry, String crossingDate, String seedsHarvested) {
 		return StringUtils.isNotBlank(femaleNursery) && StringUtils.isNotBlank(femaleEntry)
@@ -196,8 +191,7 @@ public class CrossingTemplateParser {
 
 		Date listDate = DateUtil.parseDate(
 				getCellStringValue(DESCRIPTION_SHEET_NO, listDateColNo, 1));
-		String listType = PoiUtil
-				.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO, listTypeColNo, 1);
+		String listType = getCellStringValue(DESCRIPTION_SHEET_NO, listTypeColNo, 1);
 
 		this.importedCrossesList = new ImportedCrossesList(this.originalFilename, listName,
 				listTitle, listType, listDate);
@@ -217,19 +211,19 @@ public class CrossingTemplateParser {
 			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
 				this.importedCrossesList.addImportedCondition(
 						new ImportedCondition(
-								PoiUtil.getCellStringValue(workbook, DESCRIPTION_SHEET_NO,
+								getCellStringValue(DESCRIPTION_SHEET_NO,
 										currentRow, 0)
-								, PoiUtil.getCellStringValue(workbook, DESCRIPTION_SHEET_NO,
+								, getCellStringValue( DESCRIPTION_SHEET_NO,
 								currentRow, 1)
-								, PoiUtil.getCellStringValue(workbook, DESCRIPTION_SHEET_NO,
+								, getCellStringValue( DESCRIPTION_SHEET_NO,
 								currentRow, 2)
-								, PoiUtil.getCellStringValue(workbook, DESCRIPTION_SHEET_NO,
+								, getCellStringValue( DESCRIPTION_SHEET_NO,
 								currentRow, 3)
-								, PoiUtil.getCellStringValue(workbook, DESCRIPTION_SHEET_NO,
+								, getCellStringValue( DESCRIPTION_SHEET_NO,
 								currentRow, 4)
-								, PoiUtil.getCellStringValue(workbook, DESCRIPTION_SHEET_NO,
+								, getCellStringValue( DESCRIPTION_SHEET_NO,
 								currentRow, 5)
-								, PoiUtil.getCellStringValue(workbook, DESCRIPTION_SHEET_NO,
+								, getCellStringValue( DESCRIPTION_SHEET_NO,
 								currentRow, 6),
 								""
 						)
@@ -428,27 +422,31 @@ public class CrossingTemplateParser {
 
 	protected boolean isVariateHeaderInvalid(int variateHeaderRowNo) {
 		return !AppConstants.VARIATE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
+				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
 						0))
 				|| !AppConstants.DESCRIPTION.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
+				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
 						1))
 				|| !AppConstants.PROPERTY.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
+				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
 						2))
 				|| !AppConstants.SCALE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
+				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
 						3))
 				|| !AppConstants.METHOD.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
+				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
 						4))
 				|| !AppConstants.DATA_TYPE.getString().replace("_", " ").equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
+				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
 						5));
 	}
 
 	protected void addParseErrorMsg(String message) {
 		if (importFileIsValid) {
+
+			// create a new instance if not yet existing (happens when exception caught without parsing started yet)
+			importedCrossesList = (null == importedCrossesList) ? new ImportedCrossesList() : importedCrossesList;
+
 			importedCrossesList.addErrorMessages(message);
 			importFileIsValid = false;
 		}
@@ -459,8 +457,9 @@ public class CrossingTemplateParser {
 			@Override
 			public boolean contains(Object o) {
 				for (ImportedFactor i : this) {
-					if (i.getFactor().equalsIgnoreCase(o.toString()))
+					if (i.getFactor().equalsIgnoreCase(o.toString())) {
 						return true;
+					}
 				}
 				return false;
 			}
@@ -482,8 +481,7 @@ public class CrossingTemplateParser {
 
 		importedVariates.addAll(importedCrossesList.getImportedVariates());
 
-		final int headerSize = importedCrossesList.getImportedFactors().size() + importedCrossesList
-				.getImportedVariates().size();
+		final int headerSize = sizeOfObservationHeader();
 
 		for (int i = 0; i < headerSize; i++) {
 			// search the current header
@@ -527,7 +525,7 @@ public class CrossingTemplateParser {
 		List<GermplasmList> germplasmList = fieldbookMiddlewareService
 				.getGermplasmListsByProjectId(studyId, STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType));
 
-		if (null == germplasmList && germplasmList.isEmpty()) {
+		if (null == germplasmList || germplasmList.isEmpty()) {
 			throw new MiddlewareQueryException("study.has.no.list",
 					"Study with \"" + studyName + "\" has no list.");
 		}
@@ -538,6 +536,7 @@ public class CrossingTemplateParser {
 
 	/**
 	 * Wrapper to PoiUtil.getCellStringValue static call so we can stub the methods on unit tests
+	 *
 	 * @param sheetNo
 	 * @param rowNo
 	 * @param columnNo
@@ -549,6 +548,7 @@ public class CrossingTemplateParser {
 
 	/**
 	 * Wrapper to PoiUtil.rowIsEmpty static call so we can stub the methods on unit tests
+	 *
 	 * @param sheetNo
 	 * @param rowNo
 	 * @param colCount

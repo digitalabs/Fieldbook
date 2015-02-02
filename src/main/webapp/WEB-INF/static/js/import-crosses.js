@@ -36,7 +36,7 @@ var ImportCrosses = {
 			ImportCrosses.getImportedCrossesTable().done(function(response) {
 				setTimeout(function() {
 					new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response);
-				},500);
+				},30);
 			});
 
 			$('#openCrossListNextButton').off('click');

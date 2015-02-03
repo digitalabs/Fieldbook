@@ -120,6 +120,16 @@
           class="com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl">
     </bean>
 
+    <bean id="crossingService"
+          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingServiceImpl">
+    </bean>
+
+    <bean id="crossingTemplateParser"
+          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingTemplateParser"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
     <bean id="importWorkbookFileService"
           class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl">
     </bean>
@@ -341,6 +351,12 @@
    	
    	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
 
+    <bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
+
+    <bean id="crossNameService" class="org.generationcp.commons.service.impl.CrossNameServiceImpl">
+        <aop:scoped-proxy/>
+    </bean>
+
     <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
         <!--TODO : possibly find a way to make list based on component scan of a certain package-->
         <property name="registeredExpressions">
@@ -355,5 +371,5 @@
                 <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
             </list>
         </property>
-    </bean>    
+    </bean>
 </beans>

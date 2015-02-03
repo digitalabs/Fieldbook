@@ -1,89 +1,172 @@
-<div>
+<div class="col-xs-12 col-md-12 main-inventory" style="opacity: 0.1">   
 <form id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/SeedStoreManager/next}" method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
-
-
+     
+     <input type="hidden" th:field="*{listId}"/>
+      
     <!-- case 1: no data means no table -->
-     <div th:if="*{paginatedInventoryList == null or #lists.isEmpty(paginatedInventoryList)}">
+     <div th:if="*{inventoryList == null or #lists.isEmpty(inventoryList)}">
        <span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
      </div>
-
+     
      <!-- case 2: advanced view of the importedGermplasm -->
-     <div th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">
-       <div class="">
-         <table id="inventory-table" th:if="*{not #lists.isEmpty(paginatedInventoryList)}" class="my-class table table-curved table-condensed germplasm-list-items table-with-scroll-inventory">
+     <div  class="advance-nursery-list-table" th:if="*{inventoryList != null and not #lists.isEmpty(inventoryList)}">      
+         <table id="inventory-table" th:if="*{not #lists.isEmpty(inventoryList)}" 
+         class="table-curved table-condensed final-advance-list">
            <thead>
              <tr>
-               <th width="12%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.gid}">.GID</th>
-               <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.name}">.Name</th>
-               <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.location}">.Location</th>
-               <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.user}">.User</th>
-               <th width="12%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.amount}">.Amount</th>
-               <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.source}">.Source</th>
-               <th width="12%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.scale}">.Scale</th>
+               <th class="fbk-advance-check-box"> 
+               	<div>
+               		<input type="checkbox" class="selectAllAdvance" name="selectAllAdvance" id="selectAllAdvance"/>
+               	</div>
+               </th>
+               <th th:utext="#{seed.entry.number}">Entry #</th>
+               <th th:utext="#{seed.entry.designation}">Designation</th>
+               <th th:utext="#{seed.entry.parentage}">Parentage</th>
+               <th th:utext="#{seed.inventory.gid}">.GID</th>
+               <th th:utext="#{seed.inventory.source}">.Source</th>
+               <th th:utext="#{seed.inventory.table.location}">.Location</th>
+               <th th:utext="#{seed.inventory.amount}">.Amount</th>
+               <th th:utext="#{seed.inventory.table.scale}">.Scale</th>
+               <th th:utext="#{seed.inventory.comment}">Comment</th>               
              </tr>
            </thead>
-           <tbody th:remove="all-but-first">
-             <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
-
-               <td width="12%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.1</td>
-               <td width="16%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.germplasmName}">.1</td>
-               <td width="16%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
-               <td width="16%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.userName}">.3</td>
-               <td width="12%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
-               <td width="16%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.sourceName}">.5</td>
-               <td width="12%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
-             </tr>
-             <tr>
-               <td>.1.1</td>
-               <td>.1.1</td>
-               <td>.1</td>
-               <td>.2</td>
-               <td>.3</td>
-               <td>.4</td>
-               <td>.5</td>
-             </tr>
+           <tbody>
+             <tr class="primaryRow" th:each="gid, row : *{inventoryList}" th:attr="data-gid=${gid.gid}">
+            	<td th:class="${row.even}? 'even fbk-advance-check-box' : 'odd fbk-advance-check-box'">
+            		<input type="checkbox" class="advancingListGid" th:attr="data-gid=${gid.gid}" th:attrappend="data-lotId=${gid.locationId}" name="advancingListGid" id="advancingListGid"/> 
+           		</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td> 
+                <td th:class="${row.even}? 'even' : 'odd'" >
+					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.germplasmName}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.2</a>      
+				</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.parentage}">.2</td>
+               <td th:class="${row.even}? 'even' : 'odd'" >
+               	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.gid}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.3</a>               
+               </td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.2</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
+               <td data-truncate-limit="30" data-truncate-placement="left" th:class="${row.even}? 'even advance-list-comment' : 'odd advance-list-comment'" th:text="${gid.comment}">.6</td>
+             </tr>             
            </tbody>
-         </table>
-       </div>
-     </div>
-
-
-
-
-   		<div>
-	        <div th:if="*{inventoryList != null and not #lists.isEmpty(inventoryList)}">
-	        	<div id="inventory-germplasm-list-pagination"></div>
-	        </div>
-        </div>
-
-     	<br />
+         </table> 
+     </div>	     
      </form>
-
+     
  </div>
- <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
+ <br />
+ 		
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-        var paginationUrl = /*[[@{/SeedStoreManager/page/}]]*/;
-
-
-        var options = {
-            currentPage: /*[[${seedStoreForm.currentPage}]]*/,
-            totalPages: /*[[${seedStoreForm.totalPages}]]*/,
-
-            alignment:'center',
-            useBootstrapTooltip:true,
-            onPageClicked: function(e,originalEvent,type,page){
-            	showPage(paginationUrl, page, 'inventory-germplasm-list');
-            }
-        }
-        $( document ).ready(function() {
-    			if($('#inventory-germplasm-list-pagination') != null){
-		    		$('#inventory-germplasm-list-pagination').bootstrapPaginator(options);
-			}
-
-
-        });
-
+    /*globals getJquerySafeId, showMultiTabPage, truncateStudyVariableNames*/
+    /*exported paginationUrl, options*/
+		
+        var InventoryPage = {
+        	setupPage : function(){
+        		var listDivIdentifier  = '';
+                if($('#create-nursery-tab-headers .tabdrop').hasClass('active')){
+              	  //means the active is in the tab drop
+              	  listDivIdentifier  = $('#create-nursery-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
+                }else{
+              	  listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
+                }
+                
+                var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+            	
+          		
+        		$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(event){
+        			//select all the checkbox in the section container div										
+        				//needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
+        				setTimeout(function(){
+        					var isChecked = $('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').prop('checked');
+        					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('selected');
+          				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('manual-selected');
+          				$('#'+getJquerySafeId(sectionContainerDiv) + ' input.advancingListGid').prop('checked', isChecked);
+          				
+          				if(isChecked){
+          					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('selected');
+              				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('manual-selected');
+          				}
+          				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+        				}, 10);
+        				
+        			});
+        		
+        		$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').tableSelect({
+        			onClick: function(row) {
+        				//we clear all check
+        				if($('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click') === '1'){
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '0');
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected) input.advancingListGid:checked').parent().parent().addClass('selected');
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid:not(:checked)').parent().parent().removeClass('selected');
+        				}else{
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.advancingListGid').prop('checked', false);
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').removeClass('manual-selected');
+        					if($(row).hasClass('selected')){
+        						$(row).find('input.advancingListGid').prop('checked', true);
+        					}else{
+        						$(row).find('input.advancingListGid').prop('checked', false);
+        					}
+        				}
+        				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+        			},
+        			onCtrl: function(row){
+        				
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid').prop('checked', true);
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.advancingListGid').prop('checked', false);
+        				if($(row).hasClass('manual-selected') || $(row).hasClass('selected')){
+        					$(row).find('input.advancingListGid').prop('checked', true);
+        					$(row).addClass('selected');
+        				}else{
+        					$(row).find('input.advancingListGid').prop('checked', false);
+        					$(row).removeClass('selected');
+        				}
+        				if($('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click') === '1'){
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '0');
+        					if($(row).hasClass('selected') && $(row).hasClass('manual-selected') === false){
+        						$(row).find('input.advancingListGid').prop('checked', false);
+        						$(row).removeClass('selected');	
+        					}
+        				}
+        				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+        			},
+        			onShift: function(){
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected-dummy').addClass('selected');					
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid').prop('checked', true);
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.advancingListGid').prop('checked', false);
+        				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.primaryRow.selected').length);
+        			}
+        		
+        		});
+        		$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.advancingListGid').on('click', function(){
+        			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '1');
+        			if($(this).is(':checked')){
+        				//we highlight
+        				$(this).parent().parent().addClass('selected');
+        				$(this).parent().parent().addClass('manual-selected');
+        			}else{
+        				$(this).parent().parent().removeClass('selected');
+        				$(this).parent().parent().removeClass('manual-selected');
+        			}
+        			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.advancingListGid').prop('checked', true);
+        			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
+        			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected)').remove('selected');
+        			$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+        		});
+        		truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
+        		        		
+        		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null);
+        		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);
+        	}	
+        };
+    
+        $( document ).ready(function() {  
+            'use strict';
+             setTimeout(InventoryPage.setupPage, 3);
+  			
+          });
       //]]>
     </script>

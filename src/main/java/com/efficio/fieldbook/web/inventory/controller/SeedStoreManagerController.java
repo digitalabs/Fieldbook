@@ -1,7 +1,5 @@
 package com.efficio.fieldbook.web.inventory.controller;
 
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -144,8 +143,20 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     		@ModelAttribute("seedStoreForm") SeedStoreForm form, HttpServletRequest req,
             Model model) {
         
-        try {          
-            List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId);
+    	return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.ADVANCED.name(), "/NurseryManager/savedFinalAdvanceList");
+    }
+    
+    @RequestMapping(value="/crosses/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
+    public String displayCrossesGermplasmDetails(@PathVariable Integer listId,  
+    		@ModelAttribute("seedStoreForm") SeedStoreForm form, HttpServletRequest req,
+            Model model) {
+        return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.CROSSES.name(), "/NurseryManager/savedFinalCrossesList");
+        
+    }
+    
+    protected String getInventoryGermplasmDetailsPage(SeedStoreForm form, Integer listId, Model model, String germplasmListType, String page){
+    	try {          
+            List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId, germplasmListType);
             this.getPaginationListSelection().addFinalAdvancedList(listId.toString(), inventoryDetailList);
             
             getSeedSelection().setInventoryList(inventoryDetailList);
@@ -157,24 +168,10 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return super.showAjaxPage(model, "/NurseryManager/savedFinalAdvanceList");
+        return super.showAjaxPage(model, page);
     }
     
-    
-    @RequestMapping(value="/page/advance/{pageNum}", method = RequestMethod.GET)
-    public String getAdvancePaginatedList(@PathVariable int pageNum
-            , @ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpServletRequest req) {
-    	String listIdentifier = req.getParameter("listIdentifier");
-    	
-        List<InventoryDetails> inventoryDetailsList = getPaginationListSelection().getFinalAdvancedList(listIdentifier);
-        if(inventoryDetailsList != null){
-            form.setInventoryList(inventoryDetailsList);
-            form.setCurrentPage(pageNum);
-        }
-        form.setListId(Integer.valueOf(listIdentifier));
-        return super.showAjaxPage(model, "/Inventory/seedAdvanceInventoryPagination");
-    }
-    
+            
     @ResponseBody
     @RequestMapping(value="/save/lots", method = RequestMethod.POST)
     public Map<String, Object> saveLots(@ModelAttribute("seedStoreForm") SeedStoreForm form,
@@ -230,6 +227,17 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     public SeedSelection getSeedSelection() {
         return this.seedSelection;
     }
-    
-   
+	public void setInventoryMiddlewareService(InventoryService inventoryMiddlewareService) {
+		this.inventoryMiddlewareService = inventoryMiddlewareService;
+	}
+	public void setSeedSelection(SeedSelection seedSelection) {
+		this.seedSelection = seedSelection;
+	}
+	public void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
+	}
+       
 }

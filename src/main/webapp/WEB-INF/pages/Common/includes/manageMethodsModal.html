@@ -8,7 +8,7 @@
 							&nbsp;
 						</div>
 						<div class="col-xs-1 col-md-1">
-							<button  id="closeManageMethodModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" onClick="recreateMethodCombo();" aria-hidden="true"/>
+							<button  id="closeManageMethodModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
 						</div>										
 					</div>
 					
@@ -24,30 +24,38 @@
 </div>
 
 <div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/breeding-methods.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	(function() {
         document.programMethodUrl = /*[[${programMethodURL}]]*/ '';
         document.projectID = /*[[${projectID}]]*/ '';
     })();
+
 	$(function() {
 		'use strict';
 		$('#manageMethodModal').on('hidden.bs.modal', function () {
-			if($('#advanceNurseryModal').length !== 0 && $('#advanceNurseryModal').data('open') == '1'){
-				//we show the advance nursery modal
-				setTimeout(function(){$('#advanceNurseryModal').modal('show');}, 200);
-				setTimeout(function(){$('#advanceNurseryModal').data('open', '0');}, 200);
-				
-			}else if($('#importStudyDesigConfirmationModal').length !== 0 && $('#importStudyDesigConfirmationModal').data('open') == '1'){
-				setTimeout(function(){$('#importStudyDesigConfirmationModal').modal('show');}, 200);
-				setTimeout(function(){$('#importStudyDesigConfirmationModal').data('open', '0');}, 500);
+			if(BreedingMethodsFunctions.isModalAvailableAndForOpening('advanceNurseryModal')){
+				BreedingMethodsFunctions.openModal('advanceNurseryModal');
+				recreateMethodCombo();
+			} else if( BreedingMethodsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')){
+				BreedingMethodsFunctions.openModal('importStudyDesigConfirmationModal');
+				recreateMethodCombo();
+			} else if (BreedingMethodsFunctions.isModalAvailableAndForOpening('crossSettingsModal')){
+				$.event.trigger({
+					type: 'breeding-method-update'
+				});
+
+				BreedingMethodsFunctions.openModal('crossSettingsModal');
 			}
 	    });
 	});
+
 	function closeMethodFrame(){
 		recreateMethodCombo();
 		$('#manageMethodModal').modal('hide');
 	}
+
 	function openManageMethods() {
 		$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
 		if (methodIframeOpened == false) {

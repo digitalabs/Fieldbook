@@ -58,6 +58,13 @@ public class DateUtil {
         return new SimpleDateFormat(DB_DATE_FORMAT).parse(date);
     }
     
+    public static String showUiDateFormat(Date date) throws ParseException{
+    	if(date != null){
+    		return new SimpleDateFormat(UI_DATE_FORMAT).format(date);
+    	}
+    	return "";
+    }
+    
     /**
      * Generate year choices.
      *

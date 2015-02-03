@@ -336,6 +336,72 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 
 })(jQuery);
 
+BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
+	// FIXME Refactor to remove some of this code from the constructor function
+	/**
+	 * Creates a new PreviewCrossesDataTable.
+	 *
+	 * @constructor
+	 * @alias module:fieldbook-datatable
+	 * @param {string} tableIdentifier the id of the table container
+	 * @param {string} ajaxUrl the URL from which to retrieve table data
+	 */
+	var dataTableConstructor = function ReviewDetailsOutOfBoundsDataTable(tableIdentifier, dataList) {
+		'use strict';
+
+		var columns = [],
+			columnsDef = [],
+			table;
+
+		$(tableIdentifier + ' thead tr th').each(function() {
+			columns.push({data: $(this).html()});
+		});
+		table = $(tableIdentifier).DataTable({
+			data: dataList,
+			columns: columns,
+			scrollY: '400px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			columnDefs: columnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			bAutoWidth: true,
+			iDisplayLength: 100,
+			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+				// Assuming ID is in last column
+				$(nRow).attr('id', aData.experimentId);
+				$(nRow).data('row-index', this.fnGetPosition( nRow ));
+
+				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap','nowrap');
+				
+				return nRow;
+			},
+			fnInitComplete: function(oSettings, json) {
+				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+			},
+			language: {
+				search: '<span class="mdt-filtering-label">Search:</span>'
+			},
+			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+			// Problem with reordering plugin and fixed column for column re-ordering
+			colReorder: {
+				fixedColumns: 1
+			}
+		});
+		
+		$(tableIdentifier).dataTable().bind('sort', function() {
+			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
+		});
+
+	};
+
+	return dataTableConstructor;
+
+})(jQuery);
+
 
 BMS.Fieldbook.GermplasmListDataTable = (function($) {
 

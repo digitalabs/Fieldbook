@@ -33,8 +33,11 @@ import static org.mockito.Mockito.*;
 public class CrossingTemplateParserTest {
 
 	public static final int STUDY_ID = 1;
+	public static final int OBSERVATION_HEADER_SIZE = 8;
+	public static final String RANDOM_STRING = "0";
 	private static final String STUDY_NAME = "testStudyName";
 	private static final Integer GENDER_ENTRY_NO = 1;
+	private final static int GERMPLASMLIST_ID = 0;
 	@Mock
 	private StudyDataManager studyDataManager;
 	@Mock
@@ -51,7 +54,6 @@ public class CrossingTemplateParserTest {
 
 	@Before
 	public void beforeTest() throws Exception {
-		parserUnderTest = spy(parser);
 
 		FieldUtils.writeDeclaredField(parser, "importedCrossesList", importedCrossesList, true);
 
@@ -59,6 +61,7 @@ public class CrossingTemplateParserTest {
 
 		FieldUtils.writeDeclaredField(parser, "observationColumnMap", observationColumnMap, true);
 
+		parserUnderTest = spy(parser);
 	}
 
 	@Test
@@ -86,17 +89,18 @@ public class CrossingTemplateParserTest {
 		when(file.getInputStream()).thenReturn(mock(InputStream.class));
 
 		when(fileService.saveTemporaryFile(any(InputStream.class)))
-				.thenReturn(eq("SERVER_FILE_NAME.xls"));
+				.thenReturn("SERVER_FILE_NAME.xls");
 
 		when(fileService.retrieveWorkbook("SERVER_FILE_NAME.xls")).thenReturn(mock(Workbook.class));
 
-		Workbook wb = parser.storeImportGermplasmWorkbook(file);
+		Workbook wb = parserUnderTest.storeImportGermplasmWorkbook(file);
 
 		String originalFileName = String
-				.valueOf(FieldUtils.readField(parser, "originalFilename", true));
+				.valueOf(FieldUtils.readField(parserUnderTest, "originalFilename", true));
 
-		assertEquals("should be...", "ORIGINAL_FILENAME.xls", originalFileName);
-		assertNotNull(wb);
+		assertEquals("should retrieve original filename", "ORIGINAL_FILENAME.xls",
+				originalFileName);
+		assertNotNull("returns a workbook object", wb);
 
 	}
 
@@ -121,18 +125,19 @@ public class CrossingTemplateParserTest {
 	public void testParseObservationSheet() throws Exception {
 		// SETUP!
 		doReturn(false).when(parserUnderTest).isObservationsHeaderInvalid();
-		doReturn(8).when(parserUnderTest).sizeOfObservationHeader();
+		doReturn(OBSERVATION_HEADER_SIZE).when(parserUnderTest).sizeOfObservationHeader();
 
 		int rowSize = 20;    // assume we have 20 obs rows
 		for (int i = 1; i <= rowSize; i++) {
 			doReturn(false).when(parserUnderTest)
 					.isRowEmpty(CrossingTemplateParser.OBSERVATION_SHEET_NO, i, 8);
 		}
+
 		doReturn(true).when(parserUnderTest)
 				.isRowEmpty(CrossingTemplateParser.OBSERVATION_SHEET_NO, rowSize + 1, 8);
 
 		// assume any parsed string is integer, so we can avoid any number format exceptions
-		doReturn("0").when(parserUnderTest)
+		doReturn(RANDOM_STRING).when(parserUnderTest)
 				.getCellStringValue(eq(CrossingTemplateParser.OBSERVATION_SHEET_NO), anyInt(),
 						anyInt());
 
@@ -209,7 +214,7 @@ public class CrossingTemplateParserTest {
 						CrossingTemplateParser.CONDITION_ROW_NO + 3,
 						CrossingTemplateParser.DESCRIPTION_SHEET_COL_SIZE);
 
-		doReturn("ANY_STRING").when(parserUnderTest).getCellStringValue(
+		doReturn(RANDOM_STRING).when(parserUnderTest).getCellStringValue(
 				eq(CrossingTemplateParser.DESCRIPTION_SHEET_NO), anyInt(), anyInt());
 		doNothing().when(importedCrossesList).addImportedCondition(any(ImportedCondition.class));
 
@@ -232,7 +237,7 @@ public class CrossingTemplateParserTest {
 				.isRowEmpty(CrossingTemplateParser.DESCRIPTION_SHEET_NO, 3,
 						CrossingTemplateParser.DESCRIPTION_SHEET_COL_SIZE);
 
-		doReturn("ANY_STRING").when(parserUnderTest).getCellStringValue(
+		doReturn(RANDOM_STRING).when(parserUnderTest).getCellStringValue(
 				eq(CrossingTemplateParser.DESCRIPTION_SHEET_NO), anyInt(), anyInt());
 		doNothing().when(importedCrossesList).addImportedFactor(any(ImportedFactor.class));
 
@@ -256,7 +261,7 @@ public class CrossingTemplateParserTest {
 				.isRowEmpty(CrossingTemplateParser.DESCRIPTION_SHEET_NO, 3,
 						CrossingTemplateParser.DESCRIPTION_SHEET_COL_SIZE);
 
-		doReturn("ANY_STRING").when(parserUnderTest).getCellStringValue(
+		doReturn(RANDOM_STRING).when(parserUnderTest).getCellStringValue(
 				eq(CrossingTemplateParser.DESCRIPTION_SHEET_NO), anyInt(), anyInt());
 		doNothing().when(importedCrossesList).addImportedConstant(any(ImportedConstant.class));
 
@@ -279,7 +284,7 @@ public class CrossingTemplateParserTest {
 				.isRowEmpty(CrossingTemplateParser.DESCRIPTION_SHEET_NO, 3,
 						CrossingTemplateParser.DESCRIPTION_SHEET_COL_SIZE);
 
-		doReturn("ANY_STRING").when(parserUnderTest).getCellStringValue(
+		doReturn(RANDOM_STRING).when(parserUnderTest).getCellStringValue(
 				eq(CrossingTemplateParser.DESCRIPTION_SHEET_NO), anyInt(), anyInt());
 		doNothing().when(importedCrossesList).addImportedVariate(any(ImportedVariate.class));
 
@@ -306,7 +311,7 @@ public class CrossingTemplateParserTest {
 				.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO);
 
 		verify(fieldbookMiddlewareService, times(1))
-				.getListDataProjectByListIdAndEntryNo(STUDY_ID, GENDER_ENTRY_NO);
+				.getListDataProjectByListIdAndEntryNo(GERMPLASMLIST_ID, GENDER_ENTRY_NO);
 
 		assertNotNull("should return a listdataproj obj", results);
 

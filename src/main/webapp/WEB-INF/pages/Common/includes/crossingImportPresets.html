@@ -66,9 +66,9 @@
                         <div class="row form-group">
                             <div class="col-xs-11 col-md-11">
                                 <label class="modal-title h5"
-                                       th:text="#{study.import.crosses.settings.breeding.method.header}">BREEDING
-                                    METHOD</label>
+                                       th:text="#{study.import.crosses.settings.breeding.method.header}">BREEDING METHOD</label>
                             </div>
+
                             <div class="col-xs-1 col-md-1">
                                 &nbsp;
                             </div>
@@ -132,6 +132,7 @@
                             <div class="col-xs-6 col-md-6 text-right">
                                 <label class="label-bold"
                                        th:text="#{study.import.crosses.prefix.label}"></label>
+                                <span style='color:red; font-weight:bold'>*</span>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
                                 <input class="cross-import-name-setting" type="text" id="crossPrefix" name="crossPrefix"/>
@@ -139,12 +140,15 @@
                         </div>
                         <div class="row form-group">
                             <div class="col-xs-6 col-md-6 text-right">
-                                <label class="label-bold"
-                                       th:text="#{study.import.crosses.sequence.digits.label}"></label>
+                                <span class="label-bold"
+                                       th:text="#{study.import.crosses.sequence.digits.label}"></span>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <input type="text" id="sequenceNumberDigits" class="cross-import-name-setting"
-                                       name="sequenceNumberDigits"/>
+                                <select id="sequenceNumberDigits" class="short-dropdown cross-import-name-setting">
+                                    <option value=""></option>
+                                    <option th:each="digit : ${#numbers.sequence(1,9)}" th:value="${digit}" th:text="${digit}"></option>
+                                </select>
+
                             </div>
                         </div>
                         <div class="row form-group">
@@ -162,10 +166,11 @@
                                        th:text="#{study.import.crosses.prefix.space.label}"></label>
                             </div>
                             <div class="btn-group col-xs-6 col-md-6 text-left">
-                                <input type="radio" name="hasPrefixSpace" value="true" class="cross-import-name-setting" >
+                                <input type="radio" name="hasPrefixSpace" value="true" class="cross-import-name-setting">
                                 <label class="label-bold">Yes</label>
                                 </input>
-                                <input type="radio" name="hasPrefixSpace" value="false" class="cross-import-name-setting" >
+                                &nbsp;
+                                <input type="radio" name="hasPrefixSpace" value="false" class="cross-import-name-setting" checked="true">
                                 <label class="label-bold">No</label>
                                 </input>
                             </div>
@@ -179,7 +184,8 @@
                                 <input type="radio" name="hasSuffixSpace" value="true" class="cross-import-name-setting" >
                                 <label class="label-bold">Yes</label>
                                 </input>
-                                <input type="radio" name="hasSuffixSpace" value="false" class="cross-import-name-setting" >
+                                &nbsp;
+                                <input type="radio" name="hasSuffixSpace" value="false" class="cross-import-name-setting" checked="true">
                                 <label class="label-bold">No</label>
                                 </input>
                             </div>
@@ -207,10 +213,11 @@
                             <div class="col-xs-6 col-md-6 text-right">
                                 <label class="label-bold"
                                        th:text="#{study.import.crosses.parentage.separator.label}"></label>
+                                <span style='color:red; font-weight:bold'>*</span>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
                                 <input type="text" id="parentageDesignationSeparator"
-                                       name="parentageDesignationSeparator"/>
+                                       name="parentageDesignationSeparator" value="/"/>
                             </div>
                         </div>
 
@@ -226,6 +233,64 @@
                         <div class="row form-group">
                             <div class="col-xs-11 col-md-11">
                                 <label class="modal-title h5"
+                                       th:text="#{study.import.crosses.harvest.details.header}">HARVEST
+                                    DETAILS</label>
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.harvest.details.date.label}"></label>
+                                <span style='color:red; font-weight:bold'>*</span>
+                            </div>
+                            <div class="col-xs-6 col-md-6 add-bottom-padding text-left">
+                                <div class="row form-group">
+                                    <div class="col-xs-4 col-md-4">
+                                        <input type="hidden" id="harvestYearDropdown"/>
+                                    </div>
+                                    <div class="col-xs-8 col-md-8">
+                                        <input type="hidden" id="harvestMonthDropdown"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row form-group">
+
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.harvest.details.location.label}"></label>
+                                <span style='color:red; font-weight:bold'>*</span>
+                            </div>
+                            <div class="col-xs-6 col-md-6 add-bottom-padding text-left">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12">
+                                        <input type="hidden"
+                                               id="locationDropdown"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12">
+
+                                        <input type="checkbox" id="locationFavoritesOnlyCheckbox"/>
+                                        <label>Show only favorite
+                                            locations</label>
+                                        &nbsp;
+                                        <a href="javascript: openLocationsModal();">Manage
+                                            Locations</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-11 col-md-11">
+                                <label class="modal-title h5"
                                        th:text="#{study.import.crosses.settings.save.header}">SAVE
                                     SETTINGS</label>
                             </div>
@@ -234,30 +299,27 @@
                             </div>
                         </div>
 
-                    </div>
-
-                    <div class="row form-group">
-                        <div class="col-xs-1 col-md-1">
-                            &nbsp;
-                        </div>
-
-                        <div class="col-xs-5 col-md-5">
-                            <input type="checkbox" id="saveSettingsCheckbox"/>
-                            <label class="label-bold"
-                                   th:text="#{study.import.crosses.settings.save.settings.label}"></label>
-                        </div>
-
-                        <div class="col-xs-5 col-md-5 add-bottom-padding">
-
-                            <div class="col-xs-12 col-md-12">
-                                <input type="text" id="presetName"/>
+                        <div class="row form-group">
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
                             </div>
 
+                            <div class="col-xs-5 col-md-5">
+                                <span class="label-bold"
+                                       th:text="#{study.import.crosses.settings.save.settings.label}"></span>
+                            </div>
+
+                            <div class="col-xs-5 col-md-5 add-bottom-padding">
+                                    <input type="text" id="presetName"/>
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
                         </div>
-                        <div class="col-xs-1 col-md-1">
-                            &nbsp;
-                        </div>
+
                     </div>
+
+
 
 
                     <div class="modal-footer">
@@ -265,8 +327,7 @@
                                 aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel
                         </button>
                         <button type="button" class="btn btn-primary"
-                                aria-hidden="true" th:text="#{common.form.next.text}"
-                                onclick="javascript:submitAndValidateForm();">Next
+                                aria-hidden="true" th:text="#{common.form.next.text}" id="settingsNextButton">Next
                         </button>
                     </div>
                 </div>
@@ -276,6 +337,7 @@
 
 <div layout:fragment="page-script">
     <script type="text/javascript" th:src="@{/static/js/breeding-methods.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/locations.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
     <script type='text/javascript' th:inline="javascript">
 
@@ -287,8 +349,12 @@
             BreedingMethodsFunctions.openMethodsModal();
         }
 
-        function submitAndValidateForm() {
-            ImportCrosses.submitCrossImportSettings();
+        function openLocationsModal() {
+            var crossSettingsPopupModal = $('#crossSettingsModal');
+            crossSettingsPopupModal.modal('hide');
+            crossSettingsPopupModal.data('open', '1');
+
+            LocationsFunctions.openLocationsModal();
         }
 
     </script>

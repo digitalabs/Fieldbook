@@ -27,6 +27,7 @@ var SaveAdvanceList = {};
 				type: 'GET',
 				cache: false,
 				success: function(html) {
+					$('#saveListTreeModal').data('is-save-crosses', '0');
 					$('#saveGermplasmRightSection').html(html);
 					$('#saveListTreeModal').modal({
 						show: true,
@@ -75,16 +76,32 @@ var SaveAdvanceList = {};
 		var parentId = chosenNodeFolder.data.key;
 		$('#saveListForm #parentId').val(parentId);
 		var dataForm = $('#saveListForm').serialize();
+		
+		var saveList  = '/Fieldbook/ListTreeManager/saveList/';
+	    var isCrosses = false;
+	    if($('#saveListTreeModal').data('is-save-crosses') === '1'){
+	    	isCrosses = true;
+	    }
+	    if(isCrosses){
+	    	saveList  = '/Fieldbook/ListTreeManager/saveCrossesList/';
+	    }
+	    
 		$.ajax({
-			url: '/Fieldbook/ListTreeManager/saveList/',
+			url: saveList,
 			type: 'POST',
 			data: dataForm,
 			cache: false,
 			success: function(data) {
 				if(data.isSuccess === 1){
 					$('#saveListTreeModal').modal('hide');
-					displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false, data.advancedGermplasmListId);
-				}else{
+					if(isCrosses){
+						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);        
+						$('#saveListTreeModal').data('is-save-crosses', '0');
+					} else {
+						displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false, data.advancedGermplasmListId);
+					}
+					showSuccessfulMessage('',saveListSuccessfullyMessage);
+				} else {
 					showErrorMessage('page-save-list-message-modal', data.message);
 				}
 			}

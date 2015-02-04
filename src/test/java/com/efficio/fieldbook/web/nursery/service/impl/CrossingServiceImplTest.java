@@ -252,7 +252,7 @@ public class CrossingServiceImplTest {
 		assertEquals(20150101, name1.getNdate().intValue());
 		assertEquals(null, name1.getNid());
 		assertEquals(null, name1.getNstat());
-		assertEquals("CROSS,SOURCE", name1.getNval());
+		assertEquals(null, name1.getNval());
 		assertEquals(0, name1.getReferenceId().intValue());
 		assertEquals(null, name1.getTypeId());
 		assertEquals(USER_ID, name1.getUserId());
@@ -284,7 +284,7 @@ public class CrossingServiceImplTest {
 		assertEquals(20150101, name2.getNdate().intValue());
 		assertEquals(null, name2.getNid());
 		assertEquals(null, name2.getNstat());
-		assertEquals("CROSS,SOURCE", name1.getNval());
+		assertEquals(null, name1.getNval());
 		assertEquals(0, name2.getReferenceId().intValue());
 		assertEquals(null, name2.getTypeId());
 		assertEquals(USER_ID, name2.getUserId());

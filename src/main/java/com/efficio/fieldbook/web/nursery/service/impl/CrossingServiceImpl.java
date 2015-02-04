@@ -101,7 +101,9 @@ public class CrossingServiceImpl implements CrossingService {
         }
         
         if(additionalDetailsSetting.getHarvestDate() != null){
-            dateIntValue = Integer.parseInt(additionalDetailsSetting.getHarvestDate());
+			String dateString = additionalDetailsSetting.getHarvestDate();
+			String replacedDateString = dateString.replace("-", "");
+            dateIntValue = Integer.parseInt(replacedDateString);
         }
 		
 		for (ImportedCrosses cross : importedCrosses){

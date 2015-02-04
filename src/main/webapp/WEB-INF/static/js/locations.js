@@ -49,7 +49,7 @@ if (typeof (LocationsFunctions) === 'undefined') {
                     possibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allSeedStorageLocations, locationConversionFunction);
                 }
 
-                var favoritePossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.favoriteMethods, locationConversionFunction);
+                var favoritePossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.favoriteLocations, locationConversionFunction);
 
                 if (favoritesDefault) {
                     $safeId('#' + favoritesCheckboxID).prop('checked', true);

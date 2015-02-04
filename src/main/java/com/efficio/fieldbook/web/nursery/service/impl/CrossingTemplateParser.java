@@ -5,6 +5,7 @@ import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -80,7 +81,7 @@ public class CrossingTemplateParser {
 
 			parseObservationSheet();
 
-		} catch (IOException | ParseException e) {
+		} catch (IOException | ParseException | InvalidFormatException e) {
 			addParseErrorMsg(FILE_INVALID);
 		} catch (MiddlewareQueryException e) {
 			addParseErrorMsg(NO_REFERENCES_ERROR_DESC);
@@ -89,7 +90,7 @@ public class CrossingTemplateParser {
 	}
 
 	protected Workbook storeImportGermplasmWorkbook(MultipartFile multipartFile)
-			throws IOException {
+			throws IOException, InvalidFormatException {
 		String serverFilename = fileService.saveTemporaryFile(multipartFile.getInputStream());
 		this.originalFilename = multipartFile.getOriginalFilename();
 
@@ -213,17 +214,17 @@ public class CrossingTemplateParser {
 						new ImportedCondition(
 								getCellStringValue(DESCRIPTION_SHEET_NO,
 										currentRow, 0)
-								, getCellStringValue( DESCRIPTION_SHEET_NO,
+								, getCellStringValue(DESCRIPTION_SHEET_NO,
 								currentRow, 1)
-								, getCellStringValue( DESCRIPTION_SHEET_NO,
+								, getCellStringValue(DESCRIPTION_SHEET_NO,
 								currentRow, 2)
-								, getCellStringValue( DESCRIPTION_SHEET_NO,
+								, getCellStringValue(DESCRIPTION_SHEET_NO,
 								currentRow, 3)
-								, getCellStringValue( DESCRIPTION_SHEET_NO,
+								, getCellStringValue(DESCRIPTION_SHEET_NO,
 								currentRow, 4)
-								, getCellStringValue( DESCRIPTION_SHEET_NO,
+								, getCellStringValue(DESCRIPTION_SHEET_NO,
 								currentRow, 5)
-								, getCellStringValue( DESCRIPTION_SHEET_NO,
+								, getCellStringValue(DESCRIPTION_SHEET_NO,
 								currentRow, 6),
 								""
 						)
@@ -397,26 +398,26 @@ public class CrossingTemplateParser {
 
 	protected boolean isConstantsHeaderInvalid(int constantHeaderRowNo) {
 		return !
-				AppConstants.CONSTANT.getString().equalsIgnoreCase(PoiUtil
-						.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO,
+				AppConstants.CONSTANT.getString()
+						.equalsIgnoreCase(getCellStringValue(DESCRIPTION_SHEET_NO,
 								constantHeaderRowNo, 0))
-				|| !AppConstants.DESCRIPTION.getString().equalsIgnoreCase(PoiUtil
-				.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO,
+				|| !AppConstants.DESCRIPTION.getString()
+				.equalsIgnoreCase(getCellStringValue(DESCRIPTION_SHEET_NO,
 						constantHeaderRowNo, 1))
-				|| !AppConstants.PROPERTY.getString().equalsIgnoreCase(PoiUtil
-				.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO,
+				|| !AppConstants.PROPERTY.getString()
+				.equalsIgnoreCase(getCellStringValue(DESCRIPTION_SHEET_NO,
 						constantHeaderRowNo, 2))
-				|| !AppConstants.SCALE.getString().equalsIgnoreCase(PoiUtil
-				.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO,
-						constantHeaderRowNo, 3))
-				|| !AppConstants.METHOD.getString().equalsIgnoreCase(PoiUtil
-				.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO,
-						constantHeaderRowNo, 4))
-				|| !AppConstants.DATA_TYPE.getString().equalsIgnoreCase(PoiUtil
-				.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO,
-						constantHeaderRowNo, 5))
-				|| !AppConstants.VALUE.getString().equalsIgnoreCase(PoiUtil
-				.getCellStringValue(this.workbook, DESCRIPTION_SHEET_NO,
+				|| !AppConstants.SCALE.getString().equalsIgnoreCase(getCellStringValue(
+				DESCRIPTION_SHEET_NO,
+				constantHeaderRowNo, 3))
+				|| !AppConstants.METHOD.getString().equalsIgnoreCase(getCellStringValue(
+				DESCRIPTION_SHEET_NO,
+				constantHeaderRowNo, 4))
+				|| !AppConstants.DATA_TYPE.getString().equalsIgnoreCase(getCellStringValue(
+				DESCRIPTION_SHEET_NO,
+				constantHeaderRowNo, 5))
+				|| !AppConstants.VALUE.getString().equalsIgnoreCase(
+				getCellStringValue(DESCRIPTION_SHEET_NO,
 						constantHeaderRowNo, 6));
 	}
 
@@ -445,7 +446,9 @@ public class CrossingTemplateParser {
 		if (importFileIsValid) {
 
 			// create a new instance if not yet existing (happens when exception caught without parsing started yet)
-			importedCrossesList = (null == importedCrossesList) ? new ImportedCrossesList() : importedCrossesList;
+			importedCrossesList = (null == importedCrossesList) ?
+					new ImportedCrossesList() :
+					importedCrossesList;
 
 			importedCrossesList.addErrorMessages(message);
 			importFileIsValid = false;
@@ -485,8 +488,11 @@ public class CrossingTemplateParser {
 
 		for (int i = 0; i < headerSize; i++) {
 			// search the current header
-			String obsHeader = PoiUtil
-					.getCellStringValue(this.workbook, OBSERVATION_SHEET_NO, 0, i);
+			String obsHeader = getCellStringValue(OBSERVATION_SHEET_NO, 0, i);
+
+			if (null == obsHeader) {
+				return true;
+			}
 
 			boolean inFactors = importedFactors.contains(obsHeader);
 			boolean inVariates = importedVariates.contains(obsHeader);

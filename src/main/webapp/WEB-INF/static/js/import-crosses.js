@@ -69,9 +69,9 @@ var ImportCrosses = {
 				},
 				error: function(response) {
 
-					showErrorMessage(null,generalAjaxErrorMessage);
+                    createErrorNotification(crossingImportErrorHeader,invalidImportedFile);
 
-					deferred.reject(response);
+                    deferred.reject(response);
 				}
 			}).submit();
 

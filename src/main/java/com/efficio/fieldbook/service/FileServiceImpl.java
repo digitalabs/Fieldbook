@@ -104,17 +104,11 @@ public class FileServiceImpl implements FileService{
  	 * @see com.efficio.fieldbook.service.api.FileService#retrieveWorkbook(java.lang.String)
  	 */
  	@Override
-    public Workbook retrieveWorkbook(String currentFilename) throws IOException {
-        InputStream is = new FileInputStream(getFilePath(currentFilename));
+    public Workbook retrieveWorkbook(String currentFilename)
+			throws IOException, InvalidFormatException {
+        File workbookFile = new File(getFilePath(currentFilename));
 
-        try {
-            return WorkbookFactory.create(is);
-        } catch (InvalidFormatException e) {
-            LOG.error(e.getMessage(), e);
-            return null;
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
+		return WorkbookFactory.create(workbookFile);
+
     }
-
 }

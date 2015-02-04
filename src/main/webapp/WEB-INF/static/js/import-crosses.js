@@ -165,6 +165,22 @@ var ImportCrosses = {
 			$('#locationDropdown').select2('val', setting.locationID);
 		},
 
+		openBreedingMethodsModal: function () {
+			var crossSettingsPopupModal = $('#crossSettingsModal');
+			crossSettingsPopupModal.modal('hide');
+			crossSettingsPopupModal.data('open', '1');
+
+			BreedingMethodsFunctions.openMethodsModal();
+		},
+
+		openLocationsModal: function () {
+			var crossSettingsPopupModal = $('#crossSettingsModal');
+			crossSettingsPopupModal.modal('hide');
+			crossSettingsPopupModal.data('open', '1');
+
+			LocationsFunctions.openLocationsModal();
+		},
+
 		createAvailableImportSettingsDropdown : function(dropdownID, settingList) {
 			var possibleValues = [];
 			$.each(settingList, function(index, setting) {

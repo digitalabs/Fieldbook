@@ -102,7 +102,7 @@
                                         <input type="checkbox" id="showFavoritesOnlyCheckbox"/>
                                         <label>Show only favorite methods</label>
                                         &nbsp;
-                                        <a href="javascript: openMethodsModal();">Manage Methods</a>
+                                        <a href="javascript: ImportCrosses.openBreedingMethodsModal();">Manage Methods</a>
                                     </div>
                                 </div>
 
@@ -280,7 +280,7 @@
                                         <label>Show only favorite
                                             locations</label>
                                         &nbsp;
-                                        <a href="javascript: openLocationsModal();">Manage
+                                        <a href="javascript: ImportCrosses.openLocationsModal();">Manage
                                             Locations</a>
                                     </div>
                                 </div>
@@ -340,22 +340,5 @@
     <script type="text/javascript" th:src="@{/static/js/locations.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
     <script type='text/javascript' th:inline="javascript">
-
-        function openMethodsModal() {
-            var crossSettingsPopupModal = $('#crossSettingsModal');
-            crossSettingsPopupModal.modal('hide');
-            crossSettingsPopupModal.data('open', '1');
-
-            BreedingMethodsFunctions.openMethodsModal();
-        }
-
-        function openLocationsModal() {
-            var crossSettingsPopupModal = $('#crossSettingsModal');
-            crossSettingsPopupModal.modal('hide');
-            crossSettingsPopupModal.data('open', '1');
-
-            LocationsFunctions.openLocationsModal();
-        }
-
     </script>
 </div>

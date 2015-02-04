@@ -4,6 +4,7 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -16,19 +17,14 @@ import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormatSymbols;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,6 +38,10 @@ import java.util.Map;
 public class CrossingSettingsController extends AbstractBaseFieldbookController {
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
 	public static final String URL = "/import/crosses";
+
+	public static final int YEAR_INTERVAL = 30;
+	public static final String ID = "id";
+	public static final String TEXT = "text";
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -140,6 +140,49 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		return returnVal;
 	}
 
+	@ResponseBody
+	@RequestMapping(value="/getHarvestYears", method = RequestMethod.GET)
+	public List<String> getHarvestYears() {
+		List<String> years = new ArrayList<>();
+
+		Calendar cal = Calendar.getInstance();
+
+		for (int i = 0; i < YEAR_INTERVAL; i++) {
+			years.add(Integer.toString(cal.get(Calendar.YEAR)));
+			cal.roll(Calendar.YEAR, false);
+		}
+
+		return years;
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/getHarvestMonths", method = RequestMethod.GET)
+	public List<Map<String, String>> getHarvestMonths() {
+		List<Map<String, String>> monthList = new ArrayList<>();
+
+		String[] monthLabels = DateFormatSymbols.getInstance().getMonths();
+		int i = 1;
+		for (String monthLabel : monthLabels) {
+			if (monthLabel.isEmpty()) {
+				continue;
+			}
+
+			String textValue = Integer.toString(i++);
+			if (textValue.length() == 1) {
+				textValue = "0" + textValue;
+			}
+
+			Map<String, String> monthMap = new HashMap<>();
+			monthMap.put(ID, textValue);
+			monthMap.put(TEXT, monthLabel);
+
+			monthList.add(monthMap);
+		}
+
+		return monthList;
+
+	}
+
 	protected void saveCrossSetting(CrossSetting setting, Integer programID) throws MiddlewareQueryException,
 			JAXBException{
 
@@ -183,7 +226,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		if (contextInfo != null) {
 			return contextInfo.getSelectedProjectId().intValue();
 		} else {
-			return 2;
+			return 3;
 		}
 	}
 
@@ -194,4 +237,5 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	public void setSettingsPresetService(SettingsPresetService settingsPresetService) {
 		this.settingsPresetService = settingsPresetService;
 	}
+
 }

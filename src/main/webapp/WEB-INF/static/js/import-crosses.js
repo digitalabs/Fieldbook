@@ -69,9 +69,9 @@ var ImportCrosses = {
 				},
 				error: function(response) {
 
-					showErrorMessage(null,generalAjaxErrorMessage);
+                    createErrorNotification(crossingImportErrorHeader,invalidImportedFile);
 
-					deferred.reject(response);
+                    deferred.reject(response);
 				}
 			}).submit();
 
@@ -92,14 +92,21 @@ var ImportCrosses = {
 		showImportSettingsPopup : function() {
 			var crossSettingsPopupModal = $('#crossSettingsModal');
 			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox');
+			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox', true);
+			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', true);
 			ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
+			ImportCrosses.updateSampleParentageDesignation();
 
 			$('.cross-import-name-setting').off('change');
 			$('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
 
 			$('#parentageDesignationSeparator').off('change');
 			$('#parentageDesignationSeparator').on('change', ImportCrosses.updateSampleParentageDesignation);
+
+			ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
+			ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
+
+			$('#settingsNextButton').click(ImportCrosses.submitCrossImportSettings);
 		},
 
 		updateSampleParentageDesignation : function() {
@@ -155,6 +162,23 @@ var ImportCrosses = {
 			$('#sequenceNumberDigits').val(setting.sequenceNumberDigits);
 			$('#parentageDesignationSeparator').val(setting.parentageDesignationSeparator);
 			$('#startingSequenceNumber').val(setting.startingSequenceNumber);
+			$('#locationDropdown').select2('val', setting.locationID);
+		},
+
+		openBreedingMethodsModal: function () {
+			var crossSettingsPopupModal = $('#crossSettingsModal');
+			crossSettingsPopupModal.modal('hide');
+			crossSettingsPopupModal.data('open', '1');
+
+			BreedingMethodsFunctions.openMethodsModal();
+		},
+
+		openLocationsModal: function () {
+			var crossSettingsPopupModal = $('#crossSettingsModal');
+			crossSettingsPopupModal.modal('hide');
+			crossSettingsPopupModal.data('open', '1');
+
+			LocationsFunctions.openLocationsModal();
 		},
 
 		createAvailableImportSettingsDropdown : function(dropdownID, settingList) {
@@ -208,7 +232,7 @@ var ImportCrosses = {
 
 			if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				var targetURL;
-				if ($('#saveSettingsCheckbox').is(':checked')) {
+				if ($('#presetName').val().trim() !== '') {
 					targetURL = '/Fieldbook/import/crosses/submitAndSaveSetting';
 				} else {
 					targetURL = '/Fieldbook/import/crosses/submit';
@@ -246,6 +270,16 @@ var ImportCrosses = {
 			if (!importSettings.crossNameSetting.separator || importSettings.crossNameSetting.separator === '') {
 				valid = false;
 				showErrorMessage('', 'Separator for parentage designation is required');
+			}
+
+			if (!importSettings.additionalDetailsSetting.harvestLocationId || importSettings.additionalDetailsSetting.harvestLocationId === '') {
+				valid = false;
+				showErrorMessage('', 'Harvest location is required');
+			}
+
+			if (!importSettings.additionalDetailsSetting.harvestDate || importSettings.additionalDetailsSetting.harvestDate.length < 7) {
+				valid = false;
+				showErrorMessage('', 'Harvest date is required');
 			}
 
 			return valid;
@@ -301,11 +335,63 @@ var ImportCrosses = {
 			settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
 
 			settingObject.additionalDetailsSetting = {};
-			settingObject.additionalDetailsSetting.harvestLocationId = 0;
-			settingObject.additionalDetailsSetting.harvestDate = '';
+			settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
+			if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
+				settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val();
+			}
 
 			return settingObject;
 
+		},
+
+		populateHarvestMonthDropdown : function(dropdownID) {
+			ImportCrosses.retrieveHarvestMonths().done(function(monthData) {
+				var dropdownSelect = $('#' + dropdownID);
+				dropdownSelect.empty();
+				dropdownSelect.select2({
+					placeholder : 'Month',
+					allowClear : true,
+					data : monthData,
+					minimumResultsForSearch : -1
+				});
+			});
+		},
+
+		populateHarvestYearDropdown : function(dropdownID) {
+			ImportCrosses.retrieveHarvestYears().done(function (yearData) {
+				var dropdownData = [];
+				var dropdownSelect = $('#' + dropdownID);
+				dropdownSelect.empty();
+				$.each(yearData, function (index, value) {
+					dropdownData.push({
+						id : value,
+						text : value
+					});
+				});
+
+				dropdownSelect.select2({
+					minimumResultsForSearch : -1,
+					data : dropdownData
+				});
+
+				dropdownSelect.select2('val', yearData[0]);
+			});
+		},
+
+		retrieveHarvestMonths : function() {
+			return $.ajax({
+				url: '/Fieldbook/import/crosses/getHarvestMonths',
+				type: 'GET',
+				cache: false
+			});
+		},
+
+		retrieveHarvestYears: function () {
+			return $.ajax({
+				url: '/Fieldbook/import/crosses/getHarvestYears',
+				type: 'GET',
+				cache: false
+			});
 		},
 
 		displayCrossesList: function (uniqueId, germplasmListId, listName, isDefault, crossesListId) {

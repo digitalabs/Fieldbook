@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.common.bean;
+ package com.efficio.fieldbook.web.common.bean;
 
 import org.generationcp.commons.settings.CrossSetting;
 
@@ -21,22 +21,27 @@ public class CrossImportSettings {
 	private Boolean hasPrefixSpace;
 	private Integer startingSequenceNumber;
 	private String parentageDesignationSeparator;
+	private Integer locationID;
 
 	public CrossImportSettings() {
 	}
 
 	public CrossImportSettings(String name, String crossPrefix, Integer breedingMethodID,
-			String crossSuffix, Integer sequenceNumberDigits, Boolean hasSuffixSpace,
-			Boolean hasPrefixSpace, Integer startingSequenceNumber,
-			String parentageDesignationSeparator) {
+			Boolean basedOnStatusOfParentalLines, String crossSuffix,
+			Integer sequenceNumberDigits, Boolean hasSuffixSpace, Boolean hasPrefixSpace,
+			Integer startingSequenceNumber, String parentageDesignationSeparator,
+			String harvestYear, String harvestMonth, Integer locationID) {
+		this.name = name;
 		this.crossPrefix = crossPrefix;
 		this.breedingMethodID = breedingMethodID;
+		this.basedOnStatusOfParentalLines = basedOnStatusOfParentalLines;
 		this.crossSuffix = crossSuffix;
 		this.sequenceNumberDigits = sequenceNumberDigits;
 		this.hasSuffixSpace = hasSuffixSpace;
 		this.hasPrefixSpace = hasPrefixSpace;
 		this.startingSequenceNumber = startingSequenceNumber;
 		this.parentageDesignationSeparator = parentageDesignationSeparator;
+		this.locationID = locationID;
 	}
 
 	public String getName() {
@@ -123,6 +128,8 @@ public class CrossImportSettings {
 		this.sequenceNumberDigits = setting.getCrossNameSetting().getNumOfDigits();
 		this.startingSequenceNumber = setting.getCrossNameSetting().getStartNumber();
 		this.parentageDesignationSeparator = setting.getCrossNameSetting().getSeparator();
+
+		this.locationID = setting.getAdditionalDetailsSetting().getHarvestLocationId();
 	}
 
 	public Boolean getBasedOnStatusOfParentalLines() {
@@ -131,5 +138,13 @@ public class CrossImportSettings {
 
 	public void setBasedOnStatusOfParentalLines(Boolean basedOnStatusOfParentalLines) {
 		this.basedOnStatusOfParentalLines = basedOnStatusOfParentalLines;
+	}
+
+	public Integer getLocationID() {
+		return locationID;
+	}
+
+	public void setLocationID(Integer locationID) {
+		this.locationID = locationID;
 	}
 }

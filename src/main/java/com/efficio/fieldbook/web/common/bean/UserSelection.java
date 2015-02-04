@@ -12,10 +12,14 @@
 package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+
+import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -153,8 +157,12 @@ public class UserSelection implements Serializable {
     private List<Integer> expDesignVariables;
     /** The List of experimental design variables (new, edit, or deleted) since the workbook was retrieved from the db, will be reset upon save  */
     private List<MeasurementVariable> experimentalDesignVariables;
-	
-	/**
+    private ImportedCrossesList importedCrossesList;
+    private List<Integer> importedCrossesId;
+
+    private CrossSetting crossSettings;
+
+    /**
      * Gets the current page germplasm list.
      *
      * @return the current page germplasm list
@@ -893,4 +901,36 @@ public class UserSelection implements Serializable {
 			this.experimentalDesignVariables = experimentalDesignVariables;
 		}
 
+    public ImportedCrossesList getImportedCrossesList() {
+        return importedCrossesList;
+    }
+
+    public void setimportedCrossesList(ImportedCrossesList importedCrossesList) {
+        this.importedCrossesList = importedCrossesList;
+    }
+
+    public CrossSetting getCrossSettings() {
+        return crossSettings;
+    }
+
+    public void setCrossSettings(CrossSetting crossSettings) {
+        this.crossSettings = crossSettings;
+    }
+
+	public List<Integer> getImportedCrossesId() {
+		return importedCrossesId;
+	}
+
+	public void setImportedCrossesId(List<Integer> importedCrossesId) {
+		this.importedCrossesId = importedCrossesId;
+	}
+    
+    public void addImportedCrossesId(Integer crossesId){
+    	if(importedCrossesId == null){
+    		importedCrossesId = new ArrayList<Integer>();
+    	}
+    	if(crossesId != null){
+    		importedCrossesId.add(crossesId);
+    	}
+    }
 }

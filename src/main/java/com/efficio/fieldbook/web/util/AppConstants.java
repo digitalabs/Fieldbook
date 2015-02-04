@@ -106,6 +106,15 @@ public enum AppConstants {
     , STUDY_NAME
     , STUDY_TITLE
     , OBJECTIVE
+
+    , FEMALE_NURSERY
+    , FEMALE_ENTRY
+    , MALE_NURSERY
+    , MALE_ENTRY
+    , BREEDING_METHOD
+    , CROSSING_DATE
+    , SEEDS_HARVESTED
+    , NOTES
         
     // Import Germplasm
     , CONDITION

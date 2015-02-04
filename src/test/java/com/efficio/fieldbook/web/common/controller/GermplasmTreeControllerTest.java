@@ -21,18 +21,25 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.easymock.EasyMock;
 import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.ExtendedModelMap;
 
 import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
@@ -315,5 +322,43 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 	@Test
 	public void testIsSimilarToRootFolderNameReturnsTrueForItemNameNotSimilarToRootFolder(){
 		Assert.assertFalse("Expecting to return true for item name not similar to \"Lists\" ", controller.isSimilarToRootFolderName("Dummy Folder Name"));
+	}
+	
+	public void testSaveCrossesListIfStudyIsNull() throws MiddlewareQueryException{
+		UserSelection userSelection = new UserSelection();
+		userSelection.setWorkbook(null);
+		GermplasmTreeController treeController = new GermplasmTreeController();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		Integer germplasmListId = 1;
+		Integer userId = 9;
+		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
+		Integer crossesId = 5;
+		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Mockito.anyInt(), Mockito.any(GermplasmListType.class), Mockito.anyInt(), Mockito.anyListOf(ListDataProject.class), Mockito.anyInt())).thenReturn(crossesId);
+		treeController.setUserSelection(userSelection);
+		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);
+		Assert.assertEquals("Should return the same crosses Id as per simulation of saving", crossesId.intValue(), savedCrossesId);
+	}
+	
+	@Test
+	public void testSaveCrossesListIfStudyIsNotNull() throws MiddlewareQueryException{
+		UserSelection userSelection = new UserSelection();
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		Integer studyId = 99;
+		studyDetails.setId(studyId);
+		workbook.setStudyDetails(studyDetails);
+		userSelection.setWorkbook(workbook);
+		GermplasmTreeController treeController = new GermplasmTreeController();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		Integer germplasmListId = 1;
+		Integer userId = 9;
+		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
+		Integer crossesId = 88;
+		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Mockito.anyInt(), Mockito.any(GermplasmListType.class), Mockito.anyInt(), Mockito.anyListOf(ListDataProject.class), Mockito.anyInt())).thenReturn(crossesId);
+		treeController.setUserSelection(userSelection);
+		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);
+		Assert.assertEquals("Should return the same crosses Id as per simulation of saving", crossesId.intValue(), savedCrossesId);
 	}
 }

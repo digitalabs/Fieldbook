@@ -302,4 +302,16 @@
           scope="request">
         <aop:scoped-proxy/>
     </bean>
+
+	<bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
+	<bean id="crossingService"
+          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingServiceImpl">
+    </bean>
+
+    <bean id="crossingTemplateParser"
+          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingTemplateParser"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+    
 </beans>

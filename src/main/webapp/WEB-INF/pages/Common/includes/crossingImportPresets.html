@@ -1,0 +1,295 @@
+<div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
+    <!-- Modal -->
+
+
+
+        <div class="modal fade import-study-data import-window" id="crossSettingsModal"
+             role="dialog"
+             aria-labelledby="" aria-hidden="true">
+            <div class="modal-dialog modal-extra-large">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <div class="row form-group">
+                            <div class="col-xs-11 col-md-11">
+                                <label class="modal-title fbk-modal-title" id="heading-modal"
+                                       th:text="#{study.import.crosses.settings.header}"></label>
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                <button id="close" type="button"
+                                        class="close  pull-right glyphicon glyphicon-remove"
+                                        data-dismiss="modal" aria-hidden="true"/>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-11 col-md-11">
+                                <label class="modal-title h5"
+                                       th:text="#{study.import.crosses.settings.load.settings.header}">DEFINE CROSSING SETTINGS</label>
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label
+                                        th:text="#{study.import.crosses.settings.load.settings.text}"></label>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+
+                            <div class="col-xs-5 col-md-5">
+                                <input type="checkbox" id="loadSettingsCheckbox"/>
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.settings.load.settings.label}"></label>
+                            </div>
+
+                            <div class="col-xs-5 col-md-5 add-bottom-padding">
+
+                                    <div class="col-xs-12 col-md-12">
+                                        <input type="hidden" name="presetSettings"
+                                               id="presetSettingsDropdown"/>
+                                    </div>
+
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-11 col-md-11">
+                                <label class="modal-title h5"
+                                       th:text="#{study.import.crosses.settings.breeding.method.header}">BREEDING
+                                    METHOD</label>
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label
+                                        th:text="#{study.import.crosses.settings.breeding.method.text}"></label>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                            <div class="col-xs-5 col-md-5">
+                                <input type="checkbox" id="useSelectedMethodCheckbox"/>
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.settings.breeding.method.label}"></label>
+                            </div>
+                            <div class="col-xs-5 col-md-5 add-bottom-padding">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12">
+                                        <input type="hidden" name="breedingMethodID"
+                                               id="breedingMethodDropdown"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12">
+                                        <input type="checkbox" id="showFavoritesOnlyCheckbox"/>
+                                        <label>Show only favorite methods</label>
+                                        &nbsp;
+                                        <a href="javascript: openMethodsModal();">Manage Methods</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-11 col-md-11">
+                                <label class="modal-title h5"
+                                       th:text="#{study.import.crosses.settings.naming.header}">NAMING</label>
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label
+                                        th:text="#{study.import.crosses.settings.naming.text}"></label>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.prefix.label}"></label>
+                            </div>
+                            <div class="col-xs-6 col-md-6 text-left">
+                                <input class="cross-import-name-setting" type="text" id="crossPrefix" name="crossPrefix"/>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.sequence.digits.label}"></label>
+                            </div>
+                            <div class="col-xs-6 col-md-6 text-left">
+                                <input type="text" id="sequenceNumberDigits" class="cross-import-name-setting"
+                                       name="sequenceNumberDigits"/>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.suffix.label}"></label>
+                            </div>
+                            <div class="col-xs-6 col-md-6 text-left">
+                                <input type="text" id="crossSuffix" name="crossSuffix" class="cross-import-name-setting" />
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.prefix.space.label}"></label>
+                            </div>
+                            <div class="btn-group col-xs-6 col-md-6 text-left">
+                                <input type="radio" name="hasPrefixSpace" value="true" class="cross-import-name-setting" >
+                                <label class="label-bold">Yes</label>
+                                </input>
+                                <input type="radio" name="hasPrefixSpace" value="false" class="cross-import-name-setting" >
+                                <label class="label-bold">No</label>
+                                </input>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.suffix.space.label}"></label>
+                            </div>
+                            <div class="btn-group col-xs-6 col-md-6 text-left">
+                                <input type="radio" name="hasSuffixSpace" value="true" class="cross-import-name-setting" >
+                                <label class="label-bold">Yes</label>
+                                </input>
+                                <input type="radio" name="hasSuffixSpace" value="false" class="cross-import-name-setting" >
+                                <label class="label-bold">No</label>
+                                </input>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.next.name}"></label>
+                            </div>
+                            <div class="col-xs-6 col-md-6 text-left">
+                                <label id="importNextSequenceName"/>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.starting.sequence.number.label}"></label>
+                            </div>
+                            <div class="col-xs-6 col-md-6 text-left">
+                                <input type="text" id="startingSequenceNumber"
+                                       name="startingSequenceNumber" class="cross-import-name-setting" />
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.parentage.separator.label}"></label>
+                            </div>
+                            <div class="col-xs-6 col-md-6 text-left">
+                                <input type="text" id="parentageDesignationSeparator"
+                                       name="parentageDesignationSeparator"/>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold">Example parentage designation:</label>
+                            </div>
+                            <div class="col-xs-6 col-md-6 text-left">
+                                <label id="sampleParentageDesignation"/>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-11 col-md-11">
+                                <label class="modal-title h5"
+                                       th:text="#{study.import.crosses.settings.save.header}">SAVE
+                                    SETTINGS</label>
+                            </div>
+                            <div class="col-xs-1 col-md-1">
+                                &nbsp;
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-xs-1 col-md-1">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-xs-5 col-md-5">
+                            <input type="checkbox" id="saveSettingsCheckbox"/>
+                            <label class="label-bold"
+                                   th:text="#{study.import.crosses.settings.save.settings.label}"></label>
+                        </div>
+
+                        <div class="col-xs-5 col-md-5 add-bottom-padding">
+
+                            <div class="col-xs-12 col-md-12">
+                                <input type="text" id="presetName"/>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-1 col-md-1">
+                            &nbsp;
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"
+                                aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary"
+                                aria-hidden="true" th:text="#{common.form.next.text}"
+                                onclick="javascript:submitAndValidateForm();">Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<div layout:fragment="page-script">
+    <script type="text/javascript" th:src="@{/static/js/breeding-methods.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
+    <script type='text/javascript' th:inline="javascript">
+
+        function openMethodsModal() {
+            var crossSettingsPopupModal = $('#crossSettingsModal');
+            crossSettingsPopupModal.modal('hide');
+            crossSettingsPopupModal.data('open', '1');
+
+            BreedingMethodsFunctions.openMethodsModal();
+        }
+
+        function submitAndValidateForm() {
+            ImportCrosses.submitCrossImportSettings();
+        }
+
+    </script>
+</div>

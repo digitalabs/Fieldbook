@@ -39,7 +39,23 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			<label class="control-label">
 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
 			</label>
+			<div  class="pull-right">
+                <div class="col-md-12">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+                            <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+                        </button>
+                        <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">                            
+                            <li>
+                                <a href="javascript: void(0)" class="import-crosses"
+                                   th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 		</div>
+		
 	</div>
 
     <div class="col-md-12 nopadding-right">
@@ -201,6 +217,11 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row">
 	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
+
+<div class="row">
+	<div class="row" id="addLotsModalDiv"></div>	
+</div>
+
 <div class="row">
 	<div class="col-xs-12 col-md-12">
 		<div id="manage-location" th:include="/Common/includes/manageLocationsModal"></div>
@@ -211,7 +232,28 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<div id="manage-location" th:include="/Common/includes/manageMethodsModal"></div>
 	</div>
 </div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="import-crosses-screen" th:include="/Common/includes/importCrosses"></div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="open-crosses" th:include="/Common/includes/openCrossesListModal"></div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="crossImport" th:include="/Common/includes/crossingImportPresets"/>
+	</div>
+</div>
 <div layout:fragment="page-script">
+<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	    /* jshint ignore:start */

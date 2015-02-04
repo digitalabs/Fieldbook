@@ -222,4 +222,6 @@ public interface FieldbookService {
 	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) throws MiddlewareQueryException;
     
 	BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design) throws IOException;
+	
+	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId) throws MiddlewareQueryException;
 }

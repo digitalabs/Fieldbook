@@ -36,7 +36,7 @@ function updateExpandEventIfHasChildren(obj) {
 }
 function updateDoubleClickEvent(obj) {
 	obj.dblclick(function() {
-		chooseList();
+		ListTable.chooseList();
 	});
 }
 function updateTableRowsBgColor() {

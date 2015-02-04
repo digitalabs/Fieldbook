@@ -414,4 +414,33 @@ public class FieldbookServiceTest {
 		}
 		Assert.assertTrue("Exp Design Variables should all be captured as hidden", allIsHidden);
 	}
+	
+	@Test
+	public void testSaveStudyImportCrossesIfStudyIdIsNull() throws MiddlewareQueryException{
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		List<Integer> crossesIds = new ArrayList<Integer>();
+		crossesIds.add(1);
+		crossesIds.add(2);
+		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		fieldbookService.saveStudyImportedCrosses(crossesIds, null);		
+		for(Integer crossesId : crossesIds){
+			Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).updateGermlasmListInfoStudy(crossesId, 0);
+		}
+	}
+	@Test
+	public void testSaveStudyImportCrossesIfStudyIdIsNotNull() throws MiddlewareQueryException{
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		List<Integer> crossesIds = new ArrayList<Integer>();
+		crossesIds.add(1);
+		crossesIds.add(2);
+		Integer studyId = 5; 
+		
+		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		fieldbookService.saveStudyImportedCrosses(crossesIds, studyId);		
+		for(Integer crossesId : crossesIds){
+			Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).updateGermlasmListInfoStudy(crossesId, studyId);
+		}
+	}
 }

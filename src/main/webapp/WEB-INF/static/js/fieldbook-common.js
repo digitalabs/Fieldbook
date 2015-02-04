@@ -3677,7 +3677,7 @@ function removeDetailsOutOfBoundDataInSessionStorage(){
 }
 
 function proceedToReviewOutOfBoundsDataAction() {
-	var action = $('#review-out-of-bounds-data-action').select2('data').id;
+	var action = $('#review-out-of-bounds-data-action').val();
 	if(action === '0') {
 		showErrorMessage('page-review-out-of-bounds-data-message-modal', reviewOutOfBoundsDataActionRequiredError);
 	} else if (action === '1'){

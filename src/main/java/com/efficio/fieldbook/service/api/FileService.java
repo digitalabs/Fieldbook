@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -38,7 +39,7 @@ public interface FileService{
      * @return the workbook
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    Workbook retrieveWorkbook(String currentFilename) throws IOException;
+    Workbook retrieveWorkbook(String currentFilename) throws IOException, InvalidFormatException;
 
     /**
      * Retrieves a File object based on the given file name.
@@ -50,5 +51,4 @@ public interface FileService{
     File retrieveFileFromFileName(String currentFilename) throws IOException;
     
     String getFilePath(String tempFilename);
-
 }

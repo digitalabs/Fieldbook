@@ -45,3 +45,13 @@
 		</div>
 	</div>
 </div>
+
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+	(function() {
+		$('document').ready(function() {
+			$('#review-out-of-bounds-data-action').select2({minimumResultsForSearch: 20});
+		});
+	})();
+//]]>
+</script>

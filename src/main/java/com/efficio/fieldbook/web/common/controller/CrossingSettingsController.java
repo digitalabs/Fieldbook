@@ -4,7 +4,6 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -86,10 +85,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			}
 
 
-		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage());
-		} catch (Exception e) {
-			LOG.error(e.getMessage());
+		} catch (MiddlewareQueryException | JAXBException e) {
+			LOG.error(e.getMessage(), e);
 		}
 
 		return settings;
@@ -103,10 +100,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			Integer programID = getCurrentProgramID(request);
 			saveCrossSetting(settings, programID);
 			return submitCrossSettings(settings);
-		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage());
-		} catch (JAXBException e) {
-			LOG.error(e.getMessage());
+		} catch (MiddlewareQueryException  | JAXBException e)  {
+			LOG.error(e.getMessage(), e);
 		}
 
 		returnVal.put(SUCCESS_KEY, "0");
@@ -123,7 +118,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			returnVal.put(SUCCESS_KEY, "1");
 			returnVal.put("sequenceValue", sequenceValue);
 		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage());
+			LOG.error(e.getMessage(), e);
 			returnVal.put(SUCCESS_KEY, "0");
 		}
 

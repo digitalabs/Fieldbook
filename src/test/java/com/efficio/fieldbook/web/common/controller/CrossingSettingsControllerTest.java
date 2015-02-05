@@ -6,6 +6,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.service.impl.SettingsPresetServiceImpl;
+import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
@@ -23,7 +24,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +74,8 @@ public class CrossingSettingsControllerTest {
 	public static final Integer TEST_PROGRAM_PRESET_ID = 1;
 	public static final int TEST_PROGRAM_ID = 2;
 	public static final int DUMMY_TOOL_ID = 2;
+
+	public static final int NUMBER_OF_MONTHS = 12;
 
 	@Before
 	public void setUp() throws Exception {
@@ -192,6 +197,34 @@ public class CrossingSettingsControllerTest {
 	}
 
 	@Test
+	public void testGetHarvestMonth() {
+		List<Map<String, String>> harvestMonths = dut.getHarvestMonths();
+
+		assertNotNull(harvestMonths);
+		assertEquals(NUMBER_OF_MONTHS, harvestMonths.size());
+
+		for (Map<String, String> harvestMonth : harvestMonths) {
+			assertTrue(harvestMonth.containsKey(CrossingSettingsController.ID));
+			assertTrue(harvestMonth.containsKey(CrossingSettingsController.TEXT));
+
+			assertEquals(2, harvestMonth.get(CrossingSettingsController.ID).length());
+		}
+	}
+
+	@Test
+	public void testGetHarvestYears() {
+		List<String> harvestYears = dut.getHarvestYears();
+
+		assertNotNull(harvestYears);
+		assertEquals(CrossingSettingsController.YEAR_INTERVAL, harvestYears.size());
+
+		String firstDisplayed = harvestYears.get(0);
+		Calendar cal = Calendar.getInstance();
+
+		assertEquals(Integer.toString(cal.get(Calendar.YEAR)), firstDisplayed);
+	}
+
+	@Test
 	public void testRetrieveImportSettings() {
 		try {
 			CrossingSettingsController mole = spy(dut);
@@ -241,8 +274,12 @@ public class CrossingSettingsControllerTest {
 		nameSetting.setPrefix(SETTING_PREFIX);
 		nameSetting.setSeparator(SETTING_SEPARATOR);
 		setting.setCrossNameSetting(nameSetting);
+		AdditionalDetailsSetting additionalDetailsSetting = new AdditionalDetailsSetting(0, "");
+		setting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
 		return setting;
 	}
+
+
 
 }

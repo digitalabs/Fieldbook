@@ -780,9 +780,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	}
 
     public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields, boolean isTrial) {
-        Map<Integer, MeasurementVariable> variableMap = convertToMap(workbook.getStudyConditions(), workbook.getFactors());
+        Map<Integer, MeasurementVariable> variableMap = convertToMap(workbook.getConditions(), workbook.getFactors());
         Map<String, List<MeasurementRow>> measurementData = null;
-
+        
         // this variable is defined as a map with list of measurementrow as data, but in actuality we are expecting only one
         // a list is used so that existing procedure can be reused
         Map<String, MeasurementRow> environmentData = null;

@@ -458,6 +458,10 @@ LabelPrinting = {
         // perform export
         var formElm = $('#specifyLabelDetailsForm');
         var selectedPreset = LabelPrinting.getSelectedPreset();
+        
+        if(selectedPreset.length == 0){
+        	selectedPreset = [$('#label-format').select2('data').id,0];
+        }
 
         // 1. validate
         if (!LabelPrinting.validateEnterLabelFieldsPage(type)) {

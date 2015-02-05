@@ -109,12 +109,7 @@ public class WorkbenchServiceImpl implements WorkbenchService {
 	@Override
 	public Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId)
 			throws MiddlewareQueryException {
-		Integer ibdbUserId = null;
-		IbdbUserMap userMapEntry = workbenchDataManager.getIbdbUserMap(workbenchUserId, projectId);
-		if (userMapEntry != null) {
-			ibdbUserId = userMapEntry.getIbdbUserId();
-		}
-		return ibdbUserId;
+	    	return workbenchDataManager.getCurrentIbdbUserId(projectId,workbenchUserId);
 	}
 
 

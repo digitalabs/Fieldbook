@@ -33,8 +33,8 @@ public class CrossingTemplateParser {
 	/**
 	 * The Constant FILE_INVALID.
 	 */
-	public final static String FILE_INVALID = "common.error.invalid.file";
-	public final static String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
+	public static final String FILE_INVALID = "common.error.invalid.file";
+	public static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
 	public static final String TEMPLATE_LIST_TYPE = "LST";
 	public static final int DESCRIPTION_SHEET_COL_SIZE = 8;
 	protected static final int DESCRIPTION_SHEET_NO = 0;
@@ -83,16 +83,25 @@ public class CrossingTemplateParser {
 
 		} catch (IOException | ParseException | InvalidFormatException e) {
 			addParseErrorMsg(FILE_INVALID);
+			LOG.debug(e.getMessage());
 		} catch (MiddlewareQueryException e) {
 			addParseErrorMsg(NO_REFERENCES_ERROR_DESC);
+			LOG.debug(e.getMessage());
 		}
 		return importedCrossesList;
 	}
 
 	protected Workbook storeImportGermplasmWorkbook(MultipartFile multipartFile)
 			throws IOException, InvalidFormatException {
-		String serverFilename = fileService.saveTemporaryFile(multipartFile.getInputStream());
 		this.originalFilename = multipartFile.getOriginalFilename();
+		String ext = this.originalFilename.substring(this.originalFilename.lastIndexOf(".") + 1,
+				this.originalFilename.length());
+
+		if (!"xls".equalsIgnoreCase(ext) && !"xlsx".equalsIgnoreCase(ext)) {
+			throw new InvalidFormatException("not.excel.file");
+		}
+
+		String serverFilename = fileService.saveTemporaryFile(multipartFile.getInputStream());
 
 		return fileService.retrieveWorkbook(serverFilename);
 	}
@@ -244,7 +253,7 @@ public class CrossingTemplateParser {
 		if (!isFactorHeadersInvalid(currentRow) && importFileIsValid) {
 			currentRow++;
 
-			while ((!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE))) {
+			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
 				final ImportedFactor factor = new ImportedFactor(
 						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
 								0)
@@ -286,7 +295,7 @@ public class CrossingTemplateParser {
 	protected void parseConstants() {
 		if (!isConstantsHeaderInvalid(currentRow) && importFileIsValid) {
 			currentRow++;
-			while ((!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE))) {
+			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
 				importedCrossesList.addImportedConstant(new ImportedConstant(
 						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
 								0)
@@ -351,95 +360,71 @@ public class CrossingTemplateParser {
 		}
 	}
 
-	protected boolean isConditionHeadersInvalid(int conditionHeaderRowNo) {
-		return !AppConstants.CONDITION.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						conditionHeaderRowNo, 0))
-				|| !AppConstants.DESCRIPTION.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						conditionHeaderRowNo, 1))
-				|| !AppConstants.PROPERTY.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						conditionHeaderRowNo, 2))
-				|| !AppConstants.SCALE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						conditionHeaderRowNo, 3))
-				|| !AppConstants.METHOD.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						conditionHeaderRowNo, 4))
-				|| !AppConstants.DATA_TYPE.getString()
-				.equalsIgnoreCase(getCellStringValue(DESCRIPTION_SHEET_NO,
-						conditionHeaderRowNo, 5))
-				|| !AppConstants.VALUE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						conditionHeaderRowNo, 6));
+	protected boolean isHeaderInvalid(int headerNo, String[] headers) {
+		boolean isInvalid = false;
+
+		for (int i = 0; i < headers.length; i++) {
+			isInvalid = isInvalid || !headers[i].equalsIgnoreCase(
+					getCellStringValue(DESCRIPTION_SHEET_NO, headerNo, i));
+		}
+
+		return isInvalid;
 	}
 
+	protected boolean isConditionHeadersInvalid(int conditionHeaderRowNo) {
+		String[] headers = {
+				AppConstants.CONDITION.getString(),
+				AppConstants.DESCRIPTION.getString(),
+				AppConstants.PROPERTY.getString(),
+				AppConstants.SCALE.getString(),
+				AppConstants.METHOD.getString(),
+				AppConstants.DATA_TYPE.getString(),
+				AppConstants.VALUE.getString()
+		};
+
+		return isHeaderInvalid(conditionHeaderRowNo, headers);
+	}
+
+
+
 	protected boolean isFactorHeadersInvalid(int factorHeaderRowNo) {
-		return !AppConstants.FACTOR.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						factorHeaderRowNo, 0))
-				|| !AppConstants.DESCRIPTION.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						factorHeaderRowNo, 1))
-				|| !AppConstants.PROPERTY.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						factorHeaderRowNo, 2))
-				|| !AppConstants.SCALE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						factorHeaderRowNo, 3))
-				|| !AppConstants.METHOD.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						factorHeaderRowNo, 4))
-				|| !AppConstants.DATA_TYPE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						factorHeaderRowNo, 5));
+		String[] headers = {
+				AppConstants.FACTOR.getString(),
+				AppConstants.DESCRIPTION.getString(),
+				AppConstants.PROPERTY.getString(),
+				AppConstants.SCALE.getString(),
+				AppConstants.METHOD.getString(),
+				AppConstants.DATA_TYPE.getString()
+		};
+
+		return isHeaderInvalid(factorHeaderRowNo,headers);
 	}
 
 	protected boolean isConstantsHeaderInvalid(int constantHeaderRowNo) {
-		return !
-				AppConstants.CONSTANT.getString()
-						.equalsIgnoreCase(getCellStringValue(DESCRIPTION_SHEET_NO,
-								constantHeaderRowNo, 0))
-				|| !AppConstants.DESCRIPTION.getString()
-				.equalsIgnoreCase(getCellStringValue(DESCRIPTION_SHEET_NO,
-						constantHeaderRowNo, 1))
-				|| !AppConstants.PROPERTY.getString()
-				.equalsIgnoreCase(getCellStringValue(DESCRIPTION_SHEET_NO,
-						constantHeaderRowNo, 2))
-				|| !AppConstants.SCALE.getString().equalsIgnoreCase(getCellStringValue(
-				DESCRIPTION_SHEET_NO,
-				constantHeaderRowNo, 3))
-				|| !AppConstants.METHOD.getString().equalsIgnoreCase(getCellStringValue(
-				DESCRIPTION_SHEET_NO,
-				constantHeaderRowNo, 4))
-				|| !AppConstants.DATA_TYPE.getString().equalsIgnoreCase(getCellStringValue(
-				DESCRIPTION_SHEET_NO,
-				constantHeaderRowNo, 5))
-				|| !AppConstants.VALUE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO,
-						constantHeaderRowNo, 6));
+		String[] headers = {
+				AppConstants.CONSTANT.getString(),
+				AppConstants.DESCRIPTION.getString(),
+				AppConstants.PROPERTY.getString(),
+				AppConstants.SCALE.getString(),
+				AppConstants.METHOD.getString(),
+				AppConstants.DATA_TYPE.getString(),
+				AppConstants.VALUE.getString()
+		};
+
+		return isHeaderInvalid(constantHeaderRowNo,headers);
 	}
 
 	protected boolean isVariateHeaderInvalid(int variateHeaderRowNo) {
-		return !AppConstants.VARIATE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
-						0))
-				|| !AppConstants.DESCRIPTION.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
-						1))
-				|| !AppConstants.PROPERTY.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
-						2))
-				|| !AppConstants.SCALE.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
-						3))
-				|| !AppConstants.METHOD.getString().equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
-						4))
-				|| !AppConstants.DATA_TYPE.getString().replace("_", " ").equalsIgnoreCase(
-				getCellStringValue(DESCRIPTION_SHEET_NO, variateHeaderRowNo,
-						5));
+		String headers[] = {
+			AppConstants.VARIATE.getString(),
+				AppConstants.DESCRIPTION.getString(),
+				AppConstants.PROPERTY.getString(),
+				AppConstants.SCALE.getString(),
+				AppConstants.METHOD.getString(),
+				AppConstants.DATA_TYPE.getString()
+		};
+
+		return isHeaderInvalid(variateHeaderRowNo,headers);
 	}
 
 	protected void addParseErrorMsg(String message) {
@@ -456,7 +441,7 @@ public class CrossingTemplateParser {
 	}
 
 	protected boolean isObservationsHeaderInvalid() {
-		final ArrayList<ImportedFactor> importedFactors = new ArrayList<ImportedFactor>() {
+		final List<ImportedFactor> importedFactors = new ArrayList<ImportedFactor>() {
 			@Override
 			public boolean contains(Object o) {
 				for (ImportedFactor i : this) {
@@ -470,7 +455,7 @@ public class CrossingTemplateParser {
 
 		importedFactors.addAll(importedCrossesList.getImportedFactors());
 
-		final ArrayList<ImportedVariate> importedVariates = new ArrayList<ImportedVariate>() {
+		final List<ImportedVariate> importedVariates = new ArrayList<ImportedVariate>() {
 			@Override
 			public boolean contains(Object o) {
 				for (ImportedVariate i : this) {
@@ -489,10 +474,6 @@ public class CrossingTemplateParser {
 		for (int i = 0; i < headerSize; i++) {
 			// search the current header
 			String obsHeader = getCellStringValue(OBSERVATION_SHEET_NO, 0, i);
-
-			if (null == obsHeader) {
-				return true;
-			}
 
 			boolean inFactors = importedFactors.contains(obsHeader);
 			boolean inVariates = importedVariates.contains(obsHeader);
@@ -548,8 +529,11 @@ public class CrossingTemplateParser {
 	 * @param columnNo
 	 * @return
 	 */
-	protected String getCellStringValue(int sheetNo, int rowNo, int columnNo) {
-		return PoiUtil.getCellStringValue(this.workbook, sheetNo, rowNo, columnNo);
+	protected String getCellStringValue(int sheetNo, int rowNo, Integer columnNo) {
+		String out = (null == columnNo) ?
+				"" :
+				PoiUtil.getCellStringValue(this.workbook, sheetNo, rowNo, columnNo);
+		return (null == out) ? "" : out;
 	}
 
 	/**

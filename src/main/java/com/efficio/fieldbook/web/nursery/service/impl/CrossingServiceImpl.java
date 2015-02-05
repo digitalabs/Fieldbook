@@ -125,7 +125,7 @@ public class CrossingServiceImpl implements CrossingService {
             	germplasm.setMethodId(breedingMethod.getMid());
             }
 
-            name.setNval(cross.getCross()+","+cross.getSource());
+            name.setNval(cross.getDesig());
             name.setNdate(dateIntValue);
             name.setTypeId(crossingNameTypeId);
             name.setLocationId(harvestLocationId);

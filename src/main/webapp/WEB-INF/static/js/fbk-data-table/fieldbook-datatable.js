@@ -8,6 +8,32 @@ if (typeof (BMS.Fieldbook) === 'undefined') {
 	BMS.Fieldbook = {};
 }
 
+BMS.Fieldbook.MeasurementsTable = {
+		getColumnOrdering : function(tableName){
+			var orderedColumns = [];
+			var hasOrderingChange = false;
+			if($('#'+tableName).dataTable() !== null &&  $('#'+tableName).dataTable().fnSettings() !== null){
+				var cols = $('#'+tableName).dataTable().fnSettings().aoColumns;				
+				$(cols).each(function(index){  
+				  var termId = $($(cols[index].nTh)[0]).attr('data-term-id');
+				  var prevIndex = $('#'+tableName).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
+				  
+				  if(termId != 'Action'){
+					  if(index != prevIndex){
+						  hasOrderingChange = true;
+					  }
+					  orderedColumns[orderedColumns.length] = termId;
+				  }
+				});
+			}
+			if(hasOrderingChange){
+				return orderedColumns;
+			}
+			//we return blank if there is no ordering change
+			return [];
+		},
+}
+
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	// FIXME Refactor to remove some of this code from the constructor function
 	/**
@@ -238,7 +264,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			column.visible(!column.visible());			 
 		});
 	};
-
 	return dataTableConstructor;
 
 })(jQuery);

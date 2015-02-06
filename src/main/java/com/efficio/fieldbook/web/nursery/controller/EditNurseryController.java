@@ -11,16 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -29,7 +27,6 @@ import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -43,19 +40,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class CreateNurseryController.
@@ -120,7 +123,7 @@ public class EditNurseryController extends SettingsController {
      */
     @RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
     public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
-                                     @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2,
+                                     @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2,                                     
                                      @PathVariable int nurseryId, @RequestParam(required = false) String isAjax,
                                      Model model, HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
 
@@ -324,7 +327,6 @@ public class EditNurseryController extends SettingsController {
                 break;
             }
         }
-
         //combine all study conditions (basic details and management details and hidden variables)
         List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
         if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
@@ -419,6 +421,9 @@ public class EditNurseryController extends SettingsController {
                 fieldbookService.saveStudyImportedCrosses(userSelection.getImportedCrossesId(), form.getStudyId());
                 resultMap.put(STATUS, SUCCESS);
                 resultMap.put(HAS_MEASUREMENT_DATA_STR, String.valueOf(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates()))));
+                
+                fieldbookService.saveStudyColumnOrdering(form.getStudyId(), workbook.getStudyName(), form.getColumnOrders());
+                
             } catch (MiddlewareQueryException e) {
                 resultMap.put(STATUS, ERROR);
                 resultMap.put("errorMessage", e.getMessage());

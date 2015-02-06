@@ -260,7 +260,7 @@ public class OpenTrialController extends
         List<SettingDetail> basicDetails = userSelection.getBasicDetails();
         // transfer over data from user input into the list of setting details stored in the session
         populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
-
+        
         List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
         combinedList.addAll(basicDetails);
 
@@ -360,6 +360,9 @@ public class OpenTrialController extends
                         SettingsUtil.buildVariates(workbook.getVariates())));
                 returnVal.put(MEASUREMENT_ROW_COUNT, workbook.getObservations().size());
 
+                
+                fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders());
+                
                 return returnVal;
             } catch (MiddlewareQueryException e) {
                 LOG.error(e.getMessage(), e);

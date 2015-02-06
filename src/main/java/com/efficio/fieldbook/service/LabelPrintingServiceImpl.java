@@ -1095,12 +1095,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         messageSource.getMessage("label.printing.available.fields.plot", null, locale)
                         , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()));
 
-        if (isTrial) {
+		Workbook workbook = null;
+		if (isTrial) {
             labelFieldsList.add(new LabelFields(
                                 messageSource.getMessage("label.printing.available.fields.trial.name", null, locale)
                                 , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()));
-            try {
-                Workbook workbook = fieldbookMiddlewareService.getTrialDataSet(studyID);
+
+			try {
+                workbook = fieldbookMiddlewareService.getTrialDataSet(studyID);
 
                 labelFieldsList.addAll(settingsService.retrieveTrialSettingsAsLabels(workbook));
                 labelFieldsList.addAll(settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(
@@ -1116,7 +1118,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                                 messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale)
                                 , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()));
             try {
-                Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(studyID);
+                workbook = fieldbookMiddlewareService.getNurseryDataSet(studyID);
 
                 labelFieldsList.addAll(settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
                 labelFieldsList.addAll(settingsService.retrieveGermplasmDescriptorsAsLabels(
@@ -1126,7 +1128,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             }
         }
 
-        if (hasFieldMap) {
+		labelFieldsList.addAll(settingsService.retrieveTraitsAsLabels(workbook));
+
+		if (hasFieldMap) {
             labelFieldsList.add(new LabelFields(
                     messageSource
                             .getMessage("label.printing.available.fields.block.name", null, locale)

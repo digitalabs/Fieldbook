@@ -1278,6 +1278,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 				return presetDataManager.getProgramPresetById(presetId).getConfiguration();
 			}
 		} catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
 			throw new LabelPrintingException("label.printing.cannot.retrieve.presets",
 					"database.connectivity.error",e.getMessage());
 		} catch (NullPointerException e) {

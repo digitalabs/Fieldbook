@@ -92,38 +92,61 @@ public class LabelPrintingSetting implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
+
 		LabelPrintingSetting other = (LabelPrintingSetting) obj;
 		if (barcodeSetting == null) {
-			if (other.barcodeSetting != null)
+			if (other.barcodeSetting != null) {
 				return false;
-		} else if (!barcodeSetting.equals(other.barcodeSetting))
+			}
+		} else if (!barcodeSetting.equals(other.barcodeSetting)) {
 			return false;
+		}
+
 		if (csvExcelSetting == null) {
-			if (other.csvExcelSetting != null)
+			if (other.csvExcelSetting != null) {
 				return false;
-		} else if (!csvExcelSetting.equals(other.csvExcelSetting))
+			}
+		} else if (!csvExcelSetting.equals(other.csvExcelSetting)) {
 			return false;
+		}
+
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
+
 		if (outputType == null) {
-			if (other.outputType != null)
+			if (other.outputType != null) {
 				return false;
-		} else if (!outputType.equals(other.outputType))
+			}
+
+		} else if (!outputType.equals(other.outputType)) {
 			return false;
+		}
+
 		if (pdfSetting == null) {
-			if (other.pdfSetting != null)
+			if (other.pdfSetting != null) {
 				return false;
-		} else if (!pdfSetting.equals(other.pdfSetting))
+			}
+
+		} else if (!pdfSetting.equals(other.pdfSetting)) {
 			return false;
+		}
+
 		return true;
 	}
 

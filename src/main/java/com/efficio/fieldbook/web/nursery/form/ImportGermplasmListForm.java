@@ -102,7 +102,7 @@ public class ImportGermplasmListForm {
     /** The last check source primary. */
     private int lastCheckSourcePrimary;
     
-        	
+    private String columnOrders;   	
     /**
      * Gets the selected check.
      *
@@ -630,5 +630,13 @@ public class ImportGermplasmListForm {
 		public void setCheckVariables(List<SettingDetail> checkVariables) {
 			this.checkVariables = checkVariables;
 		}
-    
+
+		public String getColumnOrders() {
+			return columnOrders;
+		}
+
+		public void setColumnOrders(String columnOrders) {
+			this.columnOrders = columnOrders;
+		}
+		
 }

@@ -3,10 +3,7 @@ package com.efficio.fieldbook.service;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -403,7 +400,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 				selectedFieldIDs.add(1);
 				selectedFieldIDs.add(2);
 				selectedFieldIDs.add(3);
-    	labelPrintingServiceImpl.printHeaderFields(true, selectedFieldIDs, row, 0, Mockito.mock(CellStyle.class));
+    	labelPrintingServiceImpl.printHeaderFields(new HashMap<Integer, String>(),true, selectedFieldIDs, row, 0, Mockito.mock(CellStyle.class));
     	Mockito.verify(cell, Mockito.times(3)).setCellValue(Mockito.anyString());
     	
     }
@@ -419,7 +416,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		selectedFieldIDs.add(1);
 		selectedFieldIDs.add(2);
 		selectedFieldIDs.add(3);
-    	labelPrintingServiceImpl.printHeaderFields(false, selectedFieldIDs, row, 0, Mockito.mock(CellStyle.class));
+    	labelPrintingServiceImpl.printHeaderFields(new HashMap<Integer, String>(), false, selectedFieldIDs, row, 0, Mockito.mock(CellStyle.class));
     	Mockito.verify(cell, Mockito.never()).setCellValue(Mockito.anyString());
     	
     }

@@ -52,6 +52,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -1071,6 +1072,15 @@ public class FieldbookServiceImpl implements FieldbookService {
         	}
         }
 		
+	}
+	
+	@Override
+	public void saveStudyColumnOrdering(Integer studyId, String studyName,
+			String columnOrderDelimited) throws MiddlewareQueryException {
+		List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
+		if(studyId != null && !columnOrdersList.isEmpty()){
+			fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);
+		}		
 	}
 
 	protected void setFieldbookMiddlewareService(

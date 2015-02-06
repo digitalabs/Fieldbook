@@ -443,6 +443,8 @@
 
 			var $form = $('#createNurseryForm, #createNurseryMainForm'),
 				serializedData = $form.serialize();
+			var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+			serializedData += '&columnOrders='+ encodeURIComponent(JSON.stringify(columnsOrder));
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/editNursery',

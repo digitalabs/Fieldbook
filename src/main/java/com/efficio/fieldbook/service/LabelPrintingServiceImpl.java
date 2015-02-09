@@ -64,6 +64,7 @@ import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -98,12 +99,26 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     public static final String LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY = "label.printing.available.fields.location";
     public static final String LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY = "label.printing.available.fields.block.name";
 
+    public static final Integer[] BASE_LABEL_PRINTING_FIELD_IDS = new Integer[] {
+            AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()
+    };
+
+    public static final Integer[] BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS = new Integer[] {
+            AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()
+    };
+
     /** The delimiter. */
     private String delimiter = " | ";
     
     /** The message source. */
     @Resource
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
     
     @Resource
     private ExportService exportService;
@@ -800,11 +815,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
         params.setVariableMap(convertToMap(workbook.getConditions(), workbook.getFactors()));
         params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvert(selectedFields));
-        Map<String, List<MeasurementRow>> measurementData = extractMeasurementRowsPerTrialInstance(workbook.getObservations());
+        Map<String, List<MeasurementRow>> measurementData = null;
+        Map<String, MeasurementRow> environmentData = null;
+
+        if (isTrial) {
+            measurementData = extractMeasurementRowsPerTrialInstance(
+                    workbook.getObservations());
+            environmentData = extractEnvironmentMeasurementDataPerTrialInstance(
+                    workbook);
+        }
+
         for (FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
             params.setInstanceInfo(instanceInfo);
             if (isTrial) {
-                Map<String, MeasurementRow> environmentData = extractEnvironmentMeasurementDataPerTrialInstance(workbook);
+
                 params.setInstanceMeasurements(measurementData
                                         .get(instanceInfo.getTrialInstanceNo()));
                 params.setEnvironmentData(environmentData.get(instanceInfo.getTrialInstanceNo()));

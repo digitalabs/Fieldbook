@@ -259,9 +259,19 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				$(this).parent().removeClass('fbk-dropdown-select-highlight');
 			}
 			// Get the column API object
-			column = table.column($(this).attr('data-index'));
-			// Toggle the visibility
-			column.visible(!column.visible());			 
+			var colIndex = $(this).attr('data-index');
+			 
+			
+			var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;				
+			$(cols).each(function(index){  
+			  var prevIndex = $(tableIdentifier).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
+			  if(colIndex == prevIndex){
+				  column = table.column(index);
+					// Toggle the visibility
+				  column.visible(!column.visible());			
+			  }			  
+			});
+			
 		});
 	};
 	return dataTableConstructor;

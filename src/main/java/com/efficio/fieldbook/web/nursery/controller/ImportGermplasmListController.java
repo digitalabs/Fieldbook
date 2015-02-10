@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -31,6 +32,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -77,31 +79,31 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping({ImportGermplasmListController.URL, ImportGermplasmListController.URL_2, ImportGermplasmListController.URL_3 , ImportGermplasmListController.URL_4})
 public class ImportGermplasmListController extends SettingsController {
     
-    private static final String TABLE_HEADER_LIST = "tableHeaderList";
+    protected static final String TABLE_HEADER_LIST = "tableHeaderList";
 
-	private static final String TYPE2 = "type";
+	protected static final String TYPE2 = "type";
 
-	private static final String LIST_DATA_TABLE = "listDataTable";
+	protected static final String LIST_DATA_TABLE = "listDataTable";
 
-	private static final String CHECK_LISTS = "checkLists";
+	protected static final String CHECK_LISTS = "checkLists";
 
-	private static final String ENTRY_CODE = "entryCode";
+	protected static final String ENTRY_CODE = "entryCode";
 
-	private static final String SOURCE = "source";
+	protected static final String SOURCE = "source";
 
-	private static final String CROSS = "cross";
+	protected static final String CROSS = "cross";
 
-	private static final String CHECK = "check";
+	protected static final String CHECK = "check";
 
-	private static final String GID = "gid";
+	protected static final String GID = "gid";
 
-	private static final String DESIG = "desig";
+	protected static final String DESIG = "desig";
 
-	private static final String ENTRY = "entry";
+	protected static final String ENTRY = "entry";
 
-	private static final String CHECK_OPTIONS = "checkOptions";
+	protected static final String CHECK_OPTIONS = "checkOptions";
 
-	private static final String POSITION = "position";
+	protected static final String POSITION = "position";
 
 	/** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
@@ -148,6 +150,9 @@ public class ImportGermplasmListController extends SettingsController {
     /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
+    
+    @Resource
+    private OntologyDataManager ontologyDataManager;
     
     /** The merge check service. */
     @Resource
@@ -622,6 +627,8 @@ public class ImportGermplasmListController extends SettingsController {
             getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
             getUserSelection().setImportValid(true);
             
+            model.addAttribute(TABLE_HEADER_LIST, getGermplasmCheckTableHeader());
+            
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -634,12 +641,12 @@ public class ImportGermplasmListController extends SettingsController {
     	if(type != null && type.equalsIgnoreCase(StudyType.N.getName())){
  
     		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.position", null, locale), POSITION));
-    		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.entry", null, locale), ENTRY));
-    		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.designation", null, locale), DESIG));
-    		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.gid", null, locale), GID));
-    		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.cross", null, locale), CROSS));
-    		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.source", null, locale), SOURCE));
-    		tableHeaderList.add(new TableHeader(messageSource.getMessage("nursery.import.header.entrycode", null, locale), ENTRY_CODE));
+    		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_ID.getTermNameFromOntology(ontologyDataManager), ENTRY));
+    		tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(ontologyDataManager), DESIG));
+    		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(ontologyDataManager), GID));
+    		tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(ontologyDataManager), CROSS));
+    		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(ontologyDataManager), SOURCE));
+    		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_CODE.getTermNameFromOntology(ontologyDataManager), ENTRY_CODE));
     		
     	}else if(type != null && type.equalsIgnoreCase(StudyType.T.getName()) && factorsList != null){
 			//we iterate the map for dynamic header of trial
@@ -654,6 +661,14 @@ public class ImportGermplasmListController extends SettingsController {
     	}
     	return tableHeaderList;
     }
+    
+    private List<TableHeader> getGermplasmCheckTableHeader(){
+    	List<TableHeader> tableHeaderList = new ArrayList<TableHeader>();
+		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_TYPE.getTermNameFromOntology(ontologyDataManager), CHECK));
+		tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(ontologyDataManager), DESIG));
+    	return tableHeaderList;
+    }
+    
     private String getGermplasmData(String termId, ImportedGermplasm germplasm){
     	String val = "";
     	if(termId != null && NumberUtils.isNumber(termId)){
@@ -730,7 +745,7 @@ public class ImportGermplasmListController extends SettingsController {
     	return userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty();
     }
     
-    private String getCheckId(String checkCode,  List<Enumeration> checksList) throws MiddlewareQueryException{
+    protected String getCheckId(String checkCode,  List<Enumeration> checksList) throws MiddlewareQueryException{
          String checkId =  "";
          
          for(Enumeration enumVar : checksList){
@@ -781,6 +796,8 @@ public class ImportGermplasmListController extends SettingsController {
             getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
             getUserSelection().setImportValid(true);
             
+            model.addAttribute(TABLE_HEADER_LIST, getGermplasmCheckTableHeader());
+            
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -815,7 +832,9 @@ public class ImportGermplasmListController extends SettingsController {
             	list = userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
             	form.setImportedCheckGermplasm(list);
             }
-            generateCheckListModel(model, list, checksList);                       
+            generateCheckListModel(model, list, checksList);      
+            
+            model.addAttribute(TABLE_HEADER_LIST, getGermplasmCheckTableHeader());
             
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -937,6 +956,8 @@ public class ImportGermplasmListController extends SettingsController {
 
             getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
             getUserSelection().setImportValid(true);
+            
+            model.addAttribute(TABLE_HEADER_LIST, getGermplasmCheckTableHeader());
             
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

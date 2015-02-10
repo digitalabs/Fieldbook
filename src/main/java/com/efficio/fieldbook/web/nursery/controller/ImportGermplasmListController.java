@@ -79,7 +79,11 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping({ImportGermplasmListController.URL, ImportGermplasmListController.URL_2, ImportGermplasmListController.URL_3 , ImportGermplasmListController.URL_4})
 public class ImportGermplasmListController extends SettingsController {
     
-    protected static final String TABLE_HEADER_LIST = "tableHeaderList";
+    private static final String ERROR = "error";
+
+	private static final String SUCCESS = "success";
+
+	protected static final String TABLE_HEADER_LIST = "tableHeaderList";
 
 	protected static final String TYPE2 = "type";
 
@@ -891,7 +895,7 @@ public class ImportGermplasmListController extends SettingsController {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return "success";
+        return SUCCESS;
     }
     
     /**
@@ -994,7 +998,7 @@ public class ImportGermplasmListController extends SettingsController {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return "success";
+        return SUCCESS;
     }
     
     @RequestMapping(value="/edit/check/{index}/{dataTableIndex}/{type}", method = RequestMethod.GET)
@@ -1039,7 +1043,7 @@ public class ImportGermplasmListController extends SettingsController {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return "success";
+        return SUCCESS;
     }
     
     /**
@@ -1069,7 +1073,7 @@ public class ImportGermplasmListController extends SettingsController {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return "success";
+        return SUCCESS;
     }
     
     
@@ -1172,12 +1176,12 @@ public class ImportGermplasmListController extends SettingsController {
         
         try {            
             List<Enumeration> allEnumerations = fieldbookService.getCheckList();
-            result.put("success", "1");
+            result.put(SUCCESS, "1");
             result.put("allCheckTypes", convertObjectToJson(allEnumerations));
             
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
-            result.put("success", "-1");
+            result.put(SUCCESS, "-1");
         }
         
         return result;
@@ -1212,24 +1216,24 @@ public class ImportGermplasmListController extends SettingsController {
                         new Object[] {enumeration.getName()}, local);
             }
             if (!validateEnumerationDescription(stdVar.getEnumerations(), enumeration)) {
-            	result.put("success", "-1");
-            	result.put("error",  messageSource.getMessage("error.add.check.duplicate.description", null, local));
+            	result.put(SUCCESS, "-1");
+            	result.put(ERROR,  messageSource.getMessage("error.add.check.duplicate.description", null, local));
             } else {
             	ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
                 List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
                 result.put("checkTypes", convertObjectToJson(allEnumerations));
                 
-                result.put("success", "1");
+                result.put(SUCCESS, "1");
                 result.put("successMessage", message);
             }
             
         } catch (MiddlewareQueryException e) {
             LOG.debug(e.getMessage(), e);
-            result.put("success", "-1");
-            result.put("error", e.getMessage());
+            result.put(SUCCESS, "-1");
+            result.put(ERROR, e.getMessage());
         } catch (MiddlewareException e) {
             LOG.debug(e.getMessage(), e);
-            result.put("success", "-1");
+            result.put(SUCCESS, "-1");
         }
         
         return result;
@@ -1251,16 +1255,16 @@ public class ImportGermplasmListController extends SettingsController {
             String name = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumeration(Integer.parseInt(form.getManageCheckCode())).getName();
             
             if (!ontologyService.validateDeleteStandardVariableEnumeration(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()))) {
-                result.put("success", "-1");
-                result.put("error", messageSource.getMessage("nursery.manage.check.types.delete.error", 
+                result.put(SUCCESS, "-1");
+                result.put(ERROR, messageSource.getMessage("nursery.manage.check.types.delete.error", 
                         new Object[] {name}, local));
             } else if (Integer.parseInt(form.getManageCheckCode()) > 0) {
-                result.put("success", "-1");
-                result.put("error", messageSource.getMessage("nursery.manage.check.types.delete.central", 
+                result.put(SUCCESS, "-1");
+                result.put(ERROR, messageSource.getMessage("nursery.manage.check.types.delete.central", 
                         new Object[] {name}, local));
             } else {
                 ontologyService.deleteStandardVariableValidValue(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()));
-                result.put("success", "1");
+                result.put(SUCCESS, "1");
                 result.put("successMessage", messageSource.getMessage("nursery.manage.check.types.delete.success", 
                         new Object[] {name}, local));
                 List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
@@ -1269,8 +1273,8 @@ public class ImportGermplasmListController extends SettingsController {
             
         } catch (MiddlewareQueryException e) {
             LOG.debug(e.getMessage(), e);
-            result.put("success", "-1");
-            result.put("error", e.getMessage());
+            result.put(SUCCESS, "-1");
+            result.put(ERROR, e.getMessage());
         }
         
         return result;
@@ -1288,7 +1292,7 @@ public class ImportGermplasmListController extends SettingsController {
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
-        return null;
+        return new ArrayList<>();
     }
     
     private boolean validateEnumerationDescription(List<Enumeration> enumerations, Enumeration newEnumeration) {

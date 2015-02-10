@@ -11,30 +11,21 @@
  *******************************************************************************/
 package com.efficio.fieldbook.service;
 
-import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.LabelPaperFactory;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
-import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.oned.Code128Writer;
-import com.lowagie.text.*;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -56,12 +47,16 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.service.api.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -69,14 +64,35 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.awt.*;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
+import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.LabelPaperFactory;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.oned.Code128Writer;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * The Class LabelPrintingServiceImpl.
@@ -135,6 +151,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
     @Resource
     private SettingsService settingsService;
+    
+    @Resource
+    private InventoryService inventoryMiddlewareService;
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
@@ -533,6 +552,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
 				buffer.append(messageSource.getMessage(
                         "label.printing.available.fields.barcode", null, locale));
+			}else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT.getInt()) {
+				buffer.append(messageSource.getMessage(
+                        "label.printing.seed.inventory.amount", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()) {
+				buffer.append(messageSource.getMessage(
+                        "label.printing.seed.inventory.scale", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_LOCATION.getInt()) {
+				buffer.append(messageSource.getMessage(
+                        "label.printing.seed.inventory.location", null, locale));
 			} else {
 				String headerName = labelHeaders.get(headerID);
                 if (headerName == null) {
@@ -600,6 +628,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 				buffer.append(moreFieldInfo.get("fieldName"));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
 				buffer.append(moreFieldInfo.get(BARCODE));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT.getInt()) {
+				buffer.append(fieldMapLabel.getInventoryAmount());	
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()) {
+				buffer.append(fieldMapLabel.getScaleName());	
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_LOCATION.getInt()) {
+				buffer.append(fieldMapLabel.getSeedLocationName());	
 			} else {
 				String value = fieldMapLabel.getUserFields().get(headerID);
 				if (value != null) {
@@ -837,10 +871,58 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             }
 
             processUserSpecificLabelsForInstance(params);
+            processInventorySpecificLabelsForInstance(params,workbook);
         }
     }
 
-    @Override
+	private void processInventorySpecificLabelsForInstance(
+			LabelPrintingProcessingParams params, Workbook workbook) {
+		Integer studyId = workbook.getStudyDetails().getId();
+		Map<Integer,InventoryDetails> inventoryDetailsMap = retrieveInventoryDetailsMap(studyId,workbook);
+		
+		for (MeasurementRow measurement : params.getInstanceMeasurements()) {
+            FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
+                    measurement.getExperimentId());
+            
+            InventoryDetails inventoryDetails = inventoryDetailsMap.get(label.getGid());
+            if(inventoryDetails != null){
+                label.setInventoryAmount(inventoryDetails.getAmount());
+                label.setScaleName(inventoryDetails.getScaleName());
+                label.setSeedLocationName(inventoryDetails.getLocationName());
+            }
+        }
+	}
+
+	private Map<Integer, InventoryDetails> retrieveInventoryDetailsMap(Integer studyId, Workbook workbook) {
+		Map<Integer,InventoryDetails> inventoryDetailsMap = new HashMap<Integer,InventoryDetails>(); 
+				
+		try {
+    		GermplasmList germplasmList = null;
+    		GermplasmListType listType = (workbook.isNursery())? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
+			List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, listType);
+			if(!germplasmLists.isEmpty()){
+				germplasmList = germplasmLists.get(0);
+			}
+			
+			if(germplasmList != null){
+				Integer listId = germplasmList.getId();
+				String germplasmListType = germplasmList.getType();
+				List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId,germplasmListType);
+				
+				for(InventoryDetails inventoryDetails : inventoryDetailList){
+					if(inventoryDetails.getLotId() != null){
+						inventoryDetailsMap.put(inventoryDetails.getGid(), inventoryDetails);
+					}
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+		
+		return inventoryDetailsMap;
+	}
+
+	@Override
     public void deleteProgramPreset(Integer programPresetId)
             throws MiddlewareQueryException {
 
@@ -1188,9 +1270,65 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     , AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()));
         }
 
+		//add inventory fields if any
+		if(hasInventoryValues(studyID,workbook.isNursery())){
+			labelFieldsList.addAll(addInventoryRelatedLabelFields(studyID,locale));
+		}
+
         return labelFieldsList;
     }
+    
+	/***
+	 * Returned true if the current study's germplasm list has inventory details
+	 * @param studyID
+	 * @param isNursery 
+	 * @return
+	 */
+    protected boolean hasInventoryValues(int studyID, boolean isNursery){    	
+    	try {
+    		GermplasmList germplasmList = null;
+    		GermplasmListType listType = (isNursery)? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
+			List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(studyID, listType);
+			if(!germplasmLists.isEmpty()){
+				germplasmList = germplasmLists.get(0);
+			}
+			
+			if(germplasmList != null){
+				Integer listId = germplasmList.getId();
+                String germplasmListType = germplasmList.getType();
+                List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId,germplasmListType);
+				
+				for(InventoryDetails inventoryDetails : inventoryDetailList){
+					if(inventoryDetails.getLotId() != null){
+						return true;
+					}
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+    	
+    	return false;
+    }
 
+
+    protected List<LabelFields> addInventoryRelatedLabelFields(int studyID, Locale locale) {
+    	List<LabelFields> labelFieldList = new ArrayList<LabelFields>();
+    	
+    	labelFieldList.add(new LabelFields(
+				messageSource.getMessage("label.printing.seed.inventory.amount", null, locale)
+                , AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT.getInt()));
+				
+		labelFieldList.add(new LabelFields(
+				messageSource.getMessage("label.printing.seed.inventory.scale", null, locale)
+                , AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()));
+		
+		labelFieldList.add(new LabelFields(
+				messageSource.getMessage("label.printing.seed.inventory.location", null, locale)
+                , AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_LOCATION.getInt()));
+		
+		return labelFieldList;
+	}
 
     public boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail) {
     	//if there are datasets with fieldmap, check if all trial instances of the study have fieldmaps
@@ -1343,7 +1481,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	public void setMessageSource(ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
-    
-    
+
+	public void setFieldbookMiddlewareService(
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	public void setInventoryMiddlewareService(
+			InventoryService inventoryMiddlewareService) {
+		this.inventoryMiddlewareService = inventoryMiddlewareService;
+	}
 
 }

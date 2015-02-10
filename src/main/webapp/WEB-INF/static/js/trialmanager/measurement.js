@@ -19,7 +19,30 @@
                         angular.copy(newValue, $scope.settings);
                     }
                 });
-
+                
+                $scope.deletedEnvironment = 0;
+                
+				$scope.$watch(function(){
+					return TrialManagerDataService.deletedEnvironment;
+				}, function(newValue){
+					
+					// this scenario only covered the update of measurement table 
+					// when the user delete an environment for a existing trial with measurement data
+					
+					if(newValue !== 0 && TrialManagerDataService.trialMeasurement.hasMeasurement){
+						$scope.deletedEnvironment = TrialManagerDataService.deletedEnvironment;
+						
+						// update the measurement tab
+						$scope.reloadMeasurementPage();
+						TrialManagerDataService.clearUnappliedChangesFlag();
+                        TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+						
+						TrialManagerDataService.deletedEnvironment = 0;
+						$scope.updateOccurred = true;
+					}
+					
+				});
+				
                 $scope.beforeDelete = function(variableType,variableIds) {
                     var deferred = $q.defer();
 
@@ -81,7 +104,7 @@
                         $.ajax({
                             url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
                             type: 'POST',
-                            data: 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys,
+                            data: 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys + "&deletedEnvironment="+$scope.deletedEnvironment,
                             cache: false,
                             success: function (html) {
                                 $('#measurementsDiv').html(html);

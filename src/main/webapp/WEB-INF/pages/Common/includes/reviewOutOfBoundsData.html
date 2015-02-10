@@ -30,6 +30,7 @@
 						<div class="col-xs-5 col-md-5">
 							<select style="width: 205px" id="review-out-of-bounds-data-action">
 								<option value="0" th:text="#{common.please.choose}"></option>
+								<option value="1" th:text="#{review.out.of.bounds.data.review.details}"></option>
 								<option value="2" th:text="#{review.out.of.bounds.data.accept.all}"></option>
 								<option value="3" th:text="#{review.out.of.bounds.data.set.to.missing}"></option>
 							</select>
@@ -44,3 +45,13 @@
 		</div>
 	</div>
 </div>
+
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+	(function() {
+		$('document').ready(function() {
+			$('#review-out-of-bounds-data-action').select2({minimumResultsForSearch: 20});
+		});
+	})();
+//]]>
+</script>

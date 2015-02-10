@@ -22,6 +22,7 @@
 </div>
 
 <div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/locations.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
     (function() {
@@ -34,17 +35,16 @@
    	$(function() {
 		'use strict';
 		$('#manageLocationModal').on('hidden.bs.modal', function () {
-			if($('#advanceNurseryModal').length !== 0 && $('#advanceNurseryModal').data('open') == '1'){
+			if(LocationsFunctions.isModalAvailableAndForOpening('advanceNurseryModal')){
 				//we show the advance nursery modal
-				setTimeout(function(){$('#advanceNurseryModal').modal('show');}, 200);				
-				setTimeout(function(){$('#advanceNurseryModal').data('open', '0');}, 500);
-			}else if($('#addLotsModal').length !== 0 && $('#addLotsModal').data('open') == '1'){
+				LocationsFunctions.openModal('advanceNurseryModal');
+			}else if(LocationsFunctions.isModalAvailableAndForOpening('addLotsModal')){
 				//we show the advance nursery modal
-				setTimeout(function(){$('#addLotsModal').modal('show');}, 200);
-				setTimeout(function(){$('#addLotsModal').data('open', '0');}, 500);				
-			}else if($('#importStudyDesigConfirmationModal').length !== 0 && $('#importStudyDesigConfirmationModal').data('open') == '1'){
-				setTimeout(function(){$('#importStudyDesigConfirmationModal').modal('show');}, 200);
-				setTimeout(function(){$('#importStudyDesigConfirmationModal').data('open', '0');}, 500);
+				LocationsFunctions.openModal('addLotsModal');
+			}else if(LocationsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')){
+				LocationsFunctions.openModal('importStudyDesigConfirmationModal');
+			} else if(LocationsFunctions.isModalAvailableAndForOpening('crossSettingsModal')){
+				LocationsFunctions.openModal('crossSettingsModal');
 			}
 	    });
 	});

@@ -217,10 +217,12 @@ public interface FieldbookService {
 	/**
 	 * Add/Updates/Deletes check variables.
 	 *
-	 * @param UserSelection the userSelection
+	 * @param userSelection the userSelection
 	 * @param form the form
 	 */
 	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) throws MiddlewareQueryException;
     
 	BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design) throws IOException;
+	
+	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId) throws MiddlewareQueryException;
 }

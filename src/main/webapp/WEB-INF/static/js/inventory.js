@@ -20,6 +20,15 @@ function triggerInventoryTableSelection(tableName, sectionContainerDiv, listIden
 		
 	});
 }
+function isCurrentTabIdentifierAdvanced(){
+	'use strict';
+    if($('#create-nursery-tab-headers .tabdrop').hasClass('active')){
+  	  //means the active is in the tab drop
+  	  return $('#create-nursery-tab-headers .tabdrop li.active').hasClass('crosses-list');
+    }else{
+  	  return $('#create-nursery-tab-headers li.active').hasClass('crosses-list');
+    }    	
+}
 function getCurrentAdvanceTabTempIdentifier(){
 	var listDivIdentifier  = '';
     if($('#create-nursery-tab-headers .tabdrop').hasClass('active')){
@@ -232,7 +241,12 @@ function saveLots() {
 		    	if (data.success === 1) {
 			    	showSuccessfulMessage('page-message', data.message);
 			    	$('#addLotsModal').modal('hide');
-			    	displayAdvanceGermplasmDetails(getCurrentAdvanceTabListIdentifier());
+			    	if(!isCurrentTabIdentifierAdvanced()){
+			    		displayAdvanceGermplasmDetails(getCurrentAdvanceTabListIdentifier());	
+			    	}else{
+			    		ImportCrosses.displayCrossesGermplasmDetails(getCurrentAdvanceTabListIdentifier());
+			    	}
+			    	
 		    	} else {
 		    		showErrorMessage('page-message-lots', data.message);
 		    	}

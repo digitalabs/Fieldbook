@@ -1,372 +1,278 @@
 package com.efficio.fieldbook.service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Resource;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.when;
 
-import junit.framework.Assert;
+/**
+ * Created by IntelliJ IDEA.
+ * User: Daniel Villafuerte
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
-import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ResourceBundleMessageSource;
+ */
 
-import com.csvreader.CsvReader;
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.utils.test.ExcelImportUtil;
-import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.util.AppConstants;
+@RunWith(MockitoJUnitRunner.class)
+public class LabelPrintingServiceTest {
 
-import com.lowagie.text.pdf.PdfReader;
+	@Mock
+	private SettingsService settingsService;
 
-public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceTest.class);
-    
-    private static int[] fieldMapLabels = {AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(), 
-			AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), 
-			AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
-    
-    private static final String PLOT_COORDINATES = "Plot Coordinates";
-        
-    @Resource
-    private LabelPrintingService labelPrintingService;
-    
-    @Resource
-    private ResourceBundleMessageSource messageSource;
-        
-    @Test
-    public void testGetAvailableLabelFieldsFromTrialWithoutFieldMap() {
-    	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(true, false, locale);
-    	Assert.assertFalse(areFieldsInLabelList(labels));
-    }
-    
-    @Test
-    public void testGetAvailableLabelFieldsFromTrialWithFieldMap() {
-    	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(true, true, locale);
-    	Assert.assertTrue(areFieldsInLabelList(labels));
-    }
-    
-    @Test
-    public void testGetAvailableLabelFieldsFromNurseryWithoutFieldMap() {
-    	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(false, false, locale);
-    	Assert.assertFalse(areFieldsInLabelList(labels));
-    }
-    
-    @Test
-    public void testGetAvailableLabelFieldsFromNurseryWithFieldMap() {
-    	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(false, true, locale);
-    	Assert.assertTrue(areFieldsInLabelList(labels));
-    }
-    
-    @Test
-    public void testGetAvailableLabelFieldsFromFieldMap() {
-    	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(false, true, locale);
-    	Assert.assertTrue(areFieldsInLabelList(labels));
-    }
-    
-    private boolean areFieldsInLabelList(List<LabelFields> labels) {
-    	int fieldMapLabelCount = 0;
-    	
-    	if (labels != null) {
-    		for (LabelFields label : labels) {
-    			for (int fieldMapLabel : fieldMapLabels) {
-    				if (label.getId() == fieldMapLabel) {
-    					fieldMapLabelCount++;
-    				}
-    			}
-    		}
-    		
-    		if (fieldMapLabelCount == fieldMapLabels.length) {
-    			return true;
-    		} else {
-    			return false;
-    		}
-    	}
-    	return false;
-    }
-    
-    @Test
-    public void testFieldmapFieldsInGeneratedPdf() {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
-    	String labels = "";
-    	String fileName = "";
-    	try {
-    		fileName = labelPrintingService.generatePDFLabels(trialInstances, userLabelPrinting, baos);
-    		
-    		PdfReader reader = new PdfReader(fileName);
-    		byte[] streamBytes = reader.getPageContent(1);
-    	    labels = new String(streamBytes);
-    	} catch (LabelPrintingException e) {
-    		LOG.error(e.getMessage(), e);
-    	} catch (FileNotFoundException e) {
-    		LOG.error(e.getMessage(), e);
-    	} catch (IOException e) {
-    		LOG.error(e.getMessage(), e);
-    	}
-    	
-    	Assert.assertTrue(areFieldsinGeneratedLabels(labels, true));
-    }
-    
-    @Test
-    public void testFieldmapFieldsInGeneratedXls() {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
-    	String labels = "";
-    	String fileName = "";
-    	try {
-    		fileName = labelPrintingService.generateXlSLabels(trialInstances, userLabelPrinting, baos);
-    		org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
-			
-    		Sheet sheet = xlsBook.getSheetAt(0);
-    		
-    		for (int i = 0; i <= sheet.getLastRowNum(); i++) {
-    			Row row = sheet.getRow(i);
-                if (row != null) {
-                	for (int j = 0; j <= row.getLastCellNum(); j++) {
-                		Cell cell = row.getCell(j);
-                		
-                		if (cell != null && cell.getStringCellValue() != null) {
-                			labels = labels + " " + cell.getStringCellValue();
-                		}
-                	}
-                }
-    		}
-    		
-    	} catch (MiddlewareQueryException e) {
-    		LOG.error(e.getMessage(), e);
-    	} catch (Exception e) {
-    		LOG.error(e.getMessage(), e);
-    	}
-    	
-    	Assert.assertTrue(areFieldsinGeneratedLabels(labels, false));
-    }
-    
-    
-    
-    private boolean areFieldsinGeneratedLabels(String labels, boolean isPdf) {
-    	boolean areFieldsInLabels = true;
-    	Locale locale = new Locale("en", "US");
-    	
-    	for (int label : fieldMapLabels) {
-    		String fieldName = "";
-    		if (label == AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
-    			fieldName = messageSource.getMessage(
-            			"label.printing.available.fields.block.name", null, locale);
-    		} else if (label == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
-    			fieldName = messageSource.getMessage(
-            			"label.printing.available.fields.field.name", null, locale);
-    		} else if (label == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
-    			fieldName = PLOT_COORDINATES;
-    		}
-    		
-    		String[] field = labels.split(fieldName);
-    		if (field.length <= 1) {
-    			areFieldsInLabels = false;
-    			break;
-    		}
-    	}
-    	
-    	return areFieldsInLabels;
-    }
-        
-    @Test
-    public void testFieldMapPropertiesOfNurseryWithoutFieldMap() {
-    	UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-    	FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(false).get(0);
-    	setFieldmapProperties(fieldMapInfoDetail, false, false);
-    	boolean hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
-    	
-    	Assert.assertFalse(hasFieldMap);
-    	Assert.assertFalse(userLabelPrinting.isFieldMapsExisting());
-    }
-    
-    @Test
-    public void testFieldMapPropertiesOfNurseryWithFieldMap() {
-    	UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-    	FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(false).get(0);
-    	setFieldmapProperties(fieldMapInfoDetail, true, false);
-    	boolean hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
-    	
-    	Assert.assertTrue(hasFieldMap);
-    	Assert.assertTrue(userLabelPrinting.isFieldMapsExisting());
-    }
-    
-    @Test
-    public void testFieldMapPropertiesOfTrialWithoutFieldMaps() {
-    	UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-    	FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
-    	setFieldmapProperties(fieldMapInfoDetail, false, false);
-    	boolean hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
-    	
-    	Assert.assertFalse(hasFieldMap);
-    	Assert.assertFalse(userLabelPrinting.isFieldMapsExisting());
-    }
-    
-    @Test
-    public void testFieldMapPropertiesOfTrialWithOneFieldMap() {
-    	UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-    	FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
-    	setFieldmapProperties(fieldMapInfoDetail, false, true);
-    	boolean hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
-    	
-    	Assert.assertTrue(hasFieldMap);
-    	Assert.assertFalse(userLabelPrinting.isFieldMapsExisting());
-    }
-    
-    @Test
-    public void testFieldMapPropertiesOfTrialWithFieldMaps() {
-    	UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
-    	FieldMapInfo fieldMapInfoDetail = LabelPrintingDataUtil.createFieldMapInfoList(true).get(0);
-    	setFieldmapProperties(fieldMapInfoDetail, true, false);
-    	boolean hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(userLabelPrinting, fieldMapInfoDetail);
-    	
-    	Assert.assertTrue(hasFieldMap);
-    	Assert.assertTrue(userLabelPrinting.isFieldMapsExisting());
-    }
-    
-    private void setFieldmapProperties(FieldMapInfo fieldMapInfoDetail, boolean hasFieldMap, boolean hasOneTrialInstanceWithFieldMap) {
-    	//set column to null and hasFieldMap to false if study has no fieldmap at all
-    	//else, don't change the values
-    	for (FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
-    		int ctr = 0;
-    		for (FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstances()) {
-    			if ((ctr == 0 && hasOneTrialInstanceWithFieldMap) || !hasOneTrialInstanceWithFieldMap) {
-    				trialInstance.setHasFieldMap(hasFieldMap);
-        			if (!hasFieldMap) {
-    	    			for (FieldMapLabel label : trialInstance.getFieldMapLabels()) {
-    	    				label.setColumn(null);
-    	    			}
-        			}
-    			}
-    			ctr++;
-    		}
-    	}
-    }
-    
-    @Test
-    public void testGenerationOfPdfLabels() {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
-    	String fileName = "";
-    	try {
-    		fileName = labelPrintingService.generatePDFLabels(trialInstances, userLabelPrinting, baos);
-    		
-    		PdfReader reader = new PdfReader(fileName);
-    		Assert.assertNotNull("Expected a new pdf file was created but found none.", reader);
-    		byte[] streamBytes = reader.getPageContent(1);
-    		Assert.assertNotNull("Expected a file with content but found none.", streamBytes);
-    	} catch (LabelPrintingException e) {
-    		LOG.error(e.getMessage(), e);
-    		Assert.fail("Error encountered while generating pdf file.");
-    	} catch (FileNotFoundException e) {
-    		LOG.error(e.getMessage(), e);
-    		Assert.fail("File not found.");
-    	} catch (IOException e) {
-    		LOG.error(e.getMessage(), e);
-    		Assert.fail("Error encountered while reading file.");
-    	}
-    }
-    
-    @Test
-    public void testGenerationOfXlsLabels() {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_EXCEL.getString());
-    	String fileName = "";
-    	try {
-    		fileName = labelPrintingService.generateXlSLabels(trialInstances, userLabelPrinting, baos);
-    		org.apache.poi.ss.usermodel.Workbook xlsBook = ExcelImportUtil.parseFile(fileName);
-			
-    		Assert.assertNotNull("Expected a new workbook file was created but found none.", xlsBook);
-    		
-    		Sheet sheet = xlsBook.getSheetAt(0);
-    		
-    		Assert.assertNotNull("Expecting an xls file with 1 sheet but found none.", sheet);
-    		
-    		Assert.assertTrue("Expected at least one row but got 0", sheet.getLastRowNum() > 0);
-    	} catch (MiddlewareQueryException e) {
-    		LOG.error(e.getMessage(), e);
-    		Assert.fail("Encountered error while exporting to xls.");
-    	} catch (Exception e) {
-    		LOG.error(e.getMessage(), e);
-    		Assert.fail("Excountered error while reading xls file.");
-    	}
-    }
-    
-    @Test
-    public void testGenerationOfCsvLabels() {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	List<StudyTrialInstanceInfo> trialInstances = LabelPrintingDataUtil.createStudyTrialInstanceInfo();
-    	UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
-    	String fileName = "";
-    	try {
-    		fileName = labelPrintingService.generateCSVLabels(trialInstances, userLabelPrinting, baos);
-    		
-    		CsvReader csvReader = new CsvReader(fileName);
-    		
-    		csvReader.readHeaders();
-            String[] headers = csvReader.getHeaders();
-			
-    		Assert.assertNotNull("Expected a new csv file was created but found none.", csvReader);    		
-    		Assert.assertNotNull("Expecting a csv file with headers but no header was found.", headers);
-    		Assert.assertTrue("Expected all headers but only got " + headers.length, areHeadersEqual(headers, userLabelPrinting));
-    		Assert.assertTrue("Expected " + " rows but got " + " instead.", areRowsEqual(csvReader, headers, userLabelPrinting));
-    	} catch (IOException e) {
-    		LOG.error(e.getMessage(), e);
-    		Assert.fail("Excountered error while exporting/reading csv file.");
-    	}
-    }
+	@Mock
+	private MessageSource messageSource;
 
-	private boolean areRowsEqual(CsvReader csvReader, String[] headers, UserLabelPrinting userLabelPrinting) {
-		try {
-			int rowNum = 0, rowNum2 = 0;
-			while (csvReader.readRecord()) {
-				rowNum++;
-			}
-			
-			for (FieldMapDatasetInfo dataset : userLabelPrinting.getFieldMapInfo().getDatasets()) {
-				for (FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstancesWithFieldMap()) {
-					rowNum2 += trialInstance.getFieldMapLabels().size();
+	@Mock
+	private Workbook workbook;
+
+	@Mock
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+
+	@InjectMocks
+	private LabelPrintingServiceImpl dut;
+
+	public static final String DUMMY_TRIAL_SETTING_LABEL_NAME = "dummyTrialSettingLabel";
+	public static final String DUMMY_TRIAL_ENVIRONMENT_LABEL_NAME = "dummyTrialEnvironmentLabel";
+	public static final String DUMMY_GERMPLASM_LABEL_NAME = "dummyGermplasmLabel";
+	public static final String DUMMY_NURSERY_LABEL_NAME = "dummyNurseryLabel";
+	public static final String DUMMY_TRAIT_LABEL_NAME = "dummyTrait";
+	public static final int DUMMY_TRIAL_SETTING_LABEL_TERM_ID = 1;
+	public static final int DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID = 2;
+	public static final int DUMMY_NURSERY_LABEL_TERM_ID = 3;
+	public static final int DUMMY_TRAIT_TERM_ID = 4;
+	public static final int DUMMY_GERMPLASM_TERM_ID = 5;
+
+	public static final int DUMMY_TRIAL_ID = 10;
+	public static final int DUMMY_NURSERY_ID = 11;
+
+	@Before
+	public void setUp() throws Exception {
+		when(fieldbookMiddlewareService.getTrialDataSet(anyInt())).thenReturn(workbook);
+		when(fieldbookMiddlewareService.getNurseryDataSet(anyInt())).thenReturn(workbook);
+	}
+
+	@Test
+	public void testGetAvailableFieldsTrialNoFieldMap() {
+		List<LabelFields> trialSettingLabels = createDummyTrialSettingLabels();
+		List<LabelFields> trialEnvironmentLabels = createDummyTrialEnvironmentLabels();
+		List<LabelFields> traitLabels = createDummyTraitLabels();
+		List<LabelFields> germplasmLabels = createDummyGermplasmLabels();
+
+
+		when(settingsService.retrieveTrialSettingsAsLabels(workbook)).thenReturn(trialSettingLabels);
+		when(settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(workbook)).thenReturn(trialEnvironmentLabels);
+		when(settingsService.retrieveTraitsAsLabels(workbook)).thenReturn(traitLabels);
+		when(settingsService.retrieveGermplasmDescriptorsAsLabels(workbook)).thenReturn(germplasmLabels);
+
+		List<LabelFields> retrieved = dut.getAvailableLabelFields(true, false, Locale.getDefault(), DUMMY_TRIAL_ID);
+
+		assertNotNull(retrieved);
+		verifyBaseLabelFieldsPresent(retrieved);
+		verifyLabelListContainsList(retrieved, trialSettingLabels, "Retrieved available label list does not contain all trial setting related labels");
+		verifyLabelListContainsList(retrieved, trialEnvironmentLabels, "Retrieved available label list does not contain all environment related labels");
+		verifyLabelListContainsList(retrieved, traitLabels, "Retrieved available label list does not contain all trait related labels");
+		verifyLabelListContainsList(retrieved, germplasmLabels, "Retrieved available label list does not contain all germplasm related labels");
+
+		verifyNoFieldMapLabels(retrieved);
+	}
+
+	@Test
+	public void testGetAvailableFieldsTrialWithFieldMap() {
+		List<LabelFields> trialSettingLabels = createDummyTrialSettingLabels();
+		List<LabelFields> trialEnvironmentLabels = createDummyTrialEnvironmentLabels();
+		List<LabelFields> traitLabels = createDummyTraitLabels();
+		List<LabelFields> germplasmLabels = createDummyGermplasmLabels();
+
+		when(settingsService.retrieveTrialSettingsAsLabels(workbook))
+				.thenReturn(trialSettingLabels);
+		when(settingsService
+				.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(workbook))
+				.thenReturn(trialEnvironmentLabels);
+		when(settingsService.retrieveTraitsAsLabels(workbook)).thenReturn(traitLabels);
+		when(settingsService.retrieveGermplasmDescriptorsAsLabels(workbook))
+				.thenReturn(germplasmLabels);
+
+		List<LabelFields> retrieved = dut
+				.getAvailableLabelFields(true, true, Locale.getDefault(), DUMMY_TRIAL_ID);
+
+		assertNotNull(retrieved);
+		verifyBaseLabelFieldsPresent(retrieved);
+		verifyLabelListContainsList(retrieved, trialSettingLabels,
+				"Retrieved available label list does not contain all trial setting related labels");
+		verifyLabelListContainsList(retrieved, trialEnvironmentLabels,
+				"Retrieved available label list does not contain all environment related labels");
+		verifyLabelListContainsList(retrieved, traitLabels,
+				"Retrieved available label list does not contain all trait related labels");
+		verifyLabelListContainsList(retrieved, germplasmLabels,
+				"Retrieved available label list does not contain all germplasm related labels");
+
+		verifyFieldMapLabelsPresent(retrieved);
+	}
+
+	@Test
+	public void testGetAvailableFieldsNurseryWithFieldMap() {
+		List<LabelFields> nurserySettingLabels = createDummyNurseryManagementLabels();
+		List<LabelFields> traitLabels = createDummyTraitLabels();
+		List<LabelFields> germplasmLabels = createDummyGermplasmLabels();
+
+		when(settingsService.retrieveNurseryManagementDetailsAsLabels(workbook))
+				.thenReturn(nurserySettingLabels);
+		when(settingsService.retrieveTraitsAsLabels(workbook)).thenReturn(traitLabels);
+		when(settingsService.retrieveGermplasmDescriptorsAsLabels(workbook))
+				.thenReturn(germplasmLabels);
+
+		List<LabelFields> retrieved = dut
+				.getAvailableLabelFields(false, true, Locale.getDefault(), DUMMY_NURSERY_ID);
+
+		assertNotNull(retrieved);
+		verifyBaseLabelFieldsPresent(retrieved);
+		verifyLabelListContainsList(retrieved, nurserySettingLabels,
+				"Retrieved available label list does not contain all nursery management related labels");
+		verifyLabelListContainsList(retrieved, traitLabels,
+				"Retrieved available label list does not contain all trait related labels");
+		verifyLabelListContainsList(retrieved, germplasmLabels,
+				"Retrieved available label list does not contain all germplasm related labels");
+
+		verifyFieldMapLabelsPresent(retrieved);
+	}
+
+	@Test
+	public void testGetAvailableFieldsNurseryNoFieldMap() {
+		List<LabelFields> nurserySettingLabels = createDummyNurseryManagementLabels();
+		List<LabelFields> traitLabels = createDummyTraitLabels();
+		List<LabelFields> germplasmLabels = createDummyGermplasmLabels();
+
+		when(settingsService.retrieveNurseryManagementDetailsAsLabels(workbook))
+				.thenReturn(nurserySettingLabels);
+		when(settingsService.retrieveTraitsAsLabels(workbook)).thenReturn(traitLabels);
+		when(settingsService.retrieveGermplasmDescriptorsAsLabels(workbook))
+				.thenReturn(germplasmLabels);
+
+		List<LabelFields> retrieved = dut
+				.getAvailableLabelFields(false, false, Locale.getDefault(), DUMMY_NURSERY_ID);
+
+		assertNotNull(retrieved);
+		verifyBaseLabelFieldsPresent(retrieved);
+		verifyLabelListContainsList(retrieved, nurserySettingLabels,
+				"Retrieved available label list does not contain all nursery management related labels");
+		verifyLabelListContainsList(retrieved, traitLabels,
+				"Retrieved available label list does not contain all trait related labels");
+		verifyLabelListContainsList(retrieved, germplasmLabels,
+				"Retrieved available label list does not contain all germplasm related labels");
+
+		verifyNoFieldMapLabels(retrieved);
+	}
+
+	protected void verifyFieldMapLabelsPresent(List<LabelFields> forVerification) {
+		for (Integer baseLabelPrintingFieldMapLabelId : LabelPrintingServiceImpl.BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS) {
+			boolean found = false;
+
+			for (LabelFields labelFields : forVerification) {
+				if (baseLabelPrintingFieldMapLabelId.equals(labelFields.getId())) {
+					found = true;
+					break;
 				}
 			}
-			return rowNum == rowNum2;
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-			Assert.fail("Error encountered while reading the file.");
-			return false;
+
+			assertTrue("Field map based label was not present in retrieved", found);
 		}
 	}
 
-	private boolean areHeadersEqual(String[] headers, UserLabelPrinting userLabelPrinting) {
-		int headerLength = userLabelPrinting.getLeftSelectedLabelFields().split(",").length + 
-				userLabelPrinting.getRightSelectedLabelFields().split(",").length;
-		return headers.length == headerLength;
+	protected void verifyNoFieldMapLabels(List<LabelFields> forVerification) {
+		for (Integer baseLabelPrintingFieldMapLabelId : LabelPrintingServiceImpl.BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS) {
+			boolean found = false;
+
+			for (LabelFields labelFields : forVerification) {
+				if (baseLabelPrintingFieldMapLabelId.equals(labelFields.getId())) {
+					found = true;
+					break;
+				}
+			}
+
+			assertFalse("Field map based labels were still present in retrieved", found);
+		}
 	}
+
+	protected void verifyLabelListContainsList(List<LabelFields> forVerification, List<LabelFields> expectedContained, String errorMessage) {
+		for (LabelFields trialSettingLabel : expectedContained) {
+			assertTrue(errorMessage,forVerification.contains(trialSettingLabel));
+		}
+	}
+
+	protected void verifyBaseLabelFieldsPresent(List<LabelFields> forVerification) {
+		for (Integer baseLabelPrintingFieldId : LabelPrintingServiceImpl.BASE_LABEL_PRINTING_FIELD_IDS) {
+			boolean found = false;
+
+			for (LabelFields labelFields : forVerification) {
+				if (baseLabelPrintingFieldId.equals(labelFields.getId())) {
+					found = true;
+					break;
+				}
+			}
+
+			assertTrue("Base label field not present in values retrieved from service", found);
+		}
+	}
+
+	protected List<LabelFields> createDummyNurseryManagementLabels() {
+		List<LabelFields> labelFields = new ArrayList<>();
+
+		LabelFields field = new LabelFields(DUMMY_NURSERY_LABEL_NAME,
+				DUMMY_NURSERY_LABEL_TERM_ID);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
+	protected List<LabelFields> createDummyTrialSettingLabels() {
+		List<LabelFields> labelFields = new ArrayList<>();
+
+		LabelFields field = new LabelFields(DUMMY_TRIAL_SETTING_LABEL_NAME, DUMMY_TRIAL_SETTING_LABEL_TERM_ID);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
+	protected List<LabelFields> createDummyTrialEnvironmentLabels() {
+		List<LabelFields> labelFields = new ArrayList<>();
+
+		LabelFields field = new LabelFields(DUMMY_TRIAL_ENVIRONMENT_LABEL_NAME,
+				DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
+	protected List<LabelFields> createDummyTraitLabels() {
+		List<LabelFields> labelFields = new ArrayList<>();
+
+		LabelFields field = new LabelFields(DUMMY_TRAIT_LABEL_NAME,
+				DUMMY_TRAIT_TERM_ID);
+		labelFields.add(field);
+
+		return labelFields;
+	}
+
+	protected List<LabelFields> createDummyGermplasmLabels() {
+			List<LabelFields> labelFields = new ArrayList<>();
+
+			LabelFields field = new LabelFields(DUMMY_GERMPLASM_LABEL_NAME,
+					DUMMY_GERMPLASM_TERM_ID);
+			labelFields.add(field);
+
+			return labelFields;
+		}
+
 }

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -36,6 +39,9 @@ public class AdvancingSourceListFactory {
 	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private ResourceBundleMessageSource messageSource;
 	
 	private static final String DEFAULT_TEST_VALUE = "T";
 
@@ -195,6 +201,9 @@ public class AdvancingSourceListFactory {
                 if (source.getGermplasm() != null && source.getGermplasm().getGid() != null 
                         && NumberUtils.isNumber(source.getGermplasm().getGid())) {                	
                     Germplasm germplasm = germplasmMap.get(source.getGermplasm().getGid().toString());
+                    
+                    checkIfGermplasmIsExisting(germplasm);
+                    
                     source.getGermplasm().setGpid1(germplasm.getGpid1());
                     source.getGermplasm().setGpid2(germplasm.getGpid2());
                     source.getGermplasm().setGnpgs(germplasm.getGnpgs());
@@ -206,6 +215,14 @@ public class AdvancingSourceListFactory {
                 }
             }
             
+        }
+    }
+    
+    protected void checkIfGermplasmIsExisting(Germplasm germplasm) throws MiddlewareQueryException{
+    	if(germplasm == null){
+        	//we throw exception becuase germplasm is not existing
+    		Locale locale = LocaleContextHolder.getLocale();
+        	throw new MiddlewareQueryException(messageSource.getMessage("error.advancing.germplasm.not.existing", new String[] {},  locale));
         }
     }
     

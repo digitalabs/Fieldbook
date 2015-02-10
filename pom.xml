@@ -5,10 +5,10 @@
 	<artifactId>Fieldbook</artifactId>
 	<packaging>war</packaging>
 	<name>Fieldbook Project</name>
-	<version>3.1.1.SNAPSHOT</version>
+	<version>3.1.2.SNAPSHOT</version>
 
 	<properties>
-        <ibpcommons.version>3.1.1.SNAPSHOT</ibpcommons.version>
+        <ibpcommons.version>3.1.2.SNAPSHOT</ibpcommons.version>
 		<spring.version>3.2.11.RELEASE</spring.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
     </properties>
@@ -17,12 +17,12 @@
 		<repository>
 			<id>efficio-nexus</id>
 			<name>Releases</name>
-			<url>http://gcp.efficio.us.com:8081/nexus/content/repositories/releases/</url>
+			<url>http://apps.leafnode.io:8081/nexus/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>efficio-nexus</id>
 			<name>Snapshots</name>
-			<url>http://gcp.efficio.us.com:8081/nexus/content/repositories/snapshots/</url>
+			<url>http://apps.leafnode.io:8081/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 

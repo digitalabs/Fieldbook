@@ -267,6 +267,7 @@ public class ObservationMatrixController extends
 						var.setCustomCategoricalValue(true);
 					} else{
 						var.setcValueId(value);
+						var.setCustomCategoricalValue(false);
 					}
 					var.setValue(value);
 					var.setAccepted(true);
@@ -298,6 +299,11 @@ public class ObservationMatrixController extends
     				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
     				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
     				var.setAccepted(true);
+    				if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
+    					var.setCustomCategoricalValue(true);
+    				}else{
+    					var.setCustomCategoricalValue(false);
+    				}
     				break;
     			}
     		}
@@ -334,6 +340,12 @@ public class ObservationMatrixController extends
 				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
 				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
 				var.setAccepted(true);
+				if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
+					var.setCustomCategoricalValue(true);
+				}else{
+					var.setCustomCategoricalValue(false);
+				}
+				
 			}
 		}
 	}
@@ -342,9 +354,12 @@ public class ObservationMatrixController extends
 			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
 				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
 				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
-				var.setAccepted(true);
+				var.setAccepted(true);				
 				if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
 					var.setValue("missing");
+					var.setCustomCategoricalValue(true);
+				}else{
+					var.setCustomCategoricalValue(false);
 				}
 			}
 		}
@@ -501,6 +516,7 @@ public class ObservationMatrixController extends
 					oldData.setcValueId(null);
 				}else{
 					oldData.setcValueId(newData.getcValueId());
+					oldData.setCustomCategoricalValue(false);
 				}
 				oldData.setValue(newData.getcValueId());
 			}else if(newData.getValue() != null){
@@ -509,6 +525,7 @@ public class ObservationMatrixController extends
 					oldData.setcValueId(null);
 				}else{
 					oldData.setcValueId(newData.getValue());
+					oldData.setCustomCategoricalValue(false);
 				}
 				oldData.setValue(newData.getValue());
 			}

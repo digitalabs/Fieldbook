@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -166,14 +167,10 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
         } catch (FileNotFoundException e) {
             LOG.error("File not found");
-        } catch (IOException e) {
-            showInvalidFileError(e.getMessage());
-        } catch (OfficeXmlFileException e) {
-            showInvalidFileError(e.getMessage());
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            showInvalidFileError(e.getMessage());
-        } finally {
+        } catch (InvalidFormatException | IOException e) {
+			LOG.error(e.getMessage(), e);
+			showInvalidFileError(e.getMessage());
+		} finally {
             if (!fileIsValid) {
                 mainInfo.setFileIsValid(false);
                 mainInfo.setErrorMessages(errorMessages);
@@ -189,14 +186,14 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	 * @param mainInfo the main info
 	 * @throws Exception the exception
 	 */
-	public void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) throws Exception{
+	public void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) {
         wb = workbook;
         currentSheet = 0;
         currentRow = 0;
         currentColumn = 0;
 
         fileIsValid = true;
-        errorMessages = new HashSet<String>();
+        errorMessages = new HashSet<>();
 
         readSheet1();
         readSheet2();

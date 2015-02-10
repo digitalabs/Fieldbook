@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -182,12 +183,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @return the list
      */
     protected List<Integer> buildVariableIDList(String requiredFields) {
-        List<Integer> requiredVariables = new ArrayList<Integer>();
-        StringTokenizer token = new StringTokenizer(requiredFields, ",");
-        while(token.hasMoreTokens()){
-            requiredVariables.add(Integer.valueOf(token.nextToken()));
-        }        
-        return requiredVariables;
+        return FieldbookUtil.getInstance().buildVariableIDList(requiredFields);
     }
     
     /**
@@ -510,6 +506,24 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         for (MeasurementRow row : userSelection.getMeasurementRowList()) {
             for (MeasurementData data : row.getDataList()) {
                 if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Checks if the measurement table has user input data for a particular variable id
+     * @param variableId, List<MeasurementRow>
+     * @return
+     */
+    public static boolean hasMeasurementDataEntered(int variableId, List<MeasurementRow> measurementRow) {
+        for (MeasurementRow row : measurementRow) {
+            for (MeasurementData data : row.getDataList()) {
+                if (data.getMeasurementVariable() != null  &&
+                		data.getMeasurementVariable().getTermId() == variableId 
+                		&& data.getValue() != null && !data.getValue().isEmpty()) {
                     return true;
                 }
             }

@@ -71,4 +71,20 @@ public class LabelPrintingControllerTest extends AbstractBaseControllerIntegrati
 		Assert.assertTrue("Expected csv file generated but found " + results.get("fileName").toString(), 
 				results.get("fileName").toString().contains("csv"));
 	}
+	
+	@Test
+	public void testGetSelectedLabelFieldsForPDF(){
+		UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_PDF.getString());
+		String selectedLabelFields = labelPrintingController.getSelectedLabelFields(userLabelPrinting);
+		String expected = userLabelPrinting.getLeftSelectedLabelFields() + "," + userLabelPrinting.getRightSelectedLabelFields();
+		Assert.assertEquals("Expecting the return results is " + expected + " but returned " + selectedLabelFields ,expected, selectedLabelFields);
+	}
+	
+	@Test
+	public void testGetSelectedLabelFieldsForCSV(){
+		UserLabelPrinting userLabelPrinting = LabelPrintingDataUtil.createUserLabelPrinting(AppConstants.LABEL_PRINTING_CSV.getString());
+		String selectedLabelFields = labelPrintingController.getSelectedLabelFields(userLabelPrinting);
+		String expected = userLabelPrinting.getMainSelectedLabelFields();
+		Assert.assertEquals("Expecting the return results is " + expected + " but returned " + selectedLabelFields ,expected, selectedLabelFields);
+	}
 }

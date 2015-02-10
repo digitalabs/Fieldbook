@@ -280,7 +280,7 @@ public class WorkbookUtil {
 	 public static void addMeasurementDataToRowsExp(List<MeasurementVariable> variableList, List<MeasurementRow> observations, 
 	         boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService) throws MiddlewareQueryException{
 	     //add new variables in measurement rows
-	    if (observations != null && observations.size() > 0) { 
+	    if (observations != null && !observations.isEmpty()) { 
             for (MeasurementVariable variable : variableList) {
                 if (variable.getOperation().equals(Operation.ADD) && !inMeasurementDataList(observations.get(0).getDataList(), variable.getTermId())) {
                     StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
@@ -352,7 +352,7 @@ public class WorkbookUtil {
         if (dataList != null) {
             if (!isVariate) {
                 for (MeasurementData data : dataList) {
-                    if ((!data.getMeasurementVariable().isFactor())) {
+                    if (!data.getMeasurementVariable().isFactor()) {
                         return index;
                     }
                     index++;
@@ -385,9 +385,9 @@ public class WorkbookUtil {
     public static void manageExpDesignVariablesAndObs(Workbook workbook, Workbook tempWorkbook) {
         //edit original factors to add/delete new/deleted variables based on tempWorkbook.getFactors
         //create map of factors in tempWorkbook and factors in workbook
-        HashMap<Integer, MeasurementVariable> tempFactorsMap = new HashMap<Integer, MeasurementVariable>();
-        HashMap<Integer, MeasurementVariable> factorsMap = new HashMap<Integer, MeasurementVariable>();
-        HashMap<Integer, StandardVariable> expDesignVariablesMap = new HashMap<Integer, StandardVariable>();  
+        Map<Integer, MeasurementVariable> tempFactorsMap = new HashMap<Integer, MeasurementVariable>();
+        Map<Integer, MeasurementVariable> factorsMap = new HashMap<Integer, MeasurementVariable>();
+        Map<Integer, StandardVariable> expDesignVariablesMap = new HashMap<Integer, StandardVariable>();  
 
         if (tempWorkbook.getFactors() != null) {
             for (MeasurementVariable var : tempWorkbook.getFactors()) {
@@ -425,9 +425,9 @@ public class WorkbookUtil {
         workbook.setObservations(tempWorkbook.getObservations());
     }
     
-    public static HashMap<Integer, MeasurementVariable> createVariableList(
+    public static Map<Integer, MeasurementVariable> createVariableList(
             List<MeasurementVariable> factors, List<MeasurementVariable> variates) {
-        HashMap<Integer, MeasurementVariable> observationVariables = new HashMap<Integer, MeasurementVariable>();
+        Map<Integer, MeasurementVariable> observationVariables = new HashMap<Integer, MeasurementVariable>();
         if (factors != null) {            
             for (MeasurementVariable var : factors) {
                 observationVariables.put(Integer.valueOf(var.getTermId()), var);
@@ -445,7 +445,7 @@ public class WorkbookUtil {
             , List<MeasurementRow> observations) {
          
         List<Integer> deletedList = new ArrayList<Integer>();
-        if (observations != null && observations.size() > 0) {
+        if (observations != null && !observations.isEmpty()) {
             for (MeasurementData data : observations.get(0).getDataList()) {
                 if (measurementDatasetVariables.get(Integer.valueOf(data.getMeasurementVariable().getTermId())) == null
                         && data.getMeasurementVariable().getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
@@ -503,4 +503,11 @@ public class WorkbookUtil {
     	}
     	return expDesignVariables;
     }
+
+	public static void updateTrialObservations(Workbook workbook,
+			Workbook temporaryWorkbook) {
+		if(temporaryWorkbook.getTrialObservations() != null){
+			workbook.setTrialObservations(temporaryWorkbook.getTrialObservations());
+        }
+	}
 }

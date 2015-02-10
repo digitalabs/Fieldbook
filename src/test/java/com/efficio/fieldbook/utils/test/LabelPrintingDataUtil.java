@@ -50,6 +50,7 @@ public class LabelPrintingDataUtil {
     private static final String PLOT_COORDINATE = "col 1 range 1";
     private static final int RANGE = 1;
     private static final String STUDY_NAME = "labelPrintingTest";
+	public static final int SAMPLE_EXPERIMENT_NO = -2;
     
     //data for FieldMapDatasetInfo
     private static final String DATASET_NAME = "labelPrintingTest-PLOT";
@@ -62,6 +63,9 @@ public class LabelPrintingDataUtil {
     private static final String LEFT_LABEL_FIELDS = AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() 
     		+ "," + AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt();
     private static final String RIGHT_LABEL_FIELDS = String.valueOf(AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt());
+    private static final String MAIN_LABEL_FIELDS = AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt() 
+    		+ "," + AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt() 
+    		+ "," + String.valueOf(AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt());
     private static final String FIRST_BARCODE_FIELD = "1";
     private static final String SECOND_BARCODE_FIELD = "";
     private static final String THIRD_BARCODE_FIELD = "";
@@ -106,19 +110,30 @@ public class LabelPrintingDataUtil {
     	userLabelPrinting.setSecondBarcodeField(SECOND_BARCODE_FIELD);
     	userLabelPrinting.setThirdBarcodeField(THIRD_BARCODE_FIELD);
     	userLabelPrinting.setGenerateType(type);
-    	userLabelPrinting.setLeftSelectedLabelFields(LEFT_LABEL_FIELDS);
-    	userLabelPrinting.setRightSelectedLabelFields(RIGHT_LABEL_FIELDS);
+    	
     	userLabelPrinting.setNumberOfLabelPerRow(LABEL_PER_ROW);
     	userLabelPrinting.setNumberOfRowsPerPageOfLabel(ROWS_PER_PAGE);
     	userLabelPrinting.setSizeOfLabelSheet(LABEL_SHEET_SIZE);
     	
     	if (type.equals(AppConstants.LABEL_PRINTING_PDF.getString())) {
-	    	userLabelPrinting.setFilenameDL(FILE_NAME_DL_PDF);
+    		userLabelPrinting.setLeftSelectedLabelFields(LEFT_LABEL_FIELDS);
+        	userLabelPrinting.setRightSelectedLabelFields(RIGHT_LABEL_FIELDS);
+        	userLabelPrinting.setMainSelectedLabelFields("");
+	    
+        	userLabelPrinting.setFilenameDL(FILE_NAME_DL_PDF);
 	    	userLabelPrinting.setFilenameDLLocation(FILE_NAME_DDL_PDF);
     	} else if (type.equals(AppConstants.LABEL_PRINTING_EXCEL.getString())) {
+    		userLabelPrinting.setLeftSelectedLabelFields("");
+        	userLabelPrinting.setRightSelectedLabelFields("");
+        	userLabelPrinting.setMainSelectedLabelFields(MAIN_LABEL_FIELDS);
+        	
     		userLabelPrinting.setFilenameDL(FILE_NAME_DL_XLS);
 	    	userLabelPrinting.setFilenameDLLocation(FILE_NAME_DDL_XLS);
     	} else {
+    		userLabelPrinting.setLeftSelectedLabelFields("");
+        	userLabelPrinting.setRightSelectedLabelFields("");
+        	userLabelPrinting.setMainSelectedLabelFields(MAIN_LABEL_FIELDS);
+        	
     		userLabelPrinting.setFilenameDL(FILE_NAME_DL_CSV);
 	    	userLabelPrinting.setFilenameDLLocation(FILE_NAME_DDL_CSV);
     	}
@@ -185,6 +200,7 @@ public class LabelPrintingDataUtil {
     	label.setPlotCoordinate(PLOT_COORDINATE);
     	label.setRange(RANGE);
     	label.setStudyName(STUDY_NAME);
+		label.setExperimentId(SAMPLE_EXPERIMENT_NO);
     	labels.add(label);
     	
     	return labels;

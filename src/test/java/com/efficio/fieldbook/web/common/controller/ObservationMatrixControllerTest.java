@@ -367,8 +367,10 @@ public class ObservationMatrixControllerTest {
             				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
             				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
         					Assert.assertTrue(var.isAccepted());
+        					Assert.assertTrue(var.isCustomCategoricalValue());
         			} else {
         					Assert.assertFalse(var.isAccepted());
+        					Assert.assertFalse(var.isCustomCategoricalValue());
         			}
         		}
         	}

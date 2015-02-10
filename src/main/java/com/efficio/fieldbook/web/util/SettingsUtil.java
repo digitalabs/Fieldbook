@@ -484,6 +484,32 @@ public class SettingsUtil {
         return "";
     }
 
+    public static List<Integer> parseFieldListAndConvert(String selectedFieldList) {
+        List<Integer> selectedFieldIDs = new ArrayList<>();
+        String[] split = selectedFieldList.split(",");
+        for (String s : split) {
+            try {
+                if ("".equals(s)) {
+					continue;
+				}
+
+                Integer termID = new Integer(s);
+                String nameTermID = SettingsUtil
+						.getNameCounterpart(termID, AppConstants.ID_NAME_COMBINATION.getString());
+
+                if ("".equals(nameTermID)) {
+					selectedFieldIDs.add(termID);
+				} else {
+					selectedFieldIDs.add(new Integer(nameTermID));
+				}
+            } catch (NumberFormatException e) {
+                LOG.error(e.getMessage());
+            }
+        }
+
+        return selectedFieldIDs;
+    }
+
     /**
      * Convert xml nursery dataset to pojo.
      *

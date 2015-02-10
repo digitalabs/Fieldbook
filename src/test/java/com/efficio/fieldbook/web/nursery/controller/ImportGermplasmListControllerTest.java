@@ -18,34 +18,49 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Resource;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ExtendedModelMap;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ImportGermplasmListControllerTest extends AbstractBaseControllerIntegrationTest {
     
-    /** The Constant LOG. */
+    private static final int CHECK_TYPE = 1;
+	private static final Integer PROJECT_ID = 97;
+	private static final Integer GERMPLASM_LIST_ID = 98;
+	private static final Integer STUDY_ID = 99;
+
+	/** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListControllerTest.class);
 
     /** The import germplasm file service. */
@@ -53,8 +68,26 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
     private ImportGermplasmFileService importGermplasmFileService;
     
     /** The user selection. */
-    @Mock
+    @Spy
     private UserSelection userSelection;
+    
+    @Spy
+    private ExtendedModelMap model;
+    
+    @Mock
+    private OntologyDataManager ontologyDataManager;
+    
+    @Mock
+    private GermplasmListManager germplasmListManager;
+    
+    @Mock
+    private FieldbookService fieldbookService;
+    
+    @Mock
+    private org.generationcp.middleware.domain.etl.Workbook workbook;
+    
+    @Mock
+    private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
     /** The workbook basic. */
     private Workbook workbookBasic;
@@ -70,6 +103,8 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 
     /** The workbook invalid. */
     private Workbook workbookInvalid;
+    
+    private final Integer LIST_ID = 1;
     
     @InjectMocks
     ImportGermplasmListController importGermplasmListController;
@@ -364,6 +399,276 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
     	
     	Boolean result = importGermplasmListController.hasMeasurement();
     	assertFalse(result);
+    }
+    
+    @Test
+    public void testDisplayGermplasmDetailsForNursery() throws MiddlewareQueryException{
+    	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	
+    	List<GermplasmListData> list = createGermplasmListData();
+    	List<Enumeration> checkList = createCheckList();
+    	doReturn(list).when(germplasmListManager).getGermplasmListDataByListId(LIST_ID, 0, list.size());
+    	doReturn(Long.valueOf(list.size())).when(germplasmListManager).countGermplasmListDataByListId(LIST_ID);
+    	doReturn("1").when(importGermplasmListController).getCheckId(anyString(), anyList());
+    	doReturn(checkList).when(fieldbookService).getCheckList();
+    	
+    	importGermplasmListController.displayGermplasmDetails(LIST_ID, "N", form, model);
+    	
+    	UserSelection userSelection = importGermplasmListController.getUserSelection();
+    	
+    	assertTrue("If import is successful, isImportValid should be TRUE", userSelection.isImportValid());
+    	
+    	List<Map<String, Object>> listDataTable = (List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
+    	
+    	//Check if the content of list data table is equal to the GermplasmListData
+        assertEquals(5, listDataTable.size());
+        
+        int x = 1;
+        for(Map<String, Object> map : listDataTable){
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+        	assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+        	assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListController.DESIG));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.GID));
+        	assertEquals("GROUPNAME" + x, map.get(ImportGermplasmListController.CROSS));
+        	assertEquals("SEEDSOURCE" + x, map.get(ImportGermplasmListController.SOURCE));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
+        	assertEquals("", map.get(ImportGermplasmListController.CHECK));
+        	x++;
+        }
+        
+    	
+    }
+    
+    @Test
+    public void testDisplayGermplasmDetailsForTrial() throws MiddlewareQueryException{
+    	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	
+    	List<GermplasmListData> list = createGermplasmListData();
+    	List<Enumeration> checkList = createCheckList();
+    	doReturn(list).when(germplasmListManager).getGermplasmListDataByListId(LIST_ID, 0, list.size());
+    	doReturn(Long.valueOf(list.size())).when(germplasmListManager).countGermplasmListDataByListId(LIST_ID);
+    	doReturn("1").when(importGermplasmListController).getCheckId(anyString(), anyList());
+    	doReturn(checkList).when(fieldbookService).getCheckList();
+    	
+    	importGermplasmListController.displayGermplasmDetails(LIST_ID, "T", form, model);
+    	
+    	UserSelection userSelection = importGermplasmListController.getUserSelection();
+    	
+    	assertTrue("If import is successful, isImportValid should be TRUE", userSelection.isImportValid());
+    	
+    	List<Map<String, Object>> listDataTable = (List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
+    	
+    	//Check if the content of list data table is equal to the GermplasmListData
+        assertEquals(5, listDataTable.size());
+        
+        int x = 1;
+        for(Map<String, Object> map : listDataTable){
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+        	assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+        	assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListController.DESIG));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.GID));
+        	assertEquals(null, map.get(ImportGermplasmListController.CROSS));
+        	assertEquals(null, map.get(ImportGermplasmListController.SOURCE));
+        	assertEquals(null, map.get(ImportGermplasmListController.ENTRY_CODE));
+        	assertEquals("1", map.get(ImportGermplasmListController.CHECK));
+        	x++;
+        }
+        
+    }
+    
+    @Test
+    public void testDisplaySelectedGermplasmDetailsForNursery() throws MiddlewareQueryException{
+    	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	
+    	List<GermplasmListData> list = createGermplasmListData();
+    	List<Enumeration> checkList = createCheckList();
+    	doReturn(list).when(germplasmListManager).getGermplasmListDataByListId(LIST_ID, 0, list.size());
+    	doReturn(Long.valueOf(list.size())).when(germplasmListManager).countGermplasmListDataByListId(LIST_ID);
+    	doReturn("1").when(importGermplasmListController).getCheckId(anyString(), anyList());
+    	doReturn(checkList).when(fieldbookService).getCheckList();
+    	doReturn(createGermplasmList()).when(fieldbookMiddlewareService).getGermplasmListsByProjectId(Integer.valueOf(STUDY_ID), GermplasmListType.NURSERY);
+    	doReturn(createListDataProject()).when(fieldbookMiddlewareService).getListDataProject(GERMPLASM_LIST_ID);
+    	
+    	doReturn(workbook).when(userSelection).getWorkbook();
+    	doReturn(createStudyDetails()).when(workbook).getStudyDetails();
+    	
+    	importGermplasmListController.displaySelectedGermplasmDetails("N", form, model);
+    	
+    	UserSelection userSelection = importGermplasmListController.getUserSelection();
+    	
+    	assertTrue(userSelection.isImportValid());
+    	
+    	List<Map<String, Object>> listDataTable = (List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
+    	
+    	//Check if the content of list data table is equal to the GermplasmListData
+        assertEquals(5, listDataTable.size());
+        
+        int x = 1;
+        for(Map<String, Object> map : listDataTable){
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+        	assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+        	assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListController.DESIG));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.GID));
+        	assertEquals("GROUPNAME" + x, map.get(ImportGermplasmListController.CROSS));
+        	assertEquals("SEEDSOURCE" + x, map.get(ImportGermplasmListController.SOURCE));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
+        	assertEquals("", map.get(ImportGermplasmListController.CHECK));
+        	x++;
+        }
+        
+    	
+    }
+    
+    @Test
+    public void testDisplaySelectedGermplasmDetailsForTrial() throws MiddlewareQueryException{
+    	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	
+    	List<GermplasmListData> list = createGermplasmListData();
+    	List<Enumeration> checkList = createCheckList();
+    	doReturn(list).when(germplasmListManager).getGermplasmListDataByListId(LIST_ID, 0, list.size());
+    	doReturn(Long.valueOf(list.size())).when(germplasmListManager).countGermplasmListDataByListId(LIST_ID);
+    	doReturn("1").when(importGermplasmListController).getCheckId(anyString(), anyList());
+    	doReturn(checkList).when(fieldbookService).getCheckList();
+    	doReturn(createGermplasmList()).when(fieldbookMiddlewareService).getGermplasmListsByProjectId(Integer.valueOf(STUDY_ID), GermplasmListType.TRIAL);
+    	doReturn(createListDataProject()).when(fieldbookMiddlewareService).getListDataProject(GERMPLASM_LIST_ID);
+    	
+    	doReturn(workbook).when(userSelection).getWorkbook();
+    	doReturn(createStudyDetails()).when(workbook).getStudyDetails();
+    	
+    	importGermplasmListController.displaySelectedGermplasmDetails("T", form, model);
+    	
+    	UserSelection userSelection = importGermplasmListController.getUserSelection();
+    	
+    	assertTrue(userSelection.isImportValid());
+    	
+    	List<Map<String, Object>> listDataTable = (List<Map<String, Object>>) model.get(ImportGermplasmListController.LIST_DATA_TABLE);
+    	
+    	//Check if the content of list data table is equal to the GermplasmListData
+        assertEquals(5, listDataTable.size());
+        
+        int x = 1;
+        for(Map<String, Object> map : listDataTable){
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
+        	assertEquals(checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+        	assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListController.DESIG));
+        	assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.GID));
+        	assertEquals(null, map.get(ImportGermplasmListController.CROSS));
+        	assertEquals(null, map.get(ImportGermplasmListController.SOURCE));
+        	assertEquals(null, map.get(ImportGermplasmListController.ENTRY_CODE));
+        	assertEquals(1, map.get(ImportGermplasmListController.CHECK));
+        	x++;
+        }
+        
+    	
+    }
+    
+    @Test
+    public void testDisplayCheckGermplasmDetails() throws MiddlewareQueryException{
+    	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	
+    	doReturn(null).when(ontologyDataManager).getTermById(anyInt());
+    	
+    	List<GermplasmListData> list = createGermplasmListData();
+    	List<Enumeration> checkList = createCheckList();
+    	doReturn(list).when(germplasmListManager).getGermplasmListDataByListId(LIST_ID, 0, list.size());
+    	doReturn(Long.valueOf(list.size())).when(germplasmListManager).countGermplasmListDataByListId(LIST_ID);
+    	doReturn("1").when(importGermplasmListController).getCheckId(anyString(), anyList());
+    	doReturn(checkList).when(fieldbookService).getCheckList();
+    	
+    	importGermplasmListController.displayCheckGermplasmDetails(LIST_ID, form, model);
+    	
+    	UserSelection userSelection = importGermplasmListController.getUserSelection();
+    
+    	assertTrue(userSelection.isImportValid());
+    	
+    }
+    
+    @Test
+    public void testDisplaySelectedCheckGermplasmDetails() throws MiddlewareQueryException{
+    	ImportGermplasmListForm form = new ImportGermplasmListForm();
+    	
+    	doReturn(null).when(ontologyDataManager).getTermById(anyInt());
+    	
+    	List<GermplasmListData> list = createGermplasmListData();
+    	List<Enumeration> checkList = createCheckList();
+    	doReturn(list).when(germplasmListManager).getGermplasmListDataByListId(LIST_ID, 0, list.size());
+    	doReturn(Long.valueOf(list.size())).when(germplasmListManager).countGermplasmListDataByListId(LIST_ID);
+    	doReturn("1").when(importGermplasmListController).getCheckId(anyString(), anyList());
+    	doReturn(checkList).when(fieldbookService).getCheckList();
+    	
+    	doReturn(workbook).when(userSelection).getWorkbook();
+    	doReturn(createStudyDetails()).when(workbook).getStudyDetails();
+    	
+    	importGermplasmListController.displaySelectedCheckGermplasmDetails(form, model);
+    	
+    	UserSelection userSelection = importGermplasmListController.getUserSelection();
+    
+    	assertTrue(userSelection.isImportValid());
+    	
+    }
+    
+    private List<ListDataProject> createListDataProject() {
+    	List<ListDataProject> list = new ArrayList<>();
+    	for (int x = 1; x<=5; x++){
+    		ListDataProject data = new ListDataProject();
+    		data.setEntryId(x);
+    		data.setDesignation("DESIGNATION" + x);
+    		data.setEntryCode(String.valueOf(x));
+    		data.setGroupName("GROUPNAME" + x);
+    		data.setSeedSource("SEEDSOURCE" + x);
+    		data.setGermplasmId(x);
+    		data.setListDataProjectId(x);
+    		data.setCheckType(CHECK_TYPE);
+    		list.add(data);
+    	}
+		return list;
+	}
+
+	private StudyDetails createStudyDetails() {
+    	StudyDetails details = new StudyDetails();
+    	details.setId(STUDY_ID);
+		return details;
+	}
+
+	private List<GermplasmList> createGermplasmList(){
+    	List<GermplasmList> list = new ArrayList<>();
+    	GermplasmList germplasmList = new GermplasmList();
+    	germplasmList.setId(GERMPLASM_LIST_ID);
+    	germplasmList.setProjectId(PROJECT_ID);
+    	list.add(germplasmList);
+    	return list;
+    }
+    
+    private List<Enumeration> createCheckList() {
+    	List<Enumeration> list = new ArrayList<>();
+    	Enumeration enumeration = new Enumeration();
+    	enumeration.setId(1);
+    	enumeration.setName("Name");
+    	enumeration.setDescription("Description");
+    	list.add(enumeration);
+		return list;
+	}
+
+	private List<GermplasmListData> createGermplasmListData(){
+    	
+    	List<GermplasmListData> list = new ArrayList<>();
+    	for (int x = 1; x<=5; x++){
+    		GermplasmListData data = new GermplasmListData();
+    		data.setId(x);
+    		data.setEntryId(x);
+    		data.setDesignation("DESIGNATION" + x);
+    		data.setEntryCode(String.valueOf(x));
+    		data.setGid(x);
+    		data.setGroupName("GROUPNAME" + x);
+    		data.setSeedSource("SEEDSOURCE" + x);
+    		data.setStatus(1);
+    		list.add(data);
+    	}
+    	return list;
     }
         
 }

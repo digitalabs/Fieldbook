@@ -83,10 +83,10 @@ public class CrossingTemplateParser {
 
 		} catch (IOException | ParseException | InvalidFormatException e) {
 			addParseErrorMsg(FILE_INVALID);
-			LOG.debug(e.getMessage());
+			LOG.debug(e.getMessage(),e);
 		} catch (MiddlewareQueryException e) {
 			addParseErrorMsg(NO_REFERENCES_ERROR_DESC);
-			LOG.debug(e.getMessage());
+			LOG.debug(e.getMessage(),e);
 		}
 		return importedCrossesList;
 	}

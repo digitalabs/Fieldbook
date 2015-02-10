@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.naming.rules.naming;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -15,21 +16,19 @@ import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class RootNameGeneratorRule implements Rule {
+public class RootNameGeneratorRule extends NamingRule {
 	
-	@Resource
-	private ProcessCodeService processCodeService;
-	
+
 	private Expression rootNameExpression;
-	private AdvancingSource advancingSource;
+
 
 	public RootNameGeneratorRule() {
 	}
 	
 	@Override
-	public void init(Object advancingSource) {
+	public void init(Map<String, Object> context) {
+		super.init(context);
 		rootNameExpression = new RootNameExpression();
-		this.advancingSource = (AdvancingSource) advancingSource;
 	}
 
 	// FIXME : the so called expression may in fact just be a rule
@@ -48,16 +47,6 @@ public class RootNameGeneratorRule implements Rule {
 		input.add(name);
 
 		return input;
-	}
-
-	
-	public ProcessCodeService getProcessCodeService() {
-		return processCodeService;
-	}
-
-	
-	public void setProcessCodeService(ProcessCodeService processCodeService) {
-		this.processCodeService = processCodeService;
 	}
 
 }

@@ -10,17 +10,8 @@ import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 
-public class PrefixRule implements Rule {
+public class PrefixRule extends NamingRule {
 	
-	@Resource
-	private ProcessCodeService processCodeService;
-	private AdvancingSource advancingSource;
-	
-	@Override
-	public void init(Object source) {
-		advancingSource = (AdvancingSource) source;
-		
-	}
 
 	@Override
 	public List<String> runRule(List<String> input) throws RuleException {
@@ -30,10 +21,4 @@ public class PrefixRule implements Rule {
 		}
 		return input;
 	}
-
-	
-	public void setProcessCodeService(ProcessCodeService processCodeService) {
-		this.processCodeService = processCodeService;
-	}
-
 }

@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -10,15 +11,11 @@ import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 
-public class SuffixRule implements Rule {
-	
-	@Resource
-	private ProcessCodeService processCodeService;
-	private AdvancingSource advancingSource;
-	
+public class SuffixRule extends NamingRule {
+
 	@Override
-	public void init(Object source) {
-		advancingSource = (AdvancingSource) source;		
+	public void init(Map<String, Object> context) {
+		super.init(context);
 		if(advancingSource.getBreedingMethod().getSuffix() == null) {
 			advancingSource.getBreedingMethod().setSuffix("");
 		}
@@ -31,11 +28,6 @@ public class SuffixRule implements Rule {
 			input.set(i, input.get(i) + processCodeService.applyToName(advancingSource.getBreedingMethod().getSuffix(), advancingSource).get(0));
 		}
 		return input;
-	}
-
-	@Override
-	public void setProcessCodeService(ProcessCodeService processCodeService) {
-		this.processCodeService = processCodeService;
 	}
 
 }

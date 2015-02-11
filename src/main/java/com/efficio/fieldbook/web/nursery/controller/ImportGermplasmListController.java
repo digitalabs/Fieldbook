@@ -327,7 +327,7 @@ public class ImportGermplasmListController extends SettingsController {
         saveListDataProject(isNursery, studyId);
         
         
-        fieldbookService.saveStudyColumnOrdering(studyId, userSelection.getWorkbook().getStudyName(), form.getColumnOrders());
+        fieldbookService.saveStudyColumnOrdering(studyId, userSelection.getWorkbook().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
         
         return Integer.toString(studyId);
     }       

@@ -450,7 +450,7 @@ public class FieldbookServiceTest {
 		Integer studyId = null;
 		String studyName = "Study Name";
 		String columnOrderDelimited = "";
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited);
+		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited, Mockito.mock(Workbook.class));
 		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Mockito.any(Integer.class), Mockito.any(String.class), Mockito.anyList());
 	}
 	@Test
@@ -461,7 +461,7 @@ public class FieldbookServiceTest {
 		Integer studyId = 7;
 		String studyName = "Study Name";
 		String columnOrderDelimited = "";
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited);
+		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,  Mockito.mock(Workbook.class));
 		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Mockito.any(Integer.class), Mockito.any(String.class), Mockito.anyList());
 	}
 	@Test
@@ -472,7 +472,7 @@ public class FieldbookServiceTest {
 		Integer studyId = 7;
 		String studyName = "Study Name";
 		String columnOrderDelimited = "[\"1100\", \"1900\"]";
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited);
+		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,  Mockito.mock(Workbook.class));
 		Mockito.verify(api, Mockito.times(1)).saveStudyColumnOrdering(Mockito.any(Integer.class), Mockito.any(String.class), Mockito.anyList());
 	}
 }

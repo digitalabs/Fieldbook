@@ -422,8 +422,7 @@ public class EditNurseryController extends SettingsController {
                 resultMap.put(STATUS, SUCCESS);
                 resultMap.put(HAS_MEASUREMENT_DATA_STR, String.valueOf(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates()))));
                 
-                fieldbookService.saveStudyColumnOrdering(form.getStudyId(), workbook.getStudyName(), form.getColumnOrders());
-                
+                fieldbookService.saveStudyColumnOrdering(form.getStudyId(), workbook.getStudyName(), form.getColumnOrders(), workbook);
             } catch (MiddlewareQueryException e) {
                 resultMap.put(STATUS, ERROR);
                 resultMap.put("errorMessage", e.getMessage());
@@ -543,7 +542,7 @@ public class EditNurseryController extends SettingsController {
 
         Workbook workbook = userSelection.getWorkbook();
         form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
-
+        fieldbookMiddlewareService.setOrderVariableByRank(workbook);
         resetSessionVariablesAfterSave(workbook, true);
 
         //set measurement session variables to form

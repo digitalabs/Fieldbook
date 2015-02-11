@@ -361,7 +361,7 @@ public class OpenTrialController extends
                 returnVal.put(MEASUREMENT_ROW_COUNT, workbook.getObservations().size());
 
                 
-                fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders());
+                fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), workbook.getStudyName(), data.getColumnOrders(), workbook);
                 
                 return returnVal;
             } catch (MiddlewareQueryException e) {

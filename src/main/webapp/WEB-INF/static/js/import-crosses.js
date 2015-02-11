@@ -1,8 +1,15 @@
 var ImportCrosses = {
+		
+		showFavoriteMethodsOnly: true,
+		
+		showFavoriteLocationsOnly: true,
+		
 		showPopup : function(){
 			$('#fileupload-import-crosses').val('');
 			$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
-					
+			$('.import-crosses-section .modal .fileupload-exists').click();
+			ImportCrosses.showFavoriteMethodsOnly = true;
+			ImportCrosses.showFavoriteLocationsOnly = true;
 		},
 
 		doSubmitImport : function() {
@@ -44,7 +51,17 @@ var ImportCrosses = {
 				$('#openCrossesListModal').modal('hide');
 				ImportCrosses.showImportSettingsPopup();
 			});
+			
+			$('#goBackToImportCrossesButton').off('click');
+			$('#goBackToImportCrossesButton').on('click', function() {
+				ImportCrosses.goBackToPage('#openCrossesListModal','.import-crosses-section .modal');
+			});
 
+		},
+		
+		goBackToPage: function(hiddenModalSelector,shownModalSelector) {
+			$(hiddenModalSelector).modal('hide');
+			$(shownModalSelector).modal({ backdrop: 'static', keyboard: true });
 		},
 
 		getImportedCrossesTable : function(){
@@ -92,8 +109,9 @@ var ImportCrosses = {
 		showImportSettingsPopup : function() {
 			var crossSettingsPopupModal = $('#crossSettingsModal');
 			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox', true);
-			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', true);
+			
+			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
+			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', ImportCrosses.showFavoriteLoationsOnly);
 			ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 			ImportCrosses.updateSampleParentageDesignation();
 
@@ -107,6 +125,13 @@ var ImportCrosses = {
 			ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 
 			$('#settingsNextButton').click(ImportCrosses.submitCrossImportSettings);
+			
+			$('#goBackToOpenCrossesButton').off('click');
+			$('#goBackToOpenCrossesButton').on('click', function() {
+				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(":checked");
+				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(":checked");
+				ImportCrosses.goBackToPage('#crossSettingsModal','#openCrossesListModal');
+			});
 		},
 
 		updateSampleParentageDesignation : function() {
@@ -482,6 +507,5 @@ $(document).ready(function() {
 	$('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);
 	$('.import-crosses-section .modal').on('hide.bs.modal', function() {
 		$('div.import-crosses-file-upload').parent().parent().removeClass('has-error');
-		$('.import-crosses-section .modal .fileupload-exists').click();
 	});
 });

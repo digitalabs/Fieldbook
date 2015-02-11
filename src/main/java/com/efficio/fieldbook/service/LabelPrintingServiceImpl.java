@@ -558,9 +558,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()) {
 				buffer.append(messageSource.getMessage(
                         "label.printing.seed.inventory.scale", null, locale));
-			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_LOCATION.getInt()) {
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
 				buffer.append(messageSource.getMessage(
-                        "label.printing.seed.inventory.location", null, locale));
+                        "label.printing.seed.inventory.lotid", null, locale));
 			} else {
 				String headerName = labelHeaders.get(headerID);
                 if (headerName == null) {
@@ -632,8 +632,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 				buffer.append(fieldMapLabel.getInventoryAmount());	
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()) {
 				buffer.append(fieldMapLabel.getScaleName());	
-			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_LOCATION.getInt()) {
-				buffer.append(fieldMapLabel.getSeedLocationName());	
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+				buffer.append(fieldMapLabel.getLotId());	
 			} else {
 				String value = fieldMapLabel.getUserFields().get(headerID);
 				if (value != null) {
@@ -888,7 +888,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             if(inventoryDetails != null){
                 label.setInventoryAmount(inventoryDetails.getAmount());
                 label.setScaleName(inventoryDetails.getScaleName());
-                label.setSeedLocationName(inventoryDetails.getLocationName());
+                label.setLotId(inventoryDetails.getLotId());
             }
         }
 	}
@@ -1324,8 +1324,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 , AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()));
 		
 		labelFieldList.add(new LabelFields(
-				messageSource.getMessage("label.printing.seed.inventory.location", null, locale)
-                , AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_LOCATION.getInt()));
+				messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale)
+                , AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()));
 		
 		return labelFieldList;
 	}

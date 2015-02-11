@@ -1,7 +1,6 @@
 var ImportCrosses = {
 		
 		showFavoriteMethodsOnly: true,
-		
 		showFavoriteLocationsOnly: true,
 		
 		showPopup : function(){
@@ -76,9 +75,7 @@ var ImportCrosses = {
 
 		submitImport : function($importCrossesForm) {
 			'use strict';
-
 			var deferred = $.Deferred();
-
 			$importCrossesForm.ajaxForm({
 				dataType: 'json',
 				success: function(response) {
@@ -170,7 +167,7 @@ var ImportCrosses = {
 					if (setting.name === currentSelectedItem) {
 						ImportCrosses.updateImportSettingsFromSavedSetting(setting);
 					}
-				})
+				});
 			}
 		},
 
@@ -274,7 +271,7 @@ var ImportCrosses = {
 					data: JSON.stringify(settingData),
 					success: function (data) {
 						if (data.success == '0') {
-							alert('error');
+							showErrorMessage('', 'Import failed');
 						} else {
 							$('#crossSettingsModal').modal('hide');
 							ImportCrosses.openSaveListModal();
@@ -444,14 +441,11 @@ var ImportCrosses = {
 			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
 			url += '?isSnapshot=0';
 			
-			
 			$.ajax({
 				url: url,
 				type: 'GET',
 				cache: false,
 				success: function(html) {
-					//ImportCrosses.displayCrossesList($(this).data('list-id'), $(this).data('list-id'), '', true);
-					
 					$('#saveListTreeModal').modal('hide');
 					$('#saveListTreeModal').data('is-save-crosses', '0');
 					$('#create-nursery-tabs .tab-pane.info').removeClass('active');

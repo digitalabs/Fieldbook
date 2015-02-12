@@ -484,6 +484,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		MeasurementData data = new MeasurementData();
 		MeasurementVariable var = new MeasurementVariable();
 		var.setTermId(TermId.DESIG.getId());
+		var.setDataTypeId(TermId.NUMERIC_DBID_VARIABLE.getId());
 		data.setMeasurementVariable(var);
 		data.setValue("123");
 		dataList.add(data);
@@ -491,6 +492,7 @@ public class LabelPrintingServiceTest extends AbstractBaseIntegrationTest {
 		data = new MeasurementData();
 		var = new MeasurementVariable();
 		var.setTermId(TermId.ENTRY_NO.getId());
+		var.setDataTypeId(TermId.NUMERIC_DBID_VARIABLE.getId());
 		data.setMeasurementVariable(var);
 		data.setValue("1");
 		dataList.add(data);

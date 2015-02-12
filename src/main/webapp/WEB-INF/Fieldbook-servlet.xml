@@ -130,6 +130,12 @@
         <aop:scoped-proxy/>
     </bean>
 
+    <bean id="crossingTemplateExcelExporter"
+          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingTemplateExcelExporter">
+        <property name="templateFile" value="classpath:CrossingTemplate_exported.xls"/>
+    </bean>
+
+
     <bean id="importWorkbookFileService"
           class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl">
     </bean>

@@ -182,8 +182,8 @@
 	<!-- **************************************************************** -->
 
     <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DefaultManagerFactoryProvider" destroy-method="close">   	
-    	<property name="dbUsername" value="${local.username}"/>
-    	<property name="dbPassword" value="${local.password}"/>
+    	<property name="dbUsername" value="${workbench.username}"/>
+    	<property name="dbPassword" value="${workbench.password}"/>
     	<property name="dbPort"     value="${workbench.port}"/>
     </bean>
     
@@ -205,12 +205,12 @@
     
     <bean id="fieldbookMiddlewareService" class="org.generationcp.middleware.service.FieldbookServiceImpl">
         <constructor-arg name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
-        <constructor-arg name="localDatabaseName" value="${local.db.name}"/>
+        <constructor-arg name="localDatabaseName" value="${crop.db.name}"/>
     </bean>
     
     <bean id="inventoryMiddlewareService" class="org.generationcp.middleware.service.InventoryServiceImpl">
     	<constructor-arg name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
-        <constructor-arg name="localDatabaseName" value="${local.db.name}"/>
+        <constructor-arg name="localDatabaseName" value="${crop.db.name}"/>
     </bean>
     
     
@@ -248,7 +248,7 @@
     
     <bean id="ibdbDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${workbench.driver}"/>
-        <property name="url" value="${local.url}"/>
+        <property name="url" value="${crop.db.url}"/>
         <property name="username" value="${workbench.username}"/>
         <property name="password" value="${workbench.password}"/>
     </bean>

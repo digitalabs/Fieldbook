@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 
 import junit.framework.Assert;
 
+import org.generationcp.commons.spring.util.ProgramUUIDFactory;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -81,6 +82,8 @@ public class FieldbookServiceTest {
     	Mockito.when(fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral()).thenReturn(personsList);
     	
     	fieldbookServiceImpl = new FieldbookServiceImpl(fieldbookMiddlewareService, new PossibleValuesCache());
+    	
+    	fieldbookServiceImpl.setUuidFactory(Mockito.mock(ProgramUUIDFactory.class));
     	
     	List<ValueReference> possibleValues = new ArrayList<ValueReference>();
     	for(int i = 0 ; i < 5 ; i++){

@@ -1111,5 +1111,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
-	
+
+	public void setUuidFactory(ProgramUUIDFactory uuidFactory) {
+		this.uuidFactory = uuidFactory;
+	}
 }

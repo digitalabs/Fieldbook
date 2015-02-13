@@ -12,6 +12,9 @@ BMS.Fieldbook.MeasurementsTable = {
 		getColumnOrdering : function(tableName){
 			var orderedColumns = [];
 			var hasOrderingChange = false;
+			if($('body').data('columnReordered') === '1'){
+				hasOrderingChange = true;
+			}
 			if($('#'+tableName).dataTable() !== null &&  $('#'+tableName).dataTable().fnSettings() !== null){
 				var cols = $('#'+tableName).dataTable().fnSettings().aoColumns;				
 				$(cols).each(function(index){  

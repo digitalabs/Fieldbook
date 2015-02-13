@@ -97,18 +97,23 @@
                     TrialManagerDataService.applicationData.unsavedTraitsAvailable = true;
                 });
 
+                
                 $scope.reloadMeasurementPage = function () {
 
                     if ($('#measurement-table').length !== 0) {
                         //we reload
+                    	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+            			var addedData = '&columnOrders='+ encodeURIComponent(JSON.stringify(columnsOrder));
+            			
                         $.ajax({
                             url: '/Fieldbook/TrialManager/openTrial/load/dynamic/change/measurement',
                             type: 'POST',
-                            data: 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys + "&deletedEnvironment="+$scope.deletedEnvironment,
+                            data: 'traitsList=' + TrialManagerDataService.settings.measurements.m_keys + "&deletedEnvironment="+$scope.deletedEnvironment+addedData,
                             cache: false,
                             success: function (html) {
                                 $('#measurementsDiv').html(html);
                                 $('body').data('needToSave', '1');
+                                $('body').data('columnReordered', columnsOrder.length != 0 ? '1' : '0');
                             }
                         });
                     }

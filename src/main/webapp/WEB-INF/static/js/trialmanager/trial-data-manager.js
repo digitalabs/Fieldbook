@@ -167,6 +167,7 @@
                     data: '',
                     cache: false,
                     success: function (html) {
+                    	$('body').data('columnReordered', '0');
                         $('#measurementsDiv').html(html);
                         showSuccessfulMessage('', saveSuccessMessage);
                     }

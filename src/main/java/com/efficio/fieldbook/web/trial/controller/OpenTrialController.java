@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
@@ -511,10 +512,12 @@ public class OpenTrialController extends
         if (isInPreviewMode) {
             model.addAttribute(IS_EXP_DESIGN_PREVIEW, "0");
         }
-
+        FieldbookUtil.setColumnOrderingOnWorkbook(workbook, form.getColumnOrders());
+        measurementDatasetVariables = workbook.arrangeMeasurementVariables(measurementDatasetVariables);
         return loadMeasurementDataPage(true, form, workbook, measurementDatasetVariables, model, request.getParameter("deletedEnvironment"));
     }
 
+   
 	private String loadMeasurementDataPage(boolean isTemporary, CreateNurseryForm form, Workbook workbook, 
     								List<MeasurementVariable> measurementDatasetVariables, Model model, 
     								String deletedEnvironments) throws MiddlewareQueryException {

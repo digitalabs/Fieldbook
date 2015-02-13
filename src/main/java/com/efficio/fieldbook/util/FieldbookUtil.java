@@ -9,6 +9,8 @@ import java.util.StringTokenizer;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,4 +64,8 @@ public class FieldbookUtil {
 		}
 		return new ArrayList<Integer>();
 	}
+	public static void setColumnOrderingOnWorkbook(Workbook workbook, String columnOrderDelimited){
+	    	List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);		
+			workbook.setColumnOrderedLists(columnOrdersList);				
+   }		
 }

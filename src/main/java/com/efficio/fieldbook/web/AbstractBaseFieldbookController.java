@@ -203,4 +203,12 @@ public abstract class AbstractBaseFieldbookController {
 	public void setPaginationListSelection(PaginationListSelection paginationListSelection) {
 		this.paginationListSelection = paginationListSelection;
 	}
+
+	public void setWorkbenchDataManager(WorkbenchDataManager workbenchDataManager) {
+		this.workbenchDataManager = workbenchDataManager;
+	}
+
+	public void setHttpRequest(HttpServletRequest httpRequest) {
+		this.httpRequest = httpRequest;
+	}
 }

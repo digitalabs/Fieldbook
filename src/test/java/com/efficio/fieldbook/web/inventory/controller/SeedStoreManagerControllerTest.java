@@ -2,11 +2,14 @@ package com.efficio.fieldbook.web.inventory.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -24,19 +27,27 @@ public class SeedStoreManagerControllerTest {
 	private SeedStoreManagerController seedStoreManager;
 	private FieldbookService fiedbookService;
 	private OntologyService ontologyService;
+	private WorkbenchDataManager workbenchDataManager;
 	
 	private Integer listId;
 	@Before
-	public void setUp(){
+	public void setUp() throws MiddlewareQueryException {
 		inventoryService = Mockito.mock(InventoryService.class);
 		fiedbookService = Mockito.mock(FieldbookService.class);
 		ontologyService = Mockito.mock(OntologyService.class);
+		workbenchDataManager = Mockito.mock(WorkbenchDataManager.class);
 		seedStoreManager = new SeedStoreManagerController();
 		seedStoreManager.setInventoryMiddlewareService(inventoryService);
 		seedStoreManager.setPaginationListSelection(Mockito.mock(PaginationListSelection.class));
 		seedStoreManager.setSeedSelection(Mockito.mock(SeedSelection.class));
 		seedStoreManager.setFieldbookMiddlewareService(fiedbookService);
 		seedStoreManager.setOntologyService(ontologyService);
+		seedStoreManager.setHttpRequest(Mockito.mock(HttpServletRequest.class));
+		seedStoreManager.setWorkbenchDataManager(workbenchDataManager);
+		
+		Project testProject = new Project();
+		testProject.setUniqueID(UUID.randomUUID().toString());
+		Mockito.when(workbenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(testProject);
 		listId = 2;
 	}
 	
@@ -77,7 +88,7 @@ public class SeedStoreManagerControllerTest {
 	
 	@Test
 	public void testGetFavoriteLocationList() throws MiddlewareQueryException{		
-		List<Long> locationsIds = new ArrayList();
+		List<Long> locationsIds = new ArrayList<Long>();
 		locationsIds.add(new Long(1));
 		Mockito.when(fiedbookService.getFavoriteProjectLocationIds(Mockito.anyString())).thenReturn(locationsIds);
 		

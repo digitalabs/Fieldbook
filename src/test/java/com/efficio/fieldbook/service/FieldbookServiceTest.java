@@ -461,8 +461,10 @@ public class FieldbookServiceTest {
 		Integer studyId = 7;
 		String studyName = "Study Name";
 		String columnOrderDelimited = "";
-		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,  Mockito.mock(Workbook.class));
+		Workbook workbook = Mockito.mock(Workbook.class);
+		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,  workbook);
 		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Mockito.any(Integer.class), Mockito.any(String.class), Mockito.anyList());
+		Mockito.verify(api, Mockito.times(1)).setOrderVariableByRank(workbook);
 	}
 	@Test
 	public void testSaveStudyColumnOrderingIfStudyIdIsNotNullAndColumnOrderListIsNotEmpty() throws MiddlewareQueryException{

@@ -1082,7 +1082,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);
 			workbook.setColumnOrderedLists(columnOrdersList);
 		}else{
-			workbook.setColumnOrderedLists(new ArrayList<Integer>());
+			fieldbookMiddlewareService.setOrderVariableByRank(workbook);
 		}
 		
 	}

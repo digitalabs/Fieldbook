@@ -3,9 +3,11 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.service.impl.SettingsPresetServiceImpl;
+import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
@@ -241,6 +243,7 @@ public class CrossingSettingsControllerTest {
 		nameSetting.setPrefix(SETTING_PREFIX);
 		nameSetting.setSeparator(SETTING_SEPARATOR);
 		setting.setCrossNameSetting(nameSetting);
+		setting.setAdditionalDetailsSetting(new AdditionalDetailsSetting());
 
 		return setting;
 	}

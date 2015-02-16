@@ -80,6 +80,10 @@
                                 <a href="javascript: void(0)" class="import-crosses"
                                    th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
                             </li>
+                            <li>
+                                <a href="javascript: void(0)" class="export-crosses-action"
+                                   th:text="#{nursery.nurserydetails.action.export.crosses}">Export Crosses</a>
+                            </li>
                             <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
                                 <a href="" style="display: none" id="open-study-url"></a>
                                 <a href="javascript: showImportOptions();" id="open-study-url-link"

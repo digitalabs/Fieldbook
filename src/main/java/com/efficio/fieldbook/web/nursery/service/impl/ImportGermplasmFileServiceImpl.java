@@ -291,7 +291,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             currentRow++;
 
             while (!rowIsEmpty()) {
-                LOG.debug("");
                 importedGermplasm = new ImportedGermplasm();
                 for (int col = 0; col < importedGermplasmList.getImportedFactors().size(); col++) {
                     if (importedGermplasmList.getImportedFactors().get(col)

@@ -1077,11 +1077,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public void saveStudyColumnOrdering(Integer studyId, String studyName,
 			String columnOrderDelimited, Workbook workbook) throws MiddlewareQueryException {
-		List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
+		List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);		
 		if(studyId != null && !columnOrdersList.isEmpty()){
 			fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);
 			workbook.setColumnOrderedLists(columnOrdersList);
 		}else{
+			if(studyId != null && workbook.getStudyDetails() != null){
+				workbook.getStudyDetails().setId(studyId);
+			}
 			fieldbookMiddlewareService.setOrderVariableByRank(workbook);
 		}
 		

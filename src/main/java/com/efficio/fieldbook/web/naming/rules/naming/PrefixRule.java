@@ -1,24 +1,39 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import com.efficio.fieldbook.web.naming.rules.Rule;
+import com.efficio.fieldbook.web.naming.rules.OrderedRule;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
+import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
 
-public class PrefixRule extends NamingRule {
-	
+@Component
+public class PrefixRule extends OrderedRule {
+
+	public static final String KEY = "Prefix";
 
 	@Override
-	public List<String> runRule(List<String> input) throws RuleException {
+	public Object runRule(RuleExecutionContext context) throws RuleException {
+		NamingRuleExecutionContext nameContext = (NamingRuleExecutionContext) context;
 		// append a separator string onto each element of the list - in place
+		List<String> input = nameContext.getCurrentData();
+
+		ProcessCodeService processCodeService = nameContext.getProcessCodeService();
+		AdvancingSource advancingSource = nameContext.getAdvancingSource();
+
 		for (int i = 0; i < input.size(); i++) {
 			input.set(i, input.get(i) + processCodeService.applyToName(advancingSource.getBreedingMethod().getPrefix(), advancingSource).get(0));
 		}
+
+		nameContext.setCurrentData(input);
+
 		return input;
+	}
+
+	@Override public String getKey() {
+		return KEY;
 	}
 }

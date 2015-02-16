@@ -1,31 +1,24 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.naming.rules.Rule;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
+import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import junit.framework.Assert;
-
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.Method;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.rules.Rule;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CountRuleTest extends AbstractBaseIntegrationTest {
-	
-	@Resource
-	ProcessCodeService processCodeService;
+import static org.junit.Assert.*;
+
+public class CountRuleTest extends BaseNamingRuleTest {
 	
 	private Rule rule;
 	private Method breedingMethod;
-	private AdvancingSource row;
 	private Integer breedingMethodSnameType;
 	private String name;
 	
@@ -39,8 +32,7 @@ public class CountRuleTest extends AbstractBaseIntegrationTest {
 		row  = new AdvancingSource();
 		row.setBreedingMethod(breedingMethod);
 		rule = new CountRule();
-		rule.init(row);
-		rule.setProcessCodeService(processCodeService);
+
 		name = "TestGP";
 	}
 	
@@ -48,30 +40,44 @@ public class CountRuleTest extends AbstractBaseIntegrationTest {
 	public void testNumberCount(){		
 		row.setPlantsSelected(3);		
 		setBulking(breedingMethod, true);
+
 		List<String> input = new ArrayList<String>();
+
 		input.add(name);
+		RuleExecutionContext context = createExecutionContext(input);
+
 		try{
-			input = rule.runRule(input);
-		}catch(RuleException re){
-			Assert.fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
+			rule.runRule(context);
+			input = (List<String>) context.getRuleExecutionOutput();
+			assertEquals(1, input.size());
+			assertEquals("Should return the correct countr", "TestGP3", input.get(0));
+
+		} catch(RuleException re){
+			fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
 		}
-		Assert.assertEquals(1, input.size());
-		Assert.assertEquals("Should return the correct countr", "TestGP3", input.get(0));
 	}
 	
 	@Test
 	public void testNumberCountNoPlantsSelected(){		
 		row.setPlantsSelected(0);
 		setBulking(breedingMethod, true);
+
 		List<String> input = new ArrayList<String>();
 		input.add(name);
+
+		RuleExecutionContext context = createExecutionContext(input);
+
 		try{
-			input = rule.runRule(input);
+			rule.runRule(context);
+
+			input = (List<String>) context.getRuleExecutionOutput();
+
+			Assert.assertEquals(1, input.size());
+			Assert.assertEquals("Should return the correct countr", "TestGP", input.get(0));
 		}catch(RuleException re){
 			Assert.fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
 		}
-		Assert.assertEquals(1, input.size());
-		Assert.assertEquals("Should return the correct countr", "TestGP", input.get(0));
+
 	}
 	
 	@Test
@@ -80,32 +86,39 @@ public class CountRuleTest extends AbstractBaseIntegrationTest {
 		setBulking(breedingMethod, false);
 		List<String> input = new ArrayList<String>();
 		input.add(name);
+
+		RuleExecutionContext context = createExecutionContext(input);
 		try{
-			input = rule.runRule(input);
+			input = (List<String>) rule.runRule(context);
+			Assert.assertEquals(1, input.size());
+			Assert.assertEquals("Should return the correct countr", "TestGP", input.get(0));
 		}catch(RuleException re){
 			Assert.fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
 		}
-		Assert.assertEquals(1, input.size());
-		Assert.assertEquals("Should return the correct countr", "TestGP", input.get(0));
+
+
 		
 	}
 	
 	@Test
 	public void testSequenceCount(){		
 		row.setPlantsSelected(3);
-		setBulking(breedingMethod, false);
+		row.setBreedingMethod(setBulking(breedingMethod, false));
 		List<String> input = new ArrayList<String>();
 		input.add(name);
+
+		RuleExecutionContext context = createExecutionContext(input);
 		try{
-			input = rule.runRule(input);
+			input = (List<String>) rule.runRule(context);
+
+			Assert.assertEquals(3, input.size());
+					Assert.assertEquals("Should return the correct countr", "TestGP1", input.get(0));
+					Assert.assertEquals("Should return the correct countr", "TestGP2", input.get(1));
+					Assert.assertEquals("Should return the correct countr", "TestGP3", input.get(2));
 		}catch(RuleException re){
 			Assert.fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
 		}
-		Assert.assertEquals(3, input.size());
-		Assert.assertEquals("Should return the correct countr", "TestGP1", input.get(0));
-		Assert.assertEquals("Should return the correct countr", "TestGP2", input.get(1));
-		Assert.assertEquals("Should return the correct countr", "TestGP3", input.get(2));
-		
+
 	}
 	
 	
@@ -120,5 +133,4 @@ public class CountRuleTest extends AbstractBaseIntegrationTest {
 		return method;
 		
 	}
-	
 }

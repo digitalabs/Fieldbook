@@ -17,15 +17,11 @@ import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class RootNameGeneratorRuleTest extends AbstractBaseIntegrationTest {
-	
-	@Resource
-	ProcessCodeService processCodeService;
+public class RootNameGeneratorRuleTest extends BaseNamingRuleTest {
 	
 	private RootNameGeneratorRule rootNameGeneratorRule;
 	private Method breedingMethod;
-	private AdvancingSource row;
-	private String testGermplasmName; 
+	private String testGermplasmName;
 	private Integer breedingMethodSnameType;
 	
 	@Before
@@ -37,7 +33,7 @@ public class RootNameGeneratorRuleTest extends AbstractBaseIntegrationTest {
 		row.setBreedingMethod(breedingMethod);
 		testGermplasmName = "advance-germplasm-name"; 
 		rootNameGeneratorRule = new RootNameGeneratorRule();
-		rootNameGeneratorRule.init(row);
+
 	}
 	
 	private Name generateNewName(Integer typeId, Integer nStat){
@@ -54,12 +50,14 @@ public class RootNameGeneratorRuleTest extends AbstractBaseIntegrationTest {
 		names.add(generateNewName(breedingMethodSnameType, 1));
 		row.setNames(names);
 		List<String> input = new ArrayList<String>();
+
 		try{
-			input = rootNameGeneratorRule.runRule(input);
+			input = (List<String>) rootNameGeneratorRule.runRule(createExecutionContext(input));
 		}catch(RuleException re){
 			Assert.fail("Should return the correct root name if the methd snametype is equal to the names' type id");
 		}
-		Assert.assertEquals(1, input.size());;
+
+		Assert.assertEquals(1, input.size());
 		Assert.assertEquals("Should return the correct root name if the methd snametype is equal to the names' type id", testGermplasmName, input.get(0));
 	}
 	

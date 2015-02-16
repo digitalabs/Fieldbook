@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.exception;
 
 /**
  * Created by cyrus on 2/13/15.

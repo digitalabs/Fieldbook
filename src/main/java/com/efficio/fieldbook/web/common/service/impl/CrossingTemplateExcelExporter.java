@@ -1,6 +1,7 @@
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -34,13 +35,12 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 	public File export(Integer studyId, String studyName)
 			throws CrossingTemplateExportException {
 		final Workbook excelWorkbook = retrieveTemplate();
-		final Map<String,CellStyle> workbookStyle = this.createStyles(excelWorkbook);
+		final Map<String, CellStyle> workbookStyle = this.createStyles(excelWorkbook);
 
 		// 1. parse the workbook to the template file
 		List<GermplasmList> crossesList = null;
 		try {
 			crossesList = retrieveAndValidateIfHasGermplasmList(studyId);
-
 
 			// 2. update description sheet
 			GermplasmList gpList = crossesList.get(0);
@@ -53,7 +53,8 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 			int rowIndex = 1;
 			final Sheet obsSheet = excelWorkbook.getSheetAt(1);
 
-			List<ListDataProject> gpListData = fieldbookMiddlewareService.getListDataProject(gpList.getId());
+			List<ListDataProject> gpListData = fieldbookMiddlewareService
+					.getListDataProject(gpList.getId());
 
 			for (ListDataProject gpData : gpListData) {
 				PoiUtil.setCellValue(obsSheet, 0, rowIndex, studyName);
@@ -62,7 +63,8 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 			}
 
 			// 4. return the resulting file back to the user
-			String outputFileName = String.format(EXPORT_FILE_NAME_FORMAT, cleanNameValueCommas(studyName));
+			String outputFileName = String
+					.format(EXPORT_FILE_NAME_FORMAT, cleanNameValueCommas(studyName));
 			try (OutputStream out = new FileOutputStream(outputFileName)) {
 				excelWorkbook.write(out);
 			}
@@ -70,9 +72,8 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 			return new File(outputFileName);
 
 		} catch (MiddlewareQueryException | IOException e) {
-			throw new CrossingTemplateExportException(e.getMessage(),e);
+			throw new CrossingTemplateExportException(e.getMessage(), e);
 		}
-
 
 	}
 
@@ -82,8 +83,9 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 				studyId,
 				GermplasmListType.NURSERY);
 
-		if (0 >= crossesList.size() ) {
-			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");
+		if (0 >= crossesList.size()) {
+			throw new CrossingTemplateExportException(
+					"study.export.crosses.no.germplasm.list.available");
 		}
 		return crossesList;
 	}
@@ -104,4 +106,5 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 	public void setTemplateFile(File templateFile) {
 		this.templateFile = templateFile;
 	}
+
 }

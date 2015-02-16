@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.nursery.bean.*;
@@ -117,7 +117,7 @@ public class CrossingTemplateParser {
 	/**
 	 * FIXME: For now, the headers are referenced to a static (APP_CONSTANTS) lookup
 	 *
-	 * @throws MiddlewareQueryException
+	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	protected void parseObservationSheet()
 			throws MiddlewareQueryException {
@@ -494,7 +494,7 @@ public class CrossingTemplateParser {
 	 * @param studyName     - femaleNursery/maleNursery equivalent from the template
 	 * @param genderEntryNo - femaleEntry/maleEntry equivalent from the template
 	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
-	 * @throws MiddlewareQueryException
+	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	protected ListDataProject getCrossingListProjectData(String studyName, Integer genderEntryNo)
 			throws MiddlewareQueryException {

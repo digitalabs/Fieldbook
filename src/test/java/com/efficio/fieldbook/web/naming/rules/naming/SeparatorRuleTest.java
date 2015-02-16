@@ -15,15 +15,11 @@ import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class SeparatorRuleTest {
-	
-	@Resource
-	private ProcessCodeService processCodeService;
+public class SeparatorRuleTest extends BaseNamingRuleTest{
 	
 	private SeparatorRule rule;
 	private Method breedingMethod;
-	private AdvancingSource row;
-	private String testGermplasmName; 
+	private String testGermplasmName;
 	private Integer breedingMethodSnameType;
 	
 	@Before
@@ -36,7 +32,7 @@ public class SeparatorRuleTest {
 		row.setBreedingMethod(breedingMethod);
 		testGermplasmName = "CMT1234"; 
 		rule = new SeparatorRule();
-		rule.init(row);
+
 	}
 	
 	@Test
@@ -44,12 +40,14 @@ public class SeparatorRuleTest {
 
 		List<String> input = new ArrayList<String>();
 		input.add(testGermplasmName);
+
 		try{
-			input = rule.runRule(input);
+			input = (List<String>) rule.runRule(createExecutionContext(input));
 		}catch(RuleException re){
 			Assert.fail("Rule failed to run for Separator" + row.getBreedingMethod().getSeparator());
 		}
-		Assert.assertEquals(1, input.size());;
+
+		Assert.assertEquals(1, input.size());
 		Assert.assertEquals("Should return the correct name appended with a separator", testGermplasmName + row.getBreedingMethod().getSeparator(), input.get(0));
 	}
 	

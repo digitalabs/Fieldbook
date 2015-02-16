@@ -16,15 +16,11 @@ import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class SuffixRuleTest {
-	
-	@Resource
-	private ProcessCodeService processCodeService;
+public class SuffixRuleTest extends BaseNamingRuleTest{
 	
 	private SuffixRule rule;
 	private Method breedingMethod;
-	private AdvancingSource row;
-	private String testGermplasmName; 
+	private String testGermplasmName;
 	private Integer breedingMethodSnameType;
 	
 	@Before
@@ -38,7 +34,6 @@ public class SuffixRuleTest {
 		row.setBreedingMethod(breedingMethod);
 		testGermplasmName = "CMT1234-B-3-"; 
 		rule = new SuffixRule();
-		rule.init(row);
 	}
 	
 	@Test
@@ -46,11 +41,13 @@ public class SuffixRuleTest {
 
 		List<String> input = new ArrayList<String>();
 		input.add(testGermplasmName);
+
 		try{
-			input = rule.runRule(input);
+			input = (List<String>) rule.runRule(createExecutionContext(input));
 		}catch(RuleException re){
 			Assert.fail("Rule failed to run for Prefix" + row.getBreedingMethod().getSuffix());
 		}
+
 		Assert.assertEquals(1, input.size());;
 		Assert.assertEquals("Should return the correct name appended with prefix text", testGermplasmName + row.getBreedingMethod().getSuffix(), input.get(0));
 	}

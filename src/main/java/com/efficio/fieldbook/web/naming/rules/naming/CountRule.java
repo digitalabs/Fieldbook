@@ -1,22 +1,30 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.efficio.fieldbook.web.naming.rules.Rule;
+import com.efficio.fieldbook.web.naming.rules.OrderedRule;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
+import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
 
-public class CountRule extends NamingRule {
+@Component
+public class CountRule extends OrderedRule {
+
+	public static final String KEY = "Count";
 	
 	@Override
-	public List<String> runRule(List<String> input) throws RuleException {
+	public Object runRule(RuleExecutionContext context) throws RuleException {
 		// create counts first - we need a list in case we have a sequence
-		List<String> counts = processCodeService.applyToName(advancingSource.getBreedingMethod().getCount(), advancingSource);		
+		NamingRuleExecutionContext nameContext = (NamingRuleExecutionContext) context;
+
+		ProcessCodeService service = nameContext.getProcessCodeService();
+		AdvancingSource source = nameContext.getAdvancingSource();
+		List<String> counts = service.applyToName(
+				source.getBreedingMethod().getCount(), source);
+
+		List<String> input = nameContext.getCurrentData();
 
 		for (String name : input) {
 			for (int i = 0; i < counts.size(); i++) {
@@ -24,7 +32,11 @@ public class CountRule extends NamingRule {
 			}
 		}
 
+		nameContext.setCurrentData(counts);
 		return counts;
 	}
 
+	@Override public String getKey() {
+		return KEY;
+	}
 }

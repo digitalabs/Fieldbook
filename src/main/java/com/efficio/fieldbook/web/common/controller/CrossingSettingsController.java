@@ -4,8 +4,12 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+import com.efficio.fieldbook.web.nursery.service.CrossingService;
 import com.efficio.fieldbook.web.nursery.service.impl.CrossingTemplateExcelExporter;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import com.efficio.fieldbook.web.nursery.service.impl.CrossingTemplateExportException;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -14,20 +18,19 @@ import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
-import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import javax.annotation.Resource;
@@ -48,26 +51,39 @@ import java.util.*;
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
 public class CrossingSettingsController extends AbstractBaseFieldbookController {
-	public static final String URL = "/import/crosses";
+	public static final String URL = "/crosses";
 	public static final int YEAR_INTERVAL = 30;
 	public static final String ID = "id";
 	public static final String TEXT = "text";
 	public static final String SUCCESS_KEY = "success";
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
+
 	@Resource
 	private WorkbenchService workbenchService;
+
 	@Resource
 	private PresetDataManager presetDataManager;
+
 	@Resource
 	private SettingsPresetService settingsPresetService;
+
 	@Resource
 	private UserSelection studySelection;
+
+	@Resource
+	private CrossingService crossingService;
+
 	@Resource
 	private CrossNameService crossNameService;
+
 	@Resource
 	private CrossingTemplateExcelExporter crossingTemplateExcelExporter;
 
-	@Override public String getContentName() {
+	@Resource
+	private MessageSource messageSource;
+
+	@Override
+	public String getContentName() {
 		return null;
 	}
 
@@ -140,7 +156,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		Map<String, Object> returnVal = new HashMap<>();
 
 		studySelection.setCrossSettings(settings);
-		returnVal.put(SUCCESS_KEY, new Integer(1));
+		returnVal.put(SUCCESS_KEY, 1);
 		return returnVal;
 	}
 
@@ -187,28 +203,117 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	}
 
+	/**
+	 * Validates if current study can perform an export
+	 * @return
+	 */
 	@ResponseBody
-	@RequestMapping(value = "/doCrossingExport", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public ResponseEntity<FileSystemResource> doExport() {
+	@RequestMapping(value = "/export", method= RequestMethod.GET)
+	public Map<String,Object> doCrossingExport() {
+		Map<String,Object>  out = new HashMap<>();
 		try {
-
 			File result = crossingTemplateExcelExporter
 					.export(studySelection.getWorkbook().getStudyId(),
 							studySelection.getWorkbook().getStudyName());
-			FileSystemResource resultResource = new FileSystemResource(result);
+
+			out.put("isSuccess",Boolean.TRUE);
+			out.put("outputFilename",result.getAbsolutePath());
+
+		} catch (CrossingTemplateExportException | NullPointerException e) {
+			out.put("isSuccess",Boolean.FALSE);
+			out.put("errorMessage",messageSource.getMessage(e.getMessage(),new String[]{},"cannot export a crossing template",LocaleContextHolder.getLocale()));
+		}
+
+		return out;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/download/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<FileSystemResource> download(HttpServletRequest req) {
+		String outputFilename = req.getParameter("outputFilename");
+
+		try {
+			File resource = new File(outputFilename);
+			FileSystemResource fileSystemResource = new FileSystemResource(resource);
 
 			HttpHeaders respHeaders = new HttpHeaders();
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			respHeaders.setContentLength(resultResource.contentLength());
-			respHeaders.setContentDispositionFormData("attachment", resultResource.getFilename());
+			respHeaders.setContentLength(fileSystemResource.contentLength());
+			respHeaders.setContentDispositionFormData("attachment", fileSystemResource.getFilename());
 
-			return new ResponseEntity<>(resultResource, respHeaders, HttpStatus.OK);
+			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
-		} catch (IOException | InvalidFormatException | MiddlewareQueryException e) {
-			LOG.error("failed exporting of crossing template", e);
+		} catch (IOException e) {
+			LOG.error("Cannot download file " + outputFilename, e);
 
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/germplasm", method = RequestMethod.POST, produces = "application/json")
+	public Map<String, Object> importFile(Model model,
+			@ModelAttribute("importCrossesForm") ImportCrossesForm form) {
+
+		Map<String, Object> resultsMap = new HashMap<>();
+
+		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
+		ImportedCrossesList parseResults = crossingService.parseFile(form.getFile());
+
+		// 2. Store the crosses to study selection if all validated
+		if (parseResults.getErrorMessages().isEmpty()) {
+			studySelection.setimportedCrossesList(parseResults);
+
+			resultsMap.put("isSuccess", 1);
+
+		} else {
+			resultsMap.put("isSuccess", 0);
+
+			// error messages is still in .prop format,
+			Set<String> errorMessages = new HashSet<>();
+			for (String error : parseResults.getErrorMessages()) {
+				errorMessages.add(messageSource.getMessage(error,new String[]{},error,
+						LocaleContextHolder.getLocale()));
+			}
+
+			resultsMap.put("error",errorMessages);
+		}
+
+		return resultsMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
+	public List<Map<String, Object>> getImportedCrossesList() {
+
+		List<Map<String, Object>> masterList = new ArrayList<>();
+
+		if (null == studySelection.getImportedCrossesList()) {
+			return masterList;
+		}
+
+		for (ImportedCrosses cross : studySelection.getImportedCrossesList().getImportedCrosses()) {
+			masterList.add(generateDatatableDataMap(cross));
+		}
+
+		return masterList;
+	}
+
+	protected Map<String, Object> generateDatatableDataMap(ImportedCrosses importedCrosses) {
+
+		Map<String, Object> dataMap = new HashMap<>();
+
+		dataMap.put("ENTRY", importedCrosses.getEntryId());
+		dataMap.put("PARENTAGE", importedCrosses.getCross());
+		dataMap.put("ENTRY CODE", importedCrosses.getEntryCode());
+		dataMap.put("FEMALE PARENT", importedCrosses.getFemaleDesig());
+		dataMap.put("FGID", importedCrosses.getFemaleGid());
+		dataMap.put("MALE PARENT", importedCrosses.getMaleDesig());
+		dataMap.put("MGID", importedCrosses.getMaleGid());
+		dataMap.put("SOURCE", importedCrosses.getSource());
+
+		return dataMap;
+
 	}
 
 	protected void saveCrossSetting(CrossSetting setting, Integer programID)
@@ -258,14 +363,6 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		} else {
 			return 3;
 		}
-	}
-
-	public SettingsPresetService getSettingsPresetService() {
-		return settingsPresetService;
-	}
-
-	public void setSettingsPresetService(SettingsPresetService settingsPresetService) {
-		this.settingsPresetService = settingsPresetService;
 	}
 
 }

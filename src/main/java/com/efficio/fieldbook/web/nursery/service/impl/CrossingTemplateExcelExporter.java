@@ -32,43 +32,60 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 	private File templateFile;
 
 	public File export(Integer studyId, String studyName)
-			throws IOException, InvalidFormatException, MiddlewareQueryException {
+			throws CrossingTemplateExportException {
 		final Workbook excelWorkbook = retrieveTemplate();
 		final Map<String,CellStyle> workbookStyle = this.createStyles(excelWorkbook);
 
 		// 1. parse the workbook to the template file
+		List<GermplasmList> crossesList = null;
+		try {
+			crossesList = retrieveAndValidateIfHasGermplasmList(studyId);
+
+
+			// 2. update description sheet
+			GermplasmList gpList = crossesList.get(0);
+			gpList.setType(GermplasmListType.LST.name());
+
+			this.writeListDetailsSection(workbookStyle, excelWorkbook.getSheetAt(0), 1,
+					gpList);
+
+			// 3. update observation sheet
+			int rowIndex = 1;
+			final Sheet obsSheet = excelWorkbook.getSheetAt(1);
+
+			List<ListDataProject> gpListData = fieldbookMiddlewareService.getListDataProject(gpList.getId());
+
+			for (ListDataProject gpData : gpListData) {
+				PoiUtil.setCellValue(obsSheet, 0, rowIndex, studyName);
+				PoiUtil.setCellValue(obsSheet, 1, rowIndex, gpData.getEntryId());
+				rowIndex++;
+			}
+
+			// 4. return the resulting file back to the user
+			String outputFileName = String.format(EXPORT_FILE_NAME_FORMAT, cleanNameValueCommas(studyName));
+			try (OutputStream out = new FileOutputStream(outputFileName)) {
+				excelWorkbook.write(out);
+			}
+
+			return new File(outputFileName);
+
+		} catch (MiddlewareQueryException | IOException e) {
+			throw new CrossingTemplateExportException(e.getMessage(),e);
+		}
+
+
+	}
+
+	public List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId)
+			throws MiddlewareQueryException, CrossingTemplateExportException {
 		List<GermplasmList> crossesList = fieldbookMiddlewareService.getGermplasmListsByProjectId(
 				studyId,
-				GermplasmListType.CROSSES);
+				GermplasmListType.NURSERY);
 
-		// 2. update description sheet
-		GermplasmList gpList = crossesList.get(0);
-		gpList.setType(GermplasmListType.LST.name());
-
-		this.writeListDetailsSection(workbookStyle, excelWorkbook.getSheetAt(0), 1,
-				gpList);
-
-		// 3. update observation sheet
-		int rowIndex = 1;
-		final Sheet obsSheet = excelWorkbook.getSheetAt(1);
-
-		List<ListDataProject> gpListData = fieldbookMiddlewareService.getListDataProject(gpList.getId());
-
-		for (ListDataProject gpData : gpListData) {
-			PoiUtil.setCellValue(obsSheet, 0, rowIndex, studyName);
-			PoiUtil.setCellValue(obsSheet, 1, rowIndex, gpData.getEntryId());
-			rowIndex++;
+		if (0 >= crossesList.size() ) {
+			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");
 		}
-
-		// 4. return the resulting file back to the user
-		String outputFileName = String.format(EXPORT_FILE_NAME_FORMAT, cleanNameValueCommas(studyName));
-		try (OutputStream out = new FileOutputStream(outputFileName)) {
-			excelWorkbook.write(out);
-		} catch (IOException ex) {
-			throw new IOException("Error with writing to: " + outputFileName, ex);
-		}
-
-		return new File(outputFileName);
+		return crossesList;
 	}
 
 	protected Workbook retrieveTemplate() {

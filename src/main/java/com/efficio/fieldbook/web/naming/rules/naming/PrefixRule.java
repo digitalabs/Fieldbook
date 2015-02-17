@@ -8,7 +8,6 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class PrefixRule extends OrderedRule {
@@ -23,9 +22,14 @@ public class PrefixRule extends OrderedRule {
 
 		ProcessCodeService processCodeService = nameContext.getProcessCodeService();
 		AdvancingSource advancingSource = nameContext.getAdvancingSource();
+		String prefix = advancingSource.getBreedingMethod().getPrefix();
+
+		if (prefix == null) {
+			prefix = "";
+		}
 
 		for (int i = 0; i < input.size(); i++) {
-			input.set(i, input.get(i) + processCodeService.applyToName(advancingSource.getBreedingMethod().getPrefix(), advancingSource).get(0));
+			input.set(i, input.get(i) + processCodeService.applyToName(prefix, advancingSource).get(0));
 		}
 
 		nameContext.setCurrentData(input);

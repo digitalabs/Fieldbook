@@ -3,6 +3,8 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.service.impl.SettingsPresetServiceImpl;
@@ -10,6 +12,7 @@ import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
@@ -20,9 +23,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -49,8 +55,10 @@ public class CrossingSettingsControllerTest {
 	public static final String SETTING_SEPARATOR = "-";
 	public static final Integer TEST_PROGRAM_PRESET_ID = 1;
 	public static final int TEST_PROGRAM_ID = 2;
+	public static final int DUMMY_STUDY_ID = 2;
 	public static final int DUMMY_TOOL_ID = 2;
 	public static final int NUMBER_OF_MONTHS = 12;
+	public static final String DUMMY_ABS_PATH = "dummy/abs/path";
 
 	@Mock
 	private WorkbenchService workbenchService;
@@ -62,8 +70,14 @@ public class CrossingSettingsControllerTest {
 	private CrossNameService crossNameService;
 	@Mock
 	private HttpServletRequest request;
+	@Mock
+	private CrossingTemplateExcelExporter crossingTemplateExcelExporter;
+	@Mock
+	private MessageSource messageSource;
+
 	@Spy
 	private SettingsPresetService settingsPresetService = new SettingsPresetServiceImpl();
+
 	@InjectMocks
 	private CrossingSettingsController dut;
 
@@ -136,7 +150,7 @@ public class CrossingSettingsControllerTest {
 			ProgramPreset captured = param.getValue();
 			assertEquals(TEST_SETTING_NAME, captured.getName());
 			assertEquals(settingsPresetService
-					.convertPresetSettingToXml(sampleSetting, CrossSetting.class),
+							.convertPresetSettingToXml(sampleSetting, CrossSetting.class),
 					captured.getConfiguration());
 
 			// we verify that the program preset that we have is blank
@@ -226,6 +240,46 @@ public class CrossingSettingsControllerTest {
 			fail(e.getMessage());
 		}
 
+	}
+
+	@Test
+	public void testDoCrossingExportSuccess() throws Exception {
+		Workbook wb = mock(Workbook.class);
+		when(wb.getStudyId()).thenReturn(DUMMY_STUDY_ID);
+		when(wb.getStudyName()).thenReturn("dummy study name");
+		when(studySelection.getWorkbook()).thenReturn(wb);
+
+		File file = mock(File.class);
+		when(file.getAbsolutePath()).thenReturn(DUMMY_ABS_PATH);
+		when(crossingTemplateExcelExporter.export(anyInt(), anyString())).thenReturn(file);
+
+		Map<String, Object> jsonResult = dut.doCrossingExport();
+
+		assertEquals("should return success", Boolean.TRUE, jsonResult.get("isSuccess"));
+		assertEquals("should return the correct output path", DUMMY_ABS_PATH,
+				jsonResult.get("outputFilename"));
+	}
+
+	@Test
+	public void testDoCrossingExportFail() throws Exception {
+		Workbook wb = mock(Workbook.class);
+		when(wb.getStudyId()).thenReturn(DUMMY_STUDY_ID);
+		when(wb.getStudyName()).thenReturn("dummy study name");
+		when(studySelection.getWorkbook()).thenReturn(wb);
+
+		File file = mock(File.class);
+		when(file.getAbsolutePath()).thenReturn(DUMMY_ABS_PATH);
+		when(crossingTemplateExcelExporter.export(anyInt(), anyString())).thenThrow(
+				new CrossingTemplateExportException("export.error"));
+
+		when(messageSource.getMessage(anyString(), any(String[].class), anyString(),
+				eq(LocaleContextHolder.getLocale()))).thenReturn("export.error");
+
+		Map<String, Object> jsonResult = dut.doCrossingExport();
+
+		assertEquals("should return success", Boolean.FALSE, jsonResult.get("isSuccess"));
+		assertEquals("should return the correct error message", "export.error",
+				jsonResult.get("errorMessage"));
 	}
 
 	public List<ProgramPreset> constructDummyPresetList() throws JAXBException {

@@ -205,7 +205,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	/**
 	 * Validates if current study can perform an export
-	 * @return
+	 * @return a JSON result object
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export", method= RequestMethod.GET)

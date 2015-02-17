@@ -34,12 +34,13 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 	public File export(Integer studyId, String studyName)
 			throws CrossingTemplateExportException {
-		final Workbook excelWorkbook = retrieveTemplate();
-		final Map<String, CellStyle> workbookStyle = this.createStyles(excelWorkbook);
-
-		// 1. parse the workbook to the template file
-		List<GermplasmList> crossesList = null;
 		try {
+			final Workbook excelWorkbook = retrieveTemplate();
+			final Map<String, CellStyle> workbookStyle = this.createStyles(excelWorkbook);
+
+			// 1. parse the workbook to the template file
+			List<GermplasmList> crossesList;
+
 			crossesList = retrieveAndValidateIfHasGermplasmList(studyId);
 
 			// 2. update description sheet
@@ -63,21 +64,25 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 			}
 
 			// 4. return the resulting file back to the user
-			String outputFileName = String
-					.format(EXPORT_FILE_NAME_FORMAT, cleanNameValueCommas(studyName));
-			try (OutputStream out = new FileOutputStream(outputFileName)) {
-				excelWorkbook.write(out);
-			}
+			return createExcelOutputFile(studyName, excelWorkbook);
 
-			return new File(outputFileName);
-
-		} catch (MiddlewareQueryException | IOException e) {
+		} catch (MiddlewareQueryException | IOException | InvalidFormatException e) {
 			throw new CrossingTemplateExportException(e.getMessage(), e);
 		}
-
 	}
 
-	public List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId)
+	protected File createExcelOutputFile(String studyName, Workbook excelWorkbook)
+			throws IOException {
+		String outputFileName = String
+				.format(EXPORT_FILE_NAME_FORMAT, cleanNameValueCommas(studyName));
+		try (OutputStream out = new FileOutputStream(outputFileName)) {
+			excelWorkbook.write(out);
+		}
+
+		return new File(outputFileName);
+	}
+
+	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId)
 			throws MiddlewareQueryException, CrossingTemplateExportException {
 		List<GermplasmList> crossesList = fieldbookMiddlewareService.getGermplasmListsByProjectId(
 				studyId,
@@ -90,17 +95,12 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		return crossesList;
 	}
 
-	protected Workbook retrieveTemplate() {
+	protected Workbook retrieveTemplate() throws IOException, InvalidFormatException {
 		try (InputStream is = new FileInputStream(templateFile)) {
 			String tempFile = fileService.saveTemporaryFile(is);
 
 			return fileService.retrieveWorkbook(tempFile);
-
-		} catch (IOException | InvalidFormatException e) {
-			e.printStackTrace();
 		}
-
-		return null;
 	}
 
 	public void setTemplateFile(File templateFile) {

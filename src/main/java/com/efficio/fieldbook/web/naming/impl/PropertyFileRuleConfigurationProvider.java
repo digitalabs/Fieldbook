@@ -13,13 +13,13 @@ import java.util.Map;
  */
 public class PropertyFileRuleConfigurationProvider implements RuleConfigurationProvider {
 
-	private Map<String, List<String>> ruleSequenceConfiguration;
+	private Map<String, String[]> ruleSequenceConfiguration;
 
-	@Override public Map<String, List<String>> retrieveRuleSequenceConfiguration() {
-		return null;
+	@Override public Map<String, String[]> retrieveRuleSequenceConfiguration() {
+		return ruleSequenceConfiguration;
 	}
 
-	public void setRuleSequenceConfiguration(Map<String, List<String>> ruleSequenceConfiguration) {
+	public void setRuleSequenceConfiguration(Map<String, String[]> ruleSequenceConfiguration) {
 		this.ruleSequenceConfiguration = ruleSequenceConfiguration;
 	}
 }

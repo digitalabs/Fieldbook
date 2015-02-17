@@ -1,33 +1,32 @@
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
+import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.naming.service.RulesService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import junit.framework.Assert;
-
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.rules.Rule;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
-import com.efficio.fieldbook.web.naming.rules.naming.CountRule;
-import com.efficio.fieldbook.web.naming.rules.naming.PrefixRule;
-import com.efficio.fieldbook.web.naming.rules.naming.RootNameGeneratorRule;
-import com.efficio.fieldbook.web.naming.rules.naming.SeparatorRule;
-import com.efficio.fieldbook.web.naming.rules.naming.SuffixRule;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.naming.service.RulesService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class RuleServiceImplTest extends AbstractBaseIntegrationTest{
 	
 	@Resource
 	RulesService rulesService;
+
+	@Resource
+	private ProcessCodeService processCodeService;
+
+	@Resource
+	private RuleFactory ruleFactory;
 	
 	private Method breedingMethod;
 	private AdvancingSource row;
@@ -66,8 +65,11 @@ public class RuleServiceImplTest extends AbstractBaseIntegrationTest{
 		row.setNames(names);
 		
 		try {
-			rulesService.setInitObject(row);
-			List<String> results = rulesService.runRules();
+			List<String> sequenceList = Arrays.asList(ruleFactory.getRuleSequenceForNamespace("naming"));
+			NamingRuleExecutionContext ruleExecutionContext =
+					new NamingRuleExecutionContext(sequenceList,
+							processCodeService, row, new ArrayList<String>());
+			List<String> results = (List<String>) rulesService.runRules(ruleExecutionContext);
 			Assert.assertFalse(results.isEmpty());
 			System.out.println(results);
 			Assert.assertEquals("test-germplasm-name-pre1suff", results.get(0));

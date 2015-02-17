@@ -1,17 +1,10 @@
 package com.efficio.fieldbook.web.naming.service;
 
-import java.util.List;
-
-import com.efficio.fieldbook.web.naming.rules.Rule;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
+import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
 
 
 public interface RulesService {
 	
-	public List<String> runRules() throws RuleException;
-	
-	public void setRules(List<Rule> rules);
-	
-	public void setInitObject(Object object);
-
+	public Object runRules(RuleExecutionContext context) throws RuleException;
 }

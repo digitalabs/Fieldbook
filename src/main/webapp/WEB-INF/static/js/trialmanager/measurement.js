@@ -102,7 +102,7 @@
 
                     if ($('#measurement-table').length !== 0) {
                         //we reload
-                    	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+                    	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
             			var addedData = '&columnOrders='+ encodeURIComponent(JSON.stringify(columnsOrder));
             			
                         $.ajax({

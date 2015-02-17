@@ -312,21 +312,26 @@
 		<property name="uploadDirectory" value="${upload.directory}" />		
 	</bean>
 	
-	<bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory" init-method="init">
-		<property name="orderedRulesToRun" value="${naming.rules}"/>
-		<property name="availableRules">
-        	<map>
-            	<entry key="RootNameGenerator"><bean class="com.efficio.fieldbook.web.naming.rules.naming.RootNameGeneratorRule"/></entry>
-            	<entry key="Separator"><bean class="com.efficio.fieldbook.web.naming.rules.naming.SeparatorRule"/></entry>
-            	<entry key="Prefix"><bean class="com.efficio.fieldbook.web.naming.rules.naming.PrefixRule"/></entry>
-            	<entry key="Count"><bean class="com.efficio.fieldbook.web.naming.rules.naming.CountRule"/></entry>
-            	<entry key="Suffix"><bean class="com.efficio.fieldbook.web.naming.rules.naming.SuffixRule"/></entry>
-       		 </map>
-    	</property>
-    </bean>
+	<bean class="com.efficio.fieldbook.web.naming.impl.RulesPostProcessor">
+			<property name="ruleFactory" ref="ruleFactory"/>
+		</bean>
 
-    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
-        <!--TODO : possibly find a way to make list based on component scan of a certain package-->
+	    <bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory" init-method="init"/>
+
+	    <bean id="ruleConfigProvider"
+	          class="com.efficio.fieldbook.web.naming.impl.PropertyFileRuleConfigurationProvider">
+	        <property name="ruleSequenceConfiguration">
+	            <map>
+	                <entry key="naming" value="${naming.rules}"/>
+	            </map>
+	        </property>
+	    </bean>
+
+
+	<context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
+
+	<bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
+
         <property name="registeredExpressions">
             <list>
                 <bean class="com.efficio.fieldbook.web.naming.expression.BracketsExpression"/>
@@ -356,5 +361,5 @@
           scope="request">
         <aop:scoped-proxy/>
     </bean>
-	
+
 </beans>

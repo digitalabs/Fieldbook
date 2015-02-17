@@ -19,7 +19,7 @@ public class RuleFactory {
 
     private Map<String, Rule> availableRules;
 
-	private Map<String, List<String>> ruleOrder;
+	private Map<String, String[]> ruleOrder;
 
 	@Resource
 	private RuleConfigurationProvider configProvider;
@@ -53,7 +53,7 @@ public class RuleFactory {
 		return availableRules.size();
 	}
 
-	public List<String> getRuleSequenceForNamespace(String namespace) {
+	public String[] getRuleSequenceForNamespace(String namespace) {
 		if (!ruleOrder.containsKey(namespace)) {
 			return null;
 		}

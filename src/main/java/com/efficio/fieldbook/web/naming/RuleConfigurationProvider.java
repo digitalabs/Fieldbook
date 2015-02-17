@@ -10,5 +10,5 @@ import java.util.Map;
  * Time: 6:52 AM
  */
 public interface RuleConfigurationProvider {
-	public Map<String, List<String>> retrieveRuleSequenceConfiguration();
+	public Map<String, String[]> retrieveRuleSequenceConfiguration();
 }

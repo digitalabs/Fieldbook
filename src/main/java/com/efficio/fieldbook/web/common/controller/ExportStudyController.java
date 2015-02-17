@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
@@ -335,7 +336,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     		outputFilename = rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId, instances);    		
     		response.setContentType(CSV_CONTENT_TYPE);
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
-    		List<Integer> visibleColumns = getVisibleColumns(data.get("visibleColumns"));
+    		List<Integer> visibleColumns = getVisibleColumns(data.get("visibleColumns"));    		
+    		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, data.get("columnOrders"));
     		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
     		if (instances != null && instances.size() > 1) {

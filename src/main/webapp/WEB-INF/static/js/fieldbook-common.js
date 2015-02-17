@@ -1355,7 +1355,8 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 			showWarningMessageForRequiredColumns(visibleColumns);
 		}
 	}
-
+	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
+	var columnOrders = (JSON.stringify(columnsOrder));
 	$.ajax(newAction, {
 		headers : {
 			'Accept' : 'application/json',
@@ -1363,6 +1364,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		},
 		data : JSON.stringify({
 			'visibleColumns' : visibleColumns,
+			'columnOrders' : columnOrders,
 			'studyExportId' : studyId
 		}),
 		type : 'POST',

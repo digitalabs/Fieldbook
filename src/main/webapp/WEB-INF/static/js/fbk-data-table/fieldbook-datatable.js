@@ -9,7 +9,7 @@ if (typeof (BMS.Fieldbook) === 'undefined') {
 }
 
 BMS.Fieldbook.MeasurementsTable = {
-		getColumnOrdering : function(tableName){
+		getColumnOrdering : function(tableName, forceGet){
 			var orderedColumns = [];
 			var hasOrderingChange = false;
 			if($('body').data('columnReordered') === '1'){
@@ -29,7 +29,7 @@ BMS.Fieldbook.MeasurementsTable = {
 				  }
 				});
 			}
-			if(hasOrderingChange){
+			if(forceGet || hasOrderingChange){
 				return orderedColumns;
 			}
 			//we return blank if there is no ordering change

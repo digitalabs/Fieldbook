@@ -88,7 +88,7 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 				studyId,
 				GermplasmListType.NURSERY);
 
-		if (0 >= crossesList.size()) {
+		if (crossesList.isEmpty()) {
 			throw new CrossingTemplateExportException(
 					"study.export.crosses.no.germplasm.list.available");
 		}

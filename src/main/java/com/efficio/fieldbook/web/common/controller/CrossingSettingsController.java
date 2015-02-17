@@ -4,12 +4,12 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -56,7 +56,9 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	public static final String ID = "id";
 	public static final String TEXT = "text";
 	public static final String SUCCESS_KEY = "success";
+
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
+	private static final String IS_SUCCESS = "isSuccess";
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -205,23 +207,27 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	/**
 	 * Validates if current study can perform an export
+	 *
 	 * @return a JSON result object
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/export", method= RequestMethod.GET)
-	public Map<String,Object> doCrossingExport() {
-		Map<String,Object>  out = new HashMap<>();
+	@RequestMapping(value = "/export", method = RequestMethod.GET)
+	public Map<String, Object> doCrossingExport() {
+		Map<String, Object> out = new HashMap<>();
 		try {
 			File result = crossingTemplateExcelExporter
 					.export(studySelection.getWorkbook().getStudyId(),
 							studySelection.getWorkbook().getStudyName());
 
-			out.put("isSuccess",Boolean.TRUE);
-			out.put("outputFilename",result.getAbsolutePath());
+			out.put(IS_SUCCESS, Boolean.TRUE);
+			out.put("outputFilename", result.getAbsolutePath());
 
 		} catch (CrossingTemplateExportException | NullPointerException e) {
-			out.put("isSuccess",Boolean.FALSE);
-			out.put("errorMessage",messageSource.getMessage(e.getMessage(),new String[]{},"cannot export a crossing template",LocaleContextHolder.getLocale()));
+			LOG.debug(e.getMessage(), e);
+
+			out.put(IS_SUCCESS, Boolean.FALSE);
+			out.put("errorMessage", messageSource.getMessage(e.getMessage(), new String[] { },
+					"cannot export a crossing template", LocaleContextHolder.getLocale()));
 		}
 
 		return out;
@@ -239,7 +245,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			HttpHeaders respHeaders = new HttpHeaders();
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			respHeaders.setContentLength(fileSystemResource.contentLength());
-			respHeaders.setContentDispositionFormData("attachment", fileSystemResource.getFilename());
+			respHeaders
+					.setContentDispositionFormData("attachment", fileSystemResource.getFilename());
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
@@ -264,19 +271,19 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		if (parseResults.getErrorMessages().isEmpty()) {
 			studySelection.setimportedCrossesList(parseResults);
 
-			resultsMap.put("isSuccess", 1);
+			resultsMap.put(IS_SUCCESS, 1);
 
 		} else {
-			resultsMap.put("isSuccess", 0);
+			resultsMap.put(IS_SUCCESS, 0);
 
 			// error messages is still in .prop format,
 			Set<String> errorMessages = new HashSet<>();
 			for (String error : parseResults.getErrorMessages()) {
-				errorMessages.add(messageSource.getMessage(error,new String[]{},error,
+				errorMessages.add(messageSource.getMessage(error, new String[] { }, error,
 						LocaleContextHolder.getLocale()));
 			}
 
-			resultsMap.put("error",errorMessages);
+			resultsMap.put("error", errorMessages);
 		}
 
 		return resultsMap;

@@ -64,7 +64,7 @@ public class EnforceUniqueNameRule extends BranchingRule {
 	}
 
 	@Override
-	public String getNextRuleStepKey(RuleExecutionContext context) throws RuleException{
+	public String getNextRuleStepKey(RuleExecutionContext context){
 		AdvancingSource source = ((NamingRuleExecutionContext)context).getAdvancingSource();
 
 		AdvanceGermplasmChangeDetail changeDetailObject = source.getChangeDetail();

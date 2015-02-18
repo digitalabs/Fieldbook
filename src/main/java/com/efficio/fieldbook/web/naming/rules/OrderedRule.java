@@ -10,7 +10,7 @@ import java.util.List;
  */
 public abstract class OrderedRule implements Rule{
 
-	@Override public String getNextRuleStepKey(RuleExecutionContext context) throws RuleException{
+	@Override public String getNextRuleStepKey(RuleExecutionContext context){
 		List<String> sequenceOrder = context.getExecutionOrder();
 		int executionIndex = context.getCurrentExecutionIndex();
 

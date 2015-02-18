@@ -1,16 +1,11 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.impl.RuleFactory;
-import com.efficio.fieldbook.web.naming.rules.Rule;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 import javax.annotation.Resource;
-import java.rmi.Naming;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,6 +21,6 @@ public class BaseNamingRuleTest extends AbstractBaseIntegrationTest{
 	protected AdvancingSource row;
 
 	protected NamingRuleExecutionContext createExecutionContext(List<String> input) {
-		return new NamingRuleExecutionContext(null, processCodeService, row, input );
+		return new NamingRuleExecutionContext(null, processCodeService, row, null, input );
 	}
 }

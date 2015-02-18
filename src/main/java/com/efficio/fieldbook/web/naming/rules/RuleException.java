@@ -17,7 +17,10 @@ public class RuleException extends Exception {
 		this.locale = locale;		
 	}
 
-	
+	public RuleException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 	public Object[] getObjects() {
 		return objects;
 	}

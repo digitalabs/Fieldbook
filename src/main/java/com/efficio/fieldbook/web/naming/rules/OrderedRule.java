@@ -1,7 +1,5 @@
 package com.efficio.fieldbook.web.naming.rules;
 
-import com.efficio.fieldbook.web.naming.impl.RuleFactory;
-
 import java.util.List;
 
 /**
@@ -12,13 +10,16 @@ import java.util.List;
  */
 public abstract class OrderedRule implements Rule{
 
-	@Override public String getNextRuleStepKey(RuleExecutionContext context) {
+	@Override public String getNextRuleStepKey(RuleExecutionContext context) throws RuleException{
 		List<String> sequenceOrder = context.getExecutionOrder();
+		int executionIndex = context.getCurrentExecutionIndex();
 
-		int keyIndex = sequenceOrder.indexOf(getKey());
-
-		if ((keyIndex != -1) && (keyIndex + 1) < sequenceOrder.size()) {
-			return sequenceOrder.get(keyIndex + 1);
+		// increment to the next rule in the sequence
+		executionIndex++;
+		if (executionIndex < sequenceOrder.size()) {
+			String nextKey = sequenceOrder.get(executionIndex);
+			context.setCurrentExecutionIndex(executionIndex);
+			return nextKey;
 		} else {
 			return null;
 		}

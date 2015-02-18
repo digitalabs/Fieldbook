@@ -1,7 +1,5 @@
 package com.efficio.fieldbook.web.naming.rules;
 
-import com.efficio.fieldbook.web.naming.impl.RuleFactory;
-
 import java.util.List;
 
 /**
@@ -13,4 +11,8 @@ public interface RuleExecutionContext {
 	public List<String> getExecutionOrder();
 
 	public Object getRuleExecutionOutput();
+
+	public void setCurrentExecutionIndex(int index);
+
+	public int getCurrentExecutionIndex();
 }

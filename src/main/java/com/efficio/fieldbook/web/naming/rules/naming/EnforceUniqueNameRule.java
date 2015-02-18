@@ -1,0 +1,114 @@
+package com.efficio.fieldbook.web.naming.rules.naming;
+
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.naming.rules.OrderedRule;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
+import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: Daniel Villafuerte
+ * Date: 2/17/2015
+ * Time: 1:50 PM
+ */
+
+@Component
+public class EnforceUniqueNameRule extends BranchingRule {
+
+	public static final String KEY = "Unique";
+
+	@Override
+	public Object runRule(RuleExecutionContext context) throws RuleException {
+
+		NamingRuleExecutionContext namingRuleExecutionContext = (NamingRuleExecutionContext) context;
+		List<String> currentData = namingRuleExecutionContext.getCurrentData();
+		GermplasmDataManager germplasmDataManager = namingRuleExecutionContext
+				.getGermplasmDataManager();
+		AdvancingSource source = namingRuleExecutionContext.getAdvancingSource();
+
+		// as per agreement, unique name checking can be limited to only the first entry for the germplasm
+		String nameForChecking = currentData.get(0);
+		try {
+			boolean duplicateExists = germplasmDataManager.checkIfMatches(nameForChecking);
+
+			if (!duplicateExists) {
+				// if necessary, update change detail object
+				updateChangeDetailForAdvancingSource(namingRuleExecutionContext);
+
+
+			} else {
+				// if a duplicate is found, initialize an AdvanceGermplasmChangeDetail object containing the original duplicate, for confirmation later on with the user
+				initializeChangeDetailForAdvancingSource(namingRuleExecutionContext);
+
+				// restore rule execution state to a previous temp save point
+				namingRuleExecutionContext.setCurrentData(namingRuleExecutionContext.getTempData());
+
+				// increment the starting sequence used to generate the count
+				source.setCurrentMaxSequence(source.getCurrentMaxSequence() + 1);
+			}
+
+		} catch (MiddlewareQueryException e) {
+			throw new RuleException(e.getMessage(), e);
+		}
+
+		// this rule does not actually do any processing on the data
+		return null;
+	}
+
+	@Override
+	public String getNextRuleStepKey(RuleExecutionContext context) throws RuleException{
+		AdvancingSource source = ((NamingRuleExecutionContext)context).getAdvancingSource();
+
+		AdvanceGermplasmChangeDetail changeDetailObject = source.getChangeDetail();
+
+		if (changeDetailObject == null || changeDetailObject.getNewAdvanceName() != null) {
+			return super.getNextRuleStepKey(context);
+		} else {
+			prepareContextForBranchingToKey(context, CountRule.KEY);
+			return CountRule.KEY;
+		}
+	}
+
+	protected void initializeChangeDetailForAdvancingSource(NamingRuleExecutionContext context) {
+		AdvanceGermplasmChangeDetail changeDetail = context.getAdvancingSource().getChangeDetail();
+
+		// change detail object only needs to be initialized once per advancing source
+		if (changeDetail == null) {
+			String offendingName = context.getCurrentData().get(0);
+			changeDetail = new AdvanceGermplasmChangeDetail();
+			changeDetail.setOldAdvanceName(offendingName);
+			changeDetail.setQuestionText(context.getMessageSource().getMessage(
+					"advance.nursery.duplicate.question.text", new String[] { offendingName },
+					LocaleContextHolder.getLocale()));
+
+			context.getAdvancingSource().setChangeDetail(changeDetail);
+		}
+	}
+
+	protected void updateChangeDetailForAdvancingSource(NamingRuleExecutionContext context) {
+		AdvanceGermplasmChangeDetail changeDetail = context.getAdvancingSource().getChangeDetail();
+
+		if (changeDetail != null) {
+
+			// provide change detail object with the resulting name that passes the uniqueness check
+			String passingName = context.getCurrentData().get(0);
+			changeDetail.setNewAdvanceName(passingName);
+			Locale locale = LocaleContextHolder.getLocale();
+			changeDetail.setAddSequenceText(context.getMessageSource()
+					.getMessage("advance.nursery.duplicate.add.sequence.text",
+							new String[] { passingName}, locale));
+		}
+	}
+
+	@Override public String getKey() {
+		return KEY;
+	}
+}

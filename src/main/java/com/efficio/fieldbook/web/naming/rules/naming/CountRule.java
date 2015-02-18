@@ -32,6 +32,10 @@ public class CountRule extends OrderedRule {
 			}
 		}
 
+		// store current data in temp before overwriting it with count data, so that it can be restored for another try later on
+		nameContext.setTempData(nameContext.getCurrentData());
+
+		// place the processed name data with count information as current rule execution output
 		nameContext.setCurrentData(counts);
 		return counts;
 	}

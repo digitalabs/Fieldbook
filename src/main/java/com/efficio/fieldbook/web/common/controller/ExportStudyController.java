@@ -327,6 +327,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	
     	String filename = getFileName(userSelection);
     	String outputFilename = null;
+    	FieldbookUtil.setColumnOrderingOnWorkbook(workbook, data.get("columnOrders"));
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
     		outputFilename = fielddroidExportStudyService.export(userSelection.getWorkbook(), filename, instances);
@@ -336,8 +337,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     		outputFilename = rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId, instances);    		
     		response.setContentType(CSV_CONTENT_TYPE);
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
-    		List<Integer> visibleColumns = getVisibleColumns(data.get("visibleColumns"));    		
-    		FieldbookUtil.setColumnOrderingOnWorkbook(workbook, data.get("columnOrders"));
+    		List<Integer> visibleColumns = getVisibleColumns(data.get("visibleColumns"));    		    		
     		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename, instances, visibleColumns);
     		if (instances != null && instances.size() > 1) {

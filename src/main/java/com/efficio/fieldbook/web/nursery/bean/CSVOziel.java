@@ -62,7 +62,7 @@ public class CSVOziel {
     	this.workbook = workbook;
     	this.headers = workbook.getMeasurementDatasetVariables();
     	this.observations = observations;
-    	this.variateHeaders = workbook.getVariates();
+    	this.variateHeaders = workbook.arrangeMeasurementVariables(workbook.getVariates());
     	this.trialObservations = trialObservations;
     	this.isDataKapture = isDataKapture;
     }

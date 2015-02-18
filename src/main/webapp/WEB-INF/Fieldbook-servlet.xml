@@ -367,6 +367,10 @@
         </property>
     </bean>
 
+    <!--
+        This component scan automatically registers all implementations of the Rule interface into the Spring context.
+        In conjunction with the RulesPostProcessor above, this automatically populates the map in the RuleFactory
+         -->
     <context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
 
     <bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>

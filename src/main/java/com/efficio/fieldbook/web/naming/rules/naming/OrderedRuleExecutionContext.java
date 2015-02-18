@@ -14,8 +14,7 @@ public abstract class OrderedRuleExecutionContext implements RuleExecutionContex
 	private List<String> executionOrder;
 	private int executionIndex;
 
-	public OrderedRuleExecutionContext() {
-	}
+
 
 	public OrderedRuleExecutionContext(List<String> executionOrder) {
 		this.executionOrder = executionOrder;

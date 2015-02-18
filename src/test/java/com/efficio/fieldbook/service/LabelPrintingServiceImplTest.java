@@ -3,7 +3,7 @@ package com.efficio.fieldbook.service;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import org.generationcp.commons.constant.ToolSection;
-import org.generationcp.commons.spring.util.ProgramUUIDFactory;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
@@ -44,7 +44,7 @@ public class LabelPrintingServiceImplTest {
 	PresetDataManager presetDataManager;
 	
     @Mock
-    private ProgramUUIDFactory uuidFactory;
+    private ContextUtil contextUtil;
 
 	@InjectMocks
 	LabelPrintingServiceImpl serviceDUT;
@@ -110,7 +110,7 @@ public class LabelPrintingServiceImplTest {
 		when(workbenchService.getStandardPresetById(TEST_PRESET_ID)).thenReturn(sp);
 		when(presetDataManager.getProgramPresetById(TEST_PRESET_ID)).thenReturn(searchResultPreset);
 		
-		when(uuidFactory.getCurrentProgramUUID()).thenReturn(DUMMY_PROGRAM_UUID);
+		when(contextUtil.getCurrentProgramUUID()).thenReturn(DUMMY_PROGRAM_UUID);
 	}
 
 	@Test

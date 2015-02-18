@@ -49,7 +49,7 @@ import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.ExportService;
-import org.generationcp.commons.spring.util.ProgramUUIDFactory;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -134,7 +134,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     private SettingsService settingsService;
     
     @Resource
-    private ProgramUUIDFactory uuidFactory;
+    private ContextUtil contextUtil;
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
@@ -1191,7 +1191,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
         if (LabelPrintingPresets.PROGRAM_PRESET == presetType) {
             List<ProgramPreset> presets = presetDataManager.getProgramPresetFromProgramAndToolByName(
-                    presetName, uuidFactory.getCurrentProgramUUID(), workbenchService.getFieldbookWebTool().getToolId().intValue(), ToolSection.FBK_LABEL_PRINTING.name());
+                    presetName, contextUtil.getCurrentProgramUUID(), workbenchService.getFieldbookWebTool().getToolId().intValue(), ToolSection.FBK_LABEL_PRINTING.name());
 
             for (ProgramPreset preset : presets) {
                 out.add(new LabelPrintingPresets(preset.getProgramPresetId(),preset.getName(),LabelPrintingPresets.PROGRAM_PRESET));
@@ -1229,7 +1229,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
             // 3. add all program presets for fieldbook
 			for (ProgramPreset preset : presetDataManager.getProgramPresetFromProgramAndTool(
-                    uuidFactory.getCurrentProgramUUID(), fieldbookToolId,ToolSection.FBK_LABEL_PRINTING.name())) {
+					contextUtil.getCurrentProgramUUID(), fieldbookToolId,
+					ToolSection.FBK_LABEL_PRINTING.name())) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
 						LabelPrintingPresets.PROGRAM_PRESET));
 			}
@@ -1278,7 +1279,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             // add new
             ProgramPreset preset = new ProgramPreset();
             preset.setName(settingsName);
-            preset.setProgramUuid(uuidFactory.getCurrentProgramUUID());
+            preset.setProgramUuid(contextUtil.getCurrentProgramUUID());
             preset.setToolId(workbenchService.getFieldbookWebTool().getToolId().intValue());
             preset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
             preset.setConfiguration(xmlConfig);
@@ -1291,7 +1292,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 		this.messageSource = messageSource;
 	}
 
-	public void setUuidFactory(ProgramUUIDFactory uuidFactory) {
-		this.uuidFactory = uuidFactory;
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 }

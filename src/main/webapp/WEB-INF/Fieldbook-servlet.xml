@@ -367,7 +367,7 @@
         </property>
     </bean>
 
-    <bean id="programUUIDFactory" class="org.generationcp.commons.spring.util.ProgramUUIDFactory"
+    <bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
           scope="request">
         <aop:scoped-proxy/>
     </bean>

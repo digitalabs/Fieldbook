@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.spring.util.ProgramUUIDFactory;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -94,7 +94,7 @@ public class FieldbookServiceImpl implements FieldbookService {
     private NamingConventionService namingConventionService;
     
     @Resource
-    private ProgramUUIDFactory uuidFactory;
+    private ContextUtil contextUtil;
     
     //@Resource(name = "BVDesignRunner")
     @Resource
@@ -317,9 +317,11 @@ public class FieldbookServiceImpl implements FieldbookService {
                 List<ValueReference> list = new ArrayList<ValueReference>();
                 list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
                 possibleValues = list;
-                possibleValues.addAll(getAllBreedingMethods(true, uuidFactory.getCurrentProgramUUID()));
+                possibleValues.addAll(getAllBreedingMethods(true,
+						contextUtil.getCurrentProgramUUID()));
             } else if (TermId.LOCATION_ID.getId() == id) {
-                possibleValues = convertLocationsToValueReferences(getAllBreedingLocationsByUniqueID(uuidFactory.getCurrentProgramUUID()));
+                possibleValues = convertLocationsToValueReferences(getAllBreedingLocationsByUniqueID(
+						contextUtil.getCurrentProgramUUID()));
             } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
                 possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral());
             } else if (TermId.NURSERY_TYPE.getId() == id) {
@@ -915,7 +917,7 @@ public class FieldbookServiceImpl implements FieldbookService {
     	List<ValueReference> possibleValues = new ArrayList<ValueReference>();
     	//we need to get all possible values so we can check the favorites as well, since if we depend on the variable possible values, its already filtered, so it can be wrong
     	if(TermId.LOCATION_ID.getId() == var.getTermId()) {
-        	possibleValues = this.getAllLocationsByUniqueID(uuidFactory.getCurrentProgramUUID());
+        	possibleValues = this.getAllLocationsByUniqueID(contextUtil.getCurrentProgramUUID());
         } else {
         	possibleValues = var.getPossibleValues();
         }
@@ -948,7 +950,7 @@ public class FieldbookServiceImpl implements FieldbookService {
         	
         	if(isGetAllRecords && TermId.LOCATION_ID.getId() == id) {
         		//for location, we get all since it is for saving, so we would be able to set the name properly
-        		possibleValues = this.getAllLocationsByUniqueID(uuidFactory.getCurrentProgramUUID());
+        		possibleValues = this.getAllLocationsByUniqueID(contextUtil.getCurrentProgramUUID());
         	} else {
         		possibleValues = this.getAllPossibleValues(id);
         	}           
@@ -1112,7 +1114,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 
-	public void setUuidFactory(ProgramUUIDFactory uuidFactory) {
-		this.uuidFactory = uuidFactory;
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 }

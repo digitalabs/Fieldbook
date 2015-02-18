@@ -13,7 +13,7 @@ import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
-import org.generationcp.commons.util.UserUtil;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -50,6 +50,9 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
     private UserSelection userSelection;
 
 	@Resource
+	private ContextUtil contextUtil;
+
+	@Resource
     private GermplasmListManager germplasmListManager;
     
     @Resource
@@ -77,8 +80,8 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 			input.setGermplasmList(germplasmList);
 			
 			input.setOwnerName(fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
-			
-			Integer currentLocalIbdbUserId = getCurrentLocaUserId();
+
+			Integer currentLocalIbdbUserId = contextUtil.getCurrentUserLocalId();
 			input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
 			
 	        input.setExporterName(fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
@@ -112,16 +115,6 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 			throw new GermplasmListExporterException("Error with exporting list to CSV File.", e);
 		}
 
-	}
-
-	protected Integer getCurrentLocaUserId() {
-		Integer currentLocalIbdbUserId = 0;
-		try {
-			currentLocalIbdbUserId = UserUtil.getCurrentUserLocalId(workbenchDataManager);
-		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(),e);
-		}
-		return currentLocalIbdbUserId;
 	}
 
 	protected List<ExportColumnHeader> getExportColumnHeadersFromTable(Map<String,Boolean> visibleColumns, Boolean isNursery) {

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
-import org.generationcp.commons.spring.util.ProgramUUIDFactory;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class LocationsController extends AbstractBaseFieldbookController {
 		private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 		
 		@Resource
-		private ProgramUUIDFactory programUUIDFactory;
+		private ContextUtil contextUtil;
 
 		@Override public String getContentName() {
 			return null;
@@ -77,7 +77,7 @@ public class LocationsController extends AbstractBaseFieldbookController {
 
 			try {
 				List<Long> locationsIds = fieldbookMiddlewareService
-						.getFavoriteProjectLocationIds(programUUIDFactory.getCurrentProgramUUID());
+						.getFavoriteProjectLocationIds(contextUtil.getCurrentProgramUUID());
 				List<Location> faveLocations = fieldbookMiddlewareService
 						.getFavoriteLocationByProjectId(locationsIds);
 				List<Location> allBreedingLocations = fieldbookMiddlewareService

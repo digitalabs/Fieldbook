@@ -4,14 +4,11 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.constant.ToolSection;
-import org.generationcp.commons.context.ContextConstants;
-import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
-import org.generationcp.commons.spring.util.ProgramUUIDFactory;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
@@ -19,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.WebUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +56,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	private CrossNameService crossNameService;
 	
 	@Resource
-	private ProgramUUIDFactory programUUIDFactory;
+	private ContextUtil contextUtil;
 
 	public static final String SUCCESS_KEY = "success";
 
@@ -223,7 +219,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	}
 
 	protected String getCurrentProgramID(HttpServletRequest request) {
-		return programUUIDFactory.getCurrentProgramUUID();
+		return contextUtil.getCurrentProgramUUID();
 	}
 
 	public SettingsPresetService getSettingsPresetService() {

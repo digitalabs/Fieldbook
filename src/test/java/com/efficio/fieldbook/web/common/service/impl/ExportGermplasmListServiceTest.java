@@ -13,10 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.Term;
@@ -29,6 +31,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -83,56 +86,52 @@ public class ExportGermplasmListServiceTest {
 	
 	@Mock
 	private UserSelection userSelection;
+
+	@Mock
+	private ContextUtil contextUtil;
 	
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
+
+	@InjectMocks
+	private ExportGermplasmListServiceImpl exportGermplasmListServiceOrigin;
 	
 	private GermplasmExportService exportServiceNursery;
 	private GermplasmExportService exportServiceTrial;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws MiddlewareQueryException {
 		
 		MockitoAnnotations.initMocks(this);
 		
 		testFileName = "test.csv";
 		
-		exportGermplasmListService = spy(new ExportGermplasmListServiceImpl());
-		exportGermplasmListService.setUserSelection(userSelection);
-		exportGermplasmListService.setOntologyService(ontologyService);
-		exportGermplasmListService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		
+		exportGermplasmListService = spy(exportGermplasmListServiceOrigin);
+
 		exportServiceTrial = spy(new GermplasmExportService(ontologyService, userSelection, false));
 		doReturn(generateImportedGermplasms()).when(exportServiceTrial).getImportedGermplasms();
 		
 		exportServiceNursery = spy(new GermplasmExportService(ontologyService, userSelection, true));
 		doReturn(generateImportedGermplasms()).when(exportServiceNursery).getImportedGermplasms();
-		
-		
+
+		when(contextUtil.getCurrentUserLocalId()).thenReturn(CURRENT_USER_ID);
+
 		doReturn(generateImportedGermplasms()).when(exportGermplasmListService).getImportedGermplasm();
-		doReturn(CURRENT_USER_ID).when(exportGermplasmListService).getCurrentLocaUserId();
 		doReturn(exportServiceTrial).when(exportGermplasmListService).getExportService(userSelection, false);
 		doReturn(exportServiceNursery).when(exportGermplasmListService).getExportService(userSelection, true);
-	
-		try {
-			
-			doReturn(createStandardVariable(TermId.ENTRY_NO.getId(), ENTRY_NO)).when(ontologyService).getStandardVariable(TermId.ENTRY_NO.getId());
-			doReturn(createStandardVariable(TermId.DESIG.getId(), DESIGNATION)).when(ontologyService).getStandardVariable(TermId.DESIG.getId());
-			doReturn(createStandardVariable(TermId.GID.getId(), GID)).when(ontologyService).getStandardVariable(TermId.GID.getId());
-			doReturn(createStandardVariable(TermId.CROSS.getId(), PARENTAGE)).when(ontologyService).getStandardVariable(TermId.CROSS.getId());
-			doReturn(createStandardVariable(TermId.SEED_SOURCE.getId(), SEED_SOURCE)).when(ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId());
-			doReturn(createStandardVariable(TermId.ENTRY_CODE.getId(), ENTRY_CODE)).when(ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId());
-			doReturn(createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),ENTRY_NUMBER_STORAGE)).when(ontologyService).getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId());
-			doReturn(createStandardVariable(TermId.CHECK.getId(),CHECK)).when(ontologyService).getStandardVariable(TermId.CHECK.getId());
-			doReturn(getPlotLevelList()).when(userSelection).getPlotsLevelList();
-			doReturn(getGermplasmList()).when(fieldbookMiddlewareService).getGermplasmListById(LIST_ID);
-			doReturn(CURRENT_USER_NAME).when(fieldbookMiddlewareService).getOwnerListName(CURRENT_USER_ID);
-		
-		} catch (MiddlewareQueryException e) {
-			
-		}
-		
-		
+
+		doReturn(createStandardVariable(TermId.ENTRY_NO.getId(), ENTRY_NO)).when(ontologyService).getStandardVariable(TermId.ENTRY_NO.getId());
+		doReturn(createStandardVariable(TermId.DESIG.getId(), DESIGNATION)).when(ontologyService).getStandardVariable(TermId.DESIG.getId());
+		doReturn(createStandardVariable(TermId.GID.getId(), GID)).when(ontologyService).getStandardVariable(TermId.GID.getId());
+		doReturn(createStandardVariable(TermId.CROSS.getId(), PARENTAGE)).when(ontologyService).getStandardVariable(TermId.CROSS.getId());
+		doReturn(createStandardVariable(TermId.SEED_SOURCE.getId(), SEED_SOURCE)).when(ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId());
+		doReturn(createStandardVariable(TermId.ENTRY_CODE.getId(), ENTRY_CODE)).when(ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId());
+		doReturn(createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),ENTRY_NUMBER_STORAGE)).when(ontologyService).getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId());
+		doReturn(createStandardVariable(TermId.CHECK.getId(),CHECK)).when(ontologyService).getStandardVariable(TermId.CHECK.getId());
+		doReturn(getPlotLevelList()).when(userSelection).getPlotsLevelList();
+		doReturn(getGermplasmList()).when(fieldbookMiddlewareService).getGermplasmListById(LIST_ID);
+		doReturn(CURRENT_USER_NAME).when(fieldbookMiddlewareService).getOwnerListName(CURRENT_USER_ID);
+
 	}
 	
 	@Test 

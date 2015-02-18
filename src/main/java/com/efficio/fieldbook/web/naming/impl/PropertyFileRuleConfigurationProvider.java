@@ -2,7 +2,6 @@ package com.efficio.fieldbook.web.naming.impl;
 
 import com.efficio.fieldbook.web.naming.RuleConfigurationProvider;
 
-import java.util.List;
 import java.util.Map;
 
 /**

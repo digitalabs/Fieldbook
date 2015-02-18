@@ -28,12 +28,14 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -59,6 +61,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -78,6 +81,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     private static final String MODAL_URL = "NurseryManager/advanceNurseryModal";
     private static final String SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE = "NurseryManager/saveAdvanceNursery";
+    
+    protected static final String TABLE_HEADER_LIST = "tableHeaderList";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AdvancingController.class);
@@ -108,6 +113,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     @Resource
     private ResourceBundleMessageSource messageSource;
+    
+    @Resource
+    private OntologyDataManager ontologyDataManager;
     
     /** The imported germplasm list. */
     private List<ImportedGermplasm> importedGermplasmList;
@@ -401,6 +409,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         	}
     		
             model.addAttribute("advanceDataList", dataTableDataList);
+            model.addAttribute(TABLE_HEADER_LIST, getAdvancedNurseryTableHeader());
             
         } catch (Exception e) {
         	form.setErrorInAdvance(e.getMessage());
@@ -412,7 +421,19 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
     }
     
-    private List<StandardVariableReference> filterVariablesByProperty(List<SettingDetail> variables, String propertyName) {
+    protected List<TableHeader> getAdvancedNurseryTableHeader(){
+    	List<TableHeader> tableHeaderList = new ArrayList<TableHeader>();
+    	
+		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_ID.getTermNameFromOntology(ontologyDataManager), "entry"));
+		tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(ontologyDataManager), "desig"));
+		tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(ontologyDataManager), "parentage"));
+		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(ontologyDataManager), "gid"));
+		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(ontologyDataManager), "source"));
+		
+    	return tableHeaderList;
+    }
+
+	private List<StandardVariableReference> filterVariablesByProperty(List<SettingDetail> variables, String propertyName) {
         List<StandardVariableReference> list = new ArrayList<StandardVariableReference>();
         if (variables != null && !variables.isEmpty()) {
             for (SettingDetail detail : variables) {
@@ -482,4 +503,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	}
     	return messageSource.getMessage("nursery.advance.nursery.empty.method.error", new String[] {name}, locale);
     }
+
+	public void setOntologyDataManager(OntologyDataManager ontologyDataManager) {
+		this.ontologyDataManager = ontologyDataManager;
+	}
+
 }

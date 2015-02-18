@@ -5,6 +5,7 @@ import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
+import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
@@ -191,8 +192,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
             	List<String> names;
 				try {
-                    RuleExecutionContext namingExecutionContext = setupNamingRuleExecutionContext(row);
+                    RuleExecutionContext namingExecutionContext = setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
 					names = (List<String>) rulesService.runRules(namingExecutionContext);
+
+                    // if change detail object is created due to a duplicate being encountered somewhere during processing, provide a reference index
+                    if (row.getChangeDetail() != null) {
+                        // index - 1 is used because Java uses 0-based referencing
+                        row.getChangeDetail().setIndex(index - 1);
+                    }
 
                     for (String name : names) {
 						addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());					
@@ -202,53 +209,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				// FIXME : needs rewriting to perform, and should be encapsulated into it's own rule
-//            	int lastCount = -1;
-//            	for (String evaluatedCount : names) {
-//            		String name = countPrefix + evaluatedCount + countSuffix;
-//            		if(!isCheckForDuplicateName){           			
-//                		addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
-//            		}else{
-//            			// this is for checking of duplicate name always in the DB, (checking of standardized and un-standardized)
-//	            		Integer currentCount = getCount(evaluatedCount);
-//	            		if (currentCount != null) {
-//	            			if (currentCount <= lastCount) {
-//	            				currentCount = lastCount + 1;
-//	            				name = countPrefix + currentCount + countSuffix;
-//	            			}
-//		        			boolean isMatch = false;
-//		        			do {
-//		            			isMatch = germplasmDataManger.checkIfMatches(name);
-//			            		if (isMatch) {
-//			            			if (countExpression.equalsIgnoreCase(SequenceExpression.KEY)) {
-//			            				currentCount++;
-//			            				name = countPrefix + currentCount + countSuffix;
-//			            			} else {
-//			            				if (row.getChangeDetail() == null) {
-//				                    		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
-//				                    		// index in java (starts at 0)
-//				                			row.getChangeDetail().setIndex(index-1); 
-//				                			row.getChangeDetail().setOldAdvanceName(name);
-//				                			Locale locale = LocaleContextHolder.getLocale();
-//				                			row.getChangeDetail().setQuestionText(messageSource.getMessage("advance.nursery.duplicate.question.text", 
-//				                					new String[] {name}, locale));
-//			            				}
-//			            				name = row.getChangeDetail().getOldAdvanceName() + "(" + currentCount + ")"; 
-//			            				currentCount++;
-//			            			}
-//			            		} else if (row.getChangeDetail() != null) {
-//			            			row.getChangeDetail().setNewAdvanceName(name);
-//		                			Locale locale = LocaleContextHolder.getLocale();
-//		                			row.getChangeDetail().setAddSequenceText(messageSource.getMessage("advance.nursery.duplicate.add.sequence.text", 
-//		                					new String[] {row.getChangeDetail().getNewAdvanceName()}, locale));
-//			            		}
-//		        			} while (isMatch);
-//		        			addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());		
-//		        			lastCount = currentCount;
-//	            		}	            		
-//            		} // end else
-//            	}
             }
         }
             
@@ -256,9 +216,19 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         return list;
     }
 
-    protected RuleExecutionContext setupNamingRuleExecutionContext(AdvancingSource row) {
+    protected RuleExecutionContext setupNamingRuleExecutionContext(AdvancingSource row, boolean checkForDuplicateName) {
         List<String> sequenceList = Arrays.asList(ruleFactory.getRuleSequenceForNamespace("naming"));
-        return new NamingRuleExecutionContext(sequenceList, processCodeService, row, new ArrayList<String>());
+
+        if (checkForDuplicateName) {
+            // new array list is required since list generated from asList method does not support adding of more elements
+            sequenceList = new ArrayList<>(sequenceList);
+            sequenceList.add(EnforceUniqueNameRule.KEY);
+        }
+
+        NamingRuleExecutionContext context =  new NamingRuleExecutionContext(sequenceList, processCodeService, row, germplasmDataManger, new ArrayList<String>());
+        context.setMessageSource(messageSource);
+
+        return context;
     }
 
     private String getNonNullValue(String value) {

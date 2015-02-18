@@ -14,8 +14,9 @@ import java.util.List;
 public abstract class BranchingRule extends OrderedRule {
 	public void prepareContextForBranchingToKey(RuleExecutionContext context, String targetKey) {
 		List<String> executionOrder = context.getExecutionOrder();
-
-		int index = executionOrder.lastIndexOf(targetKey);
+		int currentExecutionIndex = context.getCurrentExecutionIndex();
+		List<String> previousRuleKeys = executionOrder.subList(0, currentExecutionIndex);
+		int index = previousRuleKeys.lastIndexOf(targetKey);
 
 		if (index != -1) {
 			context.setCurrentExecutionIndex(index);

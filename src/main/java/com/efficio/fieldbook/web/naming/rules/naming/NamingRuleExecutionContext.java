@@ -1,9 +1,9 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.naming.impl.RuleFactory;
-import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.springframework.context.MessageSource;
 
 import java.util.List;
 
@@ -13,33 +13,32 @@ import java.util.List;
  * Date: 2/14/2015
  * Time: 12:53 AM
  */
-public class NamingRuleExecutionContext implements RuleExecutionContext{
+public class NamingRuleExecutionContext extends OrderedRuleExecutionContext{
 
-	private List<String> executionOrder;
+
 	private ProcessCodeService processCodeService;
 	private AdvancingSource advancingSource;
+	private GermplasmDataManager germplasmDataManager;
 	private List<String> currentData;
+	private MessageSource messageSource;
+
+	private List<String> tempData;
 
 	public NamingRuleExecutionContext(List<String> executionOrder,
 			ProcessCodeService processCodeService,
-			AdvancingSource advancingSource, List<String> currentData) {
-		this.executionOrder = executionOrder;
+			AdvancingSource advancingSource, GermplasmDataManager germplasmDataManager,
+			List<String> currentData) {
+		super(executionOrder);
 		this.processCodeService = processCodeService;
 		this.advancingSource = advancingSource;
 		this.currentData = currentData;
+		this.germplasmDataManager  = germplasmDataManager;
+
 	}
 
 	@Override
 	public Object getRuleExecutionOutput() {
 		return currentData;
-	}
-
-	public List<String> getExecutionOrder() {
-		return executionOrder;
-	}
-
-	public void setExecutionOrder(List<String> executionOrder) {
-		this.executionOrder = executionOrder;
 	}
 
 	public ProcessCodeService getProcessCodeService() {
@@ -64,5 +63,29 @@ public class NamingRuleExecutionContext implements RuleExecutionContext{
 
 	public void setCurrentData(List<String> currentData) {
 		this.currentData = currentData;
+	}
+
+	public GermplasmDataManager getGermplasmDataManager() {
+		return germplasmDataManager;
+	}
+
+	public void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+		this.germplasmDataManager = germplasmDataManager;
+	}
+
+	public List<String> getTempData() {
+		return tempData;
+	}
+
+	public void setTempData(List<String> tempData) {
+		this.tempData = tempData;
+	}
+
+	public MessageSource getMessageSource() {
+		return messageSource;
+	}
+
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 }

@@ -1,5 +1,7 @@
 package com.efficio.fieldbook.web.naming.rules;
 
+import com.efficio.fieldbook.web.naming.rules.naming.OrderedRuleExecutionContext;
+
 import java.util.List;
 
 /**
@@ -8,9 +10,9 @@ import java.util.List;
  * Date: 2/13/2015
  * Time: 4:07 PM
  */
-public abstract class OrderedRule implements Rule{
+public abstract class OrderedRule<T extends OrderedRuleExecutionContext> implements Rule<T>{
 
-	@Override public String getNextRuleStepKey(RuleExecutionContext context){
+	@Override public String getNextRuleStepKey(T context){
 		List<String> sequenceOrder = context.getExecutionOrder();
 		int executionIndex = context.getCurrentExecutionIndex();
 

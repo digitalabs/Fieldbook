@@ -1,9 +1,7 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.naming.rules.OrderedRule;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
-import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -21,18 +19,17 @@ import java.util.Locale;
  */
 
 @Component
-public class EnforceUniqueNameRule extends BranchingRule {
+public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionContext> {
 
 	public static final String KEY = "Unique";
 
 	@Override
-	public Object runRule(RuleExecutionContext context) throws RuleException {
+	public Object runRule(NamingRuleExecutionContext context) throws RuleException {
 
-		NamingRuleExecutionContext namingRuleExecutionContext = (NamingRuleExecutionContext) context;
-		List<String> currentData = namingRuleExecutionContext.getCurrentData();
-		GermplasmDataManager germplasmDataManager = namingRuleExecutionContext
+		List<String> currentData = context.getCurrentData();
+		GermplasmDataManager germplasmDataManager = context
 				.getGermplasmDataManager();
-		AdvancingSource source = namingRuleExecutionContext.getAdvancingSource();
+		AdvancingSource source = context.getAdvancingSource();
 
 		// as per agreement, unique name checking can be limited to only the first entry for the germplasm
 		String nameForChecking = currentData.get(0);
@@ -41,15 +38,15 @@ public class EnforceUniqueNameRule extends BranchingRule {
 
 			if (!duplicateExists) {
 				// if necessary, update change detail object
-				updateChangeDetailForAdvancingSource(namingRuleExecutionContext);
+				updateChangeDetailForAdvancingSource(context);
 
 
 			} else {
 				// if a duplicate is found, initialize an AdvanceGermplasmChangeDetail object containing the original duplicate, for confirmation later on with the user
-				initializeChangeDetailForAdvancingSource(namingRuleExecutionContext);
+				initializeChangeDetailForAdvancingSource(context);
 
 				// restore rule execution state to a previous temp save point
-				namingRuleExecutionContext.setCurrentData(namingRuleExecutionContext.getTempData());
+				context.setCurrentData(context.getTempData());
 
 				// increment the starting sequence used to generate the count
 				source.setCurrentMaxSequence(source.getCurrentMaxSequence() + 1);
@@ -64,8 +61,8 @@ public class EnforceUniqueNameRule extends BranchingRule {
 	}
 
 	@Override
-	public String getNextRuleStepKey(RuleExecutionContext context){
-		AdvancingSource source = ((NamingRuleExecutionContext)context).getAdvancingSource();
+	public String getNextRuleStepKey(NamingRuleExecutionContext context){
+		AdvancingSource source = context.getAdvancingSource();
 
 		AdvanceGermplasmChangeDetail changeDetailObject = source.getChangeDetail();
 

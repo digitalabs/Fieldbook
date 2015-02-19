@@ -1,11 +1,11 @@
 package com.efficio.fieldbook.web.naming.rules;
 
-public interface Rule {
+public interface Rule<T extends RuleExecutionContext> {
 
 
-	public Object runRule(RuleExecutionContext context) throws RuleException;
+	public Object runRule(T context) throws RuleException;
 
-	public String getNextRuleStepKey(RuleExecutionContext context);
+	public String getNextRuleStepKey(T context);
 
 	public String getKey();
 }

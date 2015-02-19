@@ -2,7 +2,6 @@ package com.efficio.fieldbook.web.naming.rules.naming;
 
 import com.efficio.fieldbook.web.naming.rules.OrderedRule;
 import com.efficio.fieldbook.web.naming.rules.RuleException;
-import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.springframework.stereotype.Component;
@@ -10,18 +9,18 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class PrefixRule extends OrderedRule {
+public class PrefixRule extends OrderedRule<NamingRuleExecutionContext> {
 
 	public static final String KEY = "Prefix";
 
 	@Override
-	public Object runRule(RuleExecutionContext context) throws RuleException {
-		NamingRuleExecutionContext nameContext = (NamingRuleExecutionContext) context;
-		// append a separator string onto each element of the list - in place
-		List<String> input = nameContext.getCurrentData();
+	public Object runRule(NamingRuleExecutionContext context) throws RuleException {
 
-		ProcessCodeService processCodeService = nameContext.getProcessCodeService();
-		AdvancingSource advancingSource = nameContext.getAdvancingSource();
+		// append a separator string onto each element of the list - in place
+		List<String> input = context.getCurrentData();
+
+		ProcessCodeService processCodeService = context.getProcessCodeService();
+		AdvancingSource advancingSource = context.getAdvancingSource();
 		String prefix = advancingSource.getBreedingMethod().getPrefix();
 
 		if (prefix == null) {
@@ -32,7 +31,7 @@ public class PrefixRule extends OrderedRule {
 			input.set(i, input.get(i) + processCodeService.applyToName(prefix, advancingSource).get(0));
 		}
 
-		nameContext.setCurrentData(input);
+		context.setCurrentData(input);
 
 		return input;
 	}

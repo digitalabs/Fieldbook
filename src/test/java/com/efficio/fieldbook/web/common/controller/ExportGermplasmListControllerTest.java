@@ -46,6 +46,7 @@ public class ExportGermplasmListControllerTest {
 	private static final String SAMPLE_LIST = "Sample List";
 	private static final String LIST_NAME = "LIST NAME";
 	private static final int CURRENT_USER_ID = 1;
+	private static final int LIST_STATUS = 1;
 	//Columns
     private static final String ENTRY_NO = "entryNo";
     private static final String GID = "gid";
@@ -428,6 +429,7 @@ public class ExportGermplasmListControllerTest {
 		germplasmList.setType(LST);
 		germplasmList.setDate(LIST_DATE);
 		germplasmList.setNotes(SAMPLE_NOTES);
+		germplasmList.setStatus(LIST_STATUS);
 		
 		return germplasmList;
 	}

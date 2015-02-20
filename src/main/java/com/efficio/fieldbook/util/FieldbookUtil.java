@@ -65,7 +65,9 @@ public class FieldbookUtil {
 		return new ArrayList<Integer>();
 	}
 	public static void setColumnOrderingOnWorkbook(Workbook workbook, String columnOrderDelimited){
-	    	List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);		
-			workbook.setColumnOrderedLists(columnOrdersList);				
+	    	List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
+	    	if(!columnOrdersList.isEmpty()){
+	    		workbook.setColumnOrderedLists(columnOrdersList);
+	    	}
    }		
 }

@@ -1355,8 +1355,11 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 			showWarningMessageForRequiredColumns(visibleColumns);
 		}
 	}
-	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
-	var columnOrders = (JSON.stringify(columnsOrder));
+	var columnOrders = "";
+	if($('.review-nursery-details').length == 0){
+		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
+		columnOrders = (JSON.stringify(columnsOrder));
+	}
 	$.ajax(newAction, {
 		headers : {
 			'Accept' : 'application/json',

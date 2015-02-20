@@ -384,10 +384,13 @@
 		}
 		function doSaveImportedData(){
 			'use strict';
+			var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+			var serializedData = 'columnOrders='+ encodeURIComponent(JSON.stringify(columnsOrder));
 			return $.ajax(
 					{ 
 						url: '/Fieldbook/ImportManager/import/save',
 						type: 'POST',
+						data: serializedData,
                         async: true,
 						success: function(html) {
 							$('#measurementsDiv').html(html);							

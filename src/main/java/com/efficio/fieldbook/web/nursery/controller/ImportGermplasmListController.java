@@ -221,7 +221,8 @@ public class ImportGermplasmListController extends SettingsController {
     		//start: section for taking note of the check germplasm
         boolean isDeleteObservations = false;
 		String[] selectedCheck = form.getSelectedCheck();
-		boolean isNursery = userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N ? true : false;
+		boolean isNursery = userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N ? true : false;			
+		
 	    if (userSelection.getTemporaryWorkbook() != null) {
             WorkbookUtil.manageExpDesignVariablesAndObs(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
             WorkbookUtil.addMeasurementDataToRowsExp(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getObservations(), 
@@ -324,6 +325,10 @@ public class ImportGermplasmListController extends SettingsController {
         fieldbookService.saveStudyImportedCrosses(userSelection.getImportedCrossesId(), studyId); 
         //for saving the list data project        
         saveListDataProject(isNursery, studyId);
+        
+        
+        fieldbookService.saveStudyColumnOrdering(studyId, userSelection.getWorkbook().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
+        
         return Integer.toString(studyId);
     }       
     

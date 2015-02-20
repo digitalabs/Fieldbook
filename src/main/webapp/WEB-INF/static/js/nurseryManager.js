@@ -1742,7 +1742,7 @@ function submitGermplasmAndCheck() {
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
 		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
-
+	serializedData += '&columnOrders='+(BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
 		type: 'POST',

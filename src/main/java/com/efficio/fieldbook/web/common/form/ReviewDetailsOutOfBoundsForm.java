@@ -44,7 +44,7 @@ public class ReviewDetailsOutOfBoundsForm {
 	}
 	
 	public List<MeasurementVariable> getArrangeMeasurementVariables(){
-		return SettingsUtil.getArrangedMeasurementVariable(getMeasurementVariables());
+		return getMeasurementVariables();
 	}
 
 	public List<MeasurementVariable> getMeasurementVariables() {

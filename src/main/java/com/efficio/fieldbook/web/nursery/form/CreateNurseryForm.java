@@ -199,6 +199,7 @@ public class CreateNurseryForm {
     /** The error message. */
     private String errorMessage;
     
+    private String columnOrders;
     /**
      * Gets the project id.
      *
@@ -1064,7 +1065,7 @@ public class CreateNurseryForm {
 		 * @return the arrange measurement variables
 		 */
 		public List<MeasurementVariable> getArrangeMeasurementVariables(){
-			return SettingsUtil.getArrangedMeasurementVariable(getMeasurementVariables());
+			return getMeasurementVariables();
 		}
 		
         /**
@@ -1265,5 +1266,12 @@ public class CreateNurseryForm {
 			this.errorMessage = errorMessage;
 		}
 
-        
+		public String getColumnOrders() {
+			return columnOrders;
+		}
+
+		public void setColumnOrders(String columnOrders) {
+			this.columnOrders = columnOrders;
+		}
+				
 }

@@ -173,13 +173,13 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		
 		currentRowNum = writeStudyDetails(currentRowNum, xlsBook, xlsSheet, workbook.getStudyDetails());
 		xlsSheet.createRow(currentRowNum++);
-		currentRowNum = writeConditions(currentRowNum, xlsBook, xlsSheet, workbook.getConditions(), trialObservation);
+		currentRowNum = writeConditions(currentRowNum, xlsBook, xlsSheet, workbook.getConditions(), trialObservation, workbook);
 		xlsSheet.createRow(currentRowNum++);
-		currentRowNum = writeFactors(currentRowNum, xlsBook, xlsSheet, workbook.getNonTrialFactors(), visibleColumns);
+		currentRowNum = writeFactors(currentRowNum, xlsBook, xlsSheet, workbook.getNonTrialFactors(), visibleColumns, workbook);
 		xlsSheet.createRow(currentRowNum++);
-		currentRowNum = writeConstants(currentRowNum, xlsBook, xlsSheet, workbook.getConstants(), trialObservation);
+		currentRowNum = writeConstants(currentRowNum, xlsBook, xlsSheet, workbook.getConstants(), trialObservation, workbook);
 		xlsSheet.createRow(currentRowNum++);
-		currentRowNum = writeVariates(currentRowNum, xlsBook, xlsSheet, workbook.getVariates(), visibleColumns);
+		currentRowNum = writeVariates(currentRowNum, xlsBook, xlsSheet, workbook.getVariates(), visibleColumns, workbook);
 		
 		xlsSheet.setColumnWidth(0, 20 * PIXEL_SIZE);
 		xlsSheet.setColumnWidth(1, 24 * PIXEL_SIZE);
@@ -238,7 +238,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 	
 	private int writeConditions(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> conditions,
-			MeasurementRow trialObservation) {
+			MeasurementRow trialObservation,Workbook workbook) {
 		List<MeasurementVariable> arrangedConditions = new ArrayList<MeasurementVariable>();
 		List<MeasurementVariable> filteredConditions = new ArrayList<MeasurementVariable>();
 		if(conditions != null){
@@ -266,22 +266,24 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				}
 			}
 		}
+		filteredConditions = workbook.arrangeMeasurementVariables(filteredConditions);
 		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredConditions, "export.study.description.column.condition", 51, 153, 102);
 	}
 	
 
-	private int writeFactors(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> factors, List<Integer> visibleColumns) {
+	private int writeFactors(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> factors, List<Integer> visibleColumns,Workbook workbook) {
 		List<MeasurementVariable> filteredFactors = new ArrayList<MeasurementVariable>();
 		for (MeasurementVariable factor : factors) {
 			if (factor.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId() && ExportImportStudyUtil.isColumnVisible(factor.getTermId(),visibleColumns)) {
 				filteredFactors.add(factor);
 			}
 		}
+		filteredFactors = workbook.arrangeMeasurementVariables(filteredFactors);
 		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredFactors, "export.study.description.column.factor", 51, 153, 102);
 	}
 	
 	private int writeConstants(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> constants, 
-			MeasurementRow trialObservation) {
+			MeasurementRow trialObservation,Workbook workbook) {
 		
 		List<MeasurementVariable> filteredConstants = new ArrayList<MeasurementVariable>();
 		for (MeasurementVariable variable : constants) {
@@ -290,11 +292,11 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
 			}
 		}
-		
+		filteredConstants = workbook.arrangeMeasurementVariables(filteredConstants);
 		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredConstants, "export.study.description.column.constant", 51, 51, 153);
 	}
 	
-	private int writeVariates(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> variates, List<Integer> visibleColumns) {
+	private int writeVariates(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> variates, List<Integer> visibleColumns,Workbook workbook) {
 		
 		List<MeasurementVariable> filteredVariates = new ArrayList<MeasurementVariable>();
 		for (MeasurementVariable variate : variates) {
@@ -302,6 +304,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				filteredVariates.add(variate);
 			}
 		}
+		filteredVariates = workbook.arrangeMeasurementVariables(filteredVariates);
 		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredVariates, "export.study.description.column.variate", 51, 51, 153,true);
 	}
 	

@@ -1054,9 +1054,13 @@ function hideErrorMessage() {
 function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestionsObj) {
 
 	$.each(locationSuggestions, function(index, value) {
+		var locNameDisplay = value.lname;
+		if(value.labbr != null && value.labbr != ''){
+			locNameDisplay  += ' - ('+value.labbr+')';
+		}
 		locationSuggestionsObj.push({
 			id: value.locid,
-			text: value.lname,
+			text: locNameDisplay,
 			abbr: value.labbr
 		});
 	});
@@ -1962,8 +1966,12 @@ function refreshImportLocationCombo(data) {
 function generateGenericLocationSuggestions(genericLocationJson){
 	var genericLocationSuggestion = [];
 	$.each(genericLocationJson, function( index, value ) {
+		var locNameDisplay = value.lname;
+		if(value.labbr != null && value.labbr != ''){
+			locNameDisplay  += ' - ('+value.labbr+')';
+		}
 		genericLocationSuggestion.push({ 'id' : value.locid,
-            'text' : value.lname
+            'text' : locNameDisplay
 		});
 	});
 	return genericLocationSuggestion;

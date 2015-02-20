@@ -379,7 +379,11 @@ public class FieldbookServiceImpl implements FieldbookService {
         if (locations != null && !locations.isEmpty()) {
             for (Location loc : locations) {
                 if (loc != null) {
-                    list.add(new ValueReference(loc.getLocid(), loc.getLname(), loc.getLname()));
+                	String locNameDisplay = loc.getLname();
+                	if(loc.getLabbr() != null && !"".equalsIgnoreCase(loc.getLabbr())){
+                		locNameDisplay += " - ("+loc.getLabbr()+")";
+                	}
+                    list.add(new ValueReference(loc.getLocid(), locNameDisplay, locNameDisplay));
                 }
             }
         }

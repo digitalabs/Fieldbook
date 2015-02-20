@@ -756,9 +756,13 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 					'text' : value.description
 				};
 			} else if (value.locid !== undefined) {
+				var locNameDisplay = value.lname;
+				if(value.labbr != null && value.labbr != ''){
+					locNameDisplay  += ' - ('+value.labbr+')';
+				}
 				jsonVal = {
 					'id' : value.locid,
-					'text' : value.lname
+					'text' : locNameDisplay
 				};
 			} else {
 				jsonVal = {

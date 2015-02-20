@@ -424,9 +424,14 @@
                             var possibleValues = [];
 
                             $.each(locations, function (key, value) {
+                                var locNameDisplay = value.lname;
+                                if(value.labbr != null && value.labbr != ''){
+                                    locNameDisplay  += ' - ('+value.labbr+')';
+                                }                                
+
                                 possibleValues.push({
                                     id: value.locid,
-                                    name: value.lname,
+                                    name: locNameDisplay,
                                     description: value.lname
                                 });
                             });

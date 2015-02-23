@@ -12,7 +12,7 @@ import java.util.List;
 public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 
 	public static final String KEY = "Count";
-	
+
 	@Override
 	public Object runRule(NamingRuleExecutionContext context) throws RuleException {
 		// create counts first - we need a list in case we have a sequence
@@ -24,18 +24,23 @@ public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 
 		List<String> input = context.getCurrentData();
 
-		for (String name : input) {
-			for (int i = 0; i < counts.size(); i++) {
-				counts.set(i, name + counts.get(i));
+		if (!counts.isEmpty()) {
+			for (String name : input) {
+				for (int i = 0; i < counts.size(); i++) {
+					counts.set(i, name + counts.get(i));
+				}
 			}
+
+			// store current data in temp before overwriting it with count data, so that it can be restored for another try later on
+			context.setTempData(context.getCurrentData());
+
+			// place the processed name data with count information as current rule execution output
+			context.setCurrentData(counts);
+			return counts;
+		} else {
+			return input;
 		}
 
-		// store current data in temp before overwriting it with count data, so that it can be restored for another try later on
-		context.setTempData(context.getCurrentData());
-
-		// place the processed name data with count information as current rule execution output
-		context.setCurrentData(counts);
-		return counts;
 	}
 
 	@Override public String getKey() {

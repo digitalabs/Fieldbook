@@ -6,8 +6,12 @@ import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import com.efficio.fieldbook.web.nursery.service.CrossingService;
+
+import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+
 import java.util.*;
 
 @Controller
@@ -39,6 +44,9 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 	 */
 	@Resource
 	private ResourceBundleMessageSource messageSource;
+	
+	@Autowired
+	private OntologyDataManager ontologyDataManager;
 
 	@Override
 	public String getContentName() {
@@ -98,17 +106,20 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 
 		Map<String, Object> dataMap = new HashMap<>();
 
-		dataMap.put("ENTRY", importedCrosses.getEntryId());
-		dataMap.put("PARENTAGE", importedCrosses.getCross());
-		dataMap.put("ENTRY CODE", importedCrosses.getEntryCode());
-		dataMap.put("FEMALE PARENT", importedCrosses.getFemaleDesig());
-		dataMap.put("FGID", importedCrosses.getFemaleGid());
-		dataMap.put("MALE PARENT", importedCrosses.getMaleDesig());
-		dataMap.put("MGID", importedCrosses.getMaleGid());
-		dataMap.put("SOURCE", importedCrosses.getSource());
+		dataMap.put(getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCrosses.getEntryId());
+		dataMap.put(getTermNameFromOntology(ColumnLabels.PARENTAGE), importedCrosses.getCross());
+		dataMap.put(getTermNameFromOntology(ColumnLabels.ENTRY_CODE), importedCrosses.getEntryCode());
+		dataMap.put(getTermNameFromOntology(ColumnLabels.FEMALE_PARENT), importedCrosses.getFemaleDesig());
+		dataMap.put(getTermNameFromOntology(ColumnLabels.FGID), importedCrosses.getFemaleGid());
+		dataMap.put(getTermNameFromOntology(ColumnLabels.MALE_PARENT), importedCrosses.getMaleDesig());
+		dataMap.put(getTermNameFromOntology(ColumnLabels.MGID), importedCrosses.getMaleGid());
+		dataMap.put(getTermNameFromOntology(ColumnLabels.SEED_SOURCE), importedCrosses.getSource());
 
 		return dataMap;
+	}
 
+	protected String getTermNameFromOntology(ColumnLabels columnLabels) {
+		return columnLabels.getTermNameFromOntology(ontologyDataManager);
 	}
 
 	public String show(Model model, boolean isTrial) {
@@ -119,6 +130,10 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 
 	private String getContentName(boolean isTrial) {
 		return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
+	}
+
+	public void setOntologyDataManager(OntologyDataManager ontologyDataManager) {
+		this.ontologyDataManager = ontologyDataManager;
 	}
 
 }

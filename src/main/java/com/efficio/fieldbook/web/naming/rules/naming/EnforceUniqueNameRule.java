@@ -48,8 +48,17 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 				// restore rule execution state to a previous temp save point
 				context.setCurrentData(context.getTempData());
 
-				// increment the starting sequence used to generate the count
-				source.setCurrentMaxSequence(source.getCurrentMaxSequence() + 1);
+				// if there is no current count expression, use the default to provide incrementing support
+				if (source.getBreedingMethod().getCount() == null || source.getBreedingMethod().getCount().isEmpty()) {
+					source.getBreedingMethod().setCount(CountRule.DEFAULT_COUNT);
+					source.setForceUniqueNameGeneration(true);
+				} else if (source.getBreedingMethod().isBulkingMethod()) {
+					source.setForceUniqueNameGeneration(true);
+				} else{
+					// increment the sequence used to generate the count
+					source.setCurrentMaxSequence(source.getCurrentMaxSequence() + 1);
+				}
+
 			}
 
 		} catch (MiddlewareQueryException e) {

@@ -12,6 +12,7 @@ import java.util.List;
 public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 
 	public static final String KEY = "Count";
+	public static final String DEFAULT_COUNT = "[NUMBER]";
 
 	@Override
 	public Object runRule(NamingRuleExecutionContext context) throws RuleException {

@@ -5,6 +5,7 @@ import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.generationcp.middleware.pojos.Method;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +41,9 @@ public class EnforceUniqueNameRuleTest {
 	private AdvancingSource source;
 
 	@Mock
+	private Method breedingMethod;
+
+	@Mock
 	private NamingRuleExecutionContext context;
 
 	private List<String> tempData;
@@ -59,14 +63,69 @@ public class EnforceUniqueNameRuleTest {
 		verify(context, never()).setCurrentData(tempData);
 		verify(source, never()).setCurrentMaxSequence(TEST_MAX_SEQUENCE + 1);
 		verify(source, never()).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+	}
+
+	@Test
+	public void testUniqueNameCheckMatchFoundNoCount() throws MiddlewareQueryException, RuleException{
+
+		setupTestExecutionContext();
+		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true);
+		dut.runRule(context);
+
+		// verify that current rule execution state is pointed back to previous stored data
+		verify(context).setCurrentData(tempData);
+		verify(source).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+
+		// verify that force unique name generation flag is set
+		verify(source).setForceUniqueNameGeneration(true);
+		// verify that default count rule is provided so that count rule execution will proceed
+		verify(breedingMethod).setCount(CountRule.DEFAULT_COUNT);
+	}
+
+	@Test
+	public void testUniqueNameCheckMatchFoundFlagSet()
+			throws MiddlewareQueryException, RuleException {
+
+		setupTestExecutionContext();
+		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true);
+		when(source.isForceUniqueNameGeneration()).thenReturn(true);
+		dut.runRule(context);
+
+		// verify that current rule execution state is pointed back to previous stored data
+		verify(context).setCurrentData(tempData);
+		verify(source).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+
+		// verify that max sequence is incremented
+		verify(source).setCurrentMaxSequence(TEST_MAX_SEQUENCE + 1);
 
 	}
 
 	@Test
-	public void testUniqueNameCheckMatchFound() throws MiddlewareQueryException, RuleException{
+	public void testUniqueNameCheckMatchFoundIsBulking()
+			throws MiddlewareQueryException, RuleException {
 
 		setupTestExecutionContext();
 		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true);
+		when(source.isBulk()).thenReturn(true);
+
+		dut.runRule(context);
+
+		// verify that current rule execution state is pointed back to previous stored data
+		verify(context).setCurrentData(tempData);
+		verify(source).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+
+		// verify that force unique name generation flag is set
+		verify(source).setForceUniqueNameGeneration(true);
+	}
+
+	@Test
+	public void testUniqueNameCheckMatchFoundHasCountNonBulking()
+			throws MiddlewareQueryException, RuleException {
+
+		setupTestExecutionContext();
+		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true);
+		when(breedingMethod.getCount()).thenReturn(CountRule.DEFAULT_COUNT);
+
 		dut.runRule(context);
 
 		// verify that max sequence is incremented
@@ -76,6 +135,8 @@ public class EnforceUniqueNameRuleTest {
 		verify(context).setCurrentData(tempData);
 		verify(source).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
 
+		// verify that flag is not set so as to preserve previous count rule logic when incrementing the count
+		verify(source, never()).setForceUniqueNameGeneration(true);
 	}
 
 	@Test
@@ -91,21 +152,23 @@ public class EnforceUniqueNameRuleTest {
 	}
 
 	@Test
-	public void testGetNextStepKeyDuplicateFoundCheckFail() throws Exception{
-			setupTestExecutionContext();
-			AdvanceGermplasmChangeDetail detail = mock(AdvanceGermplasmChangeDetail.class);
+	public void testGetNextStepKeyDuplicateFoundCheckFail() throws Exception {
+		setupTestExecutionContext();
+		AdvanceGermplasmChangeDetail detail = mock(AdvanceGermplasmChangeDetail.class);
 
-			when(source.getChangeDetail()).thenReturn(detail);
-			// if a duplicate has been found in previous steps, and a passing name has not yet been found, then the new advance name should still be null on the germplasm change detail object
-			when(detail.getNewAdvanceName()).thenReturn(null);
+		when(source.getChangeDetail()).thenReturn(detail);
+		// if a duplicate has been found in previous steps, and a passing name has not yet been found, then the new advance name should still be null on the germplasm change detail object
+		when(detail.getNewAdvanceName()).thenReturn(null);
 
-			String nextKey = dut.getNextRuleStepKey(context);
+		String nextKey = dut.getNextRuleStepKey(context);
 
-			assertNotNull(
-					"Duplicate has been found and check still fails, so next key should not be null",
-					nextKey);
-			assertEquals("Rule does not pass execution control to CountRule even after failing the check", CountRule.KEY, nextKey);
-		}
+		assertNotNull(
+				"Duplicate has been found and check still fails, so next key should not be null",
+				nextKey);
+		assertEquals(
+				"Rule does not pass execution control to CountRule even after failing the check",
+				CountRule.KEY, nextKey);
+	}
 
 	@Test
 	public void testGetNextStepKeyDuplicateFoundCheckPass() throws Exception {
@@ -143,7 +206,9 @@ public class EnforceUniqueNameRuleTest {
 		when(context.getTempData()).thenReturn(tempData);
 		when(context.getMessageSource()).thenReturn(mock(MessageSource.class));
 
+		when(source.getBreedingMethod()).thenReturn(breedingMethod);
 		when(source.getCurrentMaxSequence()).thenReturn(TEST_MAX_SEQUENCE);
+
 		when(context.getCurrentExecutionIndex()).thenReturn(ENFORCE_RULE_INDEX);
 
 	}

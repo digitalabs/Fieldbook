@@ -35,6 +35,28 @@ public class CountRuleTest extends BaseNamingRuleTest {
 
 		name = "TestGP";
 	}
+
+	@Test
+	public void testNoCountMethodInRule() {
+		breedingMethod.setCount(null);
+
+		List<String> testCurrentInput = new ArrayList<>();
+		testCurrentInput.add(name);
+
+		RuleExecutionContext context = createExecutionContext(testCurrentInput);
+
+		try {
+
+			rule.runRule(context);
+			List<String> output = (List<String>) context.getRuleExecutionOutput();
+			assertEquals(testCurrentInput.size(), output.size());
+
+			assertEquals("No changes should be made to current input if no count method is available", name, output.get(0));
+
+		} catch (RuleException re) {
+			fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
+		}
+	}
 	
 	@Test
 	public void testNumberCount(){		

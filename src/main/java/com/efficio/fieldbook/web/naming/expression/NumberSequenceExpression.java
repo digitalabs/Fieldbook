@@ -16,7 +16,7 @@ public abstract class NumberSequenceExpression implements Expression {
 				int startIndex = value.toString().toUpperCase().indexOf(getExpressionKey());
 				int endIndex = startIndex + getExpressionKey().length();
 
-				value.replace(startIndex, endIndex, Integer.toString(source.getCurrentMaxSequence() + 1));
+				value.replace(startIndex, endIndex, "(" + Integer.toString(source.getCurrentMaxSequence() + 1) + ")");
 
 			}
 

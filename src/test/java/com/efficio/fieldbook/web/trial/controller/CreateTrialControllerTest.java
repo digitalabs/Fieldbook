@@ -27,23 +27,6 @@ public class CreateTrialControllerTest extends AbstractBaseControllerIntegration
 	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Test
-	public void testGetReturnsCorrectModelAndView() throws Exception {
-		
-		ModelAndView mav = request(CreateTrialController.URL, HttpMethod.GET.name());
-		
-		ModelAndViewAssert.assertViewName(mav, CreateTrialController.ANGULAR_BASE_TEMPLATE_NAME);
-		ModelAndViewAssert.assertModelAttributeValue(mav, 
-				AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "TrialManager/createTrial");
-		
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "basicDetailsData");
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "germplasmData");
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "environmentData");
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "trialSettingsData");
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "measurementRowCount");
-		
-	}
 	
 	@Test
 	public void testUseExistingTrial() throws Exception {

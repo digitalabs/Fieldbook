@@ -338,6 +338,10 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		}
     	}
     	return propertyTrees;
-    } 
+    }
+
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
+	} 
     
 }

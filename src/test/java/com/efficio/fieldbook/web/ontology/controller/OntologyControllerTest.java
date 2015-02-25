@@ -36,6 +36,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -263,31 +264,49 @@ public class OntologyControllerTest extends AbstractBaseControllerIntegrationTes
             String method, String methodDescription,
             String scale, String scaleDescription) {
         Term term = null;
+        OntologyService service = Mockito.mock(OntologyService.class);
         try {
             if ("Property".equals(combo)) {
                 if (propertyDescription == null || propertyDescription.equals("")) {
                     propertyDescription = property;
                 }
-                term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
+                Term tempTerm = new Term();
+                tempTerm.setName(property);
+                tempTerm.setDefinition(propertyDescription);
+                
+                Mockito.when(service.addTerm(property, propertyDescription, CvId.PROPERTIES)).thenReturn(tempTerm);
+                term = service.addTerm(property, propertyDescription, CvId.PROPERTIES);
             } else if ("Method".equals(combo)) {
                 if (methodDescription == null || methodDescription.equals("")) {
                     methodDescription = method;
                 }
-                term = ontologyService.addTerm(method, methodDescription, CvId.METHODS);
+                Term tempTerm = new Term();
+                tempTerm.setName(method);
+                tempTerm.setDefinition(methodDescription);
+                
+                Mockito.when(service.addTerm(method, methodDescription, CvId.METHODS)).thenReturn(tempTerm);
+                term = service.addTerm(method, methodDescription, CvId.METHODS);
             } else if ("Scale".equals(combo)) {
                 if (scaleDescription == null || scaleDescription.equals("")) {
                     scaleDescription = scale;
                 }
-                term = ontologyService.addTerm(scale, scaleDescription, CvId.SCALES);
+                Term tempTerm = new Term();
+                tempTerm.setName(scale);
+                tempTerm.setDefinition(scaleDescription);
+                term = tempTerm;
+                Mockito.when(service.addTerm(scale, scaleDescription, CvId.SCALES)).thenReturn(tempTerm);
+                term = service.addTerm(scale, scaleDescription, CvId.SCALES);
             } else {
                 if (traitClassDescription == null || traitClassDescription.equals("")) {
                     traitClassDescription = traitClass;
                 }
-                term = ontologyService.addTraitClass(traitClass, traitClassDescription
-                        , TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
+                Term tempTerm = new Term();
+                tempTerm.setName(traitClass);
+                tempTerm.setDefinition(traitClassDescription);
+                term = tempTerm;
             }
             return term;
-        } catch (MiddlewareQueryException e) {
+        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
         return term;

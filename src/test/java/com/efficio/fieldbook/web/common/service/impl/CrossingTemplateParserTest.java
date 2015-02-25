@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.reflect.FieldUtils;
@@ -66,7 +67,7 @@ public class CrossingTemplateParserTest {
 
 	@Test
 	public void testParseFile() throws Exception {
-		doReturn(mock(Workbook.class)).when(parserUnderTest).storeImportGermplasmWorkbook(any(
+		doReturn(mock(Workbook.class)).when(parserUnderTest).storeAndRetrieveWorkbook(any(
 				MultipartFile.class));
 
 		doNothing().when(parserUnderTest).parseCrossingListDetails();
@@ -93,7 +94,7 @@ public class CrossingTemplateParserTest {
 
 		when(fileService.retrieveWorkbook("SERVER_FILE_NAME.xls")).thenReturn(mock(Workbook.class));
 
-		Workbook wb = parserUnderTest.storeImportGermplasmWorkbook(file);
+		Workbook wb = parserUnderTest.storeAndRetrieveWorkbook(file);
 
 		String originalFileName = String
 				.valueOf(FieldUtils.readField(parserUnderTest, "originalFilename", true));
@@ -156,16 +157,11 @@ public class CrossingTemplateParserTest {
 		verify(importedCrossesList, times(rowSize)).addImportedCrosses(any(ImportedCrosses.class));
 	}
 
-	@Test
+	@Test(expected = FileParsingException.class)
 	public void testParseObservationSheetObservationHeaderInvalid() throws Exception {
 		doReturn(true).when(parserUnderTest).isObservationsHeaderInvalid();
-		doNothing().when(parserUnderTest).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
 		parserUnderTest.parseObservationSheet();
-
-		verify(parserUnderTest, times(1)).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 	}
 
 	@Test

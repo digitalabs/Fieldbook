@@ -1,11 +1,11 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
+import com.efficio.fieldbook.web.common.service.AbstractFileParser;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -13,13 +13,10 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
-import org.generationcp.middleware.util.PoiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -28,7 +25,7 @@ import java.util.*;
  * This parses a Crossing Template Excel file
  * Note that this class is stateful, declare in spring app context as prototyped scope
  */
-public class CrossingTemplateParser {
+public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesList> {
 
 	/**
 	 * The Constant FILE_INVALID.
@@ -57,56 +54,43 @@ public class CrossingTemplateParser {
 	private boolean importFileIsValid = true;
 	private Workbook workbook;
 	private int currentRow = 0;
-	private String originalFilename;
 
 	/**
 	 * Resources
 	 */
 	@Resource
 	private StudyDataManager studyDataManager;
+
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	@Resource
-	private FileService fileService;
 
 	public CrossingTemplateParser() {
 
 	}
 
-	public ImportedCrossesList parseFile(MultipartFile multipartFile) {
+	@Override public String[] getSupportedFileExtensions() {
+		return EXCEL_FILE_EXTENSIONS;
+	}
+
+	@Override public ImportedCrossesList parseWorkbook(Workbook workbook) throws
+			FileParsingException{
+		this.workbook = workbook;
+
 		try {
-			this.workbook = storeImportGermplasmWorkbook(multipartFile);
-
 			parseDescriptionSheet();
-
 			parseObservationSheet();
-
-		} catch (IOException | ParseException | InvalidFormatException e) {
-			addParseErrorMsg(FILE_INVALID);
-			LOG.debug(e.getMessage(),e);
+		} catch (ParseException e) {
+			LOG.debug(e.getMessage(), e);
+			throw new FileParsingException(messageSource.getMessage(FILE_INVALID, new Object[]{}, Locale.getDefault()));
 		} catch (MiddlewareQueryException e) {
-			addParseErrorMsg(NO_REFERENCES_ERROR_DESC);
-			LOG.debug(e.getMessage(),e);
+			LOG.debug(e.getMessage(), e);
+			throw new FileParsingException(messageSource.getMessage(NO_REFERENCES_ERROR_DESC, new Object[]{}, Locale.getDefault()));
 		}
+
 		return importedCrossesList;
 	}
 
-	protected Workbook storeImportGermplasmWorkbook(MultipartFile multipartFile)
-			throws IOException, InvalidFormatException {
-		this.originalFilename = multipartFile.getOriginalFilename();
-		String ext = this.originalFilename.substring(this.originalFilename.lastIndexOf(".") + 1,
-				this.originalFilename.length());
-
-		if (!"xls".equalsIgnoreCase(ext) && !"xlsx".equalsIgnoreCase(ext)) {
-			throw new InvalidFormatException("not.excel.file");
-		}
-
-		String serverFilename = fileService.saveTemporaryFile(multipartFile.getInputStream());
-
-		return fileService.retrieveWorkbook(serverFilename);
-	}
-
-	protected void parseDescriptionSheet() throws ParseException {
+	protected void parseDescriptionSheet() throws FileParsingException, ParseException {
 		parseCrossingListDetails();
 		parseConditions();
 		parseFactors();
@@ -120,12 +104,9 @@ public class CrossingTemplateParser {
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	protected void parseObservationSheet()
-			throws MiddlewareQueryException {
+			throws FileParsingException, MiddlewareQueryException {
 		if (isObservationsHeaderInvalid()) {
-			addParseErrorMsg(FILE_INVALID);
-			LOG.debug("Invalid Observation headers");
-
-			return;
+			throw new FileParsingException("Invalid Observation headers");
 		}
 
 		currentRow = 1;
@@ -152,10 +133,8 @@ public class CrossingTemplateParser {
 			if (!isObservationRowValid(femaleNursery, femaleEntry, maleNursery, maleEntry,
 					crossingDate,
 					seedsHarvested)) {
-				addParseErrorMsg(FILE_INVALID);
-				LOG.debug("Invalid Observation on row: " + currentRow);
 
-				return;
+				throw new FileParsingException("Invalid Observation on row: " + currentRow);
 			}
 
 			// proceess female + male parent entries, will throw middleware query exception if no study valid or null
@@ -190,7 +169,7 @@ public class CrossingTemplateParser {
 						.isValidDate(crossingDate));
 	}
 
-	protected void parseCrossingListDetails() throws ParseException {
+	protected void parseCrossingListDetails() throws FileParsingException, ParseException {
 		String listName = getCellStringValue(DESCRIPTION_SHEET_NO, 0, 1);
 		String listTitle = getCellStringValue(DESCRIPTION_SHEET_NO, 1, 1);
 
@@ -203,15 +182,15 @@ public class CrossingTemplateParser {
 				getCellStringValue(DESCRIPTION_SHEET_NO, listDateColNo, 1));
 		String listType = getCellStringValue(DESCRIPTION_SHEET_NO, listTypeColNo, 1);
 
-		this.importedCrossesList = new ImportedCrossesList(this.originalFilename, listName,
+		this.importedCrossesList = new ImportedCrossesList(originalFilename, listName,
 				listTitle, listType, listDate);
 
 		if (!TEMPLATE_LIST_TYPE.equalsIgnoreCase(listType)) {
-			addParseErrorMsg(FILE_INVALID);
+			throw new FileParsingException("Error parsing details : List type is invalid");
 		}
 	}
 
-	protected void parseConditions() {
+	protected void parseConditions() throws FileParsingException{
 		// condition headers start at row = 5 (+ 1 : count starts from 0 )
 		currentRow = CONDITION_ROW_NO;
 
@@ -248,7 +227,7 @@ public class CrossingTemplateParser {
 		}
 	}
 
-	protected void parseFactors() {
+	protected void parseFactors() throws FileParsingException{
 
 		if (!isFactorHeadersInvalid(currentRow) && importFileIsValid) {
 			currentRow++;
@@ -282,9 +261,7 @@ public class CrossingTemplateParser {
 			currentRow++;
 
 		} else {
-			// Incorrect headers for factors.
-			addParseErrorMsg(FILE_INVALID);
-			LOG.debug("Error parsing on factors header: Incorrect headers for factors.");
+			throw new FileParsingException("Error parsing on factors header: Incorrect headers for factors.");
 		}
 
 		while (isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
@@ -292,7 +269,7 @@ public class CrossingTemplateParser {
 		}
 	}
 
-	protected void parseConstants() {
+	protected void parseConstants() throws FileParsingException{
 		if (!isConstantsHeaderInvalid(currentRow) && importFileIsValid) {
 			currentRow++;
 			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
@@ -324,8 +301,7 @@ public class CrossingTemplateParser {
 
 		} else {
 			// Incorrect headers for factors.
-			addParseErrorMsg(FILE_INVALID);
-			LOG.debug("Error parsing on constants header: Incorrect headers for constants.");
+			throw new FileParsingException("Error parsing on constants header: Incorrect headers for constants.");
 		}
 
 		while (isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
@@ -333,7 +309,7 @@ public class CrossingTemplateParser {
 		}
 	}
 
-	protected void parseVariate() {
+	protected void parseVariate() throws FileParsingException{
 		if (!isVariateHeaderInvalid(currentRow) && importFileIsValid) {
 			currentRow++;
 			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
@@ -355,8 +331,7 @@ public class CrossingTemplateParser {
 			}
 
 		} else {
-			addParseErrorMsg(FILE_INVALID);
-			LOG.debug("Error parsing on variates header: Incorrect headers for variates.");
+			throw new FileParsingException("Error parsing on variates header: Incorrect headers for variates.");
 		}
 	}
 
@@ -427,6 +402,7 @@ public class CrossingTemplateParser {
 		return isHeaderInvalid(variateHeaderRowNo,headers);
 	}
 
+	@Deprecated
 	protected void addParseErrorMsg(String message) {
 		if (importFileIsValid) {
 
@@ -519,32 +495,5 @@ public class CrossingTemplateParser {
 
 		return fieldbookMiddlewareService.getListDataProjectByListIdAndEntryNo(
 				germplasmList.get(0).getId(), genderEntryNo);
-	}
-
-	/**
-	 * Wrapper to PoiUtil.getCellStringValue static call so we can stub the methods on unit tests
-	 *
-	 * @param sheetNo
-	 * @param rowNo
-	 * @param columnNo
-	 * @return
-	 */
-	protected String getCellStringValue(int sheetNo, int rowNo, Integer columnNo) {
-		String out = (null == columnNo) ?
-				"" :
-				PoiUtil.getCellStringValue(this.workbook, sheetNo, rowNo, columnNo);
-		return (null == out) ? "" : out;
-	}
-
-	/**
-	 * Wrapper to PoiUtil.rowIsEmpty static call so we can stub the methods on unit tests
-	 *
-	 * @param sheetNo
-	 * @param rowNo
-	 * @param colCount
-	 * @return
-	 */
-	protected boolean isRowEmpty(int sheetNo, int rowNo, int colCount) {
-		return PoiUtil.rowIsEmpty(workbook.getSheetAt(sheetNo), rowNo, 0, colCount - 1);
 	}
 }

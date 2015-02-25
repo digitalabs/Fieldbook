@@ -1,8 +1,14 @@
 var ImportCrosses = {
+		CROSSES_URL : '/Fieldbook/crosses',
+		showFavoriteMethodsOnly: true,
+		showFavoriteLocationsOnly: true,
+		
 		showPopup : function(){
 			$('#fileupload-import-crosses').val('');
 			$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
-					
+			$('.import-crosses-section .modal .fileupload-exists').click();
+			ImportCrosses.showFavoriteMethodsOnly = true;
+			ImportCrosses.showFavoriteLocationsOnly = true;
 		},
 
 		doSubmitImport : function() {
@@ -44,14 +50,24 @@ var ImportCrosses = {
 				$('#openCrossesListModal').modal('hide');
 				ImportCrosses.showImportSettingsPopup();
 			});
+			
+			$('#goBackToImportCrossesButton').off('click');
+			$('#goBackToImportCrossesButton').on('click', function() {
+				ImportCrosses.goBackToPage('#openCrossesListModal','.import-crosses-section .modal');
+			});
 
+		},
+		
+		goBackToPage: function(hiddenModalSelector,shownModalSelector) {
+			$(hiddenModalSelector).modal('hide');
+			$(shownModalSelector).modal({ backdrop: 'static', keyboard: true });
 		},
 
 		getImportedCrossesTable : function(){
 			'use strict';
 			return $.ajax(
 			{
-				url: '/Fieldbook/import/crosses/getImportedCrossesList',
+				url: ImportCrosses.CROSSES_URL + '/getImportedCrossesList',
 				type: 'GET',
 				cache: false
 			});
@@ -59,9 +75,7 @@ var ImportCrosses = {
 
 		submitImport : function($importCrossesForm) {
 			'use strict';
-
 			var deferred = $.Deferred();
-
 			$importCrossesForm.ajaxForm({
 				dataType: 'json',
 				success: function(response) {
@@ -92,8 +106,9 @@ var ImportCrosses = {
 		showImportSettingsPopup : function() {
 			var crossSettingsPopupModal = $('#crossSettingsModal');
 			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox', true);
-			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', true);
+			
+			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
+			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', ImportCrosses.showFavoriteLoationsOnly);
 			ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 			ImportCrosses.updateSampleParentageDesignation();
 
@@ -107,6 +122,13 @@ var ImportCrosses = {
 			ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 
 			$('#settingsNextButton').click(ImportCrosses.submitCrossImportSettings);
+			
+			$('#goBackToOpenCrossesButton').off('click');
+			$('#goBackToOpenCrossesButton').on('click', function() {
+				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(":checked");
+				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(":checked");
+				ImportCrosses.goBackToPage('#crossSettingsModal','#openCrossesListModal');
+			});
 		},
 
 		updateSampleParentageDesignation : function() {
@@ -145,7 +167,7 @@ var ImportCrosses = {
 					if (setting.name === currentSelectedItem) {
 						ImportCrosses.updateImportSettingsFromSavedSetting(setting);
 					}
-				})
+				});
 			}
 		},
 
@@ -221,7 +243,7 @@ var ImportCrosses = {
 
 		retrieveAvailableImportSettings : function() {
 			return $.ajax({
-				url: '/Fieldbook/import/crosses/retrieveSettings',
+				url: ImportCrosses.CROSSES_URL + '/retrieveSettings',
 				type: 'GET',
 				cache: false
 			});
@@ -233,9 +255,9 @@ var ImportCrosses = {
 			if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
 				var targetURL;
 				if ($('#presetName').val().trim() !== '') {
-					targetURL = '/Fieldbook/import/crosses/submitAndSaveSetting';
+					targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
 				} else {
-					targetURL = '/Fieldbook/import/crosses/submit';
+					targetURL = ImportCrosses.CROSSES_URL + '/submit';
 				}
 
 				$.ajax({
@@ -249,7 +271,7 @@ var ImportCrosses = {
 					data: JSON.stringify(settingData),
 					success: function (data) {
 						if (data.success == '0') {
-							alert('error');
+							showErrorMessage('', 'Import failed');
 						} else {
 							$('#crossSettingsModal').modal('hide');
 							ImportCrosses.openSaveListModal();
@@ -305,7 +327,7 @@ var ImportCrosses = {
 										'Accept': 'application/json',
 										'Content-Type': 'application/json'
 									},
-				'url' : '/Fieldbook/import/crosses/generateSequenceValue',
+				'url' : ImportCrosses.CROSSES_URL + '/generateSequenceValue',
 				'type' : 'POST',
 				'data' : JSON.stringify(settingData),
 				'cache' : false
@@ -380,7 +402,7 @@ var ImportCrosses = {
 
 		retrieveHarvestMonths : function() {
 			return $.ajax({
-				url: '/Fieldbook/import/crosses/getHarvestMonths',
+				url: ImportCrosses.CROSSES_URL + '/getHarvestMonths',
 				type: 'GET',
 				cache: false
 			});
@@ -388,11 +410,38 @@ var ImportCrosses = {
 
 		retrieveHarvestYears: function () {
 			return $.ajax({
-				url: '/Fieldbook/import/crosses/getHarvestYears',
+				url: ImportCrosses.CROSSES_URL + '/getHarvestYears',
 				type: 'GET',
 				cache: false
 			});
 		},
+
+
+        exportCrosses : function() {
+            return $.ajax({
+                url: ImportCrosses.CROSSES_URL + '/export',
+                type: 'GET',
+                cache: false
+            });
+        },
+
+        downloadCrosses : function() {
+            ImportCrosses.exportCrosses().done(function (result) {
+                if (result.isSuccess) {
+                    var downloadUrl = ImportCrosses.CROSSES_URL + '/download/file';
+
+                    var form = $('<form method="POST" action="' + downloadUrl + '">');
+                    $.each(result, function(k, v) {
+                        form.append($('<input type="hidden" name="' + k +
+                        '" value="' + v + '">'));
+                    });
+                    form.submit();
+
+                } else {
+                    createErrorNotification(crossingExportErrorHeader,result.errorMessage);
+                }
+            });
+        },
 
 		displayCrossesList: function (uniqueId, germplasmListId, listName, isDefault, crossesListId) {
 			'use strict';
@@ -419,14 +468,11 @@ var ImportCrosses = {
 			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
 			url += '?isSnapshot=0';
 			
-			
 			$.ajax({
 				url: url,
 				type: 'GET',
 				cache: false,
 				success: function(html) {
-					//ImportCrosses.displayCrossesList($(this).data('list-id'), $(this).data('list-id'), '', true);
-					
 					$('#saveListTreeModal').modal('hide');
 					$('#saveListTreeModal').data('is-save-crosses', '0');
 					$('#create-nursery-tabs .tab-pane.info').removeClass('active');
@@ -479,9 +525,10 @@ var ImportCrosses = {
 
 $(document).ready(function() {
 	$('.import-crosses').on('click', ImportCrosses.showPopup);
-	$('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);
+    $('.export-crosses-action').on('click', ImportCrosses.downloadCrosses);
+
+    $('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);
 	$('.import-crosses-section .modal').on('hide.bs.modal', function() {
 		$('div.import-crosses-file-upload').parent().parent().removeClass('has-error');
-		$('.import-crosses-section .modal .fileupload-exists').click();
 	});
 });

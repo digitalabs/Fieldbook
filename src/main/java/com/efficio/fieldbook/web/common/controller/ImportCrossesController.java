@@ -1,11 +1,13 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
-import com.efficio.fieldbook.web.nursery.service.CrossingService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -14,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,9 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-
-import java.util.*;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 
 @Controller
 @RequestMapping(ImportCrossesController.URL)

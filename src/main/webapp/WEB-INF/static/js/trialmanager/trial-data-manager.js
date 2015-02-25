@@ -146,12 +146,17 @@
                 $('#startIndex').val($('#startIndex2').val());
                 $('#interval').val($('#interval2').val());
                 $('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
+                var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 
-                var serializedData = $form.serialize();
+                var serializedData = $form.serializeArray();
+                serializedData[serializedData.length] = {'name':'columnOrders', 'value':(JSON.stringify(columnsOrder))};
+                
                 var d = $q.defer();
-                $http.post('/Fieldbook/TrialManager/GermplasmList/next', serializedData).success(function (data) {
+                
+                $http.post('/Fieldbook/TrialManager/GermplasmList/next', $.param(serializedData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'} }).success(function (data) {
                     d.resolve(data);
                 });
+                
                 return d.promise;
             };
 
@@ -162,6 +167,7 @@
                     data: '',
                     cache: false,
                     success: function (html) {
+                    	$('body').data('columnReordered', '0');
                         $('#measurementsDiv').html(html);
                         showSuccessfulMessage('', saveSuccessMessage);
                     }
@@ -328,7 +334,10 @@
                             'regenerate the design on the Experimental Design tab', 10000);
                     } else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         performDataCleanup();
+                        var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+                		var serializedData = (JSON.stringify(columnsOrder));
                         if (!service.isOpenTrial()) {
+                        	service.currentData.columnOrders = serializedData;
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
                                 success(function () {
                                     submitGermplasmList().then(function (generatedID) {
@@ -368,6 +377,7 @@
                                     parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
                                     service.applicationData.unsavedGeneratedDesign === false)
                                 ) {
+                            	service.currentData.columnOrders = serializedData;
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function () {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
@@ -388,6 +398,7 @@
                                 });
                             }
                             else {
+                            	service.currentData.columnOrders = serializedData;
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
                                     success(function () {
                                         submitGermplasmList().then(function (trialID) {

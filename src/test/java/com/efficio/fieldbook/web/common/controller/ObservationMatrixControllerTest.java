@@ -154,7 +154,7 @@ public class ObservationMatrixControllerTest {
 		valueRow.getDataList().get(0).setAccepted(true);
 		
 		observationMatrixController.copyMeasurementValue(origRow, valueRow);
-		
+
 		Assert.assertTrue(origRow.getDataList().get(0).isCustomCategoricalValue());
 		
 	}
@@ -413,7 +413,7 @@ public class ObservationMatrixControllerTest {
                 				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
         					Assert.assertTrue(var.isAccepted());
         					if (observationMatrixController.isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
-        						Assert.assertEquals("0", var.getValue());
+        						Assert.assertEquals(ObservationMatrixController.MISSING_VALUE, var.getValue());
         					}else{
         						Assert.assertFalse("0".equals(var.getValue()));
         					}

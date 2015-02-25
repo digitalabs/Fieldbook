@@ -11,31 +11,21 @@
  *******************************************************************************/
 package com.efficio.fieldbook.service;
 
-import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.LabelPaperFactory;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
-import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.oned.Code128Writer;
-import com.lowagie.text.*;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -57,23 +47,52 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.service.api.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.awt.*;
-import java.io.*;
-import java.util.*;
-import java.util.List;
+import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.service.api.SettingsService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.LabelPaperFactory;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.oned.Code128Writer;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * The Class LabelPrintingServiceImpl.
@@ -81,15 +100,41 @@ import java.util.List;
 @Service
 public class LabelPrintingServiceImpl implements LabelPrintingService{
 
-	/** The Constant LOG. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceImpl.class);
+    public static final String BARCODE = "barcode";
+    public static final String SELECTED_NAME = "selectedName";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY = "label.printing.available.fields.field.name";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY = "label.printing.available.fields.plot";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY = "label.printing.available.fields.parentage";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY = "label.printing.available.fields.plot.coordinates";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY = "label.printing.available.fields.year";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY = "label.printing.available.fields.season";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY = "label.printing.available.fields.nursery.name";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY = "label.printing.available.fields.trial.name";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY = "label.printing.available.fields.location";
+    public static final String LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY = "label.printing.available.fields.block.name";
 
-	/** The delimiter. */
+    public static final Integer[] BASE_LABEL_PRINTING_FIELD_IDS = new Integer[] {
+            AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()
+    };
+
+    public static final Integer[] BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS = new Integer[] {
+            AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(),
+            AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()
+    };
+
+    /** The delimiter. */
     private String delimiter = " | ";
     
     /** The message source. */
     @Resource
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
     
     @Resource
     private ExportService exportService;
@@ -106,6 +151,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
     @Resource
     private SettingsService settingsService;
+    
+    @Resource
+    private InventoryService inventoryMiddlewareService;
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
@@ -140,251 +188,250 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
-            try {
-            	LabelPaper paper = LabelPaperFactory.generateLabelPaper(numberOfLabelPerRow, numberofRowsPerPageOfLabel, pageSizeId);
-            	
-                Rectangle pageSize = PageSize.LETTER;
+            LabelPaper paper = LabelPaperFactory
+                    .generateLabelPaper(numberOfLabelPerRow, numberofRowsPerPageOfLabel,
+                            pageSizeId);
 
-                if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4.getInt()) {
-                    pageSize = PageSize.A4;
+            Rectangle pageSize = PageSize.LETTER;
+
+            if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4.getInt()) {
+                pageSize = PageSize.A4;
+            }
+
+            Document document = new Document(pageSize);
+
+            //float marginLeft, float marginRight, float marginTop, float marginBottom
+            document.setMargins(paper.getMarginLeft(), paper.getMarginRight(), paper.getMarginTop(),
+                    paper.getMarginBottom());
+
+            PdfWriter.getInstance(document, fileOutputStream);
+
+            // step 3
+            document.open();
+
+            int i = 0;
+            int fixTableRowSize = numberOfLabelPerRow;
+            PdfPTable table = new PdfPTable(fixTableRowSize);
+
+            float columnWidthSize = 265f;
+            float[] widthColumns = new float[fixTableRowSize];
+
+            for (int counter = 0; counter < widthColumns.length; counter++) {
+                widthColumns[counter] = columnWidthSize;
+            }
+
+            table.setWidths(widthColumns);
+            table.setWidthPercentage(100);
+            int width = 600;
+            int height = 75;
+
+            List<File> filesToBeDeleted = new ArrayList<File>();
+            float cellHeight = paper.getCellHeight();
+
+            for (StudyTrialInstanceInfo trialInstance : trialInstances) {
+                FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance
+                        .getTrialInstance();
+
+                Map<String, String> moreFieldInfo = generateAddedInformationField(
+                        fieldMapTrialInstanceInfo, trialInstance, "");
+
+                for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo
+                        .getFieldMapLabels()) {
+
+                    i++;
+                    String barcodeLabelForCode = "";
+                    String barcodeLabel = "";
+
+                    if ("0".equalsIgnoreCase(barcodeNeeded)) {
+                        barcodeLabel = " ";
+                        barcodeLabelForCode = " ";
+                    } else {
+                        barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel,
+                                firstBarcodeField, secondBarcodeField, thirdBarcodeField,
+                                fieldMapTrialInstanceInfo.getLabelHeaders(), false);
+                        barcodeLabelForCode = generateBarcodeField(
+                                moreFieldInfo, fieldMapLabel, firstBarcodeField,
+                                secondBarcodeField, thirdBarcodeField,
+                                fieldMapTrialInstanceInfo.getLabelHeaders(), true);
+                    }
+
+                    if (barcodeLabelForCode != null && barcodeLabelForCode.length() > 80) {
+                        throw new LabelPrintingException("label.printing.label.too.long",
+                                barcodeLabelForCode, "label.printing.label.too.long");
+                    }
+                    BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabelForCode,
+                            BarcodeFormat.CODE_128, width, height, null);
+                    String imageLocation = System.getProperty("user.home")
+                            + "/" + Math.random() + ".png";
+                    File imageFile = new File(imageLocation);
+                    FileOutputStream fout = new FileOutputStream(imageFile);
+                    MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
+                    filesToBeDeleted.add(imageFile);
+
+                    Image mainImage = Image.getInstance(imageLocation);
+
+                    PdfPCell cell = new PdfPCell();
+                    cell.setFixedHeight(cellHeight);
+                    cell.setNoWrap(false);
+                    cell.setPadding(5f);
+                    cell.setPaddingBottom(1f);
+
+                    PdfPTable innerImageTableInfo = new PdfPTable(1);
+                    innerImageTableInfo.setWidths(new float[] { 1 });
+                    innerImageTableInfo.setWidthPercentage(82);
+                    PdfPCell cellImage = new PdfPCell();
+                    if ("1".equalsIgnoreCase(barcodeNeeded)) {
+                        cellImage.addElement(mainImage);
+                    } else {
+                        cellImage.addElement(new Paragraph(" "));
+                    }
+                    cellImage.setBorder(Rectangle.NO_BORDER);
+                    cellImage.setBackgroundColor(Color.white);
+                    cellImage.setPadding(1.5f);
+
+                    innerImageTableInfo.addCell(cellImage);
+
+                    float fontSize = paper.getFontSize();
+
+                    Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
+
+                    cell.addElement(innerImageTableInfo);
+                    cell.addElement(new Paragraph());
+                    for (int row = 0; row < 5; row++) {
+                        if (row == 0) {
+                            PdfPTable innerDataTableInfo = new PdfPTable(1);
+                            innerDataTableInfo.setWidths(new float[] { 1 });
+                            innerDataTableInfo.setWidthPercentage(85);
+
+                            Font fontNormalData = FontFactory
+                                    .getFont("Arial", 5.0f, Font.NORMAL);
+                            PdfPCell cellInnerData = new PdfPCell(
+                                    new Phrase(barcodeLabel, fontNormalData));
+
+                            cellInnerData.setBorder(Rectangle.NO_BORDER);
+                            cellInnerData.setBackgroundColor(Color.white);
+                            cellInnerData.setPaddingBottom(0.2f);
+                            cellInnerData.setPaddingTop(0.2f);
+                            cellInnerData.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+
+                            innerDataTableInfo.addCell(cellInnerData);
+                            innerDataTableInfo.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+                            cell.addElement(innerDataTableInfo);
+                        }
+                        PdfPTable innerTableInfo = new PdfPTable(2);
+                        innerTableInfo.setWidths(new float[] { 1, 1 });
+                        innerTableInfo.setWidthPercentage(85);
+                        List<Integer> leftSelectedFieldIDs = SettingsUtil
+                                .parseFieldListAndConvert(leftSelectedFields);
+                        String leftText = generateBarcodeLabel(
+                                moreFieldInfo, fieldMapLabel, leftSelectedFieldIDs,
+                                fieldMapTrialInstanceInfo.getLabelHeaders(), row);
+                        PdfPCell cellInnerLeft = new PdfPCell(
+                                new Paragraph(leftText, fontNormal));
+
+                        cellInnerLeft.setBorder(Rectangle.NO_BORDER);
+                        cellInnerLeft.setBackgroundColor(Color.white);
+                        cellInnerLeft.setPaddingBottom(0.5f);
+                        cellInnerLeft.setPaddingTop(0.5f);
+
+                        innerTableInfo.addCell(cellInnerLeft);
+
+                        List<Integer> rightSelectedFieldIDs = SettingsUtil
+                                .parseFieldListAndConvert(rightSelectedFields);
+                        String rightText = generateBarcodeLabel(
+                                moreFieldInfo, fieldMapLabel, rightSelectedFieldIDs,
+                                fieldMapTrialInstanceInfo.getLabelHeaders(),
+                                row);
+                        PdfPCell cellInnerRight = new PdfPCell(
+                                new Paragraph(rightText, fontNormal));
+
+                        cellInnerRight.setBorder(Rectangle.NO_BORDER);
+                        cellInnerRight.setBackgroundColor(Color.white);
+                        cellInnerRight.setPaddingBottom(0.5f);
+                        cellInnerRight.setPaddingTop(0.5f);
+
+                        innerTableInfo.addCell(cellInnerRight);
+
+                        cell.addElement(innerTableInfo);
+                    }
+
+                    cell.setBorder(Rectangle.NO_BORDER);
+                    cell.setBackgroundColor(Color.white);
+
+                    table.addCell(cell);
+
+                    if (i % numberOfLabelPerRow == 0) {
+                        // we go the next line
+                        int needed = fixTableRowSize - numberOfLabelPerRow;
+
+                        for (int neededCount = 0; neededCount < needed; neededCount++) {
+                            PdfPCell cellNeeded = new PdfPCell();
+
+                            cellNeeded.setBorder(Rectangle.NO_BORDER);
+                            cellNeeded.setBackgroundColor(Color.white);
+
+                            table.addCell(cellNeeded);
+                        }
+
+                        table.completeRow();
+                        if (numberofRowsPerPageOfLabel == 10) {
+                            table.setSpacingAfter(paper.getSpacingAfter());
+                        }
+
+                        document.add(table);
+
+                        table = new PdfPTable(fixTableRowSize);
+                        table.setWidths(widthColumns);
+                        table.setWidthPercentage(100);
+
+                    }
+                    if (i % totalPerPage == 0) {
+                        // we go the next page
+                        document.newPage();
+                    }
+                    fout.flush();
+                    fout.close();
+
+                }
+            }
+            // we need to add the last row
+            if (i % numberOfLabelPerRow != 0) {
+                // we go the next line
+
+                int remaining = numberOfLabelPerRow - (i % numberOfLabelPerRow);
+                for (int neededCount = 0; neededCount < remaining; neededCount++) {
+                    PdfPCell cellNeeded = new PdfPCell();
+
+                    cellNeeded.setBorder(Rectangle.NO_BORDER);
+                    cellNeeded.setBackgroundColor(Color.white);
+
+                    table.addCell(cellNeeded);
                 }
 
-                Document document = new Document(pageSize);
-                
-                //float marginLeft, float marginRight, float marginTop, float marginBottom
-                document.setMargins(paper.getMarginLeft(), paper.getMarginRight(), paper.getMarginTop(), paper.getMarginBottom());
-                
-                PdfWriter.getInstance(document, fileOutputStream);
-                
-                // step 3
-                document.open();
+                table.completeRow();
+                if (numberofRowsPerPageOfLabel == 10) {
 
-                int i = 0;
-                int fixTableRowSize = numberOfLabelPerRow;
-                PdfPTable table = new PdfPTable(fixTableRowSize);
-
-                float columnWidthSize = 265f;
-                float[] widthColumns = new float[fixTableRowSize];
-
-                for (int counter = 0; counter < widthColumns.length; counter++) {
-                    widthColumns[counter] = columnWidthSize;
+                    table.setSpacingAfter(paper.getSpacingAfter());
                 }
 
+                document.add(table);
+
+                table = new PdfPTable(fixTableRowSize);
                 table.setWidths(widthColumns);
                 table.setWidthPercentage(100);
-                int width = 600;
-                int height = 75;
 
-                List<File> filesToBeDeleted = new ArrayList<File>();
-                float cellHeight = paper.getCellHeight();
+            }
 
-                for (StudyTrialInstanceInfo trialInstance : trialInstances) {
-                    FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance
-                            .getTrialInstance();
+            document.close();
+            for (File file : filesToBeDeleted) {
+                file.delete();
+            }
+            fileOutputStream.close();
 
-                    Map<String, String> moreFieldInfo = generateAddedInformationField(
-                            fieldMapTrialInstanceInfo, trialInstance, "");
-
-                    for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo
-                            .getFieldMapLabels()) {
-
-                        i++;
-                        String barcodeLabelForCode = "";
-                        String barcodeLabel = "";
-
-                        if ("0".equalsIgnoreCase(barcodeNeeded)) {
-                            barcodeLabel = " ";
-                            barcodeLabelForCode = " ";
-                        } else {
-                            barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel,
-                                    firstBarcodeField, secondBarcodeField, thirdBarcodeField,
-                                    fieldMapTrialInstanceInfo.getLabelHeaders(),false);
-                            barcodeLabelForCode = generateBarcodeField(
-                                    moreFieldInfo, fieldMapLabel, firstBarcodeField,
-                                    secondBarcodeField, thirdBarcodeField,fieldMapTrialInstanceInfo.getLabelHeaders(), true);
-                        }
-
-                        if (barcodeLabelForCode != null && barcodeLabelForCode.length() > 80) {
-                            throw new LabelPrintingException("label.printing.label.too.long",
-                                    barcodeLabelForCode, "label.printing.label.too.long");
-                        }
-                        BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabelForCode,
-                                BarcodeFormat.CODE_128, width, height, null);
-                        String imageLocation = System.getProperty("user.home")
-                                + "/" + Math.random() + ".png";
-                        File imageFile = new File(imageLocation);
-                        FileOutputStream fout = new FileOutputStream(imageFile);
-                        MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
-                        filesToBeDeleted.add(imageFile);
-
-                        Image mainImage = Image.getInstance(imageLocation);
-
-                        PdfPCell cell = new PdfPCell();
-                        cell.setFixedHeight(cellHeight);
-                        cell.setNoWrap(false);
-                        cell.setPadding(5f);
-                        cell.setPaddingBottom(1f);
-
-                        PdfPTable innerImageTableInfo = new PdfPTable(1);
-                        innerImageTableInfo.setWidths(new float[] { 1 });
-                        innerImageTableInfo.setWidthPercentage(82);
-                        PdfPCell cellImage = new PdfPCell();
-                        if ("1".equalsIgnoreCase(barcodeNeeded)) {
-                            cellImage.addElement(mainImage);
-                        } else {
-                            cellImage.addElement(new Paragraph(" "));
-                        }
-                        cellImage.setBorder(Rectangle.NO_BORDER);
-                        cellImage.setBackgroundColor(Color.white);
-                        cellImage.setPadding(1.5f);
-
-                        innerImageTableInfo.addCell(cellImage);
-
-                        float fontSize = paper.getFontSize();
-
-                        Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
-
-                        cell.addElement(innerImageTableInfo);
-                        cell.addElement(new Paragraph());
-                        for (int row = 0; row < 5; row++) {
-                            if (row == 0) {
-                                PdfPTable innerDataTableInfo = new PdfPTable(1);
-                                innerDataTableInfo.setWidths(new float[] { 1 });
-                                innerDataTableInfo.setWidthPercentage(85);
-
-                                Font fontNormalData = FontFactory
-                                        .getFont("Arial", 5.0f, Font.NORMAL);
-                                PdfPCell cellInnerData = new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
-
-                                cellInnerData.setBorder(Rectangle.NO_BORDER);
-                                cellInnerData.setBackgroundColor(Color.white);
-                                cellInnerData.setPaddingBottom(0.2f);
-                                cellInnerData.setPaddingTop(0.2f);
-                                cellInnerData.setHorizontalAlignment(Element.ALIGN_MIDDLE);
-
-                                innerDataTableInfo.addCell(cellInnerData);
-                                innerDataTableInfo.setHorizontalAlignment(Element.ALIGN_MIDDLE);
-                                cell.addElement(innerDataTableInfo);
-                            }
-                            PdfPTable innerTableInfo = new PdfPTable(2);
-                            innerTableInfo.setWidths(new float[] { 1, 1 });
-                            innerTableInfo.setWidthPercentage(85);
-                            List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(leftSelectedFields);
-                            String leftText = generateBarcodeLabel(
-                                    moreFieldInfo, fieldMapLabel, leftSelectedFieldIDs, fieldMapTrialInstanceInfo.getLabelHeaders(),row);
-                            PdfPCell cellInnerLeft = new PdfPCell(
-                                    new Paragraph(leftText, fontNormal));
-
-                            cellInnerLeft.setBorder(Rectangle.NO_BORDER);
-                            cellInnerLeft.setBackgroundColor(Color.white);
-                            cellInnerLeft.setPaddingBottom(0.5f);
-                            cellInnerLeft.setPaddingTop(0.5f);
-
-                            innerTableInfo.addCell(cellInnerLeft);
-
-                            List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(rightSelectedFields);
-                            String rightText = generateBarcodeLabel(
-                                    moreFieldInfo, fieldMapLabel, rightSelectedFieldIDs, fieldMapTrialInstanceInfo.getLabelHeaders(),
-                                    row);
-                            PdfPCell cellInnerRight = new PdfPCell(
-                                    new Paragraph(rightText, fontNormal));
-
-                            cellInnerRight.setBorder(Rectangle.NO_BORDER);
-                            cellInnerRight.setBackgroundColor(Color.white);
-                            cellInnerRight.setPaddingBottom(0.5f);
-                            cellInnerRight.setPaddingTop(0.5f);
-
-                            innerTableInfo.addCell(cellInnerRight);
-
-                            cell.addElement(innerTableInfo);
-                        }
-
-                        cell.setBorder(Rectangle.NO_BORDER);
-                        cell.setBackgroundColor(Color.white);
-
-                        table.addCell(cell);
-
-                        if (i % numberOfLabelPerRow == 0) {
-                            // we go the next line
-                            int needed = fixTableRowSize - numberOfLabelPerRow;
-
-                            for (int neededCount = 0; neededCount < needed; neededCount++) {
-                                PdfPCell cellNeeded = new PdfPCell();
-
-                                cellNeeded.setBorder(Rectangle.NO_BORDER);
-                                cellNeeded.setBackgroundColor(Color.white);
-
-                                table.addCell(cellNeeded);
-                            }
-
-                            table.completeRow();
-                            if (numberofRowsPerPageOfLabel == 10) {
-                                table.setSpacingAfter(paper.getSpacingAfter());
-                            }
-
-                            document.add(table);
-
-                            table = new PdfPTable(fixTableRowSize);
-                            table.setWidths(widthColumns);
-                            table.setWidthPercentage(100);
-
-                        }
-                        if (i % totalPerPage == 0) {
-                            // we go the next page
-                            document.newPage();
-                        }
-                        fout.flush();
-                        fout.close();
-
-                    }
-                }
-                // we need to add the last row
-                if (i % numberOfLabelPerRow != 0) {
-                    // we go the next line
-
-                    int remaining = numberOfLabelPerRow - (i % numberOfLabelPerRow);
-                    for (int neededCount = 0; neededCount < remaining; neededCount++) {
-                        PdfPCell cellNeeded = new PdfPCell();
-
-                        cellNeeded.setBorder(Rectangle.NO_BORDER);
-                        cellNeeded.setBackgroundColor(Color.white);
-
-                        table.addCell(cellNeeded);
-                    }
-
-                    table.completeRow();
-                    if (numberofRowsPerPageOfLabel == 10) {
-
-                        table.setSpacingAfter(paper.getSpacingAfter());
-                    }
-
-                    document.add(table);
-
-                    table = new PdfPTable(fixTableRowSize);
-                    table.setWidths(widthColumns);
-                    table.setWidthPercentage(100);
-
-                }
-
-                document.close();
-                for (File file : filesToBeDeleted) {
-                    file.delete();
-                }
-                fileOutputStream.close();
-
-            } catch (FileNotFoundException e) {
-                LOG.error(e.getMessage(), e);
-            } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-            } 
-
-        } catch (WriterException e) {
-            LOG.error(e.getMessage(), e);
-        } catch(LabelPrintingException e){
-        	throw e;
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
+
         return fileName;
     }
     
@@ -468,16 +515,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 						"label.printing.available.fields.germplasm.name", null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.year", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.season", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.nursery.name", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.trial.name", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
 				buffer.append(messageSource.getMessage(
 						"label.printing.available.fields.trial.instance.num", null, locale));
@@ -486,25 +533,34 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 						"label.printing.available.fields.rep", null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.location", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.block.name", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.plot", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.parentage", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.plot.coordinates", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY, null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.field.name", null, locale));
+                        LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
 				buffer.append(messageSource.getMessage(
-						"label.printing.available.fields.barcode", null, locale));
+                        "label.printing.available.fields.barcode", null, locale));
+			}else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT.getInt()) {
+				buffer.append(messageSource.getMessage(
+                        "label.printing.seed.inventory.amount", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()) {
+				buffer.append(messageSource.getMessage(
+                        "label.printing.seed.inventory.scale", null, locale));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+				buffer.append(messageSource.getMessage(
+                        "label.printing.seed.inventory.lotid", null, locale));
 			} else {
 				String headerName = labelHeaders.get(headerID);
                 if (headerName == null) {
@@ -551,9 +607,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
 				buffer.append(fieldMapLabel.getSeason());
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
-				buffer.append(moreFieldInfo.get("selectedName"));
+				buffer.append(moreFieldInfo.get(SELECTED_NAME));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
-				buffer.append(moreFieldInfo.get("selectedName"));
+				buffer.append(moreFieldInfo.get(SELECTED_NAME));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
 				buffer.append(moreFieldInfo.get("trialInstanceNumber"));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()) {
@@ -571,7 +627,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()) {
 				buffer.append(moreFieldInfo.get("fieldName"));
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
-				buffer.append(moreFieldInfo.get("barcode"));
+				buffer.append(moreFieldInfo.get(BARCODE));
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT.getInt()) {
+				buffer.append(fieldMapLabel.getInventoryAmount());	
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()) {
+				buffer.append(fieldMapLabel.getScaleName());	
+			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
+				buffer.append(fieldMapLabel.getLotId());	
 			} else {
 				String value = fieldMapLabel.getUserFields().get(headerID);
 				if (value != null) {
@@ -685,7 +747,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     String barcodeLabelForCode = generateBarcodeField(
                             moreFieldInfo, fieldMapLabel, firstBarcodeField,
                             secondBarcodeField, thirdBarcodeField,fieldMapTrialInstanceInfo.getLabelHeaders(), false);
-                    moreFieldInfo.put("barcode", barcodeLabelForCode);
+                    moreFieldInfo.put(BARCODE, barcodeLabelForCode);
 
                     for (Integer selectedFieldID : selectedFieldIDs) {
                         String leftText = getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID,
@@ -710,18 +772,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         } 
         return fileName;
     }
+
     protected String appendBarcode(boolean isBarcodeNeeded, String mainSelectedFields){
+        String processed = mainSelectedFields;
     	if(isBarcodeNeeded){
-    		mainSelectedFields += "," + AppConstants.AVAILABLE_LABEL_BARCODE.getInt();
+    		processed += "," + AppConstants.AVAILABLE_LABEL_BARCODE.getInt();
     	}
-    	return mainSelectedFields;
+    	return processed;
     }
 
     protected void printHeaderFields(Map<Integer, String> labelHeaders, boolean includeHeader, List<Integer> selectedFieldIDs, Row row, int columnIndex, CellStyle labelStyle){
     	if(includeHeader){
+            int currentIndex = columnIndex;
             for (Integer selectedFieldID : selectedFieldIDs) {
                 String headerName = getHeader(selectedFieldID, labelHeaders);
-                Cell summaryCell = row.createCell(columnIndex++);
+                Cell summaryCell = row.createCell(currentIndex++);
                 summaryCell.setCellValue(headerName);
                 summaryCell.setCellStyle(labelStyle);
             }
@@ -769,7 +834,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             	String barcodeLabelForCode = generateBarcodeField(
                         moreFieldInfo, fieldMapLabel, firstBarcodeField,
                         secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
-                moreFieldInfo.put("barcode", barcodeLabelForCode);
+                moreFieldInfo.put(BARCODE, barcodeLabelForCode);
                 
             	Map<Integer, ExportColumnValue> rowMap = generateRowMap(fieldMapTrialInstanceInfo.getLabelHeaders(),selectedFieldIDs, moreFieldInfo, fieldMapLabel);
             	columnValues.add(rowMap);
@@ -784,11 +849,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
         params.setVariableMap(convertToMap(workbook.getConditions(), workbook.getFactors()));
         params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvert(selectedFields));
-        Map<String, List<MeasurementRow>> measurementData = extractMeasurementRowsPerTrialInstance(workbook.getObservations());
+        Map<String, List<MeasurementRow>> measurementData = null;
+        Map<String, MeasurementRow> environmentData = null;
+
+        if (isTrial) {
+            measurementData = extractMeasurementRowsPerTrialInstance(
+                    workbook.getObservations());
+            environmentData = extractEnvironmentMeasurementDataPerTrialInstance(
+                    workbook);
+        }
+
         for (FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
             params.setInstanceInfo(instanceInfo);
             if (isTrial) {
-                Map<String, MeasurementRow> environmentData = extractEnvironmentMeasurementDataPerTrialInstance(workbook);
+
                 params.setInstanceMeasurements(measurementData
                                         .get(instanceInfo.getTrialInstanceNo()));
                 params.setEnvironmentData(environmentData.get(instanceInfo.getTrialInstanceNo()));
@@ -797,10 +871,58 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             }
 
             processUserSpecificLabelsForInstance(params);
+            processInventorySpecificLabelsForInstance(params,workbook);
         }
     }
 
-    @Override
+	private void processInventorySpecificLabelsForInstance(
+			LabelPrintingProcessingParams params, Workbook workbook) {
+		Integer studyId = workbook.getStudyDetails().getId();
+		Map<Integer,InventoryDetails> inventoryDetailsMap = retrieveInventoryDetailsMap(studyId,workbook);
+		
+		for (MeasurementRow measurement : params.getInstanceMeasurements()) {
+            FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
+                    measurement.getExperimentId());
+            
+            InventoryDetails inventoryDetails = inventoryDetailsMap.get(label.getGid());
+            if(inventoryDetails != null){
+                label.setInventoryAmount(inventoryDetails.getAmount());
+                label.setScaleName(inventoryDetails.getScaleName());
+                label.setLotId(inventoryDetails.getLotId());
+            }
+        }
+	}
+
+	private Map<Integer, InventoryDetails> retrieveInventoryDetailsMap(Integer studyId, Workbook workbook) {
+		Map<Integer,InventoryDetails> inventoryDetailsMap = new HashMap<Integer,InventoryDetails>(); 
+				
+		try {
+    		GermplasmList germplasmList = null;
+    		GermplasmListType listType = (workbook.isNursery())? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
+			List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, listType);
+			if(!germplasmLists.isEmpty()){
+				germplasmList = germplasmLists.get(0);
+			}
+			
+			if(germplasmList != null){
+				Integer listId = germplasmList.getId();
+				String germplasmListType = germplasmList.getType();
+				List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId,germplasmListType);
+				
+				for(InventoryDetails inventoryDetails : inventoryDetailList){
+					if(inventoryDetails.getLotId() != null){
+						inventoryDetailsMap.put(inventoryDetails.getGid(), inventoryDetails);
+					}
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+		
+		return inventoryDetailsMap;
+	}
+
+	@Override
     public void deleteProgramPreset(Integer programPresetId)
             throws MiddlewareQueryException {
 
@@ -968,10 +1090,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
          moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
          moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
          moreFieldInfo.put("fieldName", fieldMapTrialInstanceInfo.getFieldName());
-         moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
+         moreFieldInfo.put(SELECTED_NAME, trialInstance.getFieldbookName());
          moreFieldInfo.put("trialInstanceNumber", 
                  fieldMapTrialInstanceInfo.getTrialInstanceNo());
-         moreFieldInfo.put("barcode", barCode);
+         moreFieldInfo.put(BARCODE, barCode);
          
          return moreFieldInfo;
     }
@@ -1029,21 +1151,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.parentage", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.year", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.season", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.location", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()));
         
         if(isTrial){
             labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage("label.printing.available.fields.trial.name", null, locale)
+                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()));
             labelFieldsList.add(new LabelFields(
                     messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale)
@@ -1053,21 +1175,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     , AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()));
         }else{
             labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale)
+                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()));
         }
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.plot", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()));
         if(hasFieldMap){
             labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage("label.printing.available.fields.block.name", null, locale)
+                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()));
             labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale)
+                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()));
             labelFieldsList.add(new LabelFields(
-            		messageSource.getMessage("label.printing.available.fields.field.name", null, locale)
+            		messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale)
             		, AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()));
         }
         return labelFieldsList;
@@ -1079,28 +1201,31 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         List<LabelFields> labelFieldsList = new ArrayList<>();
 
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.parentage", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.year", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_YEAR_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.season", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_SEASON_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()));
         labelFieldsList.add(new LabelFields(
-                messageSource.getMessage("label.printing.available.fields.location", null, locale)
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()));
 
         labelFieldsList.add(new LabelFields(
-                        messageSource.getMessage("label.printing.available.fields.plot", null, locale)
+                        messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale)
                         , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()));
 
-        if (isTrial) {
+		Workbook workbook = null;
+		if (isTrial) {
             labelFieldsList.add(new LabelFields(
-                                messageSource.getMessage("label.printing.available.fields.trial.name", null, locale)
+                                messageSource.getMessage(
+                                        LABEL_PRINTING_AVAILABLE_FIELDS_TRIAL_NAME_KEY, null, locale)
                                 , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()));
-            try {
-                Workbook workbook = fieldbookMiddlewareService.getTrialDataSet(studyID);
+
+			try {
+                workbook = fieldbookMiddlewareService.getTrialDataSet(studyID);
 
                 labelFieldsList.addAll(settingsService.retrieveTrialSettingsAsLabels(workbook));
                 labelFieldsList.addAll(settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(
@@ -1109,42 +1234,101 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         workbook));
 
             } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(), e);
             }
         } else {
             labelFieldsList.add(new LabelFields(
-                                messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale)
+                                messageSource.getMessage(
+                                        LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale)
                                 , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()));
             try {
-                Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(studyID);
+                workbook = fieldbookMiddlewareService.getNurseryDataSet(studyID);
 
                 labelFieldsList.addAll(settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
                 labelFieldsList.addAll(settingsService.retrieveGermplasmDescriptorsAsLabels(
                                         workbook));
             } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(), e);
             }
         }
 
-        if (hasFieldMap) {
+		labelFieldsList.addAll(settingsService.retrieveTraitsAsLabels(workbook));
+
+		if (hasFieldMap) {
             labelFieldsList.add(new LabelFields(
                     messageSource
-                            .getMessage("label.printing.available.fields.block.name", null, locale)
+                            .getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()));
             labelFieldsList.add(new LabelFields(
                     messageSource
-                            .getMessage("label.printing.available.fields.plot.coordinates", null,
+                            .getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY, null,
                                     locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()));
             labelFieldsList.add(new LabelFields(
                     messageSource
-                            .getMessage("label.printing.available.fields.field.name", null, locale)
+                            .getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()));
         }
 
+		//add inventory fields if any
+		if(hasInventoryValues(studyID,workbook.isNursery())){
+			labelFieldsList.addAll(addInventoryRelatedLabelFields(studyID,locale));
+		}
+
         return labelFieldsList;
     }
+    
+	/***
+	 * Returned true if the current study's germplasm list has inventory details
+	 * @param studyID
+	 * @param isNursery 
+	 * @return
+	 */
+    protected boolean hasInventoryValues(int studyID, boolean isNursery){    	
+    	try {
+    		GermplasmList germplasmList = null;
+    		GermplasmListType listType = (isNursery)? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
+			List<GermplasmList> germplasmLists = fieldbookMiddlewareService.getGermplasmListsByProjectId(studyID, listType);
+			if(!germplasmLists.isEmpty()){
+				germplasmList = germplasmLists.get(0);
+			}
+			
+			if(germplasmList != null){
+				Integer listId = germplasmList.getId();
+                String germplasmListType = germplasmList.getType();
+                List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId,germplasmListType);
+				
+				for(InventoryDetails inventoryDetails : inventoryDetailList){
+					if(inventoryDetails.getLotId() != null){
+						return true;
+					}
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+    	
+    	return false;
+    }
 
+
+    protected List<LabelFields> addInventoryRelatedLabelFields(int studyID, Locale locale) {
+    	List<LabelFields> labelFieldList = new ArrayList<LabelFields>();
+    	
+    	labelFieldList.add(new LabelFields(
+				messageSource.getMessage("label.printing.seed.inventory.amount", null, locale)
+                , AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT.getInt()));
+				
+		labelFieldList.add(new LabelFields(
+				messageSource.getMessage("label.printing.seed.inventory.scale", null, locale)
+                , AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()));
+		
+		labelFieldList.add(new LabelFields(
+				messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale)
+                , AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()));
+		
+		return labelFieldList;
+	}
 
     public boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail) {
     	//if there are datasets with fieldmap, check if all trial instances of the study have fieldmaps
@@ -1240,8 +1424,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			return allLabelPrintingPresets;
 
 		} catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
 			throw new LabelPrintingException("label.printing.cannot.retrieve.presets",
 					"database.connectivity.error", e.getMessage());
+
 		}
 	}
 
@@ -1254,9 +1440,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 				return presetDataManager.getProgramPresetById(presetId).getConfiguration();
 			}
 		} catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
 			throw new LabelPrintingException("label.printing.cannot.retrieve.presets",
 					"database.connectivity.error",e.getMessage());
 		} catch (NullPointerException e) {
+            LOG.error(e.getMessage(), e);
 			throw new LabelPrintingException("label.printing.preset.does.not.exists",
 					"label.printing.preset.does.not.exists",e.getMessage());
 		}
@@ -1270,7 +1458,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         List<LabelPrintingPresets> searchPresetList = this.getAllLabelPrintingPresetsByName(
                 settingsName, programId, LabelPrintingPresets.PROGRAM_PRESET);
 
-        if (searchPresetList.size() > 0) {
+        if (!searchPresetList.isEmpty()) {
             // update
             ProgramPreset currentLabelPrintingPreset = this.getLabelPrintingProgramPreset(
                     searchPresetList.get(0).getId());
@@ -1293,7 +1481,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	public void setMessageSource(ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
-    
-    
+
+	public void setFieldbookMiddlewareService(
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	public void setInventoryMiddlewareService(
+			InventoryService inventoryMiddlewareService) {
+		this.inventoryMiddlewareService = inventoryMiddlewareService;
+	}
 
 }

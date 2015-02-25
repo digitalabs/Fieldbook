@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.nursery.bean.*;
@@ -159,11 +159,13 @@ public class CrossingTemplateParserTest {
 	@Test
 	public void testParseObservationSheetObservationHeaderInvalid() throws Exception {
 		doReturn(true).when(parserUnderTest).isObservationsHeaderInvalid();
-		doNothing().when(parserUnderTest).addParseErrorMsg(CrossingTemplateParser.FILE_INVALID);
+		doNothing().when(parserUnderTest).addParseErrorMsg(
+				CrossingTemplateParser.FILE_INVALID);
 
 		parserUnderTest.parseObservationSheet();
 
-		verify(parserUnderTest, times(1)).addParseErrorMsg(CrossingTemplateParser.FILE_INVALID);
+		verify(parserUnderTest, times(1)).addParseErrorMsg(
+				CrossingTemplateParser.FILE_INVALID);
 	}
 
 	@Test
@@ -178,7 +180,8 @@ public class CrossingTemplateParserTest {
 				CrossingTemplateParser.DESCRIPTION_SHEET_NO, 2, 1);
 		doReturn(CrossingTemplateParser.TEMPLATE_LIST_TYPE).when(parserUnderTest)
 				.getCellStringValue(CrossingTemplateParser.DESCRIPTION_SHEET_NO, 3, 1);
-		doNothing().when(parserUnderTest).addParseErrorMsg(CrossingTemplateParser.FILE_INVALID);
+		doNothing().when(parserUnderTest).addParseErrorMsg(
+				CrossingTemplateParser.FILE_INVALID);
 
 		parserUnderTest.parseCrossingListDetails();
 
@@ -187,7 +190,8 @@ public class CrossingTemplateParserTest {
 						true);
 
 		// no validation
-		verify(parserUnderTest, never()).addParseErrorMsg(CrossingTemplateParser.FILE_INVALID);
+		verify(parserUnderTest, never()).addParseErrorMsg(
+				CrossingTemplateParser.FILE_INVALID);
 
 		assertEquals("list name is set", "listName", importedCrossesList1.getName());
 		assertEquals("list title/description is set", "listTitle", importedCrossesList1.getTitle());
@@ -206,7 +210,8 @@ public class CrossingTemplateParserTest {
 				CrossingTemplateParser.CONDITION_ROW_NO + 1,
 				CrossingTemplateParser.DESCRIPTION_SHEET_COL_SIZE);
 
-		doReturn(true).when(parserUnderTest).isRowEmpty(CrossingTemplateParser.DESCRIPTION_SHEET_NO,
+		doReturn(true).when(parserUnderTest).isRowEmpty(
+				CrossingTemplateParser.DESCRIPTION_SHEET_NO,
 				CrossingTemplateParser.CONDITION_ROW_NO + 2,
 				CrossingTemplateParser.DESCRIPTION_SHEET_COL_SIZE);
 		doReturn(false).when(parserUnderTest)

@@ -421,6 +421,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     		detail.getVariable().setOperation(Operation.UPDATE);
     	}    	    	
     	form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(userSelection.getWorkbook().getMeasurementDatesetId(), SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
+    	
+    	fieldbookService.saveStudyColumnOrdering(userSelection.getWorkbook().getStudyDetails().getId(), userSelection.getWorkbook().getStudyDetails().getStudyName(), form.getColumnOrders(), userSelection.getWorkbook());
+    	
         return super.showAjaxPage(model,ADD_OR_REMOVE_TRAITS_HTML);
     }
     

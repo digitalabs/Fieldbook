@@ -117,7 +117,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 			GermplasmList origList = fieldbookMiddlewareService.getGermplasmListById(list.getListRef());
 			
 			if(origList != null){
-				if(origList.getStatus() != GermplasmListDAO.STATUS_DELETED){
+				if(origList.getStatus() != null && origList.getStatus().intValue() != GermplasmListDAO.STATUS_DELETED.intValue()){
 					list.setType(origList.getType());
 				}else{
 					list.setType(GERPLASM_TYPE_LST);

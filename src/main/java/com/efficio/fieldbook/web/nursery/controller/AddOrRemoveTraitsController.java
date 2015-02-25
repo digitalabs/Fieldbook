@@ -147,7 +147,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
-        getUserSelection().setMeasurementRowList(workbook.getObservations());
+        getUserSelection().setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));
         form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
       	form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
 	    paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());

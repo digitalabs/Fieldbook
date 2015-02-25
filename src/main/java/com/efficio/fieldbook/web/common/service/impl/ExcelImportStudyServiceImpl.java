@@ -510,7 +510,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	protected boolean hasCellValue(Cell cell){
 		if (cell == null){
 			return false;
-		} else if ("".equals(PoiUtil.getCellValue(cell).toString())){
+		} else if (PoiUtil.getCellValue(cell) == null || "".equals(PoiUtil.getCellValue(cell).toString())){
 			return false;
 		}
 		return true;

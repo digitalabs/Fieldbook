@@ -12,6 +12,7 @@ public class TrialData {
     private EnvironmentData environments;
     private TreatmentFactorTabBean treatmentFactors;
     private ExpDesignParameterUi experimentalDesign;
+    private String columnOrders;
 
     public TrialData() {
     }
@@ -55,4 +56,14 @@ public class TrialData {
     public void setExperimentalDesign(ExpDesignParameterUi experimentalDesign) {
         this.experimentalDesign = experimentalDesign;
     }
+
+	public String getColumnOrders() {
+		return columnOrders;
+	}
+
+	public void setColumnOrders(String columnOrders) {
+		this.columnOrders = columnOrders;
+	}
+    
+    
 }

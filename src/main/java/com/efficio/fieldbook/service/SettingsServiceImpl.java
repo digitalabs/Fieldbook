@@ -42,6 +42,7 @@ public class SettingsServiceImpl implements SettingsService {
 		throw new UnsupportedOperationException("Currently in the works");
 	}
 
+	@Override
 	public List<LabelFields> retrieveTrialSettingsAsLabels(Workbook workbook) {
 		List<LabelFields> details = new ArrayList<>();
 		FieldbookUtil util = FieldbookUtil.getInstance();
@@ -71,6 +72,7 @@ public class SettingsServiceImpl implements SettingsService {
 		return details;
 	}
 
+	@Override
 	public List<LabelFields> retrieveNurseryManagementDetailsAsLabels(Workbook workbook) {
 		List<LabelFields> details = new ArrayList<>();
 		FieldbookUtil util = FieldbookUtil.getInstance();
@@ -99,6 +101,17 @@ public class SettingsServiceImpl implements SettingsService {
 		return details;
 	}
 
+	@Override
+	public List<LabelFields> retrieveTraitsAsLabels(Workbook workbook) {
+		List<LabelFields> traitList = new ArrayList<>();
+		for (MeasurementVariable var : workbook.getVariates()) {
+			traitList.add(new LabelFields(var.getName(),var.getTermId()));
+		}
+
+		return traitList;
+	}
+
+	@Override
 	public List<LabelFields> retrieveGermplasmDescriptorsAsLabels(Workbook workbook) {
 		List<LabelFields> detailList = new ArrayList<>();
 		FieldbookUtil util = FieldbookUtil.getInstance();
@@ -124,6 +137,7 @@ public class SettingsServiceImpl implements SettingsService {
 		return detailList;
 	}
 
+	@Override
 	public List<LabelFields> retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(
 			Workbook workbook) {
 

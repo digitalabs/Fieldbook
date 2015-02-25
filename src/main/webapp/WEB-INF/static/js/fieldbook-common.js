@@ -1054,9 +1054,13 @@ function hideErrorMessage() {
 function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestionsObj) {
 
 	$.each(locationSuggestions, function(index, value) {
+		var locNameDisplay = value.lname;
+		if(value.labbr != null && value.labbr != ''){
+			locNameDisplay  += ' - ('+value.labbr+')';
+		}
 		locationSuggestionsObj.push({
 			id: value.locid,
-			text: value.lname,
+			text: locNameDisplay,
 			abbr: value.labbr
 		});
 	});
@@ -1355,7 +1359,11 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 			showWarningMessageForRequiredColumns(visibleColumns);
 		}
 	}
-
+	var columnOrders = "";
+	if($('.review-nursery-details').length == 0){
+		var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table', true);
+		columnOrders = (JSON.stringify(columnsOrder));
+	}
 	$.ajax(newAction, {
 		headers : {
 			'Accept' : 'application/json',
@@ -1363,6 +1371,7 @@ function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery) {
 		},
 		data : JSON.stringify({
 			'visibleColumns' : visibleColumns,
+			'columnOrders' : columnOrders,
 			'studyExportId' : studyId
 		}),
 		type : 'POST',
@@ -1962,8 +1971,12 @@ function refreshImportLocationCombo(data) {
 function generateGenericLocationSuggestions(genericLocationJson){
 	var genericLocationSuggestion = [];
 	$.each(genericLocationJson, function( index, value ) {
+		var locNameDisplay = value.lname;
+		if(value.labbr != null && value.labbr != ''){
+			locNameDisplay  += ' - ('+value.labbr+')';
+		}
 		genericLocationSuggestion.push({ 'id' : value.locid,
-            'text' : value.lname
+            'text' : locNameDisplay
 		});
 	});
 	return genericLocationSuggestion;

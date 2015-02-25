@@ -140,8 +140,12 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 					  'text' : value.name
 				};
 		} else if (value.locid != undefined){
+			var locNameDisplay = value.lname;
+			if(value.labbr != null && value.labbr != ''){
+				locNameDisplay  += ' - ('+value.labbr+')';
+			}
 			jsonVal = { 'id' : value.locid,
-					  'text' : value.lname
+					  'text' : locNameDisplay
 				};
 		}
 		

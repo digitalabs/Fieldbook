@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyMap;

@@ -25,6 +25,9 @@ public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 
 		List<String> input = context.getCurrentData();
 
+		// store current data in temp before overwriting it with count data, so that it can be restored for another try later on
+		context.setTempData(context.getCurrentData());
+
 		if (!counts.isEmpty()) {
 			for (String name : input) {
 				for (int i = 0; i < counts.size(); i++) {
@@ -32,8 +35,7 @@ public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 				}
 			}
 
-			// store current data in temp before overwriting it with count data, so that it can be restored for another try later on
-			context.setTempData(context.getCurrentData());
+
 
 			// place the processed name data with count information as current rule execution output
 			context.setCurrentData(counts);

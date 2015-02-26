@@ -153,7 +153,7 @@ public class ObservationMatrixControllerTest {
 		valueRow.setDataList(generateTestDataList());
 		valueRow.getDataList().get(0).setAccepted(true);
 		
-		observationMatrixController.copyMeasurementValue(origRow, valueRow);
+		observationMatrixController.copyMeasurementValue(origRow, valueRow, true);
 
 		Assert.assertTrue(origRow.getDataList().get(0).isCustomCategoricalValue());
 		

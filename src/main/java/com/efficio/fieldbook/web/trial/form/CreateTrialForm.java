@@ -356,7 +356,7 @@ public class CreateTrialForm {
 	 * @return the arrange measurement variables
 	 */
 	public List<MeasurementVariable> getArrangeMeasurementVariables(){
-		return SettingsUtil.getArrangedMeasurementVariable(getMeasurementVariables());
+		return getMeasurementVariables();
 	}
 
 	/**

@@ -21,10 +21,15 @@
 						<label class="control-label label-bold study-experiment-variable-name" th:text="${measurementData.measurementVariable.name}" ></label>:			
 					</div>
 					<div class="col-xs-8 col-md-8" th:if="${measurementData.editable == false}">
-						<label th:text="${measurementData.value}" ></label>		
+						<label th:text="${measurementData.displayValue}" ></label>		
 						<input type="hidden" th:attr="data-type=${measurementData.dataType}" 
 						th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
-						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>				
+						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>	
+						
+						<input type="hidden" th:attr="data-type=${measurementData.dataType}" 
+						th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+						th:field="*{updateObservation.dataList[__${rowIndex.index}__].cValueId}"/>
+								
 					</div>
 					<div class="col-xs-8 col-md-8" th:if="${measurementData.editable == true}">
 						

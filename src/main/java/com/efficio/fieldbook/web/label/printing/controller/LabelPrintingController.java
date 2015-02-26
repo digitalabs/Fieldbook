@@ -378,7 +378,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         if (fieldMapInfoList != null) {
             trialInstances = generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
         } else {
-            // initial implementation of BMS-186 will be for single studies only, not for cases where multiple studies partcipating in a single fieldmap
+            // initial implementation of BMS-186 will be for single studies only, not for cases where multiple studies participating in a single fieldmap
             trialInstances = generateTrialInstancesFromFieldMap();
 
             for(StudyTrialInstanceInfo trialInstance : trialInstances){

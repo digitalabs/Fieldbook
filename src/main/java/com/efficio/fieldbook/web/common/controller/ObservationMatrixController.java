@@ -43,7 +43,8 @@ import com.efficio.fieldbook.web.util.DateUtil;
 public class ObservationMatrixController extends
 		AbstractBaseFieldbookController {
 
-    private static final String TRIAL = "TRIAL";
+    public static final String MISSING_VALUE = "missing";
+	private static final String TRIAL = "TRIAL";
 	private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
     public static final String URL = "/Common/addOrRemoveTraits";
     public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
@@ -356,7 +357,7 @@ public class ObservationMatrixController extends
 				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
 				var.setAccepted(true);				
 				if (isCategoricalValueOutOfBounds(var.getcValueId(), var.getValue(), var.getMeasurementVariable().getPossibleValues())){
-					var.setValue("missing");
+					var.setValue(MISSING_VALUE);
 					var.setCustomCategoricalValue(true);
 				}else{
 					var.setCustomCategoricalValue(false);

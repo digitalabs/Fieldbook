@@ -31,7 +31,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
@@ -40,7 +39,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
-import com.efficio.fieldbook.web.nursery.service.impl.CrossingServiceImpl;
+import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
 
 public class GermplasmTreeControllerTestMock {
 	

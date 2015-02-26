@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
+import org.generationcp.middleware.dao.GermplasmListDAO;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -49,6 +51,8 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 	@Resource
 	private ExportGermplasmListService exportGermplasmListService;
+	
+	public static final String GERPLASM_TYPE_LST = "LST";
 
 	@ResponseBody
 	@RequestMapping(value = "/exportGermplasmList/{exportType}/{studyType}", method = RequestMethod.GET)
@@ -108,7 +112,19 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		
 		return map;
 	}
-
+	protected void setExportListTypeFromOriginalGermplasm(GermplasmList list) throws MiddlewareQueryException{
+		if(list != null && list.getListRef() != null){
+			GermplasmList origList = fieldbookMiddlewareService.getGermplasmListById(list.getListRef());
+			
+			if(origList != null){
+				if(origList.getStatus() != null && origList.getStatus().intValue() != GermplasmListDAO.STATUS_DELETED.intValue()){
+					list.setType(origList.getType());
+				}else{
+					list.setType(GERPLASM_TYPE_LST);
+				}
+			}
+		}
+	}
 	protected String doExport(int exportType, HttpServletResponse response,
 			HttpServletRequest req, Map<String, Boolean> visibleColumnsMap, Boolean isNursery)
 			throws GermplasmListExporterException {
@@ -121,6 +137,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		try {
 			if (userSelection.getImportedGermplasmMainInfo() != null) {
 				list = fieldbookMiddlewareService.getGermplasmListById(userSelection.getImportedGermplasmMainInfo().getListId());
+				setExportListTypeFromOriginalGermplasm(list);
 			}
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);

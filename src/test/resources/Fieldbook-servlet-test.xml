@@ -306,17 +306,26 @@
 	<bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
 	
 	<bean id="crossingService"
-          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingServiceImpl">
+          class="com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl">
     </bean>
     
     <bean id="crossNameService" class="org.generationcp.commons.service.impl.CrossNameServiceImpl">
         <aop:scoped-proxy/>
     </bean>
 
+	<bean id="crossNameService" class="org.generationcp.commons.service.impl.CrossNameServiceImpl">
+	        <aop:scoped-proxy/>
+	</bean>
+
     <bean id="crossingTemplateParser"
-          class="com.efficio.fieldbook.web.nursery.service.impl.CrossingTemplateParser"
+          class="com.efficio.fieldbook.web.common.service.impl.CrossingTemplateParser"
           scope="request">
         <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="crossingTemplateExcelExporter"
+              class="com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter">
+        <property name="templateFile" value="classpath:CrossingTemplate_exported.xls"/>
     </bean>
     
 </beans>

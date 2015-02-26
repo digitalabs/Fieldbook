@@ -72,7 +72,7 @@ public class LocationsController extends AbstractBaseFieldbookController {
 		 */
 		@ResponseBody
 		@RequestMapping(value = "/getLocations", method = RequestMethod.GET)
-		public Map<String, Object> getBreedingMethods() {
+		public Map<String, Object> getLocations() {
 			Map<String, Object> result = new HashMap<>();
 
 			try {

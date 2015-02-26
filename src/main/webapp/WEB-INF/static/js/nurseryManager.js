@@ -756,9 +756,13 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 					'text' : value.description
 				};
 			} else if (value.locid !== undefined) {
+				var locNameDisplay = value.lname;
+				if(value.labbr != null && value.labbr != ''){
+					locNameDisplay  += ' - ('+value.labbr+')';
+				}
 				jsonVal = {
 					'id' : value.locid,
-					'text' : value.lname
+					'text' : locNameDisplay
 				};
 			} else {
 				jsonVal = {
@@ -1738,7 +1742,7 @@ function submitGermplasmAndCheck() {
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
 		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
-
+	serializedData += '&columnOrders='+(BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
 		type: 'POST',

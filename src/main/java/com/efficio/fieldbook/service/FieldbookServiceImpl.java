@@ -53,6 +53,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -405,7 +406,11 @@ public class FieldbookServiceImpl implements FieldbookService {
         if (locations != null && !locations.isEmpty()) {
             for (Location loc : locations) {
                 if (loc != null) {
-                    list.add(new ValueReference(loc.getLocid(), loc.getLname(), loc.getLname()));
+                	String locNameDisplay = loc.getLname();
+                	if(loc.getLabbr() != null && !"".equalsIgnoreCase(loc.getLabbr())){
+                		locNameDisplay += " - ("+loc.getLabbr()+")";
+                	}
+                    list.add(new ValueReference(loc.getLocid(), locNameDisplay, locNameDisplay));
                 }
             }
         }
@@ -1106,6 +1111,22 @@ public class FieldbookServiceImpl implements FieldbookService {
         		fieldbookMiddlewareService.updateGermlasmListInfoStudy(crossesId, studyId != null ? studyId : 0);
         	}
         }
+		
+	}
+	
+	@Override
+	public void saveStudyColumnOrdering(Integer studyId, String studyName,
+			String columnOrderDelimited, Workbook workbook) throws MiddlewareQueryException {
+		List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);		
+		if(studyId != null && !columnOrdersList.isEmpty()){
+			fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);
+			workbook.setColumnOrderedLists(columnOrdersList);
+		}else{
+			if(studyId != null && workbook.getStudyDetails() != null){
+				workbook.getStudyDetails().setId(studyId);
+			}
+			fieldbookMiddlewareService.setOrderVariableByRank(workbook);
+		}
 		
 	}
 

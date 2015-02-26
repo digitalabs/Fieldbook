@@ -446,4 +446,39 @@ public class FieldbookServiceTest {
 			Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).updateGermlasmListInfoStudy(crossesId, studyId);
 		}
 	}
+	@Test
+	public void testSaveStudyColumnOrderingIfStudyIdIsNull() throws MiddlewareQueryException{
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		FieldbookService api = Mockito.mock(FieldbookService.class);
+		fieldbookService.setFieldbookMiddlewareService(api);
+		Integer studyId = null;
+		String studyName = "Study Name";
+		String columnOrderDelimited = "";
+		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited, Mockito.mock(Workbook.class));
+		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Mockito.any(Integer.class), Mockito.any(String.class), Mockito.anyList());
+	}
+	@Test
+	public void testSaveStudyColumnOrderingIfStudyIdIsNotNullAndColumnOrderListIsEmpty() throws MiddlewareQueryException{
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		FieldbookService api = Mockito.mock(FieldbookService.class);
+		fieldbookService.setFieldbookMiddlewareService(api);
+		Integer studyId = 7;
+		String studyName = "Study Name";
+		String columnOrderDelimited = "";
+		Workbook workbook = Mockito.mock(Workbook.class);
+		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,  workbook);
+		Mockito.verify(api, Mockito.times(0)).saveStudyColumnOrdering(Mockito.any(Integer.class), Mockito.any(String.class), Mockito.anyList());
+		Mockito.verify(api, Mockito.times(1)).setOrderVariableByRank(workbook);
+	}
+	@Test
+	public void testSaveStudyColumnOrderingIfStudyIdIsNotNullAndColumnOrderListIsNotEmpty() throws MiddlewareQueryException{
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		FieldbookService api = Mockito.mock(FieldbookService.class);
+		fieldbookService.setFieldbookMiddlewareService(api);
+		Integer studyId = 7;
+		String studyName = "Study Name";
+		String columnOrderDelimited = "[\"1100\", \"1900\"]";
+		fieldbookService.saveStudyColumnOrdering(studyId, studyName, columnOrderDelimited,  Mockito.mock(Workbook.class));
+		Mockito.verify(api, Mockito.times(1)).saveStudyColumnOrdering(Mockito.any(Integer.class), Mockito.any(String.class), Mockito.anyList());
+	}
 }

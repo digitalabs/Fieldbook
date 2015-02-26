@@ -1,15 +1,26 @@
 package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
+import org.generationcp.middleware.service.api.InventoryService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +56,12 @@ public class LabelPrintingServiceImplTest {
 	
     @Mock
     private ContextUtil contextUtil;
+    
+	@Mock
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	
+    @Mock
+    private InventoryService inventoryMiddlewareService;
 
 	@InjectMocks
 	LabelPrintingServiceImpl serviceDUT;
@@ -183,4 +200,80 @@ public class LabelPrintingServiceImplTest {
 		assertEquals("should be the same item as we searched on", TEST_EXISTING_PRESET_NAME,
 				standardPresetList.get(0).getName());
 	}
+	
+	
+	@Test
+	public void testHasInventoryValues_ReturnsTrueForEntriesWithInventory() throws MiddlewareQueryException{
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		Integer studyId = workbook.getStudyDetails().getId();
+		List<GermplasmList> germplasmLists = createGermplasmLists(1);
+		GermplasmList germplasmList = germplasmLists.get(0);
+		Integer numOfEntries = germplasmList.getListData().size();
+		when(fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(germplasmLists);
+		when(inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId(),null)).thenReturn(createInventoryDetailList(numOfEntries));
+		
+		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
+	}
+	
+	@Test
+	public void testHasInventoryValues_ReturnsFalseForEntriesWithoutInventory() throws MiddlewareQueryException{
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		Integer studyId = workbook.getStudyDetails().getId();
+		List<GermplasmList> germplasmLists = createGermplasmLists(1);
+		GermplasmList germplasmList = germplasmLists.get(0);
+		when(fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(germplasmLists);
+		when(inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId())).thenReturn(new ArrayList<InventoryDetails>());
+		
+		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
+	}
+
+	private List<GermplasmList> createGermplasmLists(int numOfEntries) {
+		List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>();
+		
+		for(int i = 0; i < numOfEntries; i++ ){
+			Integer id = i+1;
+			GermplasmList germplasmList = new GermplasmList();
+			germplasmList.setId(id);
+			germplasmList.setName("List " + id);
+			germplasmList.setDescription("Description " + id);
+			germplasmList.setListData(getGermplasmListData(numOfEntries));
+			
+			germplasmLists.add(germplasmList);
+		}
+		
+		return germplasmLists;
+	}
+	
+	private List<GermplasmListData> getGermplasmListData(int numOfEntries){
+		List<GermplasmListData> germplasmListData = new ArrayList<GermplasmListData>();
+		
+		for(int i = 0; i < numOfEntries; i++){
+			Integer id = i+1;
+			GermplasmListData listData = new GermplasmListData();
+			listData.setId(id);
+			listData.setDesignation("Designation"+id);
+			listData.setEntryCode("EntryCode"+id);
+			listData.setGroupName("GroupName"+id);
+			
+			germplasmListData.add(listData);
+		}
+		
+		return germplasmListData;
+	}
+	
+	private List<InventoryDetails> createInventoryDetailList(Integer numOfEntries){
+		List<InventoryDetails> inventoryDetails = new ArrayList<InventoryDetails>();
+		
+		for(int i = 0; i < numOfEntries; i++){
+			int id = i+1;
+			InventoryDetails invDetails = new InventoryDetails();
+			invDetails.setLotId(id);
+			invDetails.setGid(id);
+			inventoryDetails.add(invDetails);
+		}
+		
+		return inventoryDetails;
+	}
+	
+	
 }

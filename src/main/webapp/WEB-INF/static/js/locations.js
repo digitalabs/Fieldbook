@@ -132,9 +132,13 @@ if (typeof (LocationsFunctions) === 'undefined') {
 
         // FIXME : change declaration so function is not accessible to the outside
         convertLocationToSelectItem : function(location) {
+        	var locNameDisplay = location.lname;
+			if(location.labbr != null && location.labbr != ''){
+				locNameDisplay  += ' - ('+location.labbr+')';
+			}
             return {
                 id: location.locid,
-                text: location.lname,
+                text: locNameDisplay,
                 abbr: location.labbr,
                 description : location.labbr
             };

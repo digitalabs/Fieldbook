@@ -40,7 +40,7 @@ LabelPrinting = {
             LabelPrinting.labelPrintingFields[availableFields[i].id] = availableFields[i].name;
         }
 
-        if (unavailableFields) {
+        if (unavailableFields && unavailableFields.length > 0) {
             var warningMsg = '<div><b>'+labelPrintingUnavailableFieldsMsg+'</b></div><br/>';
             var unavailableFieldsList = '';
 
@@ -52,6 +52,7 @@ LabelPrinting = {
             warningMsg = warningMsg + '<ul>' + unavailableFieldsList + '</ul>';
 
             createWarningNotification(labelPrintingDataNotAvailableMsg,warningMsg,6000);
+
         }
 
         addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
@@ -141,6 +142,16 @@ LabelPrinting = {
         $('#fbk-lbl-printing-save-preset-override-modal .no').on('click',function() {
             // close modal
             $('#fbk-lbl-printing-save-preset-override-modal').modal('hide');
+        });
+
+        $('#fbk-lbl-printing-proceed-export-label .yes').on('click',function() {
+            LabelPrinting.proceedExport($('#specifyLabelDetailsForm')).done(function() {
+                $('#fbk-lbl-printing-proceed-export-label').modal('hide');
+            });
+        });
+
+        $('#fbk-lbl-printing-proceed-export-label .no').on('click',function() {
+            $('#fbk-lbl-printing-proceed-export-label').modal('hide');
         });
 
 
@@ -444,6 +455,14 @@ LabelPrinting = {
     } ;
 
     LabelPrinting.doExportLabel = function(type) {
+        // perform export
+        var formElm = $('#specifyLabelDetailsForm');
+        var selectedPreset = LabelPrinting.getSelectedPreset();
+        
+        if(selectedPreset.length == 0){
+        	selectedPreset = [$('#label-format').select2('data').id,0];
+        }
+
         // 1. validate
         if (!LabelPrinting.validateEnterLabelFieldsPage(type)) {
             return false;
@@ -452,9 +471,23 @@ LabelPrinting = {
         // 2. update #specifyLabelDetailsForm for other hidden details
         LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
 
-        // perform export
-        var formElm = $('#specifyLabelDetailsForm');
-        LabelPrinting.exportLabel(formElm.attr('action'),formElm.serialize()).done(function(data) {
+        // 3. check if we need to alert user to save the presets
+        LabelPrinting.isLabelPrintingIsModified(formElm.serialize(),selectedPreset[0],selectedPreset[1]).done(function(data) {
+            if (data) {
+                $('#fbk-lbl-printing-proceed-export-label').modal('show');
+            } else {
+                LabelPrinting.proceedExport(formElm);
+            }
+        });
+
+    };
+
+    /**
+     * Submit form for exporting labels
+     * @param formElm
+     */
+    LabelPrinting.proceedExport = function(formElm) {
+        return LabelPrinting.exportLabel(formElm.attr('action'),formElm.serialize()).done(function(data) {
             if(data.isSuccess === 1){
                 $('#specifyLabelDetailsDownloadForm').submit();
             }else{
@@ -577,6 +610,12 @@ LabelPrinting = {
         var url = '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/save';
 
         return $.post(url, formSerializedData,'json');
+    };
+
+    LabelPrinting.isLabelPrintingIsModified = function(formSerializedData,presetType,presetId) {
+        var url = '/Fieldbook/LabelPrinting/specifyLabelDetails/presets/isModified/' + presetType + '/' + presetId;
+
+        return $.post(url,formSerializedData,'json');
     };
 
     /**

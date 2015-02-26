@@ -9,8 +9,11 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import junit.framework.Assert;
+
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -43,6 +46,7 @@ public class ExportGermplasmListControllerTest {
 	private static final String SAMPLE_LIST = "Sample List";
 	private static final String LIST_NAME = "LIST NAME";
 	private static final int CURRENT_USER_ID = 1;
+	private static final int LIST_STATUS = 1;
 	//Columns
     private static final String ENTRY_NO = "entryNo";
     private static final String GID = "gid";
@@ -64,6 +68,8 @@ public class ExportGermplasmListControllerTest {
 	
 	private static final String TRIAL_TYPE = "T";
 	private static final String NURSERY_TYPE = "N";
+	
+	private static final Integer STATUS_DELETED = 9;
 
 	@Mock
 	private HttpServletResponse response;
@@ -344,6 +350,77 @@ public class ExportGermplasmListControllerTest {
 		return stdVar;
 	}
 	
+	@Test
+	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNull() throws MiddlewareQueryException{
+		ExportGermplasmListController controller = new ExportGermplasmListController();
+		GermplasmList list = getGermplasmList();
+		controller.setExportListTypeFromOriginalGermplasm(list);
+		Assert.assertEquals("List type should not change since there is not list ref for the germplasm list", LST, list.getType());
+	}
+	
+	@Test
+	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNull() throws MiddlewareQueryException{
+		ExportGermplasmListController controller = new ExportGermplasmListController();
+		GermplasmList list = getGermplasmList();
+		list.setListRef(5);
+		GermplasmList listRef = getGermplasmList();
+		String harvest = "HARVEST";
+		listRef.setType(harvest);
+		doReturn(listRef).when(fieldbookMiddlewareService).getGermplasmListById(anyInt());
+		controller.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		
+		controller.setExportListTypeFromOriginalGermplasm(list);
+		Assert.assertEquals("List type should  change since there is a list ref for the germplasm list", harvest, list.getType());
+	}
+	
+	@Test
+	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullAndNotDeleted() throws MiddlewareQueryException{
+		ExportGermplasmListController controller = new ExportGermplasmListController();
+		GermplasmList list = getGermplasmList();
+		list.setListRef(5);
+		GermplasmList listRef = getGermplasmList();
+		String harvest = "HARVEST";
+		listRef.setType(harvest);
+		doReturn(listRef).when(fieldbookMiddlewareService).getGermplasmListById(anyInt());
+		controller.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		
+		controller.setExportListTypeFromOriginalGermplasm(list);
+		Assert.assertEquals("List type should  change since there is a list ref for the germplasm list", harvest, list.getType());
+	}
+	
+	@Test
+	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullAndDeleted() throws MiddlewareQueryException{
+		ExportGermplasmListController controller = new ExportGermplasmListController();
+		GermplasmList list = getGermplasmList();
+		list.setListRef(5);
+		list.setType("SAMPLE");
+		GermplasmList listRef = getGermplasmList();
+		String harvest = "HARVEST";
+		listRef.setType(harvest);
+		
+		listRef.setStatus(STATUS_DELETED);
+		doReturn(listRef).when(fieldbookMiddlewareService).getGermplasmListById(anyInt());
+		controller.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		
+		controller.setExportListTypeFromOriginalGermplasm(list);
+		Assert.assertEquals("List type should be LST since the ref list id is deleted", LST, list.getType());
+	}
+	
+	@Test
+	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullButListIsNull() throws MiddlewareQueryException{
+		ExportGermplasmListController controller = new ExportGermplasmListController();
+		GermplasmList list = getGermplasmList();
+		list.setListRef(5);
+		GermplasmList listRef = getGermplasmList();
+		String harvest = "HARVEST";
+		listRef.setType(harvest);
+		doReturn(null).when(fieldbookMiddlewareService).getGermplasmListById(anyInt());
+		controller.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		
+		controller.setExportListTypeFromOriginalGermplasm(list);
+		Assert.assertEquals("List type should not change since there is not list ref for the germplasm list", LST, list.getType());
+	}
+	
 	private GermplasmList getGermplasmList() {
 		GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setName(SAMPLE_LIST);
@@ -352,6 +429,7 @@ public class ExportGermplasmListControllerTest {
 		germplasmList.setType(LST);
 		germplasmList.setDate(LIST_DATE);
 		germplasmList.setNotes(SAMPLE_NOTES);
+		germplasmList.setStatus(LIST_STATUS);
 		
 		return germplasmList;
 	}

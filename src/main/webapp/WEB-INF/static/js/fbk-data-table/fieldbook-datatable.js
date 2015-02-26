@@ -8,6 +8,35 @@ if (typeof (BMS.Fieldbook) === 'undefined') {
 	BMS.Fieldbook = {};
 }
 
+BMS.Fieldbook.MeasurementsTable = {
+		getColumnOrdering : function(tableName, forceGet){
+			var orderedColumns = [];
+			var hasOrderingChange = false;
+			if($('body').data('columnReordered') === '1'){
+				hasOrderingChange = true;
+			}
+			if($('#'+tableName).dataTable() !== null &&  $('#'+tableName).dataTable().fnSettings() !== null){
+				var cols = $('#'+tableName).dataTable().fnSettings().aoColumns;				
+				$(cols).each(function(index){  
+				  var termId = $($(cols[index].nTh)[0]).attr('data-term-id');
+				  var prevIndex = $('#'+tableName).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
+				  
+				  if(termId != 'Action'){
+					  if(index != prevIndex){
+						  hasOrderingChange = true;
+					  }
+					  orderedColumns[orderedColumns.length] = termId;
+				  }
+				});
+			}
+			if(forceGet || hasOrderingChange){
+				return orderedColumns;
+			}
+			//we return blank if there is no ordering change
+			return [];
+		},
+}
+
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	// FIXME Refactor to remove some of this code from the constructor function
 	/**
@@ -233,12 +262,21 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				$(this).parent().removeClass('fbk-dropdown-select-highlight');
 			}
 			// Get the column API object
-			column = table.column($(this).attr('data-index'));
-			// Toggle the visibility
-			column.visible(!column.visible());			 
+			var colIndex = $(this).attr('data-index');
+			 
+			
+			var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;				
+			$(cols).each(function(index){  
+			  var prevIndex = $(tableIdentifier).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
+			  if(colIndex == prevIndex){
+				  column = table.column(index);
+					// Toggle the visibility
+				  column.visible(!column.visible());			
+			  }			  
+			});
+			
 		});
 	};
-
 	return dataTableConstructor;
 
 })(jQuery);

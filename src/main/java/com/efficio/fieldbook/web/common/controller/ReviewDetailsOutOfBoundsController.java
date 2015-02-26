@@ -188,7 +188,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 				setMeasurementDataValue(possibleValueId, measurementData, value);
 			} else if (value.getAction().equals(SET_SELECTED_VALUES_TO_MISSING)) {
 				measurementData.setAccepted(true);
-				measurementData.setValue("missing");
+				measurementData.setValue(ObservationMatrixController.MISSING_VALUE);
 			}
 		} else {
 			setMeasurementDataValue(possibleValueId, measurementData, value);

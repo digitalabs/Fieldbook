@@ -252,6 +252,9 @@ public class CreateTrialController extends BaseTrialController {
         userSelection.setWorkbook(workbook);
 
         userSelection.setTrialEnvironmentValues(convertToValueReference(data.getEnvironments().getEnvironments()));
+        
+        fieldbookService.saveStudyColumnOrdering(workbook.getStudyId(), name, data.getColumnOrders(), workbook);
+        
         return "success";
     }
     

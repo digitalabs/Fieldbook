@@ -129,8 +129,12 @@ function showEnterFieldDetailsMessage(msg){
 function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj) {
     'use strict';
 	$.each(locationSuggestions, function( index, value ) {
+		var locNameDisplay = value.lname;
+		if(value.labbr != null && value.labbr != ''){
+			locNameDisplay  += ' - ('+value.labbr+')';
+		}
 		locationSuggestions_obj.push({ 'id' : value.locid,
-            'text' : value.lname
+            'text' : locNameDisplay
 		});  
 		
 	});		
@@ -160,8 +164,12 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 function initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
     'use strict';
 	$.each(locationSuggestionsFav, function( index, value ) {
+		var locNameDisplay = value.lname;
+		if(value.labbr != null && value.labbr != ''){
+			locNameDisplay  += ' - ('+value.labbr+')';
+		}
 		locationSuggestionsFav_obj.push({ 'id' : value.locid,
-            'text' : value.lname
+            'text' : locNameDisplay
 		});
 	});
 
@@ -447,8 +455,12 @@ function recreatePopupLocationCombo() {
                var defaultData = null;
                var currentLocId = $('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val();
                $.each(popuplocationSuggestions, function( index, value ) {
+               		var locNameDisplay = value.lname;
+					if(value.labbr != null && value.labbr != ''){
+						locNameDisplay  += ' - ('+value.labbr+')';
+					}
                    var tempData = { 'id' : value.locid,
-                          'text' : value.lname
+                          'text' : locNameDisplay
                    };
                    if(currentLocId != '' && currentLocId == value.locid){
                        defaultData = tempData;
@@ -520,10 +532,18 @@ function recreatePopupFieldCombo() {
                var currentLocId = $('#'+getJquerySafeId('userFieldmap.fieldId')).val();
 
                    $.each(popupFieldlocationSuggestions, function( index, value ) {
-                       var parentLocation = value.parentLocationName != null ? value.parentLocationName : '';
+                       	var parentLocation = value.parentLocationName != null ? value.parentLocationName : '';
+                       	var locNameDisplay = value.lname;
+						if(value.labbr != null && value.labbr != ''){
+							locNameDisplay  += ' - ('+value.labbr+')';
+						}
+						var locNameDisplayParent = parentLocation;
+						if(value.parentLocationAbbr != null && value.parentLocationAbbr != ''){
+							locNameDisplayParent  += ' - ('+value.parentLocationAbbr+')';
+						}
                        var tempData = { 'id' : value.locid,
-                              'text' : value.lname,
-                              'location' : parentLocation
+                              'text' : locNameDisplay,
+                              'location' : locNameDisplayParent
                         };
                        popupFieldlocationSuggestions_obj.push(tempData);
 
@@ -651,8 +671,12 @@ function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, curre
 	var newlyAddedField = $('#newFieldName').val();
 	
 	$.each(suggestions, function( index, value ) {
+		var locNameDisplay = value.lname;
+		if(value.labbr != null && value.labbr != '' && value.labbr != '-'){
+			locNameDisplay  += ' - ('+value.labbr+')';
+		}
 		var dataObj = { 'id' : value.locid,
-			  'text' : value.lname
+			  'text' : locNameDisplay
 		};
 		suggestions_obj.push(dataObj);  
 		
@@ -696,8 +720,12 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, curre
 	var defaultData = null;
 	var newlyAddedBlock = $('#newBlockName').val();
 	$.each(suggestions, function( index, value ) {
+		var locNameDisplay = value.lname;
+		if(value.labbr != null && value.labbr != '' && value.labbr != '-'){
+			locNameDisplay  += ' - ('+value.labbr+')';
+		}
 		var dataObj = { 'id' : value.locid,
-				  'text' : value.lname
+				  'text' : locNameDisplay
 			};
 		
 		suggestions_obj.push(dataObj);  

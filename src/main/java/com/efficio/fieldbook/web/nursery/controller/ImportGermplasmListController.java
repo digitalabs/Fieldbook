@@ -79,7 +79,11 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping({ImportGermplasmListController.URL, ImportGermplasmListController.URL_2, ImportGermplasmListController.URL_3 , ImportGermplasmListController.URL_4})
 public class ImportGermplasmListController extends SettingsController {
     
-    private static final String ERROR = "error";
+	private static final String SUCCESS = "success";
+
+	private static final String ERROR = "error";
+
+	private static final String TABLE_HEADER_LIST = "tableHeaderList";
 
 	private static final String SUCCESS = "success";
 

@@ -1189,6 +1189,7 @@ function clearSettings() {
 		cache : false,
 		success : function(html) {
 			$('#chooseSettingsDiv').html(html);
+			$('.chs-add-variable-factor').show();
 			moveToTopScreen();
 		}
 	});

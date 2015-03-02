@@ -150,13 +150,13 @@
 
                 var serializedData = $form.serializeArray();
                 serializedData[serializedData.length] = {'name':'columnOrders', 'value':(JSON.stringify(columnsOrder))};
-                
+
                 var d = $q.defer();
-                
+
                 $http.post('/Fieldbook/TrialManager/GermplasmList/next', $.param(serializedData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'} }).success(function (data) {
                     d.resolve(data);
                 });
-                
+
                 return d.promise;
             };
 
@@ -202,7 +202,7 @@
                     });
                 }
             };
-            
+
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
                 {id: '@id'}, { 'get': {method: 'get', isArray: true} });
             var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, { });
@@ -273,14 +273,14 @@
                 generateExpDesign: function (data) {
                     return GenerateExpDesignService.save(data).$promise;
                 },
-                
+
                 refreshMeasurementTableAfterDeletingEnvironment : function(){
                     var noOfEnvironments = service.currentData.environments.noOfEnvironments;
                 	
                     var data = service.currentData.experimentalDesign;
                     //update the no of environments in experimental design tab
                 	data.noOfEnvironments = noOfEnvironments;
-                	
+
 					service.generateExpDesign(data).then(
                         function (response) {
                             if (response.valid === true) {
@@ -300,7 +300,7 @@
                     return service.currentData.basicDetails.studyID !== null &&
                         service.currentData.basicDetails.studyID !== 0;
                 },
-                
+
                 deletedEnvironment : 0,
 
                 indicateUnappliedChangesAvailable: function () {

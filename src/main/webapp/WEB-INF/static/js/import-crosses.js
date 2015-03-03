@@ -2,7 +2,6 @@ var ImportCrosses = {
 		CROSSES_URL : '/Fieldbook/crosses',
 		showFavoriteMethodsOnly: true,
 		showFavoriteLocationsOnly: true,
-		
 		showPopup : function(){
 			$('#fileupload-import-crosses').val('');
 			$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
@@ -50,14 +49,14 @@ var ImportCrosses = {
 				$('#openCrossesListModal').modal('hide');
 				ImportCrosses.showImportSettingsPopup();
 			});
-			
+
 			$('#goBackToImportCrossesButton').off('click');
 			$('#goBackToImportCrossesButton').on('click', function() {
 				ImportCrosses.goBackToPage('#openCrossesListModal','.import-crosses-section .modal');
 			});
 
 		},
-		
+
 		goBackToPage: function(hiddenModalSelector,shownModalSelector) {
 			$(hiddenModalSelector).modal('hide');
 			$(shownModalSelector).modal({ backdrop: 'static', keyboard: true });
@@ -106,7 +105,7 @@ var ImportCrosses = {
 		showImportSettingsPopup : function() {
 			var crossSettingsPopupModal = $('#crossSettingsModal');
 			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-			
+
 			BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
 			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', ImportCrosses.showFavoriteLoationsOnly);
 			ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
@@ -122,7 +121,7 @@ var ImportCrosses = {
 			ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 
 			$('#settingsNextButton').click(ImportCrosses.submitCrossImportSettings);
-			
+
 			$('#goBackToOpenCrossesButton').off('click');
 			$('#goBackToOpenCrossesButton').on('click', function() {
 				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(":checked");

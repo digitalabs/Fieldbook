@@ -85,10 +85,6 @@ public class ImportGermplasmListController extends SettingsController {
 
 	private static final String TABLE_HEADER_LIST = "tableHeaderList";
 
-	private static final String SUCCESS = "success";
-
-	protected static final String TABLE_HEADER_LIST = "tableHeaderList";
-
 	protected static final String TYPE2 = "type";
 
 	protected static final String LIST_DATA_TABLE = "listDataTable";

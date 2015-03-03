@@ -26,6 +26,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,14 +58,12 @@ public class OntologyDetailsControllerTest  extends AbstractBaseControllerIntegr
         Model model = new ExtendedModelMap();
         int variableId = 8050;
         
-        OntologyService ontologyService = EasyMock.createMock(OntologyService.class);
+        OntologyService ontologyService = Mockito.mock(OntologyService.class);
         StandardVariable stdvar = createStandardVariableTestData();
-        EasyMock.expect(ontologyService.getStandardVariable(8050)).andReturn(stdvar);
-        EasyMock.expect(ontologyService.countProjectsByVariable(8050)).andReturn(123456L);
-        EasyMock.expect(ontologyService.countExperimentsByVariable(8050, 1010)).andReturn(789000L);
-        EasyMock.replay(ontologyService);
-        ReflectionTestUtils.setField(controller, "ontologyService", ontologyService, OntologyService.class);
-        
+        Mockito.when(ontologyService.getStandardVariable(8050)).thenReturn(stdvar);
+        Mockito.when(ontologyService.countProjectsByVariable(8050)).thenReturn(123456L);
+        Mockito.when(ontologyService.countExperimentsByVariable(8050, 1010)).thenReturn(789000L);
+        controller.setOntologyService(ontologyService);
         String result = controller.getOntologyDetails(variableId, form, model);
         
         Assert.assertEquals(OntologyDetailsController.DETAILS_TEMPLATE, result);

@@ -196,4 +196,10 @@ public class ExcelImportStudyServiceImplTest {
 		importStudy.importDataCellValues(wData, xlsRow, columnIndex, workbook, new HashMap<Integer, MeasurementVariable>());
 		Assert.assertFalse("The Accepted Flag must be always set to false", wData.isAccepted());
 	}
+	
+	@Test
+	public void testHasCellValueIfNull(){
+		boolean resp = importStudy.hasCellValue(null);
+		Assert.assertFalse("Should return false since cell is null", resp);
+	}
 }

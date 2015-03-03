@@ -150,8 +150,9 @@
 				type: 'GET',
 				cache: false,
 				success: function(html) {
-					$('#imported-germplasm-list').css('display', 'block');
-					$('#imported-germplasm-list').html(html);
+					$('#imported-germplasm-list').css('display', 'block');					 
+					$('#imported-germplasm-list').html(html).trigger("germplasmListIsUpdated");
+					
 					$('#entries-details').css('display', 'block');
 					$('#numberOfEntries').html($('#totalGermplasms').val());
 					$('#imported-germplasm-list-reset-button').css('opacity', '1');

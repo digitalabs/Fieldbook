@@ -16,7 +16,7 @@
             	TrialManagerDataService.updateTrialMeasurementRowCount(TrialManagerDataService.trialMeasurement.count);
                 displaySelectedGermplasmDetails();
             }
-            
+
             $scope.labels = {};
             $scope.labels.germplasmFactors = {
                 label: 'Temp label here',
@@ -27,6 +27,10 @@
 
             displayStudyGermplasmSection(TrialManagerDataService.trialMeasurement.hasMeasurement,
                 TrialManagerDataService.trialMeasurement.count);
+
+    		$('#imported-germplasm-list').bind( "germplasmListIsUpdated", function(){
+    			TrialManagerDataService.indicateUnappliedChangesAvailable();  
+    	    });
 
             $scope.updateOccurred = false;
 

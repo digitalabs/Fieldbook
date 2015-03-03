@@ -20,15 +20,7 @@
                		<input type="checkbox" class="selectAllAdvance" name="selectAllAdvance" id="selectAllAdvance"/>
                	</div>
                </th>
-               <th th:utext="#{seed.entry.number}">Entry #</th>
-               <th th:utext="#{seed.entry.designation}">Designation</th>
-               <th th:utext="#{seed.entry.parentage}">Parentage</th>
-               <th th:utext="#{seed.inventory.gid}">.GID</th>
-               <th th:utext="#{seed.inventory.source}">.Source</th>
-               <th th:utext="#{seed.inventory.table.location}">.Location</th>
-               <th th:utext="#{seed.inventory.amount}">.Amount</th>
-               <th th:utext="#{seed.inventory.table.scale}">.Scale</th>
-               <th th:utext="#{seed.inventory.comment}">Comment</th>               
+               <th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
              </tr>
            </thead>
            <tbody>

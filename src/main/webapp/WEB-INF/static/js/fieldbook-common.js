@@ -1479,6 +1479,7 @@ function showImportOptions(){
 }
 function goBackToImport(){
 	'use strict';
+	revertData(false);
 	$('#importStudyConfirmationModal').modal('hide');
 	$('#importStudyDesigConfirmationModal').modal('hide');
 	$('#importOverwriteConfirmation').modal('hide');

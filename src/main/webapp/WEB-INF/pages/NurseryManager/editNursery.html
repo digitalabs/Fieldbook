@@ -15,7 +15,7 @@
 	</div>
 </div>
 <div class="row">
-<form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
+    <form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<input type="hidden" th:field="*{studyId}" />
 	<div class="row add-top-bottom-padding">
 		<div class="col-md-12">
@@ -81,7 +81,7 @@
                                    th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
                             </li>
                             <li>
-                                <a href="javascript: void(0)" class="export-crosses-action"
+                                <a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"  class="export-crosses-action"
                                    th:text="#{nursery.nurserydetails.action.export.crosses}">Export Crosses</a>
                             </li>
                             <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">

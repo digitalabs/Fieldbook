@@ -430,12 +430,10 @@ var ImportCrosses = {
                 if (result.isSuccess) {
                     var downloadUrl = ImportCrosses.CROSSES_URL + '/download/file';
 
-                    var form = $('<form method="POST" action="' + downloadUrl + '">');
-                    $.each(result, function(k, v) {
-                        form.append($('<input type="hidden" name="' + k +
-                        '" value="' + v + '">'));
+                    $.fileDownload(downloadUrl,{
+                        httpMethod: "POST",
+                        data: result
                     });
-                    form.submit();
 
                 } else {
                     createErrorNotification(crossingExportErrorHeader,result.errorMessage);
@@ -525,8 +523,6 @@ var ImportCrosses = {
 
 $(document).ready(function() {
 	$('.import-crosses').on('click', ImportCrosses.showPopup);
-    $('.export-crosses-action').on('click', ImportCrosses.downloadCrosses);
-
     $('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);
 	$('.import-crosses-section .modal').on('hide.bs.modal', function() {
 		$('div.import-crosses-file-upload').parent().parent().removeClass('has-error');

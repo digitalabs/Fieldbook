@@ -142,6 +142,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     @Resource
     private ContextUtil contextUtil;
     
+    @Resource
     private InventoryService inventoryMiddlewareService;
 
 	/* (non-Javadoc)
@@ -1286,12 +1287,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 String germplasmListType = germplasmList.getType();
                 List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId,germplasmListType);
 				
-				for(InventoryDetails inventoryDetails : inventoryDetailList){
-					if(inventoryDetails.getLotId() != null){
-						return true;
-					}
-				}
-			}
+                	for(InventoryDetails inventoryDetails : inventoryDetailList){
+    					if(inventoryDetails.getLotId() != null){
+    						return true;
+    					}
+    				}
+                }
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(),e);
 		}

@@ -437,7 +437,7 @@ LabelPrinting = {
 
         }
         var data = $safeId('#userLabelPrinting.filename').val();
-        var isValid = /^[ A-Za-z0-9_@.\.&''@{}$!\-#()%.+~_=^\s]*$/i.test(data);
+        var isValid = /[:\\\\/*?|<>]*$/i.test(data);
 
 
         if (!isValid){

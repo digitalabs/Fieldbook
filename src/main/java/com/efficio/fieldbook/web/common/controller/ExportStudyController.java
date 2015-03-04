@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,21 +112,23 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     @Override
 	public String getContentName() {
 		return null;
-	}
+	}    
 
     @ResponseBody
     @RequestMapping(value="/download/file", method = RequestMethod.GET)
-    public String downloadFile(HttpServletRequest req, HttpServletResponse response) {
-    	String outputFilename = req.getParameter("outputFilename");
-    	String filename = req.getParameter("filename");
+    public String downloadFile(HttpServletRequest req, HttpServletResponse response) throws UnsupportedEncodingException {
+    	     
+    	String outputFilename = new String(req.getParameter("outputFilename").getBytes("iso-8859-1"), "UTF-8");
+    	String filename = new String(req.getParameter("filename").getBytes("iso-8859-1"), "UTF-8");
     	String contentType = req.getParameter("contentType");
     	
     	// the selected name + current date
         File xls = new File(outputFilename); 
         FileInputStream in;
         
-        response.setHeader("Content-disposition","attachment; filename=" + SettingsUtil.cleanSheetAndFileName(filename));
+        response.setHeader("Content-disposition","attachment; filename=" + FieldbookUtil.getDownloadFileName(SettingsUtil.cleanSheetAndFileName(filename), req));
         response.setContentType(contentType);
+        response.setCharacterEncoding("UTF-8");
         try {
             in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();

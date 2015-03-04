@@ -1568,7 +1568,7 @@ public class SettingsUtil {
         for (String strFieldId : fields) {
             if (strFieldId != null && !"".equals(strFieldId)) {
                 boolean found = false;
-                String label = AppConstants.getString(strFieldId + "_LABEL");
+                String label = AppConstants.getString(strFieldId.toUpperCase() + "_LABEL");
                 if (conditions != null) {
                     for (MeasurementVariable condition : conditions) {
                         if (NumberUtils.isNumber(strFieldId)) {

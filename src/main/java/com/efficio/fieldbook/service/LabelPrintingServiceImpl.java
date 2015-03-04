@@ -84,16 +84,15 @@ import com.google.zxing.oned.Code128Writer;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-
 /**
  * The Class LabelPrintingServiceImpl.
  */
@@ -159,6 +158,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
 	 */
 
+    private String ARIAL_UNI = "arialuni.ttf";
+    
     public LabelPrintingServiceImpl(){
     	super();
     }
@@ -293,8 +294,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                     float fontSize = paper.getFontSize();
 
-                    Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
-
+                    BaseFont unicode = BaseFont.createFont(ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                    Font fontNormal = new Font(unicode, fontSize) ;
+                    fontNormal.setStyle(Font.NORMAL);
+                    
                     cell.addElement(innerImageTableInfo);
                     cell.addElement(new Paragraph());
                     for (int row = 0; row < 5; row++) {
@@ -302,9 +305,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             PdfPTable innerDataTableInfo = new PdfPTable(1);
                             innerDataTableInfo.setWidths(new float[] { 1 });
                             innerDataTableInfo.setWidthPercentage(85);
-
-                            Font fontNormalData = FontFactory
-                                    .getFont("Arial", 5.0f, Font.NORMAL);
+                            
+                            Font fontNormalData = new Font(unicode, 5.0f) ;
+                            fontNormal.setStyle(Font.NORMAL);
+                            
+                                    
                             PdfPCell cellInnerData = new PdfPCell(
                                     new Phrase(barcodeLabel, fontNormalData));
 

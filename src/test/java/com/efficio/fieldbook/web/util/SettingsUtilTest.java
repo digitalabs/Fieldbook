@@ -170,4 +170,9 @@ public class SettingsUtilTest {
 		}
 		return settingDetail;
 	}
+    @Test
+    public void testcleanSheetAndFileNameWithInvalid(){
+    	String cleanedName = SettingsUtil.cleanSheetAndFileName("Test[:\\\\/*?|<>]");
+    	Assert.assertEquals("String should be cleaned", "Test___________", cleanedName);
+    }
 }

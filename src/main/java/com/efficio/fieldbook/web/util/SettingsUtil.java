@@ -80,11 +80,7 @@ public class SettingsUtil {
         
     	name = org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(name, '_');
     	//http://www.rgagnon.com/javadetails/java-0662.html
-    	name = name.replaceAll("[:\\\\/*?|<>]", "_");
-        /*
-        name = name.replaceAll("[^a-zA-Z0-9-_.=^&'@{}$!-#()%.+~_\\[\\]]", "_");
-        name = name.replaceAll("\"", "_");
-        */
+    	name = name.replaceAll("[:\\\\/*?|<>]", "_");       
         return name;
     }
 

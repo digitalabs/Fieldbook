@@ -499,7 +499,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/export/advanced/lists", method = RequestMethod.POST)
+    @RequestMapping(value = "/export/advanced/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public String doAdvanceExport(HttpServletResponse response, HttpServletRequest req) 
     		        throws MiddlewareQueryException {
     	

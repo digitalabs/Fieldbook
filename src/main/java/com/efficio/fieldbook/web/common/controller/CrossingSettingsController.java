@@ -277,8 +277,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 		} catch (FileParsingException e) {
 			resultsMap.put(IS_SUCCESS, 0);
-
-			resultsMap.put("error", e.getMessages());
+			resultsMap.put("error", new String[] {e.getMessage()});
 		}
 
 		return resultsMap;

@@ -3,6 +3,7 @@ package com.efficio.fieldbook.service;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.google.zxing.common.BitMatrix;
 
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -220,6 +221,18 @@ public class LabelPrintingServiceImplTest {
 		when(inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId())).thenReturn(new ArrayList<InventoryDetails>());
 		
 		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
+	}
+	
+	@Test
+	public void testEncodeBardcodeInEnglishCharacters(){
+		BitMatrix bitMatrix = serviceDUT.encodeBarcode("Test", 100, 200);
+		Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII" , bitMatrix);
+	}
+	
+	@Test
+	public void testEncodeBardcodeInNonEnglishCharacters(){
+		BitMatrix bitMatrix = serviceDUT.encodeBarcode("乙七九", 100, 200);
+		Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii" , bitMatrix);
 	}
 
 	private List<GermplasmList> createGermplasmLists(int numOfEntries) {

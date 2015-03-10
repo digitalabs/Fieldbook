@@ -78,6 +78,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
@@ -153,6 +154,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
     @Resource
     private InventoryService inventoryMiddlewareService;
+    
+    private String UNSUPPORTED_CHARSET_IMG = "unsupported-char-set.png";
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
@@ -162,6 +165,19 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
     public LabelPrintingServiceImpl(){
     	super();
+    }
+    
+    protected BitMatrix encodeBarcode(String barcodeLabelForCode, int width, int height){
+    	BitMatrix bitMatrix = null;
+		try {
+			bitMatrix = new Code128Writer().encode(barcodeLabelForCode,
+			        BarcodeFormat.CODE_128, width, height, null);
+		} catch (WriterException e) {
+			LOG.debug(e.getMessage(), e);
+		}catch(IllegalArgumentException e){
+        	LOG.debug(e.getMessage(), e);
+        }
+    	return bitMatrix;
     }
     
     /* (non-Javadoc)
@@ -260,17 +276,24 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         throw new LabelPrintingException("label.printing.label.too.long",
                                 barcodeLabelForCode, "label.printing.label.too.long");
                     }
-                    BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabelForCode,
-                            BarcodeFormat.CODE_128, width, height, null);
-                    String imageLocation = System.getProperty("user.home")
-                            + "/" + Math.random() + ".png";
-                    File imageFile = new File(imageLocation);
-                    FileOutputStream fout = new FileOutputStream(imageFile);
-                    MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
-                    filesToBeDeleted.add(imageFile);
-
-                    Image mainImage = Image.getInstance(imageLocation);
-
+                    
+                    Image mainImage = Image.getInstance(LabelPrintingServiceImpl.class.getClassLoader().getResource(UNSUPPORTED_CHARSET_IMG));
+                    FileOutputStream fout = null;
+                    
+                	BitMatrix bitMatrix = encodeBarcode(barcodeLabelForCode, width, height);
+                	if(bitMatrix != null){
+	                	String imageLocation = System.getProperty("user.home")
+	                        + "/" + Math.random() + ".png";
+	                	File imageFile = new File(imageLocation);
+	                    fout = new FileOutputStream(imageFile);
+	                    MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
+	                    filesToBeDeleted.add(imageFile);
+	
+	                    mainImage = Image.getInstance(imageLocation);
+                	}
+                   
+                    
+                    
                     PdfPCell cell = new PdfPCell();
                     cell.setFixedHeight(cellHeight);
                     cell.setNoWrap(false);
@@ -394,8 +417,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         // we go the next page
                         document.newPage();
                     }
-                    fout.flush();
-                    fout.close();
+                    if(fout != null){
+	                    fout.flush();
+	                    fout.close();
+                    }
 
                 }
             }

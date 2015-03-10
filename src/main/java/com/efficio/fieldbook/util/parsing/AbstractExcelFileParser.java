@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.common.service;
+package com.efficio.fieldbook.util.parsing;
 
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.common.exception.FileParsingException;
@@ -10,7 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,7 +20,7 @@ import java.util.Locale;
  * Date: 2/24/2015
  * Time: 5:38 PM
  */
-public abstract class AbstractFileParser<T> {
+public abstract class AbstractExcelFileParser<T> {
 
 	protected Workbook workbook;
 	protected String originalFilename;
@@ -43,7 +45,10 @@ public abstract class AbstractFileParser<T> {
 		return parseWorkbook(workbook);
 	}
 
-	public abstract String[] getSupportedFileExtensions();
+	public String[] getSupportedFileExtensions() {
+		return EXCEL_FILE_EXTENSIONS;
+	}
+
 	public abstract T parseWorkbook(Workbook workbook) throws FileParsingException;
 
 	public Workbook storeAndRetrieveWorkbook(MultipartFile multipartFile)
@@ -78,6 +83,17 @@ public abstract class AbstractFileParser<T> {
 		return extensionCheckResult;
 	}
 
+	protected boolean isHeaderInvalid(int headerNo, int sheetNumber, String[] headers) {
+		boolean isInvalid = false;
+
+		for (int i = 0; i < headers.length; i++) {
+			isInvalid = isInvalid || !headers[i].equalsIgnoreCase(
+					getCellStringValue(sheetNumber, headerNo, i));
+		}
+
+		return isInvalid;
+	}
+
 	/**
 	 * Wrapper to PoiUtil.getCellStringValue static call so we can stub the methods on unit tests
 	 *
@@ -103,5 +119,16 @@ public abstract class AbstractFileParser<T> {
 	 */
 	public boolean isRowEmpty(int sheetNo, int rowNo, int colCount) {
 		return PoiUtil.rowIsEmpty(workbook.getSheetAt(sheetNo), rowNo, 0, colCount - 1);
+	}
+
+	public Map<String, Integer> convertToHeaderColumnMap(String[] headers) {
+		Map<String, Integer> headerColumnMap = new HashMap<>();
+
+		int i = 1;
+		for (String header : headers) {
+			headerColumnMap.put(header, i++);
+		}
+
+		return headerColumnMap;
 	}
 }

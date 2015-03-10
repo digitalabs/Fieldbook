@@ -71,7 +71,7 @@ function addLot(){
 		type: 'GET',
 		cache: false,
 	    success: function(data) {
-	    	$('#addLotsModalDiv').html(data);	    	
+	    	$('#addLotsModalDiv').html(data);
 	    	$('#comments').val('');
 	    	$('#amount').val('');
 	    	$('#page-message-lots').html('');
@@ -82,34 +82,34 @@ function addLot(){
 	  	    showCorrectLocationInventoryCombo();
 	    }
 	});
-	
+
 }
 
 function initializePossibleValuesComboScale(possibleValues, name, isLocation, defaultValue) {
 	'use strict';
 	var possibleValuesObj = [],
 		defaultJsonVal = null;
-	
+
 	$.each(possibleValues, function(index, value) {
 		var jsonVal = null;
 		if (value.id !== undefined) {
 			jsonVal = { 'id' : value.id,
-					  'text' : value.name
+					  'text' : value.displayName
 				};
 		}
-		
-		possibleValuesObj.push(jsonVal);  
+
+		possibleValuesObj.push(jsonVal);
 		if(defaultValue != null && defaultValue != '' && 
-				((defaultValue == value.key || defaultValue == value.locid || defaultValue == value.mid) || 
+				((defaultValue == value.key || defaultValue == value.locid || defaultValue == value.mid) ||
 				 (defaultValue == value.name || defaultValue == value.lname || defaultValue == value.mname))){
 			defaultJsonVal = jsonVal;
 		}
-		
+
 	});
-	
+
 	possibleValuesObj = sortByKey(possibleValuesObj, 'text');
 
-	
+
 		$(name).select2({
 			minimumResultsForSearch: possibleValuesObj.length == 0 ? -1 : 20,
 			query: function (query) {	
@@ -117,7 +117,7 @@ function initializePossibleValuesComboScale(possibleValues, name, isLocation, de
 		      // return the array that matches
 		      data.results = $.grep(data.results,function(item,index){
 		        return ($.fn.select2.defaults.matcher(query.term,item.text));
-		      
+
 		      });
 		        query.callback(data);
 		    }

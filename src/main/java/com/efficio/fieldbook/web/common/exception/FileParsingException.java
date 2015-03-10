@@ -8,25 +8,44 @@ package com.efficio.fieldbook.web.common.exception;
  */
 public class FileParsingException extends Exception{
 
-	private String[] messages;
+	private String message;
+	private int errorRowIndex;
+	private String errorValue;
+	private String errorColumn;
 
 	public FileParsingException() {
 		super();
 	}
 
-	public FileParsingException(String internationalizableMessage) {
-		if (messages == null) {
-			messages = new String[1];
-		}
-
-		messages[0] = internationalizableMessage;
+	public FileParsingException(String message) {
+		this.message = message;
 	}
 
-	public FileParsingException(String[] messages) {
-		this.messages = messages;
+	public FileParsingException(String message, int errorRowIndex, String errorValue,
+			String errorColumn) {
+		this.message = message;
+		this.errorRowIndex = errorRowIndex;
+		this.errorValue = errorValue;
+		this.errorColumn = errorColumn;
 	}
 
-	public String[] getMessages() {
-		return messages;
+	@Override public String getMessage() {
+		return message;
+	}
+
+	public int getErrorRowIndex() {
+		return errorRowIndex;
+	}
+
+	public String getErrorValue() {
+		return errorValue;
+	}
+
+	public String getErrorColumn() {
+		return errorColumn;
+	}
+
+	public Object[] getMessageParameters() {
+		return new Object[] {errorRowIndex, errorColumn, errorValue};
 	}
 }

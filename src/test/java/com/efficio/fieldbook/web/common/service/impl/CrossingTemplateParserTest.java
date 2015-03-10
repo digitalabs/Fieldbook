@@ -176,8 +176,6 @@ public class CrossingTemplateParserTest {
 				CrossingTemplateParser.DESCRIPTION_SHEET_NO, 2, 1);
 		doReturn(CrossingTemplateParser.TEMPLATE_LIST_TYPE).when(parserUnderTest)
 				.getCellStringValue(CrossingTemplateParser.DESCRIPTION_SHEET_NO, 3, 1);
-		doNothing().when(parserUnderTest).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
 		parserUnderTest.parseCrossingListDetails();
 
@@ -185,9 +183,6 @@ public class CrossingTemplateParserTest {
 				.readField(parserUnderTest, "importedCrossesList",
 						true);
 
-		// no validation
-		verify(parserUnderTest, never()).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
 		assertEquals("list name is set", "listName", importedCrossesList1.getName());
 		assertEquals("list title/description is set", "listTitle", importedCrossesList1.getTitle());

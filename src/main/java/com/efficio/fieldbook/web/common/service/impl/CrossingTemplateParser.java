@@ -1,7 +1,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.web.common.exception.FileParsingException;
-import com.efficio.fieldbook.web.common.service.AbstractFileParser;
+import com.efficio.fieldbook.util.parsing.AbstractExcelFileParser;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
@@ -25,7 +25,7 @@ import java.util.*;
  * This parses a Crossing Template Excel file
  * Note that this class is stateful, declare in spring app context as prototyped scope
  */
-public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesList> {
+public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCrossesList> {
 
 	/**
 	 * The Constant FILE_INVALID.
@@ -52,7 +52,6 @@ public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesLi
 	private Map<String, Integer> observationColumnMap = new HashMap<>();
 	private ImportedCrossesList importedCrossesList;
 	private boolean importFileIsValid = true;
-	private Workbook workbook;
 	private int currentRow = 0;
 
 	/**
@@ -66,10 +65,6 @@ public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesLi
 
 	public CrossingTemplateParser() {
 
-	}
-
-	@Override public String[] getSupportedFileExtensions() {
-		return EXCEL_FILE_EXTENSIONS;
 	}
 
 	@Override public ImportedCrossesList parseWorkbook(Workbook workbook) throws
@@ -190,7 +185,7 @@ public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesLi
 		}
 	}
 
-	protected void parseConditions() throws FileParsingException{
+	protected void parseConditions() {
 		// condition headers start at row = 5 (+ 1 : count starts from 0 )
 		currentRow = CONDITION_ROW_NO;
 
@@ -335,17 +330,6 @@ public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesLi
 		}
 	}
 
-	protected boolean isHeaderInvalid(int headerNo, String[] headers) {
-		boolean isInvalid = false;
-
-		for (int i = 0; i < headers.length; i++) {
-			isInvalid = isInvalid || !headers[i].equalsIgnoreCase(
-					getCellStringValue(DESCRIPTION_SHEET_NO, headerNo, i));
-		}
-
-		return isInvalid;
-	}
-
 	protected boolean isConditionHeadersInvalid(int conditionHeaderRowNo) {
 		String[] headers = {
 				AppConstants.CONDITION.getString(),
@@ -357,7 +341,7 @@ public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesLi
 				AppConstants.VALUE.getString()
 		};
 
-		return isHeaderInvalid(conditionHeaderRowNo, headers);
+		return isHeaderInvalid(conditionHeaderRowNo, DESCRIPTION_SHEET_NO, headers);
 	}
 
 
@@ -372,7 +356,7 @@ public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesLi
 				AppConstants.DATA_TYPE.getString()
 		};
 
-		return isHeaderInvalid(factorHeaderRowNo,headers);
+		return isHeaderInvalid(factorHeaderRowNo,DESCRIPTION_SHEET_NO, headers);
 	}
 
 	protected boolean isConstantsHeaderInvalid(int constantHeaderRowNo) {
@@ -386,7 +370,7 @@ public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesLi
 				AppConstants.VALUE.getString()
 		};
 
-		return isHeaderInvalid(constantHeaderRowNo,headers);
+		return isHeaderInvalid(constantHeaderRowNo, DESCRIPTION_SHEET_NO,headers);
 	}
 
 	protected boolean isVariateHeaderInvalid(int variateHeaderRowNo) {
@@ -399,22 +383,9 @@ public class CrossingTemplateParser extends AbstractFileParser<ImportedCrossesLi
 				AppConstants.DATA_TYPE.getString()
 		};
 
-		return isHeaderInvalid(variateHeaderRowNo,headers);
+		return isHeaderInvalid(variateHeaderRowNo, DESCRIPTION_SHEET_NO, headers);
 	}
 
-	@Deprecated
-	protected void addParseErrorMsg(String message) {
-		if (importFileIsValid) {
-
-			// create a new instance if not yet existing (happens when exception caught without parsing started yet)
-			importedCrossesList = (null == importedCrossesList) ?
-					new ImportedCrossesList() :
-					importedCrossesList;
-
-			importedCrossesList.addErrorMessages(message);
-			importFileIsValid = false;
-		}
-	}
 
 	protected boolean isObservationsHeaderInvalid() {
 		final List<ImportedFactor> importedFactors = new ArrayList<ImportedFactor>() {

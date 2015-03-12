@@ -1,7 +1,8 @@
 package com.efficio.fieldbook.web.util;
 
-public class FieldbookProperties {
+import org.generationcp.commons.util.WorkbenchAppPathResolver;
 
+public class FieldbookProperties {
 	private String programLocationsUrl;
 	private String programBreedingMethodsUrl;
 	private String germplasmImportUrl;
@@ -10,7 +11,7 @@ public class FieldbookProperties {
 	private String uploadDirectory;
 
 	public String getProgramLocationsUrl() {
-		return programLocationsUrl;
+		return WorkbenchAppPathResolver.getFullWebAddress(programLocationsUrl);
 	}
 
 	public void setProgramLocationsUrl(String programLocationsUrl) {
@@ -18,7 +19,7 @@ public class FieldbookProperties {
 	}
 
 	public String getProgramBreedingMethodsUrl() {
-		return programBreedingMethodsUrl;
+		return WorkbenchAppPathResolver.getFullWebAddress(programBreedingMethodsUrl);
 	}
 
 	public void setProgramBreedingMethodsUrl(String programBreedingMethodsUrl) {
@@ -26,7 +27,7 @@ public class FieldbookProperties {
 	}
 
 	public String getGermplasmImportUrl() {
-		return germplasmImportUrl;
+		return WorkbenchAppPathResolver.getFullWebAddress(germplasmImportUrl);
 	}
 
 	public void setGermplasmImportUrl(String germplasmImportUrl) {
@@ -34,7 +35,7 @@ public class FieldbookProperties {
 	}
 
 	public String getGermplasmDetailsUrl() {
-		return germplasmDetailsUrl;
+		return WorkbenchAppPathResolver.getFullWebAddress(germplasmDetailsUrl);
 	}
 
 	public void setGermplasmDetailsUrl(String germplasmDetailsUrl) {

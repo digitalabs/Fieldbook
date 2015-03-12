@@ -86,13 +86,13 @@
 
 
     <!-- Application Beans -->
-
-    <bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
+    <bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties" scope="request">
         <property name="programLocationsUrl" value="${url.program.locations}"/>
         <property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}"/>
         <property name="germplasmImportUrl" value="${url.germplasm.import}"/>
         <property name="germplasmDetailsUrl" value="${url.germplasm.details}"/>
         <property name="uploadDirectory" value="${upload.directory}"/>
+        <aop:scoped-proxy/>
     </bean>
 
     <bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl">

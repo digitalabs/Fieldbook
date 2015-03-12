@@ -65,9 +65,6 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     @Resource
     private InventoryService inventoryMiddlewareService;
     
-    @Resource
-    private WorkbenchService workbenchService;
-    
     /** The message source. */
     @Autowired
     public MessageSource messageSource;
@@ -120,7 +117,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<>();
     }
     
     @ModelAttribute("scaleList")
@@ -131,7 +128,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
         
-        return null;
+        return new ArrayList<>();
     }
     
     /**

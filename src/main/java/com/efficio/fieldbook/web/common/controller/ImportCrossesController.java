@@ -1,20 +1,17 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,12 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(ImportCrossesController.URL)
@@ -42,12 +38,6 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 	@Resource
 	private CrossingService crossingService;
 
-	/**
-	 * The message source.
-	 */
-	@Resource
-	private ResourceBundleMessageSource messageSource;
-	
 	@Autowired
 	private OntologyDataManager ontologyDataManager;
 
@@ -64,25 +54,18 @@ public class ImportCrossesController extends AbstractBaseFieldbookController {
 		Map<String, Object> resultsMap = new HashMap<>();
 
 		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
-		ImportedCrossesList parseResults = crossingService.parseFile(form.getFile());
+		ImportedCrossesList parseResults = null;
+		try {
+			parseResults = crossingService.parseFile(form.getFile());
 
-		// 2. Store the crosses to study selection if all validated
-		if (parseResults.getErrorMessages().isEmpty()) {
 			studySelection.setimportedCrossesList(parseResults);
 
 			resultsMap.put("isSuccess", 1);
-
-		} else {
+		} catch (FileParsingException e) {
 			resultsMap.put("isSuccess", 0);
 
 			// error messages is still in .prop format,
-			Set<String> errorMessages = new HashSet<>();
-			for (String error : parseResults.getErrorMessages()) {
-				errorMessages.add(messageSource.getMessage(error,new String[]{},error,
-						LocaleContextHolder.getLocale()));
-			}
-
-			resultsMap.put("error",errorMessages);
+			resultsMap.put("error", new String[] {e.getMessage()});
 		}
 
 		return resultsMap;

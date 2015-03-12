@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.common.service;
 
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 
 import org.generationcp.commons.settings.CrossSetting;
@@ -11,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface CrossingService {
 
-	ImportedCrossesList parseFile(MultipartFile file);
+	ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException;
 
 	void applyCrossSetting(CrossSetting crossingSetting, ImportedCrossesList importedCrossesList, Integer userId) throws MiddlewareQueryException;
 	

@@ -389,6 +389,11 @@
 		<div id="crossImport" th:include="/Common/includes/crossingImportPresets"/>
 	</div>
 </div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div th:include="/Common/includes/importAdvanceInventory"/>
+	</div>
+</div>
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -584,6 +589,12 @@
 			    	$(this).data('has-loaded', '1');
 			    	displayAdvanceList($(this).data('list-id'), $(this).data('list-id'), '', true);
 			    }
+			});
+			$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+				if ($('.import-advance-inventory').data('data-import') === '1') {
+					showAlertMessage('', importSaveDataWarningMessage);
+					e.preventDefault();
+				}
 			});
 		});		
 

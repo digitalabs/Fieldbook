@@ -54,7 +54,7 @@ public class CrossingSettingsControllerTest {
 	public static final String SETTING_PREFIX = "PRE";
 	public static final String SETTING_SEPARATOR = "-";
 	public static final Integer TEST_PROGRAM_PRESET_ID = 1;
-	public static final int TEST_PROGRAM_ID = 2;
+	public static final String TEST_PROGRAM_ID = "2";
 	public static final int DUMMY_STUDY_ID = 2;
 	public static final int DUMMY_TOOL_ID = 2;
 	public static final int NUMBER_OF_MONTHS = 12;

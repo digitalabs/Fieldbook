@@ -313,10 +313,6 @@
         <aop:scoped-proxy/>
     </bean>
 
-	<bean id="crossNameService" class="org.generationcp.commons.service.impl.CrossNameServiceImpl">
-	        <aop:scoped-proxy/>
-	</bean>
-
     <bean id="crossingTemplateParser"
           class="com.efficio.fieldbook.web.common.service.impl.CrossingTemplateParser"
           scope="request">

@@ -9,10 +9,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,7 +28,7 @@ import java.util.Map;
 public class ImportCrossesController extends AbstractBaseFieldbookController {
 
 	public static final String URL = "/import/crosses";
-	private static final Logger LOG = LoggerFactory.getLogger(ImportCrossesController.class);
+
 	@Resource
 	private UserSelection studySelection;
 

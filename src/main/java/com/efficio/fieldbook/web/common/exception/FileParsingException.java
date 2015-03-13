@@ -8,17 +8,17 @@ package com.efficio.fieldbook.web.common.exception;
  */
 public class FileParsingException extends Exception{
 
-	private String message;
-	private int errorRowIndex;
-	private String errorValue;
-	private String errorColumn;
+	private final String message;
+	private final int errorRowIndex;
+	private final String errorValue;
+	private final String errorColumn;
 
 	public FileParsingException() {
-		super();
+		this(null, 0, null, null);
 	}
 
 	public FileParsingException(String message) {
-		this.message = message;
+		this(message, 0, null, null);
 	}
 
 	public FileParsingException(String message, int errorRowIndex, String errorValue,

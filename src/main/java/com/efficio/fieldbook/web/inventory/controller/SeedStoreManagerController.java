@@ -1,24 +1,16 @@
 package com.efficio.fieldbook.web.inventory.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
+import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.ims.LotsResult;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -29,20 +21,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
-import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 /**
  * The Class ManageNurseriesController.
@@ -97,7 +81,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<>();
     }
     /**
      * Gets the favorite location list.
@@ -109,10 +93,8 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         try {
             
             List<Long> locationsIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds();
-            List<Location> dataTypes = fieldbookMiddlewareService
+            return fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
-            
-            return dataTypes;
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -134,7 +116,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     /**
      * Shows the manage nurseries screen
      *
-     * @param manageNurseriesForm the manage nurseries form
+     * @param form the manage nurseries form
      * @param model the model
      * @param session the session
      * @return the string
@@ -215,7 +197,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         
         try {
         	
-            LotsResult lotsResult = inventoryMiddlewareService.addAdvanceLots(gidList, 
+            inventoryMiddlewareService.addAdvanceLots(gidList,
             		form.getInventoryLocationId(),form.getInventoryScaleId(), 
             		form.getInventoryComments(), this.getCurrentIbdbUserId(),
             		form.getAmount(), form.getListId());

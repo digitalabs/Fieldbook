@@ -41,7 +41,7 @@ import java.util.Map;
 public class ImportAdvanceInventoryController extends AbstractBaseFieldbookController {
 	public static final String URL = "/importAdvanceInventory";
 
-	private static final String IS_SUCCESS = "isSuccess";
+	public static final String IS_SUCCESS = "isSuccess";
 
 	public static final String IS_OVERWRITE = "isOverwrite";
 
@@ -74,7 +74,6 @@ public class ImportAdvanceInventoryController extends AbstractBaseFieldbookContr
 
 			List<InventoryDetails> listInventoryDetails = inventoryService.getInventoryDetailsByGermplasmList(importAdvanceInventoryForm.getTargetListId(),
 								GermplasmListType.ADVANCED.name());
-			// 2. Store the crosses to study selection if all validated
 
 			boolean warnOfOverwrite = importInventoryService.mergeImportedData(listInventoryDetails, importedData);
 
@@ -107,12 +106,7 @@ public class ImportAdvanceInventoryController extends AbstractBaseFieldbookContr
 		final ContextInfo contextInfo = (ContextInfo) WebUtils
 						.getSessionAttribute(request,
 								ContextConstants.SESSION_ATTR_CONTEXT_INFO);
-		Integer currentUserID;
-		if (contextInfo != null) {
-			currentUserID = contextInfo.getloggedInUserId();
-		} else {
-			currentUserID = 1;
-		}
+		Integer currentUserID = contextInfo.getloggedInUserId();
 
 		Map<String, Object> resultMap = new HashMap<>();
 		try {

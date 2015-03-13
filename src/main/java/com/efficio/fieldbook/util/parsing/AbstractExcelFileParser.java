@@ -5,14 +5,14 @@ import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.util.PoiUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,11 +21,12 @@ import java.util.Map;
  * Time: 5:38 PM
  */
 public abstract class AbstractExcelFileParser<T> {
-
+	private static final Logger LOG = LoggerFactory.getLogger(
+			AbstractExcelFileParser.class);
 	protected Workbook workbook;
 	protected String originalFilename;
 
-	protected final String[] EXCEL_FILE_EXTENSIONS = new String[] {"xls", "xlsx"};
+	protected final static String[] EXCEL_FILE_EXTENSIONS = new String[] {"xls", "xlsx"};
 
 	@Resource
 	protected FileService fileService;
@@ -33,15 +34,8 @@ public abstract class AbstractExcelFileParser<T> {
 	@Resource
 	protected MessageSource messageSource;
 
-
-	public T parseFile(MultipartFile file) throws FileParsingException{
-		try {
-			this.workbook = storeAndRetrieveWorkbook(file);
-		} catch (IOException | InvalidFormatException e) {
-			throw new FileParsingException(messageSource.getMessage("common.error.invalid.file", new Object[] {},
-					Locale.getDefault()));
-		}
-
+	public T parseFile(MultipartFile file) throws FileParsingException {
+		this.workbook = storeAndRetrieveWorkbook(file);
 		return parseWorkbook(workbook);
 	}
 
@@ -52,16 +46,22 @@ public abstract class AbstractExcelFileParser<T> {
 	public abstract T parseWorkbook(Workbook workbook) throws FileParsingException;
 
 	public Workbook storeAndRetrieveWorkbook(MultipartFile multipartFile)
-			throws IOException, InvalidFormatException {
-		this.originalFilename = multipartFile.getOriginalFilename();
+			throws FileParsingException {
+		try {
+			this.originalFilename = multipartFile.getOriginalFilename();
 
-		if (!isFileExtensionSupported(originalFilename)) {
-			throw new InvalidFormatException("Unsupported file format");
+			if (!isFileExtensionSupported(originalFilename)) {
+				throw new InvalidFormatException("Unsupported file format");
+			}
+
+			String serverFilename = fileService.saveTemporaryFile(multipartFile.getInputStream());
+
+			return fileService.retrieveWorkbook(serverFilename);
+		} catch (InvalidFormatException | IOException e) {
+			LOG.debug(e.getMessage(), e);
+			throw new FileParsingException(messageSource.getMessage("common.error.invalid.file", new Object[] {},
+								Locale.getDefault()));
 		}
-
-		String serverFilename = fileService.saveTemporaryFile(multipartFile.getInputStream());
-
-		return fileService.retrieveWorkbook(serverFilename);
 	}
 
 	protected boolean isFileExtensionSupported(String filename) {
@@ -121,14 +121,4 @@ public abstract class AbstractExcelFileParser<T> {
 		return PoiUtil.rowIsEmpty(workbook.getSheetAt(sheetNo), rowNo, 0, colCount - 1);
 	}
 
-	public Map<String, Integer> convertToHeaderColumnMap(String[] headers) {
-		Map<String, Integer> headerColumnMap = new HashMap<>();
-
-		int i = 1;
-		for (String header : headers) {
-			headerColumnMap.put(header, i++);
-		}
-
-		return headerColumnMap;
-	}
 }

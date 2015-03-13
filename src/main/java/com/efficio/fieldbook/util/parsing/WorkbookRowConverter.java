@@ -46,7 +46,7 @@ public abstract class WorkbookRowConverter<T> {
 		List<T> valueList = new ArrayList<>();
 
 		do {
-			if (PoiUtil.rowIsEmpty(workbook.getSheetAt(targetSheetIndex), currentIndex, 0, columnCount - 1)) {
+			if (isRowEmpty(targetSheetIndex, currentIndex, columnCount - 1)) {
 				currentRowValue = null;
 				continue;
 			}
@@ -94,6 +94,10 @@ public abstract class WorkbookRowConverter<T> {
 				"" :
 				PoiUtil.getCellStringValue(this.workbook, sheetNo, rowNo, columnNo);
 		return (null == out) ? "" : out;
+	}
+
+	public boolean isRowEmpty(int sheetNo, int rowNo, int maxColumns) {
+		return PoiUtil.rowIsEmpty(this.workbook.getSheetAt(sheetNo), rowNo, 0, maxColumns);
 	}
 
 	public void setValidationMap(ParseValidationMap validationMap) {

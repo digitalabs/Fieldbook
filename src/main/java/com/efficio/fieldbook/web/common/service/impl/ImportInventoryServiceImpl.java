@@ -6,8 +6,6 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedInventoryList;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.InventoryDataManagerImpl;
-import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.springframework.web.multipart.MultipartFile;
 

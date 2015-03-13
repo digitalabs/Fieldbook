@@ -50,9 +50,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 	}
 
 	public static final int INVENTORY_SHEET = 0;
-	public static String[] HEADER_LABEL_ARRAY = convertEnumToStringArray();
+	public static final String[] HEADER_LABEL_ARRAY = convertEnumToStringArray();
 
-	public static int[] INVENTORY_SPECIFIC_COLUMNS =
+	public static final int[] INVENTORY_SPECIFIC_COLUMNS =
 			new int[] {
 					InventoryHeaderLabels.LOCATION.ordinal(),
 					InventoryHeaderLabels.AMOUNT.ordinal(),

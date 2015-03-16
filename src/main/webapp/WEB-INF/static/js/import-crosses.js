@@ -525,6 +525,7 @@ var ImportCrosses = {
 
 $(document).ready(function() {
 	$('.import-crosses').on('click', ImportCrosses.showPopup);
+	$('.export-crosses-action').off('click');
     $('.export-crosses-action').on('click', ImportCrosses.downloadCrosses);
 
     $('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);

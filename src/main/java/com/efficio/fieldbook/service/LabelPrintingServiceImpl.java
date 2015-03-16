@@ -12,9 +12,17 @@
 package com.efficio.fieldbook.service;
 
 import java.awt.Color;
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -76,10 +84,10 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.lowagie.text.*;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-
 
 /**
  * The Class LabelPrintingServiceImpl.
@@ -144,13 +152,30 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
     @Resource
     private InventoryService inventoryMiddlewareService;
+    
+    private String UNSUPPORTED_CHARSET_IMG = "unsupported-char-set.png";
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
 	 */
 
+    private String ARIAL_UNI = "arialuni.ttf";
+    
     public LabelPrintingServiceImpl(){
     	super();
+    }
+    
+    protected BitMatrix encodeBarcode(String barcodeLabelForCode, int width, int height){
+    	BitMatrix bitMatrix = null;
+		try {
+			bitMatrix = new Code128Writer().encode(barcodeLabelForCode,
+			        BarcodeFormat.CODE_128, width, height, null);
+		} catch (WriterException e) {
+			LOG.debug(e.getMessage(), e);
+		}catch(IllegalArgumentException e){
+        	LOG.debug(e.getMessage(), e);
+        }
+    	return bitMatrix;
     }
     
     /* (non-Javadoc)
@@ -249,17 +274,24 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         throw new LabelPrintingException("label.printing.label.too.long",
                                 barcodeLabelForCode, "label.printing.label.too.long");
                     }
-                    BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabelForCode,
-                            BarcodeFormat.CODE_128, width, height, null);
-                    String imageLocation = System.getProperty("user.home")
-                            + "/" + Math.random() + ".png";
-                    File imageFile = new File(imageLocation);
-                    FileOutputStream fout = new FileOutputStream(imageFile);
-                    MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
-                    filesToBeDeleted.add(imageFile);
-
-                    Image mainImage = Image.getInstance(imageLocation);
-
+                    
+                    Image mainImage = Image.getInstance(LabelPrintingServiceImpl.class.getClassLoader().getResource(UNSUPPORTED_CHARSET_IMG));
+                    FileOutputStream fout = null;
+                    
+                	BitMatrix bitMatrix = encodeBarcode(barcodeLabelForCode, width, height);
+                	if(bitMatrix != null){
+	                	String imageLocation = System.getProperty("user.home")
+	                        + "/" + Math.random() + ".png";
+	                	File imageFile = new File(imageLocation);
+	                    fout = new FileOutputStream(imageFile);
+	                    MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
+	                    filesToBeDeleted.add(imageFile);
+	
+	                    mainImage = Image.getInstance(imageLocation);
+                	}
+                   
+                    
+                    
                     PdfPCell cell = new PdfPCell();
                     cell.setFixedHeight(cellHeight);
                     cell.setNoWrap(false);
@@ -283,8 +315,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                     float fontSize = paper.getFontSize();
 
-                    Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
-
+                    BaseFont unicode = BaseFont.createFont(ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                    Font fontNormal = new Font(unicode, fontSize) ;
+                    fontNormal.setStyle(Font.NORMAL);
+                    
                     cell.addElement(innerImageTableInfo);
                     cell.addElement(new Paragraph());
                     for (int row = 0; row < 5; row++) {
@@ -292,9 +326,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             PdfPTable innerDataTableInfo = new PdfPTable(1);
                             innerDataTableInfo.setWidths(new float[] { 1 });
                             innerDataTableInfo.setWidthPercentage(85);
-
-                            Font fontNormalData = FontFactory
-                                    .getFont("Arial", 5.0f, Font.NORMAL);
+                            
+                            Font fontNormalData = new Font(unicode, 5.0f) ;
+                            fontNormal.setStyle(Font.NORMAL);
+                            
+                                    
                             PdfPCell cellInnerData = new PdfPCell(
                                     new Phrase(barcodeLabel, fontNormalData));
 
@@ -379,8 +415,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         // we go the next page
                         document.newPage();
                     }
-                    fout.flush();
-                    fout.close();
+                    if(fout != null){
+	                    fout.flush();
+	                    fout.close();
+                    }
 
                 }
             }

@@ -55,7 +55,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 	public static final String GERPLASM_TYPE_LST = "LST";
 
 	@ResponseBody
-	@RequestMapping(value = "/exportGermplasmList/{exportType}/{studyType}", method = RequestMethod.GET)
+	@RequestMapping(value = "/exportGermplasmList/{exportType}/{studyType}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public String exportGermplasmList(
 			@ModelAttribute("exportGermplasmListForm") ExportGermplasmListForm exportGermplasmListForm,
 			@PathVariable int exportType,

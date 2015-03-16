@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
@@ -64,6 +65,7 @@ import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 import org.springframework.web.util.WebUtils;
 
@@ -273,9 +275,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
                 fileName += "-" + currentDate;
             }
         }
-
-        fileName = fileName.replaceAll("[^a-zA-Z0-9\\-_\\.=^&'@{}$!-#()%.+~_\\[\\]]", "_");
-        fileName = fileName.replaceAll("\"", "_");
+        fileName = SettingsUtil.cleanSheetAndFileName(fileName);
 
         return fileName;
     }
@@ -288,7 +288,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
      */
     @ResponseBody
     @RequestMapping(value="/download", method = RequestMethod.GET)
-    public String exportFile(HttpServletResponse response) {
+    public String exportFile(HttpServletRequest req, HttpServletResponse response) {
 
         String fileName = this.userLabelPrinting.getFilenameDL();
 
@@ -297,8 +297,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         } else {
         	response.setContentType("application/vnd.ms-excel");
         }
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-
+        response.setHeader("Content-disposition", "attachment; filename=" + FieldbookUtil.getDownloadFileName(fileName, req));
+        response.setCharacterEncoding("UTF-8");
         // the selected name + current date
         File xls = new File(this.userLabelPrinting.getFilenameDLLocation());
         FileInputStream in;

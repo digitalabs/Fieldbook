@@ -1,10 +1,13 @@
 package com.efficio.fieldbook.util;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -24,7 +27,9 @@ public class FieldbookUtil {
 	private static FieldbookUtil instance;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
-
+	private static final char[] HEX_CHARS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+        'C', 'D', 'E', 'F' };
+	
 	static {
 		instance = new FieldbookUtil();
 	}
@@ -69,5 +74,28 @@ public class FieldbookUtil {
 	    	if(!columnOrdersList.isEmpty()){
 	    		workbook.setColumnOrderedLists(columnOrdersList);
 	    	}
-   }		
+   }
+	
+    /**
+    return encoded file name
+     */
+  public static String getDownloadFileName(String filename, HttpServletRequest request) {
+      try{
+          if (request.getHeader("User-Agent").indexOf("MSIE") != -1) {
+              return '\"' + java.net.URLEncoder.encode(filename, "UTF-8") + '\"';
+          }
+          byte[] bytes = filename.getBytes("UTF-8");
+          StringBuilder buff = new StringBuilder(bytes.length << 2);
+          buff.append("=?UTF-8?Q?");
+          for (byte b : bytes) {
+              int unsignedByte = b & 0xFF;
+              buff.append('=').append(HEX_CHARS[unsignedByte >> 4]).append(HEX_CHARS[unsignedByte & 0xF]);
+          }
+          return buff.append("?=").toString();
+      }catch(UnsupportedEncodingException e){
+          return filename;
+      }
+  }
+
+  
 }

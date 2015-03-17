@@ -10,12 +10,19 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+
+import static org.mockito.Mockito.*;
 
 public class ExcelImportStudyServiceImplTest {
 	
@@ -25,7 +32,7 @@ public class ExcelImportStudyServiceImplTest {
 	
 	@Before
 	public void setUp(){
-		importStudy = new ExcelImportStudyServiceImpl();
+		importStudy = spy(new ExcelImportStudyServiceImpl());
 	}
 	
 	@Test
@@ -202,4 +209,208 @@ public class ExcelImportStudyServiceImplTest {
 		boolean resp = importStudy.hasCellValue(null);
 		Assert.assertFalse("Should return false since cell is null", resp);
 	}
+	
+	@Test
+	public void testIsPropertyScaleMethodLabelCellNotNull_ReturnsTrueIfAllFieldsIsNotNull(){
+		Cell propertyCell = Mockito.mock(Cell.class);
+		Cell scaleCell = Mockito.mock(Cell.class);
+		Cell methodCell = Mockito.mock(Cell.class);
+		Cell labelCell = Mockito.mock(Cell.class);
+		
+		Assert.assertTrue("Expecting to return true if Property,Scale,Method,Label is not null but didn't.",
+				importStudy.isPropertyScaleMethodLabelCellNotNull(propertyCell, scaleCell, methodCell, labelCell));
+		
+	}
+	
+	@Test
+	public void testIsPropertyScaleMethodLabelCellNotNull_ReturnsFalseIfAtLeastOneFieldIsNull(){
+		Cell propertyCell = Mockito.mock(Cell.class);
+		Cell scaleCell = Mockito.mock(Cell.class);
+		Cell methodCell = Mockito.mock(Cell.class);
+		Cell labelCell = null;
+		
+		Assert.assertFalse("Expecting to return false if at least 1 field from Property,Scale,Method,Label is null but didn't.",
+				importStudy.isPropertyScaleMethodLabelCellNotNull(propertyCell, scaleCell, methodCell, labelCell));
+		
+	}
+	
+	@Test
+	public void testIsPropertyScaleMethodLabelCellHasStringValue_ReturnsTrueIfAllFieldsHasStringValue(){
+		Cell propertyCell = Mockito.mock(Cell.class);
+		Cell scaleCell = Mockito.mock(Cell.class);
+		Cell methodCell = Mockito.mock(Cell.class);
+		Cell labelCell = Mockito.mock(Cell.class);
+		
+		doReturn("Property").when(propertyCell).getStringCellValue();
+		doReturn("Scale").when(scaleCell).getStringCellValue();
+		doReturn("Method").when(methodCell).getStringCellValue();
+		doReturn("Label").when(labelCell).getStringCellValue();
+		
+		Assert.assertTrue("Expecting to return true if Property,Scale,Method,Label have string value but didn't.",
+				importStudy.isPropertyScaleMethodLabelCellHasStringValue(propertyCell, scaleCell, methodCell, labelCell));
+	}
+	
+	@Test
+	public void testIsPropertyScaleMethodLabelCellHasStringValue_ReturnsFalseIfAtLeastOneFromFieldsHasNoStringValue(){
+		Cell propertyCell = Mockito.mock(Cell.class);
+		Cell scaleCell = Mockito.mock(Cell.class);
+		Cell methodCell = Mockito.mock(Cell.class);
+		Cell labelCell = Mockito.mock(Cell.class);
+		
+		doReturn("Property").when(propertyCell).getStringCellValue();
+		doReturn("Scale").when(scaleCell).getStringCellValue();
+		doReturn("Method").when(methodCell).getStringCellValue();
+		doReturn(null).when(labelCell).getStringCellValue();
+		
+		Assert.assertFalse("Expecting to return false if at least one from Property,Scale,Method,Label has no string value but didn't.",
+				importStudy.isPropertyScaleMethodLabelCellHasStringValue(propertyCell, scaleCell, methodCell, labelCell));
+	}
+	
+	@Test
+	public void testGetTrialInstanceNumber_ForNursery() throws WorkbookParserException{
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		
+		org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.","1", importStudy.getTrialInstanceNumber(workbook, xlsBook));
+	}
+	
+	@Test
+	public void testGetTrialInstanceNumber_ForTrial() throws WorkbookParserException {
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		
+		org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		
+		String toBeReturned = "2";
+		doReturn(toBeReturned).when(importStudy).getTrialInstanceNumber(xlsBook);
+		
+		Assert.assertEquals("Expecting to return the value returned from the getTrialInstaceNumber method but didn't.",
+				toBeReturned, importStudy.getTrialInstanceNumber(workbook, xlsBook));
+	}
+	
+	@Test
+	public void testGetTrialInstanceNumber_ForTrial_ReturnsExceptionForNullTrialInstance() {
+		WorkbookDataUtil.setTestWorkbook(null);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
+		
+		org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		
+		doReturn(null).when(importStudy).getTrialInstanceNumber(xlsBook);
+		
+		try {
+			importStudy.getTrialInstanceNumber(workbook, xlsBook);
+			Assert.fail("Expecting to return an exception when the trial instance from the xls file is null but didn't.");
+		} catch (WorkbookParserException e) {
+			// do nothing
+		}
+	}
+	
+	@Test
+	public void testGetXlsValue_MeasurementRowIsNull(){
+		MeasurementRow temp = null;
+		MeasurementVariable var = new MeasurementVariable();
+		MeasurementVariable origVar = new MeasurementVariable();
+		MeasurementData data = new MeasurementData();
+		
+		String expectedValue = "tempValue";
+		var.setValue(expectedValue);
+		Assert.assertEquals("Expecting to return the value from var when the measurement row is null but didn't.",expectedValue,importStudy.getXlsValue(var, temp, data, origVar));
+	}
+	
+	@Test
+	public void testGetXlsValue_OrigVarPossibleValuesIsNull(){
+		MeasurementRow temp = new MeasurementRow();
+		MeasurementVariable var = new MeasurementVariable();
+		MeasurementVariable origVar = new MeasurementVariable();
+		MeasurementData data = new MeasurementData();
+		
+		origVar.setPossibleValues(null);
+		
+		String expectedValue = "tempValue";
+		var.setValue(expectedValue);
+		Assert.assertEquals("Expecting to return the value from var when the origVar's possible value is null but didn't.",expectedValue,importStudy.getXlsValue(var, temp, data, origVar));
+	}
+	
+	@Test
+	public void testGetXlsValue_OrigVarPossibleValuesIsEmpty(){
+		MeasurementRow temp = new MeasurementRow();
+		MeasurementVariable var = new MeasurementVariable();
+		MeasurementVariable origVar = new MeasurementVariable();
+		MeasurementData data = new MeasurementData();
+		
+		origVar.setPossibleValues(new ArrayList<ValueReference>());
+		
+		String expectedValue = "tempValue";
+		var.setValue(expectedValue);
+		Assert.assertEquals("Expecting to return the value from var when the origVar's possible value is empty but didn't.",expectedValue,importStudy.getXlsValue(var, temp, data, origVar));
+	}
+	
+	@Test
+	public void testGetXlsValue_ReturnsXlsValueFromCategoricalVariablePossibleValues(){
+		MeasurementRow temp = new MeasurementRow();
+		MeasurementVariable var = new MeasurementVariable();
+		MeasurementVariable origVar = new MeasurementVariable();
+		MeasurementData data = new MeasurementData();
+		
+		var.setValue("tempValue");
+		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
+		possibleValues.add(new ValueReference());
+		origVar.setPossibleValues(possibleValues);
+		origVar.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
+		
+		String expectedValue = "ExpectedXlsValue";
+		doReturn(expectedValue).when(importStudy).getCategoricalIdCellValue(var, origVar);
+		
+		Assert.assertEquals("Expecting to return the value from getCategoricalIdCellValue() but didn't.",expectedValue,importStudy.getXlsValue(var, temp, data, origVar));
+	}
+	
+	@Test
+	public void testIsMatchingPropertyScaleMethodLabel_ReturnsTrueIfAllFieldsValueAreMatched(){
+		String propertyVal = "Property";
+		String scaleVal = "Scale";
+		String methodVal = "Method";
+		String labelVal = "Label";
+		
+		MeasurementVariable var = new MeasurementVariable();
+		var.setProperty(propertyVal);
+		var.setScale(scaleVal);
+		var.setMethod(methodVal);
+		var.setLabel(labelVal);
+		
+		MeasurementVariable temp = new MeasurementVariable();
+		temp.setProperty(propertyVal);
+		temp.setScale(scaleVal);
+		temp.setMethod(methodVal);
+		temp.setLabel(labelVal);
+		
+		
+		Assert.assertTrue("Expecting to return true if all values of property, scale, method and label of two measurement variables are the same.",
+				importStudy.isMatchingPropertyScaleMethodLabel(var, temp));
+	}
+	
+	@Test
+	public void testIsMatchingPropertyScaleMethodLabel_ReturnsFalseIfAtLeast1FromFieldsValueAreNotMatched(){
+		String propertyVal = "Property";
+		String scaleVal = "Scale";
+		String methodVal = "Method";
+		String labelVal = "Label";
+		
+		MeasurementVariable var = new MeasurementVariable();
+		var.setProperty(propertyVal);
+		var.setScale(scaleVal);
+		var.setMethod(methodVal);
+		var.setLabel(labelVal);
+		
+		MeasurementVariable temp = new MeasurementVariable();
+		temp.setProperty(propertyVal);
+		temp.setScale(scaleVal);
+		temp.setMethod(methodVal);
+		temp.setLabel(labelVal + "deviation");
+		
+		Assert.assertFalse("Expecting to return false if at least 1 value from property, scale, method and label of two measurement variables are not the same.",
+				importStudy.isMatchingPropertyScaleMethodLabel(var, temp));
+	}
+	
+	
 }

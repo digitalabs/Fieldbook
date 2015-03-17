@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +43,49 @@ public class KsuFieldbookUtil {
 	private static final String TEXT_FORMAT = "text";
 	
 	
-	private static final Map<Integer, String> idNameMap;
-	
+	private static final Map<Integer, String> ID_NAME_MAP;
+
 	static {
-		idNameMap = new HashMap<Integer, String>();
-		idNameMap.put(TERM_PLOT_ID, PLOT_ID);
-		idNameMap.put(TERM_RANGE, RANGE);
-		idNameMap.put(TERM_PLOT1, PLOT);
-		idNameMap.put(TERM_PLOT2, PLOT);
+		ID_NAME_MAP = new HashMap<Integer, String>();
+		ID_NAME_MAP.put(TERM_PLOT_ID, PLOT_ID);
+		ID_NAME_MAP.put(TERM_RANGE, RANGE);
+		ID_NAME_MAP.put(TERM_PLOT1, PLOT);
+		ID_NAME_MAP.put(TERM_PLOT2, PLOT);
+	}
+	
+	public enum KsuRequiredColumnEnum {
+		ENTRY_NO(TermId.ENTRY_NO.getId(),"ENTRY_NO"),
+		PLOT_NO(TermId.PLOT_NO.getId(),PLOT),
+		GID(TermId.GID.getId(),"GID"),
+		DESIGNATION(TermId.DESIG.getId(),"DESIGNATION");
+		
+		private Integer id;
+		private String label;
+		
+		private static final Map<Integer, KsuRequiredColumnEnum> LOOK_UP = new HashMap<>();
+		
+		static {
+		      for(KsuRequiredColumnEnum cl : EnumSet.allOf(KsuRequiredColumnEnum.class)){
+		           LOOK_UP.put(cl.getId(), cl);
+		      }
+		 }
+		
+		KsuRequiredColumnEnum(Integer id, String label) {
+			this.id = id;
+			this.label = label;
+		}
+
+		public Integer getId() {
+			return id;
+		}
+		
+		public String getLabel() {
+			return label;
+		}
+		
+		public static KsuRequiredColumnEnum get(Integer id) { 
+	        return LOOK_UP.get(id); 
+	    }
 	}
 	
 	public static List<List<String>> convertWorkbookData(List<MeasurementRow> observations, List<MeasurementVariable> variables) {
@@ -105,8 +141,8 @@ public class KsuFieldbookUtil {
 				if (isFactor == null 
 						|| (isFactor != null && (isFactor && header.isFactor() || !isFactor && !header.isFactor()))) {
 					
-					if (idNameMap.get(header.getTermId()) != null) {
-						names.add(idNameMap.get(header.getTermId()));
+					if (ID_NAME_MAP.get(header.getTermId()) != null) {
+						names.add(ID_NAME_MAP.get(header.getTermId()));
 					} else {
 						names.add(header.getName());
 					}
@@ -115,6 +151,34 @@ public class KsuFieldbookUtil {
 		}
 
 		return names;
+	}
+	
+	public static boolean isValidHeaderNames(String[] headerNames){
+		Map<String,Boolean> requiredColumns = new HashMap<String,Boolean>();
+		
+		for(String headerName: headerNames){
+			if(isARequiredColumn(headerName)){
+				requiredColumns.put(headerName, true);
+			}
+		}
+		
+		// check if all required columns are present
+		Integer numberOfRequiredColumnPreset = 0;
+		for(Boolean isPresent : requiredColumns.values()){
+			if(isPresent){
+				numberOfRequiredColumnPreset++;
+			}
+		}
+		return numberOfRequiredColumnPreset == 4;
+	}
+
+	protected static boolean isARequiredColumn(String headerName) {
+		for(KsuRequiredColumnEnum column : KsuRequiredColumnEnum.values()){
+			if(column.getLabel().equalsIgnoreCase(headerName)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static List<MeasurementVariable> getMeasurementLabels(List<Integer> factorIds, List<MeasurementVariable> variables) {
@@ -169,19 +233,20 @@ public class KsuFieldbookUtil {
             methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
             propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName(); 
         } catch(MiddlewareQueryException e) {
-            e.printStackTrace();
+        	LOG.error(e.getMessage(),e);
         }
 		
 		int index = 1;
 		for (MeasurementVariable trait : traits) {
 			List<String> traitData = new ArrayList<String>();
 			traitData.add(trait.getName());
-			if (trait.getDataTypeDisplay().equals("C")) {
+			if ("C".equalsIgnoreCase(trait.getDataTypeDisplay())) {
 				traitData.add(TEXT_FORMAT);
 			} else {
 				traitData.add(NUMERIC_FORMAT);
 			}
-			traitData.add(""); //default value
+			//default value
+			traitData.add(""); 
 			if (trait.getMinRange() != null) {
 				traitData.add(trait.getMinRange().toString());
 			} else {

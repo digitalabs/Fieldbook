@@ -25,6 +25,8 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -50,6 +52,7 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
@@ -60,9 +63,11 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @RequestMapping(ImportStudyController.URL)
 public class ImportStudyController extends AbstractBaseFieldbookController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ImportStudyController.class);
+    private static final String ERROR = "error";
+	private static final String IS_SUCCESS = "isSuccess";
+	private static final Logger LOG = LoggerFactory.getLogger(ImportStudyController.class);
     public static final String URL = "/ImportManager";
-    private String ADD_OR_REMOVE_TRAITS_HTML =  "/NurseryManager/addOrRemoveTraits";
+    private static final String ADD_OR_REMOVE_TRAITS_HTML =  "/NurseryManager/addOrRemoveTraits";
 
     @Resource
     private UserSelection studySelection;
@@ -73,11 +78,16 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     @Resource
     private FieldroidImportStudyService fieldroidImportStudyService;
     
-    @Resource
+    @Autowired
+    @Qualifier("excelImportStudyService")
     private ExcelImportStudyService excelImportStudyService;
     
     @Resource
     private DataKaptureImportStudyService dataKaptureImportStudyService;
+    
+    @Autowired
+    @Qualifier("ksuExcelImportStudyService")
+    private KsuExcelImportStudyService ksuExcelImportStudyService;
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
@@ -105,83 +115,15 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	boolean isTrial = ("TRIAL").equalsIgnoreCase(studyType);
     	ImportResult importResult = null;
     	UserSelection userSelection = getUserSelection(isTrial);
+    	
     	/**
     	 * Should always revert the data first to the original data here
     	 * we should move here that part the copies it to the original observation
     	 */
-    	
         WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
-    	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
-    		MultipartFile file = form.getFile();
-            if (file == null) {
-           	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
-            } else {
-                boolean isCSVFile = file.getOriginalFilename().contains(".csv");
-                if (!isCSVFile) {
-               	 	result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
-                }
-            }
-            if(!result.hasErrors()){
-	    		try {
-	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
-	    			
-	    			importResult = fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
-				} catch (WorkbookParserException e) {
-					LOG.error(e.getMessage(), e);
-					result.rejectValue("file", e.getMessage());
-				} catch (IOException e) {
-					LOG.error(e.getMessage(), e);
-				}
-            }
-    	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == importType){
-    		 MultipartFile file = form.getFile();
-             if (file == null) {
-            	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
-             } else {
-                 boolean isExcelFile = file.getOriginalFilename().contains(".xls") 
-                         || file.getOriginalFilename().contains(".xlsx");
-                 if (!isExcelFile) {
-                	 result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
-                 }
-             }
-             if(!result.hasErrors()){
-	    		try {
-	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
-	    			importResult = excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
-				} catch (WorkbookParserException e) {
-					LOG.error(e.getMessage(), e);
-					result.rejectValue("file", e.getMessage());
-				} catch (IOException e) {
-					LOG.error(e.getMessage(), e);
-				}
-             }
-
-    	}else if(AppConstants.IMPORT_DATAKAPTURE.getInt() == importType){
-    		
-       	 	MultipartFile file = form.getFile();
-            if (file == null) {
-           	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
-            } else {
-                boolean isCSVFile = file.getOriginalFilename().contains(".csv");
-                if (!isCSVFile) {
-               	 result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
-                }
-            }
-            if(!result.hasErrors()){
-	    		try {
-	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
-	    			
-	    			importResult = dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
-					
-				} catch (WorkbookParserException e) {
-					LOG.error(e.getMessage(), e);
-					result.rejectValue("file", e.getMessage());
-				} catch (IOException e) {
-					LOG.error(e.getMessage(), e);
-				}
-            }
-    	}
-
+        
+        importResult = importWorkbookByType(form.getFile(),result,userSelection.getWorkbook(),importType);
+    	
     	Locale locale = LocaleContextHolder.getLocale();
     	Map<String, Object> resultsMap = new HashMap<String,Object>();
     	resultsMap.put("hasDataOverwrite", userSelection.getWorkbook().hasExistingDataOverwrite() ? "1" : "0");
@@ -196,10 +138,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
 	    	
 	    	if(importResult.getErrorMessage() != null && !("").equalsIgnoreCase(importResult.getErrorMessage())){
-	    		resultsMap.put("isSuccess", 0);	    		
-	    		resultsMap.put("error", importResult.getErrorMessage());
+	    		resultsMap.put(IS_SUCCESS, 0);	    		
+	    		resultsMap.put(ERROR, importResult.getErrorMessage());
 	    	}else{
-	    		resultsMap.put("isSuccess", 1);
+	    		resultsMap.put(IS_SUCCESS, 1);
 		    	resultsMap.put("modes", importResult.getModes());
 		    	populateConfirmationMessages(importResult.getChangeDetails());
 		    	resultsMap.put("changeDetails", importResult.getChangeDetails());
@@ -226,12 +168,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	
 	    	
     	}else{
-    		resultsMap.put("isSuccess", 0);
+    		resultsMap.put(IS_SUCCESS, 0);
     		String errorCode = result.getFieldError("file").getCode();
     		try{
-    			resultsMap.put("error", messageSource.getMessage(errorCode, null, locale));
+    			resultsMap.put(ERROR, messageSource.getMessage(errorCode, null, locale));
     		}catch(NoSuchMessageException e){    			
-    			resultsMap.put("error", errorCode);
+    			resultsMap.put(ERROR, errorCode);
     			LOG.error(e.getMessage(), e);
     		}
     	}
@@ -239,24 +181,74 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	return super.convertObjectToJson(resultsMap);
     }
     
-    private List<List<ValueReference>> transformTrialObservations(List<MeasurementRow> trialObservations, List<SettingDetail> trialHeaders) {
+    protected ImportResult importWorkbookByType(MultipartFile file, 
+    		BindingResult result, Workbook workbook, Integer importType){
+    	ImportResult importResult = null;
+    	
+    	validateImportFile(file, result, importType);
+
+        if(!result.hasErrors()){
+    		try {
+    			String filename = fileService.saveTemporaryFile(file.getInputStream());
+    			if(AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
+    				importResult = fieldroidImportStudyService.importWorkbook(workbook, fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
+    			} else if(AppConstants.IMPORT_NURSERY_EXCEL.getInt() == importType){
+    				importResult = excelImportStudyService.importWorkbook(workbook, fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
+    			} else if(AppConstants.IMPORT_DATAKAPTURE.getInt() == importType){
+    				importResult = dataKaptureImportStudyService.importWorkbook(workbook, fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
+    			} else if(AppConstants.IMPORT_KSU_EXCEL.getInt() == importType){
+    				importResult = ksuExcelImportStudyService.importWorkbook(workbook, fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
+    			}
+    			
+			} catch (WorkbookParserException e) {
+				LOG.error(e.getMessage(), e);
+				result.rejectValue("file", e.getMessage());
+			} catch (IOException e) {
+				LOG.error(e.getMessage(), e);
+			}
+        }
+        
+        return importResult;
+    }
+    
+    protected void validateImportFile(MultipartFile file, BindingResult result, Integer importType) {
+        if (file == null) {
+        	result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
+        } else {
+        	if(AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType 
+        			|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType){
+	            boolean isCSVFile = file.getOriginalFilename().contains(".csv");
+	            if (!isCSVFile) {
+	           	 	result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
+	            }
+        	} else if(AppConstants.IMPORT_NURSERY_EXCEL.getInt() == importType
+        			|| AppConstants.IMPORT_KSU_EXCEL.getInt() == importType){
+        		boolean isExcelFile = file.getOriginalFilename().contains(".xls") 
+                        || file.getOriginalFilename().contains(".xlsx");
+                if (!isExcelFile) {
+               	 result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
+                }
+        	}
+        }
+	}
+    
+	private List<List<ValueReference>> transformTrialObservations(List<MeasurementRow> trialObservations, List<SettingDetail> trialHeaders) {
     	List<List<ValueReference>> list = new ArrayList<List<ValueReference>>();
-    	if (trialHeaders != null && !trialHeaders.isEmpty()) {
-	    	if (trialObservations != null && !trialObservations.isEmpty()) {
-	    		for (MeasurementRow row : trialObservations) {
-	        		List<ValueReference> refList = new ArrayList<ValueReference>();
-	        		for (SettingDetail header : trialHeaders) {
-	        			for (MeasurementData data : row.getDataList()) {
-	        				if (data.getMeasurementVariable() != null
-	        					&& data.getMeasurementVariable().getTermId() == header.getVariable().getCvTermId()) {
-	        					
-	        					refList.add(new ValueReference(data.getMeasurementVariable().getTermId(), data.getValue()));
-	        				}
-	        			}
-	        		}
-	        		list.add(refList);
-	    		}
-	    	}
+    	if (trialHeaders != null && !trialHeaders.isEmpty()
+    			&& trialObservations != null && !trialObservations.isEmpty()) {
+    		for (MeasurementRow row : trialObservations) {
+        		List<ValueReference> refList = new ArrayList<ValueReference>();
+        		for (SettingDetail header : trialHeaders) {
+        			for (MeasurementData data : row.getDataList()) {
+        				if (data.getMeasurementVariable() != null
+        					&& data.getMeasurementVariable().getTermId() == header.getVariable().getCvTermId()) {
+        					
+        					refList.add(new ValueReference(data.getMeasurementVariable().getTermId(), data.getValue()));
+        				}
+        			}
+        		}
+        		list.add(refList);
+    		}
     	}
     	return list;
     }
@@ -458,6 +450,31 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	map.put("newSelectionVariates", objectMapper.writeValueAsString(selectedVariates));
     	return map;
     }
-    
-    
+	public void setFileService(FileService fileService) {
+		this.fileService = fileService;
+	}
+	public void setFieldroidImportStudyService(
+			FieldroidImportStudyService fieldroidImportStudyService) {
+		this.fieldroidImportStudyService = fieldroidImportStudyService;
+	}
+	public void setExcelImportStudyService(
+			ExcelImportStudyService excelImportStudyService) {
+		this.excelImportStudyService = excelImportStudyService;
+	}
+	public void setDataKaptureImportStudyService(
+			DataKaptureImportStudyService dataKaptureImportStudyService) {
+		this.dataKaptureImportStudyService = dataKaptureImportStudyService;
+	}
+	public void setKsuExcelImportStudyService(
+			KsuExcelImportStudyService ksuExcelImportStudyService) {
+		this.ksuExcelImportStudyService = ksuExcelImportStudyService;
+	}
+	public void setFieldbookMiddlewareService(
+			FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
+	}
+	
 }

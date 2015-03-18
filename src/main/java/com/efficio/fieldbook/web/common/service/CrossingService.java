@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface CrossingService {
 
-	ImportedCrossesList parseFile(MultipartFile file);
+	ImportedCrossesList parseFile(MultipartFile file, String programUUID);
 
 	void applyCrossSetting(CrossSetting crossingSetting, ImportedCrossesList importedCrossesList, Integer userId) throws MiddlewareQueryException;
 	

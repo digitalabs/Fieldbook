@@ -136,13 +136,13 @@ public class CrossingSettingsControllerTest {
 		try {
 			CrossingSettingsController mole = spy(dut);
 			CrossSetting sampleSetting = constructCrossSetting();
-			doReturn(TEST_PROGRAM_ID).when(mole).getCurrentProgramID(any(HttpServletRequest.class));
+			doReturn(TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			doReturn(DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
 
 			doReturn(new ArrayList<ProgramPreset>()).when(presetDataManager).getProgramPresetFromProgramAndTool(anyString(), anyInt(), anyString());
 
 			ArgumentCaptor<ProgramPreset> param = ArgumentCaptor.forClass(ProgramPreset.class);
-			mole.submitAndSaveCrossSettings(constructCrossSetting(), request);
+			mole.submitAndSaveCrossSettings(constructCrossSetting());
 
 			verify(presetDataManager).saveOrUpdateProgramPreset(param.capture());
 
@@ -165,14 +165,14 @@ public class CrossingSettingsControllerTest {
 		try {
 			CrossingSettingsController mole = spy(dut);
 			CrossSetting sampleSetting = constructCrossSetting();
-			doReturn(TEST_PROGRAM_ID).when(mole).getCurrentProgramID(any(HttpServletRequest.class));
+			doReturn(TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			doReturn(DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
 
 			doReturn(constructDummyPresetList()).when(presetDataManager)
 					.getProgramPresetFromProgramAndTool(anyString(), anyInt(), anyString());
 
 			ArgumentCaptor<ProgramPreset> param = ArgumentCaptor.forClass(ProgramPreset.class);
-			mole.submitAndSaveCrossSettings(constructCrossSetting(), request);
+			mole.submitAndSaveCrossSettings(constructCrossSetting());
 
 			verify(presetDataManager).saveOrUpdateProgramPreset(param.capture());
 
@@ -222,13 +222,13 @@ public class CrossingSettingsControllerTest {
 	public void testRetrieveImportSettings() {
 		try {
 			CrossingSettingsController mole = spy(dut);
-			doReturn(TEST_PROGRAM_ID).when(mole).getCurrentProgramID(any(HttpServletRequest.class));
+			doReturn(TEST_PROGRAM_ID).when(mole).getCurrentProgramID();
 			doReturn(DUMMY_TOOL_ID).when(mole).getFieldbookToolID();
 
 			doReturn(constructDummyPresetList()).when(presetDataManager)
 					.getProgramPresetFromProgramAndTool(anyString(), anyInt(), anyString());
 
-			List<CrossImportSettings> output = mole.getAvailableCrossImportSettings(request);
+			List<CrossImportSettings> output = mole.getAvailableCrossImportSettings();
 			assertTrue(output.size() > 0);
 			CrossImportSettings setting = output.get(0);
 			assertEquals(TEST_SETTING_NAME, setting.getName());

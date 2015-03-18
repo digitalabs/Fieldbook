@@ -92,7 +92,7 @@ public class StudyTreeControllerTest extends AbstractBaseControllerIntegrationTe
     public void setUp() throws Exception {
     	controller = spy(studyTreeController);
     	selectedProject = createProject();
-    	when(controller.getProgramInContext()).thenReturn(selectedProject);
+    	when(controller.getCurrentProgramUUID()).thenReturn(selectedProject.getUniqueID());
     	mockFieldbookServiceAndItsMethods();
     }
 

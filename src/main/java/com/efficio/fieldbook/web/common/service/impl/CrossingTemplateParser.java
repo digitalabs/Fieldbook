@@ -73,13 +73,13 @@ public class CrossingTemplateParser {
 
 	}
 
-	public ImportedCrossesList parseFile(MultipartFile multipartFile) {
+	public ImportedCrossesList parseFile(MultipartFile multipartFile, String programUUID) {
 		try {
 			this.workbook = storeImportGermplasmWorkbook(multipartFile);
 
 			parseDescriptionSheet();
 
-			parseObservationSheet();
+			parseObservationSheet(programUUID);
 
 		} catch (IOException | ParseException | InvalidFormatException e) {
 			addParseErrorMsg(FILE_INVALID);
@@ -119,7 +119,7 @@ public class CrossingTemplateParser {
 	 *
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
-	protected void parseObservationSheet()
+	protected void parseObservationSheet(String programUUID)
 			throws MiddlewareQueryException {
 		if (isObservationsHeaderInvalid()) {
 			addParseErrorMsg(FILE_INVALID);
@@ -160,9 +160,9 @@ public class CrossingTemplateParser {
 
 			// proceess female + male parent entries, will throw middleware query exception if no study valid or null
 			ListDataProject femaleListData = this
-					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femaleEntry));
+					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femaleEntry),programUUID);
 			ListDataProject maleListData = this
-					.getCrossingListProjectData(maleNursery, Integer.valueOf(maleEntry));
+					.getCrossingListProjectData(maleNursery, Integer.valueOf(maleEntry),programUUID);
 
 			this.importedCrossesList.addImportedCrosses(
 					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery,
@@ -496,10 +496,11 @@ public class CrossingTemplateParser {
 	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
-	protected ListDataProject getCrossingListProjectData(String studyName, Integer genderEntryNo)
+	protected ListDataProject getCrossingListProjectData(
+			String studyName, Integer genderEntryNo, String programUUID)
 			throws MiddlewareQueryException {
 		// 1 get the particular study's list
-		final Integer studyId = studyDataManager.getStudyIdByName(studyName);
+		final Integer studyId = studyDataManager.getStudyIdByNameAndProgramUUID(studyName,programUUID);
 
 		if (null == studyId) {
 			throw new MiddlewareQueryException("no.such.study.exists",

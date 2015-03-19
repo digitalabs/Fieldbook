@@ -56,8 +56,41 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).html()});
-			
-			if ($(this).data('term-data-type-id') == '1130'){
+			if ($(this).data('term-data-type-id') == '1110'){
+				var minVal = ($(this).data('min-range'));
+				var maxVal = ($(this).data('max-range'));
+				
+				var termId = $(this).data('term-id');
+				var isVariates = $(this).hasClass('variates');
+				columnsDef.push({
+					targets: columns.length - 1,
+					createdCell: function (td, cellData, rowData, row, col) {
+						if(isVariates){
+							$(td).addClass('numeric-variable');
+							var cellText = $(td).text();
+							if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) || parseFloat(cellText) > parseFloat(maxVal))){
+								$(td).removeClass('accepted-value');
+						    	$(td).removeClass('invalid-value');
+						    	
+						    	if ($(td).text() !== 'missing' ){
+						    		
+						    		if ($(td).find("input[type='hidden']").val() === 'true'){
+										$(td).addClass('accepted-value');
+									}else{
+										$(td).addClass('invalid-value');
+									}
+						    	}															
+						    }
+						}
+					    $(td).data('term-id', termId);
+					},
+					render: function ( data, type, full, meta ) {
+					      return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+
+					}
+				});
+				
+			}else if ($(this).data('term-data-type-id') == '1130'){
 				if($(this).data('term-valid-values') == null){
 					$(this).data('term-valid-values', '');
 				}
@@ -150,14 +183,34 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				$(nRow).attr('title', toolTip);
 				$('td', nRow).attr('nowrap','nowrap');
 				
-				$(nRow).find('.accepted-value, .invalid-value').each(function (){
+				$(nRow).find('.accepted-value, .invalid-value, .numeric-variable').each(function (){
 
 					var termId = $(this).data('term-id');
 					var cellData = $(this).text();
 					if (termId != undefined) {
 						var possibleValues = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-valid-values');
-						
-						if (possibleValues != undefined){
+						var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
+						if(dataTypeId == '1110'){
+							var minVal = ( $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
+							var maxVal = ( $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));														
+							var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
+							
+							if(isVariates){
+								$(this).removeClass('accepted-value');
+								$(this).removeClass('invalid-value');
+								if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))){															    	
+							    	if (cellData !== 'missing' ){
+							    		
+							    		if ($(this).find("input[type='hidden']").val() === 'true'){
+							    			$(this).addClass('accepted-value');
+										}else{
+											$(this).addClass('invalid-value');
+										}
+							    	}														
+						    	}
+							}
+								
+						}else if (possibleValues != undefined){
 							  var values = possibleValues.split('|');
 							  
 							  $(this).removeClass('accepted-value');

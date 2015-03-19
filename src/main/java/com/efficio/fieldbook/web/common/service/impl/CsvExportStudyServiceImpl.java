@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
+import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
@@ -235,16 +236,28 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 			if (AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(
 					dataCell.getDataType())) {
 
-				if (dataCell.getValue() != null
-						&& !"".equalsIgnoreCase(dataCell.getValue())) {
-					columnValue = new ExportColumnValue(termId, Double.valueOf(
-							dataCell.getValue()).toString());
-				}
+				columnValue = getNumericColumnValue(dataCell, termId);
 
 			} else {
 				columnValue = new ExportColumnValue(termId, dataCell.getValue());
 			}
 
+		}
+		return columnValue;
+	}
+	
+	protected ExportColumnValue getNumericColumnValue(MeasurementData dataCell, Integer termId){
+		ExportColumnValue columnValue = null;
+		String cellVal = "";
+		
+		if (dataCell.getValue() != null
+				&& !"".equalsIgnoreCase(dataCell.getValue())) {					
+			if(ValidationServiceImpl.MISSING_VAL.equalsIgnoreCase(dataCell.getValue())){
+				cellVal = dataCell.getValue();
+			}else{
+				cellVal = Double.valueOf(dataCell.getValue()).toString();
+			}
+			columnValue = new ExportColumnValue(termId, cellVal);
 		}
 		return columnValue;
 	}

@@ -3,7 +3,12 @@
 <input type="hidden" class="data-hidden-value-term-id" name="termId" th:value="*{termId}"/>
 <input  class="data-value" maxlength="250"  th:attr="data-type=${measurementData.dataType}" 
 style="width: 100%" size="1" type="text" 
-th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != dateVarId and measurementData.measurementVariable.dataTypeId != categoricalVarId}" 
+th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != dateVarId and measurementData.measurementVariable.dataTypeId != categoricalVarId and measurementData.measurementVariable.dataTypeId != numericVarId}" 
+th:field="*{measurementData.value}"/>
+
+<input th:attr="data-min-range=${measurementData.measurementVariable.minRange},data-max-range=${measurementData.measurementVariable.maxRange},data-type=${measurementData.dataType}"  class="numeric-value data-value" maxlength="250" 
+style="width: 100%" size="1" type="text" 
+th:if="${measurementData.measurementVariable.dataTypeId == numericVarId}" 
 th:field="*{measurementData.value}"/>
 
 <input th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == dateVarId}"
@@ -39,7 +44,9 @@ th:field="*{measurementData.cValueId}" th:attrappend="data-cvalueid=${measuremen
 			        	}
 			        	
 			        });
-					
+					$('.inline-input .numeric-value').on('change', function(){
+						processInlineEditInput();
+					});
 					$('.inline-input .variates-select').each(function(){
 						 var possibleValuesSuggestions = /*[[${possibleValues}]]*/ [];
 						 var possibleValues_obj = [];

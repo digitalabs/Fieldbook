@@ -19,7 +19,7 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 					<tbody>
 						<tr th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
-							<td th:class="${measurementData.categoricalDisplayAcceptedValidValues} ? 'accepted-value' : ''" th:switch="${measurementData.measurementVariable.termId}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="left" th:each="measurementData, rowIndex : ${measurementRow.dataList}">
+							<td th:class="${measurementData.displayAcceptedValidValues} ? 'accepted-value' : ''" th:switch="${measurementData.measurementVariable.termId}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="left" th:each="measurementData, rowIndex : ${measurementRow.dataList}">
 								<a th:case="8240" class="gid-link" href="javascript: void(0)" th:text="${measurementData.value}"></a>
 								<a th:case="8250" class="desig-link" href="javascript: void(0)" th:text="${measurementData.value}"></a>
 								<label th:case="*" th:text="${measurementData.displayValue}" ></label>

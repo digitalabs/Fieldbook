@@ -323,5 +323,13 @@
               class="com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter">
         <property name="templateFile" value="classpath:CrossingTemplate_exported.xls"/>
     </bean>
-    
+
+	<bean id="importAdvanceInventoryService" class="com.efficio.fieldbook.web.common.service.impl.ImportInventoryServiceImpl">
+	        <aop:scoped-proxy/>
+	    </bean>
+
+	    <bean id="inventoryImportParser" class="com.efficio.fieldbook.web.util.parsing.InventoryImportParser" scope="prototype">
+	        <aop:scoped-proxy/>
+	    </bean>
+
 </beans>

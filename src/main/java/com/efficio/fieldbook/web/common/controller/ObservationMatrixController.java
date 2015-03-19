@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -184,6 +185,7 @@ public class ObservationMatrixController extends
     	form.setExperimentIndex(index);
     	model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
     	model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
+    	model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());    	
     	model.addAttribute("isNursery", userSelection.getWorkbook().isNursery());
         return super.showAjaxPage(model, EDIT_EXPERIMENT_TEMPLATE);
     }
@@ -273,6 +275,7 @@ public class ObservationMatrixController extends
 					var.setValue(value);
 					var.setAccepted(true);
 				}else{
+					var.setAccepted(true);
 					var.setValue(value);
 				}
 				break;
@@ -306,7 +309,11 @@ public class ObservationMatrixController extends
     					var.setCustomCategoricalValue(false);
     				}
     				break;
-    			}
+    			}else if(var != null && var.getMeasurementVariable().getTermId() == termId && 
+        				(var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId())){
+        				var.setAccepted(true);        				
+        				break;
+        		}
     		}
     	}
 		
@@ -414,6 +421,7 @@ public class ObservationMatrixController extends
     		int index, int termId, List<ValueReference> possibleValues) {
     	model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
     	model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
+    	model.addAttribute("numericVarId", TermId.NUMERIC_VARIABLE.getId());
     	model.addAttribute("isNursery", isNursery);
     	model.addAttribute("measurementData", measurementData);
     	model.addAttribute(INDEX, index);
@@ -460,6 +468,18 @@ public class ObservationMatrixController extends
 			copyMeasurementValue(originalRow, row);
 			updateDates(originalRow);
 			map.put(SUCCESS, "1");
+			for(MeasurementData data : originalRow.getDataList()){
+				//we set the data accepted automatically to true, if value is out out limit
+				if (data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())){
+					Double minRange = data.getMeasurementVariable().getMinRange();
+					Double maxRange = data.getMeasurementVariable().getMaxRange();
+					if(minRange != null && maxRange != null && NumberUtils.isNumber(data.getValue()) && 
+							(Double.parseDouble(data.getValue()) < minRange || Double.parseDouble(data.getValue()) > maxRange)){
+						data.setAccepted(true);
+					}
+				}
+			}
+			
 			Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
 	    	map.put(DATA, dataMap);
 		} catch (MiddlewareQueryException e) {
@@ -532,6 +552,7 @@ public class ObservationMatrixController extends
 			}
 		}else {
 			oldData.setValue(newData.getValue());
+			oldData.setAccepted(newData.isAccepted());
 		}
 	}
 
@@ -548,10 +569,11 @@ public class ObservationMatrixController extends
 				displayVal += suffix;
 			}
 			
-			if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())){
+			if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId()) ||
+					data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())){
 				Object[] categArray = new Object[] {displayVal, data.isAccepted()};
 				dataMap.put(data.getMeasurementVariable().getName(), categArray);
-			}else{
+			} else{
 				dataMap.put(data.getMeasurementVariable().getName(), displayVal);
 			}
 		}

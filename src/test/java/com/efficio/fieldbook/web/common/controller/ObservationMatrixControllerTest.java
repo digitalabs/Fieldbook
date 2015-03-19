@@ -335,6 +335,41 @@ public class ObservationMatrixControllerTest {
 	}
 	
 	@Test
+	public void testMarkExperimentCellDataAsAcceptedForNumeric(){
+		int termId = 2000;
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList<>();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(1000, "1st", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName1"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(termId, "1", TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		userSelection.setMeasurementRowList(measurementRowList);
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		observationMatrixController.setStudySelection(userSelection);
+		observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+		Map<String, String> data = new HashMap<>();
+		
+		data.put("index", "1");
+		data.put("termId", Integer.toString(termId));
+	
+    	HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+    	    	    	
+		Map<String, Object> results = observationMatrixController.markExperimentCellDataAsAccepted(data, req);
+		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> dataMap =  (Map<String, Object>) results.get("data");
+		
+		Assert.assertTrue("The Accepted flag should be true",(boolean)((Object[]) dataMap.get("TestVarName2"))[1]);
+		
+	}
+	
+	@Test
 	public void testMarkAllExperimentDataAsAccepted(){
 		int termId = 2000;
 		UserSelection userSelection = new UserSelection();

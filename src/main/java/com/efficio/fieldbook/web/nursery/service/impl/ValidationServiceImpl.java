@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -41,6 +41,8 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 public class ValidationServiceImpl implements ValidationService {
 
 	private static final String DATA_TYPE_NUMERIC = "Numeric variable";
+	private static final String ERROR_INVALID_CELL = "error.workbook.save.invalidCellValue";
+	public static final String MISSING_VAL = "missing";
 	
 	@Resource
 	private ResourceBundleMessageSource messageSource;
@@ -58,32 +60,27 @@ public class ValidationServiceImpl implements ValidationService {
 			return true;
 		}
 		if (var.getMinRange() != null && var.getMaxRange() != null) {
+			if(MISSING_VAL.equals(value.trim())){
+				return true;
+			}
 			if (!NumberUtils.isNumber(value)) {
 				return false;
-			} else {
-				Double numericValue = Double.valueOf(value);
-				return numericValue <= var.getMaxRange() && numericValue >= var.getMinRange();
+			} else {				
+				return true;
 			}
 			
 		} else if(validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId() && value != null && !"".equals(value.trim())){
 			return DateUtil.isValidDate(value);			
 		}else if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {
+			if(MISSING_VAL.equals(value.trim())){
+				return true;
+			}
 			return NumberUtils.isNumber(value.trim());
 			
 		} else {
 			return true;
 		}
-	}
-	
-	private boolean isValidInteger(String val){
-		boolean valid = true;
-		try {
-		    Integer.parseInt(val);
-		} catch (NumberFormatException e) {
-			valid = false;
-		}
-		return valid;
-	}
+	}	
 	
 	@Override
 	public void validateObservationValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException {
@@ -101,7 +98,7 @@ public class ValidationServiceImpl implements ValidationService {
 				for (MeasurementData data : row.getDataList()) {
 					MeasurementVariable variate = data.getMeasurementVariable();
 					if (!isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
-						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
+						throw new MiddlewareQueryException(messageSource.getMessage(ERROR_INVALID_CELL, new Object[] {variate.getName(), data.getValue()}, locale));
 						
 					}
 				}
@@ -117,10 +114,10 @@ public class ValidationServiceImpl implements ValidationService {
 			for (MeasurementVariable var : workbook.getConditions()) {
 					
 					if (WorkbookUtil.isConditionValidate(var.getTermId())){
-						if(var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null && !var.getValue().equalsIgnoreCase("")){
+						if(var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null && !"".equalsIgnoreCase(var.getValue())){
 							//we do the validation here
 							 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-				                HashMap<String, Method> methodMap = new HashMap<String, Method>();
+				                Map<String, Method> methodMap = new HashMap<String, Method>();
 				                //create a map to get method id based on given code
 				                if (methods != null) {
 				                    for (Method method : methods) {
@@ -131,13 +128,13 @@ public class ValidationServiceImpl implements ValidationService {
 				                if(!methodMap.containsKey(var.getValue())){
 				                	//this is an error since there is no matching method code
 				                	var.setOperation(null);
-				                	throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {var.getName(), var.getValue()}, locale));
+				                	throw new MiddlewareQueryException(messageSource.getMessage(ERROR_INVALID_CELL, new Object[] {var.getName(), var.getValue()}, locale));
 				                }else{
 				                	var.setOperation(Operation.UPDATE);
 				                }
 						} else if(!isValidValue(var, var.getValue(), "", true)) {
 							var.setOperation(null);
-							throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {var.getName(), var.getValue()}, locale));
+							throw new MiddlewareQueryException(messageSource.getMessage(ERROR_INVALID_CELL, new Object[] {var.getName(), var.getValue()}, locale));
 						}
 					}
 				
@@ -153,7 +150,7 @@ public class ValidationServiceImpl implements ValidationService {
 					MeasurementVariable variate = data.getMeasurementVariable();
 					if (!isValidValue(variate, data.getValue(), data.getcValueId(), true)) {
 						variate.setOperation(null);
-						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
+						throw new MiddlewareQueryException(messageSource.getMessage(ERROR_INVALID_CELL, new Object[] {variate.getName(), data.getValue()}, locale));
 						
 					}
 				}
@@ -167,7 +164,7 @@ public class ValidationServiceImpl implements ValidationService {
 			for (MeasurementData data : row.getDataList()) {
 				MeasurementVariable variate = data.getMeasurementVariable();
 				if (!isValidValue(variate, data.getValue(), data.getcValueId(), false)) {
-						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
+						throw new MiddlewareQueryException(messageSource.getMessage(ERROR_INVALID_CELL, new Object[] {variate.getName(), data.getValue()}, locale));
 					}
 				}			
 		}

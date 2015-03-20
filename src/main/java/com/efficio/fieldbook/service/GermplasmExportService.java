@@ -37,8 +37,15 @@ public class GermplasmExportService extends ExportServiceImpl {
 		this.userSelection = userSelection;
 		this.isNursery = isNursery;
 	}
-
+	
+	
 	@Override
+	public void writeListFactorSection(Map<String, CellStyle> styles,
+			HSSFSheet descriptionSheet, int startingRow,
+			GermplasmListExportInputValues input) {
+		writeListFactorSection(styles, descriptionSheet, startingRow, input.getVisibleColumnMap());
+	}
+	
 	public void writeListFactorSection(Map<String, CellStyle> styles, HSSFSheet descriptionSheet, 
     		int startingRow, Map<String, Boolean> visibleColumnMap) {
     	
@@ -232,6 +239,11 @@ public class GermplasmExportService extends ExportServiceImpl {
 	}
 	
 	@Override
+	public void createListEntriesHeaderRow(Map<String, CellStyle> styles,
+			HSSFSheet observationSheet, GermplasmListExportInputValues input) {
+		createListEntriesHeaderRow(styles, observationSheet, input.getVisibleColumnMap());
+	}
+
 	public void createListEntriesHeaderRow(Map<String, CellStyle> styles,
 			HSSFSheet observationSheet, Map<String, Boolean> visibleColumnMap) {
 		HSSFRow listEntriesHeader = observationSheet.createRow(0);

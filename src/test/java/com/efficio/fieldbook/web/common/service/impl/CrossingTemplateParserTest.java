@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.reflect.FieldUtils;
@@ -38,6 +39,7 @@ public class CrossingTemplateParserTest {
 	private static final String STUDY_NAME = "testStudyName";
 	private static final Integer GENDER_ENTRY_NO = 1;
 	private final static int GERMPLASMLIST_ID = 0;
+	private static final String PROGRAM_UUID = "123456789";
 	@Mock
 	private StudyDataManager studyDataManager;
 	@Mock
@@ -66,7 +68,7 @@ public class CrossingTemplateParserTest {
 
 	@Test
 	public void testParseFile() throws Exception {
-		doReturn(mock(Workbook.class)).when(parserUnderTest).storeImportGermplasmWorkbook(any(
+		doReturn(mock(Workbook.class)).when(parserUnderTest).storeAndRetrieveWorkbook(any(
 				MultipartFile.class));
 
 		doNothing().when(parserUnderTest).parseCrossingListDetails();
@@ -74,12 +76,12 @@ public class CrossingTemplateParserTest {
 		doNothing().when(parserUnderTest).parseFactors();
 		doNothing().when(parserUnderTest).parseConstants();
 		doNothing().when(parserUnderTest).parseVariate();
-		doNothing().when(parserUnderTest).parseObservationSheet();
+		doNothing().when(parserUnderTest).parseObservationSheet(PROGRAM_UUID);
 
 		parserUnderTest.parseFile(mock(MultipartFile.class));
 
 		verify(parserUnderTest, times(1)).parseDescriptionSheet();
-		verify(parserUnderTest, times(1)).parseObservationSheet();
+		verify(parserUnderTest, times(1)).parseObservationSheet(PROGRAM_UUID);
 	}
 
 	@Test
@@ -93,7 +95,7 @@ public class CrossingTemplateParserTest {
 
 		when(fileService.retrieveWorkbook("SERVER_FILE_NAME.xls")).thenReturn(mock(Workbook.class));
 
-		Workbook wb = parserUnderTest.storeImportGermplasmWorkbook(file);
+		Workbook wb = parserUnderTest.storeAndRetrieveWorkbook(file);
 
 		String originalFileName = String
 				.valueOf(FieldUtils.readField(parserUnderTest, "originalFilename", true));
@@ -147,25 +149,20 @@ public class CrossingTemplateParserTest {
 						anyString(), anyString());
 
 		doReturn(mock(ListDataProject.class)).when(parserUnderTest)
-				.getCrossingListProjectData(anyString(), anyInt());
+				.getCrossingListProjectData(anyString(), anyInt(), anyString());
 		doNothing().when(importedCrossesList).addImportedCrosses(any(ImportedCrosses.class));
 
-		parserUnderTest.parseObservationSheet();
+		parserUnderTest.parseObservationSheet(PROGRAM_UUID);
 
 		// ASSERTIONS!
 		verify(importedCrossesList, times(rowSize)).addImportedCrosses(any(ImportedCrosses.class));
 	}
 
-	@Test
+	@Test(expected = FileParsingException.class)
 	public void testParseObservationSheetObservationHeaderInvalid() throws Exception {
 		doReturn(true).when(parserUnderTest).isObservationsHeaderInvalid();
-		doNothing().when(parserUnderTest).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
-		parserUnderTest.parseObservationSheet();
-
-		verify(parserUnderTest, times(1)).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
+		parserUnderTest.parseObservationSheet(PROGRAM_UUID);
 	}
 
 	@Test
@@ -180,8 +177,6 @@ public class CrossingTemplateParserTest {
 				CrossingTemplateParser.DESCRIPTION_SHEET_NO, 2, 1);
 		doReturn(CrossingTemplateParser.TEMPLATE_LIST_TYPE).when(parserUnderTest)
 				.getCellStringValue(CrossingTemplateParser.DESCRIPTION_SHEET_NO, 3, 1);
-		doNothing().when(parserUnderTest).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
 		parserUnderTest.parseCrossingListDetails();
 
@@ -189,9 +184,6 @@ public class CrossingTemplateParserTest {
 				.readField(parserUnderTest, "importedCrossesList",
 						true);
 
-		// no validation
-		verify(parserUnderTest, never()).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
 		assertEquals("list name is set", "listName", importedCrossesList1.getName());
 		assertEquals("list title/description is set", "listTitle", importedCrossesList1.getTitle());
@@ -304,7 +296,7 @@ public class CrossingTemplateParserTest {
 		List<GermplasmList> germplasmList = new ArrayList<>();
 		germplasmList.add(mock(GermplasmList.class));
 
-		when(studyDataManager.getStudyIdByName(anyString())).thenReturn(STUDY_ID);
+		when(studyDataManager.getStudyIdByNameAndProgramUUID(anyString(),anyString())).thenReturn(STUDY_ID);
 		when(studyDataManager.getStudyType(STUDY_ID)).thenReturn(StudyType.N);
 		when(fieldbookMiddlewareService
 				.getGermplasmListsByProjectId(STUDY_ID, GermplasmListType.NURSERY))
@@ -313,7 +305,7 @@ public class CrossingTemplateParserTest {
 				.thenReturn(mock(ListDataProject.class));
 
 		ListDataProject results = parserUnderTest
-				.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO);
+				.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO, PROGRAM_UUID);
 
 		verify(fieldbookMiddlewareService, times(1))
 				.getListDataProjectByListIdAndEntryNo(GERMPLASMLIST_ID, GENDER_ENTRY_NO);
@@ -324,19 +316,19 @@ public class CrossingTemplateParserTest {
 
 	@Test(expected = MiddlewareQueryException.class)
 	public void testGetCrossingListProjectDataNoStudyFound() throws Exception {
-		when(studyDataManager.getStudyIdByName(anyString())).thenReturn(null);
+		when(studyDataManager.getStudyIdByNameAndProgramUUID(anyString(),anyString())).thenReturn(null);
 
-		parserUnderTest.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO);
+		parserUnderTest.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO, PROGRAM_UUID);
 	}
 
 	@Test(expected = MiddlewareQueryException.class)
 	public void testGetCrossingListProjectDataNoGermplasmListFound() throws Exception {
-		when(studyDataManager.getStudyIdByName(anyString())).thenReturn(STUDY_ID);
+		when(studyDataManager.getStudyIdByNameAndProgramUUID(anyString(),anyString())).thenReturn(STUDY_ID);
 		when(studyDataManager.getStudyType(STUDY_ID)).thenReturn(StudyType.N);
 		when(fieldbookMiddlewareService
 				.getGermplasmListsByProjectId(STUDY_ID, GermplasmListType.NURSERY))
 				.thenReturn(new ArrayList<GermplasmList>());
 
-		parserUnderTest.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO);
+		parserUnderTest.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO, PROGRAM_UUID);
 	}
 }

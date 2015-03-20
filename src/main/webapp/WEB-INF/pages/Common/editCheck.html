@@ -24,7 +24,7 @@
 </form>
 
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
+	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
 		function updateCheck(event){
 			'use strict';
@@ -42,8 +42,14 @@
 				data: $('.editCheck').serialize(),
 				success: function(data) {
 					//update the hidden and the a href
-				
-					$('#selectedCheck'+$('.editCheck #index').val()).val($('.editCheck #checkVal').select2('data').id);					
+					var oldValue = $('#selectedCheck'+$('.editCheck #index').val()).val();
+					var newValue = $('.editCheck #checkVal').select2('data').id;
+					if(oldValue != newValue){
+						$('#selectedCheck'+$('.editCheck #index').val()).val($('.editCheck #checkVal').select2('data').id).trigger('germplasmListIsUpdated');	
+					} else {
+						$('#selectedCheck'+$('.editCheck #index').val()).val($('.editCheck #checkVal').select2('data').id);
+					}
+					
 					$('.check-table-popover #selectedCheck'+$('.editCheck #index').val()).data('code',  $('.editCheck #checkVal option:selected').data('code'));
 					$('.edit-check'+$('.editCheck #index').val()).data('code',  $('.editCheck #checkVal option:selected').data('code'));
 					$('.editCheck #checkVal').select2('destroy');															

@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
@@ -101,12 +102,12 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveSettings", method = RequestMethod.GET, produces = "application/json")
-	public List<CrossImportSettings> getAvailableCrossImportSettings(HttpServletRequest request) {
+	public List<CrossImportSettings> getAvailableCrossImportSettings() {
 		List<CrossImportSettings> settings = new ArrayList<>();
 
 		try {
 			List<ProgramPreset> presets = presetDataManager
-					.getProgramPresetFromProgramAndTool(getCurrentProgramID(request),
+					.getProgramPresetFromProgramAndTool(getCurrentProgramID(),
 							getFieldbookToolID(),
 							ToolSection.FBK_CROSS_IMPORT.name());
 
@@ -128,11 +129,10 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@ResponseBody
 	@RequestMapping(value = "/submitAndSaveSetting", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public Map<String, Object> submitAndSaveCrossSettings(@RequestBody CrossSetting settings,
-			HttpServletRequest request) {
+	public Map<String, Object> submitAndSaveCrossSettings(@RequestBody CrossSetting settings) {
 		Map<String, Object> returnVal = new HashMap<>();
 		try {
-			saveCrossSetting(settings, getCurrentProgramID(request));
+			saveCrossSetting(settings, getCurrentProgramID());
 			return submitCrossSettings(settings);
 		} catch (MiddlewareQueryException | JAXBException e) {
 			LOG.error(e.getMessage(), e);
@@ -274,25 +274,18 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		Map<String, Object> resultsMap = new HashMap<>();
 
 		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
-		ImportedCrossesList parseResults = crossingService.parseFile(form.getFile());
+		try {
+			ImportedCrossesList parseResults = crossingService.parseFile(form.getFile());
 
-		// 2. Store the crosses to study selection if all validated
-		if (parseResults.getErrorMessages().isEmpty()) {
+			// 2. Store the crosses to study selection if all validated
+
 			studySelection.setimportedCrossesList(parseResults);
 
 			resultsMap.put(IS_SUCCESS, 1);
 
-		} else {
+		} catch (FileParsingException e) {
 			resultsMap.put(IS_SUCCESS, 0);
-
-			// error messages is still in .prop format,
-			Set<String> errorMessages = new HashSet<>();
-			for (String error : parseResults.getErrorMessages()) {
-				errorMessages.add(messageSource.getMessage(error, new String[] { }, error,
-						LocaleContextHolder.getLocale()));
-			}
-
-			resultsMap.put("error", errorMessages);
+			resultsMap.put("error", new String[] {e.getMessage()});
 		}
 
 		return resultsMap;
@@ -370,7 +363,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		return workbenchService.getFieldbookWebTool().getToolId().intValue();
 	}
 
-	protected String getCurrentProgramID(HttpServletRequest request) {
+	protected String getCurrentProgramID() {
 		return contextUtil.getCurrentProgramUUID();
 	}
 

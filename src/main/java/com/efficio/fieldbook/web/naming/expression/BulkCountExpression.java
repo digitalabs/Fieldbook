@@ -30,7 +30,7 @@ public class BulkCountExpression implements Expression {
 					public void evaluateCapturedExpression(String capturedText,
 							String originalInput, int start, int end) {
 
-						if (capturedText.equals("-B")) {
+						if ("-B".equals(capturedText)) {
 							lastBulkCount.replace(0, lastBulkCount.length(), "1");
 						} else {
 							String newCapturedText = capturedText.replaceAll("[-B]*", "");

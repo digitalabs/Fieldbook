@@ -170,8 +170,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 				val = inventoryDetails.getGid().toString();
 		} else if(columnHeaderId == TermId.SOURCE.getId()) { 
 				val = inventoryDetails.getSource();
-		} else if(columnHeaderId == TermId.LOCATION_ID.getId()) { 
-				val = inventoryDetails.getLocationName();
+		} else if(columnHeaderId == TermId.LOCATION_ID.getId()) {
+			// in preparation for BMS-143. Export the abbreviation instead of the whole name
+				val = inventoryDetails.getLocationAbbr();
 		} else if(columnHeaderId == AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt()) { 
 				val = getInventoryAmount(inventoryDetails);
 		} else if(columnHeaderId == AppConstants.TEMPORARY_INVENTORY_SCALE.getInt()) { 

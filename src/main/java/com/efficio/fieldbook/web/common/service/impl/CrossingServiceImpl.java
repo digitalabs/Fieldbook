@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -51,7 +52,7 @@ public class CrossingServiceImpl implements CrossingService {
 	private CrossingTemplateParser crossingTemplateParser;
 
 	@Override
-	public ImportedCrossesList parseFile(MultipartFile file) {
+	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException{
 		return crossingTemplateParser.parseFile(file);
 	}
 	

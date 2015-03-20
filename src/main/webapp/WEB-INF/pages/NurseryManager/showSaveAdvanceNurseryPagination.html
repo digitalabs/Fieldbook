@@ -3,11 +3,7 @@
 	<table class="table-curved table-condensed advance-germplasm-items">	
 		<thead>
 			<tr>
-				<th data-col-name="entry" th:utext="#{nursery.import.header.entry}">.Entry</th>
-				<th data-col-name="desig" th:utext="#{nursery.import.header.designation}">.Designation</th>
-				<th data-col-name="parentage" th:utext="#{nursery.import.header.parentage}">Parentage</th>
-				<th data-col-name="gid" th:utext="#{nursery.import.header.gid}">.GID</th>
-				<th data-col-name="source" th:utext="#{nursery.import.header.source}">.Source</th>
+				<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
 			</tr>
 		</thead>		
 	</table>

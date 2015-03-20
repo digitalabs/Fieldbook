@@ -56,6 +56,8 @@ public class TreeNode {
 	 */
 	private Object icon;
 	
+	private String programUUID;
+	
 	/**
 	 * Instantiates a new tree node.
 	 */
@@ -71,7 +73,7 @@ public class TreeNode {
 	 * @param addClass the add class
 	 * @param icon the icon
 	 */
-	public TreeNode(String key, String title, boolean isFolder, String addClass, Object icon) {
+	public TreeNode(String key, String title, boolean isFolder, String addClass, Object icon, String programUUID) {
 	    this.key = key;
 	    this.title = title;
 	    this.isFolder = isFolder;
@@ -79,6 +81,7 @@ public class TreeNode {
 	    this.icon = icon;
 	    this.isLazy = true;
 	    this.children = new ArrayList<TreeNode>();
+	    this.programUUID = programUUID;
 	}
 	
 	/**
@@ -278,5 +281,12 @@ public class TreeNode {
     public void setIncludeInSearch(boolean includeInSearch) {
         this.includeInSearch = includeInSearch;
     }
-    
+
+	public String getProgramUUID() {
+		return programUUID;
+	}
+
+	public void setProgramUUID(String programUUID) {
+		this.programUUID = programUUID;
+	}
 }

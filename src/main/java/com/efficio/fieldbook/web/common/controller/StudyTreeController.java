@@ -251,7 +251,7 @@ public class StudyTreeController {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(),e);
 			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put("message", e.getMessage());
+			resultsMap.put(MESSAGE, e.getMessage());
 		}
 		return resultsMap;
 
@@ -275,7 +275,7 @@ public class StudyTreeController {
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(),e);
 			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put("message", e.getMessage());
+			resultsMap.put(MESSAGE, e.getMessage());
 		}
 		return resultsMap;
 	}
@@ -292,7 +292,7 @@ public class StudyTreeController {
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(),e);
 			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put("message", messageSource.getMessage("browse.nursery.delete.folder.has.children", null, locale));
+			resultsMap.put(MESSAGE, messageSource.getMessage("browse.nursery.delete.folder.has.children", null, locale));
 			
 		}
 		return resultsMap;

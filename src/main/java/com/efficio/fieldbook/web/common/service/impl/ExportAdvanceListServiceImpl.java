@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.ExportService;
@@ -46,6 +47,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	private FieldbookService fieldbookMiddlewareService;
 	
 	private static final String NO_FILE = "noFile";
+	
+	private static String ADVANCE_LIST_SHEET_NAME = "Advance List";
 
 	@Override
 	public File exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds,
@@ -64,7 +67,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 						.getGermplasmListById(advanceGermpasmListId);
 				String advanceListName = germplasmList.getName();
 				String filenamePath = this.getFileNamePath(advanceListName) + suffix;
-				String sheetName =  SettingsUtil.cleanSheetAndFileName(advanceListName);
+				String sheetName =  WorkbookUtil.createSafeSheetName(ADVANCE_LIST_SHEET_NAME);
 				
 				exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, type);
 					

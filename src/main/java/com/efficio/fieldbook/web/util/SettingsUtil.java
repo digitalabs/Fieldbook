@@ -76,9 +76,7 @@ public class SettingsUtil {
     public static String cleanSheetAndFileName(String name) {
         if (name == null) {
             return null;
-        }
-        
-    	name = org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(name, '_');
+        }            	
     	//http://www.rgagnon.com/javadetails/java-0662.html
     	name = name.replaceAll("[:\\\\/*?|<>]", "_");       
         return name;

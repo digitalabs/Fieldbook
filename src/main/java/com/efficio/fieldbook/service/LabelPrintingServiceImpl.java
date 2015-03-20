@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
@@ -704,10 +705,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         try {
 
             HSSFWorkbook workbook = new HSSFWorkbook();
-            String sheetName = SettingsUtil.cleanSheetAndFileName(userLabelPrinting.getName());
+            String sheetName = WorkbookUtil.createSafeSheetName(userLabelPrinting.getName());
             if (sheetName == null) {
                 sheetName = "Labels";
-            }
+            }            
             Sheet labelPrintingSheet = workbook.createSheet(sheetName);
 
             CellStyle labelStyle = workbook.createCellStyle();

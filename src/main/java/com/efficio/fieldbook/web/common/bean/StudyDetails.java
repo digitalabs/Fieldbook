@@ -424,21 +424,22 @@ public class StudyDetails{
 		if (this.factorsMap == null) {
 			this.factorsMap = new HashMap<Integer, SettingDetail>();
 			if (factorDetails != null) {
-				for (SettingDetail factorDetail : factorDetails) {
-					if (factorDetail.getVariable() != null) {
-						this.factorsMap.put(factorDetail.getVariable().getCvTermId(), factorDetail);
-					}
-				}
+				buildFactorsMapFromSettingDetailsList(factorDetails);
 			}
 			if (germplasmDescriptors != null) {
-				for (SettingDetail factorDetail : germplasmDescriptors) {
-					if (factorDetail.getVariable() != null) {
-						this.factorsMap.put(factorDetail.getVariable().getCvTermId(), factorDetail);
-					}
-				}
+				buildFactorsMapFromSettingDetailsList(germplasmDescriptors);
 			}
 		}
 		return this.factorsMap;
+	}
+
+	private void buildFactorsMapFromSettingDetailsList(
+			List<SettingDetail> settingDetails) {
+		for (SettingDetail settingDetail : settingDetails) {
+			if (settingDetail.getVariable() != null) {
+				this.factorsMap.put(settingDetail.getVariable().getCvTermId(), settingDetail);
+			}
+		}
 	}
 
 	public String getErrorMessage() {

@@ -12,8 +12,8 @@
 				<img style="display:none; margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{trial.trialdetails.header}">BASIC DETAILS</strong>
 			</label>
-			<a class="btn btn-info fbk-open-button-left-margin" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>
-			<div style="float:right;">
+			<a th:if="${trialDetails.programUUID!=null}" class="btn btn-info fbk-open-button-left-margin" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>
+			<div th:if="${trialDetails.programUUID!=null}" style="float:right;">
 				<div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 						<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span th:text="#{nursery.nurserydetails.actions}">Actions</span>

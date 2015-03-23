@@ -26,6 +26,9 @@ public class StudyDetails{
     
 	private Integer id;
 	
+	/** The program_uuid */
+	private String programUUID;
+	
     /** The name. */
     private String name;
     
@@ -445,5 +448,15 @@ public class StudyDetails{
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
+
+	public String getProgramUUID() {
+		return programUUID;
+	}
+
+	public void setProgramUUID(String programUUID) {
+		this.programUUID = programUUID;
+	}
+	
+	
 
 }

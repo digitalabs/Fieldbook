@@ -1449,6 +1449,8 @@ public class SettingsUtil {
 
         StudyDetails details = new StudyDetails();
         details.setId(workbook.getStudyId());
+        details.setProgramUUID(workbook.getStudyDetails()!=null?
+        		workbook.getStudyDetails().getProgramUUID():null);
         List<MeasurementVariable> conditions = workbook.getConditions();
         List<MeasurementVariable> constants = workbook.getConstants();
 

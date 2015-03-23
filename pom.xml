@@ -5,10 +5,10 @@
 	<artifactId>Fieldbook</artifactId>
 	<packaging>war</packaging>
 	<name>Fieldbook Project</name>
-	<version>3.1.2.SNAPSHOT</version>
+	<version>4.0.2.SNAPSHOT</version>
 
 	<properties>
-        <ibpcommons.version>3.1.2.SNAPSHOT</ibpcommons.version>
+        <ibpcommons.version>4.0.2.SNAPSHOT</ibpcommons.version>
 		<spring.version>3.2.11.RELEASE</spring.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
     </properties>
@@ -27,7 +27,7 @@
 	</distributionManagement>
 
 	<dependencies>
-		<!-- Spring Dependency -->	       
+		<!-- Spring Dependency -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -89,7 +89,7 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
+
 		<!-- Spring Security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -116,7 +116,7 @@
 			<artifactId>spring-security-aspects</artifactId>
 			<version>${spring.security.version}</version>
 		</dependency>
-		
+
 		<!-- Apache Commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -149,7 +149,7 @@
 			<artifactId>poi-ooxml-schemas</artifactId>
 			<version>3.8</version>
 		</dependency>
-		
+
 		<!-- Logging dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -166,7 +166,7 @@
             <artifactId>logback-core</artifactId>
             <version>1.1.2</version>
         </dependency>
-		
+
 		<!-- JUnit Dependency for Testing -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -214,8 +214,8 @@
 					<artifactId>vaadin</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>		
-		
+		</dependency>
+
 		<!--ThymeLeaf Dependencies -->
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
@@ -226,7 +226,7 @@
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring3</artifactId>
 			<version>2.1.2.RELEASE</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 		    <groupId>com.github.mxab.thymeleaf.extras</groupId>
 		    <artifactId>thymeleaf-extras-data-attribute</artifactId>
@@ -237,7 +237,7 @@
 			<artifactId>thymeleaf-extras-springsecurity3</artifactId>
 			<version>2.1.1.RELEASE</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
@@ -303,14 +303,14 @@
 			<groupId>net.sourceforge.javacsv</groupId>
 			<artifactId>javacsv</artifactId>
 			<version>2.0</version>
-		</dependency>		
+		</dependency>
 		<!-- Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
             <scope>test</scope>
-        </dependency>           		  
+        </dependency>
 	</dependencies>
 
 	<profiles>
@@ -378,7 +378,7 @@
 											</fileset>
 										</copy>
 									</tasks>
-								</configuration>			
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -430,8 +430,8 @@
 											</fileset>
 										</copy>
 									</tasks>
-								</configuration>			
-							</execution>							
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 				</plugins>
@@ -460,7 +460,7 @@
 				</includes>
 			</resource>
 		</resources>
-		<plugins>			
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -468,6 +468,7 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -504,7 +505,7 @@
 					<path>/${project.build.finalName}</path>
 					<maxPostSize>-1</maxPostSize>
 				</configuration>
-			</plugin>									
+			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>

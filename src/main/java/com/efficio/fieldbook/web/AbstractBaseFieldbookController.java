@@ -82,6 +82,10 @@ public abstract class AbstractBaseFieldbookController {
 		return "0";
 	}
 	
+	protected Project getCurrentProject() throws MiddlewareQueryException {
+		return ContextUtil.getProjectInContext(this.workbenchDataManager, this.httpRequest);
+	}
+	
 	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {	
 		return workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), 
 					ContextUtil.getCurrentWorkbenchUserId(this.workbenchDataManager, this.httpRequest));
@@ -198,5 +202,13 @@ public abstract class AbstractBaseFieldbookController {
 
 	public void setPaginationListSelection(PaginationListSelection paginationListSelection) {
 		this.paginationListSelection = paginationListSelection;
+	}
+
+	public void setWorkbenchDataManager(WorkbenchDataManager workbenchDataManager) {
+		this.workbenchDataManager = workbenchDataManager;
+	}
+
+	public void setHttpRequest(HttpServletRequest httpRequest) {
+		this.httpRequest = httpRequest;
 	}
 }

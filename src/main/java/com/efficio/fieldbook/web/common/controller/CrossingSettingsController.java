@@ -1,22 +1,27 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormatSymbols;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
+
 import com.efficio.fieldbook.web.common.exception.FileParsingException;
-import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import org.generationcp.commons.constant.ToolSection;
-import org.generationcp.commons.context.ContextConstants;
-import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
@@ -32,15 +37,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.WebUtils;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.IOException;
-import java.text.DateFormatSymbols;
-import java.util.*;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
+import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -78,6 +85,9 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@Resource
 	private CrossNameService crossNameService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Resource
 	private CrossingTemplateExcelExporter crossingTemplateExcelExporter;
@@ -92,12 +102,12 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveSettings", method = RequestMethod.GET, produces = "application/json")
-	public List<CrossImportSettings> getAvailableCrossImportSettings(HttpServletRequest request) {
+	public List<CrossImportSettings> getAvailableCrossImportSettings() {
 		List<CrossImportSettings> settings = new ArrayList<>();
 
 		try {
 			List<ProgramPreset> presets = presetDataManager
-					.getProgramPresetFromProgramAndTool(getCurrentProgramID(request),
+					.getProgramPresetFromProgramAndTool(getCurrentProgramID(),
 							getFieldbookToolID(),
 							ToolSection.FBK_CROSS_IMPORT.name());
 
@@ -119,12 +129,10 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@ResponseBody
 	@RequestMapping(value = "/submitAndSaveSetting", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public Map<String, Object> submitAndSaveCrossSettings(@RequestBody CrossSetting settings,
-			HttpServletRequest request) {
+	public Map<String, Object> submitAndSaveCrossSettings(@RequestBody CrossSetting settings) {
 		Map<String, Object> returnVal = new HashMap<>();
 		try {
-			Integer programID = getCurrentProgramID(request);
-			saveCrossSetting(settings, programID);
+			saveCrossSetting(settings, getCurrentProgramID());
 			return submitCrossSettings(settings);
 		} catch (MiddlewareQueryException | JAXBException e) {
 			LOG.error(e.getMessage(), e);
@@ -205,7 +213,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		return monthList;
 
 	}
-
+	
 	/**
 	 * Validates if current study can perform an export
 	 *
@@ -236,8 +244,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@ResponseBody
 	@RequestMapping(value = "/download/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public ResponseEntity<FileSystemResource> download(HttpServletRequest req) {
-		String outputFilename = req.getParameter("outputFilename");
+	public ResponseEntity<FileSystemResource> download(HttpServletRequest req) throws UnsupportedEncodingException {
+		String outputFilename = new String(req.getParameter("outputFilename").getBytes("iso-8859-1"), "UTF-8");
 
 		try {
 			File resource = new File(outputFilename);
@@ -247,7 +255,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			respHeaders.setContentLength(fileSystemResource.contentLength());
 			respHeaders
-					.setContentDispositionFormData("attachment", fileSystemResource.getFilename());
+					.setContentDispositionFormData("attachment", FieldbookUtil.getDownloadFileName(fileSystemResource.getFilename(), req));
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
@@ -317,12 +325,12 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	}
 
-	protected void saveCrossSetting(CrossSetting setting, Integer programID)
+	protected void saveCrossSetting(CrossSetting setting, String programUUID)
 			throws MiddlewareQueryException,
 			JAXBException {
 
 		List<ProgramPreset> presets = presetDataManager
-				.getProgramPresetFromProgramAndTool(programID,
+				.getProgramPresetFromProgramAndTool(programUUID,
 						getFieldbookToolID(),
 						ToolSection.FBK_CROSS_IMPORT.name());
 
@@ -342,7 +350,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			forSaving = new ProgramPreset();
 			forSaving.setName(setting.getName());
 			forSaving.setToolId(getFieldbookToolID());
-			forSaving.setProgramUuid(programID);
+			forSaving.setProgramUuid(programUUID);
 			forSaving.setToolSection(ToolSection.FBK_CROSS_IMPORT.name());
 			forSaving.setConfiguration(
 					settingsPresetService.convertPresetSettingToXml(setting, CrossSetting.class));
@@ -355,15 +363,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		return workbenchService.getFieldbookWebTool().getToolId().intValue();
 	}
 
-	protected Integer getCurrentProgramID(HttpServletRequest request) {
-		final ContextInfo contextInfo = (ContextInfo) WebUtils
-				.getSessionAttribute(request,
-						ContextConstants.SESSION_ATTR_CONTEXT_INFO);
-		if (contextInfo != null) {
-			return contextInfo.getSelectedProjectId().intValue();
-		} else {
-			return 3;
-		}
+	protected String getCurrentProgramID() {
+		return contextUtil.getCurrentProgramUUID();
 	}
 
 }

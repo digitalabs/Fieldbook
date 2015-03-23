@@ -4,14 +4,12 @@
 /* global deleteNurseryConfirmation */
 /* global deleteFolderTitle */
 /* global deleteNurseryTitle */
-
 function addFolder(object) {
     'use strict';
     if (!$(object).hasClass('disable-image')) {
         hideRenameFolderDiv();
         $('#addFolderName').val('');
         $('#addFolderDiv').slideDown('fast');
-
     }
 }
 
@@ -46,9 +44,8 @@ function submitRenameFolder() {
 
     var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
     
-    if(activeStudyNode == null || activeStudyNode.data.isFolder === false ||
-		activeStudyNode.data.key > 1 || activeStudyNode.data.key === 'CENTRAL' || activeStudyNode.data.key === 'LOCAL'){
-		showErrorMessage('', studyProgramFolderRequired);
+    if(activeStudyNode === null || activeStudyNode.data.isFolder === false || activeStudyNode.data.key === 'LOCAL'){
+    	showErrorMessage('', studyProgramFolderRequired);
 		return false;
 	}
     
@@ -79,10 +76,10 @@ function submitRenameFolder() {
                 if (data.isSuccess === '1') {
                     hideRenameFolderDiv();
                     node = $('#studyTree').dynatree('getTree').getActiveNode();
-                    node.data.title = folderName
+                    node.data.title = folderName;
                     $(node.span).find('a').html(folderName);
                     node.focus();
-                    showSuccessfulMessage('',renameFolderSuccessful);
+                    showSuccessfulMessage('',renameItemSuccessful);
                 } else {
                     showErrorMessage('page-rename-study-folder-message-modal', data.message);
                 }

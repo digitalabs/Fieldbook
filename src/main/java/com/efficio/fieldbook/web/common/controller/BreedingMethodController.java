@@ -4,6 +4,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 import org.slf4j.Logger;
@@ -37,6 +38,9 @@ public class BreedingMethodController extends AbstractBaseFieldbookController{
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override public String getContentName() {
 		return null;
@@ -69,7 +73,8 @@ public class BreedingMethodController extends AbstractBaseFieldbookController{
 
 		try {
 			List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-			List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods();
+			List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods(
+					contextUtil.getCurrentProgramUUID());
 			List<Method> favoriteMethods = fieldbookMiddlewareService
 					.getFavoriteBreedingMethods(methodIds, false);
 			List<Method> allNonGenerativeMethods = fieldbookMiddlewareService

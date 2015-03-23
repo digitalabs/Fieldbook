@@ -124,7 +124,7 @@ public class CreateNurseryController extends SettingsController {
 	            fieldbookService.createIdNameVariablePairs(workbook, new ArrayList<SettingDetail>(),AppConstants.ID_NAME_COMBINATION.getString(), false);
 	
 	            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
-	            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true, false);
+	            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProject().getUniqueID(), true, false);
 	            
 	            //nursery-level
 	            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildVariableIDList(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
@@ -473,7 +473,7 @@ public class CreateNurseryController extends SettingsController {
                     List<ValueReference> possibleValues =
                             fieldbookService.getAllPossibleValues(var.getCvTermId());
                     SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
-                    List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProjectId());
+                    List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProject().getUniqueID());
                     newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
                     newSetting.setPossibleValuesToJson(possibleValues);
                     newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,9 +76,9 @@ public class SettingsUtil {
     public static String cleanSheetAndFileName(String name) {
         if (name == null) {
             return null;
-        }
-        name = name.replaceAll("[^a-zA-Z0-9-_.=^&'@{}$!-#()%.+~_\\[\\]]", "_");
-        name = name.replaceAll("\"", "_");
+        }            	
+    	//http://www.rgagnon.com/javadetails/java-0662.html
+    	name = name.replaceAll("[:\\\\/*?|<>]", "_");       
         return name;
     }
 
@@ -392,14 +394,14 @@ public class SettingsUtil {
      *
      * @param fieldbookService   the fieldbook service
      * @param standardVariableId the standard variable id
-     * @param projectId          the project id
+     * @param programUUID          the project id
      * @return the field possible values favorite
      */
-    private static List<ValueReference> getFieldPossibleValuesFavorite(FieldbookService fieldbookService, Integer standardVariableId, String projectId) {
+    private static List<ValueReference> getFieldPossibleValuesFavorite(FieldbookService fieldbookService, Integer standardVariableId, String programUUID) {
         List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
 
         try {
-            possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId, projectId);
+            possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId, programUUID);
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -431,14 +433,14 @@ public class SettingsUtil {
      * @param fieldbookService           the fieldbook service
      * @param dataset                    the dataset
      * @param userSelection              the user selection
-     * @param projectId                  the project id
+     * @param programUUID                  the project id
      * @throws MiddlewareQueryException the middleware query exception
      */
-    public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection, String projectId, boolean isUsePrevious, boolean isTrial) throws MiddlewareQueryException {
+    public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection, String programUUID, boolean isUsePrevious, boolean isTrial) throws MiddlewareQueryException {
         if (!isTrial) {
-            convertXmlNurseryDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection, projectId, isUsePrevious);
+            convertXmlNurseryDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection, programUUID, isUsePrevious);
         } else {
-            convertXmlTrialDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection, projectId);
+            convertXmlTrialDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection, programUUID);
         }
     }
 
@@ -517,12 +519,12 @@ public class SettingsUtil {
      * @param fieldbookService           the fieldbook service
      * @param dataset                    the dataset
      * @param userSelection              the user selection
-     * @param projectId                  the project id
+     * @param programUUID                  the project id
      * @throws MiddlewareQueryException the middleware query exception
      */
     private static void convertXmlNurseryDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                        com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection,
-                                                       String projectId, boolean isUsePrevious) throws MiddlewareQueryException {
+                                                       String programUUID, boolean isUsePrevious) throws MiddlewareQueryException {
         Operation operation = isUsePrevious ? Operation.ADD : Operation.UPDATE;
         if (dataset != null && userSelection != null) {
             //we copy it to User session object
@@ -571,7 +573,7 @@ public class SettingsUtil {
                             possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
 
                     settingDetail.setPossibleValuesToJson(possibleValues);
-                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
                     settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 
                     if (userSelection != null) {
@@ -677,7 +679,7 @@ public class SettingsUtil {
                             possibleValues, null, true);
                     
                     settingDetail.setPossibleValuesToJson(possibleValues);
-                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
                     settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
                     
                     if (inPropertyList(standardVariable.getProperty().getId())) {
@@ -710,7 +712,7 @@ public class SettingsUtil {
                             possibleValues, HtmlUtils.htmlUnescape(constant.getValue()), true);
 
                     settingDetail.setPossibleValuesToJson(possibleValues);
-                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
                     settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
                     nurseryConditions.add(settingDetail);
                     if (userSelection != null) {
@@ -756,10 +758,10 @@ public class SettingsUtil {
      * @param fieldbookService           the fieldbook service
      * @param dataset                    the dataset
      * @param userSelection              the user selection
-     * @param projectId                  the project id
+     * @param programUUID                  the project id
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private static void convertXmlTrialDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException {
+    private static void convertXmlTrialDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection, String programUUID) throws MiddlewareQueryException {
         if (dataset != null && userSelection != null) {
             //we copy it to User session object
             //nursery level
@@ -787,7 +789,7 @@ public class SettingsUtil {
                                 possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
 
                         settingDetail.setPossibleValuesToJson(possibleValues);
-                        List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                        List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
                         settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
                         
                         String nameTermId = getNameCounterpart(variable.getCvTermId(), AppConstants.ID_NAME_COMBINATION.getString());
@@ -854,7 +856,7 @@ public class SettingsUtil {
                                 possibleValues, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
 
                         settingDetail.setPossibleValuesToJson(possibleValues);
-                        List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                        List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
                         settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 
                         if (TermId.TRIAL_INSTANCE_FACTOR.getId() == variable.getCvTermId()) {
@@ -1568,7 +1570,7 @@ public class SettingsUtil {
         for (String strFieldId : fields) {
             if (strFieldId != null && !"".equals(strFieldId)) {
                 boolean found = false;
-                String label = AppConstants.getString(strFieldId + "_LABEL");
+                String label = AppConstants.getString(strFieldId.toUpperCase() + "_LABEL");
                 if (conditions != null) {
                     for (MeasurementVariable condition : conditions) {
                         if (NumberUtils.isNumber(strFieldId)) {

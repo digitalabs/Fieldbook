@@ -1,6 +1,8 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 import org.junit.Before;
@@ -8,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +38,9 @@ public class BreedingMethodControllerTest {
 
 	@Mock
 	private HttpServletRequest request;
+	
+	@Mock
+	private ContextUtil contextUtil;
 
 	public static final String DUMMY_URL = "myURL";
 	public static final Long DUMMY_PROJECT_ID = (long)2;
@@ -67,7 +73,7 @@ public class BreedingMethodControllerTest {
 
 		try {
 			doReturn(allMethodList).when(fieldbookMiddlewareService).getAllBreedingMethods(false);
-			doReturn(favoriteMethodList).when(fieldbookMiddlewareService).getFavoriteProjectMethods();
+			doReturn(favoriteMethodList).when(fieldbookMiddlewareService).getFavoriteProjectMethods(Mockito.anyString());
 			Map<String, Object> breedingMethods = mole.getBreedingMethods();
 
 			assertNotNull(breedingMethods);

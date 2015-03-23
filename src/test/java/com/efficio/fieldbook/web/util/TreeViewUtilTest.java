@@ -22,36 +22,22 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 	
 	private static final Integer LIST_USER_ID = 1;
 	
-	/** The Constant LOCAL_LIST_1. */
-    private static final GermplasmList LOCAL_LIST_1 = 
-            new GermplasmList(-1, "Local List 1", null, "FOLDER", LIST_USER_ID, "Local List Description 1", null, 1);
+	/** The Constant LIST_1. */
+    private static final GermplasmList LIST_1 = 
+            new GermplasmList(1, "List 1", null, "FOLDER", LIST_USER_ID, "List Description 1", null, 1);
     
-    /** The Constant LOCAL_LIST_2. */
-    private static final GermplasmList LOCAL_LIST_2 = 
-            new GermplasmList(-2, "Local List 2", null, null, LIST_USER_ID, null, null, 1);
+    /** The Constant LIST_2. */
+    private static final GermplasmList LIST_2 = 
+            new GermplasmList(2, "List 2", null, null, LIST_USER_ID, null, null, 1);
     
-    /** The Constant LOCAL_LIST_3. */
-    private static final GermplasmList LOCAL_LIST_3 = 
-            new GermplasmList(-3, "Local List 3", null, "LST", LIST_USER_ID, 
-            		"A very long long long long long description ", LOCAL_LIST_1, 1);
+    /** The Constant LIST_3. */
+    private static final GermplasmList LIST_3 = 
+            new GermplasmList(3, "List 3", null, "LST", LIST_USER_ID, 
+            		"A very long long long long long description ", LIST_1, 1);
  
-    /** The Constant LOCAL_GERMPLASM_LIST_TEST_DATA. */
-    private static final List<GermplasmList> LOCAL_GERMPLASM_LIST_TEST_DATA = 
-            Arrays.asList(LOCAL_LIST_1, LOCAL_LIST_2, LOCAL_LIST_3);
-    
-    /** The Constant CENTRAL_LIST_1. */
-    private static final GermplasmList CENTRAL_LIST_1 = 
-            new GermplasmList(1, "Central List 1", null, "FOLDER", LIST_USER_ID, 
-            		"Central List Folder 1", null, 1);
-    
-    /** The Constant CENTRAL_LIST_2. */
-    private static final GermplasmList CENTRAL_LIST_2 = 
-            new GermplasmList(2, "Central List 2", null, "LST", LIST_USER_ID, 
-            		"Central List 2", CENTRAL_LIST_1, 1);
-    
-    /** The Constant CENTRAL_GERMPLASM_LIST_TEST_DATA. */
-    private static final List<GermplasmList> CENTRAL_GERMPLASM_LIST_TEST_DATA = 
-            Arrays.asList(CENTRAL_LIST_1, CENTRAL_LIST_2);
+    /** The Constant GERMPLASM_LIST_TEST_DATA. */
+    private static final List<GermplasmList> GERMPLASM_LIST_TEST_DATA = 
+            Arrays.asList(LIST_1, LIST_2, LIST_3);
     
     private static final List<GermplasmList> EMPTY_GERMPLASM_LIST_TEST_DATA = 
             new ArrayList<GermplasmList>();
@@ -85,22 +71,19 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testConvertGermplasmListToTreeTableNodes() {
-		List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>(LOCAL_GERMPLASM_LIST_TEST_DATA);
-		germplasmLists.addAll(CENTRAL_GERMPLASM_LIST_TEST_DATA);
+		List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>(GERMPLASM_LIST_TEST_DATA);
 		List<TreeTableNode> treeTableNodes = TreeViewUtil.convertGermplasmListToTreeTableNodes(
 				germplasmLists, userDataManager, germplasmListManager);
 		
 		assertTrue("The list should not be null",treeTableNodes!=null);
 		assertTrue("The list should not be empty",!treeTableNodes.isEmpty());
-		assertEquals("The list should have 5 items",germplasmLists.size(),treeTableNodes.size());
+		assertEquals("The list should have 3 items",germplasmLists.size(),treeTableNodes.size());
 		for (TreeTableNode treeTableNode : treeTableNodes) {
 			GermplasmList germplasmList = null;
 			switch(Integer.parseInt(treeTableNode.getId())) {
-				case -1: germplasmList = LOCAL_LIST_1; break;
-				case -2: germplasmList = LOCAL_LIST_2; break;
-				case -3: germplasmList = LOCAL_LIST_3; break;
-				case 1: germplasmList = CENTRAL_LIST_1; break;
-				case 2: germplasmList = CENTRAL_LIST_2; break;
+				case 1: germplasmList = LIST_1; break;
+				case 2: germplasmList = LIST_2; break;
+				case 3: germplasmList = LIST_3; break;
 			}
 			assertEquals("The id should be " + germplasmList.getId(),
 					Integer.toString(germplasmList.getId()),treeTableNode.getId());
@@ -134,11 +117,7 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 	public static String getParentId(GermplasmList germplasmList) {
 		Integer parentId = germplasmList.getParentId();
 		if(parentId==null) {
-			if(germplasmList.getId()>0) {
-				return "CENTRAL";
-			} else {
-				return "LOCAL";
-			}
+			return "LISTS";
 		}
 		return String.valueOf(parentId);
 	}

@@ -63,7 +63,7 @@ function initializeGermplasmListTreeTable() {
 	updateTools();
 	updateDraggableTableRows();
 	updateDroppableTableRows();
-	$('#germplasmTreeTable').treetable('unloadBranch', $('#germplasmTreeTable').treetable('node','LOCAL'));
+	$('#germplasmTreeTable').treetable('unloadBranch', $('#germplasmTreeTable').treetable('node','LISTS'));
 	updateTableRowsBgColor();
 	$('#germplasmTreeTable .file').each(function() {
 		updateDoubleClickEvent($(this));
@@ -73,12 +73,7 @@ function updateTools() {
 	$('#germplasmTreeTable tbody').on('mousedown', 'tr', function() {
 		$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
-		if($(this).attr('data-tt-id')==='CENTRAL' ||
-				($(this).attr('data-tt-id')!=='LOCAL' && $(this).attr('data-tt-id')>'0')) {
-			changeBrowseGermplasmButtonBehavior(false);
-			hideAddGermplasmFolderDiv();
-			hideRenameGermplasmFolderDiv();
-		} else if($(this).attr('data-tt-id')==='LOCAL') {
+		if($(this).attr('data-tt-id')==='LISTS') {
 			changeBrowseGermplasmButtonBehavior(true);
 			$('.edit-germplasm-folder').addClass('disable-image');
 			$('.delete-germplasm-folder').addClass('disable-image');
@@ -94,7 +89,7 @@ function updateTools() {
 function updateDraggableTableRows() {
 	$('#germplasmTreeTable .folder, #germplasmTreeTable .file').each(function() {
 		var rowId = $(this).parents('tr').attr('data-tt-id');
-		if(rowId !== 'CENTRAL' && rowId !== 'LOCAL' && rowId < '0') {
+		if(rowId !== 'LISTS') {
 			germplasmTreeTableDraggableSetup.apply(this);
 		}
 	});
@@ -110,9 +105,7 @@ function germplasmTreeTableDraggableSetup() {
 	});
 }
 function updateDroppableTableRows() {
-	$('#germplasmTreeTable .folder').parents('tr').filter(function() {
-		  return $(this).attr('data-tt-id') === 'LOCAL' || $(this).attr('data-tt-id') < '0';
-	}).each(function() {
+	$('#germplasmTreeTable .folder').parents('tr').each(function() {
 		germplasmTreeTableDroppableSetup.apply(this);
 	});
 }
@@ -148,8 +141,8 @@ function moveGermplasmListInTreeTable(sourceNode, targetNode, sourceParentId) {
 	var sourceId = sourceNode.id,
 		targetId = targetNode.id;
 
-	if (targetId === 'LOCAL') {
-		targetId = 1;
+	if (targetId === 'LISTS') {
+		targetId = 0;
 	}
 
 	$.ajax({
@@ -201,7 +194,7 @@ function submitDeleteGermplasmFolderInTreeTable() {
 				node.remove();
 				updateTableRowsBgColor();
 				changeBrowseGermplasmButtonBehavior(false);
-                showSuccessfulMessage('',deleteFolderSuccessful);
+                showSuccessfulMessage('',deleteItemSuccessful);
 			} else {
 				showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
 			}
@@ -227,8 +220,8 @@ function createGermplasmFolderInTreeTable() {
         return false;
     } else {
         parentFolderId = getSelectedGermplasmListId();
-        if (parentFolderId === 'LOCAL') {
-            parentFolderId = 1;
+        if (parentFolderId === 'LISTS') {
+            parentFolderId = 0;
         }
 
         $.ajax({
@@ -309,7 +302,7 @@ function submitRenameGermplasmFolderInTreeTable() {
     
     var id = getSelectedGermplasmListId();
 
-    if (id > 1 || id === 'CENTRAL' || id === 'LOCAL') {
+    if (id === 'LISTS') {
         showErrorMessage('page-rename-germplasm-folder-message-modal', renameGermplasmInvalidFolderMessage);
         return false;
     }
@@ -328,8 +321,8 @@ function submitRenameGermplasmFolderInTreeTable() {
         return false;
     } else {
         parentFolderId = id;
-        if (parentFolderId === 'LOCAL') {
-            parentFolderId = 1;
+        if (parentFolderId === 'LISTS') {
+            parentFolderId = 0;
         }
 
         $.ajax({
@@ -342,7 +335,7 @@ function submitRenameGermplasmFolderInTreeTable() {
                 if (data.isSuccess === '1') {
                     hideRenameGermplasmFolderDiv();
                     setSelectedGermplasmListName(folderName);
-                    showSuccessfulMessage('', renameFolderSuccessful);
+                    showSuccessfulMessage('', renameItemSuccessful);
                 } else {
                     showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
                 }

@@ -23,9 +23,9 @@
 						</div>
 						<div style="margin-left: 10px" class="col-xs-6 col-md-6">
 							<div style="float: right; ">
-								<img onclick="javascript: addGermplasmFolder(this)" th:src="@{/static/img/add 2.png}" class="image-padding browse-germplasm-action" />
-								<img onclick="javascript: renameGermplasmFolder(this)" th:src="@{/static/img/edit.png}" class="image-padding browse-germplasm-action edit-germplasm-folder" />
-								<img onclick="javascript: FolderOperation.deleteGermplasmFolder(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
+								<img onclick="javascript: ListTreeOperation.addGermplasmFolder(this)" th:src="@{/static/img/add 2.png}" class="image-padding browse-germplasm-action" />
+								<img onclick="javascript: ListTreeOperation.renameGermplasmFolder(this)" th:src="@{/static/img/edit.png}" class="image-padding browse-germplasm-action edit-germplasm-folder" />
+								<img onclick="javascript: ListTreeOperation.deleteGermplasmFolder(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
 							</div>
 						</div>
 					</div>
@@ -45,12 +45,12 @@
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
-                                <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '1');"/>
+                                <input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '1');"/>
                                  <span class="input-group-btn">
-                                     <button class="btn btn-success" id="addGermplasmFolderOkButton" onclick="javascript: createGermplasmFolder()">
+                                     <button class="btn btn-success" id="addGermplasmFolderOkButton" onclick="javascript: ListTreeOperation.createGermplasmFolder()">
                                          <span class="glyphicon glyphicon-ok"></span>
                                      </button>
-                                     <button class="btn btn-danger" id="addGermplasmFolderCancelButton" onclick="javascript: hideAddGermplasmFolderDiv()">
+                                     <button class="btn btn-danger" id="addGermplasmFolderCancelButton" onclick="javascript: ListTreeOperation.hideAddGermplasmFolderDiv()">
                                          <span class="glyphicon glyphicon-remove"></span>
                                      </button>
                                  </span>
@@ -64,12 +64,12 @@
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
-                                <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '2');"/>
+                                <input id="renameFolderName" name="renameFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '2');"/>
                                   <span class="input-group-btn">
-                                      <button class="btn btn-success" id="renameGermplasmFolderOkButton" onclick="javascript: submitRenameGermplasmFolder()">
+                                      <button class="btn btn-success" id="renameGermplasmFolderOkButton" onclick="javascript: ListTreeOperation.submitRenameGermplasmFolder()">
                                           <span class="glyphicon glyphicon-ok"></span>
                                       </button>
-                                      <button class="btn btn-danger" id="renameGermplasmFolderCancelButton" onclick="javascript: hideRenameGermplasmFolderDiv()">
+                                      <button class="btn btn-danger" id="renameGermplasmFolderCancelButton" onclick="javascript: ListTreeOperation.hideRenameGermplasmFolderDiv()">
                                           <span class="glyphicon glyphicon-remove"></span>
                                       </button>
                                   </span>
@@ -88,204 +88,49 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-				<button type="button" class="btn btn-primary" th:text="#{common.form.save.text}" onclick="javascript: saveGermplasmList();">Ok</button>
+				<button type="button" class="btn btn-primary" th:text="#{common.form.save.text}" onclick="javascript: SaveAdvanceList.saveGermplasmList();">Ok</button>
 			</div>
 		</div>
 	</div>
 </div>
-
-<div class="modal fade" id="oldDeleteGermplasmFolder" role="dialog" aria-labelledby="oldDeleteGermplasmFolder" aria-hidden="true" style="overflow: hidden">
+<div class="modal fade" id="deleteFolderModal" role="dialog" aria-labelledby="deleteFolderModal" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">
+		<div class="modal-content">			
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">
-						<label class="modal-title fbk-modal-title" id="heading-delete-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
-						<button  id="closeDeleteGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('oldDeleteGermplasmFolder')"/>
-					</div>
+						<button id="closeDeleteFolderModal" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteFolderModal')"/>
+					</div>										
 				</div>
-
+				
 				<div class="row">
-					<div id="page-delete-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
+					<div id="page-delete-message-modal" class="col-xs-12 col-md-12">
 					</div>
 				</div>
 				<div class="row form-group">
-						<div class="col-xs-12 col-md-12 add_top_padding">
-							<label class="control-label" id="oldDelete-folder-confirmation"></label>
-						</div>
+					<div class="col-xs-12 col-md-12 add_top_padding">
+						<label class="control-label" id="delete-folder-confirm"></label>
+					</div>
 				</div>
 
 			</div>
 			<div class="modal-footer addVariable-footer">
-				<button type="button" class="btn btn-default" onclick="javascript: closeModal('oldDeleteGermplasmFolder')" th:text="#{common.form.no.text}">Cancel</button>
-				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: FolderOperation.submitDeleteGermplasmFolder();">Ok</button>
+				<button type="button" class="btn btn-default" onclick="javascript: closeModal('deleteFolderModal')" th:text="#{common.form.no.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: ListTreeOperation.submitDeleteGermplasmFolder();">Ok</button>
 			</div>
 		</div>
 	</div>
 </div>
-
 <div id="list-tree-include" th:include="/Common/includes/listTreeInclude"></div>
-<div id="list-operation-include" th:include="/Common/includes/manageGermplasmListOperation"></div>
-
 <div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/nursery-manager/saveAdvanceList.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/nursery-manager/listTreeOperation.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
-	//<![CDATA[
-	/*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList*/
-	/*globals showErrorMessage, showInvalidInputMessage, getDisplayedTreeName*/
-	/*exported nameDuplicateError, saveGermplasmList, openSaveListModal*/
-
-	var FolderOperation = {};
-
-	FolderOperation.deleteGermplasmFolder = function (object) {
-		var currentFolderName;
-
-		if (!$(object).hasClass('disable-image')) {
-			$('#oldDeleteGermplasmFolder').modal('show');
-			$('#addGermplasmFolderDiv').slideUp('fast');
-			$('#renameGermplasmFolderDiv').slideUp('fast');
-			currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title;
-			$('#oldDelete-folder-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');
-
-			$('#page-delete-germplasm-folder-message-modal').html('');
-		}
-	};
-
-	FolderOperation.submitDeleteGermplasmFolder = function() {
-		'use strict';
-
-		var folderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
-
-		$.ajax({
-			url: '/Fieldbook/ListTreeManager/deleteGermplasmFolder',
-			type: 'POST',
-			data: 'folderId=' + folderId,
-			cache: false,
-			success: function (data) {
-				var node;
-				if (data.isSuccess === '1') {
-					$('#oldDeleteGermplasmFolder').modal('hide');
-					node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
-					node.remove();
-					showSuccessfulMessage('', deleteFolderSuccessful);
-				} else {
-					showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
-				}
-			}
+		$( document ).ready(function() {
+			SaveAdvanceList.initializeGermplasmListTree();
 		});
-	};
-
-	var folderRequired = /*[[#{germplasm.save.list.folder.error}]]*/ '',
-		nameRequired = /*[[#{germplasm.save.list.name.error}]]*/ '',
-		descriptionRequired = /*[[#{germplasm.save.list.description.error}]]*/ '',
-		dateRequired = /*[[#{germplasm.save.list.date.error}]]*/ '',
-		typeRequired = /*[[#{germplasm.save.list.type.error}]]*/ '',
-		nameDuplicateError = /*[[#{germplasm.save.list.name.unique.error}]]*/ '';
-			var treeReloading = 1; // this will prevent reloading
-
-			$( document ).ready(function() {
-				'use strict';
-				displayGermplasmListTree('germplasmFolderTree', true, 1);
-				changeBrowseGermplasmButtonBehavior(false);
-				$('#saveListTreeModal').on('hidden.bs.modal', function() {
-					treeReloading = 0;
-					$('#germplasmFolderTree').dynatree('getTree').reload();
-					changeBrowseGermplasmButtonBehavior(false);
-				});
-
-			});
-			function openSaveListModal(object){
-				'use strict';
-				var listIdentifier = $(object).attr('id'),
-				germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
-				additionalLazyLoadUrl = '/1';
-				$.ajax(
-					{ 
-						url: '/Fieldbook/ListTreeManager/saveList/'+listIdentifier,
-						type: 'GET',
-						cache: false,
-						success: function(html) {
-	                        $('#saveListTreeModal').data('is-save-crosses', '0');
-							$('#saveGermplasmRightSection').html(html);
-							$('#saveListTreeModal').modal({
-								show: true,
-								keyboard: true,
-								backdrop: 'static'
-							});
-							//we preselect the program lists
-							if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null){
-								germplasmTreeNode.getNodeByKey('LOCAL').activate();
-								germplasmTreeNode.getNodeByKey('LOCAL').expand()
-							}
-						}
-					}
-				);
-			}
-			function saveGermplasmList(){
-				'use strict';
-				var chosenNodeFolder = $('#'+getDisplayedTreeName()).dynatree('getTree').getActiveNode();
-				var errorMessageDiv = 'page-save-list-message-modal';
-				if(chosenNodeFolder == null){
-					showErrorMessage(errorMessageDiv, folderRequired);
-					return false;
-				}
-				if($('#listName').val() === ''){
-					showInvalidInputMessage(nameRequired);
-					return false;
-				}
-				if($('#listDescription').val() === ''){
-					showInvalidInputMessage(descriptionRequired);
-					return false;
-				}
-				if($('#listType').val() === ''){
-					showInvalidInputMessage(typeRequired);
-					return false;
-				}
-				if($('#listDate').val() === ''){
-					showInvalidInputMessage(dateRequired);
-					return false;
-				}
-				var invalidDateMsg = validateAllDates();
-			    if(invalidDateMsg !== '') {
-			    	showInvalidInputMessage(invalidDateMsg);
-			    	return false;
-			    }
-			    
-				var parentId = chosenNodeFolder.data.key;
-				$('#saveListForm #parentId').val(parentId);
-				var dataForm = $('#saveListForm').serialize();
-				
-				var saveList  = '/Fieldbook/ListTreeManager/saveList/';
-				var isCrosses = false;
-				if($('#saveListTreeModal').data('is-save-crosses') === '1'){
-					isCrosses = true;
-				}
-				if(isCrosses){
-					saveList  = '/Fieldbook/ListTreeManager/saveCrossesList/';
-				}
-				$.ajax(
-					{ url: saveList,
-					type: 'POST',
-					data: dataForm,
-					cache: false,
-					success: function(data) {
-						if(data.isSuccess === 1){
-							$('#saveListTreeModal').modal('hide');
-							if(isCrosses){
-								ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);								
-								$('#saveListTreeModal').data('is-save-crosses', '0');
-							}else{
-								displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName, false, data.advancedGermplasmListId);
-							}
-							showSuccessfulMessage('',saveListSuccessfullyMessage);
-						}else{
-							showErrorMessage('page-save-list-message-modal', data.message);
-						}
-					}
-				}
-				);
-			}
-	//]]>
-</script>
+	</script>
 </div>

@@ -1,12 +1,17 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -15,11 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,6 +41,9 @@ public class LocationsController extends AbstractBaseFieldbookController {
 
 		@Resource
 		private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+		
+		@Resource
+		private ContextUtil contextUtil;
 
 		@Override public String getContentName() {
 			return null;
@@ -72,7 +77,7 @@ public class LocationsController extends AbstractBaseFieldbookController {
 
 			try {
 				List<Long> locationsIds = fieldbookMiddlewareService
-						.getFavoriteProjectLocationIds();
+						.getFavoriteProjectLocationIds(contextUtil.getCurrentProgramUUID());
 				List<Location> faveLocations = fieldbookMiddlewareService
 						.getFavoriteLocationByProjectId(locationsIds);
 				List<Location> allBreedingLocations = fieldbookMiddlewareService

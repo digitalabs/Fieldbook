@@ -35,10 +35,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -78,18 +80,12 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -100,7 +96,7 @@ import com.lowagie.text.pdf.PdfWriter;
 @Service
 public class LabelPrintingServiceImpl implements LabelPrintingService{
 
-    /** The Constant LOG. */
+	/** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceImpl.class);
     public static final String BARCODE = "barcode";
     public static final String SELECTED_NAME = "selectedName";
@@ -153,14 +149,34 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     private SettingsService settingsService;
     
     @Resource
+    private ContextUtil contextUtil;
+    
+    @Resource
     private InventoryService inventoryMiddlewareService;
+    
+    private String UNSUPPORTED_CHARSET_IMG = "unsupported-char-set.png";
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
 	 */
 
+    private String ARIAL_UNI = "arialuni.ttf";
+    
     public LabelPrintingServiceImpl(){
     	super();
+    }
+    
+    protected BitMatrix encodeBarcode(String barcodeLabelForCode, int width, int height){
+    	BitMatrix bitMatrix = null;
+		try {
+			bitMatrix = new Code128Writer().encode(barcodeLabelForCode,
+			        BarcodeFormat.CODE_128, width, height, null);
+		} catch (WriterException e) {
+			LOG.debug(e.getMessage(), e);
+		}catch(IllegalArgumentException e){
+        	LOG.debug(e.getMessage(), e);
+        }
+    	return bitMatrix;
     }
     
     /* (non-Javadoc)
@@ -259,17 +275,24 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         throw new LabelPrintingException("label.printing.label.too.long",
                                 barcodeLabelForCode, "label.printing.label.too.long");
                     }
-                    BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabelForCode,
-                            BarcodeFormat.CODE_128, width, height, null);
-                    String imageLocation = System.getProperty("user.home")
-                            + "/" + Math.random() + ".png";
-                    File imageFile = new File(imageLocation);
-                    FileOutputStream fout = new FileOutputStream(imageFile);
-                    MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
-                    filesToBeDeleted.add(imageFile);
-
-                    Image mainImage = Image.getInstance(imageLocation);
-
+                    
+                    Image mainImage = Image.getInstance(LabelPrintingServiceImpl.class.getClassLoader().getResource(UNSUPPORTED_CHARSET_IMG));
+                    FileOutputStream fout = null;
+                    
+                	BitMatrix bitMatrix = encodeBarcode(barcodeLabelForCode, width, height);
+                	if(bitMatrix != null){
+	                	String imageLocation = System.getProperty("user.home")
+	                        + "/" + Math.random() + ".png";
+	                	File imageFile = new File(imageLocation);
+	                    fout = new FileOutputStream(imageFile);
+	                    MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
+	                    filesToBeDeleted.add(imageFile);
+	
+	                    mainImage = Image.getInstance(imageLocation);
+                	}
+                   
+                    
+                    
                     PdfPCell cell = new PdfPCell();
                     cell.setFixedHeight(cellHeight);
                     cell.setNoWrap(false);
@@ -293,8 +316,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                     float fontSize = paper.getFontSize();
 
-                    Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
-
+                    BaseFont unicode = BaseFont.createFont(ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                    Font fontNormal = new Font(unicode, fontSize) ;
+                    fontNormal.setStyle(Font.NORMAL);
+                    
                     cell.addElement(innerImageTableInfo);
                     cell.addElement(new Paragraph());
                     for (int row = 0; row < 5; row++) {
@@ -302,9 +327,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             PdfPTable innerDataTableInfo = new PdfPTable(1);
                             innerDataTableInfo.setWidths(new float[] { 1 });
                             innerDataTableInfo.setWidthPercentage(85);
-
-                            Font fontNormalData = FontFactory
-                                    .getFont("Arial", 5.0f, Font.NORMAL);
+                            
+                            Font fontNormalData = new Font(unicode, 5.0f) ;
+                            fontNormal.setStyle(Font.NORMAL);
+                            
+                                    
                             PdfPCell cellInnerData = new PdfPCell(
                                     new Phrase(barcodeLabel, fontNormalData));
 
@@ -389,8 +416,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         // we go the next page
                         document.newPage();
                     }
-                    fout.flush();
-                    fout.close();
+                    if(fout != null){
+	                    fout.flush();
+	                    fout.close();
+                    }
 
                 }
             }
@@ -532,8 +561,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 				buffer.append(messageSource.getMessage(
 						"label.printing.available.fields.rep", null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
-				buffer.append(messageSource.getMessage(
-                        LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale));
+				buffer.append(messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale));
 			} else if (headerID ==  AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
 				buffer.append(messageSource.getMessage(
                         LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale));
@@ -568,12 +596,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 }
 
                 buffer.append(headerName);
-
+                
 			}
 
             return buffer.toString();
         } catch (NumberFormatException e) {
-            LOG.error(e.getMessage());
+            LOG.error(e.getMessage(),e);
             return "";
         }
     }
@@ -633,7 +661,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_SCALE.getInt()) {
 				buffer.append(fieldMapLabel.getScaleName());	
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
-				buffer.append(fieldMapLabel.getLotId());	
+				buffer.append(fieldMapLabel.getLotId());
 			} else {
 				String value = fieldMapLabel.getUserFields().get(headerID);
 				if (value != null) {
@@ -653,7 +681,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
             return stemp;
         } catch (NumberFormatException e) {
-            LOG.error(e.getMessage());
+            LOG.error(e.getMessage(),e);
             return "";
         }
     }
@@ -677,10 +705,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         try {
 
             HSSFWorkbook workbook = new HSSFWorkbook();
-            String sheetName = SettingsUtil.cleanSheetAndFileName(userLabelPrinting.getName());
+            String sheetName = WorkbookUtil.createSafeSheetName(userLabelPrinting.getName());
             if (sheetName == null) {
                 sheetName = "Labels";
-            }
+            }            
             Sheet labelPrintingSheet = workbook.createSheet(sheetName);
 
             CellStyle labelStyle = workbook.createCellStyle();
@@ -1043,7 +1071,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 }
 
             } catch (NumberFormatException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(),e);
             }
 
         }
@@ -1110,7 +1138,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 ExportColumnValue columnValue = new ExportColumnValue(selectedFieldID, value);
                 rowMap.put(selectedFieldID, columnValue);
             } catch (NumberFormatException e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(),e);
             }
         }
 
@@ -1298,12 +1326,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 String germplasmListType = germplasmList.getType();
                 List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId,germplasmListType);
 				
-				for(InventoryDetails inventoryDetails : inventoryDetailList){
-					if(inventoryDetails.getLotId() != null){
-						return true;
-					}
-				}
-			}
+                	for(InventoryDetails inventoryDetails : inventoryDetailList){
+    					if(inventoryDetails.getLotId() != null){
+    						return true;
+    					}
+    				}
+                }
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(),e);
 		}
@@ -1378,7 +1406,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
         if (LabelPrintingPresets.PROGRAM_PRESET == presetType) {
             List<ProgramPreset> presets = presetDataManager.getProgramPresetFromProgramAndToolByName(
-                    presetName, programId, workbenchService.getFieldbookWebTool().getToolId().intValue(), ToolSection.FBK_LABEL_PRINTING.name());
+                    presetName, contextUtil.getCurrentProgramUUID(), workbenchService.getFieldbookWebTool().getToolId().intValue(), ToolSection.FBK_LABEL_PRINTING.name());
 
             for (ProgramPreset preset : presets) {
                 out.add(new LabelPrintingPresets(preset.getProgramPresetId(),preset.getName(),LabelPrintingPresets.PROGRAM_PRESET));
@@ -1416,7 +1444,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
             // 3. add all program presets for fieldbook
 			for (ProgramPreset preset : presetDataManager.getProgramPresetFromProgramAndTool(
-                    programId, fieldbookToolId,ToolSection.FBK_LABEL_PRINTING.name())) {
+					contextUtil.getCurrentProgramUUID(), fieldbookToolId,
+					ToolSection.FBK_LABEL_PRINTING.name())) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
 						LabelPrintingPresets.PROGRAM_PRESET));
 			}
@@ -1469,7 +1498,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             // add new
             ProgramPreset preset = new ProgramPreset();
             preset.setName(settingsName);
-            preset.setProgramUuid(programId);
+            preset.setProgramUuid(contextUtil.getCurrentProgramUUID());
             preset.setToolId(workbenchService.getFieldbookWebTool().getToolId().intValue());
             preset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
             preset.setConfiguration(xmlConfig);
@@ -1492,4 +1521,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 		this.inventoryMiddlewareService = inventoryMiddlewareService;
 	}
 
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
 }

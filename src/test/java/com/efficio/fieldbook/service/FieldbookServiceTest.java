@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 
 import junit.framework.Assert;
 
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -34,7 +35,8 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 public class FieldbookServiceTest {
        
-    private static final String CHECK = "CHECK";
+    private static final String DUMMY_PROGRAM_UUID = "1234567890";
+	private static final String CHECK = "CHECK";
 	private static final String DESIG = "DESIG";
 	private static final String CATEGORICAL_VARIABLE = "Categorical variable";
 	private static final String CODE = "Code";
@@ -80,6 +82,8 @@ public class FieldbookServiceTest {
     	Mockito.when(fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral()).thenReturn(personsList);
     	
     	fieldbookServiceImpl = new FieldbookServiceImpl(fieldbookMiddlewareService, new PossibleValuesCache());
+    	
+    	fieldbookServiceImpl.setContextUtil(Mockito.mock(ContextUtil.class));
     	
     	List<ValueReference> possibleValues = new ArrayList<ValueReference>();
     	for(int i = 0 ; i < 5 ; i++){
@@ -145,7 +149,7 @@ public class FieldbookServiceTest {
     }    
     @Test
     public void testGetAllLocations() throws Exception {
-    	List<ValueReference> resultPossibleValues = fieldbookServiceImpl.getAllLocations();
+    	List<ValueReference> resultPossibleValues = fieldbookServiceImpl.getAllLocationsByUniqueID(DUMMY_PROGRAM_UUID);
     	Assert.assertEquals("First possible value should have an id of 1 as per our test data", Integer.valueOf(1), resultPossibleValues.get(0).getId());
     	Assert.assertEquals("Second possible value should have an id of 2 as per our test data", Integer.valueOf(2), resultPossibleValues.get(1).getId());
     	Assert.assertEquals("There should only be 2 records as per our test data", 2, resultPossibleValues.size());

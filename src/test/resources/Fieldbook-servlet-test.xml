@@ -182,105 +182,73 @@
 	<!-- **************************************************************** -->
 
     <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DefaultManagerFactoryProvider" destroy-method="close">   	
-    	<property name="localUsername" value="${local.username}"/>
-    	<property name="localPassword" value="${local.password}"/>
-    	<property name="localPort"     value="${workbench.port}"/>
-    	<property name="centralUsername" value="${central.username}"/>
-    	<property name="centralPassword" value="${central.password}"/>
-    	<property name="centralPort"     value="${workbench.port}"/>
+    	<property name="dbUsername" value="${workbench.username}"/>
+    	<property name="dbPassword" value="${workbench.password}"/>
+    	<property name="dbPort"     value="${workbench.port}"/>
     </bean>
     
      <bean id="ontologyDataManagerV2" class="org.generationcp.middleware.manager.OntologyDataManagerImpl">
-        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+        <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
     
     <bean id="germplasmDataManagerV2" class="org.generationcp.middleware.manager.GermplasmDataManagerImpl">
-        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+        <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
 
 	<bean id="presetDataManager" class="org.generationcp.middleware.manager.PresetDataManagerImpl">
-		<property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-		<property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+		<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
 	</bean>
     
     <bean id="dataImportService" class="org.generationcp.middleware.service.DataImportServiceImpl">
-        <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+        <constructor-arg name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
     
     <bean id="fieldbookMiddlewareService" class="org.generationcp.middleware.service.FieldbookServiceImpl">
-        <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-        <constructor-arg name="localDatabaseName" value="${local.db.name}"/>
-        <constructor-arg name="centralDatabaseName" value="${central.db.name}"/>
+        <constructor-arg name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
+        <constructor-arg name="localDatabaseName" value="${crop.db.name}"/>
     </bean>
     
     <bean id="inventoryMiddlewareService" class="org.generationcp.middleware.service.InventoryServiceImpl">
-    	<constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-        <constructor-arg name="localDatabaseName" value="${local.db.name}"/>
-        <constructor-arg name="centralDatabaseName" value="${central.db.name}"/>
+    	<constructor-arg name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
+        <constructor-arg name="localDatabaseName" value="${crop.db.name}"/>
     </bean>
     
     
     <bean id="ontologyService" class="org.generationcp.middleware.service.OntologyServiceImpl">
-        <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+        <constructor-arg name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
     
     <bean id="studyDataManagerV2" class="org.generationcp.middleware.manager.StudyDataManagerImpl">
-        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+        <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
     
     <bean id="germplasmListManager" class="org.generationcp.middleware.manager.GermplasmListManagerImpl">
-        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+        <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
     
     <bean id="userDataManager" class="org.generationcp.middleware.manager.UserDataManagerImpl">
-    	<property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+    	<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
 
-    <bean id="centralHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="singleton" destroy-method="close">
-        <property name="sessionFactory" ref="centralSessionFactory"/>
+    <bean id="ibdbHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="singleton" destroy-method="close">
+        <property name="sessionFactory" ref="ibdbSessionFactory"/>
         <aop:scoped-proxy proxy-target-class="false"/>
-    </bean>
-    
-     <bean id="localIbdbHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="singleton" destroy-method="close">
-        <property name="sessionFactory" ref="localIbdbSessionFactory"/>
-        <aop:scoped-proxy proxy-target-class="false"/>
-    </bean>
-    
-    <bean id="centralSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-        <property name="dataSource" ref="centralDataSource"/>
-        <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
     </bean>
 
 
 	<bean id="workbenchSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="workbenchDataSource"/>
-        <property name="configLocation" value="classpath:ibpworkbench_hib.cfg.xml"/>
-    </bean>
-    
-    <bean id="localIbdbSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-        <property name="dataSource" ref="localIbdbDataSource"/>
         <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
     </bean>
     
-     <bean id="centralDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${workbench.driver}"/>
-        <property name="url" value="${central.url}"/>
-        <property name="username" value="${workbench.username}"/>
-        <property name="password" value="${workbench.password}"/>
+    <bean id="ibdbSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="ibdbDataSource"/>
+        <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
     </bean>
-
-    <bean id="localIbdbDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    
+    <bean id="ibdbDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${workbench.driver}"/>
-        <property name="url" value="${local.url}"/>
+        <property name="url" value="${crop.db.url}"/>
         <property name="username" value="${workbench.username}"/>
         <property name="password" value="${workbench.password}"/>
     </bean>
@@ -329,14 +297,21 @@
     </bean>
 
 	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
+	
+	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
 	<bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
+	
 	<bean id="crossingService"
           class="com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl">
     </bean>
-
-	<bean id="crossNameService" class="org.generationcp.commons.service.impl.CrossNameServiceImpl">
-	        <aop:scoped-proxy/>
-	</bean>
+    
+    <bean id="crossNameService" class="org.generationcp.commons.service.impl.CrossNameServiceImpl">
+        <aop:scoped-proxy/>
+    </bean>
 
     <bean id="crossingTemplateParser"
           class="com.efficio.fieldbook.web.common.service.impl.CrossingTemplateParser"

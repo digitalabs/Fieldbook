@@ -1,28 +1,30 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.Method;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Location;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,6 +43,9 @@ public class LocationControllerTest {
 
 	@Mock
 	private HttpServletRequest request;
+	
+	@Mock
+	private ContextUtil contextUtil;
 
 	@InjectMocks
 	private LocationsController controller;
@@ -72,7 +77,8 @@ public class LocationControllerTest {
 			List<Location> favoriteLocationsList = new ArrayList<>();
 
 			try {
-				doReturn(locationIDs).when(fieldbookMiddlewareService).getFavoriteProjectLocationIds();
+				doReturn(locationIDs).when(fieldbookMiddlewareService).getFavoriteProjectLocationIds(
+						Mockito.anyString());
 				doReturn(breedingLocationsList).when(fieldbookMiddlewareService).getAllBreedingLocations();
 				doReturn(favoriteLocationsList).when(fieldbookMiddlewareService).getFavoriteLocationByProjectId(locationIDs);
 				Map<String, Object> locations = mole.getLocations();

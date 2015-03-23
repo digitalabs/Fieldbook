@@ -7,6 +7,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -63,6 +64,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
+	@Resource
+	private ContextUtil contextUtil;
+
 	public CrossingTemplateParser() {
 
 	}
@@ -73,7 +77,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		try {
 			parseDescriptionSheet();
-			parseObservationSheet();
+			parseObservationSheet(contextUtil.getCurrentProgramUUID());
 		} catch (ParseException e) {
 			LOG.debug(e.getMessage(), e);
 			throw new FileParsingException(messageSource.getMessage(FILE_INVALID, new Object[]{}, Locale.getDefault()));
@@ -98,7 +102,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 *
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
-	protected void parseObservationSheet()
+	protected void parseObservationSheet(String programUUID)
 			throws FileParsingException, MiddlewareQueryException {
 		if (isObservationsHeaderInvalid()) {
 			throw new FileParsingException("Invalid Observation headers");
@@ -134,9 +138,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			// proceess female + male parent entries, will throw middleware query exception if no study valid or null
 			ListDataProject femaleListData = this
-					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femaleEntry));
+					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femaleEntry),programUUID);
 			ListDataProject maleListData = this
-					.getCrossingListProjectData(maleNursery, Integer.valueOf(maleEntry));
+					.getCrossingListProjectData(maleNursery, Integer.valueOf(maleEntry),programUUID);
 
 			this.importedCrossesList.addImportedCrosses(
 					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery,
@@ -443,10 +447,11 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
-	protected ListDataProject getCrossingListProjectData(String studyName, Integer genderEntryNo)
+	protected ListDataProject getCrossingListProjectData(
+			String studyName, Integer genderEntryNo, String programUUID)
 			throws MiddlewareQueryException {
 		// 1 get the particular study's list
-		final Integer studyId = studyDataManager.getStudyIdByName(studyName);
+		final Integer studyId = studyDataManager.getStudyIdByNameAndProgramUUID(studyName,programUUID);
 
 		if (null == studyId) {
 			throw new MiddlewareQueryException("no.such.study.exists",

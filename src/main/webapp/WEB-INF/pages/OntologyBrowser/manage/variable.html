@@ -419,14 +419,6 @@ function doValidation() {
             }
         }
 
-    } else if ($('#isDelete').val() == 1) {
-        if (parseInt($('#comboVariableName').select2('data').id) > 0) {
-            var variableName = $('#comboVariableName').select2('data').text.replace(' (Shared)', '');
-            message = /*[[#{ontology.browser.cannot.delete.central.variable}]]*/;
-            showMessage(message.replace('{0}', variableName));
-            moveToTopScreen();
-            return false;
-        }
     }
 
     if($('#preselectVariableId').val() == 0 && $('#fromPopup').val() == 1){
@@ -491,9 +483,7 @@ $( document ).ready(function() {
     setVisibleButtons(true, false, false);
     clearFields();
 	var varName = name;
-	if(varId > 0) {
-		varName += ' (Shared)'
-	}
+	
     if (saveSuccessful == '1' ) {
         triggerExternalNotification = true;
         if (isDelete == 0) {

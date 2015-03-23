@@ -3,8 +3,10 @@ package com.efficio.fieldbook.service;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.google.zxing.common.BitMatrix;
 
 import org.generationcp.commons.constant.ToolSection;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
@@ -30,8 +32,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -47,13 +47,17 @@ public class LabelPrintingServiceImplTest {
 	public static final int TEST_PRESET_ID = 1;
 	public static final String PROGRAM_PRESET_CONFIG = "program_preset_config";
 	public static final String STANDARD_PRESET_CONFIG = "standard_preset_config";
-
+	public static final String DUMMY_PROGRAM_UUID = "1234567890";
+	
 	@Mock
 	WorkbenchService workbenchService;
 
 	@Mock
 	PresetDataManager presetDataManager;
 	
+    @Mock
+    private ContextUtil contextUtil;
+    
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
@@ -80,7 +84,7 @@ public class LabelPrintingServiceImplTest {
 
 		final ArrayList<ProgramPreset> notEmptySearchResult = new ArrayList<>();
 		final ProgramPreset searchResultPreset = new ProgramPreset();
-		searchResultPreset.setProgramUuid(1);
+		searchResultPreset.setProgramUuid(DUMMY_PROGRAM_UUID);
 		searchResultPreset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
 		searchResultPreset.setToolId(23);
 		searchResultPreset.setName(TEST_EXISTING_PRESET_NAME);
@@ -88,15 +92,15 @@ public class LabelPrintingServiceImplTest {
 		notEmptySearchResult.add(searchResultPreset);
 
 		when(presetDataManager.getProgramPresetFromProgramAndToolByName(TEST_EXISTING_PRESET_NAME,
-				TEST_PROJECT_ID.intValue(), 23,
+				DUMMY_PROGRAM_UUID, 23,
 				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(notEmptySearchResult);
 
 		when(presetDataManager.getProgramPresetFromProgramAndToolByName(
 				TEST_NON_EXISTING_PRESET_NAME,
-				TEST_PROJECT_ID.intValue(), 23,
+				DUMMY_PROGRAM_UUID, 23,
 				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(new ArrayList<ProgramPreset>());
 
-		when(presetDataManager.getProgramPresetFromProgramAndTool(TEST_PROJECT_ID.intValue(), 23,
+		when(presetDataManager.getProgramPresetFromProgramAndTool(DUMMY_PROGRAM_UUID, 23,
 				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
 				notEmptySearchResult);
 
@@ -123,6 +127,8 @@ public class LabelPrintingServiceImplTest {
 
 		when(workbenchService.getStandardPresetById(TEST_PRESET_ID)).thenReturn(sp);
 		when(presetDataManager.getProgramPresetById(TEST_PRESET_ID)).thenReturn(searchResultPreset);
+		
+		when(contextUtil.getCurrentProgramUUID()).thenReturn(DUMMY_PROGRAM_UUID);
 	}
 
 	@Test
@@ -220,6 +226,18 @@ public class LabelPrintingServiceImplTest {
 		when(inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId())).thenReturn(new ArrayList<InventoryDetails>());
 		
 		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
+	}
+	
+	@Test
+	public void testEncodeBardcodeInEnglishCharacters(){
+		BitMatrix bitMatrix = serviceDUT.encodeBarcode("Test", 100, 200);
+		Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII" , bitMatrix);
+	}
+	
+	@Test
+	public void testEncodeBardcodeInNonEnglishCharacters(){
+		BitMatrix bitMatrix = serviceDUT.encodeBarcode("乙七九", 100, 200);
+		Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii" , bitMatrix);
 	}
 
 	private List<GermplasmList> createGermplasmLists(int numOfEntries) {

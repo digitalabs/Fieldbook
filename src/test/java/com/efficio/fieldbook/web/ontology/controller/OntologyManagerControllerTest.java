@@ -30,6 +30,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermProperty;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.OntologyServiceImpl;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
@@ -139,6 +140,12 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerIntegra
     	form.setPreselectVariableId(variableId);
     	form.setVariableId(variableId);
     	form.setDataTypeId(dataTypeId);
+    	form.setProperty("1");
+        form.setMethod("1");
+        form.setScale("1");
+        form.setDataType("1");
+        form.setRole("1");
+        
     	ontologyManagerController.setOntologyService(mockOntologyService);
     	ontologyManagerController.saveNewVariable(form, result, model);
     	Assert.assertEquals("Should return in model the same preselect variable id that was set in the form when it is a popup", variableId, model.asMap().get("preselectVariableId"));
@@ -160,6 +167,12 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerIntegra
     	form.setPreselectVariableId(variableId);
     	form.setVariableId(variableId);
     	form.setDataTypeId(dataTypeId);
+        form.setProperty("1");
+        form.setMethod("1");
+        form.setScale("1");
+        form.setDataType("1");
+        form.setRole("1");
+        
     	ontologyManagerController.setOntologyService(mockOntologyService);
     	ontologyManagerController.saveNewVariable(form, result, model);
 
@@ -228,4 +241,14 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerIntegra
     	
     	Assert.assertEquals("Not expecting an error but encountered an error instead.", false, hasError);
     }
+    
+    @Test
+    public void testValidateDeleteIfVariableIdIsPositive() throws MiddlewareQueryException{
+    	BindingResult result = Mockito.mock(BindingResult.class);
+    	form.setVariableId(1);    	
+    	ontologyManagerController.setOntologyService(mockOntologyService);
+    	ontologyManagerController.validateDelete(form, result);    	
+    	Mockito.verify(mockOntologyService, Mockito.times(1)).countProjectsByVariable(1);
+    }
+    
 }

@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by IntelliJ IDEA.

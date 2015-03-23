@@ -125,11 +125,11 @@ public class EditNurseryController extends SettingsController {
     public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
                                      @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2,                                     
                                      @PathVariable int nurseryId, @RequestParam(required = false) String isAjax,
-                                     Model model, HttpSession session, HttpServletRequest request, RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
+                                     Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
 
         final String contextParams = retrieveContextInfo(request);
 
-        this.clearSessionData(session);
+        this.clearSessionData(request.getSession());
 
         try {
             Workbook workbook = null;
@@ -167,7 +167,7 @@ public class EditNurseryController extends SettingsController {
                 form.setLoadSettings(SUCCESS);
                 form.setFolderId(Integer.valueOf((int) workbook.getStudyDetails().getParentFolderId()));
 
-                form.setFolderName(getNurseryFolderName(form.getFolderId(), nurseryId));
+                form.setFolderName(getNurseryFolderName(form.getFolderId()));
 
                 //measurements part
                 SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
@@ -205,13 +205,10 @@ public class EditNurseryController extends SettingsController {
 
     }
 
-    protected String getNurseryFolderName(int folderId, int nurseryId) throws MiddlewareQueryException {
-        if (folderId == 1 && nurseryId > 0) {
-            return AppConstants.PUBLIC_NURSERIES.getString();
-        } else if (folderId == 1) {
-            return AppConstants.PROGRAM_NURSERIES.getString();
+    protected String getNurseryFolderName(int folderId) throws MiddlewareQueryException {
+        if (folderId == 1) {
+            return AppConstants.NURSERIES.getString();
         }
-
         return fieldbookMiddlewareService.getFolderNameById(folderId);
     }
 
@@ -222,7 +219,7 @@ public class EditNurseryController extends SettingsController {
     protected void convertToXmlDatasetPojo(Workbook workbook) throws MiddlewareQueryException {
         Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 
-        SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, false);
+        SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProject().getUniqueID(), false, false);
     }
 
     protected void clearSessionData(HttpSession session) {

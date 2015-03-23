@@ -16,7 +16,7 @@
 
     <!-- Declare property file locations  -->
     <context:property-placeholder
-            location="classpath:fieldbook.properties, classpath:workbench.properties"/>
+            location="classpath:fieldbook.properties, classpath:workbench.properties,classpath:c3p0.properties"/>
 
     <!-- **************************************************************** -->
     <!--  RESOURCE FOLDERS CONFIGURATION                                  -->
@@ -68,6 +68,7 @@
 		<!-- Template cache is true by default. Set to false if you want -->
 		<!-- templates to be automatically updated when modified. -->
 		<property name="cacheable" value="false" />
+		<property name="characterEncoding" value="UTF-8" />
 	</bean>
 
 	<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
@@ -82,17 +83,18 @@
 
 	<bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
 		<property name="templateEngine" ref="templateEngine" />
+		<property name="characterEncoding" value="UTF-8" />
 	</bean>
 
 
     <!-- Application Beans -->
-
-    <bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
+    <bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties" scope="request">
         <property name="programLocationsUrl" value="${url.program.locations}"/>
         <property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}"/>
         <property name="germplasmImportUrl" value="${url.germplasm.import}"/>
         <property name="germplasmDetailsUrl" value="${url.germplasm.details}"/>
         <property name="uploadDirectory" value="${upload.directory}"/>
+        <aop:scoped-proxy/>
     </bean>
 
     <bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl">
@@ -240,13 +242,22 @@
     <!-- MIDDLEWARE Database Managers -->
     <!-- **************************************************************** -->
 
-    <bean id="workbenchDataSource"
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${workbench.driver}"/>
-        <property name="url" value="${workbench.url}"/>
-        <property name="username" value="${workbench.username}"/>
-        <property name="password" value="${workbench.password}"/>
-    </bean>
+    <bean id="workbenchDataSource" class = "com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${workbench.driver}" />
+        <property name="jdbcUrl" value="${workbench.url}" />
+        <property name="user" value="${workbench.username}" />
+        <property name="password" value="${workbench.password}" /> 
+
+        <!-- C3P0 properties -->
+        <property name="minPoolSize" value="${c3p0.minPoolSize}" />
+        <property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+        <property name="debugUnreturnedConnectionStackTraces" value="${c3p0.debugUnreturnedConnectionStackTraces}" />
+        <property name="unreturnedConnectionTimeout" value="${c3p0.unreturnedConnectionTimeout}" />
+        <property name="maxConnectionAge" value="${c3p0.maxConnectionAge}" />
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+        <property name="preferredTestQuery" value="${c3p0.preferredTestQuery}" />
+        <property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}" />
+ 	</bean>
 
     <bean id="workbenchSessionFactory"
           class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -264,19 +275,13 @@
         <aop:scoped-proxy proxy-target-class="false"/>
     </bean>
 
-    <bean id="managerFactoryProvider"
-          class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency"
-          destroy-method="closeAllSessionFactories">
+    <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency" destroy-method="closeAllSessionFactories">
         <constructor-arg ref="workbenchDataManager"/>
-        <property name="maxCachedLocalSessionFactories" value="1"/>
-        <property name="localPort" value="${workbench.port}"/>
-        <property name="localHost" value="${workbench.host}"/>
-        <property name="localUsername" value="${workbench.username}"/>
-        <property name="localPassword" value="${workbench.password}"/>
-        <property name="centralPort" value="${workbench.port}"/>
-        <property name="centralHost" value="${workbench.host}"/>
-        <property name="centralUsername" value="${workbench.username}"/>
-        <property name="centralPassword" value="${workbench.password}"/>
+        <property name="maxCachedSessionFactories" value="10"/>
+        <property name="dbPort" value="${workbench.port}"/>
+        <property name="dbHost" value="${workbench.host}"/>
+        <property name="dbUsername" value="${workbench.username}"/>
+        <property name="dbPassword" value="${workbench.password}"/>
     </bean>
 
     <bean id="managerFactory" name="managerFactory"
@@ -386,4 +391,10 @@
             </list>
         </property>
     </bean>
+
+    <bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+    
 </beans>

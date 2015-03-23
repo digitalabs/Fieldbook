@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 
 import com.efficio.fieldbook.util.FieldbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -100,7 +101,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	@Resource
 	protected OntologyService ontologyService;
 	
-
+	@Resource
+	protected ContextUtil contextUtil;
+	
 	
     /**
      * Gets the settings list.
@@ -152,7 +155,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     @ModelAttribute("nurseryList")
     public List<StudyDetails> getNurseryList() {
         try {
-            return fieldbookMiddlewareService.getAllLocalNurseryDetails();
+            return fieldbookMiddlewareService.getAllLocalNurseryDetails(
+            		contextUtil.getCurrentProgramUUID());
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -168,7 +172,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     @ModelAttribute("trialList")
     public List<StudyDetails> getTrialList() {
         try {
-            return fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
+            return fieldbookMiddlewareService.getAllLocalTrialStudyDetails(
+            		contextUtil.getCurrentProgramUUID());
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -387,7 +392,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                         settingDetail.setValue(dateFormat.format(date));
                     }
                     settingDetail.setPossibleValuesToJson(possibleValues);
-                    List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
+                    List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID());
                     settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
                     settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
                     return settingDetail;

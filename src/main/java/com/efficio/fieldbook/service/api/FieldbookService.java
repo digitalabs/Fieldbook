@@ -144,11 +144,12 @@ public interface FieldbookService {
     /**
      * Gets the all breeding methods.
      *
+     * @param programUUID - unique id of the current program
      * @param isFilterOutGenerative the is filter out generative
      * @return the all breeding methods
      * @throws MiddlewareQueryException the middleware query exception
      */
-    List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative) throws MiddlewareQueryException;
+    List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative, String programUUID) throws MiddlewareQueryException;
 
     /**
      * Sets the all possible values in workbook.

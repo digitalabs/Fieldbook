@@ -259,6 +259,7 @@ public class TreeViewUtil {
 		treeNode.setTitle(reference.getName());
 		treeNode.setIsFolder(reference instanceof DatasetReference ? false : true);
 		treeNode.setIsLazy(true);
+		treeNode.setProgramUUID(reference.getProgramUUID());
 
 		return treeNode;
 	}
@@ -289,6 +290,7 @@ public class TreeViewUtil {
 		boolean isFolder = isFolder(reference.getId(), fieldbookService);
 		treeNode.setIsFolder(isFolder);
 		treeNode.setIsLazy(true);
+		treeNode.setProgramUUID(reference.getProgramUUID());
 		if(isFolder){
 			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
 		} else {
@@ -381,11 +383,7 @@ public class TreeViewUtil {
 	private static String getParentId(GermplasmList germplasmList) {
 		Integer parentId = germplasmList.getParentId();
 		if(parentId==null) {
-			if(germplasmList.getId()>0) {
-				return "CENTRAL";
-			} else {
-				return "LOCAL";
-			}
+			return "LISTS";
 		}
 		return String.valueOf(parentId);
 	}

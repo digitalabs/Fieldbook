@@ -329,9 +329,9 @@ public class ImportGermplasmListController extends SettingsController {
         userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
         
         fieldbookService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
-        fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);        
-        int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true, isDeleteObservations);                
-        fieldbookService.saveStudyImportedCrosses(userSelection.getImportedCrossesId(), studyId); 
+        fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(), true);
+        int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true, isDeleteObservations, getCurrentProject().getUniqueID());        
+        fieldbookService.saveStudyImportedCrosses(userSelection.getImportedCrossesId(), studyId);
         //for saving the list data project        
         saveListDataProject(isNursery, studyId);
         

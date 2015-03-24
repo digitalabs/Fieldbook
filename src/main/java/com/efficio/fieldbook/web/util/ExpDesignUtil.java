@@ -64,6 +64,10 @@ public class ExpDesignUtil {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 	
+	private ExpDesignUtil(){
+		//hide implicit public constructor
+	}
+	
 	public static String getXmlStringForSetting(MainDesign mainDesign) throws JAXBException{
 		JAXBContext context = JAXBContext.newInstance(MainDesign.class);
         Marshaller marshaller = context.createMarshaller();
@@ -364,6 +368,7 @@ public class ExpDesignUtil {
 			try{
 				bvOutput = fieldbookService.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
 			}catch(Exception e){
+				LOG.error(e.getMessage());
 				throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
 			}
 			if(bvOutput != null && bvOutput.isSuccess()){

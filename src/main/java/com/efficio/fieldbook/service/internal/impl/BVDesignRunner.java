@@ -29,15 +29,13 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 //@Component("BVDesignRunner")
 public class BVDesignRunner implements DesignRunner {
-	
+	public static String BV_PREFIX = "-bv";
+	public static String CSV_EXTENSION = ".csv";
+
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignRunner.class);
-	
     private static String XML_EXTENSION = ".xml";
-    private static String CSV_EXTENSION = ".csv";
-	private static String BV_PREFIX = "-bv";
 	private static String BREEDING_VIEW_EXE = "BreedingView.exe";
 	private static String BVDESIGN_EXE = "BVDesign.exe";
-	private static String OUTPUT_FILE_PARAMETER_NAME = "outputfile";
 	
 	@Override
 	public BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design) throws IOException{
@@ -76,7 +74,7 @@ public class BVDesignRunner implements DesignRunner {
 		BVDesignOutput output = new BVDesignOutput(returnCode);
 		if(returnCode == 0){
 			 
-			 File outputFile = new File(design.getDesign().getParameterValue(OUTPUT_FILE_PARAMETER_NAME));
+			 File outputFile = new File(design.getDesign().getParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM));
 			 FileReader fileReader = new FileReader(outputFile);
 			 CSVReader reader = new CSVReader(fileReader);
 			 List<String[]> myEntries = reader.readAll();			 			 
@@ -94,7 +92,7 @@ public class BVDesignRunner implements DesignRunner {
 		Long currentTimeMillis = System.currentTimeMillis();
 		String outputFilePath = currentTimeMillis+BV_PREFIX+CSV_EXTENSION;
 		 
-		 design.getDesign().setParameterValue(OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
+		 design.getDesign().setParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM, outputFilePath);
 		 design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, new Integer(currentTimeMillis.intValue()).toString());
 		 
 		 try {

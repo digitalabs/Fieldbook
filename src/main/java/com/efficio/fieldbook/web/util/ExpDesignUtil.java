@@ -36,6 +36,26 @@ import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
 public class ExpDesignUtil {
+	public static final String NCLATIN_PARAM = "nclatin";
+	public static final String NRLATIN_PARAM = "nrlatin";
+	public static final String REPLATINGROUPS_PARAM = "replatingroups";
+	public static final String COLUMNFACTOR_PARAM = "columnfactor";
+	public static final String ROWFACTOR_PARAM = "rowfactor";
+	public static final String NCOLUMNS_PARAM = "ncolumns";
+	public static final String NROWS_PARAM = "nrows";
+	public static final String NBLATIN_PARAM = "nblatin";
+	public static final String REPLICATEFACTOR_PARAM = "replicatefactor";
+	public static final String TREATMENTFACTOR_PARAM = "treatmentfactor";
+	public static final String NREPLICATES_PARAM = "nreplicates";
+	public static final String NTREATMENTS_PARAM = "ntreatments";
+	public static final String BLOCKSIZE_PARAM = "blocksize";
+	public static final String TIMELIMIT_PARAM = "timelimit";
+	public static final String LEVELS_PARAM = "levels";
+	public static final String TREATMENTFACTORS_PARAM = "treatmentfactors";
+	public static final String PLOTFACTOR_PARAM = "plotfactor";
+	public static final String BLOCKFACTOR_PARAM = "blockfactor";
+	public static final String NBLOCKS_PARAM = "nblocks";
+	public static final String OUTPUTFILE_PARAM = "outputfile";
 	public static final String SEED_PARAM = "seed";
 	
 	private static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
@@ -74,9 +94,9 @@ public class ExpDesignUtil {
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));
-		paramList.add(createExpDesignParameter("nblocks", nBlock, null));
-		paramList.add(createExpDesignParameter("blockfactor", blockFactor, null));
-		paramList.add(createExpDesignParameter("plotfactor", plotFactor, null));
+		paramList.add(createExpDesignParameter(NBLOCKS_PARAM, nBlock, null));
+		paramList.add(createExpDesignParameter(BLOCKFACTOR_PARAM, blockFactor, null));
+		paramList.add(createExpDesignParameter(PLOTFACTOR_PARAM, plotFactor, null));
 		List<ListItem> itemsTreatmentFactor = new ArrayList<ListItem>();
 		List<ListItem> itemsLevels = new ArrayList<ListItem>();
 		if(treatmentFactor != null){
@@ -91,11 +111,11 @@ public class ExpDesignUtil {
 				itemsLevels.add(listItem);
 			}
 		}
-		paramList.add(createExpDesignParameter("treatmentfactors", null, itemsTreatmentFactor));		
-		paramList.add(createExpDesignParameter("levels", null,itemsLevels));
+		paramList.add(createExpDesignParameter(TREATMENTFACTORS_PARAM, null, itemsTreatmentFactor));		
+		paramList.add(createExpDesignParameter(LEVELS_PARAM, null,itemsLevels));
 				
-		paramList.add(createExpDesignParameter("timelimit", timeLimit, null));
-		paramList.add(createExpDesignParameter("outputfile", outputfile, null));
+		paramList.add(createExpDesignParameter(TIMELIMIT_PARAM, timeLimit, null));
+		paramList.add(createExpDesignParameter(OUTPUTFILE_PARAM, outputfile, null));
 		
 		ExpDesign design = new ExpDesign(RANDOMIZED_COMPLETE_BLOCK_DESIGN, paramList);
 		
@@ -110,15 +130,15 @@ public class ExpDesignUtil {
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));
-		paramList.add(createExpDesignParameter("blocksize", blockSize, null));
-		paramList.add(createExpDesignParameter("ntreatments", nTreatments, null));
-		paramList.add(createExpDesignParameter("nreplicates", nReplicates, null));
-		paramList.add(createExpDesignParameter("treatmentfactor", treatmentFactor, null));
-		paramList.add(createExpDesignParameter("replicatefactor", replicateFactor, null));
-		paramList.add(createExpDesignParameter("blockfactor", blockFactor, null));
-		paramList.add(createExpDesignParameter("plotfactor", plotFactor, null));
+		paramList.add(createExpDesignParameter(BLOCKSIZE_PARAM, blockSize, null));
+		paramList.add(createExpDesignParameter(NTREATMENTS_PARAM, nTreatments, null));
+		paramList.add(createExpDesignParameter(NREPLICATES_PARAM, nReplicates, null));
+		paramList.add(createExpDesignParameter(TREATMENTFACTOR_PARAM, treatmentFactor, null));
+		paramList.add(createExpDesignParameter(REPLICATEFACTOR_PARAM, replicateFactor, null));
+		paramList.add(createExpDesignParameter(BLOCKFACTOR_PARAM, blockFactor, null));
+		paramList.add(createExpDesignParameter(PLOTFACTOR_PARAM, plotFactor, null));
 		if(useLatinize){
-			paramList.add(createExpDesignParameter("nblatin", nBlatin, null));
+			paramList.add(createExpDesignParameter(NBLATIN_PARAM, nBlatin, null));
 			//we add the string tokenize replating groups
 			//we tokenize the replating groups
 			StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
@@ -126,13 +146,13 @@ public class ExpDesignUtil {
 			while(tokenizer.hasMoreTokens()){
 				replatingList.add(new ListItem(tokenizer.nextToken()));
 			}
-			paramList.add(createExpDesignParameter("replatingroups", null, replatingList));
+			paramList.add(createExpDesignParameter(REPLATINGROUPS_PARAM, null, replatingList));
 		}else{
-			paramList.add(createExpDesignParameter("nblatin", "0", null));
+			paramList.add(createExpDesignParameter(NBLATIN_PARAM, "0", null));
 		}
 		
-		paramList.add(createExpDesignParameter("timelimit", timeLimit, null));
-		paramList.add(createExpDesignParameter("outputfile", outputfile, null));
+		paramList.add(createExpDesignParameter(TIMELIMIT_PARAM, timeLimit, null));
+		paramList.add(createExpDesignParameter(OUTPUTFILE_PARAM, outputfile, null));
 		
 		ExpDesign design = new ExpDesign(RESOLVABLE_INCOMPLETE_BLOCK_DESIGN, paramList);
 		
@@ -149,31 +169,31 @@ public class ExpDesignUtil {
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));
-		paramList.add(createExpDesignParameter("ntreatments", nTreatments, null));
-		paramList.add(createExpDesignParameter("nreplicates", nReplicates, null));
-		paramList.add(createExpDesignParameter("nrows", nRows, null));
-		paramList.add(createExpDesignParameter("ncolumns", nColumns, null));
-		paramList.add(createExpDesignParameter("treatmentfactor", treatmentFactor, null));
-		paramList.add(createExpDesignParameter("replicatefactor", replicateFactor, null));
-		paramList.add(createExpDesignParameter("rowfactor", rowFactor, null));
-		paramList.add(createExpDesignParameter("columnfactor", columnFactor, null));
-		paramList.add(createExpDesignParameter("plotfactor", plotFactor, null));
+		paramList.add(createExpDesignParameter(NTREATMENTS_PARAM, nTreatments, null));
+		paramList.add(createExpDesignParameter(NREPLICATES_PARAM, nReplicates, null));
+		paramList.add(createExpDesignParameter(NROWS_PARAM, nRows, null));
+		paramList.add(createExpDesignParameter(NCOLUMNS_PARAM, nColumns, null));
+		paramList.add(createExpDesignParameter(TREATMENTFACTOR_PARAM, treatmentFactor, null));
+		paramList.add(createExpDesignParameter(REPLICATEFACTOR_PARAM, replicateFactor, null));
+		paramList.add(createExpDesignParameter(ROWFACTOR_PARAM, rowFactor, null));
+		paramList.add(createExpDesignParameter(COLUMNFACTOR_PARAM, columnFactor, null));
+		paramList.add(createExpDesignParameter(PLOTFACTOR_PARAM, plotFactor, null));
 		if(useLatinize != null && useLatinize.booleanValue()){
-			paramList.add(createExpDesignParameter("nrlatin", nrLatin, null));
-			paramList.add(createExpDesignParameter("nclatin", ncLatin, null));
+			paramList.add(createExpDesignParameter(NRLATIN_PARAM, nrLatin, null));
+			paramList.add(createExpDesignParameter(NCLATIN_PARAM, ncLatin, null));
 			//we tokenize the replating groups
 			StringTokenizer tokenizer = new StringTokenizer(replatingGroups, ",");
 			List<ListItem> replatingList = new ArrayList<ListItem>();
 			while(tokenizer.hasMoreTokens()){
 				replatingList.add(new ListItem(tokenizer.nextToken()));
 			}
-			paramList.add(createExpDesignParameter("replatingroups", null, replatingList));
+			paramList.add(createExpDesignParameter(REPLATINGROUPS_PARAM, null, replatingList));
 		}else{
-			paramList.add(createExpDesignParameter("nrlatin", "0", null));
-			paramList.add(createExpDesignParameter("nclatin", "0", null));
+			paramList.add(createExpDesignParameter(NRLATIN_PARAM, "0", null));
+			paramList.add(createExpDesignParameter(NCLATIN_PARAM, "0", null));
 		}
-		paramList.add(createExpDesignParameter("timelimit", timeLimit, null));
-		paramList.add(createExpDesignParameter("outputfile", outputfile, null));
+		paramList.add(createExpDesignParameter(TIMELIMIT_PARAM, timeLimit, null));
+		paramList.add(createExpDesignParameter(OUTPUTFILE_PARAM, outputfile, null));
 		
 		
 	

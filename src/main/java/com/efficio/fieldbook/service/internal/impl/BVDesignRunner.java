@@ -15,7 +15,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -27,7 +26,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
-//@Component("BVDesignRunner")
 public class BVDesignRunner implements DesignRunner {
 	public static final String BV_PREFIX = "-bv";
 	public static final String CSV_EXTENSION = ".csv";

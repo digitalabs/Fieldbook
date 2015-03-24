@@ -106,7 +106,7 @@ public class ResolvableRowColumnDesignServiceImpl implements
 				MainDesign mainDesign = ExpDesignUtil.createResolvableRowColDesign(Integer.toString(nTreatments),
 						replicates, rows, cols, stdvarTreatment.getName(), stdvarRep.getName(), 
 						stdvarRows.getName(),stdvarCols.getName(),stdvarPlot.getName(),
-						parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "1", "", parameter.getUseLatenized());
+						parameter.getNrlatin(), parameter.getNclatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
 				
 				measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd, 
 						trialVariables, factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 

@@ -40,9 +40,8 @@ public class MockDesignEngineTest extends AbstractBaseIntegrationTest {
 		String plotFactor = "BLOCK_NO";
 		List<String> treatmentFactor = Arrays.asList("ENTRY_NO");
 		List<String> levels = Arrays.asList("20");
-		String timeLimit = "0.1";
 		String outputfile = "1416451506872-mock-bv.csv";
-		mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign(nBlock, blockFactor, plotFactor, treatmentFactor, levels, timeLimit, outputfile);
+		mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign(nBlock, blockFactor, plotFactor, treatmentFactor, levels, outputfile);
 	}
 	
 	@Test

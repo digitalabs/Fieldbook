@@ -88,9 +88,9 @@ public class ExpDesignUtil {
 	}
 	
 	public static MainDesign createRandomizedCompleteBlockDesign(String nBlock, String blockFactor, String plotFactor,
-			List<String> treatmentFactor, List<String> levels, String timeLimit, String outputfile){
+			List<String> treatmentFactor, List<String> levels, String outputfile){
 		
-		timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
+		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));
@@ -124,9 +124,9 @@ public class ExpDesignUtil {
 	
 	public static MainDesign createResolvableIncompleteBlockDesign(String blockSize, String nTreatments,
 			String nReplicates, String treatmentFactor, String replicateFactor, String blockFactor,
-			String plotFactor, String nBlatin, String replatingGroups, String timeLimit, String outputfile, boolean useLatinize){
+			String plotFactor, String nBlatin, String replatingGroups, String outputfile, boolean useLatinize){
 		
-		timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
+		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));
@@ -162,10 +162,9 @@ public class ExpDesignUtil {
 	public static MainDesign createResolvableRowColDesign(String nTreatments,
 			String nReplicates, String nRows, String nColumns, String treatmentFactor, String replicateFactor, 
 			String rowFactor, String columnFactor,String plotFactor,
-			String nrLatin, String ncLatin, String replatingGroups, String timeLimit, String outputfile, Boolean useLatinize){
-		//we override the timelimit from the propfile
+			String nrLatin, String ncLatin, String replatingGroups, String outputfile, Boolean useLatinize){
 		
-		timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
+		String timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
 		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));

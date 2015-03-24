@@ -36,6 +36,8 @@ import com.efficio.fieldbook.web.trial.bean.xml.ListItem;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 
 public class ExpDesignUtil {
+	public static final String SEED_PARAM = "seed";
+	
 	private static String RANDOMIZED_COMPLETE_BLOCK_DESIGN = "RandomizedBlock";
 	private static String RESOLVABLE_INCOMPLETE_BLOCK_DESIGN = "ResolvableIncompleteBlock";
 	private static String RESOLVABLE_ROW_COL_DESIGN = "ResolvableRowColumn";
@@ -71,6 +73,7 @@ public class ExpDesignUtil {
 		timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));
 		paramList.add(createExpDesignParameter("nblocks", nBlock, null));
 		paramList.add(createExpDesignParameter("blockfactor", blockFactor, null));
 		paramList.add(createExpDesignParameter("plotfactor", plotFactor, null));
@@ -106,6 +109,7 @@ public class ExpDesignUtil {
 		timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));
 		paramList.add(createExpDesignParameter("blocksize", blockSize, null));
 		paramList.add(createExpDesignParameter("ntreatments", nTreatments, null));
 		paramList.add(createExpDesignParameter("nreplicates", nReplicates, null));
@@ -144,6 +148,7 @@ public class ExpDesignUtil {
 		timeLimit = AppConstants.EXP_DESIGN_TIME_LIMIT.getString();
 		
 		List<ExpDesignParameter> paramList = new ArrayList<ExpDesignParameter>();
+		paramList.add(createExpDesignParameter(SEED_PARAM, "", null));
 		paramList.add(createExpDesignParameter("ntreatments", nTreatments, null));
 		paramList.add(createExpDesignParameter("nreplicates", nReplicates, null));
 		paramList.add(createExpDesignParameter("nrows", nRows, null));

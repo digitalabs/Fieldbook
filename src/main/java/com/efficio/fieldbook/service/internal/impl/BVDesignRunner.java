@@ -45,19 +45,9 @@ public class BVDesignRunner implements DesignRunner {
 		String bvDesignLocation = getBreedingViewExeLocation(workbenchService);
 		int returnCode = -1;
 		if(bvDesignLocation != null && design != null && design.getDesign() != null){
-			 String outputFilePath = System.currentTimeMillis()+BV_PREFIX+CSV_EXTENSION;
-			 
-			 design.getDesign().setParameterValue(OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
-			 
-			 String xml = "";
-			 try {
-				 xml = ExpDesignUtil.getXmlStringForSetting(design);
-			 } catch (JAXBException e ) {
-				 LOG.error(e.getMessage(), e);
-			 }
+			String xml = getXMLStringForDesign(design);
 			 
 			 String filepath = writeToFile(xml, fieldbookProperties);
-
 			 
 			 ProcessBuilder pb = new ProcessBuilder(bvDesignLocation, "-i" + filepath);
 	         Process p = pb.start();
@@ -97,6 +87,22 @@ public class BVDesignRunner implements DesignRunner {
 			 
 		}
 		return output;
+	}
+
+	public String getXMLStringForDesign(MainDesign design) {
+		String xml = "";
+		Long currentTimeMillis = System.currentTimeMillis();
+		String outputFilePath = currentTimeMillis+BV_PREFIX+CSV_EXTENSION;
+		 
+		 design.getDesign().setParameterValue(OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
+		 design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, new Integer(currentTimeMillis.intValue()).toString());
+		 
+		 try {
+			 xml = ExpDesignUtil.getXmlStringForSetting(design);
+		 } catch (JAXBException e ) {
+			 LOG.error(e.getMessage(), e);
+		 }
+		return xml;
 	}
 	
 	private static String getBreedingViewExeLocation(WorkbenchService workbenchService){

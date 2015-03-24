@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
  */
 public class ExpressionHelper {
 
-
-
     public static void evaluateExpression(String input, String sequence, ExpressionHelperCallback callback) {
         Pattern pattern = Pattern.compile(sequence);
         Matcher matcher = pattern.matcher(input);

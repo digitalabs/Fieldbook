@@ -362,6 +362,28 @@
    	
    	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
 
+    <bean class="com.efficio.fieldbook.web.naming.impl.RulesPostProcessor">
+        <property name="ruleFactory" ref="ruleFactory"/>
+    </bean>
+
+    <bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory"
+          init-method="init"/>
+
+    <bean id="ruleConfigProvider"
+          class="com.efficio.fieldbook.web.naming.impl.PropertyFileRuleConfigurationProvider">
+        <property name="ruleSequenceConfiguration">
+            <map>
+                <entry key="naming" value="${naming.rules}"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--
+        This component scan automatically registers all implementations of the Rule interface into the Spring context.
+        In conjunction with the RulesPostProcessor above, this automatically populates the map in the RuleFactory
+         -->
+    <context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
+
     <bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
 
     <bean id="crossNameService" class="org.generationcp.commons.service.impl.CrossNameServiceImpl">

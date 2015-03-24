@@ -277,11 +277,32 @@
 		<property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}" />
 		<property name="germplasmImportUrl" value="${url.germplasm.import}" />
 		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />	
-		<property name="uploadDirectory" value="${upload.directory}" />	
+		<property name="uploadDirectory" value="${upload.directory}" />		
 	</bean>
+	
+	<bean class="com.efficio.fieldbook.web.naming.impl.RulesPostProcessor">
+			<property name="ruleFactory" ref="ruleFactory"/>
+		</bean>
 
-    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
-        <!--TODO : possibly find a way to make list based on component scan of a certain package-->
+	    <bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory" init-method="init"/>
+
+	    <bean id="ruleConfigProvider"
+	          class="com.efficio.fieldbook.web.naming.impl.PropertyFileRuleConfigurationProvider">
+	        <property name="ruleSequenceConfiguration">
+	            <map>
+	                <entry key="naming" value="${naming.rules}"/>
+	            </map>
+	        </property>
+	    </bean>
+
+	<!--
+	        This component scan automatically registers all implementations of the Rule interface into the Spring context.
+	        In conjunction with the RulesPostProcessor above, this automatically populates the map in the RuleFactory
+	         -->
+	<context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
+
+	<bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
+
         <property name="registeredExpressions">
             <list>
                 <bean class="com.efficio.fieldbook.web.naming.expression.BracketsExpression"/>

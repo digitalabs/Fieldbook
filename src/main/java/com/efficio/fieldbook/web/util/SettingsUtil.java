@@ -11,8 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,12 +72,13 @@ public class SettingsUtil {
 	}
     
     public static String cleanSheetAndFileName(String name) {
-        if (name == null) {
+    	String finalName = name;
+        if (finalName == null) {
             return null;
         }            	
     	//http://www.rgagnon.com/javadetails/java-0662.html
-    	name = name.replaceAll("[:\\\\/*?|<>]", "_");       
-        return name;
+        finalName = finalName.replaceAll("[:\\\\/*?|<>]", "_");       
+        return finalName;
     }
 
 
@@ -444,7 +443,7 @@ public class SettingsUtil {
         }
     }
 
-    private static boolean idCounterPartInList(Integer stdVar, HashMap<String, String> idCodeNameMap, List<Condition> conditions) {
+    private static boolean idCounterPartInList(Integer stdVar, Map<String, String> idCodeNameMap, List<Condition> conditions) {
         boolean inList = false;
 
         if (idCodeNameMap.get(String.valueOf(stdVar)) != null) {
@@ -458,16 +457,16 @@ public class SettingsUtil {
         }
         return inList;
     }
-    public static HashMap<String, MeasurementVariable> buildMeasurementVariableMap(List<MeasurementVariable> factors) {
-        HashMap<String, MeasurementVariable> factorsMap = new HashMap<String, MeasurementVariable>();
+    public static Map<String, MeasurementVariable> buildMeasurementVariableMap(List<MeasurementVariable> factors) {
+        Map<String, MeasurementVariable> factorsMap = new HashMap<String, MeasurementVariable>();
         for (MeasurementVariable factor : factors) {
         	factorsMap.put(String.valueOf(factor.getTermId()), factor);
         }
         return factorsMap;
     }
     
-    private static HashMap<String, Condition> buildConditionsMap(List<Condition> conditions) {
-        HashMap<String, Condition> conditionsMap = new HashMap<String, Condition>();
+    private static Map<String, Condition> buildConditionsMap(List<Condition> conditions) {
+        Map<String, Condition> conditionsMap = new HashMap<String, Condition>();
         for (Condition condition : conditions) {
             conditionsMap.put(String.valueOf(condition.getId()), condition);
         }
@@ -538,7 +537,7 @@ public class SettingsUtil {
             List<SettingDetail> removedConditions = new ArrayList<SettingDetail>();
             if (dataset.getConditions() != null) {
                 //create a map of code and its id-code-name combination
-                HashMap<String, String> idCodeNameMap = new HashMap<String, String>();
+                Map<String, String> idCodeNameMap = new HashMap<String, String>();
                 String idCodeNameCombination = AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString();
                 if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
                     StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
@@ -552,7 +551,7 @@ public class SettingsUtil {
                     }
                 }
 
-                HashMap<String, Condition> conditionsMap = buildConditionsMap(dataset.getConditions());
+                Map<String, Condition> conditionsMap = buildConditionsMap(dataset.getConditions());
 
                 for (Condition condition : dataset.getConditions()) {
                     SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
@@ -644,12 +643,9 @@ public class SettingsUtil {
                     SettingDetail settingDetail = new SettingDetail(variable,
                             null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
 
-                    if (factor.getRole() != null && !factor.getRole().equals(PhenotypicType.TRIAL_ENVIRONMENT.name())) {
-                        if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
-                            plotsLevelList.add(settingDetail);
-                        } else {
-                            removedFactors.add(settingDetail);
-                        }
+                    if (factor.getRole() != null && !factor.getRole().equals(PhenotypicType.TRIAL_ENVIRONMENT.name())
+                    		&& !inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
+                        plotsLevelList.add(settingDetail);
                     } else {
                         removedFactors.add(settingDetail);
                     }
@@ -772,7 +768,7 @@ public class SettingsUtil {
             List<SettingDetail> treatmentFactors = new ArrayList<SettingDetail>();
             List<SettingDetail> trialConditions = new ArrayList<SettingDetail>();
             
-            HashMap<String, Condition> conditionsMap = buildConditionsMap(dataset.getConditions());
+            Map<String, Condition> conditionsMap = buildConditionsMap(dataset.getConditions());
             
             if (dataset.getConditions() != null) {
                 for (Condition condition : dataset.getConditions()) {
@@ -924,77 +920,6 @@ public class SettingsUtil {
         return inList;
     }
 
-    /**
-     * Generate dummy condition.
-     *
-     * @param limit the limit
-     * @return the list
-     */
-    public static List<Condition> generateDummyCondition(int limit) {
-        List<Condition> conditions = new ArrayList<Condition>();
-        for (int i = 0; i < limit; i++) {
-            Condition condition = new Condition();
-
-            condition.setName(i + "name");
-            condition.setDescription(i + " description");
-            condition.setProperty(i + " property");
-            condition.setScale(i + " scale");
-            condition.setMethod(i + " method");
-            condition.setRole(i + " role");
-            condition.setDatatype(i + "Test Data Type");
-            condition.setValue(i + " value");
-            conditions.add(condition);
-        }
-        return conditions;
-    }
-
-    /**
-     * Generate dummy factor.
-     *
-     * @param limit the limit
-     * @return the list
-     */
-    public static List<Factor> generateDummyFactor(int limit) {
-        List<Factor> factors = new ArrayList<Factor>();
-        for (int i = 0; i < limit; i++) {
-            Factor factor = new Factor();
-
-            factor.setName(i + "name");
-            factor.setDescription(i + " description");
-            factor.setProperty(i + " property");
-            factor.setScale(i + " scale");
-            factor.setMethod(i + " method");
-            factor.setRole(i + " role");
-            factor.setDatatype(i + "Test Data Type");
-            factors.add(factor);
-        }
-        return factors;
-    }
-
-    /**
-     * Generate dummy variate.
-     *
-     * @param limit the limit
-     * @return the list
-     */
-    public static List<Variate> generateDummyVariate(int limit) {
-        List<Variate> variates = new ArrayList<Variate>();
-        for (int i = 0; i < limit; i++) {
-            Variate variate = new Variate();
-
-            variate.setName(i + "name");
-            variate.setDescription(i + " description");
-            variate.setProperty(i + " property");
-            variate.setScale(i + " scale");
-            variate.setMethod(i + " method");
-            variate.setRole(i + " role");
-            variate.setDatatype(i + "Test Data Type");
-            variates.add(variate);
-        }
-        return variates;
-    }
-
-
     public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset, boolean isNursery) {
     	return convertXmlDatasetToWorkbook(dataset, isNursery, null, null, null, null);
     }
@@ -1030,6 +955,7 @@ public class SettingsUtil {
         	try {
         		setExperimentalDesignToWorkbook(param, variables, workbook, allExpDesignVariables, fieldbookMiddlewareService);
         	} catch (MiddlewareQueryException e) {
+        		LOG.error(e.getMessage(),e);
         		//do nothing
         	}
         }
@@ -1449,6 +1375,8 @@ public class SettingsUtil {
 
         StudyDetails details = new StudyDetails();
         details.setId(workbook.getStudyId());
+        details.setProgramUUID(workbook.getStudyDetails()!=null?
+        		workbook.getStudyDetails().getProgramUUID():null);
         List<MeasurementVariable> conditions = workbook.getConditions();
         List<MeasurementVariable> constants = workbook.getConstants();
 
@@ -1491,11 +1419,11 @@ public class SettingsUtil {
         return convertWorkbookOtherStudyVariablesToSettingDetails(conditions, index, userSelection, fieldbookMiddlewareService, fieldbookService, false);
     }
 
-    private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(List<MeasurementVariable> conditions, int index,
+    private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(List<MeasurementVariable> conditions, int orderIndex,
                                                                                           UserSelection userSelection,
                                                                                           org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService, boolean isVariate)
             throws MiddlewareQueryException {
-
+    	int index = orderIndex;
         List<SettingDetail> details = new ArrayList<SettingDetail>();
         List<String> basicFields;
         if (userSelection.isTrial()) {
@@ -1505,7 +1433,7 @@ public class SettingsUtil {
         }
         List<String> hiddenFields = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
 
-        HashMap<String, MeasurementVariable> variableMap = new HashMap<String, MeasurementVariable>();
+        Map<String, MeasurementVariable> variableMap = new HashMap<String, MeasurementVariable>();
 
         for (MeasurementVariable condition : conditions) {
             variableMap.put(String.valueOf(condition.getTermId()), condition);
@@ -1733,11 +1661,12 @@ public class SettingsUtil {
         return variable;
     }
 
-    private static int addToList(List<SettingDetail> list, SettingDetail settingDetail, int index, List<String> fields, String idString) {
+    private static int addToList(List<SettingDetail> list, SettingDetail settingDetail, int orderIndex, List<String> fields, String idString) {
         int order = -1;
         if (fields != null) {
             order = fields.indexOf(idString);
         }
+        int index = orderIndex;
         settingDetail.setOrder(order > -1 ? order : index++);
         list.add(settingDetail);
 
@@ -1765,7 +1694,7 @@ public class SettingsUtil {
             List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
             if (!indeces.isEmpty()) {
                 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-                HashMap<String, Method> methodMap = new HashMap<String, Method>();
+                Map<String, Method> methodMap = new HashMap<String, Method>();
                 //create a map to get method id based on given code
                 if (methods != null) {
                     for (Method method : methods) {
@@ -1791,7 +1720,7 @@ public class SettingsUtil {
             List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
             if (!indeces.isEmpty()) {
                 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-                HashMap<Integer, Method> methodMap = new HashMap<Integer, Method>();
+                Map<Integer, Method> methodMap = new HashMap<Integer, Method>();
 
                 if (methods != null) {
                     for (Method method : methods) {
@@ -1881,8 +1810,13 @@ public class SettingsUtil {
      * @param deletedList the deleted list
      * @param sessionList the session list
      */
-    public static void addDeletedSettingsList(List<SettingDetail> formList, List<SettingDetail> deletedList, List<SettingDetail> sessionList) {
-        if (deletedList != null) {
+    public static void addDeletedSettingsList(
+    		List<SettingDetail> previousFormList, 
+    		List<SettingDetail> deletedList, 
+    		List<SettingDetail> previousSessionList) {
+    	List<SettingDetail> formList = previousFormList;
+    	List<SettingDetail> sessionList = previousSessionList;
+    	if (deletedList != null) {
             List<SettingDetail> newDeletedList = new ArrayList<SettingDetail>();
             for (SettingDetail setting : deletedList) {
                 if (setting.getVariable().getOperation().equals(Operation.UPDATE)) {
@@ -2111,52 +2045,52 @@ public class SettingsUtil {
 
     public static ExpDesignParameterUi convertToExpDesignParamsUi(List<MeasurementVariable> expDesigns) {
     	ExpDesignParameterUi param = new ExpDesignParameterUi();
-    	if (expDesigns != null && !expDesigns.isEmpty()) {
-    		for (MeasurementVariable var : expDesigns) {
-    			if (var.getTermId() == TermId.BLOCK_SIZE.getId()) {
-    				param.setBlockSize(var.getValue());
-    			} else if (var.getTermId() == TermId.NO_OF_COLS_IN_REPS.getId()) {
-    				param.setColsPerReplications(var.getValue());
-    			} else if (var.getTermId() == TermId.NO_OF_ROWS_IN_REPS.getId()) {
-    				param.setRowsPerReplications(var.getValue());
-    			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
-    				if (var.getValue() != null) {
-    					if (String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).equals(var.getValue())) {
-    						param.setDesignType(0);
-    					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).equals(var.getValue())
-    							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())) {
-    						param.setDesignType(1);
-    					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).equals(var.getValue())
-    							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
-    						param.setDesignType(2);
-    					}
-    					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
-    							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
-    						param.setUseLatenized(true);
-    					}
-    				}
-    			} else if (var.getTermId() == TermId.NO_OF_CBLKS_LATINIZE.getId()) {
-    	    		param.setNblatin(var.getValue());
-    			} else if (var.getTermId() == TermId.NO_OF_CCOLS_LATINIZE.getId()) {
-    	    		param.setNclatin(var.getValue());
-    			} else if (var.getTermId() == TermId.NO_OF_CROWS_LATINIZE.getId()) {
-    	    		param.setNrlatin(var.getValue());
-    			} else if (var.getTermId() == TermId.NO_OF_REPS_IN_COLS.getId()) {
-    	    		param.setReplatinGroups(var.getValue());
-    			} else if (var.getTermId() == TermId.REPLICATIONS_MAP.getId()) {
-    				if (String.valueOf(TermId.REPS_IN_SINGLE_COL.getId()).equals(var.getValue())) {
-    					param.setReplicationsArrangement(1);
-    				} else if (String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId()).equals(var.getValue())) {
-    					param.setReplicationsArrangement(2);
-    				} else if (String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId()).equals(var.getValue())) {
-    					param.setReplicationsArrangement(3);
-    				}
-    			} else if (var.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
-    	    		param.setReplicationsCount(var.getValue());
-    			}
-    		}
-    		
+    	if (expDesigns == null || expDesigns.isEmpty()) {
+    		return param;
     	}
+		for (MeasurementVariable var : expDesigns) {
+			if (var.getTermId() == TermId.BLOCK_SIZE.getId()) {
+				param.setBlockSize(var.getValue());
+			} else if (var.getTermId() == TermId.NO_OF_COLS_IN_REPS.getId()) {
+				param.setColsPerReplications(var.getValue());
+			} else if (var.getTermId() == TermId.NO_OF_ROWS_IN_REPS.getId()) {
+				param.setRowsPerReplications(var.getValue());
+			} else if (var.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
+				if (var.getValue() != null) {
+					if (String.valueOf(TermId.RANDOMIZED_COMPLETE_BLOCK.getId()).equals(var.getValue())) {
+						param.setDesignType(0);
+					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK.getId()).equals(var.getValue())
+							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())) {
+						param.setDesignType(1);
+					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).equals(var.getValue())
+							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
+						param.setDesignType(2);
+					}
+					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
+							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
+						param.setUseLatenized(true);
+					}
+				}
+			} else if (var.getTermId() == TermId.NO_OF_CBLKS_LATINIZE.getId()) {
+	    		param.setNblatin(var.getValue());
+			} else if (var.getTermId() == TermId.NO_OF_CCOLS_LATINIZE.getId()) {
+	    		param.setNclatin(var.getValue());
+			} else if (var.getTermId() == TermId.NO_OF_CROWS_LATINIZE.getId()) {
+	    		param.setNrlatin(var.getValue());
+			} else if (var.getTermId() == TermId.NO_OF_REPS_IN_COLS.getId()) {
+	    		param.setReplatinGroups(var.getValue());
+			} else if (var.getTermId() == TermId.REPLICATIONS_MAP.getId()) {
+				if (String.valueOf(TermId.REPS_IN_SINGLE_COL.getId()).equals(var.getValue())) {
+					param.setReplicationsArrangement(1);
+				} else if (String.valueOf(TermId.REPS_IN_SINGLE_ROW.getId()).equals(var.getValue())) {
+					param.setReplicationsArrangement(2);
+				} else if (String.valueOf(TermId.REPS_IN_ADJACENT_COLS.getId()).equals(var.getValue())) {
+					param.setReplicationsArrangement(3);
+				}
+			} else if (var.getTermId() == TermId.NUMBER_OF_REPLICATES.getId()) {
+	    		param.setReplicationsCount(var.getValue());
+			}
+		}
     	return param;
     }
     

@@ -41,6 +41,8 @@ public class AdvancingSource {
     private String prefix;
     private String suffix;
 
+	private boolean isForceUniqueNameGeneration;
+
     public AdvancingSource(ImportedGermplasm germplasm, List<Name> names,
 			Integer plantsSelected, Method breedingMethod, boolean isCheck,
 			String nurseryName, String season, String locationAbbreviation) {
@@ -268,6 +270,14 @@ public class AdvancingSource {
 	 */
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
+	}
+
+	public boolean isForceUniqueNameGeneration() {
+		return isForceUniqueNameGeneration;
+	}
+
+	public void setForceUniqueNameGeneration(boolean isForceUniqueNameGeneration) {
+		this.isForceUniqueNameGeneration = isForceUniqueNameGeneration;
 	}
 
 	@Override

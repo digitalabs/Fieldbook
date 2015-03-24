@@ -63,6 +63,7 @@ import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
@@ -333,7 +334,14 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         	results.put("isSuccess", "0");
         	results.put("listSize", 0);
         	results.put("message", e.getMessage());
-        }
+        } catch (RuleException e) {
+        	form.setErrorInAdvance(e.getMessage());
+        	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
+        	form.setEntries(0);
+        	results.put("isSuccess", "0");
+        	results.put("listSize", 0);
+        	results.put("message", e.getMessage());
+		}
         
         return results;
     }

@@ -58,6 +58,7 @@ import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
@@ -101,7 +102,7 @@ public class FieldbookServiceImpl implements FieldbookService {
     @Resource
     private DesignRunner designRunner;    
 
-    public FieldbookServiceImpl(){
+    public FieldbookServiceImpl(){ 
     }
     
     public FieldbookServiceImpl(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, PossibleValuesCache possibleValuesCache){
@@ -128,9 +129,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 
     /**
      * Advance Nursery
+     * @throws RuleException 
      */
     public AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook)
-            throws MiddlewareQueryException {
+            throws MiddlewareQueryException, RuleException {
 
         return namingConventionService.advanceNursery(advanceInfo, workbook);
     }

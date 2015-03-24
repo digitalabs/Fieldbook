@@ -11,6 +11,19 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 public abstract class NumberSequenceExpression implements Expression {
 
 	protected void applyNumberSequence(List<StringBuilder> values, AdvancingSource source) {
+		if (source.isForceUniqueNameGeneration()) {
+			for (StringBuilder value : values) {
+				int startIndex = value.toString().toUpperCase().indexOf(getExpressionKey());
+				int endIndex = startIndex + getExpressionKey().length();
+
+				value.replace(startIndex, endIndex, "(" + Integer.toString(source.getCurrentMaxSequence() + 1) + ")");
+
+			}
+
+			return;
+		}
+
+
     	if (source.isBulk()) {
 	        for (StringBuilder value : values) {
 	            int startIndex = value.toString().toUpperCase().indexOf(getExpressionKey());
@@ -28,9 +41,11 @@ public abstract class NumberSequenceExpression implements Expression {
     	} else {
 			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
 			int startCount = 1;
+
 			if (source.getCurrentMaxSequence() > -1) {
 				startCount = source.getCurrentMaxSequence() + 1;
 			}
+
 			for (StringBuilder value : values) {
 				int startIndex = value.toString().toUpperCase().indexOf(getExpressionKey());
 				int endIndex = startIndex + getExpressionKey().length();

@@ -29,8 +29,8 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 //@Component("BVDesignRunner")
 public class BVDesignRunner implements DesignRunner {
-	public static String BV_PREFIX = "-bv";
-	public static String CSV_EXTENSION = ".csv";
+	public static final String BV_PREFIX = "-bv";
+	public static final String CSV_EXTENSION = ".csv";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignRunner.class);
     private static String XML_EXTENSION = ".xml";
@@ -93,7 +93,7 @@ public class BVDesignRunner implements DesignRunner {
 		String outputFilePath = currentTimeMillis+BV_PREFIX+CSV_EXTENSION;
 		 
 		 design.getDesign().setParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM, outputFilePath);
-		 design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, new Integer(currentTimeMillis.intValue()).toString());
+		 design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, Integer.toString(currentTimeMillis.intValue()));
 		 
 		 try {
 			 xml = ExpDesignUtil.getXmlStringForSetting(design);

@@ -94,7 +94,7 @@ public class BVDesignRunnerTest {
 			String xmlString) {
 		String outputFile = mainDesign.getDesign().getParameterValue(OUTPUTFILE_PARAM);
 		String outputFileMillisecs = outputFile.replace(BVDesignRunner.BV_PREFIX+BVDesignRunner.CSV_EXTENSION, "");
-		String seedValue = new Integer(new Long(outputFileMillisecs).intValue()).toString();
+		String seedValue = Integer.toString(new Long(outputFileMillisecs).intValue());
 		expectedString = expectedString.replace(":seedValue", seedValue);
 		expectedString = expectedString.replace(":outputFile", outputFile);
 		

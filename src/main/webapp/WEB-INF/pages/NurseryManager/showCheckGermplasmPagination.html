@@ -20,8 +20,7 @@
 					<thead>
 						<tr>
 							<th nowrap="nowrap" data-col-name="action"></th>
-							<th nowrap="nowrap"  data-col-name="check" th:utext="#{nursery.import.header.check}">.Check</th>
-							<th nowrap="nowrap" data-col-name="desig"  th:utext="#{nursery.import.header.designation}">.Designation</th>							
+							<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>							
 						</tr>
 					</thead>
 					 

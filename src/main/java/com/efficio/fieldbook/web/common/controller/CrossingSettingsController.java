@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
@@ -273,26 +274,18 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		Map<String, Object> resultsMap = new HashMap<>();
 
 		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
-		ImportedCrossesList parseResults = crossingService.parseFile(form.getFile(),
-				getCurrentProgramID());
+		try {
+			ImportedCrossesList parseResults = crossingService.parseFile(form.getFile());
 
-		// 2. Store the crosses to study selection if all validated
-		if (parseResults.getErrorMessages().isEmpty()) {
+			// 2. Store the crosses to study selection if all validated
+
 			studySelection.setimportedCrossesList(parseResults);
 
 			resultsMap.put(IS_SUCCESS, 1);
 
-		} else {
+		} catch (FileParsingException e) {
 			resultsMap.put(IS_SUCCESS, 0);
-
-			// error messages is still in .prop format,
-			Set<String> errorMessages = new HashSet<>();
-			for (String error : parseResults.getErrorMessages()) {
-				errorMessages.add(messageSource.getMessage(error, new String[] { }, error,
-						LocaleContextHolder.getLocale()));
-			}
-
-			resultsMap.put("error", errorMessages);
+			resultsMap.put("error", new String[] {e.getMessage()});
 		}
 
 		return resultsMap;

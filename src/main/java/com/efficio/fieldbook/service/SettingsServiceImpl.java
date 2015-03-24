@@ -13,8 +13,8 @@ import org.generationcp.middleware.domain.oms.TermId;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,7 +52,7 @@ public class SettingsServiceImpl implements SettingsService {
 		List<Integer> basicDetailIDList = util.buildVariableIDList(
 				AppConstants.HIDE_TRIAL_FIELDS.getString());
 		List<MeasurementVariable> measurementVariables = workbook.getStudyConditions();
-		HashMap<String, MeasurementVariable> settingsMap = SettingsUtil
+		Map<String, MeasurementVariable> settingsMap = SettingsUtil
 				.buildMeasurementVariableMap(measurementVariables);
 		for (MeasurementVariable var : measurementVariables) {
 			if (!basicDetailIDList.contains(var.getTermId()) && !hiddenFields.contains(var.getTermId())) {
@@ -81,7 +81,7 @@ public class SettingsServiceImpl implements SettingsService {
 				AppConstants.NURSERY_BASIC_DETAIL_FIELDS_HIDDEN_LABELS.getString());
 		List<MeasurementVariable> measurementVariables = workbook.getStudyConditions();
 		measurementVariables.addAll(workbook.getTrialConditions());
-		HashMap<String, MeasurementVariable> settingsMap = SettingsUtil
+		Map<String, MeasurementVariable> settingsMap = SettingsUtil
 				.buildMeasurementVariableMap(measurementVariables);
 		for (MeasurementVariable var : measurementVariables) {
 			if (!hiddenFields.contains(var.getTermId())) {
@@ -147,7 +147,7 @@ public class SettingsServiceImpl implements SettingsService {
 		List<Integer> hiddenFields = util.buildVariableIDList(
 				AppConstants.HIDE_TRIAL_VARIABLE_DBCV_FIELDS.getString());
 
-		HashMap<String, MeasurementVariable> factorsMap = SettingsUtil
+		Map<String, MeasurementVariable> factorsMap = SettingsUtil
 				.buildMeasurementVariableMap(workbook.getTrialConditions());
 
 		for (MeasurementVariable var : workbook.getTrialConditions()) {

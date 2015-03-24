@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.settings.CrossSetting;
-import org.generationcp.commons.util.ContextUtil;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -54,11 +54,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
@@ -110,7 +110,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     private ResourceBundleMessageSource messageSource;
     @Resource
     private UserSelection userSelection;
-    
+    @Resource
+	public ContextUtil contextUtil;
     
     /**
      * Load initial germplasm tree.
@@ -525,7 +526,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value = "/germplasm/import/url", method = RequestMethod.GET)
     public String getImportGermplasmUrl(HttpServletRequest request) {
-    	String contextParams = ContextUtil.getContextParameterString(request);
+    	String contextParams = org.generationcp.commons.util.ContextUtil.getContextParameterString(request);
         return fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams;
     }
     
@@ -539,7 +540,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     public String loadInitialGermplasmTree(@PathVariable String isFolderOnly) {
     	try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            rootNodes.add(new TreeNode(LISTS, AppConstants.LISTS.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString()));
+            rootNodes.add(new TreeNode(LISTS, AppConstants.LISTS.getString(), true, "lead", 
+            		AppConstants.FOLDER_ICON_PNG.getString(),contextUtil.getCurrentProgramUUID()));
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
             
         } catch(Exception e) {

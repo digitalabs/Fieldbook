@@ -1,21 +1,16 @@
 package com.efficio.fieldbook.web.inventory.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
+import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
+import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.ims.LotsResult;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -23,18 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
-import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 /**
  * The Class ManageNurseriesController.
@@ -49,14 +41,13 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     public static final String URL = "/SeedStoreManager";
     public static final String PAGINATION_TEMPLATE = "/Inventory/seedInventoryPagination";
 
+    protected static final String TABLE_HEADER_LIST = "tableHeaderList";
+    
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
     @Resource
     private InventoryService inventoryMiddlewareService;
-    
-    @Resource
-    private WorkbenchService workbenchService;
     
     /** The message source. */
     @Autowired
@@ -69,6 +60,10 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
+
+    /** The ontology manager. */ 
+    @Resource
+    private OntologyDataManager ontologyDataManager;
     
     /**
      * Gets the data types.
@@ -86,7 +81,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<>();
     }
     /**
      * Gets the favorite location list.
@@ -98,15 +93,13 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         try {
             
             List<Long> locationsIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-            List<Location> dataTypes = fieldbookMiddlewareService
+            return fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
-            
-            return dataTypes;
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<>();
     }
     
     @ModelAttribute("scaleList")
@@ -117,13 +110,13 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
         
-        return null;
+        return new ArrayList<>();
     }
     
     /**
      * Shows the manage nurseries screen
      *
-     * @param manageNurseriesForm the manage nurseries form
+     * @param form the manage nurseries form
      * @param model the model
      * @param session the session
      * @return the string
@@ -163,12 +156,31 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             form.setListId(listId);
             form.setInventoryList(inventoryDetailList);
             form.setCurrentPage(1);
-            form.setGidList(Integer.toString(listId));                        
+            form.setGidList(Integer.toString(listId));                    
+            
+            model.addAttribute(TABLE_HEADER_LIST, getSeedInventoryTableHeader());
             
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
         return super.showAjaxPage(model, page);
+    }
+    
+    protected List<TableHeader> getSeedInventoryTableHeader(){
+    	Locale locale = LocaleContextHolder.getLocale();
+    	List<TableHeader> tableHeaderList = new ArrayList<TableHeader>();
+    	
+		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_ID.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.entry.number", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.entry.designation", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.entry.parentage", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.gid", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.source", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.LOT_LOCATION.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.table.location", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.AMOUNT.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.amount", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.SCALE.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.table.scale", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.COMMENT.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.comment", null, locale)));
+		
+    	return tableHeaderList;
     }
     
             
@@ -185,7 +197,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         
         try {
         	
-            LotsResult lotsResult = inventoryMiddlewareService.addAdvanceLots(gidList, 
+            inventoryMiddlewareService.addAdvanceLots(gidList,
             		form.getInventoryLocationId(),form.getInventoryScaleId(), 
             		form.getInventoryComments(), this.getCurrentIbdbUserId(),
             		form.getAmount(), form.getListId());
@@ -239,5 +251,10 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-       
+	public void setOntologyDataManager(OntologyDataManager ontologyDataManager) {
+		this.ontologyDataManager = ontologyDataManager;
+	}
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
 }

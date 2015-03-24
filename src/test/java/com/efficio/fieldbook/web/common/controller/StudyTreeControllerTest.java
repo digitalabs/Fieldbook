@@ -50,13 +50,15 @@ public class StudyTreeControllerTest extends AbstractBaseControllerIntegrationTe
     private static final String TYPE_NURSERY = "N";
     private static final String TYPE_TRIAL = "T";
     
+    private static final String DUMMY_PROGRAM_UUID = "1234567890";
+    
     private static final TreeNode ROOT_NURSERIES = 
     		new TreeNode(LOCAL, AppConstants.NURSERIES.getString(), true, "lead", 
-    				AppConstants.FOLDER_ICON_PNG.getString());
+    				AppConstants.FOLDER_ICON_PNG.getString(),DUMMY_PROGRAM_UUID);
     
     private static final TreeNode ROOT_TRIALS = 
     		new TreeNode(LOCAL, AppConstants.TRIALS.getString(), true, "lead", 
-    				AppConstants.FOLDER_ICON_PNG.getString());
+    				AppConstants.FOLDER_ICON_PNG.getString(),DUMMY_PROGRAM_UUID);
     
     private static final FolderReference FOLDER_1 = 
             new FolderReference(ROOT_STUDY, 2, "Folder_1", "Folder 1");

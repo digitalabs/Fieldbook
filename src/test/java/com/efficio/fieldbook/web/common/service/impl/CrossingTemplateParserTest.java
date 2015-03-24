@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.reflect.FieldUtils;
@@ -67,7 +68,7 @@ public class CrossingTemplateParserTest {
 
 	@Test
 	public void testParseFile() throws Exception {
-		doReturn(mock(Workbook.class)).when(parserUnderTest).storeImportGermplasmWorkbook(any(
+		doReturn(mock(Workbook.class)).when(parserUnderTest).storeAndRetrieveWorkbook(any(
 				MultipartFile.class));
 
 		doNothing().when(parserUnderTest).parseCrossingListDetails();
@@ -77,7 +78,7 @@ public class CrossingTemplateParserTest {
 		doNothing().when(parserUnderTest).parseVariate();
 		doNothing().when(parserUnderTest).parseObservationSheet(PROGRAM_UUID);
 
-		parserUnderTest.parseFile(mock(MultipartFile.class),PROGRAM_UUID);
+		parserUnderTest.parseFile(mock(MultipartFile.class));
 
 		verify(parserUnderTest, times(1)).parseDescriptionSheet();
 		verify(parserUnderTest, times(1)).parseObservationSheet(PROGRAM_UUID);
@@ -94,7 +95,7 @@ public class CrossingTemplateParserTest {
 
 		when(fileService.retrieveWorkbook("SERVER_FILE_NAME.xls")).thenReturn(mock(Workbook.class));
 
-		Workbook wb = parserUnderTest.storeImportGermplasmWorkbook(file);
+		Workbook wb = parserUnderTest.storeAndRetrieveWorkbook(file);
 
 		String originalFileName = String
 				.valueOf(FieldUtils.readField(parserUnderTest, "originalFilename", true));
@@ -157,16 +158,11 @@ public class CrossingTemplateParserTest {
 		verify(importedCrossesList, times(rowSize)).addImportedCrosses(any(ImportedCrosses.class));
 	}
 
-	@Test
+	@Test(expected = FileParsingException.class)
 	public void testParseObservationSheetObservationHeaderInvalid() throws Exception {
 		doReturn(true).when(parserUnderTest).isObservationsHeaderInvalid();
-		doNothing().when(parserUnderTest).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
 		parserUnderTest.parseObservationSheet(PROGRAM_UUID);
-
-		verify(parserUnderTest, times(1)).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 	}
 
 	@Test
@@ -181,8 +177,6 @@ public class CrossingTemplateParserTest {
 				CrossingTemplateParser.DESCRIPTION_SHEET_NO, 2, 1);
 		doReturn(CrossingTemplateParser.TEMPLATE_LIST_TYPE).when(parserUnderTest)
 				.getCellStringValue(CrossingTemplateParser.DESCRIPTION_SHEET_NO, 3, 1);
-		doNothing().when(parserUnderTest).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
 		parserUnderTest.parseCrossingListDetails();
 
@@ -190,9 +184,6 @@ public class CrossingTemplateParserTest {
 				.readField(parserUnderTest, "importedCrossesList",
 						true);
 
-		// no validation
-		verify(parserUnderTest, never()).addParseErrorMsg(
-				CrossingTemplateParser.FILE_INVALID);
 
 		assertEquals("list name is set", "listName", importedCrossesList1.getName());
 		assertEquals("list title/description is set", "listTitle", importedCrossesList1.getTitle());

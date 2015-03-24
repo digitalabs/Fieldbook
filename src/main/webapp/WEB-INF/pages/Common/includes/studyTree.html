@@ -152,7 +152,8 @@ function chooseStudyNode(node, fromEnterKey) {
     if (choosingType === 1 || choosingType === 3) {
         if (node.data.isFolder === false) {
             if (choosingType === 1){
-            	if($('#studyTreeModal').data('open') === '1'){
+            	if($('#studyTreeModal').data('open') === '1' 
+            			&& node.data.programUUID != null){
             		$('#studyTreeModal').data('open', '0'); 
             		openTreeStudy(node.data.key);
             	}else{

@@ -27,12 +27,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
-
-import org.springframework.web.util.HtmlUtils;
 
 @Controller
 @RequestMapping(StudyTreeController.URL)
@@ -66,7 +65,8 @@ public class StudyTreeController {
 		try {
 			List<TreeNode> rootNodes = new ArrayList<TreeNode>();
 			String localName = isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
-			TreeNode localTreeNode = new TreeNode(LOCAL, localName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString());			
+			TreeNode localTreeNode = new TreeNode(LOCAL, localName, true, "lead", 
+					AppConstants.FOLDER_ICON_PNG.getString(), getCurrentProgramUUID());			
 			rootNodes.add(localTreeNode);
 			return TreeViewUtil.convertTreeViewToJson(rootNodes);
 		} catch (Exception e) {
@@ -108,7 +108,8 @@ public class StudyTreeController {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		int parentId = Integer.valueOf(parentKey);
 		List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId, getCurrentProgramUUID());
-		// convert reference to folder refence
+		
+		// convert reference to folder reference
 		List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
 		childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folRefs, isNursery, false, true, fieldbookMiddlewareService,
 				isFolderOnly);
@@ -250,7 +251,7 @@ public class StudyTreeController {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(),e);
 			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put("message", e.getMessage());
+			resultsMap.put(MESSAGE, e.getMessage());
 		}
 		return resultsMap;
 
@@ -274,7 +275,7 @@ public class StudyTreeController {
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(),e);
 			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put("message", e.getMessage());
+			resultsMap.put(MESSAGE, e.getMessage());
 		}
 		return resultsMap;
 	}
@@ -291,7 +292,7 @@ public class StudyTreeController {
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(),e);
 			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put("message", messageSource.getMessage("browse.nursery.delete.folder.has.children", null, locale));
+			resultsMap.put(MESSAGE, messageSource.getMessage("browse.nursery.delete.folder.has.children", null, locale));
 			
 		}
 		return resultsMap;

@@ -15,7 +15,7 @@
 	</div>
 </div>
 <div class="row">
-<form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
+    <form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<input type="hidden" th:field="*{studyId}" />
 	<div class="row add-top-bottom-padding">
 		<div class="col-md-12">
@@ -81,7 +81,7 @@
                                    th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
                             </li>
                             <li>
-                                <a href="javascript: void(0)" class="export-crosses-action"
+                                <a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"  class="export-crosses-action"
                                    th:text="#{nursery.nurserydetails.action.export.crosses}">Export Crosses</a>
                             </li>
                             <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
@@ -389,6 +389,11 @@
 		<div id="crossImport" th:include="/Common/includes/crossingImportPresets"/>
 	</div>
 </div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div th:include="/Common/includes/importAdvanceInventory"/>
+	</div>
+</div>
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -584,6 +589,12 @@
 			    	$(this).data('has-loaded', '1');
 			    	displayAdvanceList($(this).data('list-id'), $(this).data('list-id'), '', true);
 			    }
+			});
+			$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+				if ($('.import-advance-inventory').data('data-import') === '1') {
+					showAlertMessage('', importSaveDataWarningMessage);
+					e.preventDefault();
+				}
 			});
 		});		
 

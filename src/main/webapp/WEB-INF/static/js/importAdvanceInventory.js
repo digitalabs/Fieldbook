@@ -22,12 +22,12 @@ if (typeof ImportAdvanceInventoryFunctions === 'undefined') {
             ImportAdvanceInventoryFunctions.submitImport().done(function (response) {
 
                 if (!response.isSuccess) {
-                    createErrorNotification('', response.error);
+                    showErrorMessage('', response.error);
                     return;
                 }
 
                 if (response.isOverwrite) {
-                    createWarningNotification('', 'Data will be overwritten')
+                    showAlertMessage('', 'Data will be overwritten');
                 }
 
                 $('#importAdvanceInventoryModal').modal('hide');
@@ -50,7 +50,7 @@ if (typeof ImportAdvanceInventoryFunctions === 'undefined') {
                 },
                 error: function (response) {
 
-                    createErrorNotification('', 'Error occurred while importing file');
+                    showErrorMessage('', 'Error occurred while importing file');
 
                     deferred.reject(response);
                 }

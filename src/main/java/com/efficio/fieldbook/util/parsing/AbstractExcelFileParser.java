@@ -59,8 +59,7 @@ public abstract class AbstractExcelFileParser<T> {
 			return fileService.retrieveWorkbook(serverFilename);
 		} catch (InvalidFormatException | IOException e) {
 			LOG.debug(e.getMessage(), e);
-			throw new FileParsingException(messageSource.getMessage("common.error.invalid.file", new Object[] {},
-								Locale.getDefault()));
+			throw new FileParsingException("common.error.invalid.file");
 		}
 	}
 

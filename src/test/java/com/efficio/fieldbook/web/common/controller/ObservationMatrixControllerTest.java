@@ -478,6 +478,24 @@ public class ObservationMatrixControllerTest {
 		Assert.assertTrue("3 is NOT in possible values so the return value should be true",observationMatrixController.isCategoricalValueOutOfBounds(null, "3", possibleValues));
 	}
 	
+	@Test
+	public void testIsNumericalValueOutOfBoundsWhenThereIsRange(){
+		MeasurementVariable var = new MeasurementVariable();
+		var.setMinRange(Double.valueOf("1"));
+		var.setMaxRange(Double.valueOf("10"));
+		Assert.assertFalse("Should return false since 2 is not out of range", observationMatrixController.isNumericalValueOutOfBounds("2", var));
+		Assert.assertTrue("Should return true since 21 is out of range", observationMatrixController.isNumericalValueOutOfBounds("21", var));
+	}
+	
+	@Test
+	public void testIsNumericalValueOutOfBoundsWhenThereIsNoRange(){
+		MeasurementVariable var = new MeasurementVariable();
+		
+		Assert.assertFalse("Should return false since 2 is not out of range", observationMatrixController.isNumericalValueOutOfBounds("2", var));
+		Assert.assertFalse("Should return false since 21 is not out of range", observationMatrixController.isNumericalValueOutOfBounds("21", var));
+	}
+	
+	
 	private MeasurementData generateTestMeasurementData(int termId, String value, int dataTypeId, List<ValueReference> possibleValues, String varName){
 		MeasurementData emptyData = new MeasurementData();
 		MeasurementVariable measurementVariable = new MeasurementVariable();

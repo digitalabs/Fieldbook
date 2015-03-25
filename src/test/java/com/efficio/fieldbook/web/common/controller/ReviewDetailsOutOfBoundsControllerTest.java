@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import junit.framework.Assert;
+
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -67,6 +69,33 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 	}
 	
 	@Test
+	public void testIsNumericalValueOutOfBoundsWhenThereIsRange(){
+		MeasurementData data = new MeasurementData();		
+		MeasurementVariable var = new MeasurementVariable();
+		var.setMinRange(Double.valueOf("1"));
+		var.setMaxRange(Double.valueOf("10"));
+		data.setMeasurementVariable(var);
+		data.setValue("2");
+		Assert.assertFalse("Should return false since 2 is not out of range", reviewDetailsOutOfBoundsController.isNumericalValueOutOfBounds(data));
+		data.setValue("21");
+		Assert.assertTrue("Should return true since 21 is out of range", reviewDetailsOutOfBoundsController.isNumericalValueOutOfBounds(data));
+	}
+	
+	@Test
+	public void testIsNumericalValueOutOfBoundsWhenThereIsNoRange(){
+		MeasurementData data = new MeasurementData();		
+		MeasurementVariable var = new MeasurementVariable();
+		
+		data.setMeasurementVariable(var);
+		data.setValue("2");				
+		Assert.assertFalse("Should return false since 2 is not out of range", reviewDetailsOutOfBoundsController.isNumericalValueOutOfBounds(data));
+		data.setValue("21");
+		Assert.assertFalse("Should return false since 21 is not out of range", reviewDetailsOutOfBoundsController.isNumericalValueOutOfBounds(data));
+	}
+	
+	
+	
+	@Test
 	public void testFilterColumnsForReviewDetailsTable(){
 		
 		List<MeasurementVariable> measurementVariables = reviewDetailsOutOfBoundsController.filterColumnsForReviewDetailsTable(generateMeasurementVariables(), 1001);
@@ -95,7 +124,7 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 	
 	@Test
 	public void testGetCategoricalWithOutOfBoundsOnly(){
-		List<MeasurementVariable> measurementVariables = reviewDetailsOutOfBoundsController.getCategoricalWithOutOfBoundsOnly(generateMeasurementVariables());
+		List<MeasurementVariable> measurementVariables = reviewDetailsOutOfBoundsController.getTraitsWithOutOfBoundsOnly(generateMeasurementVariables());
 		assertFalse(measurementVariables.isEmpty());
 	}
 	
@@ -160,6 +189,7 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 	public void testSubmitDetails_Next(){
 		
 		MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		measurementVariable.setTermId(1001);
 		measurementVariable.setPossibleValues(generatePossibleValues());
 		measurementVariable.setFactor(false);
@@ -183,6 +213,7 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 		measurementVariable.setTermId(1002);
 		measurementVariable.setPossibleValues(generatePossibleValues());
 		measurementVariable.setFactor(false);
+		measurementVariable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		
 		ReviewDetailsOutOfBoundsForm form = new ReviewDetailsOutOfBoundsForm();
 		form.setMeasurementVariable(measurementVariable);
@@ -251,6 +282,36 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 		
 	}
 	
+	@Test
+	public void testIsValueOutOfRangeIfMissing(){
+		MeasurementData data = new MeasurementData();
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setMinRange(Double.valueOf(1));
+		measurementVariable.setMaxRange(Double.valueOf(10));
+		data.setMeasurementVariable(measurementVariable);
+		Assert.assertTrue("Should return true since missing is out of bounds", reviewDetailsOutOfBoundsController.isValueOutOfRange("MISSING", data));
+	}
+	
+	@Test
+	public void testIsValueOutOfRangeIfWithinRange(){
+		MeasurementData data = new MeasurementData();
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setMinRange(Double.valueOf(1));
+		measurementVariable.setMaxRange(Double.valueOf(10));
+		data.setMeasurementVariable(measurementVariable);
+		Assert.assertFalse("Should return false since value is within range", reviewDetailsOutOfBoundsController.isValueOutOfRange("3", data));
+	}
+	
+	@Test
+	public void testIsValueOutOfRangeIfOutOfRangeRange(){
+		MeasurementData data = new MeasurementData();
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setMinRange(Double.valueOf(1));
+		measurementVariable.setMaxRange(Double.valueOf(10));
+		data.setMeasurementVariable(measurementVariable);
+		Assert.assertTrue("Should return True since value is out of range", reviewDetailsOutOfBoundsController.isValueOutOfRange("13", data));
+	}
+	
 	private UserSelection generateUserSelection(){
 		UserSelection userSelection = new UserSelection();
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
@@ -310,33 +371,40 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 		
 		MeasurementVariable var1 = new MeasurementVariable();
 		var1.setTermId(TermId.TRIAL_INSTANCE_FACTOR.getId());
+		var1.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		measurementVariables.add(var1);
 		
 		MeasurementVariable var2 = new MeasurementVariable();
 		var2.setTermId(TermId.ENTRY_NO.getId());
+		var2.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		measurementVariables.add(var2);
 		
 		MeasurementVariable var3= new MeasurementVariable();
 		var3.setTermId(TermId.PLOT_NO.getId());
+		var3.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		measurementVariables.add(var3);
 		
 		MeasurementVariable var4= new MeasurementVariable();
 		var4.setTermId(TermId.TRIAL_LOCATION.getId());
+		var4.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		measurementVariables.add(var4);
 		
 		MeasurementVariable var5= new MeasurementVariable();
 		var5.setTermId(1001);
 		var5.setPossibleValues(generatePossibleValues());
 		var5.setFactor(false);
+		var5.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		measurementVariables.add(var5);
 		
 		MeasurementVariable var6= new MeasurementVariable();
 		var6.setTermId(1002);
 		var6.setPossibleValues(generatePossibleValues());
 		var6.setFactor(false);
+		var6.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		measurementVariables.add(var6);
 		
 		MeasurementVariable var7= new MeasurementVariable();
+		var7.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		var7.setTermId(1003);
 		measurementVariables.add(var7);
 		
@@ -350,6 +418,7 @@ public class ReviewDetailsOutOfBoundsControllerTest {
 		measurementVariable.setDataTypeId(dataTypeId);
 		measurementVariable.setPossibleValues(possibleValues);
 		measurementVariable.setName(varName);
+		
 		emptyData.setcValueId("");
 		emptyData.setDataType("");
 		emptyData.setEditable(false);

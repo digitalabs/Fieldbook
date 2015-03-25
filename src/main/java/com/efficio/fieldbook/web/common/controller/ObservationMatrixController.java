@@ -333,7 +333,7 @@ public class ObservationMatrixController extends
     	UserSelection userSelection = getUserSelection(false);
     	for (MeasurementRow row : userSelection.getMeasurementRowList())  {
     		if(row != null && row.getMeasurementVariables() != null){
-        		markNonEmptyCategoricalValuesAsAccepted(row.getDataList());
+    			markNonEmptyVariateValuesAsAccepted(row.getDataList());
         	}
     	}
     	
@@ -342,9 +342,13 @@ public class ObservationMatrixController extends
     	return map;
     }
     
-    private void markNonEmptyCategoricalValuesAsAccepted(List<MeasurementData> measurementDataList) {
-    	for(MeasurementData var : measurementDataList){	    			
-			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
+    private void markNonEmptyVariateValuesAsAccepted(List<MeasurementData> measurementDataList) {
+    	for(MeasurementData var : measurementDataList){	  
+    		if(var != null && !StringUtils.isEmpty(var.getValue()) && var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()){    			
+				if (isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())){					
+					var.setAccepted(true);
+				}
+    		}else if(var != null && !StringUtils.isEmpty(var.getValue()) && 
 				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
 				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
 				var.setAccepted(true);
@@ -357,9 +361,14 @@ public class ObservationMatrixController extends
 			}
 		}
 	}
-    private void markNonEmptyCategoricalValuesAsMissing(List<MeasurementData> measurementDataList) {
-    	for(MeasurementData var : measurementDataList){	    			
-			if(var != null && !StringUtils.isEmpty(var.getValue()) && 
+    private void markNonEmptyVariateValuesAsMissing(List<MeasurementData> measurementDataList) {
+    	for(MeasurementData var : measurementDataList){	  
+    		if(var != null && !StringUtils.isEmpty(var.getValue()) && var.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()){    			
+				if (isNumericalValueOutOfBounds(var.getValue(), var.getMeasurementVariable())){					
+					var.setAccepted(true);
+					var.setValue(MISSING_VALUE);
+				}
+    		}else if(var != null && !StringUtils.isEmpty(var.getValue()) && 
 				(var.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() || 
 				!var.getMeasurementVariable().getPossibleValues().isEmpty())){
 				var.setAccepted(true);				
@@ -380,7 +389,7 @@ public class ObservationMatrixController extends
     	UserSelection userSelection = getUserSelection(false);
     	for (MeasurementRow row : userSelection.getMeasurementRowList())  {
     		if(row != null && row.getMeasurementVariables() != null){
-    			markNonEmptyCategoricalValuesAsMissing(row.getDataList());
+    			markNonEmptyVariateValuesAsMissing(row.getDataList());
         	}
     	}
 		map.put(SUCCESS, "1");    	    
@@ -490,20 +499,24 @@ public class ObservationMatrixController extends
 		    			    	    	    
     	return map;
     }
-
-    protected boolean isCategoricalValueOutOfBounds(String cValueId, String value, List<ValueReference> possibleValues){
-    	
+    protected boolean isNumericalValueOutOfBounds(String value, MeasurementVariable var){    	    	
+		if (var.getMinRange() != null && var.getMaxRange() != null) {			
+			if (NumberUtils.isNumber(value) && (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange())) {
+				return true;
+			}			
+		} 		
+		return false;
+    }
+    protected boolean isCategoricalValueOutOfBounds(String cValueId, String value, List<ValueReference> possibleValues){    	
     	String val = cValueId;
     	if (val == null ){
     		val = value;
-    	}
-    	
+    	}    	
     	for (ValueReference ref : possibleValues){
     		if (ref.getKey().equals(val)){
     			return false;
     		}
-    	}
-    	
+    	}    	
     	return true;
     }
     

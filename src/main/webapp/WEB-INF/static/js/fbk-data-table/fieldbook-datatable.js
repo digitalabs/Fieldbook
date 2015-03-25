@@ -372,7 +372,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 				columns.push({data: $(this).html()});
 			}
 			
-			if ($(this).data('term-data-type-id') == '1130'){
+			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110'){
 				columnsDef.push({
 					targets: columns.length - 1,
 					render: function ( data, type, full, meta ) {

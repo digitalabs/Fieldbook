@@ -3490,7 +3490,11 @@ function processInlineEditInput(){
 							
 			var cellText = $('.data-value').val();
 			if($.trim(cellText.toLowerCase()) == 'missing'){
-				isNew = '1';	
+				if(minVal != null && maxVal != null){
+					isNew = '1';
+				}else{
+					isNew = '0';
+				}
 				$('.data-value').val('missing');
 			}else if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) || parseFloat(cellText) > parseFloat(maxVal))){
 				isNew = '1';				

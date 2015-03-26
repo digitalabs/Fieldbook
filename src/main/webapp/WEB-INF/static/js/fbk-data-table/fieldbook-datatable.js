@@ -1068,6 +1068,11 @@ $(function(){
 		select: function(event, ui) {
 			var colvindex = $(ui.target.parent()).data('row-index');
 			var termId = $(ui.target).data('term-id');
+			if(termId == null){
+				termId = $(ui.target).parents('td').data('term-id');
+				colvindex = $(ui.target).parents('tr').data('row-index');
+				ui.target = $(ui.target).parents('td');
+			}
 			switch(ui.cmd){
 				case "markAccepted":
 					markCellAsAccepted(colvindex, termId, ui.target);

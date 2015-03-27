@@ -2,6 +2,8 @@ package com.efficio.fieldbook.util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,9 +82,13 @@ public class FieldbookUtil {
     return encoded file name
      */
   public static String getDownloadFileName(String filename, HttpServletRequest request) {
+	  String newFilename = filename;
       try{
-          if (request.getHeader("User-Agent").indexOf("MSIE") != -1) {
-              return '\"' + java.net.URLEncoder.encode(filename, "UTF-8") + '\"';
+          if (request.getHeader("User-Agent").indexOf("MSIE") != -1 || request.getHeader("User-Agent").indexOf("Trident") != -1) {
+            //return '\"' + java.net.URLEncoder.encode(filename, "UTF-8") + '\"';
+            URI uri = new URI(null, null, filename, null);
+      	  	newFilename = uri.toASCIIString();
+            return newFilename;
           }
           byte[] bytes = filename.getBytes("UTF-8");
           StringBuilder buff = new StringBuilder(bytes.length << 2);
@@ -92,9 +98,15 @@ public class FieldbookUtil {
               buff.append('=').append(HEX_CHARS[unsignedByte >> 4]).append(HEX_CHARS[unsignedByte & 0xF]);
           }
           return buff.append("?=").toString();
-      }catch(UnsupportedEncodingException e){
-          return filename;
-      }
+          
+          
+          
+      }catch (URISyntaxException e) {
+		LOG.error(e.getMessage(), e);
+	} catch (UnsupportedEncodingException e) {
+		LOG.error(e.getMessage(), e);
+	}
+      return newFilename;
   }
 
   

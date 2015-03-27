@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -62,7 +63,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 			Model model) {
 
 		UserSelection userSelection = getUserSelection();
-		List<MeasurementVariable> measurementVariables = getCategoricalWithOutOfBoundsOnly(userSelection
+		List<MeasurementVariable> measurementVariables = getTraitsWithOutOfBoundsOnly(userSelection
 				.getWorkbook().getMeasurementDatasetVariables());
 		form.setMeasurementVariable(measurementVariables.get(0));
 		form.setTraitSize(measurementVariables.size());
@@ -78,7 +79,7 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 			Model model) {
 
 		UserSelection userSelection = getUserSelection();
-		List<MeasurementVariable> measurementVariablesCategorical = getCategoricalWithOutOfBoundsOnly(userSelection
+		List<MeasurementVariable> measurementVariablesCategorical = getTraitsWithOutOfBoundsOnly(userSelection
 				.getWorkbook().getMeasurementDatasetVariables());
 
 		if ("next".equals(action)) {
@@ -198,18 +199,27 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 	protected void setMeasurementDataValue(String possibleValueId, MeasurementData measurementData,
 			Value value) {
 		if (!value.getNewValue().isEmpty()) {
-			if (possibleValueId.equalsIgnoreCase(value.getNewValue())) {
+			
+			if(measurementData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()){
 				measurementData.setAccepted(true);
+				measurementData.setValue(value.getNewValue());
+				
+			}else if(measurementData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()){
+				if (possibleValueId.equalsIgnoreCase(value.getNewValue())) {
+					measurementData.setAccepted(true);
+				}
+				measurementData.setValue(possibleValueId);
 			}
-			measurementData.setValue(possibleValueId);
 		}
 	}
 
-	protected List<MeasurementVariable> getCategoricalWithOutOfBoundsOnly(
+	protected List<MeasurementVariable> getTraitsWithOutOfBoundsOnly(
 			List<MeasurementVariable> measurementVariables) {
 		List<MeasurementVariable> variables = new ArrayList<>();
 		for (MeasurementVariable var : measurementVariables) {
-			if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()
+			if(var.getDataTypeId()  != null && var.getDataTypeId() == TermId.NUMERIC_VARIABLE.getId() && !var.isFactor() && checkIfNumericalTraitHasOutOfBoundsData(var.getTermId())){
+				variables.add(var);
+			}else if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()
 					&& !var.isFactor()
 					&& checkIfCategoricalTraitHasOutOfBoundsData(var.getTermId())) {
 
@@ -220,6 +230,24 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 
 	}
 
+	protected Boolean checkIfNumericalTraitHasOutOfBoundsData(Integer termId) {
+		UserSelection userSelection = getUserSelection();
+		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+		tempList.addAll(userSelection.getMeasurementRowList());
+
+		for (MeasurementRow row : tempList) {
+			MeasurementData data = row.getMeasurementData(termId);
+			if(data != null){
+				Boolean isNumericalValueOutOfBounds = isNumericalValueOutOfBounds(data);
+				if (isNumericalValueOutOfBounds) {
+					return isNumericalValueOutOfBounds;
+				}
+			}
+		}
+
+		return false;
+	}
+	
 	protected Boolean checkIfCategoricalTraitHasOutOfBoundsData(Integer termId) {
 		UserSelection userSelection = getUserSelection();
 		List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
@@ -288,21 +316,27 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		dataMap.put("PLOT_NO", row.getMeasurementDataValue(TermId.PLOT_NO.getId()));
 		dataMap.put("MEASUREMENT_ROW_INDEX", rowIndex);
 
-		boolean isTraitCustomCategValue = false;
+		boolean isTraitCustomValue = false;
 		for (MeasurementData data : row.getDataList()) {
 			String displayVal = data.getDisplayValue();
-
 			if (data.getMeasurementVariable().getDataTypeId()
+					.equals(TermId.NUMERIC_VARIABLE.getId())
+					&& data.getMeasurementVariable().getTermId() == targetTraitTermId) {
+
+				isTraitCustomValue = isNumericalValueOutOfBounds(data);
+				Object[] categArray = new Object[] { displayVal, data.isAccepted() };
+				dataMap.put("OLD VALUE", categArray);
+			}else if (data.getMeasurementVariable().getDataTypeId()
 					.equals(TermId.CATEGORICAL_VARIABLE.getId())
 					&& data.getMeasurementVariable().getTermId() == targetTraitTermId) {
 
-				isTraitCustomCategValue = isCategoricalValueOutOfBounds(data);
+				isTraitCustomValue = isCategoricalValueOutOfBounds(data);
 				Object[] categArray = new Object[] { displayVal, data.isAccepted() };
 				dataMap.put("OLD VALUE", categArray);
 			}
 		}
 
-		if (isTraitCustomCategValue) {
+		if (isTraitCustomValue) {
 			return dataMap;
 		} else {
 			return new HashMap<String, Object>();
@@ -346,6 +380,28 @@ public class ReviewDetailsOutOfBoundsController extends AbstractBaseFieldbookCon
 		return true;
 	}
 
+	protected boolean isNumericalValueOutOfBounds(MeasurementData data) {
+		String value = data.getValue();
+		if (data.isAccepted()) {
+			return false;
+		}		
+		if (data.getMeasurementVariable().getMinRange() != null && 
+				data.getMeasurementVariable().getMaxRange() != null && isValueOutOfRange(value, data)) {
+			return true;						
+		} 		
+		return false;
+	}
+	
+	protected boolean isValueOutOfRange(String value, MeasurementData data){
+		if(ObservationMatrixController.MISSING_VALUE.equalsIgnoreCase(value)){
+			return true;
+		}else if (NumberUtils.isNumber(value) && (Double.valueOf(value) < data.getMeasurementVariable().getMinRange() || Double.valueOf(value) > data.getMeasurementVariable().getMaxRange())) {
+			return true;
+		}
+		return false;
+	}
+
+	
 	protected String getPossibleValueIDByValue(String value, List<ValueReference> possibleValues) {
 		for (ValueReference ref : possibleValues) {
 			if (ref.getName().equalsIgnoreCase(value)) {

@@ -3483,6 +3483,23 @@ function processInlineEditInput(){
         	}else{
         		indexDataVal = '';
         	}
+        } else if($('.data-value').hasClass('numeric-value')){			
+        	
+        	var minVal = ($('.data-value').data('min-range'));
+			var maxVal = ($('.data-value').data('max-range'));
+							
+			var cellText = $('.data-value').val();
+			if($.trim(cellText.toLowerCase()) == 'missing'){
+				if(minVal != null && maxVal != null){
+					isNew = '1';
+				}else{
+					isNew = '0';
+				}
+				$('.data-value').val('missing');
+			}else if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) || parseFloat(cellText) > parseFloat(maxVal))){
+				isNew = '1';				
+		    }
+        	indexDataVal =  $('.data-value').val();
         } else {
         	indexDataVal =  $('.data-value').val();
         }

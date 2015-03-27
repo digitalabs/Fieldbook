@@ -16,7 +16,7 @@
 				th:text="*{measurementVariable.name}"></a> <span th:text="#{review.details.out.of.bounds.data.descripton2}"></span>
 		</div>
 	</div>
-	<div class="row add_top_padding">
+	<div class="row add_top_padding" th:if="*{measurementVariable.dataTypeId == T(org.generationcp.middleware.domain.oms.TermId).CATEGORICAL_VARIABLE.getId()}">
 		<div class="col-xs-6 col-md-6">
 			<strong th:text="#{review.details.out.of.bounds.data.valid.values}"></strong>
 
@@ -31,6 +31,24 @@
 				<tr th:each="refval : *{measurementVariable.possibleValues}">
 					<td th:text="${refval.name}"></td>
 					<td th:text="${refval.description}"></td>
+				</tr>
+
+			</table>
+		</div>
+	</div>
+	<div class="row add_top_padding" th:if="*{measurementVariable.dataTypeId == T(org.generationcp.middleware.domain.oms.TermId).NUMERIC_VARIABLE.getId()}">
+		<div class="col-xs-6 col-md-6">			
+
+			<table class="table table-curved table-condensed">
+				<thead>
+					<tr>
+						<th th:text="#{review.details.out.of.bounds.data.min.range}">Min Value</th>
+						<th th:text="#{review.details.out.of.bounds.data.max.range}">Max Value</th>
+					</tr>
+				</thead>
+				<tr>
+					<td th:text="*{measurementVariable.minRange}"></td>
+					<td th:text="*{measurementVariable.maxRange}"></td>
 				</tr>
 
 			</table>

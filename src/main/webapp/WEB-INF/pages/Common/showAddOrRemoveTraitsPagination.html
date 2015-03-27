@@ -22,7 +22,7 @@
 	<thead>
 		<tr>
 			<th th:if="${isExpDesignPreview != '1'}" nowrap="nowrap" data-term-id="Action" class="factors">Action</th>
-			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString}"
+			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString},data-min-range=${measurementVariable.minRange},data-max-range=${measurementVariable.maxRange}"
 			th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
 			th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}"
 			th:utext="${measurementVariable.name}">.variable name</th>

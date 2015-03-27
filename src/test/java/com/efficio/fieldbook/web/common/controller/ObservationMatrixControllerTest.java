@@ -335,6 +335,41 @@ public class ObservationMatrixControllerTest {
 	}
 	
 	@Test
+	public void testMarkExperimentCellDataAsAcceptedForNumeric(){
+		int termId = 2000;
+		UserSelection userSelection = new UserSelection();
+		List<MeasurementRow> measurementRowList = new ArrayList<>();
+		MeasurementRow row = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(1000, "1st", TermId.CHARACTER_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName1"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		row = new MeasurementRow();
+		dataList = new ArrayList<>();
+		dataList.add(generateTestMeasurementData(termId, "1", TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), "TestVarName2"));
+		row.setDataList(dataList);
+		measurementRowList.add(row);
+		userSelection.setMeasurementRowList(measurementRowList);
+		userSelection.setWorkbook(Mockito.mock(org.generationcp.middleware.domain.etl.Workbook.class));
+		observationMatrixController.setStudySelection(userSelection);
+		observationMatrixController.setValidationService(Mockito.mock(ValidationService.class));
+		Map<String, String> data = new HashMap<>();
+		
+		data.put("index", "1");
+		data.put("termId", Integer.toString(termId));
+	
+    	HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+    	    	    	
+		Map<String, Object> results = observationMatrixController.markExperimentCellDataAsAccepted(data, req);
+		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> dataMap =  (Map<String, Object>) results.get("data");
+		
+		Assert.assertTrue("The Accepted flag should be true",(boolean)((Object[]) dataMap.get("TestVarName2"))[1]);
+		
+	}
+	
+	@Test
 	public void testMarkAllExperimentDataAsAccepted(){
 		int termId = 2000;
 		UserSelection userSelection = new UserSelection();
@@ -442,6 +477,24 @@ public class ObservationMatrixControllerTest {
 		Assert.assertFalse("2 is in possible values so the return value should be false", observationMatrixController.isCategoricalValueOutOfBounds(null, "2", possibleValues));
 		Assert.assertTrue("3 is NOT in possible values so the return value should be true",observationMatrixController.isCategoricalValueOutOfBounds(null, "3", possibleValues));
 	}
+	
+	@Test
+	public void testIsNumericalValueOutOfBoundsWhenThereIsRange(){
+		MeasurementVariable var = new MeasurementVariable();
+		var.setMinRange(Double.valueOf("1"));
+		var.setMaxRange(Double.valueOf("10"));
+		Assert.assertFalse("Should return false since 2 is not out of range", observationMatrixController.isNumericalValueOutOfBounds("2", var));
+		Assert.assertTrue("Should return true since 21 is out of range", observationMatrixController.isNumericalValueOutOfBounds("21", var));
+	}
+	
+	@Test
+	public void testIsNumericalValueOutOfBoundsWhenThereIsNoRange(){
+		MeasurementVariable var = new MeasurementVariable();
+		
+		Assert.assertFalse("Should return false since 2 is not out of range", observationMatrixController.isNumericalValueOutOfBounds("2", var));
+		Assert.assertFalse("Should return false since 21 is not out of range", observationMatrixController.isNumericalValueOutOfBounds("21", var));
+	}
+	
 	
 	private MeasurementData generateTestMeasurementData(int termId, String value, int dataTypeId, List<ValueReference> possibleValues, String varName){
 		MeasurementData emptyData = new MeasurementData();

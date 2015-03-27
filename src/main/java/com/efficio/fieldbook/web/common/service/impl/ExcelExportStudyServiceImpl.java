@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -525,11 +526,13 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				} else {
 					
 					if(AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())){					
-						if(dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())){
+						if(dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue()) && NumberUtils.isNumber(dataCell.getValue())){
 							cell.setCellType(Cell.CELL_TYPE_BLANK);
 							cell.setCellType(Cell.CELL_TYPE_NUMERIC);		
-							cell.setCellValue(Double.valueOf(dataCell.getValue()));
-							
+							cell.setCellValue(Double.valueOf(dataCell.getValue()));							
+						}else{
+							cell.setCellType(Cell.CELL_TYPE_STRING);
+							cell.setCellValue(dataCell.getValue());
 						}
 					} else {
 						cell.setCellValue(dataCell.getValue());	

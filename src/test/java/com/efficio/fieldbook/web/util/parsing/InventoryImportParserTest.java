@@ -75,7 +75,7 @@ public class InventoryImportParserTest {
 
 		testLocationList = createDummyLocationList();
 		testScaleList = createDummyScaleList();
-		doReturn(testLocationList).when(fieldbookMiddlewareService).getAllSeedLocations();
+		doReturn(testLocationList).when(fieldbookMiddlewareService).getAllLocations();
 		doReturn(testScaleList).when(ontologyService).getAllInventoryScales();
 
 	}

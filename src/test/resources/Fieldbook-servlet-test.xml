@@ -107,6 +107,12 @@
 
 	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl" />
 	
+	<bean id="ksuExcelImportStudyService" class="com.efficio.fieldbook.web.common.service.impl.KsuExcelImportStudyServiceImpl">
+    </bean>
+    
+    <bean id="excelImportStudyService" class="com.efficio.fieldbook.web.common.service.impl.ExcelImportStudyServiceImpl">
+    </bean>
+	
 	<!-- to handle the issue in the abstract controller that needs httpservlet request -->
 	<bean id="httpServletRequest" class="org.springframework.mock.web.MockHttpServletRequest">
 	</bean>

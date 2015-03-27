@@ -22,6 +22,11 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 	@Override
 	public List<String> applyToName(final String expression, final AdvancingSource source) {
 		List<String> newNames = new ArrayList<String>();
+
+		if (expression == null) {
+			return newNames;
+		}
+
 		final List<StringBuilder> builders = new ArrayList<StringBuilder>();
 		builders.add(new StringBuilder(expression));
 		

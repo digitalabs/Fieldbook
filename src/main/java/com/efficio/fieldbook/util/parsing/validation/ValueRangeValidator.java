@@ -25,12 +25,18 @@ public class ValueRangeValidator extends ParsingValidator{
 
 		this.acceptedValues = new ArrayList<>();
 		if (acceptedValueParam != null) {
-			for (String acceptedValue : acceptedValueParam) {
-				acceptedValues.add(acceptedValue.toUpperCase());
-			}
+			processAcceptedValues(acceptedValueParam);
 		}
 
 		setValidationErrorMessage(GENERIC_INVALID_VALUE_MESSAGE);
+	}
+
+	protected void processAcceptedValues(List<String> acceptedValueParam) {
+		for (String acceptedValue : acceptedValueParam) {
+			if (acceptedValue != null) {
+				acceptedValues.add(acceptedValue.toUpperCase());
+			}
+		}
 	}
 
 	@Override public boolean isParsedValueValid(String value) {

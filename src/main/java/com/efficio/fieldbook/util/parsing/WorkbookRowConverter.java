@@ -46,13 +46,13 @@ public abstract class WorkbookRowConverter<T> {
 		List<T> valueList = new ArrayList<>();
 
 		do {
-			if (isRowEmpty(targetSheetIndex, currentIndex, columnCount - 1)) {
+			if (isRowEmpty(targetSheetIndex, currentIndex, columnCount)) {
 				currentRowValue = null;
 				continue;
 			}
 
 			currentRowValue = new HashMap<>();
-			for (int i = 0; i < columnCount - 1; i++) {
+			for (int i = 0; i < columnCount; i++) {
 				String value = getCellStringValue(targetSheetIndex, currentIndex, i);
 
 				if (value == null) {

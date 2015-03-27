@@ -1,10 +1,7 @@
 package com.efficio.fieldbook.web.inventory.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
@@ -16,9 +13,7 @@ import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +28,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping({SeedStoreManagerController.URL})
-public class SeedStoreManagerController extends AbstractBaseFieldbookController{
+public class SeedStoreManagerController extends SeedInventoryTableDisplayingController {
     
     private static final Logger LOG = LoggerFactory.getLogger(SeedStoreManagerController.class);
     
@@ -41,17 +36,11 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     public static final String URL = "/SeedStoreManager";
     public static final String PAGINATION_TEMPLATE = "/Inventory/seedInventoryPagination";
 
-    protected static final String TABLE_HEADER_LIST = "tableHeaderList";
-    
-    @Resource
+	@Resource
     private FieldbookService fieldbookMiddlewareService;
     
     @Resource
     private InventoryService inventoryMiddlewareService;
-    
-    /** The message source. */
-    @Autowired
-    public MessageSource messageSource;
     
     /** The user selection. */
     @Resource
@@ -61,11 +50,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     @Resource
     private OntologyService ontologyService;
 
-    /** The ontology manager. */ 
-    @Resource
-    private OntologyDataManager ontologyDataManager;
-    
-    /**
+	/**
      * Gets the data types.
      *
      * @return the data types
@@ -165,26 +150,8 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         }
         return super.showAjaxPage(model, page);
     }
-    
-    protected List<TableHeader> getSeedInventoryTableHeader(){
-    	Locale locale = LocaleContextHolder.getLocale();
-    	List<TableHeader> tableHeaderList = new ArrayList<TableHeader>();
-    	
-		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_ID.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.entry.number", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.entry.designation", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.entry.parentage", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.gid", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.source", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.LOT_LOCATION.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.table.location", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.AMOUNT.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.amount", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.SCALE.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.table.scale", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.COMMENT.getTermNameFromOntology(ontologyDataManager), messageSource.getMessage("seed.inventory.comment", null, locale)));
-		
-    	return tableHeaderList;
-    }
-    
-            
-    @ResponseBody
+
+	@ResponseBody
     @RequestMapping(value="/save/lots", method = RequestMethod.POST)
     public Map<String, Object> saveLots(@ModelAttribute("seedStoreForm") SeedStoreForm form,
             Model model, Locale local) {

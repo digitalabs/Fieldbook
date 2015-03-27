@@ -1,11 +1,9 @@
 package com.efficio.fieldbook.web.inventory.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedInventoryList;
 import com.efficio.fieldbook.web.nursery.form.ImportAdvanceInventoryForm;
 import org.generationcp.commons.context.ContextConstants;
@@ -16,7 +14,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +35,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(value = ImportAdvanceInventoryController.URL)
-public class ImportAdvanceInventoryController extends AbstractBaseFieldbookController {
+public class ImportAdvanceInventoryController extends SeedInventoryTableDisplayingController {
 	public static final String URL = "/importAdvanceInventory";
 
 	public static final String IS_SUCCESS = "isSuccess";
@@ -49,9 +46,6 @@ public class ImportAdvanceInventoryController extends AbstractBaseFieldbookContr
 
 	@Resource
 	private ImportInventoryService importInventoryService;
-
-	@Resource
-	private MessageSource messageSource;
 
 	@Resource
 	private InventoryService inventoryService;
@@ -136,11 +130,12 @@ public class ImportAdvanceInventoryController extends AbstractBaseFieldbookContr
 			form.setCurrentPage(1);
 			form.setGidList(Integer.toString(listId));
 
+			model.addAttribute(SeedInventoryTableDisplayingController.TABLE_HEADER_LIST, getSeedInventoryTableHeader());
+
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
 
 		return super.showAjaxPage(model, "/NurseryManager/saveAdvanceInventoryImport");
 	}
-
 }

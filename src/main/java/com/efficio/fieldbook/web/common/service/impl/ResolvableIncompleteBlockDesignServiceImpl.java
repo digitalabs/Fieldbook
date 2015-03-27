@@ -103,7 +103,7 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 			MainDesign mainDesign = ExpDesignUtil.createResolvableIncompleteBlockDesign(blockSize,
 				Integer.toString(nTreatments), replicates, 
 				stdvarTreatment.getName(), stdvarRep.getName(), stdvarBlock.getName(), stdvarPlot.getName(), 
-				parameter.getNblatin(), parameter.getReplatinGroups(), "1", "", parameter.getUseLatenized());
+				parameter.getNblatin(), parameter.getReplatinGroups(), "", parameter.getUseLatenized());
 			
 			measurementRowList = ExpDesignUtil.generateExpDesignMeasurements(environments, environmentsToAdd,
 					trialVariables, factors, nonTrialFactors, variates, treatmentVariables, reqVarList, germplasmList, 

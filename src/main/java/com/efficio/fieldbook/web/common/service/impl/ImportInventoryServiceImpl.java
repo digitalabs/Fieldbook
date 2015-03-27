@@ -64,13 +64,15 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 		boolean possibleOverwrite = false;
 
 		if (! (isEmpty(imported.getAmount()) || isEmpty(imported.getScaleName()) || isEmpty(imported.getLocationName())) ) {
-			possibleOverwrite = (! (isEmpty(original.getAmount()) || isEmpty(original.getLocationName()) || isEmpty(original.getScaleName())));
+			possibleOverwrite = (! (isEmpty(original.getAmount()) || isEmpty(original.getComment())|| isEmpty(original.getLocationName())
+					|| isEmpty(original.getScaleName())));
 			original.setAmount(imported.getAmount());
 			original.setLocationAbbr(imported.getLocationAbbr());
 			original.setScaleName(imported.getScaleName());
 			original.setScaleId(imported.getScaleId());
 			original.setLocationName(imported.getLocationName());
 			original.setLocationId(imported.getLocationId());
+			original.setComment(imported.getComment());
 		}
 
 		return possibleOverwrite;

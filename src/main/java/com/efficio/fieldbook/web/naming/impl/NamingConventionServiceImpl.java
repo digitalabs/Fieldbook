@@ -1,13 +1,20 @@
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
+import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
+import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
+import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.naming.service.RulesService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -22,23 +29,17 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
-import com.efficio.fieldbook.web.naming.expression.SequenceExpression;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import javax.annotation.Resource;
+import java.util.*;
 
 @Service
 public class NamingConventionServiceImpl implements NamingConventionService {
 
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private RulesService rulesService;
     
     @Resource
     private GermplasmDataManager germplasmDataManger;
@@ -49,15 +50,17 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     @Resource
     private ProcessCodeService processCodeService;
 
+    @Resource
+    private RuleFactory ruleFactory;
+
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 	
     @Override
-	public AdvanceResult advanceNursery(AdvancingNursery info,
-			Workbook workbook) throws MiddlewareQueryException {
+	public AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException, RuleException {
 		
-        Map<Integer, Method> breedingMethodMap = new HashMap<Integer, Method>();
-        Map<String, Method> breedingMethodCodeMap = new HashMap<String, Method>();
+        Map<Integer, Method> breedingMethodMap = new HashMap<>();
+        Map<String, Method> breedingMethodCodeMap = new HashMap<>();
         List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods(false);
 
         for(Method method: methodList){
@@ -69,7 +72,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         updatePlantsSelectedIfNecessary(list, info);
         List<ImportedGermplasm> importedGermplasmList = generateGermplasmList(list, info.isCheckAdvanceLinesUnique());
 
-        List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<AdvanceGermplasmChangeDetail>();
+        List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
         for (AdvancingSource source : list.getRows()) {
         	if (source.getChangeDetail() != null) {
         		changeDetails.add(source.getChangeDetail());
@@ -178,7 +181,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         germplasm.setNames(names);
     }
 
-    public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean isCheckForDuplicateName) throws MiddlewareQueryException {
+    public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean isCheckForDuplicateName) throws MiddlewareQueryException, RuleException {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         int index = 1;
         TimerWatch timer = new TimerWatch("advance");
@@ -187,82 +190,54 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
             		&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
-    	
-            	Method method = row.getBreedingMethod();
-            	String germplasmName = getGermplasmRootName(method.getSnametype(), row);
-            	String countPrefixExpression = germplasmName 
-									+ getNonNullValue(method.getSeparator()) 
-									+ getNonNullValue(method.getPrefix());
-            	String countExpression = getNonNullValue(method.getCount());
-            	String countSuffixExpression = getNonNullValue(method.getSuffix());
-            	row.setRootName(germplasmName);
-            	
-            	//prefix and suffix to count expects only 1 row
-            	String countPrefix = processCodeService.applyToName(countPrefixExpression, row).get(0);
-            	String countSuffix = processCodeService.applyToName(countSuffixExpression, row).get(0);            	            
-            	
-            	//may return more than 1 record, esp if sequence is used.
-            	List<String> names = processCodeService.applyToName(countExpression, row);
+            	List<String> names;
+				try {
+                    RuleExecutionContext namingExecutionContext = setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
+					names = (List<String>) rulesService.runRules(namingExecutionContext);
 
-            	
-            	
-            	int lastCount = -1;
-            	for (String evaluatedCount : names) {
-            		String name = countPrefix + evaluatedCount + countSuffix;
-            		if(!isCheckForDuplicateName){           			
-                		addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
-            		}else{
-            			//this is for checking of duplicate name always in the DB, (checking of standardized and un-standardized)
-	            		Integer currentCount = getCount(evaluatedCount);
-	            		if (currentCount != null) {
-	            			if (currentCount <= lastCount) {
-	            				currentCount = lastCount + 1;
-	            				name = countPrefix + currentCount + countSuffix;
-	            			}
-		        			boolean isMatch = false;
-		        			do {
-		            			isMatch = germplasmDataManger.checkIfMatches(name);
-			            		if (isMatch) {
-			            			if (countExpression.equalsIgnoreCase(SequenceExpression.KEY)) {
-			            				currentCount++;
-			            				name = countPrefix + currentCount + countSuffix;
-			            			} else {
-			            				if (row.getChangeDetail() == null) {
-				                    		row.setChangeDetail(new AdvanceGermplasmChangeDetail());
-				                    		//index in java (starts at 0)
-				                			row.getChangeDetail().setIndex(index-1); 
-				                			row.getChangeDetail().setOldAdvanceName(name);
-				                			Locale locale = LocaleContextHolder.getLocale();
-				                			row.getChangeDetail().setQuestionText(messageSource.getMessage("advance.nursery.duplicate.question.text", 
-				                					new String[] {name}, locale));
-			            				}
-			            				name = row.getChangeDetail().getOldAdvanceName() + "(" + currentCount + ")"; 
-			            				currentCount++;
-			            			}
-			            		} else if (row.getChangeDetail() != null) {
-			            			row.getChangeDetail().setNewAdvanceName(name);
-		                			Locale locale = LocaleContextHolder.getLocale();
-		                			row.getChangeDetail().setAddSequenceText(messageSource.getMessage("advance.nursery.duplicate.add.sequence.text", 
-		                					new String[] {row.getChangeDetail().getNewAdvanceName()}, locale));
-			            		}
-		        			} while (isMatch);
-		        			addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());		
-		        			lastCount = currentCount;
-	            		}	            		
-            		}            		
-            	}
+                    // if change detail object is created due to a duplicate being encountered somewhere during processing, provide a reference index
+                    if (row.getChangeDetail() != null) {
+                        // index - 1 is used because Java uses 0-based referencing
+                        row.getChangeDetail().setIndex(index - 1);
+                    }
+
+                    for (String name : names) {
+						addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());					
+					}
+
+				} catch (RuleException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
             
         timer.stop();
         return list;
     }
+
+    protected RuleExecutionContext setupNamingRuleExecutionContext(AdvancingSource row, boolean checkForDuplicateName) {
+        List<String> sequenceList = Arrays.asList(ruleFactory.getRuleSequenceForNamespace("naming"));
+
+        if (checkForDuplicateName) {
+            // new array list is required since list generated from asList method does not support adding of more elements
+            sequenceList = new ArrayList<>(sequenceList);
+            sequenceList.add(EnforceUniqueNameRule.KEY);
+        }
+
+        NamingRuleExecutionContext context =  new NamingRuleExecutionContext(sequenceList, processCodeService, row, germplasmDataManger, new ArrayList<String>());
+        context.setMessageSource(messageSource);
+
+        return context;
+    }
+
     private String getNonNullValue(String value) {
     	return value != null ? value : "";
     }
     
-    protected String getGermplasmRootName(Integer snametype, AdvancingSource row)
-    throws MiddlewareQueryException {
+    // 1. RootNameGeneratorRule
+    // FIXME : breedingMethodNameType NOT USED : hard coded 1 in the 'Expression'
+    protected String getGermplasmRootName(Integer breedingMethodSnameType, AdvancingSource row) throws MiddlewareQueryException {
     	
     	RootNameExpression expression = new RootNameExpression();
     	List<StringBuilder> builders = new ArrayList<StringBuilder>();
@@ -274,6 +249,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     				new Object[] {row.getGermplasm().getEntryId()}, LocaleContextHolder.getLocale())); 
     	}
     	return name;
+    	
     }
     
     private Integer getCount(String countStr) {

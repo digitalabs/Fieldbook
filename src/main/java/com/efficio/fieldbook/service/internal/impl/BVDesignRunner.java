@@ -15,7 +15,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -27,17 +26,14 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
-//@Component("BVDesignRunner")
 public class BVDesignRunner implements DesignRunner {
-	
+	public static final String BV_PREFIX = "-bv";
+	public static final String CSV_EXTENSION = ".csv";
+
 	private static final Logger LOG = LoggerFactory.getLogger(BVDesignRunner.class);
-	
     private static String XML_EXTENSION = ".xml";
-    private static String CSV_EXTENSION = ".csv";
-	private static String BV_PREFIX = "-bv";
 	private static String BREEDING_VIEW_EXE = "BreedingView.exe";
 	private static String BVDESIGN_EXE = "BVDesign.exe";
-	private static String OUTPUT_FILE_PARAMETER_NAME = "outputfile";
 	
 	@Override
 	public BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design) throws IOException{
@@ -45,19 +41,9 @@ public class BVDesignRunner implements DesignRunner {
 		String bvDesignLocation = getBreedingViewExeLocation(workbenchService);
 		int returnCode = -1;
 		if(bvDesignLocation != null && design != null && design.getDesign() != null){
-			 String outputFilePath = System.currentTimeMillis()+BV_PREFIX+CSV_EXTENSION;
-			 
-			 design.getDesign().setParameterValue(OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
-			 
-			 String xml = "";
-			 try {
-				 xml = ExpDesignUtil.getXmlStringForSetting(design);
-			 } catch (JAXBException e ) {
-				 LOG.error(e.getMessage(), e);
-			 }
+			String xml = getXMLStringForDesign(design);
 			 
 			 String filepath = writeToFile(xml, fieldbookProperties);
-
 			 
 			 ProcessBuilder pb = new ProcessBuilder(bvDesignLocation, "-i" + filepath);
 	         Process p = pb.start();
@@ -86,7 +72,7 @@ public class BVDesignRunner implements DesignRunner {
 		BVDesignOutput output = new BVDesignOutput(returnCode);
 		if(returnCode == 0){
 			 
-			 File outputFile = new File(design.getDesign().getParameterValue(OUTPUT_FILE_PARAMETER_NAME));
+			 File outputFile = new File(design.getDesign().getParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM));
 			 FileReader fileReader = new FileReader(outputFile);
 			 CSVReader reader = new CSVReader(fileReader);
 			 List<String[]> myEntries = reader.readAll();			 			 
@@ -97,6 +83,22 @@ public class BVDesignRunner implements DesignRunner {
 			 
 		}
 		return output;
+	}
+
+	public String getXMLStringForDesign(MainDesign design) {
+		String xml = "";
+		Long currentTimeMillis = System.currentTimeMillis();
+		String outputFilePath = currentTimeMillis+BV_PREFIX+CSV_EXTENSION;
+		 
+		 design.getDesign().setParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM, outputFilePath);
+		 design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, Integer.toString(currentTimeMillis.intValue()));
+		 
+		 try {
+			 xml = ExpDesignUtil.getXmlStringForSetting(design);
+		 } catch (JAXBException e ) {
+			 LOG.error(e.getMessage(), e);
+		 }
+		return xml;
 	}
 	
 	private static String getBreedingViewExeLocation(WorkbenchService workbenchService){

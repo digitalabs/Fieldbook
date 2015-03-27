@@ -17,6 +17,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -34,9 +35,10 @@ public interface NamingConventionService {
      * @param info
      * @return
      * @throws MiddlewareQueryException
+     * @throws RuleException 
      */
-    AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException;
+    AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException, RuleException;
     
-    List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean checkForUniqueness) throws MiddlewareQueryException;
+    List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean checkForUniqueness) throws MiddlewareQueryException, RuleException;
     
 }

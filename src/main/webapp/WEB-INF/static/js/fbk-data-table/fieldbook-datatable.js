@@ -105,8 +105,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							if ($.inArray(cellText, possibleValues) === -1){
 								
 								$(td).removeClass('accepted-value');
-						    	$(td).removeClass('invalid-value');
-						    	
+						    	$(td).removeClass('invalid-value');						    	
 						    	if ($(td).text() !== 'missing' ){
 						    		if ($(td).find("input[type='hidden']").val() === 'true'){
 										$(td).addClass('accepted-value');
@@ -267,8 +266,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		
 		if($('#studyId').val() != ''){
 			// Activate an inline edit on click of a table cell
-		    $(tableIdentifier).on( 'click', 'tbody td:not(:first-child)', function (e) {
-		    	
+		    $(tableIdentifier).on( 'click', 'tbody td:not(:first-child)', function (e) {		    	
 		    	if(isAllowedEditMeasurementDataCell(false)){
 			    	var $tdCell = $(this);	    	
 			        var cellTdIndex =  $(this).index();

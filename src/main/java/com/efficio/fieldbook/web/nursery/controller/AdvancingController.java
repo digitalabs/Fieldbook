@@ -415,7 +415,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
 				dataMap.put("source", germplasm.getSource());
 				dataMap.put("parentage", germplasm.getCross());
 				dataTableDataList.add(dataMap);
-}
+            }
             model.addAttribute("advanceDataList", dataTableDataList);
             model.addAttribute(TABLE_HEADER_LIST, getAdvancedNurseryTableHeader());
             

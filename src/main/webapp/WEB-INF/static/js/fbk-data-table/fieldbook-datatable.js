@@ -7,7 +7,6 @@ if (typeof (BMS) === 'undefined') {
 if (typeof (BMS.Fieldbook) === 'undefined') {
 	BMS.Fieldbook = {};
 }
-
 BMS.Fieldbook.MeasurementsTable = {
 		getColumnOrdering : function(tableName, forceGet){
 			var orderedColumns = [];
@@ -16,8 +15,8 @@ BMS.Fieldbook.MeasurementsTable = {
 				hasOrderingChange = true;
 			}
 			if($('#'+tableName).dataTable() !== null &&  $('#'+tableName).dataTable().fnSettings() !== null){
-				var cols = $('#'+tableName).dataTable().fnSettings().aoColumns;				
-				$(cols).each(function(index){  
+				var cols = $('#'+tableName).dataTable().fnSettings().aoColumns;
+				$(cols).each(function(index){
 				  var termId = $($(cols[index].nTh)[0]).attr('data-term-id');
 				  var prevIndex = $('#'+tableName).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
 				  
@@ -191,13 +190,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						var dataTypeId = $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('term-data-type-id');
 						if(dataTypeId == '1110'){
 							var minVal = ( $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
-							var maxVal = ( $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));														
+							var maxVal = ( $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
 							var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
 							
 							if(isVariates){
 								$(this).removeClass('accepted-value');
 								$(this).removeClass('invalid-value');
-								if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))){															    	
+								if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellData) || parseFloat(cellData) > parseFloat(maxVal))){
 							    	if (cellData !== 'missing' ){
 							    		
 							    		if ($(this).find("input[type='hidden']").val() === 'true'){
@@ -270,10 +269,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 		    	if(isAllowedEditMeasurementDataCell(false)){
 			    	var $tdCell = $(this);	    	
 			        var cellTdIndex =  $(this).index();
-			        var rowIndex = $(this).parent('tr').data('row-index');	         
+			        var rowIndex = $(this).parent('tr').data('row-index');
 			        
-			        var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq('+cellTdIndex+')');	        
-			        $(tableIdentifier).data('show-inline-edit', '1');	
+			        var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq('+cellTdIndex+')');
+			        $(tableIdentifier).data('show-inline-edit', '1');
 			        if($colHeader.hasClass('variates')){
 			        	$('body').data('last-td-time-clicked', new Date().getTime());
 			    	}
@@ -316,8 +315,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			var colIndex = $(this).attr('data-index');
 			 
 			
-			var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;				
-			$(cols).each(function(index){  
+			var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;
+			$(cols).each(function(index){
 			  var prevIndex = $(tableIdentifier).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
 			  if(colIndex == prevIndex){
 				  column = table.column(index);
@@ -353,15 +352,15 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			
 			if (($(this).data('term-id') === 'Check')){
 				columns.push({
-		            data:   "active",
+		            data:   'active',
 		            render: function ( data, type, row ) {
 		            	return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="checkbox" class="editor-active" data-binding>';
 		            },
-					className:"fbk-center"
+					className:'fbk-center'
 		        });
 			} else if (($(this).data('term-id') === 'NewValue')){
 				columns.push({
-		            data:   "newValue",
+		            data:   'newValue',
 		            render: function ( data, type, row ) {
 		            	return '<input data-row-index="' + row.MEASUREMENT_ROW_INDEX + '" type="text" class="form-control" data-binding />';
 		            }
@@ -861,7 +860,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				
 		  	}
 		});
-		$(parentDiv + ' div.dataTables_scrollBody').scroll( 
+		$(parentDiv + ' div.dataTables_scrollBody').scroll(
 				function(){
 						$(parentDiv + ' .popover').remove();
 					} 
@@ -1060,8 +1059,8 @@ $(function(){
 	$(document).contextmenu({
 	    delegate: ".dataTable td[class*='invalid-value']",
 	    menu: [
-	      {title: "Accept Value", cmd: "markAccepted"},
-	      {title: "Mark Missing", cmd: "markMissing"}
+	      {title: 'Accept Value', cmd: 'markAccepted'},
+	      {title: 'Mark Missing', cmd: 'markMissing'}
 		],
 		select: function(event, ui) {
 			var colvindex = $(ui.target.parent()).data('row-index');
@@ -1072,10 +1071,10 @@ $(function(){
 				ui.target = $(ui.target).parents('td');
 			}
 			switch(ui.cmd){
-				case "markAccepted":
+				case 'markAccepted':
 					markCellAsAccepted(colvindex, termId, ui.target);
 					break;
-				case "markMissing":
+				case 'markMissing':
 					markCellAsMissing(colvindex, termId , 'missing' , 1 , ui.target);
 					break;
 			}

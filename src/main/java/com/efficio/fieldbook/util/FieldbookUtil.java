@@ -85,7 +85,6 @@ public class FieldbookUtil {
 	  String newFilename = filename;
       try{
           if (request.getHeader("User-Agent").indexOf("MSIE") != -1 || request.getHeader("User-Agent").indexOf("Trident") != -1) {
-            //return '\"' + java.net.URLEncoder.encode(filename, "UTF-8") + '\"';
             URI uri = new URI(null, null, filename, null);
       	  	newFilename = uri.toASCIIString();
             return newFilename;

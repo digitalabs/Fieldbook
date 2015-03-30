@@ -41,7 +41,6 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -102,10 +101,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     @Resource
     private UserSelection userSelection;
-    
-    @Resource
-    private OntologyService ontologyService;
-    
+
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
     
@@ -117,10 +113,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     @Resource
     private OntologyDataManager ontologyDataManager;
-    
-    /** The imported germplasm list. */
-    private List<ImportedGermplasm> importedGermplasmList;
-    
+
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -194,7 +187,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/getBreedingMethods", method = RequestMethod.GET)
     public Map<String, String> getBreedingMethods() {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         
         try {
 			List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods(false);
@@ -225,7 +218,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/getLocations", method = RequestMethod.GET)
     public Map<String, String> getLocations() {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         
         try {
             List<Long> locationsIds = fieldbookMiddlewareService
@@ -295,7 +288,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.POST)
     public Map<String, Object>  postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , BindingResult result, Model model) throws MiddlewareQueryException{
-        Map<String, Object> results = new HashMap<String, Object>();
+        Map<String, Object> results = new HashMap<>();
         advancingNursery.setMethodChoice(form.getMethodChoice());
         advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
         advancingNursery.setLineChoice(form.getLineChoice());
@@ -307,9 +300,24 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setLineVariateId(form.getLineVariateId());
         advancingNursery.setPlotVariateId(form.getPlotVariateId());
         advancingNursery.setMethodVariateId(form.getMethodVariateId());
-        advancingNursery.setCheckAdvanceLinesUnique((form.getCheckAdvanceLinesUnique() != null && form.getCheckAdvanceLinesUnique().equalsIgnoreCase("1")) ? true : false);
+        advancingNursery.setCheckAdvanceLinesUnique(form.getCheckAdvanceLinesUnique() != null && "1".equalsIgnoreCase(form.getCheckAdvanceLinesUnique()));
         
         try {
+
+            if (!advancingNursery.getMethodChoice().isEmpty()) {
+                Method method = fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingNursery.getBreedingMethodId()));
+                if ("GEN".equals(method.getMtype())) {
+                    form.setErrorInAdvance(messageSource.getMessage("nursery.save.advance.error.row.list.empty.generative.method",new String[]{},"",LocaleContextHolder.getLocale()));
+                    form.setGermplasmList(new ArrayList<ImportedGermplasm>());
+                    form.setEntries(0);
+                    results.put("isSuccess", "0");
+                    results.put("listSize", 0);
+                    results.put("message", form.getErrorInAdvance());
+
+                    return results;
+                }
+            }
+
         	AdvanceResult advanceResult = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
         	List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
         	long id = (new Date()).getTime();
@@ -327,33 +335,26 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         	results.put("advanceGermplasmChangeDetails", advanceGermplasmChangeDetails);
         	results.put("uniqueId", id);
         	
-        } catch (MiddlewareQueryException e) {
+        } catch (MiddlewareQueryException | RuleException e) {
         	form.setErrorInAdvance(e.getMessage());
         	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
         	form.setEntries(0);
         	results.put("isSuccess", "0");
         	results.put("listSize", 0);
         	results.put("message", e.getMessage());
-        } catch (RuleException e) {
-        	form.setErrorInAdvance(e.getMessage());
-        	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
-        	form.setEntries(0);
-        	results.put("isSuccess", "0");
-        	results.put("listSize", 0);
-        	results.put("message", e.getMessage());
-		}
-        
+        }
+
         return results;
     }
     
     @ResponseBody
     @RequestMapping(value="/apply/change/details", method=RequestMethod.POST)
     public Map<String, Object> applyChangeDetails(@RequestParam(value="data") String userResponses) throws Exception {
-    	Map<String, Object> results = new HashMap<String, Object>();
+    	Map<String, Object> results = new HashMap<>();
     	ObjectMapper objectMapper = new ObjectMapper();
     	AdvanceGermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, AdvanceGermplasmChangeDetail[].class);
     	List<ImportedGermplasm> importedGermplasmListTemp = userSelection.getImportedAdvancedGermplasmList();
-    	List<Integer> deletedEntryIds = new ArrayList<Integer>();
+    	List<Integer> deletedEntryIds = new ArrayList<>();
     	for (AdvanceGermplasmChangeDetail responseDetail : responseDetails) {
     		if (responseDetail.getIndex() < importedGermplasmListTemp.size()) {
     			ImportedGermplasm importedGermplasm = importedGermplasmListTemp.get(responseDetail.getIndex());
@@ -395,7 +396,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         
        
         try {
-        	importedGermplasmList = userSelection.getImportedAdvancedGermplasmList();
+        	/* The imported germplasm list. */
+            List<ImportedGermplasm> importedGermplasmList = userSelection
+                    .getImportedAdvancedGermplasmList();
             form.setGermplasmList(importedGermplasmList);
             form.setEntries(importedGermplasmList.size());
             form.changePage(1);
@@ -403,19 +406,16 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             form.setUniqueId(Long.valueOf(uniqueId));
             
             
-            List<Map<String, Object>> dataTableDataList = new ArrayList<Map<String, Object>>();
-        	if(importedGermplasmList != null){
-    	    	for(ImportedGermplasm germplasm : importedGermplasmList){
-    	        	Map<String, Object> dataMap = new HashMap<String, Object>();            	
-    				dataMap.put("desig", germplasm.getDesig().toString());
-    				dataMap.put("gid", "Pending");
-    				dataMap.put("entry", germplasm.getEntryId());
-    				dataMap.put("source", germplasm.getSource());
-    				dataMap.put("parentage", germplasm.getCross());
-    	    		dataTableDataList.add(dataMap);
-    	        }        	           
-        	}
-    		
+            List<Map<String, Object>> dataTableDataList = new ArrayList<>();
+            for(ImportedGermplasm germplasm : importedGermplasmList){
+				Map<String, Object> dataMap = new HashMap<>();
+				dataMap.put("desig", germplasm.getDesig());
+				dataMap.put("gid", "Pending");
+				dataMap.put("entry", germplasm.getEntryId());
+				dataMap.put("source", germplasm.getSource());
+				dataMap.put("parentage", germplasm.getCross());
+				dataTableDataList.add(dataMap);
+}
             model.addAttribute("advanceDataList", dataTableDataList);
             model.addAttribute(TABLE_HEADER_LIST, getAdvancedNurseryTableHeader());
             
@@ -430,7 +430,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     }
     
     protected List<TableHeader> getAdvancedNurseryTableHeader(){
-    	List<TableHeader> tableHeaderList = new ArrayList<TableHeader>();
+    	List<TableHeader> tableHeaderList = new ArrayList<>();
     	
 		tableHeaderList.add(new TableHeader(ColumnLabels.ENTRY_ID.getTermNameFromOntology(ontologyDataManager), "entry"));
 		tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(ontologyDataManager), "desig"));
@@ -442,7 +442,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     }
 
 	private List<StandardVariableReference> filterVariablesByProperty(List<SettingDetail> variables, String propertyName) {
-        List<StandardVariableReference> list = new ArrayList<StandardVariableReference>();
+        List<StandardVariableReference> list = new ArrayList<>();
         if (variables != null && !variables.isEmpty()) {
             for (SettingDetail detail : variables) {
                 if (detail.getVariable() != null && detail.getVariable().getProperty() != null 
@@ -458,7 +458,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/countPlots/{ids}", method=RequestMethod.GET)
     public int countPlots(@PathVariable String ids) throws MiddlewareQueryException {
     	String[] idList = ids.split(",");
-    	List<Integer> idParams = new ArrayList<Integer>();
+    	List<Integer> idParams = new ArrayList<>();
     	for (String id : idList) {
     		if (id != null && NumberUtils.isNumber(id)) {
     			idParams.add(Double.valueOf(id).intValue());
@@ -473,7 +473,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     public String checkMethodTypeMode(@PathVariable int methodVariateId) throws MiddlewareQueryException {
     	List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
     	if (observations != null && !observations.isEmpty()) {
-    		Set<Integer> methodIds = new HashSet<Integer>();
+    		Set<Integer> methodIds = new HashSet<>();
     		for (MeasurementRow row : observations) {
     			String value = row.getMeasurementDataValue(methodVariateId);
     			if (value != null && NumberUtils.isNumber(value)) {
@@ -481,7 +481,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     			}
     		}
     		if (!methodIds.isEmpty()) {
-    			List<Method> methods = germplasmDataManager.getMethodsByIDs(new ArrayList<Integer>(methodIds));
+    			List<Method> methods = germplasmDataManager.getMethodsByIDs(new ArrayList<>(methodIds));
     			boolean isBulk = false;
     			boolean isLine = false;
     			for (Method method : methods) {

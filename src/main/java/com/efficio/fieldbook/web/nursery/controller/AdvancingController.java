@@ -43,8 +43,8 @@ import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -109,7 +109,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     private GermplasmDataManager germplasmDataManager;
     
     @Resource
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
     
     @Resource
     private OntologyDataManager ontologyDataManager;
@@ -307,7 +307,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             if (!advancingNursery.getMethodChoice().isEmpty()) {
                 Method method = fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingNursery.getBreedingMethodId()));
                 if ("GEN".equals(method.getMtype())) {
-                    form.setErrorInAdvance(messageSource.getMessage("nursery.save.advance.error.row.list.empty.generative.method",new String[]{},"",LocaleContextHolder.getLocale()));
+                    form.setErrorInAdvance(messageSource.getMessage("nursery.save.advance.error.row.list.empty.generative.method",new String[]{},LocaleContextHolder.getLocale()));
                     form.setGermplasmList(new ArrayList<ImportedGermplasm>());
                     form.setEntries(0);
                     results.put("isSuccess", "0");

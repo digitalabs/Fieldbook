@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -29,7 +30,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;

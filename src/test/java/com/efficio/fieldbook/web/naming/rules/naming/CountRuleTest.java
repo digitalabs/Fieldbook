@@ -1,10 +1,12 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.naming.rules.Rule;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
-import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+
 import junit.framework.Assert;
+
+import org.generationcp.commons.ruleengine.Rule;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.Method;
 import org.junit.Before;

@@ -2,9 +2,10 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
-import com.efficio.fieldbook.web.naming.rules.OrderedRule;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
+import org.generationcp.commons.ruleengine.OrderedRule;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+
+import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 

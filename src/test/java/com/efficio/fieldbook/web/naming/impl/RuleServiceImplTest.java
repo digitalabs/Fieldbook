@@ -1,13 +1,16 @@
 package com.efficio.fieldbook.web.naming.impl;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.naming.service.RulesService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+
 import junit.framework.Assert;
+
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.RuleFactory;
+import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
@@ -17,6 +20,7 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

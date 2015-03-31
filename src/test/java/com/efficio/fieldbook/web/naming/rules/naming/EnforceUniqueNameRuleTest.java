@@ -1,8 +1,9 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+
+import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;

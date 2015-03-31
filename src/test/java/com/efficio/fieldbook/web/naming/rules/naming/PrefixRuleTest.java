@@ -7,12 +7,12 @@ import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
+import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.pojos.Method;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 

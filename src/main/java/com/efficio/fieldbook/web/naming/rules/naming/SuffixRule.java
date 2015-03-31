@@ -1,9 +1,10 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.naming.rules.OrderedRule;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+
+import org.generationcp.commons.ruleengine.OrderedRule;
+import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

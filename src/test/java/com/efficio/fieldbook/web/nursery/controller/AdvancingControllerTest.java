@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.efficio.fieldbook.web.common.bean.*;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+
 import junit.framework.Assert;
 
+import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -27,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;

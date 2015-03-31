@@ -1,6 +1,5 @@
 package com.efficio.fieldbook.web.naming.impl;
 
-import org.junit.runner.RunWith;
 
 /**
  * Created by IntelliJ IDEA.

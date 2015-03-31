@@ -3,19 +3,21 @@ package com.efficio.fieldbook.web.naming.impl;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
-import com.efficio.fieldbook.web.naming.rules.RuleExecutionContext;
 import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
 import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.naming.service.RulesService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.util.AppConstants;
+
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.RuleExecutionContext;
+import org.generationcp.commons.ruleengine.RuleFactory;
+import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -30,6 +32,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.*;
 
 @Service

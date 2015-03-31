@@ -11,22 +11,23 @@
 	<!-- Declare property file locations  -->
 	<context:property-placeholder location="classpath:fieldbook.properties, classpath:test.properties" />
 
+    
+   	<bean class="org.generationcp.commons.ruleengine.RulesPostProcessor">
+        <property name="ruleFactory" ref="ruleFactory"/>
+    </bean>
 
-	<bean class="com.efficio.fieldbook.web.naming.impl.RulesPostProcessor">
-		<property name="ruleFactory" ref="ruleFactory"/>
-	</bean>
-
-    <bean id="ruleFactory" class="com.efficio.fieldbook.web.naming.impl.RuleFactory" init-method="init"/>
+    <bean id="ruleFactory" class="org.generationcp.commons.ruleengine.RuleFactory"
+          init-method="init"/>
 
     <bean id="ruleConfigProvider"
-          class="com.efficio.fieldbook.web.naming.impl.PropertyFileRuleConfigurationProvider">
+          class="org.generationcp.commons.ruleengine.provider.PropertyFileRuleConfigurationProvider">
         <property name="ruleSequenceConfiguration">
             <map>
                 <entry key="naming" value="${naming.rules}"/>
             </map>
         </property>
     </bean>
-
+	<bean id="ruleService" class="org.generationcp.commons.ruleengine.impl.RulesServiceImpl" />
     <!--
             This component scan automatically registers all implementations of the Rule interface into the Spring context.
             In conjunction with the RulesPostProcessor above, this automatically populates the map in the RuleFactory

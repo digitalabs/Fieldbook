@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -58,7 +59,6 @@ import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;

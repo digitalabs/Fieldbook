@@ -1,8 +1,11 @@
 package com.efficio.fieldbook.web.naming.impl;
 
-import com.efficio.fieldbook.web.naming.rules.Rule;
 import com.efficio.fieldbook.web.naming.rules.naming.CountRule;
 import com.efficio.fieldbook.web.trial.controller.CreateTrialController;
+
+import org.generationcp.commons.ruleengine.Rule;
+import org.generationcp.commons.ruleengine.RuleFactory;
+import org.generationcp.commons.ruleengine.RulesPostProcessor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

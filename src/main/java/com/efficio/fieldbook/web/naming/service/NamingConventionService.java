@@ -13,11 +13,11 @@ package com.efficio.fieldbook.web.naming.service;
 
 import java.util.List;
 
+import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.naming.rules.RuleException;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;

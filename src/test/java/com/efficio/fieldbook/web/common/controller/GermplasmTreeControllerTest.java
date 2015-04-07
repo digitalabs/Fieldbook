@@ -306,10 +306,10 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 		when(germplasmListManager.getGermplasmListByName(folderName, 0, 1, null))
         			.thenReturn(GERMPLASM_LIST_TEST_DATA);
         ReflectionTestUtils.setField(controller, "germplasmListManager"
-                , germplasmListManager, GermplasmListManager.class);        
+                , germplasmListManager, GermplasmListManager.class);
 		try {
 			controller.checkIfUnique(folderName);
-		} catch (MiddlewareQueryException | MiddlewareException e) {
+		} catch (MiddlewareException e) {
 			Assert.assertEquals(NAME_NOT_UNIQUE, e.getMessage());
 		}
 	}

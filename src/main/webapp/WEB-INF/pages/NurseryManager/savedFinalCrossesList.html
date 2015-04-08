@@ -10,6 +10,14 @@
              <span class="control-label control-label-bold advance-list-size advanced-list-label numberOfAdvanceSelected">0</span>
          </div>
 		<div class="pull-right">
+
+			<div style="float:right;  margin-right: 10px;">
+				<button type="button" class="btn btn-info"
+						onclick="javascript: ImportInventoryFunctions.openImportInventoryModal('crosses');"
+						th:text="#{advancing.nursery.button.import.inventory}">
+				</button>
+			</div>
+
 			<div style="float:right;  margin-right: 10px;">
 				<button type="button" class="btn btn-info" onclick="javascript: addLot();"  th:text="#{advancing.nursery.button.manage.inventory}">						
 				</button>					

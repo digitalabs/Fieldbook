@@ -15,14 +15,14 @@
             <div style="float:inherit">
                 <button style="margin-left: 20px" type="button"
                         class="btn btn-info btn-save-import-advance-inventory" aria-hidden="true"
-                        onclick="javascript: ImportAdvanceInventoryFunctions.saveImport();"
+                        onclick="javascript: ImportInventoryFunctions.saveImport('advance');"
                         th:text="#{nursery.save.advanced.inventory.list}">
                     Save
                 </button>
 
                 <button style="margin-left: 20px" type="button"
                         class="btn btn-info btn-discard-import-advance-inventory" aria-hidden="true"
-                        onclick="javascript: ImportAdvanceInventoryFunctions.discardImport();"
+                        onclick="javascript: ImportInventoryFunctions.discardImport('advance');"
                         th:text="#{import.discard.data}">
                     Discard Imported Data
                 </button>
@@ -33,7 +33,7 @@
 
 			<div style="float:right;  margin-right: 10px;">
 				<button type="button" class="btn btn-info"
-						onclick="javascript: ImportAdvanceInventoryFunctions.openImportAdvanceInventoryModal();"
+						onclick="javascript: ImportInventoryFunctions.openImportInventoryModal('advance');"
 						th:text="#{advancing.nursery.button.import.inventory}">
 				</button>
 			</div>

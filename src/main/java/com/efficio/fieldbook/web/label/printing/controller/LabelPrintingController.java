@@ -38,6 +38,7 @@ import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.util.CrossExpansionRule;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -114,6 +115,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     @Resource
     private UserSelection userSelection;
     
+    @Resource
+    private CrossExpansionRule crossExpansionRule;
+    
     /**
      * Show trial label details.
      *
@@ -137,7 +141,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             study = fieldbookMiddlewareService.getStudy(id);
             List<Integer> ids = new ArrayList<Integer>();
             ids.add(id);
-            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids);
+            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionRule.getMaxLevelStoppageRule(), this.crossExpansionRule.getNameTypeStoppageRule());
 
             for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
                 fieldMapInfo = fieldMapInfoDetail;
@@ -186,7 +190,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             study = fieldbookMiddlewareService.getStudy(id);
             List<Integer> ids = new ArrayList<Integer>();
             ids.add(id);
-            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids);
+            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionRule.getMaxLevelStoppageRule(), this.crossExpansionRule.getNameTypeStoppageRule());
             for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
                 fieldMapInfo = fieldMapInfoDetail;
                 hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);

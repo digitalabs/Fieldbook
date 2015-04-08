@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.util.CrossExpansionRule;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -75,6 +76,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private WorkbenchService workbenchService;
     
+    @Resource
+    private CrossExpansionRule crossExpansionRule;
     /**
      * Gets the data types.
      *
@@ -138,7 +141,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                 trialIds.add(Integer.parseInt(id));
             }
             List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService
-                    .getFieldMapInfoOfTrial(trialIds);
+                    .getFieldMapInfoOfTrial(trialIds, this.crossExpansionRule.getMaxLevelStoppageRule(), this.crossExpansionRule.getNameTypeStoppageRule());
 
             clearFields();
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
@@ -359,7 +362,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             
             clearFields();
             List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService
-                    .getFieldMapInfoOfNursery(nurseryIds);
+                    .getFieldMapInfoOfNursery(nurseryIds, this.crossExpansionRule.getMaxLevelStoppageRule(), this.crossExpansionRule.getNameTypeStoppageRule());
 
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, false);
             

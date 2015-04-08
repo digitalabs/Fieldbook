@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.service.ExportService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
+import org.generationcp.commons.util.CrossExpansionRule;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -109,6 +110,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     
     @Resource
     private ExportAdvanceListService exportAdvanceListService;
+    
+    @Resource
+    private CrossExpansionRule crossExpansionRule;
+    
     @Override
 	public String getContentName() {
 		return null;
@@ -459,7 +464,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
         List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();       
         
         try{
-        	fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds);
+        	fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionRule.getMaxLevelStoppageRule(), this.crossExpansionRule.getNameTypeStoppageRule());
         }catch(MiddlewareQueryException e){
         	LOG.error(e.getMessage(), e);
         }

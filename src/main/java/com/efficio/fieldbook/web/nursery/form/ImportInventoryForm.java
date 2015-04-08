@@ -7,12 +7,14 @@ import org.springframework.web.multipart.MultipartFile;
  * User: Daniel Villafuerte
 
  */
-public class ImportAdvanceInventoryForm {
+public class ImportInventoryForm {
 	private MultipartFile file;
 
 	private int targetListId;
 
-	public ImportAdvanceInventoryForm() {
+	private String importSource;
+
+	public ImportInventoryForm() {
 	}
 
 	public MultipartFile getFile() {
@@ -29,5 +31,13 @@ public class ImportAdvanceInventoryForm {
 
 	public void setTargetListId(int targetListId) {
 		this.targetListId = targetListId;
+	}
+
+	public String getImportSource() {
+		return importSource;
+	}
+
+	public void setImportSource(String importSource) {
+		this.importSource = importSource;
 	}
 }

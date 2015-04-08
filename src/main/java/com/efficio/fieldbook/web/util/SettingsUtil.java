@@ -11,51 +11,31 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.*;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.TreatmentVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.workbench.settings.Condition;
-import org.generationcp.middleware.pojos.workbench.settings.Constant;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.pojos.workbench.settings.Factor;
-import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
-import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
-import org.generationcp.middleware.pojos.workbench.settings.Variate;
+import org.generationcp.middleware.pojos.workbench.settings.*;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.PairedVariable;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import java.util.*;
 
 /**
  * The Class SettingsUtil.
@@ -80,6 +60,12 @@ public class SettingsUtil {
         finalName = finalName.replaceAll("[:\\\\/*?|<>]", "_");       
         return finalName;
     }
+
+    public static final List<String> HIDDEN_FIELDS = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
+
+    public static final List<String> TRIAL_BASIC_REQUIRED_FIELDS = Arrays.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString().split(","));
+
+    public static final List<String> NURSERY_BASIC_REQUIRED_FIELDS = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
 
 
     /**
@@ -126,83 +112,103 @@ public class SettingsUtil {
 
     protected static List<Condition> convertDetailsToConditions(List<SettingDetail> details, UserSelection userSelection,
                                                                 org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
-        List<Condition> conditions = new ArrayList<Condition>();
+        List<Condition> conditions = new ArrayList<>();
 
-        if (details != null) {
-            for (SettingDetail settingDetail : details) {
-                SettingVariable variable = settingDetail.getVariable();
-                if (userSelection != null) {
-                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-
-                    //if the standard variable exists in the database
-                    if (standardVariable.getName() != null) {
-                        variable.setPSMRFromStandardVariable(standardVariable);
-
-                        if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) ||
-                                variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
-                                && ("0").equals(settingDetail.getValue())) {
-                            settingDetail.setValue("");
-                        }
-
-                        Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
-                                variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-                                DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())),
-                                variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-                        condition.setOperation(variable.getOperation());
-                        condition.setStoredIn(standardVariable.getStoredIn().getId());
-                        condition.setId(variable.getCvTermId());
-                        conditions.add(condition);
-                    }
-                }
-            }
+        if (details == null || userSelection == null) {
+            return conditions;
         }
+
+        for (SettingDetail settingDetail : details) {
+            SettingVariable variable = settingDetail.getVariable();
+
+            StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(),
+                    userSelection, fieldbookMiddlewareService);
+
+            if (standardVariable.getName() == null) {
+                continue;
+            }
+
+            variable.setPSMRFromStandardVariable(standardVariable);
+
+            if ((variable.getCvTermId()
+                    .equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) ||
+                    variable.getCvTermId()
+                            .equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
+                    && ("0").equals(settingDetail.getValue())) {
+                settingDetail.setValue("");
+            }
+
+            Condition condition = new Condition(variable.getName(),
+                    variable.getDescription(), variable.getProperty(),
+                    variable.getScale(), variable.getMethod(), variable.getRole(),
+                    variable.getDataType(),
+                    DateUtil.convertToDBDateFormat(variable.getDataTypeId(),
+                            HtmlUtils.htmlEscape(settingDetail.getValue())),
+                    variable.getDataTypeId(), variable.getMinRange(),
+                    variable.getMaxRange());
+            condition.setOperation(variable.getOperation());
+            condition.setStoredIn(standardVariable.getStoredIn().getId());
+            condition.setId(variable.getCvTermId());
+            conditions.add(condition);
+        }
+
         return conditions;
     }
 
     protected static List<Variate> convertBaselineTraitsToVariates(List<SettingDetail> baselineTraits, UserSelection userSelection,
                                                                    org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
-        List<Variate> variateList = new ArrayList<Variate>();
-
-        if (baselineTraits != null && !baselineTraits.isEmpty()) {
-            for (SettingDetail settingDetail : baselineTraits) {
-                SettingVariable variable = settingDetail.getVariable();
-                if (userSelection != null) {
-                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-                    variable.setPSMRFromStandardVariable(standardVariable);
-
-                    Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
-                            variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
-                            settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
-                    variate.setOperation(variable.getOperation());
-                    variate.setStoredIn(standardVariable.getStoredIn().getId());
-                    variate.setId(variable.getCvTermId());
-                    variateList.add(variate);
-                }
-            }
+        List<Variate> variateList = new ArrayList<>();
+        if (baselineTraits == null || baselineTraits.isEmpty() || userSelection == null) {
+            return variateList;
         }
+
+        for (SettingDetail settingDetail : baselineTraits) {
+            SettingVariable variable = settingDetail.getVariable();
+
+            StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(),
+                    userSelection, fieldbookMiddlewareService);
+            variable.setPSMRFromStandardVariable(standardVariable);
+
+            Variate variate = new Variate(variable.getName(), variable.getDescription(),
+                    variable.getProperty(),
+                    variable.getScale(), variable.getMethod(), variable.getRole(),
+                    variable.getDataType(), variable.getDataTypeId(),
+                    settingDetail.getPossibleValues(), variable.getMinRange(),
+                    variable.getMaxRange());
+            variate.setOperation(variable.getOperation());
+            variate.setStoredIn(standardVariable.getStoredIn().getId());
+            variate.setId(variable.getCvTermId());
+            variateList.add(variate);
+
+        }
+
 
         return variateList;
     }
 
     protected static List<Factor> convertDetailsToFactors(List<SettingDetail> plotLevelDetails, UserSelection userSelection,
                                                           org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
-        List<Factor> factors = new ArrayList<Factor>();
-        if (plotLevelDetails != null && !plotLevelDetails.isEmpty()) {
-            for (SettingDetail settingDetail : plotLevelDetails) {
-                SettingVariable variable = settingDetail.getVariable();
-                if (userSelection != null) {
-                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-                    variable.setPSMRFromStandardVariable(standardVariable);
+        List<Factor> factors = new ArrayList<>();
 
-                    Factor factor = convertStandardVariableToFactor(standardVariable);
-                    factor.setOperation(variable.getOperation());
-                    factor.setPossibleValues(settingDetail.getPossibleValues());
-                    factor.setMinRange(variable.getMinRange());
-                    factor.setMaxRange(variable.getMaxRange());
-                    factor.setName(variable.getName());
-                    factors.add(factor);
-                }
-            }
+        if (plotLevelDetails == null || plotLevelDetails.isEmpty() || userSelection == null) {
+            return factors;
+        }
+
+        for (SettingDetail settingDetail : plotLevelDetails) {
+            SettingVariable variable = settingDetail.getVariable();
+
+                StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(),
+                        userSelection, fieldbookMiddlewareService);
+                variable.setPSMRFromStandardVariable(standardVariable);
+
+                Factor factor = convertStandardVariableToFactor(standardVariable);
+                factor.setOperation(variable.getOperation());
+                factor.setPossibleValues(settingDetail.getPossibleValues());
+                factor.setMinRange(variable.getMinRange());
+                factor.setMaxRange(variable.getMaxRange());
+                factor.setName(variable.getName());
+                factors.add(factor);
+
         }
 
         return factors;
@@ -221,83 +227,96 @@ public class SettingsUtil {
 
     protected static List<Constant> convertConditionsToConstants(List<SettingDetail> nurseryConditions, UserSelection userSelection,
                                                                  org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, boolean isTrial) {
-        List<Constant> constants = new ArrayList<Constant>();
-        if (nurseryConditions != null && !nurseryConditions.isEmpty()) {
-            for (SettingDetail settingDetail : nurseryConditions) {
-                SettingVariable variable = settingDetail.getVariable();
-                if (userSelection != null) {
-                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+        List<Constant> constants = new ArrayList<>();
 
-                    variable.setPSMRFromStandardVariable(standardVariable);
-                    //need to get the name from the session
+        if (nurseryConditions == null || nurseryConditions.isEmpty() | userSelection == null) {
+            return constants;
+        }
 
-                    Constant constant = new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
-                            variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-                            DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), 
-                            variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange(), isTrial);
-                    constant.setOperation(variable.getOperation());
-                    constant.setStoredIn(standardVariable.getStoredIn().getId());
-                    constant.setId(variable.getCvTermId());
-                    constants.add(constant);
-                }
-            }
+        for (SettingDetail settingDetail : nurseryConditions) {
+            SettingVariable variable = settingDetail.getVariable();
+
+            StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(),
+                    userSelection, fieldbookMiddlewareService);
+
+            variable.setPSMRFromStandardVariable(standardVariable);
+            //need to get the name from the session
+
+            Constant constant = new Constant(variable.getName(), variable.getDescription(),
+                    variable.getProperty(),
+                    variable.getScale(), variable.getMethod(), variable.getRole(),
+                    variable.getDataType(),
+                    DateUtil.convertToDBDateFormat(variable.getDataTypeId(),
+                            HtmlUtils.htmlEscape(settingDetail.getValue())),
+                    variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange(),
+                    isTrial);
+            constant.setOperation(variable.getOperation());
+            constant.setStoredIn(standardVariable.getStoredIn().getId());
+            constant.setId(variable.getCvTermId());
+            constants.add(constant);
+
         }
 
         return constants;
     }
 
     protected static void setNameAndOperationFromSession(List<SettingDetail> listWithValue, List<SettingDetail> listFromSession) {
-        if (listWithValue != null && listFromSession != null) {
-            for (SettingDetail detailWithValue : listWithValue) {
-                for (SettingDetail detailFromSession : listFromSession) {
-                    if (detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
-                        SettingVariable variable = detailWithValue.getVariable();
-                        detailWithValue.setPossibleValues(detailFromSession.getPossibleValues());
-                        variable.setName(detailFromSession.getVariable().getName());
-                        variable.setOperation(detailFromSession.getVariable().getOperation());
-                    }
+        if (listWithValue == null || listFromSession == null) {
+            return;
+        }
+
+        for (SettingDetail detailWithValue : listWithValue) {
+            for (SettingDetail detailFromSession : listFromSession) {
+                if (detailFromSession.getVariable().getCvTermId()
+                        .equals(detailWithValue.getVariable().getCvTermId())) {
+                    SettingVariable variable = detailWithValue.getVariable();
+                    detailWithValue.setPossibleValues(detailFromSession.getPossibleValues());
+                    variable.setName(detailFromSession.getVariable().getName());
+                    variable.setOperation(detailFromSession.getVariable().getOperation());
                 }
             }
         }
+
     }
 
     protected static List<TreatmentFactor> processTreatmentFactorItems(List<SettingDetail> treatmentFactorDetails, Map<String, TreatmentFactorData> treatmentFactorItems, List<Factor> factorList,
                                                                        UserSelection userSelection, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
         List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
-        if (treatmentFactorItems != null && treatmentFactorDetails != null) {
-
-            for (SettingDetail detail : treatmentFactorDetails) {
-                Integer termId = detail.getVariable().getCvTermId();
-                StandardVariable levelVariable = getStandardVariable(termId, userSelection, fieldbookMiddlewareService);
-                Factor levelFactor = convertStandardVariableToFactor(levelVariable);
-                levelFactor.setName(detail.getVariable().getName());
-                Factor valueFactor = null;
-                levelFactor.setOperation(detail.getVariable().getOperation());
-                levelFactor.setTreatmentLabel(detail.getVariable().getName());
-
-                TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
-                
-                if (data != null) {
-                    StandardVariable valueVariable = getStandardVariable(data.getVariableId(),
-                            userSelection, fieldbookMiddlewareService);
-        
-                    valueFactor = convertStandardVariableToFactor(valueVariable);
-                    valueFactor.setOperation(detail.getVariable().getOperation());
-                    valueFactor.setTreatmentLabel(detail.getVariable().getName());
-                    
-                    int index = 1;
-                    for (String labelValue : data.getLabels()) {
-                        TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor, index, labelValue);
-                        treatmentFactors.add(treatmentFactor);
-                        index++;
-                    }
-                    factorList.add(valueFactor);
-                }
-                factorList.add(levelFactor);
-            }
-
+        if (treatmentFactorItems == null || treatmentFactorDetails == null) {
+            return treatmentFactors;
         }
 
+        for (SettingDetail detail : treatmentFactorDetails) {
+            Integer termId = detail.getVariable().getCvTermId();
+            StandardVariable levelVariable = getStandardVariable(termId, userSelection,
+                    fieldbookMiddlewareService);
+            Factor levelFactor = convertStandardVariableToFactor(levelVariable);
+            levelFactor.setName(detail.getVariable().getName());
+            Factor valueFactor;
+            levelFactor.setOperation(detail.getVariable().getOperation());
+            levelFactor.setTreatmentLabel(detail.getVariable().getName());
+
+            TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
+
+            if (data != null) {
+                StandardVariable valueVariable = getStandardVariable(data.getVariableId(),
+                        userSelection, fieldbookMiddlewareService);
+
+                valueFactor = convertStandardVariableToFactor(valueVariable);
+                valueFactor.setOperation(detail.getVariable().getOperation());
+                valueFactor.setTreatmentLabel(detail.getVariable().getName());
+
+                int index = 1;
+                for (String labelValue : data.getLabels()) {
+                    TreatmentFactor treatmentFactor = new TreatmentFactor(levelFactor, valueFactor,
+                            index, labelValue);
+                    treatmentFactors.add(treatmentFactor);
+                    index++;
+                }
+                factorList.add(valueFactor);
+            }
+            factorList.add(levelFactor);
+        }
 
         return treatmentFactors;
     }
@@ -400,7 +419,8 @@ public class SettingsUtil {
         List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
 
         try {
-            possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId, programUUID);
+            possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId,
+                    programUUID);
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -1324,7 +1344,8 @@ public class SettingsUtil {
         SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(),
                 factor.getProperty(), factor.getScale(), factor.getMethod(), factor.getRole(),
                 factor.getDatatype());
-        StandardVariable standardVariable = getStandardVariable(factor.getTermId(), userSelection, fieldbookMiddlewareService);
+        StandardVariable standardVariable = getStandardVariable(factor.getTermId(), userSelection,
+                fieldbookMiddlewareService);
         variable.setPSMRFromStandardVariable(standardVariable);
         variable.setCvTermId(standardVariable.getId());
         List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, standardVariable.getId());
@@ -1349,7 +1370,8 @@ public class SettingsUtil {
         	studyDetails.setNumberOfEnvironments(0);
         }
 
-        List<SettingDetail> factors = convertWorkbookFactorsToSettingDetails(workbook.getNonTrialFactors(), fieldbookMiddlewareService);
+        List<SettingDetail> factors = convertWorkbookFactorsToSettingDetails(
+                workbook.getNonTrialFactors(), fieldbookMiddlewareService);
         if (!workbook.isNursery()) {
             List<SettingDetail> germplasmDescriptors = new ArrayList<SettingDetail>();
             rearrangeSettings(factors, germplasmDescriptors, PhenotypicType.GERMPLASM);
@@ -1424,14 +1446,12 @@ public class SettingsUtil {
                                                                                           org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService, boolean isVariate)
             throws MiddlewareQueryException {
     	int index = orderIndex;
+
         List<SettingDetail> details = new ArrayList<SettingDetail>();
-        List<String> basicFields;
-        if (userSelection.isTrial()) {
-            basicFields = Arrays.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString().split(","));
-        } else {
-            basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
+
+        if (conditions == null) {
+            return details;
         }
-        List<String> hiddenFields = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
 
         Map<String, MeasurementVariable> variableMap = new HashMap<String, MeasurementVariable>();
 
@@ -1439,30 +1459,55 @@ public class SettingsUtil {
             variableMap.put(String.valueOf(condition.getTermId()), condition);
         }
 
-        if (conditions != null) {
-            for (MeasurementVariable condition : conditions) {
-                String id = String.valueOf(condition.getTermId());
-                String role = (isVariate) ? PhenotypicType.VARIATE.toString() : PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString();
-                if (!basicFields.contains(id) && !hiddenFields.contains(id)
-                		//do not show breeding method id if code exists
-                        && !(condition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null) 
-                        && !(condition.getTermId() == TermId.BREEDING_METHOD.getId() && (variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null ||
-                        variableMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) != null))) { 
-                	//do not name if code or id exists
-                    SettingVariable variable = getSettingVariable(getDisplayName(conditions, condition.getTermId(), condition.getName()), condition.getDescription(), condition.getProperty(),
-                            condition.getScale(), condition.getMethod(), role,
-                            condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
-                    variable.setCvTermId(condition.getTermId());
-                    variable.setStoredInId(condition.getStoredIn());
-                    String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()),
-                            condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
-                    SettingDetail settingDetail = new SettingDetail(variable, null, HtmlUtils.htmlUnescape(value), false);
-                    settingDetail.setPossibleValues(fieldbookService.getAllPossibleValues(condition.getTermId()));
-                    index = addToList(details, settingDetail, index, null, null);
-                }
+        for (MeasurementVariable condition : conditions) {
+            String id = String.valueOf(condition.getTermId());
+            String role = (isVariate) ?
+                    PhenotypicType.VARIATE.toString() :
+                    PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString();
+            if (! isIdInFieldListForHiding(userSelection, id)
+                    //do not show breeding method id if code exists
+                    && ! breedingCodeExists(condition.getTermId(), variableMap)) {
+                //do not name if code or id exists
+                SettingVariable variable = getSettingVariable(
+                        getDisplayName(conditions, condition.getTermId(), condition.getName()),
+                        condition.getDescription(), condition.getProperty(),
+                        condition.getScale(), condition.getMethod(), role,
+                        condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(),
+                        condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
+                variable.setCvTermId(condition.getTermId());
+                variable.setStoredInId(condition.getStoredIn());
+                String value = fieldbookService.getValue(variable.getCvTermId(),
+                        HtmlUtils.htmlUnescape(condition.getValue()),
+                        condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
+                SettingDetail settingDetail = new SettingDetail(variable, null,
+                        HtmlUtils.htmlUnescape(value), false);
+                settingDetail.setPossibleValues(
+                        fieldbookService.getAllPossibleValues(condition.getTermId()));
+                index = addToList(details, settingDetail, index, null, null);
             }
         }
+
         return details;
+    }
+
+    protected static boolean isIdInFieldListForHiding(UserSelection userSelection, String termId) {
+        List<String> basicFields;
+        if (userSelection.isTrial()) {
+            basicFields = TRIAL_BASIC_REQUIRED_FIELDS;
+        } else {
+            basicFields = NURSERY_BASIC_REQUIRED_FIELDS;
+        }
+
+        return basicFields.contains(termId) || HIDDEN_FIELDS.contains(termId);
+    }
+
+    protected static boolean breedingCodeExists(Integer termId, Map<String, MeasurementVariable> variableMap) {
+        return (termId == TermId.BREEDING_METHOD_ID.getId()
+                && variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null)
+                || (termId == TermId.BREEDING_METHOD.getId() && (
+                variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null ||
+                        variableMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId()))
+                                != null));
     }
 
     private static String getDisplayName(List<MeasurementVariable> variables, int termId, String name) {
@@ -1496,51 +1541,69 @@ public class SettingsUtil {
             datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyId(), studyName);
         }
         for (String strFieldId : fields) {
-            if (strFieldId != null && !"".equals(strFieldId)) {
-                boolean found = false;
-                String label = AppConstants.getString(strFieldId.toUpperCase() + "_LABEL");
-                if (conditions != null) {
-                    for (MeasurementVariable condition : conditions) {
-                        if (NumberUtils.isNumber(strFieldId)) {
-                            if (condition.getTermId() == Integer.valueOf(strFieldId)) {
-                                if (label == null || "".equals(label.trim())) {
-                                    label = condition.getName();
-                                }
-                                SettingVariable variable = getSettingVariable(label, condition.getDescription(), condition.getProperty(),
-                                        condition.getScale(), condition.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString(),
-                                        condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
-                                variable.setCvTermId(Integer.valueOf(strFieldId));
-                                String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()),
-                                        condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
-                                SettingDetail settingDetail = new SettingDetail(variable, null,
-                                        HtmlUtils.htmlUnescape(value), false);
-                                index = addToList(details, settingDetail, index, fields, strFieldId);
-                                found = true;
-                                break;
-                            }
-                        } else { 
-                        	//special field
-                            SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
-                            String value = getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
-                            SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
-                            if (strFieldId.equals(AppConstants.SPFLD_ENTRIES.getString())) {
-                                String plotValue = getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId, fieldbookMiddlewareService, workbook);
-                                PairedVariable pair = new PairedVariable(AppConstants.getString(AppConstants.SPFLD_PLOT_COUNT.getString() + "_LABEL"), plotValue);
-                                settingDetail.setPairedVariable(pair);
-                            }
-                            index = addToList(details, settingDetail, index, fields, strFieldId);
-                            found = true;
-                            break;
+            if (StringUtils.isEmpty(strFieldId) || conditions == null) {
+                continue;
+            }
+
+            boolean found = false;
+            String label = AppConstants.getString(strFieldId.toUpperCase() + "_LABEL");
+
+            for (MeasurementVariable condition : conditions) {
+                if (NumberUtils.isNumber(strFieldId)) {
+                    if (condition.getTermId() == Integer.valueOf(strFieldId)) {
+                        if (label == null || "".equals(label.trim())) {
+                            label = condition.getName();
                         }
+                        SettingVariable variable = getSettingVariable(label,
+                                condition.getDescription(), condition.getProperty(),
+                                condition.getScale(), condition.getMethod(),
+                                PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel())
+                                        .toString(),
+                                condition.getDataType(), condition.getDataTypeId(),
+                                condition.getMinRange(), condition.getMaxRange(), userSelection,
+                                fieldbookMiddlewareService);
+                        variable.setCvTermId(Integer.valueOf(strFieldId));
+                        String value = fieldbookService.getValue(variable.getCvTermId(),
+                                HtmlUtils.htmlUnescape(condition.getValue()),
+                                condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE
+                                        .getId());
+                        SettingDetail settingDetail = new SettingDetail(variable, null,
+                                HtmlUtils.htmlUnescape(value), false);
+                        index = addToList(details, settingDetail, index, fields, strFieldId);
+                        found = true;
+                        break;
                     }
-                }
-                if (!found) { 
-                	//required field but has no value
-                    SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
-                    SettingDetail settingDetail = new SettingDetail(variable, null, "", false);
+                } else {
+                    //special field
+                    SettingVariable variable = new SettingVariable(label, null, null, null,
+                            null, null, null, null, null, null);
+                    String value = getSpecialFieldValue(strFieldId, datasetId,
+                            fieldbookMiddlewareService, workbook);
+                    SettingDetail settingDetail = new SettingDetail(variable, null, value,
+                            false);
+                    if (strFieldId.equals(AppConstants.SPFLD_ENTRIES.getString())) {
+                        String plotValue = getSpecialFieldValue(
+                                AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId,
+                                fieldbookMiddlewareService, workbook);
+                        PairedVariable pair = new PairedVariable(AppConstants.getString(
+                                AppConstants.SPFLD_PLOT_COUNT.getString() + "_LABEL"),
+                                plotValue);
+                        settingDetail.setPairedVariable(pair);
+                    }
                     index = addToList(details, settingDetail, index, fields, strFieldId);
+                    found = true;
+                    break;
                 }
             }
+
+            if (!found) {
+                //required field but has no value
+                SettingVariable variable = new SettingVariable(label, null, null, null, null, null,
+                        null, null, null, null);
+                SettingDetail settingDetail = new SettingDetail(variable, null, "", false);
+                index = addToList(details, settingDetail, index, fields, strFieldId);
+            }
+
         }
         return details;
     }
@@ -1578,26 +1641,36 @@ public class SettingsUtil {
             throws MiddlewareQueryException {
 
         List<SettingDetail> plotsLevelList = new ArrayList<SettingDetail>();
-        if (factors != null) {
-            for (MeasurementVariable factor : factors) {
-                SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
-                        factor.getScale(), factor.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(factor.getLabel()).toString(),
-                        factor.getDataType());
-                Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-                        HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()),
-                        HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+        if (factors == null) {
+            return plotsLevelList;
+        }
 
-                if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())
-                        && (factor.getTreatmentLabel() == null || "".equals(factor.getTreatmentLabel()))) {
+        for (MeasurementVariable factor : factors) {
+            SettingVariable variable = new SettingVariable(factor.getName(),
+                    factor.getDescription(), factor.getProperty(),
+                    factor.getScale(), factor.getMethod(),
+                    PhenotypicType.getPhenotypicTypeForLabel(factor.getLabel()).toString(),
+                    factor.getDataType());
+            Integer stdVar = fieldbookMiddlewareService
+                    .getStandardVariableIdByPropertyScaleMethodRole(
+                            HtmlUtils.htmlUnescape(variable.getProperty()),
+                            HtmlUtils.htmlUnescape(variable.getScale()),
+                            HtmlUtils.htmlUnescape(variable.getMethod()),
+                            PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 
-                    variable.setCvTermId(stdVar);
-                    variable.setStoredInId(factor.getStoredIn());
-                    SettingDetail settingDetail = new SettingDetail(variable,
-                            null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
-                    plotsLevelList.add(settingDetail);
-                }
+            if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())
+                    && (factor.getTreatmentLabel() == null || ""
+                    .equals(factor.getTreatmentLabel()))) {
+
+                variable.setCvTermId(stdVar);
+                variable.setStoredInId(factor.getStoredIn());
+                SettingDetail settingDetail = new SettingDetail(variable,
+                        null, null, isSettingVariableDeletable(stdVar,
+                        AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
+                plotsLevelList.add(settingDetail);
             }
         }
+
         return plotsLevelList;
     }
 
@@ -1607,24 +1680,31 @@ public class SettingsUtil {
             throws MiddlewareQueryException {
 
         List<String> svProperties = getSelectedVariatesPropertyNames(fieldbookService);
+        if (variates == null) {
+            return;
+        }
 
-        if (variates != null) {
-            for (MeasurementVariable variate : variates) {
-                SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
-                        variate.getScale(), variate.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variate.getLabel()).toString(),
-                        variate.getDataType());
-                Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()),
-                        HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()),
-                        PhenotypicType.VARIATE);
-                variable.setCvTermId(stdVar);
-                SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
-                if (svProperties.contains(variate.getProperty())) {
-                    selectedVariates.add(settingDetail);
-                } else {
-                    traits.add(settingDetail);
-                }
+        for (MeasurementVariable variate : variates) {
+            SettingVariable variable = new SettingVariable(variate.getName(),
+                    variate.getDescription(), variate.getProperty(),
+                    variate.getScale(), variate.getMethod(),
+                    PhenotypicType.getPhenotypicTypeForLabel(variate.getLabel()).toString(),
+                    variate.getDataType());
+            Integer stdVar = fieldbookMiddlewareService
+                    .getStandardVariableIdByPropertyScaleMethodRole(
+                            HtmlUtils.htmlUnescape(variable.getProperty()),
+                            HtmlUtils.htmlUnescape(variable.getScale()),
+                            HtmlUtils.htmlUnescape(variable.getMethod()),
+                            PhenotypicType.VARIATE);
+            variable.setCvTermId(stdVar);
+            SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
+            if (svProperties.contains(variate.getProperty())) {
+                selectedVariates.add(settingDetail);
+            } else {
+                traits.add(settingDetail);
             }
         }
+
     }
 
     private static List<String> getSelectedVariatesPropertyNames(FieldbookService fieldbookService) throws MiddlewareQueryException {
@@ -1690,58 +1770,74 @@ public class SettingsUtil {
 
     public static void resetBreedingMethodValueToId(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                     List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) throws MiddlewareQueryException {
-        if (observations != null && !observations.isEmpty()) {
-            List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
-            if (!indeces.isEmpty()) {
-                List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-                Map<String, Method> methodMap = new HashMap<String, Method>();
-                //create a map to get method id based on given code
-                if (methods != null) {
-                    for (Method method : methods) {
-                        methodMap.put(method.getMcode(), method);
-                    }
-                }
+        if (observations == null || observations.isEmpty()) {
+            return;
+        }
 
-                //set value back to id
-                for (MeasurementRow row : observations) {
-                    for (Integer i : indeces) {
-                        Method method = methodMap.get(row.getDataList().get(i).getValue());
-                        row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : String.valueOf(method.getMid()));
-                    }
-                }
+        List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
+
+        if (indeces.isEmpty()) {
+            return;
+        }
+
+        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+        Map<String, Method> methodMap = new HashMap<String, Method>();
+        //create a map to get method id based on given code
+        if (methods != null) {
+            for (Method method : methods) {
+                methodMap.put(method.getMcode(), method);
             }
         }
+
+        //set value back to id
+        for (MeasurementRow row : observations) {
+            for (Integer i : indeces) {
+                Method method = methodMap.get(row.getDataList().get(i).getValue());
+                row.getDataList().get(i).setValue(method == null ?
+                        row.getDataList().get(i).getValue() :
+                        String.valueOf(method.getMid()));
+            }
+        }
+
+
     }
 
     public static void resetBreedingMethodValueToCode(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                       List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) throws MiddlewareQueryException {
         //set value of breeding method code in selection variates to code instead of id
-        if (observations != null && !observations.isEmpty()) {
-            List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
-            if (!indeces.isEmpty()) {
-                List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-                Map<Integer, Method> methodMap = new HashMap<Integer, Method>();
+        if (observations == null || observations.isEmpty()) {
+            return;
+        }
 
-                if (methods != null) {
-                    for (Method method : methods) {
-                        methodMap.put(method.getMid(), method);
-                    }
+        List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
+
+        if (indeces.isEmpty()) {
+            return;
+        }
+
+        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+        Map<Integer, Method> methodMap = new HashMap<Integer, Method>();
+
+        if (methods != null) {
+            for (Method method : methods) {
+                methodMap.put(method.getMid(), method);
+            }
+        }
+        for (MeasurementRow row : observations) {
+            for (Integer i : indeces) {
+                Integer value = null;
+
+                if (row.getDataList().get(i).getValue() == null
+                        || row.getDataList().get(i).getValue().isEmpty()) {
+                    value = null;
+                } else if (NumberUtils.isNumber(row.getDataList().get(i).getValue())) {
+                    value = Integer.parseInt(row.getDataList().get(i).getValue());
                 }
-                for (MeasurementRow row : observations) {
-                    for (Integer i : indeces) {
-                        Integer value = null;
-                        
-                        if(row.getDataList().get(i).getValue() == null
-                                || row.getDataList().get(i).getValue().isEmpty()) {
-                        	value = null;
-                        }else if(NumberUtils.isNumber(row.getDataList().get(i).getValue())){
-                        	value = Integer.parseInt(row.getDataList().get(i).getValue());
-                        }
-                            
-                        Method method = methodMap.get(value);
-                        row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : method.getMcode());
-                    }
-                }
+
+                Method method = methodMap.get(value);
+                row.getDataList().get(i).setValue(method == null ?
+                        row.getDataList().get(i).getValue() :
+                        method.getMcode());
             }
         }
     }
@@ -1806,9 +1902,9 @@ public class SettingsUtil {
     /**
      * Adds the deleted settings list.
      *
-     * @param formList the form list
+     * @param previousFormList the form list
      * @param deletedList the deleted list
-     * @param sessionList the session list
+     * @param previousSessionList the session list
      */
     public static void addDeletedSettingsList(
     		List<SettingDetail> previousFormList, 

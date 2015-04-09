@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -43,7 +42,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.ImportedCondition;
-import com.efficio.fieldbook.web.nursery.bean.ImportedConstant;
 import com.efficio.fieldbook.web.nursery.bean.ImportedFactor;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
@@ -64,6 +62,12 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmFileServiceImpl.class);
+    
+    /** The Constant FILE_INVALID. */
+    public static final String FILE_INVALID = "common.error.invalid.file";
+    
+    /** The Constant FILE_TYPE_INVALID. */
+    public static final String FILE_TYPE_INVALID = "common.error.invalid.file.type";
     
     /** The file service. */
     @Resource
@@ -102,29 +106,15 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     /** The imported germplasm list. */
     private ImportedGermplasmList importedGermplasmList;
     
-    /** The file. */
-    public File file;
-
-    /** The temp file name. */
-    private String tempFileName;
-    
     /** The original filename. */
     private String originalFilename;
-    
-    /** The server filename. */
-    private String serverFilename;
-    
-    /** The Constant FILE_INVALID. */
-    public final static String FILE_INVALID = "common.error.invalid.file";
-    
-    /** The Constant FILE_TYPE_INVALID. */
-    public final static String FILE_TYPE_INVALID = "common.error.invalid.file.type";
         
     /** The error messages. */
     private Set<String> errorMessages;
         
     /** The is advance import type. */
     private boolean isAdvanceImportType;
+    
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
@@ -166,7 +156,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             doProcessNow(wb, mainInfo);
 
         } catch (FileNotFoundException e) {
-            LOG.error("File not found");
+            LOG.error("File not found", e);
         } catch (InvalidFormatException | IOException e) {
 			LOG.error(e.getMessage(), e);
 			showInvalidFileError(e.getMessage());
@@ -278,7 +268,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                 isAdvanceImportType = true;
             } else if (!desigGidIsPresent && !desigCrossIsPresent 
                     && !desigSourcePresent && !desigEntryCodePresent) {
-
+            	//do nothing
             } else {
                 showInvalidFileError("CROSS or SOURCE or GID or ENTRY CODE column missing " 
                             + "from Observation sheet.");
@@ -362,7 +352,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
      */
     private void readConditions(){
         
-        currentRow++; //Skip row from file info
+    	//Skip row from file info
+        currentRow++; 
         
         //Check if headers are correct
         if(!getCellStringValue(currentSheet,currentRow,0,true)
@@ -381,7 +372,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                         .equalsIgnoreCase(AppConstants.VALUE.getString())
             ){
         	//for now we dont flag as an error
-        	currentRow++; //Skip row from file info
+        	//Skip row from file info
+        	currentRow++; 
         	return;
         }
         //If file is still valid (after checking headers), proceed
@@ -431,8 +423,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         }
         //If file is still valid (after checking headers), proceed
         if(fileIsValid){
-            ImportedFactor importedFactor;            
-            currentRow++; //skip header
+            ImportedFactor importedFactor;   
+            //skip header
+            currentRow++; 
             while(!rowIsEmpty()){
             	importedFactor = new ImportedFactor(getCellStringValue(currentSheet,currentRow,0,true)
                         ,getCellStringValue(currentSheet,currentRow,1,true)
@@ -460,72 +453,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             LOG.debug("Invalid file on missing ENTRY or DESIG on readFactors");
         }
     }
-    
-    /**
-     * Read constants.
-     */
-    private void readConstants(){
-        //Check if headers are correct
-        if(!getCellStringValue(currentSheet,currentRow,0,true).equalsIgnoreCase(AppConstants.CONSTANT.getString()) 
-            || !getCellStringValue(currentSheet,currentRow,1,true).equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
-            || !getCellStringValue(currentSheet,currentRow,2,true).equalsIgnoreCase(AppConstants.PROPERTY.getString())
-            || !getCellStringValue(currentSheet,currentRow,3,true).equalsIgnoreCase(AppConstants.SCALE.getString())
-            || !getCellStringValue(currentSheet,currentRow,4,true).equalsIgnoreCase(AppConstants.METHOD.getString())
-            || !getCellStringValue(currentSheet,currentRow,5,true).equalsIgnoreCase(AppConstants.DATA_TYPE.getString())
-            || !getCellStringValue(currentSheet,currentRow,6,true).equalsIgnoreCase(AppConstants.VALUE.getString())) {
-            showInvalidFileError("Incorrect headers for constants.");
-        }
-        //If file is still valid (after checking headers), proceed
-        if(fileIsValid){
-            ImportedConstant importedConstant;
-            currentRow++; //skip header
-            while(!rowIsEmpty()){
-                importedConstant = new ImportedConstant(getCellStringValue(currentSheet,currentRow,0,true)
-                    ,getCellStringValue(currentSheet,currentRow,1,true)
-                    ,getCellStringValue(currentSheet,currentRow,2,true)
-                    ,getCellStringValue(currentSheet,currentRow,3,true)
-                    ,getCellStringValue(currentSheet,currentRow,4,true)
-                    ,getCellStringValue(currentSheet,currentRow,5,true)
-                    ,getCellStringValue(currentSheet,currentRow,6,true));
-                importedGermplasmList.addImportedConstant(importedConstant);   
-                currentRow++;
-            }
-        }
-        currentRow++;
-    }
-    
-    /**
-     * Read variates.
-     */
-    private void readVariates(){
-        //Check if headers are correct
-        if(!getCellStringValue(currentSheet,currentRow,0,true).equalsIgnoreCase(AppConstants.VARIATE.getString())
-            || !getCellStringValue(currentSheet,currentRow,1,true).equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
-            || !getCellStringValue(currentSheet,currentRow,2,true).equalsIgnoreCase(AppConstants.PROPERTY.getString())
-            || !getCellStringValue(currentSheet,currentRow,3,true).equalsIgnoreCase(AppConstants.SCALE.getString())
-            || !getCellStringValue(currentSheet,currentRow,4,true).equalsIgnoreCase(AppConstants.METHOD.getString())
-            || !getCellStringValue(currentSheet,currentRow,5,true).equalsIgnoreCase(AppConstants.DATA_TYPE.getString())) {
-            showInvalidFileError("Incorrect headers for variates.");
-        }
-        //If file is still valid (after checking headers), proceed
-        if(fileIsValid){
-            ImportedVariate importedVariate;
-            currentRow++; //skip header
-            while(!rowIsEmpty()){
-                importedVariate = new ImportedVariate(getCellStringValue(currentSheet,currentRow,0,true)
-                    ,getCellStringValue(currentSheet,currentRow,1,true)
-                    ,getCellStringValue(currentSheet,currentRow,2,true)
-                    ,getCellStringValue(currentSheet,currentRow,3,true)
-                    ,getCellStringValue(currentSheet,currentRow,4,true)
-                    ,getCellStringValue(currentSheet,currentRow,5,true));
-                importedGermplasmList.addImportedVariate(importedVariate);
-                currentRow++;
-            }
-        }
-        currentRow++;
-    }
-
-    
     
     /**
      * Row is empty.
@@ -556,7 +483,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     private Boolean rowIsEmpty(Integer sheet, Integer row){
         for(int col=0;col<8;col++){
             if(getCellStringValue(sheet, row, col)!=null 
-                    && !getCellStringValue(sheet, row, col).equalsIgnoreCase("") ){
+                    && !"".equalsIgnoreCase(getCellStringValue(sheet, row, col))){
                 return false;
             }
         }
@@ -601,8 +528,10 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             Sheet sheet = wb.getSheetAt(sheetNumber);
             Row row = sheet.getRow(rowNumber);
             Cell cell = row.getCell(columnNumber);
+            LOG.error(e.getMessage(), e);
             return String.valueOf(Integer.valueOf((int) cell.getNumericCellValue()));
         } catch(NullPointerException e) {
+        	LOG.error(e.getMessage(), e);
             return "";
         }
     }
@@ -615,16 +544,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     private void showInvalidFileError(String message){
         if(fileIsValid){
         	errorMessages.add(FILE_INVALID);
-            fileIsValid = false;
-        }
-    }
-    
-    /**
-     * Show invalid file type error.
-     */
-    private void showInvalidFileTypeError(){
-        if(fileIsValid){
-        	errorMessages.add(FILE_TYPE_INVALID);
             fileIsValid = false;
         }
     }
@@ -642,7 +561,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		for(int i = 0 ; i < formImportedGermplasmsm.size() ; i++){
 			ImportedGermplasm germplasm = formImportedGermplasmsm.get(i);
 			String checkVal = "";
-			if(germplasm.getCheck() != null && !germplasm.getCheck().equalsIgnoreCase("")){
+			if(germplasm.getCheck() != null && !"".equalsIgnoreCase(germplasm.getCheck())){
 				checkVal = germplasm.getCheck();
 				hasCheck = true;
 			}
@@ -682,7 +601,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			}
 		}else{
 			//we remove since it was dynamically added only
-			if(userSelection.getWorkbook().isCheckFactorAddedOnly() == true){
+			if(userSelection.getWorkbook().isCheckFactorAddedOnly()){
 				//we need to remove it
 				userSelection.getWorkbook().reset();
 				List<MeasurementVariable> factors = userSelection.getWorkbook().getFactors();

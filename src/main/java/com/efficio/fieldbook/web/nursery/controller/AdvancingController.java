@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.ruleengine.RuleException;
@@ -86,6 +89,14 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AdvancingController.class);
+
+	private static final String IS_SUCCESS = "isSuccess";
+
+	private static final String LIST_SIZE = "listSize";
+
+	private static final String MESSAGE = "message";
+
+	private static final String SUCCESS = "success";
     
     /** The user selection. */
     @Resource
@@ -195,14 +206,14 @@ public class AdvancingController extends AbstractBaseFieldbookController{
 			List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);						
 			List<Method> allNonGenerativeMethods = fieldbookMiddlewareService.getAllBreedingMethods(true);
                                    
-            result.put("success", "1");
+            result.put(SUCCESS, "1");
             result.put("allMethods", convertMethodsToJson(breedingMethods));
             result.put("favoriteMethods", convertMethodsToJson(favoriteMethods));            
             result.put("allNonGenerativeMethods", convertMethodsToJson(allNonGenerativeMethods));
             result.put("favoriteNonGenerativeMethods", convertMethodsToJson(favoriteMethods));
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
-            result.put("success", "-1");
+            result.put(SUCCESS, "-1");
             result.put("errorMessage", e.getMessage());
         }
         
@@ -227,13 +238,13 @@ public class AdvancingController extends AbstractBaseFieldbookController{
                                 .getFavoriteLocationByProjectId(locationsIds);
             List<Location> allBreedingLocations = fieldbookMiddlewareService.getAllBreedingLocations();
             List<Location> allSeedStorageLocations = fieldbookMiddlewareService.getAllSeedLocations();
-            result.put("success", "1");
+            result.put(SUCCESS, "1");
             result.put("favoriteLocations", convertFaveLocationToJson(faveLocations));
             result.put("allBreedingLocations", convertFaveLocationToJson(allBreedingLocations));
             result.put("allSeedStorageLocations", convertFaveLocationToJson(allSeedStorageLocations));
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
-            result.put("success", "-1");
+            result.put(SUCCESS, "-1");
         }
         
         return result;
@@ -310,9 +321,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
                     form.setErrorInAdvance(messageSource.getMessage("nursery.save.advance.error.row.list.empty.generative.method",new String[]{},LocaleContextHolder.getLocale()));
                     form.setGermplasmList(new ArrayList<ImportedGermplasm>());
                     form.setEntries(0);
-                    results.put("isSuccess", "0");
-                    results.put("listSize", 0);
-                    results.put("message", form.getErrorInAdvance());
+                    results.put(IS_SUCCESS, "0");
+                    results.put(LIST_SIZE, 0);
+                    results.put(MESSAGE, form.getErrorInAdvance());
 
                     return results;
                 }
@@ -330,18 +341,19 @@ public class AdvancingController extends AbstractBaseFieldbookController{
                                    
             List<AdvanceGermplasmChangeDetail> advanceGermplasmChangeDetails = advanceResult.getChangeDetails();
             
-            results.put("isSuccess", "1");
-            results.put("listSize", importedGermplasmList.size());
+            results.put(IS_SUCCESS, "1");
+            results.put(LIST_SIZE, importedGermplasmList.size());
         	results.put("advanceGermplasmChangeDetails", advanceGermplasmChangeDetails);
         	results.put("uniqueId", id);
         	
         } catch (MiddlewareQueryException | RuleException e) {
+        	LOG.error(e.getMessage(),e);
         	form.setErrorInAdvance(e.getMessage());
         	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
         	form.setEntries(0);
-        	results.put("isSuccess", "0");
-        	results.put("listSize", 0);
-        	results.put("message", e.getMessage());
+        	results.put(IS_SUCCESS, "0");
+        	results.put(LIST_SIZE, 0);
+        	results.put(MESSAGE, e.getMessage());
         }
 
         return results;
@@ -349,7 +361,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     @ResponseBody
     @RequestMapping(value="/apply/change/details", method=RequestMethod.POST)
-    public Map<String, Object> applyChangeDetails(@RequestParam(value="data") String userResponses) throws Exception {
+    public Map<String, Object> applyChangeDetails(@RequestParam(value="data") String userResponses) throws JsonParseException, JsonMappingException, IOException {
     	Map<String, Object> results = new HashMap<>();
     	ObjectMapper objectMapper = new ObjectMapper();
     	AdvanceGermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, AdvanceGermplasmChangeDetail[].class);
@@ -385,8 +397,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		}
     	}
     	userSelection.setImportedAdvancedGermplasmList(importedGermplasmListTemp);
-    	results.put("isSuccess", "1");
-    	results.put("listSize", importedGermplasmListTemp.size());
+    	results.put(IS_SUCCESS, "1");
+    	results.put(LIST_SIZE, importedGermplasmListTemp.size());
     	return results;
     }
     
@@ -418,8 +430,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             }
             model.addAttribute("advanceDataList", dataTableDataList);
             model.addAttribute(TABLE_HEADER_LIST, getAdvancedNurseryTableHeader());
-            
         } catch (Exception e) {
+        	LOG.error(e.getMessage(),e);
         	form.setErrorInAdvance(e.getMessage());
         	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
         	form.setEntries(0);

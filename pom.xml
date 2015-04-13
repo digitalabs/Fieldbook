@@ -8,10 +8,10 @@
 	<version>4.0.2.SNAPSHOT</version>
 
 	<properties>
-        <ibpcommons.version>4.0.2.SNAPSHOT</ibpcommons.version>
+		<ibpcommons.version>4.0.2.SNAPSHOT</ibpcommons.version>
 		<spring.version>3.2.11.RELEASE</spring.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
-    </properties>
+	</properties>
 
 	<distributionManagement>
 		<repository>
@@ -151,21 +151,21 @@
 		</dependency>
 
 		<!-- Logging dependencies -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.7</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.1.2</version>
-        </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.1.2</version>
+		</dependency>
 
 		<!-- JUnit Dependency for Testing -->
 		<dependency>
@@ -206,8 +206,8 @@
 			<version>${ibpcommons.version}</version>
 			<exclusions>
 				<exclusion>
-		            <groupId>junit</groupId>
-		            <artifactId>junit</artifactId>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.vaadin</groupId>
@@ -228,9 +228,9 @@
 			<version>2.1.2.RELEASE</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.github.mxab.thymeleaf.extras</groupId>
-		    <artifactId>thymeleaf-extras-data-attribute</artifactId>
-		    <version>1.3</version>
+			<groupId>com.github.mxab.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-data-attribute</artifactId>
+			<version>1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
@@ -256,32 +256,33 @@
 			<version>1.9.13</version>
 		</dependency>
 
-        <!-- For support of LEGACYHTML5 templating mode ( AngularJS and Thymeleaf integration -->
-        <dependency>
-            <groupId>net.sourceforge.nekohtml</groupId>
-            <artifactId>nekohtml</artifactId>
-            <version>1.9.20</version>
-        </dependency>
+		<!-- For support of LEGACYHTML5 templating mode ( AngularJS and Thymeleaf 
+			integration -->
+		<dependency>
+			<groupId>net.sourceforge.nekohtml</groupId>
+			<artifactId>nekohtml</artifactId>
+			<version>1.9.20</version>
+		</dependency>
 
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-            <version>1.4.01</version>
-        </dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+		</dependency>
 
 		<!-- ZXing dependency -->
 		<dependency>
-	      <groupId>com.google.zxing</groupId>
-	      <artifactId>core</artifactId>
-	      <version>2.2</version>
-	    </dependency>
-	    <dependency>
-	      <groupId>com.google.zxing</groupId>
-	      <artifactId>javase</artifactId>
-	      <version>2.2</version>
-	    </dependency>
-	    <!-- for itet pdf generation -->
-	    <dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<!-- for itet pdf generation -->
+		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
 			<version>2.0.7</version>
@@ -305,12 +306,12 @@
 			<version>2.0</version>
 		</dependency>
 		<!-- Mockito -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -329,17 +330,17 @@
 						<version>1.7</version>
 						<executions>
 							<execution>
-							    <id>copy-properties</id>
+								<id>copy-properties</id>
 								<phase>generate-resources</phase>
 								<configuration>
 									<tasks>
-										<!-- Please do not change this, run mvn clean install -DenvConfig={your pilpeline folder name}
-										and make a folder under pipeline/config with property overrides as per your environment. -->
+										<!-- Please do not change this, run mvn clean install -DenvConfig={your 
+											pilpeline folder name} and make a folder under pipeline/config with property 
+											overrides as per your environment. -->
 										<copy todir="src/main/resources" overwrite="true">
-											<fileset dir="pipeline/config/${envConfig}"
-													 id="fromDir">
+											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
 												<include name="fieldbook.properties" />
-												<include name="workbench.properties"/>
+												<include name="workbench.properties" />
 											</fileset>
 										</copy>
 									</tasks>
@@ -352,10 +353,9 @@
 								<id>default-cli</id>
 								<configuration>
 									<tasks>
-										<delete dir="${webapp.path}/${project.artifactId}"/>
+										<delete dir="${webapp.path}/${project.artifactId}" />
 										<copy todir="${webapp.path}/${project.artifactId}">
-											<fileset dir="target/${project.artifactId}"
-													 includes="**/*"/>
+											<fileset dir="target/${project.artifactId}" includes="**/*" />
 										</copy>
 									</tasks>
 								</configuration>
@@ -367,14 +367,15 @@
 								<id>test-properties-override</id>
 								<phase>generate-test-resources</phase>
 								<goals>
-				                	<goal>run</goal>
+									<goal>run</goal>
 								</goals>
 								<configuration>
 									<tasks>
-										<echo message="Overriding test environment properties from pipeline/config/${envConfig}" />
+										<echo
+											message="Overriding test environment properties from pipeline/config/${envConfig}" />
 										<copy todir="src/test/resources" overwrite="true">
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
-                                                <include name="test.properties"/>
+												<include name="test.properties" />
 											</fileset>
 										</copy>
 									</tasks>
@@ -405,8 +406,8 @@
 									<tasks>
 										<copy todir="src/main/resources" overwrite="true">
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
-												<include name="fieldbook.properties"/>
-                                                <include name="workbench.properties"/>
+												<include name="fieldbook.properties" />
+												<include name="workbench.properties" />
 											</fileset>
 										</copy>
 									</tasks>
@@ -419,14 +420,15 @@
 								<id>test-properties-override</id>
 								<phase>generate-test-resources</phase>
 								<goals>
-				                	<goal>run</goal>
+									<goal>run</goal>
 								</goals>
 								<configuration>
 									<tasks>
-										<echo message="Overriding test environment properties from pipeline/config/${envConfig}" />
+										<echo
+											message="Overriding test environment properties from pipeline/config/${envConfig}" />
 										<copy todir="src/test/resources" overwrite="true">
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
-                                                <include name="test.properties"/>
+												<include name="test.properties" />
 											</fileset>
 										</copy>
 									</tasks>
@@ -438,7 +440,10 @@
 			</build>
 		</profile>
 	</profiles>
-
+	<scm>
+		<developerConnection>scm:git:https://github.com/IntegratedBreedingPlatform/Fieldbook</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<resources>
@@ -525,6 +530,34 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<git-SHA-1>${buildNumber}</git-SHA-1>
+						</manifestEntries>
+					</archive>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

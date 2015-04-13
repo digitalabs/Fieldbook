@@ -28,8 +28,8 @@ function checkMethod() {
 		$('#methodSelected').val($('#defaultMethodId').val());
 		setCorrectMethodValues(false);
 		// we show the bulk and lines section
-		$('.bulk-section').css('display', 'none');
-		$('.lines-section').css('display', 'none');
+		$('.bulk-section').show();
+		$('.lines-section').show();
 		if ($('#methodVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();

@@ -20,6 +20,10 @@ public class SeparatorRule extends OrderedRule<NamingRuleExecutionContext> {
 		String separator = source.getBreedingMethod().getSeparator();
 		// append a separator string onto each element of the list - in place
 
+		if (separator == null){
+			separator = "";
+		}
+		
 		for (int i = 0; i < input.size(); i++) {
 			input.set(i, input.get(i) + separator);
 		}

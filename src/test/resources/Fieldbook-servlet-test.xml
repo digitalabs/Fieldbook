@@ -360,4 +360,21 @@
 	        <aop:scoped-proxy/>
 	    </bean>
 
+	<bean id="pedigreeService" factory-bean="managerFactory"
+          factory-method="getPedigreeService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="pedigreeService" class="org.generationcp.middleware.service.PedigreeServiceImpl">
+    	<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
+    </bean>
+    
+	<bean id="crossExpansionProperties" class = "org.generationcp.commons.util.CrossExpansionProperties">
+    	<property name="cimmytUser" value="${cimmyt.user}" />
+        <property name="wheatMaxLevel" value="${cross.expansion.wheat.max.generation.level}" />
+        <property name="wheatNameType" value="${cross.expansion.wheat.name.type}" />
+        <property name="nonWheatMaxLevel" value="${cross.expansion.non.wheat.max.generation.level}" />
+        <property name="nonWheatNameType" value="${cross.expansion.non.wheat.name.type}" />
+    </bean>
 </beans>

@@ -304,7 +304,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         
         try {
 
-            if (!advancingNursery.getMethodChoice().isEmpty()) {
+            if (advancingNursery.getMethodChoice()!=null && !advancingNursery.getMethodChoice().isEmpty()) {
                 Method method = fieldbookMiddlewareService.getMethodById(Integer.valueOf(advancingNursery.getBreedingMethodId()));
                 if ("GEN".equals(method.getMtype())) {
                     form.setErrorInAdvance(messageSource.getMessage("nursery.save.advance.error.row.list.empty.generative.method",new String[]{},LocaleContextHolder.getLocale()));

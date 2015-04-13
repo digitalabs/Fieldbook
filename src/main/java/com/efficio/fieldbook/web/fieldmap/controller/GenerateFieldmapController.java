@@ -25,7 +25,7 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 import com.efficio.fieldbook.web.util.DateUtil;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.util.CrossExpansionRule;
+import org.generationcp.commons.util.CrossExpansionProperties;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -89,7 +89,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 	private ExportExcelService exportExcelService;
 	
 	@Resource
-	private CrossExpansionRule crossExpansionRule;
+	private CrossExpansionProperties crossExpansionProperties;
 
 	/**
 	 * Show generated fieldmap.
@@ -129,7 +129,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 
 			this.userFieldmap.setSelectedFieldMaps(
 					fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(
-							datasetId, geolocationId,this.crossExpansionRule.getMaxLevelStoppageRule(), this.crossExpansionRule.getNameTypeStoppageRule()));
+							datasetId, geolocationId,this.crossExpansionProperties.getCrossExpansionRule()));
 
 			FieldMapTrialInstanceInfo trialInfo =
 					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndGeolocationId(

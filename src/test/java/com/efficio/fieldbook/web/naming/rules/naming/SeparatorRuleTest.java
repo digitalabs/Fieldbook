@@ -15,7 +15,7 @@ import org.junit.Test;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class SeparatorRuleTest extends BaseNamingRuleTest{
+public class SeparatorRuleTest extends BaseNamingRuleTest {
 	
 	private SeparatorRule rule;
 	private Method breedingMethod;
@@ -49,6 +49,24 @@ public class SeparatorRuleTest extends BaseNamingRuleTest{
 
 		Assert.assertEquals(1, input.size());
 		Assert.assertEquals("Should return the correct name appended with a separator", testGermplasmName + row.getBreedingMethod().getSeparator(), input.get(0));
+	}
+	
+	@Test
+	public void testGetGermplasmRootNameWithNullSeparator(){		
+
+		List<String> input = new ArrayList<String>();
+		input.add(testGermplasmName);
+		
+		breedingMethod.setSeparator(null);
+
+		try{
+			input = (List<String>) rule.runRule(createExecutionContext(input));
+		}catch(RuleException re){
+			Assert.fail("Rule failed to run for Separator" + row.getBreedingMethod().getSeparator());
+		}
+
+		Assert.assertEquals(1, input.size());
+		Assert.assertEquals("Should return the correct name appended with a blank separator", testGermplasmName, input.get(0));
 	}
 	
 }

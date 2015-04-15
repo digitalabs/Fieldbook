@@ -1,17 +1,15 @@
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.efficio.fieldbook.util.ExpressionHelper;
 import com.efficio.fieldbook.util.ExpressionHelperCallback;
 import com.efficio.fieldbook.web.naming.expression.Expression;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProcessCodeServiceImpl implements ProcessCodeService {
@@ -20,7 +18,7 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 	private ProcessCodeFactory factory;
 	
 	@Override
-	public List<String> applyToName(final String expression, final AdvancingSource source) {
+	public List<String> applyProcessCode(final String expression, final AdvancingSource source) {
 		List<String> newNames = new ArrayList<String>();
 
 		if (expression == null) {
@@ -45,6 +43,7 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 		for (StringBuilder builder : builders) {
 			newNames.add(builder.toString());
 		}
+
 		return newNames;
 	}
 

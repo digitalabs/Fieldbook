@@ -8,11 +8,10 @@ then enclose the root name in parentheses.
 
 package com.efficio.fieldbook.web.naming.expression;
 
-import java.util.List;
-
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.generationcp.middleware.pojos.Name;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.List;
 
 public class RootNameExpression implements Expression {
 
@@ -27,6 +26,7 @@ public class RootNameExpression implements Expression {
 		    		for (Name name : names) {
 		    			if (name.getTypeId() != null && name.getTypeId().equals(snametype)) {
 		    				nameString = name.getNval();
+							source.setRootNameType(name.getTypeId());
 		    				break;
 		    			}
 		    		}
@@ -36,6 +36,7 @@ public class RootNameExpression implements Expression {
 		    		for (Name name : names) {
 		    			if (name.getNstat() != null && name.getNstat().equals(1)) {
 		    				nameString = name.getNval();
+							source.setRootNameType(name.getTypeId());
 		    			}
 		    		}
 	    		}
@@ -44,6 +45,8 @@ public class RootNameExpression implements Expression {
 	    	if (nameString == null) {
 	    		break;
 	    	}
+
+			source.setRootName(nameString);
 	    	
 	    	if (!checkNameIfEnclosed(nameString)) {
 	    		value.append("(").append(nameString).append(")");

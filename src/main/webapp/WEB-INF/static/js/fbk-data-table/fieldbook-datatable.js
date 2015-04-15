@@ -84,8 +84,10 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					    $(td).data('term-id', termId);
 					},
 					render: function ( data, type, full, meta ) {
-					      return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
-
+						if (data !== undefined){
+							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+						}
+					      
 					}
 				});
 				
@@ -119,8 +121,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					    $(td).data('term-id', termId);
 					},
 					render: function ( data, type, full, meta ) {
-					      return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
-
+						  if (data !== undefined){
+							  return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
+						  }
 					}
 				});
 			}

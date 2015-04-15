@@ -21,8 +21,8 @@ public class SeparatorRule extends OrderedRule<NamingRuleExecutionContext> {
 		ProcessCodeService processCodeService = context.getProcessCodeService();
 		String separatorExpression = source.getBreedingMethod().getSeparator();
 
-		if (separator == null){
-			separator = "";
+		if (separatorExpression == null){
+			separatorExpression = "";
 		}
 		
 		for (int i = 0; i < input.size(); i++) {

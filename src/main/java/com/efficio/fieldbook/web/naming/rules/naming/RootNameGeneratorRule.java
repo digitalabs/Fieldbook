@@ -2,9 +2,8 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
-import org.generationcp.commons.ruleengine.OrderedRule;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-
+import org.generationcp.commons.ruleengine.OrderedRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,6 @@ public class RootNameGeneratorRule extends OrderedRule<NamingRuleExecutionContex
 	public static final String KEY = "RootNameGenerator";
 	
 
-	// FIXME : the so called expression may in fact just be a rule
 	@Override
 	public Object runRule(NamingRuleExecutionContext context) throws RuleException {
 

@@ -8,14 +8,14 @@ import java.util.Map;
 
 public class ProcessCodeFactory {
 
-    public List<Expression> registeredExpressions;
+    private List<Expression> registeredExpressions;
 
-    public Map<String, Expression> expressionMap;
+    private Map<String, Expression> expressionMap;
 
     public void init() {
-        assert(registeredExpressions != null);
+        assert registeredExpressions != null;
 
-        expressionMap = new HashMap<String, Expression>();
+        expressionMap = new HashMap<>();
         for (Expression registeredExpression : registeredExpressions) {
             expressionMap.put(registeredExpression.getExpressionKey(), registeredExpression);
         }
@@ -23,8 +23,7 @@ public class ProcessCodeFactory {
 
 
 	public Expression create(String key) {
-		Expression expression = expressionMap.get(key.toUpperCase());
-		return expression;
+		return expressionMap.get(key.toUpperCase());
 	}
 
     public void setRegisteredExpressions(List<Expression> registeredExpressions) {

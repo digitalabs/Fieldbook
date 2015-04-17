@@ -38,7 +38,7 @@ import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
-import org.generationcp.commons.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -141,7 +141,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             study = fieldbookMiddlewareService.getStudy(id);
             List<Integer> ids = new ArrayList<Integer>();
             ids.add(id);
-            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties.getCrossExpansionRule());
+            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
 
             for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
                 fieldMapInfo = fieldMapInfoDetail;
@@ -190,7 +190,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             study = fieldbookMiddlewareService.getStudy(id);
             List<Integer> ids = new ArrayList<Integer>();
             ids.add(id);
-            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties.getCrossExpansionRule());
+            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
             for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
                 fieldMapInfo = fieldMapInfoDetail;
                 hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);

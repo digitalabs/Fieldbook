@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -141,7 +141,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                 trialIds.add(Integer.parseInt(id));
             }
             List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService
-                    .getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties.getCrossExpansionRule());
+                    .getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
 
             clearFields();
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
@@ -362,7 +362,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             
             clearFields();
             List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService
-                    .getFieldMapInfoOfNursery(nurseryIds, this.crossExpansionProperties.getCrossExpansionRule());
+                    .getFieldMapInfoOfNursery(nurseryIds, this.crossExpansionProperties);
 
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, false);
             

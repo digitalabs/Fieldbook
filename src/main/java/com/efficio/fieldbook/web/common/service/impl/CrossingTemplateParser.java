@@ -177,7 +177,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		int listDateColNo = AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
 		int listTypeColNo = AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
 
-		Date listDate = DateUtil.getDate(
+		Date listDate = DateUtil.parseDate(
 				getCellStringValue(DESCRIPTION_SHEET_NO, listDateColNo, 1), 
 				DateUtil.DATE_AS_NUMBER_FORMAT);
 		String listType = getCellStringValue(DESCRIPTION_SHEET_NO, listTypeColNo, 1);

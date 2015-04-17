@@ -326,12 +326,12 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             String labelIdentifier = getCellStringValue(0, 2, 0, true);
             
             if(AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelIdentifier)){
-            	listDate = DateUtil.getDate(getCellStringValue(0, 2, 1, true),
+            	listDate = DateUtil.parseDate(getCellStringValue(0, 2, 1, true),
             			DateUtil.DATE_AS_NUMBER_FORMAT);
             	listType = getCellStringValue(0, 3, 1, true);
             }else if(AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelIdentifier)){            	
             	listType = getCellStringValue(0, 2, 1, true);
-            	listDate = DateUtil.getDate(getCellStringValue(0, 3, 1, true),
+            	listDate = DateUtil.parseDate(getCellStringValue(0, 3, 1, true),
             			DateUtil.DATE_AS_NUMBER_FORMAT);
             }
             

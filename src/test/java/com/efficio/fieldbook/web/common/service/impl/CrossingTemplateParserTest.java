@@ -187,7 +187,7 @@ public class CrossingTemplateParserTest {
 
 		assertEquals("list name is set", "listName", importedCrossesList1.getName());
 		assertEquals("list title/description is set", "listTitle", importedCrossesList1.getTitle());
-		assertEquals("date is set", DateUtil.getDate("20010101",
+		assertEquals("date is set", DateUtil.parseDate("20010101",
 				DateUtil.DATE_AS_NUMBER_FORMAT), importedCrossesList1.getDate());
 		assertEquals("list type is set (and valid)", CrossingTemplateParser.TEMPLATE_LIST_TYPE,
 				importedCrossesList1.getType());

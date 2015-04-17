@@ -366,13 +366,12 @@
         <aop:scoped-proxy/>
     </bean>
     
-    <bean id="pedigreeService" class="org.generationcp.middleware.service.PedigreeServiceImpl">
+    <bean id="pedigreeService" class="org.generationcp.middleware.service.PedigreeDefaultServiceImpl">
     	<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
     
 	<bean id="crossExpansionProperties" class = "org.generationcp.commons.util.CrossExpansionProperties">
-    	<property name="cimmytUser" value="${cimmyt.user}" />
-        <property name="wheatMaxLevel" value="${cross.expansion.wheat.max.generation.level}" />
-        <property name="nonWheatMaxLevel" value="${cross.expansion.non.wheat.max.generation.level}" />
+        <property name="wheatLevel" value="0" />
+        <property name="defaultLevel" value="1" />
     </bean>
 </beans>

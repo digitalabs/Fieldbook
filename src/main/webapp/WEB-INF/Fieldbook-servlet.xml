@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -280,6 +281,12 @@
         <!-- JDK Standard Proxy around this request scoped bean, so we can use it on longer scoped beans -->
         <aop:scoped-proxy proxy-target-class="false"/>
     </bean>
+	<!-- Would be passed as a parameter when call getCrossExpansion so that user has the capability to override the settings -->
+    <bean id="crossExpansionProperties" class = "org.generationcp.middleware.util.CrossExpansionProperties" 
+    	scope="request">
+        <property name="wheatLevel" value="${wheat.generation.level}" />
+        <property name="defaultLevel" value="${default.generation.level}" />
+    </bean>
 
     <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency" destroy-method="closeAllSessionFactories">
         <constructor-arg ref="workbenchDataManager"/>
@@ -288,11 +295,12 @@
         <property name="dbHost" value="${workbench.host}"/>
         <property name="dbUsername" value="${workbench.username}"/>
         <property name="dbPassword" value="${workbench.password}"/>
+        <property name="pedigreeProfile" value="${pedigree.profile}"/>
     </bean>
 
     <bean id="managerFactory" name="managerFactory"
           factory-bean="managerFactoryProvider"
-          factory-method="createInstance"
+          factory-method="createInstance" 
           scope="request" destroy-method="close">
         <aop:scoped-proxy/>
     </bean>
@@ -431,10 +439,5 @@
         <aop:scoped-proxy/>
     </bean>
     
-    <bean id="crossExpansionProperties" class = "org.generationcp.commons.util.CrossExpansionProperties">
-    	<property name="cimmytUser" value="${cimmyt.user}" />
-        <property name="wheatMaxLevel" value="${cross.expansion.wheat.max.generation.level}" />
-        <property name="nonWheatMaxLevel" value="${cross.expansion.non.wheat.max.generation.level}" />
-    </bean>
     
 </beans>

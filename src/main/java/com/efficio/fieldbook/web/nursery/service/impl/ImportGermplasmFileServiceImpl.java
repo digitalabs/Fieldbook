@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -49,7 +50,6 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 
 /**
  * The Class ImportGermplasmFileServiceImpl.
@@ -326,11 +326,13 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             String labelIdentifier = getCellStringValue(0, 2, 0, true);
             
             if(AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelIdentifier)){
-            	listDate = DateUtil.parseDate(getCellStringValue(0, 2, 1, true));
+            	listDate = DateUtil.getDate(getCellStringValue(0, 2, 1, true),
+            			DateUtil.DATE_AS_NUMBER_FORMAT);
             	listType = getCellStringValue(0, 3, 1, true);
             }else if(AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelIdentifier)){            	
             	listType = getCellStringValue(0, 2, 1, true);
-            	listDate = DateUtil.parseDate(getCellStringValue(0, 3, 1, true));
+            	listDate = DateUtil.getDate(getCellStringValue(0, 3, 1, true),
+            			DateUtil.DATE_AS_NUMBER_FORMAT);
             }
             
 

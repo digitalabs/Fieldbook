@@ -38,6 +38,7 @@ import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -63,7 +64,6 @@ import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
@@ -256,7 +256,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
      * @return the string
      */
     private String generateDefaultFilename(UserLabelPrinting userLabelPrinting, boolean isTrial){
-        String currentDate = DateUtil.getCurrentDate();
+        String currentDate = DateUtil.getCurrentDateAsStringValue();
         String fileName = "Labels-for-" + userLabelPrinting.getName();
 
         if(isTrial) {

@@ -4,10 +4,10 @@ import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.util.parsing.AbstractExcelFileParser;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -177,8 +177,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		int listDateColNo = AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
 		int listTypeColNo = AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
 
-		Date listDate = DateUtil.parseDate(
-				getCellStringValue(DESCRIPTION_SHEET_NO, listDateColNo, 1));
+		Date listDate = DateUtil.getDate(
+				getCellStringValue(DESCRIPTION_SHEET_NO, listDateColNo, 1), 
+				DateUtil.DATE_AS_NUMBER_FORMAT);
 		String listType = getCellStringValue(DESCRIPTION_SHEET_NO, listTypeColNo, 1);
 
 		this.importedCrossesList = new ImportedCrossesList(originalFilename, listName,

@@ -34,7 +34,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.DateUtil;
+import org.generationcp.commons.util.DateUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service

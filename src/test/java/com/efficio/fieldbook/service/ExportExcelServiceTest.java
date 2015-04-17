@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.junit.Test;
@@ -33,7 +34,6 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator;
 import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 
 public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
        
@@ -86,7 +86,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 				, deletedPlot, fieldMapLabels, new HorizontalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-        String fileName = "FieldMapHorizontal" +  "_" + DateUtil.getCurrentDate() + ".xls";
+        String fileName = "FieldMapHorizontal" +  "_" + DateUtil.getCurrentDateAsStringValue() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		
 		assertEquals("Dummy Trial-76<br/>Entry null<br/>Rep 76", plots[2][9].getDisplayString());
@@ -120,7 +120,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 				, deletedPlot, fieldMapLabels, new VerticalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-        String fileName = "FieldMapVertical" +  "_" + DateUtil.getCurrentDate() + ".xls";
+        String fileName = "FieldMapVertical" +  "_" + DateUtil.getCurrentDateAsStringValue() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		
 		assertEquals("Dummy Trial-10<br/>Entry null<br/>Rep 10", plots[2][9].getDisplayString());
@@ -156,7 +156,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 				, deletedPlot, fieldMapLabels, new HorizontalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-        String fileName = "FieldMapHorizontalRowColumn" +  "_" + DateUtil.getCurrentDate() + ".xls";
+        String fileName = "FieldMapHorizontalRowColumn" +  "_" + DateUtil.getCurrentDateAsStringValue() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		assertEquals("Dummy Trial-77<br/>Entry null<br/>Rep 77", plots[2][9].getDisplayString());
 		assertEquals("Dummy Trial-83<br/>Entry null<br/>Rep 83", plots[8][9].getDisplayString());
@@ -191,7 +191,7 @@ public class ExportExcelServiceTest extends AbstractBaseIntegrationTest {
 				, deletedPlot, fieldMapLabels, new VerticalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-        String fileName = "FieldMapVerticalRowColumn" +  "_" + DateUtil.getCurrentDate() + ".xls";
+        String fileName = "FieldMapVerticalRowColumn" +  "_" + DateUtil.getCurrentDateAsStringValue() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		assertEquals("Dummy Trial-17<br/>Entry null<br/>Rep 17", plots[2][9].getDisplayString());
 		assertEquals("Dummy Trial-74<br/>Entry null<br/>Rep 74", plots[8][9].getDisplayString());

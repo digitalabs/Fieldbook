@@ -34,6 +34,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
+import org.generationcp.commons.util.DateUtil;
 
 import java.util.*;
 

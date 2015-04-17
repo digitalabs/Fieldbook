@@ -1,9 +1,6 @@
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -238,8 +236,7 @@ public class AdvancingSourceListFactory {
 	        }
         }
         if (season == null || "".equals(season.trim())) {
-        	DateFormat dateFormat = new SimpleDateFormat("yyyyMM");
-        	season = dateFormat.format(new Date());
+        	DateUtil.getCurrentDateAsStringValue("yyyyMM");
         }
         return season;
     }

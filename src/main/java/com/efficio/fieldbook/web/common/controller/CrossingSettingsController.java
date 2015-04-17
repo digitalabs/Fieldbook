@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
@@ -176,7 +178,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	public List<String> getHarvestYears() {
 		List<String> years = new ArrayList<>();
 
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = DateUtil.getCalendarInstance();
 
 		for (int i = 0; i < YEAR_INTERVAL; i++) {
 			years.add(Integer.toString(cal.get(Calendar.YEAR)));

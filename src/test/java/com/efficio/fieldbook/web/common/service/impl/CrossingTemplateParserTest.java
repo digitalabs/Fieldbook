@@ -3,9 +3,9 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.nursery.bean.*;
-import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -187,7 +187,8 @@ public class CrossingTemplateParserTest {
 
 		assertEquals("list name is set", "listName", importedCrossesList1.getName());
 		assertEquals("list title/description is set", "listTitle", importedCrossesList1.getTitle());
-		assertEquals("date is set", DateUtil.parseDate("20010101"), importedCrossesList1.getDate());
+		assertEquals("date is set", DateUtil.getDate("20010101",
+				DateUtil.DATE_AS_NUMBER_FORMAT), importedCrossesList1.getDate());
 		assertEquals("list type is set (and valid)", CrossingTemplateParser.TEMPLATE_LIST_TYPE,
 				importedCrossesList1.getType());
 

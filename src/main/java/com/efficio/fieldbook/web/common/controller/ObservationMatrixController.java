@@ -37,7 +37,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.DateUtil;
+import org.generationcp.commons.util.DateUtil;
 
 @Controller
 @RequestMapping(ObservationMatrixController.URL)

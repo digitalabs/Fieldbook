@@ -104,7 +104,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 			List<Integer> gidList = new ArrayList<>();
 			gidList.add(inventoryDetails.getGid());
 
-				inventoryService.addAdvanceLots(gidList,
+				inventoryService.addLotsForList(gidList,
 						inventoryDetails.getLocationId(),
 						inventoryDetails.getScaleId(),
 						inventoryDetails.getComment(),

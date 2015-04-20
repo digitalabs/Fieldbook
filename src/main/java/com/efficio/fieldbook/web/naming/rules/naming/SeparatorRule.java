@@ -1,8 +1,8 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import org.generationcp.commons.ruleengine.OrderedRule;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-
+import org.generationcp.commons.ruleengine.OrderedRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +17,19 @@ public class SeparatorRule extends OrderedRule<NamingRuleExecutionContext> {
 	public Object runRule(NamingRuleExecutionContext context) throws RuleException {
 		List<String> input = context.getCurrentData();
 		AdvancingSource source = context.getAdvancingSource();
-		String separator = source.getBreedingMethod().getSeparator();
-		// append a separator string onto each element of the list - in place
 
+		ProcessCodeService processCodeService = context.getProcessCodeService();
+		String separatorExpression = source.getBreedingMethod().getSeparator();
+
+		if (separatorExpression == null){
+			separatorExpression = "";
+		}
+		
 		for (int i = 0; i < input.size(); i++) {
-			input.set(i, input.get(i) + separator);
+			// some separator expressions perform operations on the root name, so we replace the current input with the result
+			input.set(i,
+					processCodeService.applyProcessCode(input.get(i) + separatorExpression, source)
+							.get(0));
 		}
 
 		context.setCurrentData(input);

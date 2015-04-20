@@ -94,11 +94,18 @@ public class BVDesignRunnerTest {
 			String xmlString) {
 		String outputFile = mainDesign.getDesign().getParameterValue(OUTPUTFILE_PARAM);
 		String outputFileMillisecs = outputFile.replace(BVDesignRunner.BV_PREFIX+BVDesignRunner.CSV_EXTENSION, "");
-		String seedValue = Integer.toString(new Long(outputFileMillisecs).intValue());
+		String seedValue = getSeedValue(outputFileMillisecs);
 		expectedString = expectedString.replace(":seedValue", seedValue);
 		expectedString = expectedString.replace(":outputFile", outputFile);
 		
 		Assert.assertEquals(expectedString, xmlString);
 	}
 
+	private String getSeedValue(String currentTimeMillis) {
+		String seedValue = currentTimeMillis;
+		if(Long.parseLong(currentTimeMillis) > Integer.MAX_VALUE) {
+			seedValue = seedValue.substring(seedValue.length()-9);
+		}
+		return seedValue;
+	}
 }

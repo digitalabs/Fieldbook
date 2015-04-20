@@ -164,10 +164,10 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
         
         try {
         	
-            inventoryMiddlewareService.addAdvanceLots(gidList,
-            		form.getInventoryLocationId(),form.getInventoryScaleId(), 
-            		form.getInventoryComments(), this.getCurrentIbdbUserId(),
-            		form.getAmount(), form.getListId());
+            inventoryMiddlewareService.addLotsForList(gidList,
+                    form.getInventoryLocationId(), form.getInventoryScaleId(),
+                    form.getInventoryComments(), this.getCurrentIbdbUserId(),
+                    form.getAmount(), form.getListId());
            
                 result.put("message", messageSource
                         .getMessage("seed.inventory.add.lot.save.success", null, local));

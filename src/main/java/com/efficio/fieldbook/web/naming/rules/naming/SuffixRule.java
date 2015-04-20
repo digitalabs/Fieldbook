@@ -2,7 +2,6 @@ package com.efficio.fieldbook.web.naming.rules.naming;
 
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-
 import org.generationcp.commons.ruleengine.OrderedRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,7 @@ public class SuffixRule extends OrderedRule<NamingRuleExecutionContext> {
 		List<String> input = context.getCurrentData();
 
 		for (int i = 0; i < input.size(); i++) {
-			input.set(i, input.get(i) + processCodeService.applyToName(suffix, advancingSource).get(0));
+			input.set(i, processCodeService.applyProcessCode(input.get(i) + suffix, advancingSource).get(0));
 		}
 
 		context.setCurrentData(input);

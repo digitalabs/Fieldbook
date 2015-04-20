@@ -28,8 +28,8 @@ function checkMethod() {
 		$('#methodSelected').val($('#defaultMethodId').val());
 		setCorrectMethodValues(false);
 		// we show the bulk and lines section
-		$('.bulk-section').css('display', 'none');
-		$('.lines-section').css('display', 'none');
+		$('.bulk-section').show();
+		$('.lines-section').show();
 		if ($('#methodVariateId').has('option').length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
@@ -404,9 +404,9 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		var isDelete = '';
 
 		// include delete button if variable is deletable
-		if (settingDetail.deletable) {			
-			isDelete = '<input class="remove-indv-btn"' 
-				+ ' type="checkbox" data-variable-type="'+varType+'"' 
+		if (settingDetail.deletable) {
+			isDelete = '<input class="remove-indv-btn"'
+				+ ' type="checkbox" data-variable-type="'+varType+'"'
 				+ ' data-cv-term-id="'+settingDetail.variable.cvTermId+'"/>';
 		}
 
@@ -543,7 +543,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 			$('#' + tableId + ' .remove-all-section').before(newRow);
 		} else {
 			$('#' + tableId).append(newRow);
-		}	
+		}
 
 		if (settingDetail.variable.widgetType === 'DROPDOWN') {
 			// initialize select 2 combo
@@ -695,8 +695,8 @@ function createTableSettingVariables(data, name, tableId, varType) {
 		var isDelete = '';
 
 		if (settingDetail.deletable) {
-			isDelete = '<input class="remove-indv-btn"' 
-				+ ' type="checkbox" data-variable-type="'+varType+'"' 
+			isDelete = '<input class="remove-indv-btn"'
+				+ ' type="checkbox" data-variable-type="'+varType+'"'
 				+ ' data-cv-term-id="'+settingDetail.variable.cvTermId+'"/>';
 		}
 		newRow = newRow
@@ -869,7 +869,7 @@ function checkMeasurementData(variableType, variableId) {
 	});
 	return hasData;
 }
-function deleteMultiVariable(variableType, variableIds, sectionDiv) {	
+function deleteMultiVariable(variableType, variableIds, sectionDiv) {
 	'use strict';
 	var hasMeasurementData = '0';
 	if (variableType == selectionVariatesSegment
@@ -881,8 +881,7 @@ function deleteMultiVariable(variableType, variableIds, sectionDiv) {
 		// remove row from UI
 		$('.'+sectionDiv+' .remove-indv-btn:checked').each(function(){
 			$(this).parent().parent().remove();
-		});	
-		
+		});
 		checkShowSettingsFormReminder();
 		// remove row from session
 		$.ajax({
@@ -944,7 +943,7 @@ function proceedWithDelete() {
 		var sectionDiv = $('#variateDeleteConfirmationModal').data('section-delete');
 		$('.'+sectionDiv+' .remove-indv-btn:checked').each(function(){
 			$(this).parent().parent().remove();
-		});		
+		});
 	} else if(deleteButton !== null) {
 		deleteButton.parent().parent().remove();
 	}

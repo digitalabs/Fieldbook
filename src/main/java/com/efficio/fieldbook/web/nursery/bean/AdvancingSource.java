@@ -11,12 +11,11 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.bean;
 
-import java.util.List;
-
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import java.util.List;
 
 /**
  * 
@@ -40,6 +39,7 @@ public class AdvancingSource {
     private AdvanceGermplasmChangeDetail changeDetail;
     private String prefix;
     private String suffix;
+	private Integer rootNameType;
 
 	private boolean isForceUniqueNameGeneration;
 
@@ -278,6 +278,14 @@ public class AdvancingSource {
 
 	public void setForceUniqueNameGeneration(boolean isForceUniqueNameGeneration) {
 		this.isForceUniqueNameGeneration = isForceUniqueNameGeneration;
+	}
+
+	public Integer getRootNameType() {
+		return rootNameType;
+	}
+
+	public void setRootNameType(Integer rootNameType) {
+		this.rootNameType = rootNameType;
 	}
 
 	@Override

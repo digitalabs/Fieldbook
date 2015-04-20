@@ -11,19 +11,19 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.pojos.treeview.TreeNode;
+import com.efficio.pojos.treeview.TreeTableNode;
 import junit.framework.Assert;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.easymock.EasyMock;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -38,11 +38,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -306,10 +304,10 @@ public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrati
 		when(germplasmListManager.getGermplasmListByName(folderName, 0, 1, null))
         			.thenReturn(GERMPLASM_LIST_TEST_DATA);
         ReflectionTestUtils.setField(controller, "germplasmListManager"
-                , germplasmListManager, GermplasmListManager.class);        
+                , germplasmListManager, GermplasmListManager.class);
 		try {
 			controller.checkIfUnique(folderName);
-		} catch (MiddlewareQueryException | MiddlewareException e) {
+		} catch (MiddlewareException e) {
 			Assert.assertEquals(NAME_NOT_UNIQUE, e.getMessage());
 		}
 	}

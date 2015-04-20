@@ -134,6 +134,10 @@ public class AdvancingControllerTest {
 		assertNotNull("should have advance germplasm change details",
 				output.get("advanceGermplasmChangeDetails"));
 		assertNotNull("should have generated unique id", output.get("uniqueId"));
+		
+		form.setMethodChoice(null);
+		output = advancingController.postAdvanceNursery(form,null,null);
+		assertEquals("should be successful", "1", output.get("isSuccess"));
 
 	}
 

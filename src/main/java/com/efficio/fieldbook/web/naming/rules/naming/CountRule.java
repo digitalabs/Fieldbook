@@ -1,12 +1,12 @@
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import org.generationcp.commons.ruleengine.OrderedRule;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-
+import org.generationcp.commons.ruleengine.OrderedRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -21,23 +21,21 @@ public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 
 		ProcessCodeService service = context.getProcessCodeService();
 		AdvancingSource source = context.getAdvancingSource();
-		List<String> counts = service.applyToName(
-				source.getBreedingMethod().getCount(), source);
 
 		List<String> input = context.getCurrentData();
+
+		List<String> counts = new ArrayList<>();
+
+		for (String currentInput : input) {
+			counts.addAll(service.applyProcessCode(
+					currentInput + source.getBreedingMethod().getCount(), source));
+		}
+
 
 		// store current data in temp before overwriting it with count data, so that it can be restored for another try later on
 		context.setTempData(context.getCurrentData());
 
 		if (!counts.isEmpty()) {
-			for (String name : input) {
-				for (int i = 0; i < counts.size(); i++) {
-					counts.set(i, name + counts.get(i));
-				}
-			}
-
-
-
 			// place the processed name data with count information as current rule execution output
 			context.setCurrentData(counts);
 			return counts;

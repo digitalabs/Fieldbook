@@ -2,7 +2,6 @@ package com.efficio.fieldbook.web.naming.rules.naming;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-
 import org.generationcp.commons.ruleengine.BranchingRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -42,32 +41,8 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 				// if necessary, update change detail object
 				updateChangeDetailForAdvancingSource(context);
 
-
 			} else {
-				// if a duplicate is found, initialize an AdvanceGermplasmChangeDetail object containing the original duplicate, for confirmation later on with the user
-				initializeChangeDetailForAdvancingSource(context);
-
-				// restore rule execution state to a previous temp save point
-				context.setCurrentData(context.getTempData());
-
-
-				if (!source.isForceUniqueNameGeneration()) {
-					// if there is no current count expression, use the default to provide incrementing support
-					if (source.getBreedingMethod().getCount() == null || source.getBreedingMethod()
-							.getCount().isEmpty()) {
-						source.getBreedingMethod().setCount(CountRule.DEFAULT_COUNT);
-						source.setForceUniqueNameGeneration(true);
-					} else if (source.isBulk()) {
-						source.setForceUniqueNameGeneration(true);
-					} else {
-						// simply increment the sequence used to generate the count. no other flags set so as to preserve previously used logic
-						source.setCurrentMaxSequence(source.getCurrentMaxSequence() + 1);
-					}
-				}else{
-					// if force unique name generation flag is set, then simply increment the current sequence used for generating the count
-					source.setCurrentMaxSequence(source.getCurrentMaxSequence() + 1);
-				}
-
+				processNonUniqueName(context, source);
 			}
 
 		} catch (MiddlewareQueryException e) {
@@ -76,6 +51,31 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 
 		// this rule does not actually do any processing on the data
 		return null;
+	}
+
+	protected void processNonUniqueName(NamingRuleExecutionContext context, AdvancingSource source) {
+		// if a duplicate is found, initialize an AdvanceGermplasmChangeDetail object containing the original duplicate, for confirmation later on with the user
+		initializeChangeDetailForAdvancingSource(context);
+
+		// restore rule execution state to a previous temp save point
+		context.setCurrentData(context.getTempData());
+
+		if (!source.isForceUniqueNameGeneration()) {
+			// if there is no current count expression, use the default to provide incrementing support
+			if (source.getBreedingMethod().getCount() == null || source.getBreedingMethod()
+					.getCount().isEmpty()) {
+				source.getBreedingMethod().setCount(CountRule.DEFAULT_COUNT);
+				source.setForceUniqueNameGeneration(true);
+			} else if (source.isBulk()) {
+				source.setForceUniqueNameGeneration(true);
+			} else {
+				// simply increment the sequence used to generate the count. no other flags set so as to preserve previously used logic
+				source.setCurrentMaxSequence(source.getCurrentMaxSequence() + 1);
+			}
+		} else {
+			// if force unique name generation flag is set, then simply increment the current sequence used for generating the count
+			source.setCurrentMaxSequence(source.getCurrentMaxSequence() + 1);
+		}
 	}
 
 	@Override

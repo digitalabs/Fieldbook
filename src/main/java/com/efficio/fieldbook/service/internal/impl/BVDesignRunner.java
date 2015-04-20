@@ -91,7 +91,7 @@ public class BVDesignRunner implements DesignRunner {
 		String outputFilePath = currentTimeMillis+BV_PREFIX+CSV_EXTENSION;
 		 
 		 design.getDesign().setParameterValue(ExpDesignUtil.OUTPUTFILE_PARAM, outputFilePath);
-		 design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, Integer.toString(currentTimeMillis.intValue()));
+		 design.getDesign().setParameterValue(ExpDesignUtil.SEED_PARAM, getSeedValue(currentTimeMillis));
 		 
 		 try {
 			 xml = ExpDesignUtil.getXmlStringForSetting(design);
@@ -99,6 +99,14 @@ public class BVDesignRunner implements DesignRunner {
 			 LOG.error(e.getMessage(), e);
 		 }
 		return xml;
+	}
+	
+	private String getSeedValue(Long currentTimeMillis) {
+		String seedValue = Long.toString(currentTimeMillis);
+		if(currentTimeMillis > Integer.MAX_VALUE) {
+			seedValue = seedValue.substring(seedValue.length()-9);
+		}
+		return seedValue;
 	}
 	
 	private static String getBreedingViewExeLocation(WorkbenchService workbenchService){

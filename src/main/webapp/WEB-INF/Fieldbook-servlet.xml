@@ -416,6 +416,8 @@
                 <bean class="com.efficio.fieldbook.web.naming.expression.SeasonExpression"/>
                 <bean class="com.efficio.fieldbook.web.naming.expression.SequenceExpression"/>
                 <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.BulkGroupCountExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.PoundGroupCountExpression"/>
             </list>
         </property>
     </bean>

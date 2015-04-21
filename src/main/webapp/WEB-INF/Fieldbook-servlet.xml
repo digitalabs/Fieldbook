@@ -269,6 +269,11 @@
           class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="workbenchDataSource"/>
         <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            </props>
+        </property>
     </bean>
 
 
@@ -380,15 +385,18 @@
         <property name="ruleSequenceConfiguration">
             <map>
                 <entry key="naming" value="${naming.rules}"/>
+                <entry key="stockid" value="${stockid.rules}"/>
             </map>
         </property>
     </bean>
+
 	<bean id="ruleService" class="org.generationcp.commons.ruleengine.impl.RulesServiceImpl" />
     <!--
         This component scan automatically registers all implementations of the Rule interface into the Spring context.
         In conjunction with the RulesPostProcessor above, this automatically populates the map in the RuleFactory
          -->
     <context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
+    <context:component-scan base-package="org.generationcp.commons.ruleengine.stockid"/>
 
     <bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
 
@@ -401,6 +409,10 @@
     </bean>
 
     <bean id="inventoryImportParser" class="com.efficio.fieldbook.web.util.parsing.InventoryImportParser" scope="prototype">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="inventoryStockService" class="org.generationcp.commons.service.impl.InventoryStockServiceImpl">
         <aop:scoped-proxy/>
     </bean>
 

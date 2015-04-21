@@ -135,6 +135,11 @@
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
+
+	<bean id="inventoryStockService" class="org.generationcp.commons.service.impl.InventoryStockServiceImpl"
+		  scope="session">
+		<aop:scoped-proxy />
+	</bean>
 	
 	<bean id="seedSelection" class="com.efficio.fieldbook.web.inventory.bean.SeedSelection"
 		scope="session">

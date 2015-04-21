@@ -58,7 +58,6 @@ import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SettingsController.
  */
@@ -120,7 +119,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             LOG.error(e.getMessage(), e);
         }
 		
-        return null;
+        return new ArrayList<TemplateSetting>();
     }
     
     /**
@@ -141,7 +140,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             LOG.error(e.getMessage(), e);
         }
 		
-        return null;
+        return new ArrayList<TemplateSetting>();
     }
     
     /**
@@ -158,7 +157,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             LOG.error(e.getMessage(), e);
         }
                 
-        return null;
+        return new ArrayList<StudyDetails>();
     }
     
     /**
@@ -175,7 +174,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             LOG.error(e.getMessage(), e);
         }
                 
-        return null;
+        return new ArrayList<StudyDetails>();
     }
     
     /**
@@ -251,7 +250,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination) throws MiddlewareQueryException{
         
         //create a map of id and its id-code-name combination
-        HashMap<String, String> idCodeNameMap = new HashMap<String, String>();
+        Map<String, String> idCodeNameMap = new HashMap<String, String>();
         if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
             StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
             if(tokenizer.hasMoreTokens()){
@@ -264,7 +263,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         }
         
         //save hidden conditions in a map
-        HashMap<String, SettingDetail> variablesMap = new HashMap<String, SettingDetail>();
+        Map<String, SettingDetail> variablesMap = new HashMap<String, SettingDetail>();
         if (variables != null) {
             for (SettingDetail variable : userSelection.getRemovedConditions()) {
                 variablesMap.put(variable.getVariable().getCvTermId().toString(), variable);
@@ -632,13 +631,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     }
 
     private void removeRemovedVariablesFromSession(List<SettingDetail> variableList, List<SettingDetail> removedVariableList) {
-        if (removedVariableList != null && variableList != null) {
-            for (SettingDetail setting : removedVariableList) {
-                Iterator<SettingDetail> iter = variableList.iterator();
-                while(iter.hasNext()) {
-                    if (iter.next().getVariable().getCvTermId().equals(setting.getVariable().getCvTermId())) {
-                        iter.remove();
-                    }
+    	if (removedVariableList == null || variableList == null) {
+    		return;
+    	}
+        for (SettingDetail setting : removedVariableList) {
+            Iterator<SettingDetail> iter = variableList.iterator();
+            while(iter.hasNext()) {
+                if (iter.next().getVariable().getCvTermId().equals(setting.getVariable().getCvTermId())) {
+                    iter.remove();
                 }
             }
         }

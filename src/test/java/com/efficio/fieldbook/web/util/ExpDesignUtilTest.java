@@ -73,15 +73,6 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 		} catch (BVDesignException e) {
 			LOG.error(e.getMessage(), e);
 			Assert.fail("Expected mock values but called original BV Design generator.");
-		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
-			Assert.fail("Expected mock values but called original Middleware method.");
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-			Assert.fail("Expected mock values but called original method.");
-		} catch (JAXBException e) {
-			LOG.error(e.getMessage(), e);
-			Assert.fail("Expected mock values but called original method.");
 		}
 	}
 

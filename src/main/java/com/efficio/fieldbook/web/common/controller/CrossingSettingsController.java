@@ -7,11 +7,8 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -286,6 +283,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			resultsMap.put(IS_SUCCESS, 1);
 
 		} catch (FileParsingException e) {
+			LOG.error(e.getMessage(),e);
 			resultsMap.put(IS_SUCCESS, 0);
 			resultsMap.put("error", new String[] {e.getMessage()});
 		}

@@ -379,7 +379,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	}
 
 	protected boolean isVariateHeaderInvalid(int variateHeaderRowNo) {
-		String headers[] = {
+		String[] headers = {
 			AppConstants.VARIATE.getString(),
 				AppConstants.DESCRIPTION.getString(),
 				AppConstants.PROPERTY.getString(),
@@ -396,12 +396,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		final List<ImportedFactor> importedFactors = new ArrayList<ImportedFactor>() {
 			@Override
 			public boolean contains(Object o) {
+				boolean returnVal = false;
 				for (ImportedFactor i : this) {
 					if (i.getFactor().equalsIgnoreCase(o.toString())) {
-						return true;
+						returnVal = true;
 					}
 				}
-				return false;
+				return returnVal;
 			}
 		};
 

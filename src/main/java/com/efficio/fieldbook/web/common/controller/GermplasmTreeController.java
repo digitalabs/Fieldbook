@@ -755,7 +755,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         return expandGermplasmTree(parentKey, "0");
     }
 
-    protected void checkIfUnique(String folderName) throws MiddlewareQueryException, MiddlewareException {
+    protected void checkIfUnique(String folderName) throws MiddlewareException {
     	List<GermplasmList> duplicate = germplasmListManager.
             	getGermplasmListByName(folderName, 0, 1, null);
         if(duplicate!=null && !duplicate.isEmpty()) {

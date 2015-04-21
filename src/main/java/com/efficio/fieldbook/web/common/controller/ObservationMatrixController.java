@@ -500,10 +500,9 @@ public class ObservationMatrixController extends
     	return map;
     }
     protected boolean isNumericalValueOutOfBounds(String value, MeasurementVariable var){    	    	
-		if (var.getMinRange() != null && var.getMaxRange() != null) {			
-			if (NumberUtils.isNumber(value) && (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange())) {
-				return true;
-			}			
+		if (var.getMinRange() != null && var.getMaxRange() != null && 
+			NumberUtils.isNumber(value) && (Double.valueOf(value) < var.getMinRange() || Double.valueOf(value) > var.getMaxRange())) {
+			return true;
 		} 		
 		return false;
     }

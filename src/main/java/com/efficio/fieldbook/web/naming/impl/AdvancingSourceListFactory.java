@@ -64,65 +64,64 @@ public class AdvancingSourceListFactory {
         
         List<Integer> gids = new ArrayList<Integer>();
 
-        if (workbook != null) {
-            if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
-                for (MeasurementRow row : workbook.getObservations()) {
-                	
-                	ImportedGermplasm germplasm = createGermplasm(row);
-                	if (germplasm.getGid() != null && NumberUtils.isNumber(germplasm.getGid())) {
-                		gids.add(Integer.valueOf(germplasm.getGid()));
-                	}
-                    
-                    MeasurementRow trialRow = getTrialObservation(workbook, row.getLocationId());
-                    season = getSeason(trialRow);
-                    
-                    MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
-                    String check = null;
-                    if (checkData != null) {
-	                    check = checkData.getcValueId();
-	                    if (checkData != null && checkData.getMeasurementVariable() != null 
-	                    		&& checkData.getMeasurementVariable().getPossibleValues() != null
-	                    		&& !checkData.getMeasurementVariable().getPossibleValues().isEmpty()
-	                    		&& check != null 
-	                    		&& NumberUtils.isNumber(check)) {
-	                    	
-	                    	for (ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
-	                    		if (valref.getId().equals(Double.valueOf(check).intValue())) {
-	                    			check = valref.getName();
-	                    			break;
-	                    		}
+        if (workbook != null && workbook.getObservations() != null && 
+    		!workbook.getObservations().isEmpty()) {
+            for (MeasurementRow row : workbook.getObservations()) {
+            	
+            	ImportedGermplasm germplasm = createGermplasm(row);
+            	if (germplasm.getGid() != null && NumberUtils.isNumber(germplasm.getGid())) {
+            		gids.add(Integer.valueOf(germplasm.getGid()));
+            	}
+                
+                MeasurementRow trialRow = getTrialObservation(workbook, row.getLocationId());
+                season = getSeason(trialRow);
+                
+                MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
+                String check = null;
+                if (checkData != null) {
+                    check = checkData.getcValueId();
+                    if (checkData != null && checkData.getMeasurementVariable() != null 
+                    		&& checkData.getMeasurementVariable().getPossibleValues() != null
+                    		&& !checkData.getMeasurementVariable().getPossibleValues().isEmpty()
+                    		&& check != null 
+                    		&& NumberUtils.isNumber(check)) {
+                    	
+                    	for (ValueReference valref : checkData.getMeasurementVariable().getPossibleValues()) {
+                    		if (valref.getId().equals(Double.valueOf(check).intValue())) {
+                    			check = valref.getName();
+                    			break;
+                    		}
+                    	}
+                    }
+                }
+                boolean isCheck = check != null && !"".equals(check) && !DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
+
+                Integer methodId = null;
+                if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
+                    if (methodVariateId != null) {
+                    	methodId = getBreedingMethodId(methodVariateId, row, breedingMethodCodeMap);
+                    } 
+                } else {
+                	methodId = getIntegerValue(advanceInfo.getBreedingMethodId());
+                }
+
+                if (methodId != null) {
+                	Method breedingMethod = breedingMethodMap.get(methodId);
+	                Integer plantsSelected = null; 
+	                Boolean isBulk = breedingMethod.isBulkingMethod();
+	                if (isBulk != null) {
+	                	if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
+	                    	if (plotVariateId != null) {
+		                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(plotVariateId));
+	                    	}
+	                	} else {
+	                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
+	                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(lineVariateId));
 	                    	}
 	                    }
-                    }
-                    boolean isCheck = check != null && !"".equals(check) && !DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
-
-                    Integer methodId = null;
-                    if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
-                        if (methodVariateId != null) {
-                        	methodId = getBreedingMethodId(methodVariateId, row, breedingMethodCodeMap);
-                        } 
-                    } else {
-                    	methodId = getIntegerValue(advanceInfo.getBreedingMethodId());
-                    }
-
-                    if (methodId != null) {
-                    	Method breedingMethod = breedingMethodMap.get(methodId);
-		                Integer plantsSelected = null; 
-		                Boolean isBulk = breedingMethod.isBulkingMethod();
-		                if (isBulk != null) {
-		                	if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
-		                    	if (plotVariateId != null) {
-			                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(plotVariateId));
-		                    	}
-		                	} else {
-		                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
-		                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(lineVariateId));
-		                    	}
-		                    }
-			                rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, 
-			                					isCheck, nurseryName, season, locationAbbreviation));
-		                }
-                    }
+		                rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, 
+		                					isCheck, nurseryName, season, locationAbbreviation));
+	                }
                 }
             }
         }
@@ -249,7 +248,8 @@ public class AdvancingSourceListFactory {
     		String methodName = row.getMeasurementDataValue(methodVariateId);
     		if (NumberUtils.isNumber(methodName)) {
         		methodId = Double.valueOf(methodName).intValue();
-    		} else { //coming from old fb or other sources
+    		} else { 
+    			//coming from old fb or other sources
 	    		Set<String> keys = breedingMethodCodeMap.keySet();
 	    		Iterator<String> iterator = keys.iterator();
 	    		while (iterator.hasNext()) {

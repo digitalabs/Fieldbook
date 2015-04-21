@@ -63,12 +63,7 @@ public class ValidationServiceImpl implements ValidationService {
 			if(MISSING_VAL.equals(value.trim())){
 				return true;
 			}
-			if (!NumberUtils.isNumber(value)) {
-				return false;
-			} else {				
-				return true;
-			}
-			
+			return NumberUtils.isNumber(value);
 		} else if(validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId() && value != null && !"".equals(value.trim())){
 			return DateUtil.isValidDate(value);			
 		}else if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {

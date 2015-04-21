@@ -7,7 +7,7 @@ package com.efficio.fieldbook.web.naming.expression;
  */
 public class PoundGroupCountExpression extends GroupCountExpression{
 
-	public static final String KEY = "(#*[COUNT])";
+	public static final String KEY = "#*[COUNT]";
 
 	@Override public String getTargetCountExpression() {
 		return "-#";

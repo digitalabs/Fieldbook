@@ -7,7 +7,7 @@ package com.efficio.fieldbook.web.naming.expression;
  */
 public class BulkGroupCountExpression extends GroupCountExpression{
 
-	public static final String KEY = "(B*[COUNT])";
+	public static final String KEY = "B*[COUNT]";
 
 	@Override public String getExpressionKey() {
 		return KEY;

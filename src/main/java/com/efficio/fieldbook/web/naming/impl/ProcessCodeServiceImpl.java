@@ -18,17 +18,17 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 	private ProcessCodeFactory factory;
 	
 	@Override
-	public List<String> applyProcessCode(final String expression, final AdvancingSource source) {
+	public List<String> applyProcessCode(String currentInput, String processCode, final AdvancingSource source) {
 		List<String> newNames = new ArrayList<String>();
 
-		if (expression == null) {
+		if (processCode == null) {
 			return newNames;
 		}
 
 		final List<StringBuilder> builders = new ArrayList<StringBuilder>();
-		builders.add(new StringBuilder(expression));
+		builders.add(new StringBuilder(currentInput + processCode));
 		
-		ExpressionHelper.evaluateExpression(expression, "\\[([^\\]]*)]", new ExpressionHelperCallback() {
+		ExpressionHelper.evaluateExpression(processCode, "\\[([^\\]]*)]", new ExpressionHelperCallback() {
             @Override
             public void evaluateCapturedExpression(String capturedText, String originalInput, int start, int end) {
             	Expression expression = factory.create(capturedText);

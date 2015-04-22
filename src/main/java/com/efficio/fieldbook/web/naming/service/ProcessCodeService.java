@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ProcessCodeService {
 
-	List<String> applyProcessCode(String paddedExpression, AdvancingSource source);
+	List<String> applyProcessCode(String currentInput, String processCode, AdvancingSource source);
 }

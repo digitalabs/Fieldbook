@@ -28,7 +28,7 @@ public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 
 		for (String currentInput : input) {
 			counts.addAll(service.applyProcessCode(
-					currentInput + source.getBreedingMethod().getCount(), source));
+					currentInput, source.getBreedingMethod().getCount(), source));
 		}
 
 

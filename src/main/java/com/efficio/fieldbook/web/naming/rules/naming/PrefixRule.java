@@ -28,7 +28,7 @@ public class PrefixRule extends OrderedRule<NamingRuleExecutionContext> {
 		}
 
 		for (int i = 0; i < input.size(); i++) {
-			input.set(i, processCodeService.applyProcessCode(input.get(i) + prefix, advancingSource).get(
+			input.set(i, processCodeService.applyProcessCode(input.get(i) , prefix, advancingSource).get(
 					0));
 		}
 

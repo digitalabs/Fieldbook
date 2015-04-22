@@ -28,7 +28,7 @@ public class SuffixRule extends OrderedRule<NamingRuleExecutionContext> {
 		List<String> input = context.getCurrentData();
 
 		for (int i = 0; i < input.size(); i++) {
-			input.set(i, processCodeService.applyProcessCode(input.get(i) + suffix, advancingSource).get(0));
+			input.set(i, processCodeService.applyProcessCode(input.get(i), suffix, advancingSource).get(0));
 		}
 
 		context.setCurrentData(input);

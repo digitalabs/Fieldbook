@@ -28,7 +28,7 @@ public class SeparatorRule extends OrderedRule<NamingRuleExecutionContext> {
 		for (int i = 0; i < input.size(); i++) {
 			// some separator expressions perform operations on the root name, so we replace the current input with the result
 			input.set(i,
-					processCodeService.applyProcessCode(input.get(i) + separatorExpression, source)
+					processCodeService.applyProcessCode(input.get(i), separatorExpression, source)
 							.get(0));
 		}
 

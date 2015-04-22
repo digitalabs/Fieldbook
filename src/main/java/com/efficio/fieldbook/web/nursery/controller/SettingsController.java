@@ -11,12 +11,9 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +25,7 @@ import javax.annotation.Resource;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -58,10 +56,8 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SettingsController.
  */
@@ -123,7 +119,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             LOG.error(e.getMessage(), e);
         }
 		
-        return null;
+        return new ArrayList<TemplateSetting>();
     }
     
     /**
@@ -144,7 +140,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             LOG.error(e.getMessage(), e);
         }
 		
-        return null;
+        return new ArrayList<TemplateSetting>();
     }
     
     /**
@@ -161,7 +157,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             LOG.error(e.getMessage(), e);
         }
                 
-        return null;
+        return new ArrayList<StudyDetails>();
     }
     
     /**
@@ -178,7 +174,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             LOG.error(e.getMessage(), e);
         }
                 
-        return null;
+        return new ArrayList<StudyDetails>();
     }
     
     /**
@@ -254,7 +250,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination) throws MiddlewareQueryException{
         
         //create a map of id and its id-code-name combination
-        HashMap<String, String> idCodeNameMap = new HashMap<String, String>();
+        Map<String, String> idCodeNameMap = new HashMap<String, String>();
         if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
             StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
             if(tokenizer.hasMoreTokens()){
@@ -267,7 +263,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         }
         
         //save hidden conditions in a map
-        HashMap<String, SettingDetail> variablesMap = new HashMap<String, SettingDetail>();
+        Map<String, SettingDetail> variablesMap = new HashMap<String, SettingDetail>();
         if (variables != null) {
             for (SettingDetail variable : userSelection.getRemovedConditions()) {
                 variablesMap.put(variable.getVariable().getCvTermId().toString(), variable);
@@ -387,9 +383,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                     } else if (id == TermId.STUDY_UID.getId()) {
                         settingDetail.setValue(this.getCurrentIbdbUserId().toString());
                     } else if (id == TermId.STUDY_UPDATE.getId()) {
-                        DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
-                        Date date = new Date();
-                        settingDetail.setValue(dateFormat.format(date));
+                        settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
                     }
                     settingDetail.setPossibleValuesToJson(possibleValues);
                     List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID());
@@ -637,13 +631,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     }
 
     private void removeRemovedVariablesFromSession(List<SettingDetail> variableList, List<SettingDetail> removedVariableList) {
-        if (removedVariableList != null && variableList != null) {
-            for (SettingDetail setting : removedVariableList) {
-                Iterator<SettingDetail> iter = variableList.iterator();
-                while(iter.hasNext()) {
-                    if (iter.next().getVariable().getCvTermId().equals(setting.getVariable().getCvTermId())) {
-                        iter.remove();
-                    }
+    	if (removedVariableList == null || variableList == null) {
+    		return;
+    	}
+        for (SettingDetail setting : removedVariableList) {
+            Iterator<SettingDetail> iter = variableList.iterator();
+            while(iter.hasNext()) {
+                if (iter.next().getVariable().getCvTermId().equals(setting.getVariable().getCvTermId())) {
+                    iter.remove();
                 }
             }
         }
@@ -904,9 +899,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                 LOG.error(e.getMessage(), e);
             }
         } else if (termId.equals(Integer.valueOf(TermId.STUDY_UPDATE.getId()))) {
-            DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
-            Date date = new Date();
-            setting.setValue(dateFormat.format(date));
+            setting.setValue(DateUtil.getCurrentDateAsStringValue());
         }
 	}
 

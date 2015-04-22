@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -17,6 +19,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Germplasm;
@@ -42,6 +45,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
@@ -55,7 +59,7 @@ import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
+import org.generationcp.commons.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -296,25 +300,25 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     @ResponseBody
     @RequestMapping(value="/apply/change/details", method=RequestMethod.POST)
-    public String applyChangeDetails(@RequestParam(value="data") String userResponses) throws Exception {
+    public String applyChangeDetails(@RequestParam(value="data") String userResponses) throws FieldbookException {
     	UserSelection userSelection = (UserSelection) getUserSelection(false);
-    	ObjectMapper objectMapper = new ObjectMapper();
-    	GermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
+    	GermplasmChangeDetail[] responseDetails = getResponseDetails(userResponses);
     	List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
     	Map<String, Map<String, String>> changeMap = new HashMap<String, Map<String,String>>();
     	for (GermplasmChangeDetail responseDetail : responseDetails) {
     		if (responseDetail.getIndex() < observations.size()) {
     			MeasurementRow row = observations.get(responseDetail.getIndex());
-				int userId = this.getCurrentIbdbUserId();
+				int userId = getUserId();
 				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
 				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
 				MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
     			if (responseDetail.getStatus() == 1) { 
     				// add germplasm name to gid
     				String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
-					Integer dateInteger = Integer.valueOf(gDate); 
-    				fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), 
-    						Integer.valueOf(responseDetail.getOriginalGid()), userId, responseDetail.getNameType(), responseDetail.getImportLocationId(), dateInteger);
+					Integer dateInteger = Integer.valueOf(gDate);
+					addGermplasmName(responseDetail.getNewDesig(),
+							Integer.valueOf(responseDetail.getOriginalGid()),
+							userId, responseDetail.getNameType(), responseDetail.getImportLocationId(), dateInteger);
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(responseDetail.getOriginalGid());    				
     			} else if (responseDetail.getStatus() == 2) { 
@@ -324,7 +328,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     			    Name name = new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(), responseDetail.getImportLocationId(), dateInteger, 0);
     			    Germplasm germplasm = new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 
     			            0, responseDetail.getImportLocationId(), dateInteger, name);
-    				int newGid = fieldbookMiddlewareService.addGermplasm(germplasm, name);
+    				int newGid = addGermplasm(germplasm, name);
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(String.valueOf(newGid));
     			} else if (responseDetail.getStatus() == 3) { 
@@ -361,7 +365,49 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     }
     //germplasm trial entry plot - 345
     
-    private void populateConfirmationMessages(List<GermplasmChangeDetail> details) {
+    private int addGermplasm(Germplasm germplasm, Name name) throws FieldbookException {
+    	try {
+			return fieldbookMiddlewareService.addGermplasm(germplasm, name);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+			throw new FieldbookException(e.getMessage());
+		}
+	}
+	private void addGermplasmName(String nameValue, Integer gid, int userId,
+			int nameTypeId, int locationId, Integer date) throws FieldbookException {
+    	try {
+			fieldbookMiddlewareService.addGermplasmName(nameValue, 
+					gid, userId, nameTypeId, locationId, date);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+			throw new FieldbookException(e.getMessage());
+		}
+		
+	}
+	private int getUserId() throws FieldbookException {
+    	try {
+			return getCurrentIbdbUserId();
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+			throw new FieldbookException(e.getMessage());
+		}
+	}
+	private GermplasmChangeDetail[] getResponseDetails(String userResponses) throws FieldbookException {
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	try {
+			return objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
+		} catch (JsonParseException e) {
+			LOG.error(e.getMessage(),e);
+			throw new FieldbookException(e.getMessage());
+		} catch (JsonMappingException e) {
+			LOG.error(e.getMessage(),e);
+			throw new FieldbookException(e.getMessage());
+		} catch (IOException e) {
+			LOG.error(e.getMessage(),e);
+			throw new FieldbookException(e.getMessage());
+		}
+	}
+	private void populateConfirmationMessages(List<GermplasmChangeDetail> details) {
     	if (details != null && !details.isEmpty()) {
     		for (int index = 0 ; index < details.size() ; index++) {
     			String[] args = new String[] {String.valueOf(index+1), String.valueOf(details.size()), 
@@ -374,7 +420,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     }
 
     @RequestMapping(value="/import/save", method=RequestMethod.POST)
-    public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws Exception {
+    public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
     	UserSelection userSelection = (UserSelection) getUserSelection(false);
     	List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(
 								    			userSelection.getWorkbook().getVariates(), 
@@ -422,7 +468,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     
     @RequestMapping(value="/import/preview", method=RequestMethod.POST)
-    public String previewImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws Exception {
+    public String previewImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	UserSelection userSelection = (UserSelection) getUserSelection(false);
     	List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(
 								    			userSelection.getWorkbook().getVariates(), 
@@ -440,7 +486,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     @ResponseBody
     @RequestMapping(value="/retrieve/new/import/variables", method=RequestMethod.GET)
-    public Map<String, String> getNewlyImportedTraits() throws Exception {
+    public Map<String, String> getNewlyImportedTraits() throws IOException {
     	UserSelection userSelection = (UserSelection) getUserSelection(false);
     	ObjectMapper objectMapper = new ObjectMapper();
     	Map<String, String> map = new HashMap<String, String>();

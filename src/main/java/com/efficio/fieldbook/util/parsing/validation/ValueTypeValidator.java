@@ -1,8 +1,7 @@
 package com.efficio.fieldbook.util.parsing.validation;
 
-
-import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
+import org.generationcp.commons.util.DateUtil;
 
 import java.util.Date;
 

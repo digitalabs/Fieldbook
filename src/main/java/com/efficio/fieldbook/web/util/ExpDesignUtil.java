@@ -14,6 +14,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -329,7 +330,7 @@ public class ExpDesignUtil {
 			List<TreatmentVariable> treatmentVariables, List<StandardVariable> requiredExpDesignVariable, 
 			List<ImportedGermplasm> germplasmList, MainDesign mainDesign, WorkbenchService workbenchService, 
 			FieldbookProperties fieldbookProperties, String entryNumberIdentifier, Map<String, List<String>> treatmentFactorValues, FieldbookService fieldbookService) 
-					throws JAXBException, IOException, MiddlewareQueryException, BVDesignException{
+					throws BVDesignException{
 		List<MeasurementRow> measurementRowList = new ArrayList<MeasurementRow>();
 		List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();			
 		varList.addAll(nonTrialFactors);
@@ -368,7 +369,7 @@ public class ExpDesignUtil {
 			try{
 				bvOutput = fieldbookService.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
 			}catch(Exception e){
-				LOG.error(e.getMessage());
+				LOG.error(e.getMessage(),e);
 				throw new BVDesignException("experiment.design.bv.exe.error.generate.generic.error");
 			}
 			if(bvOutput != null && bvOutput.isSuccess()){
@@ -378,8 +379,13 @@ public class ExpDesignUtil {
 						int germplasmIndex = Integer.valueOf(entryNo) - 1;
 						if(germplasmIndex >= 0 && germplasmIndex < germplasmList.size()){
 							ImportedGermplasm importedGermplasm = germplasmList.get(germplasmIndex);
-							MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo, factors, entryNo);
-							measurementRowList.add(row);
+							try {
+								MeasurementRow row = createMeasurementRow(varList, importedGermplasm, bvOutput.getEntryMap(counter), treatmentFactorValues, trialVariables, trialNo, factors, entryNo);
+								measurementRowList.add(row);
+							} catch (MiddlewareQueryException e) {
+								LOG.error(e.getMessage(),e);
+							}
+							
 						}
 					}
 				}

@@ -12,6 +12,7 @@ import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
@@ -213,7 +214,7 @@ public class CrossingSettingsControllerTest {
 		assertEquals(CrossingSettingsController.YEAR_INTERVAL, harvestYears.size());
 
 		String firstDisplayed = harvestYears.get(0);
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = DateUtil.getCalendarInstance();
 
 		assertEquals(Integer.toString(cal.get(Calendar.YEAR)), firstDisplayed);
 	}

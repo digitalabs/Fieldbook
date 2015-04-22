@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -49,7 +50,6 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 
 /**
  * The Class ImportGermplasmFileServiceImpl.
@@ -326,11 +326,13 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             String labelIdentifier = getCellStringValue(0, 2, 0, true);
             
             if(AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelIdentifier)){
-            	listDate = DateUtil.parseDate(getCellStringValue(0, 2, 1, true));
+            	listDate = DateUtil.parseDate(getCellStringValue(0, 2, 1, true),
+            			DateUtil.DATE_AS_NUMBER_FORMAT);
             	listType = getCellStringValue(0, 3, 1, true);
             }else if(AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelIdentifier)){            	
             	listType = getCellStringValue(0, 2, 1, true);
-            	listDate = DateUtil.parseDate(getCellStringValue(0, 3, 1, true));
+            	listDate = DateUtil.parseDate(getCellStringValue(0, 3, 1, true),
+            			DateUtil.DATE_AS_NUMBER_FORMAT);
             }
             
 
@@ -360,22 +362,26 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                         .equalsIgnoreCase(AppConstants.CONDITION.getString()) 
             || !getCellStringValue(currentSheet,currentRow,1,true)
                         .equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
-            || !getCellStringValue(currentSheet,currentRow,2,true)
-                        .equalsIgnoreCase(AppConstants.PROPERTY.getString())
-            || !getCellStringValue(currentSheet,currentRow,3,true)
-                        .equalsIgnoreCase(AppConstants.SCALE.getString())
-            || !getCellStringValue(currentSheet,currentRow,4,true)
-                        .equalsIgnoreCase(AppConstants.METHOD.getString())
-            || !getCellStringValue(currentSheet,currentRow,5,true)
-                        .equalsIgnoreCase(AppConstants.DATA_TYPE.getString())
             || !getCellStringValue(currentSheet,currentRow,6,true)
-                        .equalsIgnoreCase(AppConstants.VALUE.getString())
-            ){
+                        .equalsIgnoreCase(AppConstants.VALUE.getString())){
         	//for now we dont flag as an error
         	//Skip row from file info
         	currentRow++; 
         	return;
         }
+        if(!getCellStringValue(currentSheet,currentRow,2,true)
+		                .equalsIgnoreCase(AppConstants.PROPERTY.getString())
+		    || !getCellStringValue(currentSheet,currentRow,3,true)
+		                .equalsIgnoreCase(AppConstants.SCALE.getString())
+		    || !getCellStringValue(currentSheet,currentRow,4,true)
+		                .equalsIgnoreCase(AppConstants.METHOD.getString())
+		    || !getCellStringValue(currentSheet,currentRow,5,true)
+		                .equalsIgnoreCase(AppConstants.DATA_TYPE.getString())){
+			//for now we dont flag as an error
+			//Skip row from file info
+			currentRow++; 
+			return;
+		}
         //If file is still valid (after checking headers), proceed
         if(fileIsValid){
             ImportedCondition importedCondition;
@@ -408,19 +414,22 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         if(!getCellStringValue(currentSheet,currentRow,0,true)
                         .equalsIgnoreCase(AppConstants.FACTOR.getString()) 
             || !getCellStringValue(currentSheet,currentRow,1,true)
-                        .equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
-            || !getCellStringValue(currentSheet,currentRow,2,true)
-                        .equalsIgnoreCase(AppConstants.PROPERTY.getString())
-            || !getCellStringValue(currentSheet,currentRow,3,true)
-                        .equalsIgnoreCase(AppConstants.SCALE.getString())
-            || !getCellStringValue(currentSheet,currentRow,4,true)
-                        .equalsIgnoreCase(AppConstants.METHOD.getString())
-            || !getCellStringValue(currentSheet,currentRow,5,true)
-                        .equalsIgnoreCase(AppConstants.DATA_TYPE.getString())
-            ) {
+                        .equalsIgnoreCase(AppConstants.DESCRIPTION.getString())) {
             showInvalidFileError("Incorrect headers for factors.");
             LOG.debug("Invalid file on readFactors header");
         }
+        if(!getCellStringValue(currentSheet,currentRow,2,true)
+		                .equalsIgnoreCase(AppConstants.PROPERTY.getString())
+		    || !getCellStringValue(currentSheet,currentRow,3,true)
+		                .equalsIgnoreCase(AppConstants.SCALE.getString())
+		    || !getCellStringValue(currentSheet,currentRow,4,true)
+		                .equalsIgnoreCase(AppConstants.METHOD.getString())
+		    || !getCellStringValue(currentSheet,currentRow,5,true)
+		                .equalsIgnoreCase(AppConstants.DATA_TYPE.getString())
+		    ) {
+		    showInvalidFileError("Incorrect headers for factors.");
+		    LOG.debug("Invalid file on readFactors header");
+		}
         //If file is still valid (after checking headers), proceed
         if(fileIsValid){
             ImportedFactor importedFactor;   

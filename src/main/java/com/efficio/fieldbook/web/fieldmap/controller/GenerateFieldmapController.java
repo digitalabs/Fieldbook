@@ -22,8 +22,8 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
-import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -195,7 +195,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 
 	protected String makeSafeFileName(String filename) {
 		return filename.replace(" ", "") + "-"
-				+ DateUtil.getCurrentDate() + ".xls";
+				+ DateUtil.getCurrentDateAsStringValue() + ".xls";
 	}
 
 	protected void writeXlsToOutputStream(HttpServletResponse response, File xls)

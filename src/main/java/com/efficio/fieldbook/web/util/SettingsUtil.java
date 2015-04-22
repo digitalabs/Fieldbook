@@ -34,6 +34,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
+import org.generationcp.commons.util.DateUtil;
 
 import java.util.*;
 
@@ -46,7 +47,10 @@ public class SettingsUtil {
      * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
-
+    public static final List<String> HIDDEN_FIELDS = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
+    public static final List<String> TRIAL_BASIC_REQUIRED_FIELDS = Arrays.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString().split(","));
+    public static final List<String> NURSERY_BASIC_REQUIRED_FIELDS = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
+    
     private SettingsUtil() {
 		// do nothing
 	}
@@ -60,13 +64,6 @@ public class SettingsUtil {
         finalName = finalName.replaceAll("[:\\\\/*?|<>]", "_");       
         return finalName;
     }
-
-    public static final List<String> HIDDEN_FIELDS = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
-
-    public static final List<String> TRIAL_BASIC_REQUIRED_FIELDS = Arrays.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString().split(","));
-
-    public static final List<String> NURSERY_BASIC_REQUIRED_FIELDS = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
-
 
     /**
      * Get standard variable.

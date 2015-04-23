@@ -11,45 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.ruleengine.RuleException;
-import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.Enumeration;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -69,6 +30,37 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Property;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.UserDataManager;
+import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -97,6 +89,9 @@ public class FieldbookServiceImpl implements FieldbookService {
     
     @Resource
     private ContextUtil contextUtil;
+
+    @Resource
+    private UserDataManager userDataManager;
     
     //@Resource(name = "BVDesignRunner")
     @Resource
@@ -377,7 +372,8 @@ public class FieldbookServiceImpl implements FieldbookService {
     private List<ValueReference> getFavoriteBreedingMethods(List<Integer> methodIDList, boolean isFilterOutGenerative)
             throws MiddlewareQueryException {
         List<ValueReference> list = new ArrayList<ValueReference>();
-        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList, isFilterOutGenerative);
+        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList,
+                isFilterOutGenerative);
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
@@ -391,7 +387,8 @@ public class FieldbookServiceImpl implements FieldbookService {
     @Override
     public List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative, String programUUID) throws MiddlewareQueryException {
         List<ValueReference> list = new ArrayList<ValueReference>();
-        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(isFilterOutGenerative);
+        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(
+                isFilterOutGenerative);
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null 
@@ -472,7 +469,7 @@ public class FieldbookServiceImpl implements FieldbookService {
         } else if (TermId.LOCATION_ID.getId() == id) {
             return getLocationById(valueId.intValue());
         } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id || TermId.STUDY_UID.getId() == id) {
-            return getPersonById(valueId.intValue());
+            return getPersonByPersonId(valueId.intValue());
         } else if (isCategorical) {
             Term term = ontologyService.getTermById(valueId.intValue());
             if (term != null) {
@@ -517,13 +514,33 @@ public class FieldbookServiceImpl implements FieldbookService {
     }
 
     @Override
-    public String getPersonById(int id) throws MiddlewareQueryException {
-        Person person = fieldbookMiddlewareService.getPersonById(id);
+    public String getPersonByPersonId(int personId) throws MiddlewareQueryException {
+        Person person = userDataManager.getPersonById(personId);
         if (person != null) {
             return person.getDisplayName();
         }
-        return null;
+        return "";
     }
+
+    @Override
+    public String getPersonByUserId(int userId) throws MiddlewareQueryException {
+        User user = userDataManager.getUserById(userId);
+
+        if (user == null) {
+            return "";
+        }
+
+        Person person = userDataManager.getPersonById(user.getPersonid());
+
+        if (person != null) {
+            return person.getDisplayName();
+        }
+
+        return "";
+    }
+
+
+
 
     @Override
     public Term getTermById(int termId) throws MiddlewareQueryException {

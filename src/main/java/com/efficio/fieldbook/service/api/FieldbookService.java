@@ -11,12 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.service.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
+import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -27,14 +29,11 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
-import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -132,8 +131,10 @@ public interface FieldbookService {
      * @return the person by id
      * @throws MiddlewareQueryException the middleware query exception
      */
-    String getPersonById(int id) throws MiddlewareQueryException;
-    
+    String getPersonByPersonId(int id) throws MiddlewareQueryException;
+
+    String getPersonByUserId(int userId) throws MiddlewareQueryException;
+
     /**
      * Gets the term by id.
      *

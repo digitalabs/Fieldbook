@@ -86,7 +86,7 @@ if (typeof ImportInventoryFunctions === 'undefined') {
             var url;
 
             if (source === 'advance') {
-                url = "/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/" + listId;
+                url = "/Fieldbook/germplasm/list/advance/" + listId;
             } else {
                 url = "/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/" + listId;
             }

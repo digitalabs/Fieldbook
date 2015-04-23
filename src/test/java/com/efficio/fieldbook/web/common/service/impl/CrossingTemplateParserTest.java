@@ -5,6 +5,7 @@ import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -37,9 +38,12 @@ public class CrossingTemplateParserTest {
 	public static final int OBSERVATION_HEADER_SIZE = 8;
 	public static final String RANDOM_STRING = "0";
 	private static final String STUDY_NAME = "testStudyName";
-	private static final Integer GENDER_ENTRY_NO = 1;
-	private final static int GERMPLASMLIST_ID = 0;
+	private static final Integer GENDER_PLOT_NO = 1;
 	private static final String PROGRAM_UUID = "123456789";
+
+	@Mock
+	private ContextUtil contextUtil;
+
 	@Mock
 	private StudyDataManager studyDataManager;
 	@Mock
@@ -50,12 +54,14 @@ public class CrossingTemplateParserTest {
 	private ImportedCrossesList importedCrossesList;
 	@Mock
 	private Map<String, Integer> observationColumnMap;
+
 	@InjectMocks
 	private CrossingTemplateParser parser;
 	private CrossingTemplateParser parserUnderTest;
 
 	@Before
 	public void beforeTest() throws Exception {
+		when(contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
 
 		FieldUtils.writeDeclaredField(parser, "importedCrossesList", importedCrossesList, true);
 
@@ -63,12 +69,14 @@ public class CrossingTemplateParserTest {
 
 		FieldUtils.writeDeclaredField(parser, "observationColumnMap", observationColumnMap, true);
 
+
 		parserUnderTest = spy(parser);
 	}
 
 	@Test
 	public void testParseFile() throws Exception {
-		doReturn(mock(Workbook.class)).when(parserUnderTest).storeAndRetrieveWorkbook(any(
+		Workbook mockWorkbook = mock(Workbook.class);
+		doReturn(mockWorkbook).when(parserUnderTest).storeAndRetrieveWorkbook(any(
 				MultipartFile.class));
 
 		doNothing().when(parserUnderTest).parseCrossingListDetails();
@@ -76,7 +84,11 @@ public class CrossingTemplateParserTest {
 		doNothing().when(parserUnderTest).parseFactors();
 		doNothing().when(parserUnderTest).parseConstants();
 		doNothing().when(parserUnderTest).parseVariate();
+
+		doNothing().when(parserUnderTest).parseDescriptionSheet();
 		doNothing().when(parserUnderTest).parseObservationSheet(PROGRAM_UUID);
+
+
 
 		parserUnderTest.parseFile(mock(MultipartFile.class));
 
@@ -302,34 +314,37 @@ public class CrossingTemplateParserTest {
 		when(fieldbookMiddlewareService
 				.getGermplasmListsByProjectId(STUDY_ID, GermplasmListType.NURSERY))
 				.thenReturn(germplasmList);
-		when(fieldbookMiddlewareService.getListDataProjectByListIdAndEntryNo(anyInt(), anyInt()))
+		when(fieldbookMiddlewareService.getListDataProjectByStudy(anyInt(),
+				eq(GermplasmListType.NURSERY), anyInt()))
 				.thenReturn(mock(ListDataProject.class));
 
 		ListDataProject results = parserUnderTest
-				.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO, PROGRAM_UUID);
+				.getCrossingListProjectData(STUDY_NAME, GENDER_PLOT_NO, PROGRAM_UUID);
 
 		verify(fieldbookMiddlewareService, times(1))
-				.getListDataProjectByListIdAndEntryNo(GERMPLASMLIST_ID, GENDER_ENTRY_NO);
+				.getListDataProjectByStudy(STUDY_ID, GermplasmListType.NURSERY, GENDER_PLOT_NO);
 
 		assertNotNull("should return a listdataproj obj", results);
 
 	}
 
-	@Test(expected = MiddlewareQueryException.class)
+	@Test(expected = FileParsingException.class)
 	public void testGetCrossingListProjectDataNoStudyFound() throws Exception {
-		when(studyDataManager.getStudyIdByNameAndProgramUUID(anyString(),anyString())).thenReturn(null);
+		when(studyDataManager.getStudyIdByNameAndProgramUUID(anyString(),anyString())).thenReturn(
+				null);
 
-		parserUnderTest.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO, PROGRAM_UUID);
+
+		parserUnderTest.getCrossingListProjectData(STUDY_NAME, GENDER_PLOT_NO, PROGRAM_UUID);
 	}
 
 	@Test(expected = MiddlewareQueryException.class)
 	public void testGetCrossingListProjectDataNoGermplasmListFound() throws Exception {
 		when(studyDataManager.getStudyIdByNameAndProgramUUID(anyString(),anyString())).thenReturn(STUDY_ID);
 		when(studyDataManager.getStudyType(STUDY_ID)).thenReturn(StudyType.N);
-		when(fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(STUDY_ID, GermplasmListType.NURSERY))
-				.thenReturn(new ArrayList<GermplasmList>());
+		when(fieldbookMiddlewareService.getListDataProjectByStudy(anyInt(),
+				eq(GermplasmListType.NURSERY), anyInt()))
+				.thenThrow(new MiddlewareQueryException("simulate middleware error"));
 
-		parserUnderTest.getCrossingListProjectData(STUDY_NAME, GENDER_ENTRY_NO, PROGRAM_UUID);
+		parserUnderTest.getCrossingListProjectData(STUDY_NAME, GENDER_PLOT_NO, PROGRAM_UUID);
 	}
 }

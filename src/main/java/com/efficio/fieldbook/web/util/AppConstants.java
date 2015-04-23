@@ -11,17 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.*;
 
 public enum AppConstants {
 
@@ -111,9 +106,9 @@ public enum AppConstants {
     , OBJECTIVE
 
     , FEMALE_NURSERY
-    , FEMALE_ENTRY
+    , FEMALE_PLOT
     , MALE_NURSERY
-    , MALE_ENTRY
+    , MALE_PLOT
     , BREEDING_METHOD
     , CROSSING_DATE
     , SEEDS_HARVESTED

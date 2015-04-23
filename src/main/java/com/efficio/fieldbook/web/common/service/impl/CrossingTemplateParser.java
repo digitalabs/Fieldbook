@@ -1,7 +1,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.util.parsing.AbstractExcelFileParser;
+import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import org.apache.commons.lang.StringUtils;
@@ -12,7 +12,6 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	}
 
-	@Override public ImportedCrossesList parseWorkbook(Workbook workbook) throws
+	@Override
+	public ImportedCrossesList parseWorkbook(Workbook workbook) throws
 			FileParsingException{
 		this.workbook = workbook;
 
@@ -114,12 +114,12 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			String femaleNursery = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
 					observationColumnMap.get(AppConstants.FEMALE_NURSERY.getString()));
-			String femaleEntry = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
-					observationColumnMap.get(AppConstants.FEMALE_ENTRY.getString()));
+			String femalePlotNo = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.FEMALE_PLOT.getString()));
 			String maleNursery = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
 					observationColumnMap.get(AppConstants.MALE_NURSERY.getString()));
-			String maleEntry = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
-					observationColumnMap.get(AppConstants.MALE_ENTRY.getString()));
+			String malePlotNo = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
+					observationColumnMap.get(AppConstants.MALE_PLOT.getString()));
 			String breedingMethod = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
 					observationColumnMap.get(AppConstants.BREEDING_METHOD.getString()));
 			String crossingDate = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
@@ -129,7 +129,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			String notes = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
 					observationColumnMap.get(AppConstants.NOTES.getString()));
 
-			if (!isObservationRowValid(femaleNursery, femaleEntry, maleNursery, maleEntry,
+			if (!isObservationRowValid(femaleNursery, femalePlotNo, maleNursery, malePlotNo,
 					crossingDate,
 					seedsHarvested)) {
 
@@ -138,9 +138,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 			// proceess female + male parent entries, will throw middleware query exception if no study valid or null
 			ListDataProject femaleListData = this
-					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femaleEntry),programUUID);
+					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femalePlotNo),programUUID);
 			ListDataProject maleListData = this
-					.getCrossingListProjectData(maleNursery, Integer.valueOf(maleEntry),programUUID);
+					.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo),programUUID);
 
 			this.importedCrossesList.addImportedCrosses(
 					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery,
@@ -156,12 +156,12 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				.getImportedVariates().size();
 	}
 
-	protected boolean isObservationRowValid(String femaleNursery, String femaleEntry,
-			String maleNursery, String maleEntry, String crossingDate, String seedsHarvested) {
-		return StringUtils.isNotBlank(femaleNursery) && StringUtils.isNotBlank(femaleEntry)
+	protected boolean isObservationRowValid(String femaleNursery, String femalePlot,
+			String maleNursery, String malePlot, String crossingDate, String seedsHarvested) {
+		return StringUtils.isNotBlank(femaleNursery) && StringUtils.isNotBlank(femalePlot)
 				&& StringUtils.isNotBlank(maleNursery) && StringUtils
-				.isNotBlank(maleEntry) && StringUtils.isNumeric(femaleEntry)
-				&& StringUtils.isNumeric(maleEntry) && (
+				.isNotBlank(malePlot) && StringUtils.isNumeric(femalePlot)
+				&& StringUtils.isNumeric(malePlot) && (
 				(!StringUtils.isNotBlank(seedsHarvested)) || StringUtils
 						.isNumeric(seedsHarvested)) && (
 				(!StringUtils.isNotBlank(crossingDate)) || DateUtil
@@ -442,36 +442,34 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	}
 
 	/**
-	 * Returns the ListProjectData given a female or male entries using the current entry position on the template.
+	 * Returns the ListProjectData given a female or male plot no using the current plot position on the template.
 	 *
 	 * @param studyName     - femaleNursery/maleNursery equivalent from the template
-	 * @param genderEntryNo - femaleEntry/maleEntry equivalent from the template
+	 * @param genderedPlotNo - femalePlot/malePlot equivalent from the template
 	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	protected ListDataProject getCrossingListProjectData(
-			String studyName, Integer genderEntryNo, String programUUID)
-			throws MiddlewareQueryException {
+			String studyName, Integer genderedPlotNo, String programUUID)
+			throws MiddlewareQueryException, FileParsingException {
 		// 1 get the particular study's list
 		final Integer studyId = studyDataManager.getStudyIdByNameAndProgramUUID(studyName,programUUID);
 
 		if (null == studyId) {
-			throw new MiddlewareQueryException("no.such.study.exists",
-					"No study with \"" + studyName + "\" exists.");
+			throw new FileParsingException("no.such.study.exists");
 		}
 
 		final StudyType studyType = studyDataManager.getStudyType(studyId);
 
 		// 2. retrieve the list id of the particular study
-		List<GermplasmList> germplasmList = fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(studyId, STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType));
+		ListDataProject listdataResult = fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
+				STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType),
+				genderedPlotNo);
 
-		if (null == germplasmList || germplasmList.isEmpty()) {
-			throw new MiddlewareQueryException("study.has.no.list",
-					"Study with \"" + studyName + "\" has no list.");
+		if (null == listdataResult) {
+			throw new FileParsingException("no.list.data.for.plot");
 		}
 
-		return fieldbookMiddlewareService.getListDataProjectByListIdAndEntryNo(
-				germplasmList.get(0).getId(), genderEntryNo);
+		return listdataResult;
 	}
 }

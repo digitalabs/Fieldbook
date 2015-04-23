@@ -1775,7 +1775,8 @@ function closeAdvanceListTab(uniqueId) {
 
 function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, advancedGermplasmListId) {
 	'use script';
-	var url = '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId;
+	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
+	var url = '/Fieldbook/germplasm/list/advance/' + id;
 	if(!isDefault){
 		$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
 		url += '?isSnapshot=0';

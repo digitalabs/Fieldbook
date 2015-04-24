@@ -21,23 +21,35 @@ public class GroupCountExpression implements Expression {
 		for (StringBuilder value : values) {
 			String currentValue = value.toString();
 			String countPrefix = getCountPrefix(currentValue);
-			String valueWithoutProcessCode = currentValue.replace(countPrefix + getExpressionKey(), "");
+			String valueWithoutProcessCode = currentValue.replace(countPrefix + getExpressionKey(),
+					"");
+
+			if (valueWithoutProcessCode.charAt(valueWithoutProcessCode.length() - 1) == '-') {
+				valueWithoutProcessCode = valueWithoutProcessCode.substring(0, valueWithoutProcessCode.length() - 1);
+			}
+
 			String targetCountExpression = getTargetCountExpression(countPrefix);
 			CountResultBean result = countContinuousExpressionOccurrence(targetCountExpression,
 					valueWithoutProcessCode);
 
 			if (result.getCount() > 2) {
-				currentValue = value.replace(result.getStart(), result.getEnd(), "").toString();
-				currentValue = currentValue.replace(countPrefix + getExpressionKey(),
-						targetCountExpression + "*" + String.valueOf(result.getCount()));
+				currentValue = cleanupString(new StringBuilder(valueWithoutProcessCode), result);
+				currentValue = currentValue +
+						targetCountExpression + "*" + String.valueOf(result.getCount());
 				value.delete(0, value.length());
 				value.append(currentValue);
 			} else {
 				value.delete(0, value.length());
-				value.append(currentValue.replace(countPrefix + getExpressionKey(), targetCountExpression));
+				value.append(valueWithoutProcessCode).append(targetCountExpression);
 			}
 
 		}
+	}
+
+	protected String cleanupString(StringBuilder value, CountResultBean result) {
+		value.replace(result.getStart(), result.getEnd(), "");
+
+		return value.toString();
 	}
 
 	protected String getCountPrefix(String input) {

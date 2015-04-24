@@ -21,9 +21,10 @@ public class GroupCountExpression implements Expression {
 		for (StringBuilder value : values) {
 			String currentValue = value.toString();
 			String countPrefix = getCountPrefix(currentValue);
+			String valueWithoutProcessCode = currentValue.replace(countPrefix + getExpressionKey(), "");
 			String targetCountExpression = getTargetCountExpression(countPrefix);
 			CountResultBean result = countContinuousExpressionOccurrence(targetCountExpression,
-					currentValue);
+					valueWithoutProcessCode);
 
 			if (result.getCount() > 2) {
 				currentValue = value.replace(result.getStart(), result.getEnd(), "").toString();

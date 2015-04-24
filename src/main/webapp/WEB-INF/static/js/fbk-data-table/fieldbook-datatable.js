@@ -908,19 +908,9 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 	var dataTableConstructor = function AdvancedGermplasmListDataTable(tableIdentifier, parentDiv, dataList) {
 		'use strict';
 		
-		var columns = [],
-		columnsDef = [],
-		germplasmDataTable;				
-
-		$(tableIdentifier + ' thead tr th').each(function(index) {
-			columns.push({data: $(this).data('col-name')});
-			
-		});
+		var germplasmDataTable;				
 
 		this.germplasmDataTable = $(tableIdentifier).dataTable({
-			data: dataList,
-			columns: columns,
-			columnDefs: columnsDef,			
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,
@@ -929,6 +919,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 		  fnDrawCallback: function( oSettings ) {
 			  makeDraggable(true);
 		    },
+		    
 		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {			
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);

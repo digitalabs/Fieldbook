@@ -173,6 +173,15 @@ public class SettingsUtilTest {
     @Test
     public void testcleanSheetAndFileNameWithInvalid(){
     	String cleanedName = SettingsUtil.cleanSheetAndFileName("Test[:\\\\/*?|<>]");
-    	Assert.assertEquals("String should be cleaned", "Test___________", cleanedName);
+    	Assert.assertEquals("String should be cleaned", "Test[_________]", cleanedName);
+    }
+    
+    @Test
+    public void testGetCodeInPossibleValues(){
+    	List<ValueReference> valueRefs = new ArrayList<ValueReference>();
+    	valueRefs.add(new ValueReference(8414, "1"));
+    	valueRefs.add(new ValueReference(8415, "2"));    	
+    	Assert.assertEquals("Should return 1 since the matching name for 8414 is 1", 1, SettingsUtil.getCodeInPossibleValues(valueRefs, "8414"));
+    	Assert.assertEquals("Should return 2 since the matching name for 8415 is 2", 2, SettingsUtil.getCodeInPossibleValues(valueRefs, "8415"));
     }
 }

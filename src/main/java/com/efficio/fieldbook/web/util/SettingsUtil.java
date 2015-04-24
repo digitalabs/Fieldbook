@@ -16,6 +16,7 @@ import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -2206,7 +2207,14 @@ public class SettingsUtil {
     	
     	return value;
     }
-    
+    public static int getCodeInPossibleValues(List<ValueReference> valueRefs, String settingDetailValue){    	
+		for(ValueReference valueRef : valueRefs){
+			if (valueRef.getId().equals(Integer.parseInt(settingDetailValue))) {
+				return Integer.parseInt(valueRef.getName());
+			}
+		}
+		return 0;
+    }
     public static int getCodeValue(String settingDetailValue, List<SettingDetail> removedConditions,
 			int termId) {
     	if (removedConditions != null) {

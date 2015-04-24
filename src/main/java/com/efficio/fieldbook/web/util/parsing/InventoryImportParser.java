@@ -46,11 +46,22 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		LOCATION,
 		AMOUNT,
 		SCALE,
-		COMMENT
+		COMMENT;
+
+		public static String[] names() {
+			InventoryHeaderLabels[] values = values();
+			String[] names = new String[values.length];
+
+			for (int i = 0; i < values.length; i++) {
+				names[i] = values[i].name();
+			}
+
+			return names;
+		}
 	}
 
 	public static final int INVENTORY_SHEET = 0;
-	public static final String[] HEADER_LABEL_ARRAY = convertEnumToStringArray();
+	public static final String[] HEADER_LABEL_ARRAY = InventoryHeaderLabels.names();
 
 	public static final int[] INVENTORY_SPECIFIC_COLUMNS =
 			new int[] {
@@ -72,7 +83,8 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	private List<Scale> scales;
 
-	@Override public ImportedInventoryList parseWorkbook(Workbook workbook)
+	@Override
+	public ImportedInventoryList parseWorkbook(Workbook workbook)
 			throws FileParsingException {
 
 		this.workbook = workbook;
@@ -137,7 +149,8 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		validationMap.addValidation(InventoryHeaderLabels.LOCATION.ordinal(), new ValueRangeValidator(buildAllowedLocationsList()));
 		validationMap.addValidation(InventoryHeaderLabels.AMOUNT.ordinal(), new ValueTypeValidator(Double.class));
 
-		validationMap.addValidation(InventoryHeaderLabels.SCALE.ordinal(), new ValueRangeValidator(buildAllowedScaleList()));
+		validationMap.addValidation(InventoryHeaderLabels.SCALE.ordinal(), new ValueRangeValidator(
+				buildAllowedScaleList()));
 
 		return validationMap;
 	}
@@ -254,20 +267,6 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 			return details;
 		}
-	}
-
-
-	// FIXME for extraction to a generic utility
-	public static String[] convertEnumToStringArray() {
-		InventoryHeaderLabels[] labels = InventoryHeaderLabels.values();
-		String[] stringArray = new String[labels.length];
-
-
-		for (InventoryHeaderLabels label : labels) {
-			stringArray[label.ordinal()] = label.name();
-		}
-
-		return stringArray;
 	}
 
 	public void setLocations(List<Location> locations) {

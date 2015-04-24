@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
+import com.efficio.fieldbook.util.parsing.DescriptionSheetParser;
 import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.util.parsing.AbstractExcelFileParser;
 import com.efficio.fieldbook.web.nursery.bean.*;
@@ -28,16 +29,8 @@ import java.util.*;
  */
 public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCrossesList> {
 
-	/**
-	 * The Constant FILE_INVALID.
-	 */
-	public static final String FILE_INVALID = "common.error.invalid.file";
 	public static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
-	public static final String TEMPLATE_LIST_TYPE = "LST";
-	public static final int DESCRIPTION_SHEET_COL_SIZE = 8;
-	protected static final int DESCRIPTION_SHEET_NO = 0;
 	protected static final int OBSERVATION_SHEET_NO = 1;
-	protected static final int CONDITION_ROW_NO = 5;
 
 	/**
 	 * The Constant LOG.
@@ -67,16 +60,23 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	@Resource
 	private ContextUtil contextUtil;
 
+	private DescriptionSheetParser<ImportedCrossesList> descriptionSheetParser;
+
 	public CrossingTemplateParser() {
 
 	}
 
-	@Override public ImportedCrossesList parseWorkbook(Workbook workbook) throws
-			FileParsingException{
+	@Override
+	public ImportedCrossesList parseWorkbook(Workbook workbook) throws
+			FileParsingException {
 		this.workbook = workbook;
+		this.importedCrossesList = new ImportedCrossesList();
 
 		try {
-			parseDescriptionSheet();
+			descriptionSheetParser = new DescriptionSheetParser<>(importedCrossesList,workbook);
+
+			descriptionSheetParser.parseDescriptionSheet();
+
 			parseObservationSheet(contextUtil.getCurrentProgramUUID());
 		} catch (ParseException e) {
 			LOG.debug(e.getMessage(), e);
@@ -87,14 +87,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 
 		return importedCrossesList;
-	}
-
-	protected void parseDescriptionSheet() throws FileParsingException, ParseException {
-		parseCrossingListDetails();
-		parseConditions();
-		parseFactors();
-		parseConstants();
-		parseVariate();
 	}
 
 	/**
@@ -110,7 +102,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		currentRow = 1;
 		while (importFileIsValid && !isRowEmpty(OBSERVATION_SHEET_NO, currentRow,
-				sizeOfObservationHeader())) {
+				importedCrossesList.sizeOfObservationHeader())) {
 
 			String femaleNursery = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
 					observationColumnMap.get(AppConstants.FEMALE_NURSERY.getString()));
@@ -151,11 +143,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 	}
 
-	protected int sizeOfObservationHeader() {
-		return importedCrossesList.getImportedFactors().size() + importedCrossesList
-				.getImportedVariates().size();
-	}
-
 	protected boolean isObservationRowValid(String femaleNursery, String femaleEntry,
 			String maleNursery, String maleEntry, String crossingDate, String seedsHarvested) {
 		return StringUtils.isNotBlank(femaleNursery) && StringUtils.isNotBlank(femaleEntry)
@@ -167,229 +154,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				(!StringUtils.isNotBlank(crossingDate)) || DateUtil
 						.isValidDate(crossingDate));
 	}
-
-	protected void parseCrossingListDetails() throws FileParsingException, ParseException {
-		String listName = getCellStringValue(DESCRIPTION_SHEET_NO, 0, 1);
-		String listTitle = getCellStringValue(DESCRIPTION_SHEET_NO, 1, 1);
-
-		String labelId = getCellStringValue(DESCRIPTION_SHEET_NO, 2, 0);
-
-		int listDateColNo = AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
-		int listTypeColNo = AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
-
-		Date listDate = DateUtil.parseDate(
-				getCellStringValue(DESCRIPTION_SHEET_NO, listDateColNo, 1));
-		String listType = getCellStringValue(DESCRIPTION_SHEET_NO, listTypeColNo, 1);
-
-		this.importedCrossesList = new ImportedCrossesList(originalFilename, listName,
-				listTitle, listType, listDate);
-
-		if (!TEMPLATE_LIST_TYPE.equalsIgnoreCase(listType)) {
-			throw new FileParsingException("Error parsing details : List type is invalid");
-		}
-	}
-
-	protected void parseConditions() {
-		// condition headers start at row = 5 (+ 1 : count starts from 0 )
-		currentRow = CONDITION_ROW_NO;
-
-		if (!isConditionHeadersInvalid(CONDITION_ROW_NO) && importFileIsValid) {
-			currentRow++;
-
-			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-				this.importedCrossesList.addImportedCondition(
-						new ImportedCondition(
-								getCellStringValue(DESCRIPTION_SHEET_NO,
-										currentRow, 0)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 1)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 2)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 3)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 4)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 5)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 6),
-								""
-						)
-				);
-
-				currentRow++;
-			}
-		}
-
-		while (isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-			currentRow++;
-		}
-	}
-
-	protected void parseFactors() throws FileParsingException{
-
-		if (!isFactorHeadersInvalid(currentRow) && importFileIsValid) {
-			currentRow++;
-
-			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-				final ImportedFactor factor = new ImportedFactor(
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								0)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								1)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								2)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								3)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								4)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								5)
-						, "");
-
-				importedCrossesList.addImportedFactor(factor);
-
-				currentRow++;
-			}
-
-			currentRow++;
-
-		} else {
-			throw new FileParsingException("Error parsing on factors header: Incorrect headers for factors.");
-		}
-
-		while (isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-			currentRow++;
-		}
-	}
-
-	protected void parseConstants() throws FileParsingException{
-		if (!isConstantsHeaderInvalid(currentRow) && importFileIsValid) {
-			currentRow++;
-			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-				importedCrossesList.addImportedConstant(new ImportedConstant(
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								0)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								1)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								2)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								3)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								4)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								5)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								6)));
-
-				currentRow++;
-			}
-			currentRow++;
-
-		} else {
-			// Incorrect headers for factors.
-			throw new FileParsingException("Error parsing on constants header: Incorrect headers for constants.");
-		}
-
-		while (isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-			currentRow++;
-		}
-	}
-
-	protected void parseVariate() throws FileParsingException{
-		if (!isVariateHeaderInvalid(currentRow) && importFileIsValid) {
-			currentRow++;
-			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-				importedCrossesList.addImportedVariate(
-						new ImportedVariate(
-								getCellStringValue(DESCRIPTION_SHEET_NO,
-										currentRow, 0)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 1)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 2)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 3)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 4)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 5)));
-				currentRow++;
-			}
-
-		} else {
-			throw new FileParsingException("Error parsing on variates header: Incorrect headers for variates.");
-		}
-	}
-
-	protected boolean isConditionHeadersInvalid(int conditionHeaderRowNo) {
-		String[] headers = {
-				AppConstants.CONDITION.getString(),
-				AppConstants.DESCRIPTION.getString(),
-				AppConstants.PROPERTY.getString(),
-				AppConstants.SCALE.getString(),
-				AppConstants.METHOD.getString(),
-				AppConstants.DATA_TYPE.getString(),
-				AppConstants.VALUE.getString()
-		};
-
-		return isHeaderInvalid(conditionHeaderRowNo, DESCRIPTION_SHEET_NO, headers);
-	}
-
-
-
-	protected boolean isFactorHeadersInvalid(int factorHeaderRowNo) {
-		String[] headers = {
-				AppConstants.FACTOR.getString(),
-				AppConstants.DESCRIPTION.getString(),
-				AppConstants.PROPERTY.getString(),
-				AppConstants.SCALE.getString(),
-				AppConstants.METHOD.getString(),
-				AppConstants.DATA_TYPE.getString()
-		};
-
-		return isHeaderInvalid(factorHeaderRowNo,DESCRIPTION_SHEET_NO, headers);
-	}
-
-	protected boolean isConstantsHeaderInvalid(int constantHeaderRowNo) {
-		String[] headers = {
-				AppConstants.CONSTANT.getString(),
-				AppConstants.DESCRIPTION.getString(),
-				AppConstants.PROPERTY.getString(),
-				AppConstants.SCALE.getString(),
-				AppConstants.METHOD.getString(),
-				AppConstants.DATA_TYPE.getString(),
-				AppConstants.VALUE.getString()
-		};
-
-		return isHeaderInvalid(constantHeaderRowNo, DESCRIPTION_SHEET_NO,headers);
-	}
-
-	protected boolean isVariateHeaderInvalid(int variateHeaderRowNo) {
-		String headers[] = {
-			AppConstants.VARIATE.getString(),
-				AppConstants.DESCRIPTION.getString(),
-				AppConstants.PROPERTY.getString(),
-				AppConstants.SCALE.getString(),
-				AppConstants.METHOD.getString(),
-				AppConstants.DATA_TYPE.getString()
-		};
-
-		return isHeaderInvalid(variateHeaderRowNo, DESCRIPTION_SHEET_NO, headers);
-	}
-
 
 	protected boolean isObservationsHeaderInvalid() {
 		final List<ImportedFactor> importedFactors = new ArrayList<ImportedFactor>() {
@@ -420,7 +184,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		importedVariates.addAll(importedCrossesList.getImportedVariates());
 
-		final int headerSize = sizeOfObservationHeader();
+		final int headerSize = importedCrossesList.sizeOfObservationHeader();
 
 		for (int i = 0; i < headerSize; i++) {
 			// search the current header

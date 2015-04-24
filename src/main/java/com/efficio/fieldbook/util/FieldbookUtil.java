@@ -19,6 +19,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.efficio.fieldbook.web.util.AppConstants;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
@@ -108,5 +110,7 @@ public class FieldbookUtil {
       return newFilename;
   }
 
-  
+  public static String generateEntryCode(int index) {
+      return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
+  }
 }

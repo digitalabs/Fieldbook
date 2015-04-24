@@ -210,4 +210,39 @@ public class AdvancingControllerTest {
 		doNothing().when(paginationListSelection).addAdvanceDetails(anyString(), eq(form));
 
 	}
+	@Test
+	public void testDeleteImportedGermplasmEntriesIfDeleted(){
+		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
+		for(int i = 0 ; i < 10 ; i++){
+			ImportedGermplasm germplasm = new ImportedGermplasm();
+			germplasm.setEntryId(i);
+			importedGermplasms.add(germplasm);
+		}
+		String entries[] = {"1","2","3"};
+		importedGermplasms = advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
+		Assert.assertEquals("Should have a total of 7 germplasms remaining", 7, importedGermplasms.size());
+	}
+	
+	private List<ImportedGermplasm> generateGermplasm(){
+		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
+		for(int i = 0 ; i < 10 ; i++){
+			ImportedGermplasm germplasm = new ImportedGermplasm();
+			germplasm.setEntryId(i);
+			importedGermplasms.add(germplasm);
+		}
+		return importedGermplasms;
+	}
+	@Test
+	public void testDeleteImportedGermplasmEntriesIfNoneDeleted(){
+		List<ImportedGermplasm> importedGermplasms = generateGermplasm();
+		String entries[] = {};
+		importedGermplasms = advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
+		Assert.assertEquals("Should have a total of 10 germplasms, since nothing is deleted", 10, importedGermplasms.size());
+	}
+	@Test
+	public void testSetupAdvanceReviewDataList(){
+		List<ImportedGermplasm> importedGermplasms = generateGermplasm();
+		List<Map<String, Object>> mapInfos = advancingController.setupAdvanceReviewDataList(importedGermplasms);
+		Assert.assertEquals("Should have the same number of records", importedGermplasms.size(), mapInfos.size());
+	}
 }

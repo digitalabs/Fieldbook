@@ -28,8 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.ruleengine.RuleException;
@@ -60,6 +58,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
@@ -361,7 +360,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     @ResponseBody
     @RequestMapping(value="/apply/change/details", method=RequestMethod.POST)
-    public Map<String, Object> applyChangeDetails(@RequestParam(value="data") String userResponses) throws JsonParseException, JsonMappingException, IOException {
+    public Map<String, Object> applyChangeDetails(@RequestParam(value="data") String userResponses) throws IOException {
     	Map<String, Object> results = new HashMap<>();
     	ObjectMapper objectMapper = new ObjectMapper();
     	AdvanceGermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, AdvanceGermplasmChangeDetail[].class);
@@ -406,8 +405,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     public String showAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, 
     		BindingResult result, Model model, HttpServletRequest req) throws MiddlewareQueryException{
         
-       
-        try {
+    	try {
         	/* The imported germplasm list. */
             List<ImportedGermplasm> importedGermplasmList = userSelection
                     .getImportedAdvancedGermplasmList();
@@ -418,16 +416,47 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             form.setUniqueId(Long.valueOf(uniqueId));
             
             
-            List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-            for(ImportedGermplasm germplasm : importedGermplasmList){
-				Map<String, Object> dataMap = new HashMap<>();
-				dataMap.put("desig", germplasm.getDesig());
-				dataMap.put("gid", "Pending");
-				dataMap.put("entry", germplasm.getEntryId());
-				dataMap.put("source", germplasm.getSource());
-				dataMap.put("parentage", germplasm.getCross());
-				dataTableDataList.add(dataMap);
-            }
+            List<Map<String, Object>> dataTableDataList = setupAdvanceReviewDataList(importedGermplasmList);
+            
+            model.addAttribute("advanceDataList", dataTableDataList);
+            model.addAttribute(TABLE_HEADER_LIST, getAdvancedNurseryTableHeader());
+        } catch (Exception e) {
+        	LOG.error(e.getMessage(),e);
+        	form.setErrorInAdvance(e.getMessage());
+        	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
+        	form.setEntries(0);
+        }
+    	
+        
+       
+    	return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
+    }
+    
+    @RequestMapping(value="/delete/entries", method = RequestMethod.POST)
+    public String deleteAdvanceNurseryEntries(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, 
+    		BindingResult result, Model model, HttpServletRequest req) throws MiddlewareQueryException{
+        
+       
+        try {
+        	/* The imported germplasm list. */
+            List<ImportedGermplasm> importedGermplasmList = userSelection
+                    .getImportedAdvancedGermplasmList();
+            
+            String entryNumbers = req.getParameter("entryNums");
+            String[] entries = entryNumbers.split(",");
+            importedGermplasmList = deleteImportedGermplasmEntries(importedGermplasmList, entries);
+            userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
+            
+            form.setGermplasmList(importedGermplasmList);
+            form.setEntries(importedGermplasmList.size());
+            form.changePage(1);
+            String uniqueId = req.getParameter("uniqueId");
+            form.setUniqueId(Long.valueOf(uniqueId));            
+            
+            
+            List<Map<String, Object>> dataTableDataList = setupAdvanceReviewDataList(importedGermplasmList);
+            //remove the entry numbers 
+            
             model.addAttribute("advanceDataList", dataTableDataList);
             model.addAttribute(TABLE_HEADER_LIST, getAdvancedNurseryTableHeader());
         } catch (Exception e) {
@@ -437,8 +466,51 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         	form.setEntries(0);
         }
         
-       
+        
+        
     	return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
+    }
+    
+    protected List<ImportedGermplasm> deleteImportedGermplasmEntries(List<ImportedGermplasm> importedGermplasmList, String[] entries){
+            for(int j = 0 ; j < entries.length ; j++){
+            	//we remove the matching entries from the germplasm list
+            	String entryNumber = entries[j];
+            	boolean isFound = false;
+            	int i = 0;
+            	for(i = 0 ; i < importedGermplasmList.size() ; i++){
+            		ImportedGermplasm germplasm = importedGermplasmList.get(i);
+            		if(germplasm.getEntryId().toString().equalsIgnoreCase(entryNumber)){
+            			isFound = true;
+            			break;
+            		}
+            	}
+            	if(isFound){
+            		importedGermplasmList.remove(i);
+            	}
+            }
+            //now we need to set the entry id again
+            for(int i = 0 ; i < importedGermplasmList.size() ; i++){
+            	Integer newEntryId = i+1;
+            	importedGermplasmList.get(i).setEntryId(newEntryId);
+            	importedGermplasmList.get(i).setEntryCode(FieldbookUtil.generateEntryCode(newEntryId));
+            	
+            }
+        
+    	return importedGermplasmList;
+    }
+    
+    protected List<Map<String, Object>> setupAdvanceReviewDataList(List<ImportedGermplasm> importedGermplasmList){
+    	List<Map<String, Object>> dataTableDataList = new ArrayList<>();
+        for(ImportedGermplasm germplasm : importedGermplasmList){
+			Map<String, Object> dataMap = new HashMap<>();
+			dataMap.put("desig", germplasm.getDesig());
+			dataMap.put("gid", "Pending");
+			dataMap.put("entry", germplasm.getEntryId());
+			dataMap.put("source", germplasm.getSource());
+			dataMap.put("parentage", germplasm.getCross());
+			dataTableDataList.add(dataMap);
+        }
+        return dataTableDataList;
     }
     
     protected List<TableHeader> getAdvancedNurseryTableHeader(){

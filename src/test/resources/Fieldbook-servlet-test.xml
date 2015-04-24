@@ -353,24 +353,18 @@
     </bean>
 
 	<bean id="importInventoryService" class="com.efficio.fieldbook.web.common.service.impl.ImportInventoryServiceImpl">
-	        <aop:scoped-proxy/>
-	    </bean>
-
-	    <bean id="inventoryImportParser" class="com.efficio.fieldbook.web.util.parsing.InventoryImportParser" scope="prototype">
-	        <aop:scoped-proxy/>
-	    </bean>
-
-	<bean id="pedigreeService" factory-bean="managerFactory"
-          factory-method="getPedigreeService"
-          scope="request">
         <aop:scoped-proxy/>
     </bean>
-    
-    <bean id="pedigreeService" class="org.generationcp.middleware.service.PedigreeDefaultServiceImpl">
+
+    <bean id="inventoryImportParser" class="com.efficio.fieldbook.web.util.parsing.InventoryImportParser" scope="prototype">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="pedigreeService" class="org.generationcp.middleware.service.pedigree.PedigreeDefaultServiceImpl">
     	<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
     
-	<bean id="crossExpansionProperties" class = "org.generationcp.commons.util.CrossExpansionProperties">
+	<bean id="crossExpansionProperties" class = "org.generationcp.middleware.util.CrossExpansionProperties">
         <property name="wheatLevel" value="0" />
         <property name="defaultLevel" value="1" />
     </bean>

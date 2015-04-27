@@ -70,17 +70,12 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	public ImportedCrossesList parseWorkbook(Workbook workbook) throws
 			FileParsingException {
 		this.workbook = workbook;
-		this.importedCrossesList = new ImportedCrossesList();
-
 		try {
-			descriptionSheetParser = new DescriptionSheetParser<>(importedCrossesList,workbook);
+			descriptionSheetParser = new DescriptionSheetParser<>(new ImportedCrossesList());
 
-			descriptionSheetParser.parseDescriptionSheet();
+			this.importedCrossesList = descriptionSheetParser.parseWorkbook(this.workbook);
 
 			parseObservationSheet(contextUtil.getCurrentProgramUUID());
-		} catch (ParseException e) {
-			LOG.debug(e.getMessage(), e);
-			throw new FileParsingException(messageSource.getMessage(FILE_INVALID, new Object[]{}, Locale.getDefault()));
 		} catch (MiddlewareQueryException e) {
 			LOG.debug(e.getMessage(), e);
 			throw new FileParsingException(messageSource.getMessage(NO_REFERENCES_ERROR_DESC, new Object[]{}, Locale.getDefault()));
@@ -128,7 +123,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				throw new FileParsingException("Invalid Observation on row: " + currentRow);
 			}
 
-			// proceess female + male parent entries, will throw middleware query exception if no study valid or null
+			// process female + male parent entries, will throw middleware query exception if no study valid or null
 			ListDataProject femaleListData = this
 					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femaleEntry),programUUID);
 			ListDataProject maleListData = this

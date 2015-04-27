@@ -9,10 +9,8 @@ import com.efficio.fieldbook.util.parsing.validation.ParseValidationMap;
 import com.efficio.fieldbook.util.parsing.validation.ValueTypeValidator;
 import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.nursery.bean.ImportedFactor;
-import com.efficio.fieldbook.web.nursery.bean.ImportedInventoryList;
+import com.efficio.fieldbook.web.nursery.bean.ImportedInventoryListWithDescription;
 import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
@@ -20,13 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
-import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cyrus on 4/24/15.
  */
-public class GermplasmStockImportParser extends AbstractExcelFileParser<Pair<ImportedDescriptionDetails,ImportedInventoryList>> {
+public class GermplasmStockImportParser extends AbstractExcelFileParser<ImportedInventoryListWithDescription> {
 	private static final Logger LOG = LoggerFactory.getLogger(InventoryImportParser.class);
 
 	public static final String ALL_LOCATION_VALUES_REQUIRED = "inventory.import.parsing.validation.error.blank.location.value";
@@ -72,43 +72,25 @@ public class GermplasmStockImportParser extends AbstractExcelFileParser<Pair<Imp
 	private DescriptionSheetParser<ImportedDescriptionDetails> descriptionSheetParser;
 
 	private Map<String, Integer> observationColumnMap = new HashMap<>();
-	private ImportedDescriptionDetails descriptionDetails;
-	private ImportedInventoryList importedInventoryList;
+	private ImportedInventoryListWithDescription importedInventoryListWithDescription;
 
 	@Resource
 	private ContextUtil contextUtil;
 
 	@Override
-	public Pair<ImportedDescriptionDetails,ImportedInventoryList> parseWorkbook(Workbook workbook)
+	public ImportedInventoryListWithDescription parseWorkbook(Workbook workbook)
 			throws FileParsingException {
 		this.workbook = workbook;
-		try {
-			descriptionDetails = new ImportedDescriptionDetails();
+		importedInventoryListWithDescription = new ImportedInventoryListWithDescription();
+		descriptionSheetParser = new DescriptionSheetParser<>(importedInventoryListWithDescription.getImportedDescriptionDetails());
+		descriptionSheetParser.setDoParseConstants(false);
 
-			// TODO, set descriptorSheetParser flags to specify parsing conditions without overriding the methods
-			descriptionSheetParser = new DescriptionSheetParser<ImportedDescriptionDetails>(descriptionDetails,workbook) {
-				@Override
-				public void parseDescriptionSheet()
-						throws FileParsingException, ParseException {
-					this.parseListDetails();
-					this.parseConditions();
-					this.parseFactors();
-					this.parseVariate();
-				}
-			};
-			descriptionSheetParser.parseDescriptionSheet();
+		descriptionSheetParser.parseWorkbook(this.workbook);
 
-			importedInventoryList = new ImportedInventoryList(descriptionDetails.getFilename());
-
-			parseObservationSheet(contextUtil.getCurrentProgramUUID());
-		} catch (ParseException e) {
-			LOG.debug(e.getMessage(), e);
-			throw new FileParsingException(messageSource.getMessage(FILE_INVALID, new Object[]{}, Locale
-					.getDefault()));
-		}
+		parseObservationSheet(contextUtil.getCurrentProgramUUID());
 
 		// Todo, extend importedInventoryList with descriptionDetails
-		return new ImmutablePair<>(descriptionDetails,importedInventoryList);
+		return importedInventoryListWithDescription;
 	}
 
 	/**
@@ -127,13 +109,13 @@ public class GermplasmStockImportParser extends AbstractExcelFileParser<Pair<Imp
 		// setup validation for the stock inventory
 		ParseValidationMap parseValidationMap = inventoryValidatorWithRequiredStockId();
 		InventoryWithStockIdConverter inventoryWithStockIdConverter = new InventoryWithStockIdConverter(workbook,currentParseIndex,
-				OBSERVATION_SHEET_NO,descriptionDetails.sizeOfObservationHeader(),HeaderLabels.names(),observationColumnMap);
+				OBSERVATION_SHEET_NO,importedInventoryListWithDescription.getImportedDescriptionDetails().sizeOfObservationHeader(),HeaderLabels.names(),observationColumnMap);
 		inventoryWithStockIdConverter.setValidationMap(parseValidationMap);
 
 		List<InventoryDetails> detailsList = inventoryWithStockIdConverter.convertWorkbookRowsToObject(
 				new WorkbookRowConverter.ContinueTillBlank());
 
-		importedInventoryList.setImportedInventoryDetails(detailsList);
+		importedInventoryListWithDescription.setImportedInventoryDetails(detailsList);
 
 	}
 
@@ -172,7 +154,7 @@ public class GermplasmStockImportParser extends AbstractExcelFileParser<Pair<Imp
 			}
 		};
 
-		importedFactors.addAll(descriptionDetails.getImportedFactors());
+		importedFactors.addAll(importedInventoryListWithDescription.getImportedDescriptionDetails().getImportedFactors());
 
 		final List<ImportedVariate> importedVariates = new ArrayList<ImportedVariate>() {
 			@Override
@@ -186,9 +168,9 @@ public class GermplasmStockImportParser extends AbstractExcelFileParser<Pair<Imp
 			}
 		};
 
-		importedVariates.addAll(descriptionDetails.getImportedVariates());
+		importedVariates.addAll(importedInventoryListWithDescription.getImportedDescriptionDetails().getImportedVariates());
 
-		final int headerSize = descriptionDetails.sizeOfObservationHeader();
+		final int headerSize = importedInventoryListWithDescription.getImportedDescriptionDetails().sizeOfObservationHeader();
 
 		for (int i = 0; i < headerSize; i++) {
 			// search the current header

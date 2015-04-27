@@ -25,6 +25,9 @@ public class ImportedInventoryList {
 		this.filename = filename;
 	}
 
+	public ImportedInventoryList() {
+	}
+
 	public List<InventoryDetails> getImportedInventoryDetails() {
 		return importedInventoryDetails;
 	}

@@ -8,17 +8,17 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.generationcp.middleware.util.PoiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by cyrus on 4/24/15.
  */
-public class DescriptionSheetParser<T extends ImportedDescriptionDetails> {
+public class DescriptionSheetParser<T extends ImportedDescriptionDetails> extends AbstractExcelFileParser<T> {
 	public static final int DESCRIPTION_SHEET_NO = 0;
 	public static final int CONDITION_ROW_NO = 5;
 	public static final int DESCRIPTION_SHEET_COL_SIZE = 8;
@@ -30,26 +30,41 @@ public class DescriptionSheetParser<T extends ImportedDescriptionDetails> {
 
 	private int currentRow = 0;
 	private boolean importFileIsValid = true;
-	private Workbook workbook;
 
-	public DescriptionSheetParser(T importedList,Workbook workbook) {
+	private boolean doParseDetails, doParseConditions, doParseFactors, doParseConstants, doParseVariates;
+
+	public DescriptionSheetParser(T importedList) {
 		this.importedList = importedList;
-		this.workbook = workbook;
+		doParseDetails = doParseConditions = doParseFactors = doParseConstants = doParseVariates = true;
 	}
 
-	/**
-	 * You may overide this method to costumize parsing behavior, by default, it parses
-	 * ListDetails, Conditions, Factors, Constants and Variate
-	 * @throws FileParsingException
-	 * @throws ParseException
-	 */
 	public void parseDescriptionSheet() throws FileParsingException, ParseException {
-		parseListDetails();
-		parseConditions();
-		parseFactors();
-		parseConstants();
-		parseVariate();
+		parseDescriptionSheet(doParseDetails,doParseConditions,doParseFactors,doParseConstants,doParseVariates);
 	}
+
+	public void parseDescriptionSheet(boolean doParseDetails,boolean doParseConditions,boolean doParseFactors,boolean doParseConstants,boolean doParseVariates) throws FileParsingException, ParseException {
+
+		if (doParseDetails) {
+			parseListDetails();
+		}
+
+		if (doParseConditions) {
+			parseConditions();
+		}
+
+		if (doParseFactors) {
+			parseFactors();
+		}
+
+		if (doParseConstants) {
+			parseConstants();
+		}
+
+		if (doParseVariates) {
+			parseVariate();
+		}
+	}
+
 
 	protected void parseListDetails() throws FileParsingException, ParseException {
 		String listName = getCellStringValue(DESCRIPTION_SHEET_NO, 0, 1);
@@ -273,41 +288,38 @@ public class DescriptionSheetParser<T extends ImportedDescriptionDetails> {
 		return isHeaderInvalid(variateHeaderRowNo, DESCRIPTION_SHEET_NO, headers);
 	}
 
-	protected boolean isHeaderInvalid(int headerNo, int sheetNumber, String[] headers) {
-		boolean isInvalid = false;
+	public void setDoParseDetails(boolean doParseDetails) {
+		this.doParseDetails = doParseDetails;
+	}
 
-		for (int i = 0; i < headers.length; i++) {
-			isInvalid = isInvalid || !headers[i].equalsIgnoreCase(
-					getCellStringValue(sheetNumber, headerNo, i));
+	public void setDoParseConditions(boolean doParseConditions) {
+		this.doParseConditions = doParseConditions;
+	}
+
+	public void setDoParseFactors(boolean doParseFactors) {
+		this.doParseFactors = doParseFactors;
+	}
+
+	public void setDoParseConstants(boolean doParseConstants) {
+		this.doParseConstants = doParseConstants;
+	}
+
+	public void setDoParseVariates(boolean doParseVariates) {
+		this.doParseVariates = doParseVariates;
+	}
+
+	@Override
+	public T parseWorkbook(Workbook workbook)
+			throws FileParsingException {
+		try {
+			this.workbook = workbook;
+
+			this.parseDescriptionSheet();
+			return importedList;
+		} catch (ParseException e) {
+			LOG.debug(e.getMessage(), e);
+			throw new FileParsingException(messageSource.getMessage(FILE_INVALID, new Object[]{}, Locale
+					.getDefault()));
 		}
-
-		return isInvalid;
-	}
-
-	/**
-	 * Wrapper to PoiUtil.getCellStringValue static call so we can stub the methods on unit tests
-	 *
-	 * @param sheetNo
-	 * @param rowNo
-	 * @param columnNo
-	 * @return
-	 */
-	public String getCellStringValue(int sheetNo, int rowNo, Integer columnNo) {
-		String out = (null == columnNo) ?
-				"" :
-				PoiUtil.getCellStringValue(workbook, sheetNo, rowNo, columnNo);
-		return (null == out) ? "" : out;
-	}
-
-	/**
-	 * Wrapper to PoiUtil.rowIsEmpty static call so we can stub the methods on unit tests
-	 *
-	 * @param sheetNo
-	 * @param rowNo
-	 * @param colCount
-	 * @return
-	 */
-	public boolean isRowEmpty(int sheetNo, int rowNo, int colCount) {
-		return PoiUtil.rowIsEmpty(workbook.getSheetAt(sheetNo), rowNo, 0, colCount - 1);
 	}
 }

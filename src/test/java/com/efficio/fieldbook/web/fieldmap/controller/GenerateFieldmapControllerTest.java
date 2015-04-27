@@ -1,9 +1,9 @@
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import org.generationcp.commons.util.DateUtil;
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.util.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -73,7 +73,7 @@ public class GenerateFieldmapControllerTest {
 		assertTrue("Contains the BLOCK_NAME without spaces",
 				out.contains(BLOCK_NAME.replace(" ", "")));
 		assertTrue("No spaces, ends with \"-<current_date>.xls\"",
-				!out.contains(" ") && out.endsWith("-" + DateUtil.getCurrentDate() + ".xls"));
+				!out.contains(" ") && out.endsWith("-" + DateUtil.getCurrentDateAsStringValue() + ".xls"));
 
 	}
 

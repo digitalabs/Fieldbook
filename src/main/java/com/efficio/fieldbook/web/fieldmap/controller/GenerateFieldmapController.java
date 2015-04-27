@@ -22,8 +22,10 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
-import com.efficio.fieldbook.web.util.DateUtil;
+
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.*;
 import java.util.*;
 
@@ -84,6 +87,9 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 	 */
 	@Resource
 	private ExportExcelService exportExcelService;
+	
+	@Resource
+	private CrossExpansionProperties crossExpansionProperties;
 
 	/**
 	 * Show generated fieldmap.
@@ -123,7 +129,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 
 			this.userFieldmap.setSelectedFieldMaps(
 					fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(
-							datasetId, geolocationId));
+							datasetId, geolocationId,this.crossExpansionProperties));
 
 			FieldMapTrialInstanceInfo trialInfo =
 					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
@@ -195,7 +201,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 
 	protected String makeSafeFileName(String filename) {
 		return filename.replace(" ", "") + "-"
-				+ DateUtil.getCurrentDate() + ".xls";
+				+ DateUtil.getCurrentDateAsStringValue() + ".xls";
 	}
 
 	protected void writeXlsToOutputStream(HttpServletResponse response, File xls)

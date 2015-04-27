@@ -5,10 +5,9 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.*;
@@ -21,12 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -516,7 +510,7 @@ public abstract class BaseTrialController extends SettingsController {
         basic.setFolderName(folderName);
         basic.setFolderNameLabel(folderName);
         basic.setUserID(getCurrentIbdbUserId());
-        basic.setUserName(fieldbookService.getPersonById(basic.getUserID()));
+        basic.setUserName(fieldbookService.getPersonByUserId(basic.getUserID()));
 
 
         TabInfo tab = new TabInfo();

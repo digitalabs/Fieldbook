@@ -295,13 +295,13 @@ public class ImportGermplasmListController extends SettingsController {
         	    	        form.getImportedCheckGermplasm(), 
         	    	        Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId())), 
         	    	        interval, 
-        	    	        SettingsUtil.getCodeValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()), userSelection.getRemovedConditions(), TermId.CHECK_PLAN.getId()), 
+        	    	        SettingsUtil.getCodeInPossibleValues(SettingsUtil.getFieldPossibleVales(fieldbookService, TermId.CHECK_PLAN.getId()), SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId())), 
         	    	        defaultTestCheckId);
             		
         	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(newImportedGermplasm);
         	    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
             	}
-        	
+            	
             	//this would validate and add CHECK factor if necessary
                 importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
                 userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));

@@ -18,12 +18,12 @@ import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -49,6 +49,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -148,16 +149,36 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         form.setLineVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_PLANTS_SELECTED.getString()));
         form.setPlotVariates(form.getLineVariates());
     	
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-    	SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
-    	String currentYear = sdf.format(new Date());
+        Date currentDate = DateUtil.getCurrentDate();
+    	SimpleDateFormat sdf = DateUtil.getSimpleDateFormat("yyyy");
+    	SimpleDateFormat sdfMonth = DateUtil.getSimpleDateFormat("MM");
+    	String currentYear = sdf.format(currentDate);
     	form.setHarvestYear(currentYear);
-    	form.setHarvestMonth(sdfMonth.format(new Date()));
+    	form.setHarvestMonth(sdfMonth.format(currentDate));
     	
-    	model.addAttribute("yearChoices", DateUtil.generateYearChoices(Integer.parseInt(currentYear)));
-    	model.addAttribute("monthChoices", DateUtil.generateMonthChoices());
+    	model.addAttribute("yearChoices", generateYearChoices(Integer.parseInt(currentYear)));
+    	model.addAttribute("monthChoices", generateMonthChoices());
     	
     	return super.showAjaxPage(model, MODAL_URL);
+    }
+    
+    public List<ChoiceKeyVal> generateYearChoices(int currentYear){
+    	List<ChoiceKeyVal> yearList = new ArrayList<ChoiceKeyVal>();
+    	int startYear = currentYear - AppConstants.ADVANCING_YEAR_RANGE.getInt();
+    	currentYear = currentYear + AppConstants.ADVANCING_YEAR_RANGE.getInt();
+    	for(int i = startYear ; i <= currentYear ; i++){
+    		yearList.add(new ChoiceKeyVal(Integer.toString(i), Integer.toString(i)));
+    	}
+    	return yearList;
+    }
+    
+    public List<ChoiceKeyVal> generateMonthChoices(){
+    	List<ChoiceKeyVal> monthList = new ArrayList<ChoiceKeyVal>();
+    	DecimalFormat df2 = new DecimalFormat( "00" );
+    	for(double i = 1 ; i <= 12 ; i++){
+    		monthList.add(new ChoiceKeyVal(df2.format(i), df2.format(i)));
+    	}
+    	return monthList;
     }
 
     @ModelAttribute("programLocationURL")
@@ -311,7 +332,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
 
         	AdvanceResult advanceResult = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
         	List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
-        	long id = (new Date()).getTime();
+        	long id = (DateUtil.getCurrentDate()).getTime();
             getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
             userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
             form.setGermplasmList(importedGermplasmList);

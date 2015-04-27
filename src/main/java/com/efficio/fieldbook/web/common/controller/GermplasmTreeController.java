@@ -16,7 +16,6 @@ import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
@@ -27,6 +26,7 @@ import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -47,7 +47,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -87,8 +86,6 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 	private static final String IS_SUCCESS = "isSuccess";
 
 	private static final String MESSAGE = "message";
-
-	private static final String DATE_FORMAT = "yyyyMMdd";
 	
     @Resource
     private ResourceBundleMessageSource messageSource;
@@ -193,7 +190,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
                 listName = userSelection.getImportedCrossesList().getName();
                 listDescription = userSelection.getImportedCrossesList().getTitle();
                 listType = userSelection.getImportedCrossesList().getType();
-                listDate = DateUtil.showUiDateFormat(userSelection.getImportedCrossesList().getDate());
+                listDate = DateUtil.getDateInUIFormat(
+                        userSelection.getImportedCrossesList().getDate());
             }
             
             form.setListName(listName);
@@ -412,7 +410,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         if (harvestLocationId != null && !"".equals(harvestLocationId)){
             locationId = Integer.valueOf(harvestLocationId); 
         }
-        Integer gDate = Integer.valueOf(DateUtil.getCurrentDate()); 
+        Integer gDate = DateUtil.getCurrentDateAsIntegerValue();
         
         //Common germplasm list data fields
         Integer listDataId = null; 
@@ -743,7 +741,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         return expandGermplasmTree(parentKey, "0");
     }
 
-    protected void checkIfUnique(String folderName) throws MiddlewareQueryException, MiddlewareException {
+    protected void checkIfUnique(String folderName) throws MiddlewareException {
     	List<GermplasmList> duplicate = germplasmListManager.
             	getGermplasmListByName(folderName, 0, 1, null);
         if(duplicate!=null && !duplicate.isEmpty()) {
@@ -778,7 +776,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         	Integer userId = this.getCurrentIbdbUserId();
 
             if (id == null) {
-                newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat(DATE_FORMAT)).format(Calendar.getInstance().getTime())),FOLDER,userId,folderName,null,0);
+                newList = new GermplasmList(null,folderName,
+                		org.generationcp.commons.util.DateUtil.getCurrentDateAsLongValue(),FOLDER,userId,folderName,null,0);
             } else {
                 gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(id));
 
@@ -788,12 +787,15 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
                     parent = gpList.getParent();
 
                     if (parent == null) {
-                        newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat(DATE_FORMAT)).format(Calendar.getInstance().getTime())),FOLDER,userId,folderName,null,0);
+                        newList = new GermplasmList(null,folderName,
+                        		org.generationcp.commons.util.DateUtil.getCurrentDateAsLongValue(),FOLDER,userId,folderName,null,0);
                     } else {
-                        newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat(DATE_FORMAT)).format(Calendar.getInstance().getTime())),FOLDER,userId,folderName,parent,0);
+                        newList = new GermplasmList(null,folderName,
+                        		org.generationcp.commons.util.DateUtil.getCurrentDateAsLongValue(),FOLDER,userId,folderName,parent,0);
                     }
                 } else {
-                    newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat(DATE_FORMAT)).format(Calendar.getInstance().getTime())),FOLDER,userId,folderName,gpList,0);
+                    newList = new GermplasmList(null,folderName,
+                    		org.generationcp.commons.util.DateUtil.getCurrentDateAsLongValue(),FOLDER,userId,folderName,gpList,0);
                 }
 
             }

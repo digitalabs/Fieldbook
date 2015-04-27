@@ -47,9 +47,11 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +89,9 @@ public class FieldbookServiceImpl implements FieldbookService {
     
     @Resource
     private ContextUtil contextUtil;
+
+    @Resource
+    private UserDataManager userDataManager;
     
     //@Resource(name = "BVDesignRunner")
     @Resource
@@ -367,7 +372,8 @@ public class FieldbookServiceImpl implements FieldbookService {
     private List<ValueReference> getFavoriteBreedingMethods(List<Integer> methodIDList, boolean isFilterOutGenerative)
             throws MiddlewareQueryException {
         List<ValueReference> list = new ArrayList<ValueReference>();
-        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList, isFilterOutGenerative);
+        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList,
+                isFilterOutGenerative);
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
@@ -381,7 +387,8 @@ public class FieldbookServiceImpl implements FieldbookService {
     @Override
     public List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative, String programUUID) throws MiddlewareQueryException {
         List<ValueReference> list = new ArrayList<ValueReference>();
-        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(isFilterOutGenerative);
+        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(
+                isFilterOutGenerative);
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null 
@@ -462,7 +469,7 @@ public class FieldbookServiceImpl implements FieldbookService {
         } else if (TermId.LOCATION_ID.getId() == id) {
             return getLocationById(valueId.intValue());
         } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id || TermId.STUDY_UID.getId() == id) {
-            return getPersonById(valueId.intValue());
+            return getPersonByPersonId(valueId.intValue());
         } else if (isCategorical) {
             Term term = ontologyService.getTermById(valueId.intValue());
             if (term != null) {
@@ -507,13 +514,33 @@ public class FieldbookServiceImpl implements FieldbookService {
     }
 
     @Override
-    public String getPersonById(int id) throws MiddlewareQueryException {
-        Person person = fieldbookMiddlewareService.getPersonById(id);
+    public String getPersonByPersonId(int personId) throws MiddlewareQueryException {
+        Person person = userDataManager.getPersonById(personId);
         if (person != null) {
             return person.getDisplayName();
         }
-        return null;
+        return "";
     }
+
+    @Override
+    public String getPersonByUserId(int userId) throws MiddlewareQueryException {
+        User user = userDataManager.getUserById(userId);
+
+        if (user == null) {
+            return "";
+        }
+
+        Person person = userDataManager.getPersonById(user.getPersonid());
+
+        if (person != null) {
+            return person.getDisplayName();
+        }
+
+        return "";
+    }
+
+
+
 
     @Override
     public Term getTermById(int termId) throws MiddlewareQueryException {

@@ -341,6 +341,7 @@
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
 												<include name="fieldbook.properties" />
 												<include name="workbench.properties" />
+												<include name="crossing.properties" />
 											</fileset>
 										</copy>
 									</tasks>
@@ -408,6 +409,7 @@
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
 												<include name="fieldbook.properties" />
 												<include name="workbench.properties" />
+												<include name="crossing.properties" />
 											</fileset>
 										</copy>
 									</tasks>

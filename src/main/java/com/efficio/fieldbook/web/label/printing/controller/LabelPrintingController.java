@@ -38,6 +38,8 @@ import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -63,7 +65,6 @@ import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
@@ -114,6 +115,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     @Resource
     private UserSelection userSelection;
     
+    @Resource
+    private CrossExpansionProperties crossExpansionProperties;
+    
     /**
      * Show trial label details.
      *
@@ -137,7 +141,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             study = fieldbookMiddlewareService.getStudy(id);
             List<Integer> ids = new ArrayList<Integer>();
             ids.add(id);
-            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids);
+            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
 
             for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
                 fieldMapInfo = fieldMapInfoDetail;
@@ -186,7 +190,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             study = fieldbookMiddlewareService.getStudy(id);
             List<Integer> ids = new ArrayList<Integer>();
             ids.add(id);
-            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids);
+            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
             for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
                 fieldMapInfo = fieldMapInfoDetail;
                 hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
@@ -256,7 +260,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
      * @return the string
      */
     private String generateDefaultFilename(UserLabelPrinting userLabelPrinting, boolean isTrial){
-        String currentDate = DateUtil.getCurrentDate();
+        String currentDate = DateUtil.getCurrentDateAsStringValue();
         String fileName = "Labels-for-" + userLabelPrinting.getName();
 
         if(isTrial) {

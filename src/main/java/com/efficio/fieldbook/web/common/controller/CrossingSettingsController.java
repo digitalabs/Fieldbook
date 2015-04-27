@@ -17,6 +17,7 @@ import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
@@ -169,7 +170,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	public List<String> getHarvestYears() {
 		List<String> years = new ArrayList<>();
 
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = DateUtil.getCalendarInstance();
 
 		for (int i = 0; i < YEAR_INTERVAL; i++) {
 			years.add(Integer.toString(cal.get(Calendar.YEAR)));
@@ -248,7 +249,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			respHeaders.setContentLength(fileSystemResource.contentLength());
 			respHeaders
-					.setContentDispositionFormData("attachment", FieldbookUtil.getDownloadFileName(fileSystemResource.getFilename(), req));
+					.setContentDispositionFormData("attachment", FieldbookUtil
+							.getDownloadFileName(fileSystemResource.getFilename(), req));
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
@@ -277,6 +279,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			resultsMap.put(IS_SUCCESS, 1);
 
 		} catch (FileParsingException e) {
+			LOG.error(e.getMessage(),e);
 			resultsMap.put(IS_SUCCESS, 0);
 			resultsMap.put("error", new String[] {e.getMessage()});
 		}

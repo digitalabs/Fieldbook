@@ -3318,7 +3318,12 @@ function displayStudyGermplasmSection(hasData, observationCount){
 }
 
 function disableCheckVariables(isDisabled) {
+	
+	$('#' + getJquerySafeId('checkVariables2.value')).select2('destroy');
+	$('#' + getJquerySafeId('checkVariables2.value')).prop('disabled', isDisabled);
+	$('#' + getJquerySafeId('checkVariables2.value')).select2();	
 	$('#specifyCheckSection').find('input,select').prop('disabled', isDisabled);
+	
 }
 
 function showMeasurementsPreview(){

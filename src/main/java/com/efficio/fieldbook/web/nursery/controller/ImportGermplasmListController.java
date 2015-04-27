@@ -1263,10 +1263,6 @@ public class ImportGermplasmListController extends SettingsController {
                 result.put(SUCCESS, "-1");
                 result.put(ERROR, messageSource.getMessage("nursery.manage.check.types.delete.error", 
                         new Object[] {name}, local));
-            } else if (Integer.parseInt(form.getManageCheckCode()) > 0) {
-                result.put(SUCCESS, "-1");
-                result.put(ERROR, messageSource.getMessage("nursery.manage.check.types.delete.central", 
-                        new Object[] {name}, local));
             } else {
                 ontologyService.deleteStandardVariableValidValue(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()));
                 result.put(SUCCESS, "1");

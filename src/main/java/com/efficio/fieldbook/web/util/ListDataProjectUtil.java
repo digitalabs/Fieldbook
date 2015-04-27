@@ -1,12 +1,11 @@
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListDataProjectUtil {
 	

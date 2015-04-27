@@ -1,8 +1,8 @@
 package com.efficio.fieldbook.web.common.service;
 
-import java.util.List;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import java.util.List;
 
 public interface MergeCheckService {
 

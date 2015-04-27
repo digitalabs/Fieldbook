@@ -1,13 +1,13 @@
 package com.efficio.fieldbook.web.inventory.controller;
 
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedInventoryList;
 import com.efficio.fieldbook.web.nursery.form.ImportInventoryForm;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;

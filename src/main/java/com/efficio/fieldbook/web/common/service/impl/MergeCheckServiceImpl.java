@@ -1,13 +1,12 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.efficio.fieldbook.web.common.service.MergeCheckService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.springframework.stereotype.Service;
 
-import com.efficio.fieldbook.web.common.service.MergeCheckService;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MergeCheckServiceImpl implements MergeCheckService {

@@ -1,9 +1,10 @@
 package com.efficio.fieldbook.util.parsing;
 
-import com.efficio.fieldbook.util.parsing.validation.ParsingValidator;
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.WorkbookRowConverter;
+import org.generationcp.commons.parsing.validation.ParsingValidator;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.pojos.Location;
@@ -17,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by IntelliJ IDEA.

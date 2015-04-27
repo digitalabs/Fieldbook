@@ -11,11 +11,10 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-import java.util.List;
-
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import java.util.List;
 
 /**
  * The Class AdvancingNurseryForm.

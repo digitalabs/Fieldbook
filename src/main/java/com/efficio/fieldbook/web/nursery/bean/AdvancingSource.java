@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 

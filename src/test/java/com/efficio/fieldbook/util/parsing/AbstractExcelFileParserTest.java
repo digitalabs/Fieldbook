@@ -1,24 +1,7 @@
 package com.efficio.fieldbook.util.parsing;
 
-import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Stubber;
-import org.springframework.context.MessageSource;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,6 +12,7 @@ import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractExcelFileParserTest {
+	/*
 	@Mock
 	protected FileService fileService;
 
@@ -109,4 +93,6 @@ public class AbstractExcelFileParserTest {
 			currentStub.when(mole).getCellStringValue(anyInt(), anyInt(), anyInt());
 			assertTrue(mole.isHeaderInvalid(0, 0, InventoryImportParser.HEADER_LABEL_ARRAY));
 		}
+
+		*/
 }

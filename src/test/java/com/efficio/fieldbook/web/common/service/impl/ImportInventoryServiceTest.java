@@ -1,7 +1,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedInventoryList;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
+import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.junit.Test;
@@ -14,8 +14,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,11 +1,11 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;

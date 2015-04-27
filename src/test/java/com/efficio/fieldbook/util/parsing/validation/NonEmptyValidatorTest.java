@@ -1,11 +1,13 @@
 package com.efficio.fieldbook.util.parsing.validation;
 
+import org.generationcp.commons.parsing.validation.NonEmptyValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte

@@ -11,23 +11,17 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.service.impl;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.parsing.pojo.*;
+import org.generationcp.commons.service.FileService;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -39,17 +33,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCondition;
-import com.efficio.fieldbook.web.nursery.bean.ImportedFactor;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
-import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.DateUtil;
+import javax.annotation.Resource;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The Class ImportGermplasmFileServiceImpl.
@@ -146,7 +138,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     }
 	
 	/* (non-Javadoc)
-	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#processWorkbook(com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo)
+	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#processWorkbook(org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo)
 	 */
 	@Override
 	public ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo){

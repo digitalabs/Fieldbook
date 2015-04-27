@@ -11,16 +11,15 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.service;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * The Interface ImportGermplasmFileService.

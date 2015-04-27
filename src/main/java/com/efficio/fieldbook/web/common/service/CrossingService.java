@@ -1,8 +1,7 @@
 package com.efficio.fieldbook.web.common.service;
 
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
-
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.web.multipart.MultipartFile;

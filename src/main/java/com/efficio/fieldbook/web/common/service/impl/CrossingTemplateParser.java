@@ -456,7 +456,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		final Integer studyId = studyDataManager.getStudyIdByNameAndProgramUUID(studyName,programUUID);
 
 		if (null == studyId) {
-			throw new FileParsingException("no.such.study.exists");
+			throw new FileParsingException(messageSource.getMessage(
+					"study.import.crosses.no.such.study.exists", new String[]{studyName}, Locale.getDefault()) );
 		}
 
 		final StudyType studyType = studyDataManager.getStudyType(studyId);
@@ -467,7 +468,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				genderedPlotNo);
 
 		if (null == listdataResult) {
-			throw new FileParsingException("no.list.data.for.plot");
+			throw new FileParsingException(messageSource.getMessage(
+					"study.import.crosses.no.list.data.for.plot", new String[] { studyName },
+					Locale.getDefault()) );
 		}
 
 		return listdataResult;

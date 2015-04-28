@@ -1743,6 +1743,8 @@ function submitGermplasmAndCheck() {
 	var $form = $('#germplasm-list-form,#specify-checks-form'),
 		serializedData = $form.serialize() + '&lastDraggedChecksList='+lastDraggedChecksList;
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+		//we need to move to 1st page so the serialize would work properly
+		selectedCheckListDataTable.getDataTable().fnDraw();
 		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
 	serializedData += '&columnOrders='+(BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));

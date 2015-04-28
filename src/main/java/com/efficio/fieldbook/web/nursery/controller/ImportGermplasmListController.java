@@ -252,7 +252,16 @@ public class ImportGermplasmListController extends SettingsController {
             	if(importedGermplasmMainInfoToUse == null){
             		//since for trial, we are using only the original info
             		importedGermplasmMainInfoToUse = getUserSelection().getImportedGermplasmMainInfo();
-            	}            	
+            	}
+                if(importedGermplasmMainInfoToUse != null){
+                    for (int i = 0; i < selectedCheck.length; i++) {
+                        int realIndex = i;                        
+                        if (NumberUtils.isNumber(selectedCheck[i])) {                            
+                            importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
+                            importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));                            
+                        }
+                    }
+                }
             }else{
             	//we set the check to null
             	if(getUserSelection().getImportedGermplasmMainInfo() != null && 

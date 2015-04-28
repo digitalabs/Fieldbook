@@ -62,7 +62,6 @@
 	$( document ).ready(function() {
 		'use strict';		
 		if(dataSelectedCheckGermplasmList !== null && dataSelectedCheckGermplasmList.length !== 0){
-			$('#chooseGermplasmAndChecks').data('replace',1);
 			selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);
 		}
 	});	

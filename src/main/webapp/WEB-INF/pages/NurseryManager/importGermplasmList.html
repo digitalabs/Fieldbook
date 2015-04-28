@@ -458,7 +458,7 @@
 				$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 			}			
 		}
-		function deleteCheckGermplasmList(entryNumber, gid, rowObj) {
+		function deleteCheckGermplasmList(entryNumber, gid, rowObj, isDropDelete) {
 			'use strict';
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/deleteCheckGermplasmDetails/' + gid,
@@ -490,16 +490,16 @@
 							}
 						}
 					}
-					
 					if(rowObj !== null && $(rowObj) != null){
 						if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
 							selectedCheckListDataTable.getDataTable().fnDeleteRow( $(rowObj), null, true);
 							if(selectedCheckListDataTable.getDataTable().$('tr').length == 0){
 								//we call the reset
 								resetCheckList();
+							}else if(isDropDelete !== true){
+								reloadCheckListTable();;
 							}
-						}
-							
+						}							
 					}	
 				}
 			});
@@ -643,7 +643,7 @@
 							
 							var entryNumber = $(this).data('entry'),
 							gid = '' + $(this).data('gid');
-							deleteCheckGermplasmList(entryNumber, gid, $(this));
+							deleteCheckGermplasmList(entryNumber, gid, $(this), true);
 							$.each($('.germplasm-list-items tbody tr'), function (index, row) {
 								if ($(row).data('entry') == entryNumber && $(row).data('gid') == gid) {
 									$(row).removeAttr('style');
@@ -654,6 +654,8 @@
 						$('.check-germplasm-list-items tr.checkGermplasmSelectedRow').remove();
 						if ($('.check-germplasm-list-items tbody tr').length === 0) {		
 							resetCheckList();
+						}else{
+							reloadCheckListTable();
 						}
 					}
 				}

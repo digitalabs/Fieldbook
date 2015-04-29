@@ -1,6 +1,6 @@
-/*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList*/
-/*globals showErrorMessage, showInvalidInputMessage, getDisplayedTreeName*/
-/*globals listParentFolderRequired, listNameRequired, listDescriptionRequired, listDateRequired, listTypeRequired, listNameDuplicateError */
+/*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList,saveGermplasmReviewError*/
+/*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName,ImportCrosses,listShouldNotBeEmptyError,getJquerySafeId,validateAllDates */
+/*globals listParentFolderRequired, listNameRequired, listDescriptionRequired, listDateRequired, listTypeRequired, listNameDuplicateError, moveToTopScreen */
 /*exported saveGermplasmList, openSaveListModal*/
 
 var SaveAdvanceList = {};
@@ -8,7 +8,6 @@ var SaveAdvanceList = {};
 (function() {
 	'use strict';
 	SaveAdvanceList.initializeGermplasmListTree = function() {
-		'use strict';
 		displayGermplasmListTree('germplasmFolderTree', true, 1);
 		changeBrowseGermplasmButtonBehavior(false);
 		$('#saveListTreeModal').on('hidden.bs.modal', function() {
@@ -17,7 +16,6 @@ var SaveAdvanceList = {};
 		});
 	};
 	SaveAdvanceList.openSaveListModal = function(object) {
-		'use strict';
 		if(parseInt($('#reviewAdvanceNurseryModal .total-review-items').html(),10) < 1){
 			showErrorMessage('', saveGermplasmReviewError);
 			return false;
@@ -48,7 +46,6 @@ var SaveAdvanceList = {};
 		);
 	};
 	SaveAdvanceList.saveGermplasmList = function() {
-		'use strict';
 		var chosenNodeFolder = $('#'+getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 		var errorMessageDiv = 'page-save-list-message-modal';
 		if(chosenNodeFolder === null){
@@ -79,16 +76,30 @@ var SaveAdvanceList = {};
 	    
 		var parentId = chosenNodeFolder.data.key;
 		$('#saveListForm #parentId').val(parentId);
-		var dataForm = $('#saveListForm').serialize();
+
 		
 		var saveList  = '/Fieldbook/ListTreeManager/saveList/';
 	    var isCrosses = false;
-	    if($('#saveListTreeModal').data('is-save-crosses') === '1'){
+		var isStock = false;
+
+		if($('#saveListTreeModal').data('is-save-crosses') === '1'){
 	    	isCrosses = true;
 	    }
+
+		if ($('#saveListTreeModal').data('is-save-stock') === '1') {
+			isStock = true;
+			$('#sourceListId').val($('#saveListTreeModal').data('sourceListId'));
+		}
+
 	    if(isCrosses){
-	    	saveList  = '/Fieldbook/ListTreeManager/saveCrossesList/';
-	    }
+			$('#germplasmListType').val('cross');
+	    } else if (isStock) {
+			$('#germplasmListType').val('stock');
+		} else {
+			$('#germplasmListType').val('advance');
+		}
+
+		var dataForm = $('#saveListForm').serialize();
 	    
 		$.ajax({
 			url: saveList,
@@ -101,7 +112,9 @@ var SaveAdvanceList = {};
 					if(isCrosses){
 						ImportCrosses.displayTabCrossesList(data.germplasmListId, data.crossesListId,  data.listName);        
 						$('#saveListTreeModal').data('is-save-crosses', '0');
-					} else {					
+					} else if (isStock) {
+						$('#saveListTreeModal').data('is-save-stock', '0');
+					} else{
 						var uniqueId,
 							close,
 							aHtml;
@@ -161,7 +174,6 @@ var SaveAdvanceList = {};
 		});
 	};
 	SaveAdvanceList.reviewAdvanceList = function(uniqueId) {
-		'use strict';
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/advance/nursery/info?uniqueId='+uniqueId,
 			type: 'GET',
@@ -190,7 +202,6 @@ var SaveAdvanceList = {};
 		});
 	};
 	SaveAdvanceList.setupAdvanceListForReview = function(){
-		'use strict';
 		var sectionContainerDiv = 'reviewAdvanceNurseryModal';
   		
 		$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(event){
@@ -319,7 +330,6 @@ var SaveAdvanceList = {};
 		$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
 	};
 	SaveAdvanceList.deleteSelectedEntries = function(){
-		'use strict';
 		var entryNums = '',
 			sectionContainerDiv = 'reviewAdvanceNurseryModal',
 			uniqueId = $('.btn-save-advance-list').attr('id');

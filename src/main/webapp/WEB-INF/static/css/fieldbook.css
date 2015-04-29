@@ -39,6 +39,10 @@ margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border
 
 label{
     font-weight: normal;
+    word-wrap: break-word;
+}
+label#list-notes {
+  width: 300px;
 }
 .btn-primary {
     color: #ffffff;
@@ -971,6 +975,18 @@ div.sectionContainer {
 .control-label-bold{
     font-weight: bold;
 }
+.control-label-italic{
+    font-style: italic;
+}
+.list-notes-display{
+	overflow:hidden;
+	text-overflow:ellipsis;	
+	white-space: nowrap;
+	width: 200px;
+	position: absolute;
+	
+}
+
 .delete-icon {
     background:url(../img/delete-icon.png) left top;
     width:18px;

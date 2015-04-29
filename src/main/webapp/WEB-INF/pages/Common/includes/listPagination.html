@@ -24,12 +24,27 @@
                 <td th:class="${row.even}? 'even' : 'odd'" >
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.designation}" th:attr="data-gid=${germplasm.germplasmId}" th:attrappend="data-desig=${germplasm.designation}">.2</a>
 				</td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.groupName}">.2</td>
-               <td th:class="${row.even}? 'even' : 'odd'" >
-               	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.germplasmId}" th:attr="data-gid=${germplasm.germplasmId}" th:attrappend="data-desig=${germplasm.designation}">.3</a>
-               </td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.seedSource}">.2</td>
-
+              	<td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.groupName}">.2</td>
+               
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.femaleParent}" th:attr="data-gid=${germplasm.fgid}" th:attrappend="data-desig=${germplasm.femaleParent}">.2</a>	
+               	</td>
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.fgid}" th:attr="data-gid=${germplasm.fgid}" th:attrappend="data-desig=${germplasm.femaleParent}">.2</a>
+               	</td>
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.maleParent}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
+               	</td>
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.mgid}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
+               	</td>
+               
+               	<td th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.germplasmId}" th:attr="data-gid=${germplasm.germplasmId}" th:attrappend="data-desig=${germplasm.designation}">.3</a>
+               	</td>
+               	<td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.seedSource}">.2</td>
+               
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.duplicate}">.2</td>
              </tr>
            </tbody>
          </table> 

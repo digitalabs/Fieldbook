@@ -5,10 +5,10 @@
 	<artifactId>Fieldbook</artifactId>
 	<packaging>war</packaging>
 	<name>Fieldbook Project</name>
-	<version>4.0.2.RELEASE</version>
+	<version>4.0.0.M2</version>
 
 	<properties>
-		<ibpcommons.version>4.0.2.RELEASE</ibpcommons.version>
+		<ibpcommons.version>4.0.0.M2</ibpcommons.version>
 		<spring.version>3.2.11.RELEASE</spring.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
 	</properties>

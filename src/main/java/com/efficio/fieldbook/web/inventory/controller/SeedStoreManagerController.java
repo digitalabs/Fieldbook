@@ -161,9 +161,9 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
         for (String gid : form.getGidList().split(",")) {
             gidList.add(Integer.parseInt(gid));
         }
-        
-        try {
-        	
+        // TODO : for re implementation with inventory ID
+        /*try {
+
             inventoryMiddlewareService.addLotsForList(gidList,
                     form.getInventoryLocationId(), form.getInventoryScaleId(),
                     form.getInventoryComments(), this.getCurrentIbdbUserId(),
@@ -177,7 +177,7 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
             LOG.error(e.getMessage(), e);
             result.put("message", "error: " + e.getMessage());
             result.put("success", 0);
-        }
+        }*/
         
         return result;
     }

@@ -110,7 +110,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 						inventoryDetails.getComment(),
 						currentUserID,
 						inventoryDetails.getAmount(),
-						listID);
+						listID, inventoryDetails.getInventoryID());
 
 		}
 

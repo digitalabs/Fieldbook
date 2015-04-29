@@ -20,7 +20,7 @@
                     </button>
                     <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
                         <li>
-                            <a href="" id="generate-stock-list-link"
+                            <a href="javascript: void(0)" onclick="javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier());" id="generate-stock-list-link"
                                th:text="#{common.stock.list.generate}">Generate Stock List</a>
                         </li>
                     </ul>
@@ -34,6 +34,7 @@
 <div class="row">
     &nbsp;
 </div>
+
 <div class="row col-xs-12 col-md-12" id="inventory-germplasm-list">
     <div th:include="/Common/includes/listPagination"></div>
 </div>

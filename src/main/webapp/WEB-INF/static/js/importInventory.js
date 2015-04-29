@@ -88,7 +88,7 @@ if (typeof ImportInventoryFunctions === 'undefined') {
             if (source === 'advance') {
                 url = "/Fieldbook/germplasm/list/advance/" + listId;
             } else {
-                url = "/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/" + listId;
+                url = "/Fieldbook/germplasm/list/crosses/" + listId;
             }
 
             $.ajax({

@@ -93,7 +93,7 @@ var ImportCrosses = {
 		displayCrossesGermplasmDetails: function (listId) {
 			'use strict';
 			$.ajax({
-				url: '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + listId,
+				url: '/Fieldbook/germplasm/list/crosses/' + listId,
 				type: 'GET',
 				cache: false,
 				success: function(html) {
@@ -442,7 +442,7 @@ var ImportCrosses = {
 
 		displayCrossesList: function (uniqueId, germplasmListId, listName, isDefault, crossesListId) {
 			'use strict';
-			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
+			var url = '/Fieldbook/germplasm/list/crosses/' + germplasmListId;
 			if(!isDefault){
 				$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
 				url += '?isSnapshot=0';
@@ -462,7 +462,7 @@ var ImportCrosses = {
 		},
 		displayTabCrossesList: function (germplasmListId, crossesListId, listName) {
 			'use strict';
-			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
+			var url = '/Fieldbook/germplasm/list/crosses/' + crossesListId;
 			url += '?isSnapshot=0';
 			
 			$.ajax({

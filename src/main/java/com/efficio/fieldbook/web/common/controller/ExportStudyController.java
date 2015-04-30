@@ -544,7 +544,39 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     		return exportAdvanceListService.exportAdvanceGermplasmList(advancedListIds, studyDetails.getStudyName(), getExportServiceImpl(), exportType);
     	}  
     	return null;
-    }    
+    }  
+    
+
+	/**
+     * Do export.
+     *
+     * @param exportType the export type
+     * @param selectedTraitTermId the selected trait term id
+     * @param response the response
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/export/stock/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public String doExportStockList(HttpServletResponse response, HttpServletRequest req) 
+    		        throws MiddlewareQueryException {
+    	
+    	String stockIds = req.getParameter("exportStockListId");
+    	
+    	
+    	String outputFilename = null;
+    	    	
+    	File file = exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), getExportServiceImpl());
+    	  	
+    	outputFilename = file.getAbsolutePath();
+		String contentType = "application/vnd.ms-excel";
+    	response.setContentType(contentType);;
+    	Map<String, Object> results = new HashMap<String, Object>();
+    	results.put("outputFilename", outputFilename);
+    	results.put("filename", SettingsUtil.cleanSheetAndFileName(file.getName()));
+    	results.put("contentType", contentType);
+    	
+    	return super.convertObjectToJson(results);
+    }
 
 	protected void setExportAdvanceListService(ExportAdvanceListService exportAdvanceListService) {
 		this.exportAdvanceListService = exportAdvanceListService;

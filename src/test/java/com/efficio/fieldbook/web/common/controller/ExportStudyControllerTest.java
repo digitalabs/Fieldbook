@@ -483,6 +483,34 @@ public class ExportStudyControllerTest{
 		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ".zip but returned " + result.get("filename"),generatedFilename + ZIP_EXT, result.get("filename"));
 		Assert.assertEquals("Expected that the returned output filename is " + outputFilename + ".zip but returned " + result.get("outputFilename"),outputFilename + ZIP_EXT, result.get("outputFilename"));
 	}
+	
+	@Test
+	public void testDoStockExport() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException {
+		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
+		ExportService exportService = Mockito.mock(ExportService.class);
+		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
+		Mockito.when(exportAdvanceListService.exportStockList(1,exportService)).thenReturn(new File("temp.xls"));
+		
+		
+		UserSelection userSelection = new UserSelection();
+		Workbook workbook = new Workbook();
+		StudyDetails studyDetails = new StudyDetails();
+		studyDetails.setStudyName("TempName");
+		workbook.setStudyDetails(studyDetails);
+		userSelection.setWorkbook(workbook);
+		Mockito.doReturn(userSelection).when(exportStudyControllerMock).getUserSelection();
+		HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
+		HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+		Mockito.when(req.getParameter("exportStockListId")).thenReturn("1");
+		exportStudyControllerMock.setExportAdvanceListService(exportAdvanceListService);
+		
+		String ret = exportStudyControllerMock.doExportStockList(resp, req);
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, String> mapObject = mapper.readValue(ret,new TypeReference<Map<String, String>>() {});
+		String contentType = mapObject.get("contentType");
+		Assert.assertTrue("Should have a content type of application/vnd.ms-excel since its just 1 stock list", "application/vnd.ms-excel".equalsIgnoreCase(contentType));
+	}
 
 	private String getTrialInstanceString(List<Integer> instances) {
 		String trialInstances = "";

@@ -1,8 +1,10 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.web.common.bean.DuplicateType;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 
 /**
@@ -78,10 +81,22 @@ public class GermplasmListController {
 			model.addAttribute("listName", germplasmList.getName());
 			model.addAttribute("listNotes", germplasmList.getNotes());
 			model.addAttribute("listType", germplasmList.getType());
+			model.addAttribute("duplicateType", getDuplicateType(listData));
 			
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}
+	}
+
+	private Map<Integer,DuplicateType> getDuplicateType(List<ListDataProject> listData) {
+		 Map<Integer,DuplicateType> duplicateTypeMap = new HashMap<Integer, DuplicateType>();
+		 
+		 for(ListDataProject ldp : listData){
+			 Integer listDataProjectId = ldp.getListDataProjectId();
+			 duplicateTypeMap.put(listDataProjectId, new DuplicateType(listDataProjectId,ldp.getDuplicate()));
+		 }
+		 
+		return duplicateTypeMap;
 	}
 
 	private List<ListDataProject> getListDataProjectByListType(Integer listId,

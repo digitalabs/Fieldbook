@@ -25,7 +25,10 @@
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.designation}" th:attr="data-gid=${germplasm.germplasmId}" th:attrappend="data-desig=${germplasm.designation}">.2</a>
 				</td>
               	<td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.groupName}">.2</td>
+
+
                
+                <!-- Cross List Columns ONLY -->
                	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
                		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.femaleParent}" th:attr="data-gid=${germplasm.fgid}" th:attrappend="data-desig=${germplasm.femaleParent}">.2</a>	
                	</td>
@@ -38,13 +41,21 @@
                	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
                		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.mgid}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
                	</td>
+               	<!-- End of Cross List Columns ONLY -->
                
                	<td th:class="${row.even}? 'even' : 'odd'" >
                		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.germplasmId}" th:attr="data-gid=${germplasm.germplasmId}" th:attrappend="data-desig=${germplasm.designation}">.3</a>
                	</td>
                	<td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.seedSource}">.2</td>
                
-               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.duplicate}">.2</td>
+               	<td th:if="*{listType == 'CROSSES'}" 
+               		th:class="${row.even}? 'even' : 'odd'"
+               		 
+               		th:style="${duplicateType[__germplasm.listDataProjectId__].isPedigreeDupe()}? 'background: #E5D8DD' :
+								( ${duplicateType[__germplasm.listDataProjectId__].isPlotDupe()}? 'background: #CCCCCC' :
+               						( ${duplicateType[__germplasm.listDataProjectId__].isPedigreeRecip()}? 'background: #DCE9F2' :
+										( ${duplicateType[__germplasm.listDataProjectId__].isPlotRecip()}? 'background: #E0E4D7' )))" 
+					th:text="${germplasm.duplicate}">.2</td>
              </tr>
            </tbody>
          </table> 

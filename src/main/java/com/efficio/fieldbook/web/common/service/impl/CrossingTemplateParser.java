@@ -19,6 +19,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -215,7 +216,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		final Integer studyId = studyDataManager.getStudyIdByNameAndProgramUUID(studyName,programUUID);
 
 		if (null == studyId) {
-			throw new FileParsingException("no.such.study.exists");
+			throw new FileParsingException(messageSource.getMessage("no.such.study.exists",new String[]{studyName},
+					LocaleContextHolder.getLocale()));
 		}
 
 		final StudyType studyType = studyDataManager.getStudyType(studyId);
@@ -226,7 +228,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				genderedPlotNo);
 
 		if (null == listdataResult) {
-			throw new FileParsingException("no.list.data.for.plot");
+			throw new FileParsingException(messageSource.getMessage("no.list.data.for.plot",new Object[]{studyName,genderedPlotNo},LocaleContextHolder.getLocale()));
 		}
 
 		return listdataResult;

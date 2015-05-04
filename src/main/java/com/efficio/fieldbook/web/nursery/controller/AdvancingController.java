@@ -18,6 +18,7 @@ import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.ColumnLabels;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -60,7 +62,9 @@ import java.util.*;
 @RequestMapping(AdvancingController.URL)
 public class AdvancingController extends AbstractBaseFieldbookController{
 
-    /** The Constant URL. */
+    private static final String UNIQUE_ID = "uniqueId";
+
+	/** The Constant URL. */
     public static final String URL = "/NurseryManager/advance/nursery";
     
     private static final String MODAL_URL = "NurseryManager/advanceNurseryModal";
@@ -345,7 +349,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             results.put(IS_SUCCESS, "1");
             results.put(LIST_SIZE, importedGermplasmList.size());
         	results.put("advanceGermplasmChangeDetails", advanceGermplasmChangeDetails);
-        	results.put("uniqueId", id);
+        	results.put(UNIQUE_ID, id);
         	
         } catch (MiddlewareQueryException | RuleException e) {
         	LOG.error(e.getMessage(),e);
@@ -414,7 +418,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             form.setGermplasmList(importedGermplasmList);
             form.setEntries(importedGermplasmList.size());
             form.changePage(1);
-            String uniqueId = req.getParameter("uniqueId");
+            String uniqueId = req.getParameter(UNIQUE_ID);
             form.setUniqueId(Long.valueOf(uniqueId));
             
             
@@ -452,7 +456,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             form.setGermplasmList(importedGermplasmList);
             form.setEntries(importedGermplasmList.size());
             form.changePage(1);
-            String uniqueId = req.getParameter("uniqueId");
+            String uniqueId = req.getParameter(UNIQUE_ID);
             form.setUniqueId(Long.valueOf(uniqueId));            
             
             

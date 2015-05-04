@@ -569,7 +569,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	  	
     	outputFilename = file.getAbsolutePath();
 		String contentType = "application/vnd.ms-excel";
-    	response.setContentType(contentType);;
+    	response.setContentType(contentType);
     	Map<String, Object> results = new HashMap<String, Object>();
     	results.put("outputFilename", outputFilename);
     	results.put("filename", SettingsUtil.cleanSheetAndFileName(file.getName()));

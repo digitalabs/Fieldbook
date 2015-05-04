@@ -393,11 +393,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		Integer status = 1;
 		Long dateLong = Long.valueOf(DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(),
 				saveListForm.getListDate()));
-		GermplasmList germplasmList = new GermplasmList(null, listName, dateLong, listType,
-				currentUserId,
-				description, parent, status, saveListForm.getListNotes());
 
-		return germplasmList;
+		return new GermplasmList(null, listName, dateLong, listType,
+				currentUserId, description, parent, status, saveListForm.getListNotes());
 
 	}
 
@@ -817,8 +815,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return expandGermplasmTree(parentKey, "0");
 	}
 
-	protected void checkIfUnique(String folderName)
-			throws MiddlewareQueryException, MiddlewareException {
+	protected void checkIfUnique(String folderName) throws MiddlewareException {
 		List<GermplasmList> duplicate = germplasmListManager.
 				getGermplasmListByName(folderName, 0, 1, null);
 		if (duplicate != null && !duplicate.isEmpty()) {

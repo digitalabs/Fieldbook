@@ -984,7 +984,7 @@ div.sectionContainer {
 	white-space: nowrap;
 	width: 200px;
 	position: absolute;
-	
+	padding-left: 3px;
 }
 
 .delete-icon {

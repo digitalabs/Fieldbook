@@ -52,10 +52,14 @@
 						<span th:text="#{crosses.nursery.list.actions}">Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-						<li class="withMeasurementsOnly"><a href=""
-							style="display: none" id="open-study-url"></a> <a href="#"
-							id="generate-stock-list" th:text="#{common.stock.list.generate}">Generate
-								Stock List</a></li>
+						<li class="withMeasurementsOnly">
+							<a href=""
+								style="display: none" id="open-study-url"></a> <a href="javascript: void(0)"
+								onclick="javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier()); alert(getCurrentAdvanceTabListIdentifier());"
+								id="generate-stock-list" th:text="#{common.stock.list.generate}">
+									Generate Stock List
+							</a>
+						</li>
 					</ul>
 				</div>
 			</div>

@@ -121,14 +121,14 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
     		@ModelAttribute("seedStoreForm") SeedStoreForm form, HttpServletRequest req,
             Model model) {
         
-    	return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.ADVANCED.name(), "/NurseryManager/savedFinalAdvanceList");
+    	return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.ADVANCED.name(), "/NurseryManager/savedFinalList");
     }
     
     @RequestMapping(value="/crosses/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
     public String displayCrossesGermplasmDetails(@PathVariable Integer listId,  
     		@ModelAttribute("seedStoreForm") SeedStoreForm form, HttpServletRequest req,
             Model model) {
-        return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.CROSSES.name(), "/NurseryManager/savedFinalCrossesList");
+        return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.CROSSES.name(), "/NurseryManager/savedFinalList");
         
     }
     

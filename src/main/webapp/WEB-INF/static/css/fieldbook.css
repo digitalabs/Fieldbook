@@ -1760,3 +1760,19 @@ td.accepted-value {
 #fbk-lbl-printing-delete-preset-confirm .modal-dialog {
     width: 40%;
 }
+
+.plotDupe {
+	background-color: #CCCCCC;
+}
+
+.pedigreeDupe {
+	background-color: #E5D8DD;
+}
+
+.plotRecip {
+	background-color: #E0E4D7;
+}
+
+.pedigreeRecip {
+	background-color: #DCE9F2;
+}

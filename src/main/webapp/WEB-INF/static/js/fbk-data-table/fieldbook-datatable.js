@@ -446,6 +446,22 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).html()});
+			if ($(this).html() === 'DUPLICATE'){
+				columnsDef.push({
+					targets: columns.length - 1,
+					createdCell: function (td, cellData, rowData, row, col) {
+						if ($(td).text().startsWith('Plot Dupe')){
+							$(td).addClass('plotDupe');
+						} else if ($(td).text().startsWith('Pedigree Dupe')){
+							$(td).addClass('pedigreeDupe');
+					    } else if ($(td).text().startsWith('Plot Recip')){
+							$(td).addClass('plotRecip');
+					    } else if ($(td).text().startsWith('Pedigree Recip')) {
+							$(td).addClass('pedigreeRecip');
+					    }
+					}
+				});
+			}
 		});
 		table = $(tableIdentifier).DataTable({
 			data: dataList,

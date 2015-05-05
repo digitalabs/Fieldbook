@@ -9,6 +9,8 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.util.DuplicatesUtil;
+
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -67,7 +69,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@Resource
 	private PresetDataManager presetDataManager;
-
+	
 	@Resource
 	private SettingsPresetService settingsPresetService;
 
@@ -271,8 +273,9 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
 		try {
 			ImportedCrossesList parseResults = crossingService.parseFile(form.getFile());
-
-			// 2. Store the crosses to study selection if all validated
+			// 2. Process duplicates and set to ImportedCrossesList
+			DuplicatesUtil.processDuplicates(parseResults);
+			// 3. Store the crosses to study selection if all validated
 
 			studySelection.setimportedCrossesList(parseResults);
 
@@ -286,6 +289,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 		return resultsMap;
 	}
+
+	
 
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
@@ -316,7 +321,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		dataMap.put("MALE PARENT", importedCrosses.getMaleDesig());
 		dataMap.put("MGID", importedCrosses.getMaleGid());
 		dataMap.put("SOURCE", importedCrosses.getSource());
-
+		dataMap.put("DUPLICATE", importedCrosses.getDuplicate());
 		return dataMap;
 
 	}

@@ -15,18 +15,30 @@ public class DuplicateType {
 	}
 	
 	public Boolean isPedigreeDupe() {
-		return duplicate.contains("Pedigree Dupe");
+		if(duplicate != null){
+			return duplicate.contains("Pedigree Dupe");
+		}
+		return false;
 	}	
 
 	public Boolean isPlotDupe() {
-		return duplicate.contains("Plot Dupe");
+		if(duplicate != null){
+			return duplicate.contains("Plot Dupe");
+		}
+		return false;
 	}
 	
 	public Boolean isPedigreeRecip() {
-		return duplicate.contains("Pedigree Recip");
+		if(duplicate != null){
+			return duplicate.contains("Pedigree Recip");
+		}
+		return false;
 	}
 	
 	public Boolean isPlotRecip() {
-		return duplicate.contains("Plot Recip");
+		if(duplicate != null){
+			return duplicate.contains("Plot Recip");
+		}
+		return false;
 	}
 }

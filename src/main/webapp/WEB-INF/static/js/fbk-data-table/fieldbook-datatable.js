@@ -19,7 +19,6 @@ BMS.Fieldbook.MeasurementsTable = {
 				$(cols).each(function(index){
 				  var termId = $($(cols[index].nTh)[0]).attr('data-term-id');
 				  var prevIndex = $('#'+tableName).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
-				  
 				  if(termId != 'Action'){
 					  if(index != prevIndex){
 						  hasOrderingChange = true;
@@ -34,7 +33,7 @@ BMS.Fieldbook.MeasurementsTable = {
 			//we return blank if there is no ordering change
 			return [];
 		},
-}
+};
 
 BMS.Fieldbook.MeasurementsDataTable = (function($) {
 	// FIXME Refactor to remove some of this code from the constructor function
@@ -58,7 +57,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			if ($(this).data('term-data-type-id') == '1110'){
 				var minVal = ($(this).data('min-range'));
 				var maxVal = ($(this).data('max-range'));
-				
 				var termId = $(this).data('term-id');
 				var isVariates = $(this).hasClass('variates');
 				columnsDef.push({
@@ -70,9 +68,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							if (minVal != null && maxVal != null && (parseFloat(minVal) > parseFloat(cellText) || parseFloat(cellText) > parseFloat(maxVal))){
 								$(td).removeClass('accepted-value');
 						    	$(td).removeClass('invalid-value');
-						    	
 						    	if ($(td).text() !== 'missing' ){
-						    		
 						    		if ($(td).find("input[type='hidden']").val() === 'true'){
 										$(td).addClass('accepted-value');
 									}else{
@@ -86,11 +82,9 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					render: function ( data, type, full, meta ) {
 						if (data !== undefined){
 							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
-						}
-					      
+						} 
 					}
 				});
-				
 			}else if ($(this).data('term-data-type-id') == '1130'){
 				if($(this).data('term-valid-values') == null){
 					$(this).data('term-valid-values', '');
@@ -104,18 +98,15 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						if(isVariates){
 							var cellText = $(td).text();
 							if ($.inArray(cellText, possibleValues) === -1){
-								
 								$(td).removeClass('accepted-value');
-						    	$(td).removeClass('invalid-value');						    	
-						    	if ($(td).text() !== 'missing' ){
-						    		if ($(td).find("input[type='hidden']").val() === 'true'){
+								$(td).removeClass('invalid-value');
+								if ($(td).text() !== 'missing' ){
+									if ($(td).find("input[type='hidden']").val() === 'true'){
 										$(td).addClass('accepted-value');
 									}else{
 										$(td).addClass('invalid-value');
 									}
 						    	}
-								
-								
 						    }
 						}
 					    $(td).data('term-id', termId);
@@ -127,7 +118,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					}
 				});
 			}
-			
 			
 			if ($(this).data('term-id') == '8240') {
 				// For GID
@@ -195,7 +185,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							var minVal = ( $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('min-range'));
 							var maxVal = ( $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").data('max-range'));
 							var isVariates =  $(tableIdentifier + " thead tr th[data-term-id='" + termId + "']").hasClass('variates');
-							
 							if(isVariates){
 								$(this).removeClass('accepted-value');
 								$(this).removeClass('invalid-value');
@@ -204,18 +193,17 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 							    		
 							    		if ($(this).find("input[type='hidden']").val() === 'true'){
 							    			$(this).addClass('accepted-value');
-										}else{
+							    		}else{
 											$(this).addClass('invalid-value');
 										}
 							    	}														
 						    	}
-							}
-								
+							}	
 						}else if (possibleValues != undefined){
 							  var values = possibleValues.split('|');
 							  
 							  $(this).removeClass('accepted-value');
-					    	  $(this).removeClass('invalid-value');
+							  $(this).removeClass('invalid-value');
 					    	  
 					    	  if (cellData !== '' && cellData !== 'missing'){
 					    		  if ($.inArray(cellData, values) === -1 && $(this).find("input[type='hidden']").val() !== 'true') {
@@ -227,17 +215,13 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 											$(this).addClass('invalid-value');
 										}							    	  
 							    	  $(this).data('term-id', $(this).data('term-id'));
-							      }else{
+					    		  }else{
 							    	  $(this).addClass('accepted-value');
 							      }
 					    	  }
-							  
 						}
-						
 					}
-					
 				});
-				
 				return nRow;
 			},
 			fnInitComplete: function(oSettings, json) {
@@ -270,7 +254,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			// Activate an inline edit on click of a table cell
 		    $(tableIdentifier).on( 'click', 'tbody td:not(:first-child)', function (e) {		    	
 		    	if(isAllowedEditMeasurementDataCell(false)){
-			    	var $tdCell = $(this);	    	
+		    		var $tdCell = $(this);
 			        var cellTdIndex =  $(this).index();
 			        var rowIndex = $(this).parent('tr').data('row-index');
 			        
@@ -317,7 +301,6 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			// Get the column API object
 			var colIndex = $(this).attr('data-index');
 			 
-			
 			var cols = $(tableIdentifier).dataTable().fnSettings().aoColumns;
 			$(cols).each(function(index){
 			  var prevIndex = $(tableIdentifier).dataTable().fnSettings().aoColumns[index]._ColReorder_iOrigCol;
@@ -325,9 +308,8 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				  column = table.column(index);
 					// Toggle the visibility
 				  column.visible(!column.visible());			
-			  }			  
+			  }
 			});
-			
 		});
 	};
 	return dataTableConstructor;
@@ -498,7 +480,6 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				fixedColumns: 1
 			}
 		});
-		
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
@@ -508,7 +489,6 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 	return dataTableConstructor;
 
 })(jQuery);
-
 
 BMS.Fieldbook.GermplasmListDataTable = (function($) {
 
@@ -591,8 +571,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 			}
 		});
 		
-		GermplasmListDataTable.prototype.getDataTable = function()
-		{
+		GermplasmListDataTable.prototype.getDataTable = function() {
 		    return this.germplasmDataTable;
 		};
 	};
@@ -689,11 +668,9 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 												
 				$(nRow).addClass('primaryRow');
 				$('td', nRow).attr('nowrap','nowrap');
-								
 				return nRow;
 			},
 		  fnInitComplete: function(oSettings, json) {
-				
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength );
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
@@ -705,8 +682,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 			}
 		});
 		
-		TrialGermplasmListDataTable.prototype.getDataTable = function()
-		{
+		TrialGermplasmListDataTable.prototype.getDataTable = function() {
 		    return this.table;
 		};
 		
@@ -721,8 +697,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 			return -1;
 		};
 		
-		TrialGermplasmListDataTable.prototype.getDataTableColumn = function(colName)
-		{
+		TrialGermplasmListDataTable.prototype.getDataTableColumn = function(colName) {
 			var colNames = this.table.fnSettings().aoColumns;
 			for(var counter = 0 ; counter < colNames.length ; counter++){
 				if(colNames[counter].data === colName){
@@ -732,14 +707,10 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 			return null;
 		};
 		
-		
-		
-		
 		$('.col-show-hide').html('');
 		$('.col-show-hide').html($(parentDiv + ' .mdt-columns').clone().removeClass('fbk-hide'));
 		
 		$('.germplasm-dropdown-menu a').click(function(e) {
-			
 			e.stopPropagation();
 			if ($(this).parent().hasClass('fbk-dropdown-select-fade')) {
 				$(this).parent().removeClass('fbk-dropdown-select-fade');
@@ -846,13 +817,13 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 		this.checkDataTable = $(tableIdentifier).dataTable({
 			data: dataList,
 			columns: columns,
-			columnDefs: columnsDef,			
+			columnDefs: columnsDef,
 			scrollY: '500px',
 			scrollX: '100%',
 			bSort: false,
 			scrollCollapse: true,
 		  dom: 'R<t><"fbk-page-div"p>',
-		  iDisplayLength: 100,		  
+		  iDisplayLength: 100,
 		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {		
 		  		$(nRow).addClass('checkRow');
 		  		$(nRow).data('entry', aData.entry);
@@ -861,7 +832,6 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
 				
 			  	$('td', nRow).attr('nowrap','nowrap');			  	
-			  	
 			  	setTimeout(function(){makeCheckDraggable(makeCheckDraggableBool);}, 300);
 				return nRow;
 			},
@@ -911,7 +881,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
 BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
-	// FIXME Refactor to remove some of this code from the constructor function	
+	// FIXME Refactor to remove some of this code from the constructor function
 	/**
 	 * Creates a new AdvancedGermplasmListDataTable.
 	 *
@@ -934,22 +904,20 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 		  iDisplayLength: 100,
 		  fnDrawCallback: function( oSettings ) {
 			  makeDraggable(true);
-		    },
+		  },
 		    
 		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {			
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
-												
 				$('td', nRow).attr('nowrap','nowrap');
 				return nRow;
 			},
 		  fnInitComplete: function(oSettings, json) {
-				
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength );
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
-				$(parentDiv).removeClass('fbk-hide-opacity');		
+				$(parentDiv).removeClass('fbk-hide-opacity');
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
 				oSettings.oInstance.fnAdjustColumnSizing();
@@ -961,9 +929,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 		    return this.germplasmDataTable;
 		};
 	};
-
 	return dataTableConstructor;
-
 })(jQuery);
 
 BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
@@ -1037,12 +1003,10 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {			
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
-												
 				$('td', nRow).attr('nowrap','nowrap');
 				return nRow;
 			},
 		  fnInitComplete: function(oSettings, json) {
-				
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength );
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');

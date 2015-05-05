@@ -89,7 +89,7 @@ var ImportCrosses = {
 			}).submit();
 
 			return deferred.promise();
-		},	
+		},
 		displayCrossesGermplasmDetails: function (listId) {
 			'use strict';
 			$.ajax({
@@ -124,8 +124,8 @@ var ImportCrosses = {
 
 			$('#goBackToOpenCrossesButton').off('click');
 			$('#goBackToOpenCrossesButton').on('click', function() {
-				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(":checked");
-				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(":checked");
+				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(':checked');
+				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(':checked');
 				ImportCrosses.goBackToPage('#crossSettingsModal','#openCrossesListModal');
 			});
 		},
@@ -430,7 +430,7 @@ var ImportCrosses = {
                     var downloadUrl = ImportCrosses.CROSSES_URL + '/download/file';
 
                     $.fileDownload(downloadUrl,{
-                        httpMethod: "POST",
+                    	httpMethod: 'POST',
                         data: result
                     });
 
@@ -464,7 +464,6 @@ var ImportCrosses = {
 			'use strict';
 			var url = '/Fieldbook/germplasm/list/crosses/' + crossesListId;
 			url += '?isSnapshot=0';
-			
 			$.ajax({
 				url: url,
 				type: 'GET',
@@ -473,7 +472,6 @@ var ImportCrosses = {
 					$('#saveListTreeModal').modal('hide');
 					$('#saveListTreeModal').data('is-save-crosses', '0');
 					$('#create-nursery-tabs .tab-pane.info').removeClass('active');
-					
 					var uniqueId,
 					close,
 					aHtml;
@@ -485,7 +483,6 @@ var ImportCrosses = {
 					$('a#advance-list'+uniqueId).tab('show');
 					$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
 					$('.nav-tabs').tabdrop('layout');
-					
 					$('a#advance-list'+uniqueId).on('click', function(){
 						$('#create-nursery-tabs .tab-pane.info').removeClass('active');
 						$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
@@ -496,8 +493,7 @@ var ImportCrosses = {
 		openSaveListModal: function(){
 			'use strict';
 			var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
-			$.ajax(
-				{ 
+			$.ajax({
 					url: '/Fieldbook/ListTreeManager/saveCrossesList/',
 					type: 'GET',
 					cache: false,

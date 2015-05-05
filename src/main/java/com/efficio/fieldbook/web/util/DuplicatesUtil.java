@@ -116,22 +116,19 @@ public class DuplicatesUtil {
 
 	private static boolean canStillSetDuplicateNotes(
 			ImportedCrosses importedCrosses, String prefix) {
+		boolean canStillSetDuplicateNotes = false;
 		if(importedCrosses.getDuplicatePrefix()==null) {
-			return true;
+			canStillSetDuplicateNotes = true;
+		} else if(importedCrosses.isPlotDupe() && ImportedCrosses.PLOT_DUPE_PREFIX.equals(prefix)) {
+			canStillSetDuplicateNotes = true;
+		} else if(importedCrosses.isPedigreeDupe() && ImportedCrosses.PEDIGREE_DUPE_PREFIX.equals(prefix)) {
+			canStillSetDuplicateNotes = true;
+		} else if(importedCrosses.isPlotRecip() && ImportedCrosses.PLOT_RECIP_PREFIX.equals(prefix)) {
+			canStillSetDuplicateNotes = true;
+		} else if(importedCrosses.isPedigreeRecip() && ImportedCrosses.PEDIGREE_RECIP_PREFIX.equals(prefix)) {
+			canStillSetDuplicateNotes = true;
 		}
-		if(importedCrosses.isPlotDupe() && ImportedCrosses.PLOT_DUPE_PREFIX.equals(prefix)) {
-			return true;
-		}
-		if(importedCrosses.isPedigreeDupe() && ImportedCrosses.PEDIGREE_DUPE_PREFIX.equals(prefix)) {
-			return true;
-		}
-		if(importedCrosses.isPlotRecip() && ImportedCrosses.PLOT_RECIP_PREFIX.equals(prefix)) {
-			return true;
-		}
-		if(importedCrosses.isPedigreeRecip() && ImportedCrosses.PEDIGREE_RECIP_PREFIX.equals(prefix)) {
-			return true;
-		}
-		return false;
+		return canStillSetDuplicateNotes;
 	}
 
 	private static void setDuplicateNotesAsPlotOrPedigreeDuplicates(
@@ -245,11 +242,10 @@ public class DuplicatesUtil {
 			}
 			String maleAndFemaleGid = importedCrosses.getMaleGid()+SEPARATOR+importedCrosses.getFemaleGid();
 			for (ImportedCrosses possibleReciprocal: importedCrossesList.getImportedCrosses()) {
-				if(possibleReciprocal.getEntryId()!=importedCrosses.getEntryId()) {
-					String femaleAndMaleGid = possibleReciprocal.getFemaleGid()+SEPARATOR+possibleReciprocal.getMaleGid(); 
-					if(maleAndFemaleGid.equals(femaleAndMaleGid)) {
-						addToMap(reciprocalsMap, possibleReciprocal, importedCrosses);
-					}
+				String femaleAndMaleGid = possibleReciprocal.getFemaleGid()+SEPARATOR+possibleReciprocal.getMaleGid(); 
+				if(possibleReciprocal.getEntryId()!=importedCrosses.getEntryId() && 
+						maleAndFemaleGid.equals(femaleAndMaleGid)) {
+					addToMap(reciprocalsMap, possibleReciprocal, importedCrosses);
 				}
 			}
 		}

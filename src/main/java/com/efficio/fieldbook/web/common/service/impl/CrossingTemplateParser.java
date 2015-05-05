@@ -87,8 +87,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	}
 
 	/**
-	 * FIXME: For now, the headers are referenced to a static (APP_CONSTANTS) lookup
-	 *
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	protected void parseObservationSheet(String programUUID)

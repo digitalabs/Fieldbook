@@ -161,23 +161,6 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
         for (String gid : form.getGidList().split(",")) {
             gidList.add(Integer.parseInt(gid));
         }
-        // TODO : for re implementation with inventory ID
-        /*try {
-
-            inventoryMiddlewareService.addLotsForList(gidList,
-                    form.getInventoryLocationId(), form.getInventoryScaleId(),
-                    form.getInventoryComments(), this.getCurrentIbdbUserId(),
-                    form.getAmount(), form.getListId());
-           
-                result.put("message", messageSource
-                        .getMessage("seed.inventory.add.lot.save.success", null, local));
-                result.put("success", 1);
-
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-            result.put("message", "error: " + e.getMessage());
-            result.put("success", 0);
-        }*/
         
         return result;
     }

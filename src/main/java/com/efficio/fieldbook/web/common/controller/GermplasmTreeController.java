@@ -21,6 +21,7 @@ import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -50,6 +51,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -59,6 +61,10 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/ListTreeManager")
 public class GermplasmTreeController extends AbstractBaseFieldbookController {
+
+	private static final String COMMON_SAVE_GERMPLASM_LIST = "Common/saveGermplasmList";
+
+	private static final String GERMPLASM_LIST_TYPES = "germplasmListTypes";
 
 	/**
 	 * The Constant LOG.
@@ -137,13 +143,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			List<UserDefinedField> germplasmListTypes = germplasmListManager
 					.getGermplasmListTypes();
 			form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
-			model.addAttribute("germplasmListTypes", germplasmListTypes);
+			model.addAttribute(GERMPLASM_LIST_TYPES, germplasmListTypes);
 
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
 
-		return super.showAjaxPage(model, "Common/saveGermplasmList");
+		return super.showAjaxPage(model, COMMON_SAVE_GERMPLASM_LIST);
 	}
 
 	/**
@@ -160,13 +166,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			List<UserDefinedField> germplasmListTypes = germplasmListManager
 					.getGermplasmListTypes();
 			form.setListType(AppConstants.GERMPLASM_LIST_TYPE_GENERIC_LIST.getString());
-			model.addAttribute("germplasmListTypes", germplasmListTypes);
+			model.addAttribute(GERMPLASM_LIST_TYPES, germplasmListTypes);
 
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
 
-		return super.showAjaxPage(model, "Common/saveGermplasmList");
+		return super.showAjaxPage(model, COMMON_SAVE_GERMPLASM_LIST);
 	}
 
 	/**
@@ -339,13 +345,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			List<UserDefinedField> germplasmListTypes = germplasmListManager
 					.getGermplasmListTypes();
-			model.addAttribute("germplasmListTypes", germplasmListTypes);
+			model.addAttribute(GERMPLASM_LIST_TYPES, germplasmListTypes);
 
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
 
-		return super.showAjaxPage(model, "Common/saveGermplasmList");
+		return super.showAjaxPage(model, COMMON_SAVE_GERMPLASM_LIST);
 	}
 
 	protected int saveCrossesList(Integer germplasmListId, List<ListDataProject> listDataProject,

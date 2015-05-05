@@ -64,7 +64,8 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 @RequestMapping(ExportStudyController.URL)
 public class ExportStudyController extends AbstractBaseFieldbookController {
 
-    private static final String CSV_CONTENT_TYPE = "text/csv";
+    private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
+	private static final String CSV_CONTENT_TYPE = "text/csv";
 	private static final Logger LOG = LoggerFactory.getLogger(ExportStudyController.class);
     public static final String URL = "/ExportManager";
     private static final int BUFFER_SIZE = 4096 * 4;
@@ -354,7 +355,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
         		response.setContentType("application/zip");
         	} else {
         		filename = getOutputFileName(workbook.isNursery(), outputFilename, filename);
-        		response.setContentType("application/vnd.ms-excel");
+        		response.setContentType(APPLICATION_VND_MS_EXCEL);
         	}
     	}else if(AppConstants.EXPORT_DATAKAPTURE.getInt() == exportType) {
     		outputFilename = dataKaptureExportStudyService.export(userSelection.getWorkbook(), filename, instances);
@@ -527,7 +528,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	} else if (extensionName.indexOf(AppConstants.EXPORT_CSV_SUFFIX.getString()) != -1) {
     		contentType = "text/csv";
     	} else if (extensionName.indexOf(AppConstants.EXPORT_XLS_SUFFIX.getString()) != -1) {
-    		contentType = "application/vnd.ms-excel";
+    		contentType = APPLICATION_VND_MS_EXCEL;
     	}
     	response.setContentType(contentType);;
     	Map<String, Object> results = new HashMap<String, Object>();
@@ -568,7 +569,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	File file = exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), getExportServiceImpl());
     	  	
     	outputFilename = file.getAbsolutePath();
-		String contentType = "application/vnd.ms-excel";
+		String contentType = APPLICATION_VND_MS_EXCEL;
     	response.setContentType(contentType);
     	Map<String, Object> results = new HashMap<String, Object>();
     	results.put("outputFilename", outputFilename);

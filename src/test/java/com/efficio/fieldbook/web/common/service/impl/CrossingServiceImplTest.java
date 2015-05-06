@@ -221,7 +221,7 @@ public class CrossingServiceImplTest {
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 		
-		Map<Germplasm, Name> germplasmNameMap = crossingService.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), USER_ID);
+		Map<Germplasm, Name> germplasmNameMap = crossingService.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), USER_ID, false);
 	
 		Iterator<Entry<Germplasm, Name>> iterator = germplasmNameMap.entrySet().iterator();
 		Entry<Germplasm, Name> entry1 = iterator.next();

@@ -229,7 +229,7 @@ public class LabelPrintingServiceTest {
 		List<LabelFields> labelFields = new ArrayList<>();
 
 		LabelFields field = new LabelFields(DUMMY_NURSERY_LABEL_NAME,
-				DUMMY_NURSERY_LABEL_TERM_ID);
+				DUMMY_NURSERY_LABEL_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -238,7 +238,7 @@ public class LabelPrintingServiceTest {
 	protected List<LabelFields> createDummyTrialSettingLabels() {
 		List<LabelFields> labelFields = new ArrayList<>();
 
-		LabelFields field = new LabelFields(DUMMY_TRIAL_SETTING_LABEL_NAME, DUMMY_TRIAL_SETTING_LABEL_TERM_ID);
+		LabelFields field = new LabelFields(DUMMY_TRIAL_SETTING_LABEL_NAME, DUMMY_TRIAL_SETTING_LABEL_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -248,7 +248,7 @@ public class LabelPrintingServiceTest {
 		List<LabelFields> labelFields = new ArrayList<>();
 
 		LabelFields field = new LabelFields(DUMMY_TRIAL_ENVIRONMENT_LABEL_NAME,
-				DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID);
+				DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -258,7 +258,7 @@ public class LabelPrintingServiceTest {
 		List<LabelFields> labelFields = new ArrayList<>();
 
 		LabelFields field = new LabelFields(DUMMY_TRAIT_LABEL_NAME,
-				DUMMY_TRAIT_TERM_ID);
+				DUMMY_TRAIT_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -268,7 +268,7 @@ public class LabelPrintingServiceTest {
 			List<LabelFields> labelFields = new ArrayList<>();
 
 			LabelFields field = new LabelFields(DUMMY_GERMPLASM_LABEL_NAME,
-					DUMMY_GERMPLASM_TERM_ID);
+					DUMMY_GERMPLASM_TERM_ID, false);
 			labelFields.add(field);
 
 			return labelFields;

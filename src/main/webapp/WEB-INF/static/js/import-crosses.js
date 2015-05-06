@@ -2,6 +2,7 @@ var ImportCrosses = {
 		CROSSES_URL : '/Fieldbook/crosses',
 		showFavoriteMethodsOnly: true,
 		showFavoriteLocationsOnly: true,
+		preservePlotDuplicates: false,
 		showPopup : function(){
 			$('#fileupload-import-crosses').val('');
 			$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
@@ -24,16 +25,22 @@ var ImportCrosses = {
 					createErrorNotification(crossingImportErrorHeader,resp.error.join('<br/>'));
 					return;
 				}
-
+				ImportCrosses.preservePlotDuplicates = false;
 				$('.import-crosses-section .modal').modal('hide');
-
+				$('#openCrossesListModal').data('hasPlotDuplicate', resp.hasPlotDuplicate);
 				// show review crosses page
-				ImportCrosses.openCrossesList();
+				setTimeout(ImportCrosses.openCrossesList, 500);
 
 			});
 
 		},
-
+		hasPlotDuplicate : function(){
+			'use strict';
+			if($('#openCrossesListModal').data('hasPlotDuplicate') === true){
+				return true;
+			}
+			return false;
+		},
 		openCrossesList : function() {
 			'use strict';
 			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
@@ -46,8 +53,8 @@ var ImportCrosses = {
 
 			$('#openCrossListNextButton').off('click');
 			$('#openCrossListNextButton').on('click', function() {
-				$('#openCrossesListModal').modal('hide');
-				ImportCrosses.showImportSettingsPopup();
+				$('#openCrossesListModal').modal('hide');								
+				setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 			});
 
 			$('#goBackToImportCrossesButton').off('click');
@@ -101,7 +108,25 @@ var ImportCrosses = {
 				}
 			});
 		},
-
+		showPlotDuplicateConfirmation : function(){
+			'use strict';
+			if(ImportCrosses.hasPlotDuplicate()){
+				//show the confirmation now
+				$('#duplicate-crosses-modal input[type=checkbox]').prop('checked',ImportCrosses.preservePlotDuplicates);
+				
+				$('#duplicate-crosses-modal').modal({ backdrop: 'static', keyboard: true });
+				
+				$('#continue-duplicate-crosses').off('click');
+				$('#continue-duplicate-crosses').on('click', function() {
+					//get the value of the checkbox
+					ImportCrosses.preservePlotDuplicates = $('#duplicate-crosses-modal input[type=checkbox]').is(':checked');
+					$('#duplicate-crosses-modal').modal('hide');				
+					setTimeout(ImportCrosses.showImportSettingsPopup, 500);
+				});
+			}else{
+				ImportCrosses.showImportSettingsPopup();
+			}			
+		},
 		showImportSettingsPopup : function() {
 			var crossSettingsPopupModal = $('#crossSettingsModal');
 			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
@@ -354,7 +379,7 @@ var ImportCrosses = {
 			settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
 			settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
 			settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
-
+			settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
 			settingObject.additionalDetailsSetting = {};
 			settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
 			if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
@@ -517,6 +542,8 @@ var ImportCrosses = {
 };
 
 $(document).ready(function() {
+	$('.import-crosses').off('click');
+    $('.btn-import-crosses').off('click');    
 	$('.import-crosses').on('click', ImportCrosses.showPopup);
     $('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);
 	$('.import-crosses-section .modal').on('hide.bs.modal', function() {

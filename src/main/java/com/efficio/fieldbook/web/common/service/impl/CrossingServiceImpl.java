@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
@@ -55,12 +56,18 @@ public class CrossingServiceImpl implements CrossingService {
 		CrossNameSetting crossNameSetting = crossSetting.getCrossNameSetting();
 		
 		applyCrossNameSettingToImportedCrosses(crossNameSetting, importedCrossesList.getImportedCrosses());
-		Map<Germplasm, Name> germplasmToBeSaved = generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), userId);
+		Map<Germplasm, Name> germplasmToBeSaved = generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), userId, importedCrossesList.hasPlotDuplicate());
 		List<Integer> savedGermplasmIds = saveGermplasm(germplasmToBeSaved);
 		
 		Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
 		for (ImportedCrosses cross : importedCrossesList.getImportedCrosses()){
-			cross.setGid(germplasmIdIterator.next().toString());
+			//this will do the merging and using the gid and cross from the initial duplicate
+			if(FieldbookUtil.isContinueCrossingMerge(importedCrossesList.hasPlotDuplicate(), crossSetting.isPreservePlotDuplicates(), cross)){
+				FieldbookUtil.mergeCrossesPlotDuplicateData(cross, importedCrossesList.getImportedCrosses());
+				continue;
+			}			
+			Integer newGid = germplasmIdIterator.next();
+			cross.setGid(newGid.toString());
 		}
 		
 	}
@@ -80,7 +87,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 	} 
 	
-	protected Map<Germplasm, Name> generateGermplasmNameMap(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses, Integer userId) throws MiddlewareQueryException{
+	protected Map<Germplasm, Name> generateGermplasmNameMap(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses, Integer userId, boolean hasPlotDuplicate) throws MiddlewareQueryException{
 		
 		Map<Germplasm, Name> germplasmNameMap = new LinkedHashMap<>();
 		Integer crossingNameTypeId = getIDForUserDefinedFieldCrossingName();
@@ -101,6 +108,9 @@ public class CrossingServiceImpl implements CrossingService {
 		
 		for (ImportedCrosses cross : importedCrosses){
                         
+			if(FieldbookUtil.isContinueCrossingMerge(hasPlotDuplicate, crossSetting.isPreservePlotDuplicates(), cross)){
+				continue;
+			}
             Germplasm germplasm = new Germplasm();
             Name name = new Name();
             

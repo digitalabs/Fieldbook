@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.common.controller;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
@@ -274,7 +275,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		} else if (GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 			type = GermplasmListType.CROSSES;
-
+			//need to add the copying of the duplicate entry here
+			FieldbookUtil.copyDupeNotesToListDataProject(dataProjectList, userSelection.getImportedCrossesList().getImportedCrosses());
 		} else if (GERMPLASM_LIST_TYPE_STOCK.equals(form.getGermplasmListType())) {
 			type = GermplasmListType.STOCK;
 		} else {

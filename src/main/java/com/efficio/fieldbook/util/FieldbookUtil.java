@@ -14,8 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,5 +113,37 @@ public class FieldbookUtil {
 
   public static String generateEntryCode(int index) {
       return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
+  }
+  
+  public static boolean isPlotDuplicateNonFirstInstance(ImportedCrosses crosses){
+	  if(crosses.isPlotDupe() && crosses.getDuplicateEntries() != null &&  crosses.getEntryId() > crosses.getDuplicateEntries().iterator().next()){
+		  return true;
+	  }
+	  return false;
+  }
+  public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses, List<ImportedCrosses> importedGermplasmList){
+	  if(isPlotDuplicateNonFirstInstance(crosses)){
+		  //get the 1st instance of duplicate from the list
+		  Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
+		  // needed to minus 1 since a list is 0 based
+		  ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate-1);
+		  crosses.setGid(firstInstanceCrossGermplasm.getGid());
+		  crosses.setCross(firstInstanceCrossGermplasm.getCross());
+		  crosses.setDesig(firstInstanceCrossGermplasm.getDesig());		  
+	  }
+  }
+  public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate, boolean isPreservePlotDuplicate, ImportedCrosses cross){
+	  if(hasPlotDuplicate && !isPreservePlotDuplicate && FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)){
+		  return true;
+	  }
+	  return false;
+  }
+  
+  public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList, List<ImportedCrosses> importedCrosses){
+	  if(dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()){
+		  for(int i = 0 ; i < dataProjectList.size() ; i++){
+			  dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate()); 
+		  }
+	  }
   }
 }

@@ -63,6 +63,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
 	private static final String IS_SUCCESS = "isSuccess";
+	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -280,6 +281,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			studySelection.setimportedCrossesList(parseResults);
 
 			resultsMap.put(IS_SUCCESS, 1);
+			resultsMap.put(HAS_PLOT_DUPLICATE, parseResults.hasPlotDuplicate());
 
 		} catch (FileParsingException e) {
 			LOG.error(e.getMessage(),e);

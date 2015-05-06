@@ -172,7 +172,7 @@ LabelPrinting = {
             receive: function(event, ui) {          	
             	var receiverId = $(this).attr('id'),
             		senderId = $(ui.sender).attr('id'),
-            		stvarId = parseInt(event.toElement.id);
+            		stvarId = parseInt(ui.item.context.id);
             	
             	// nursery/trial details items are not allowed to be dragged 
             	// to nursery/trial list details and vice versa

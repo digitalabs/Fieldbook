@@ -97,26 +97,6 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 		return detailMap;
 	}
 
-	@Override public boolean saveUpdatedInventoryDetails(List<InventoryDetails> updatedList, Integer currentUserID, Integer listID) throws MiddlewareQueryException{
-
-		for (InventoryDetails inventoryDetails : filterBlankDetails(updatedList)) {
-
-			List<Integer> gidList = new ArrayList<>();
-			gidList.add(inventoryDetails.getGid());
-
-				inventoryService.addLotsForList(gidList,
-						inventoryDetails.getLocationId(),
-						inventoryDetails.getScaleId(),
-						inventoryDetails.getComment(),
-						currentUserID,
-						inventoryDetails.getAmount(),
-						listID, inventoryDetails.getInventoryID());
-
-		}
-
-		return true;
-	}
-
 	protected List<InventoryDetails> filterBlankDetails(List<InventoryDetails> originalList) {
 		List<InventoryDetails> list = new ArrayList<>();
 

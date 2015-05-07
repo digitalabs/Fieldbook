@@ -14,10 +14,7 @@ import java.util.List;
 
  */
 public interface ImportInventoryService {
-	public ImportedInventoryList parseFile(MultipartFile file) throws FileParsingException;
+	ImportedInventoryList parseFile(MultipartFile file) throws FileParsingException;
 
-	public boolean mergeImportedData(List<InventoryDetails> originalList, ImportedInventoryList imported);
-
-	public boolean saveUpdatedInventoryDetails(List<InventoryDetails> updatedList, Integer currentUserID, Integer listID) throws
-			MiddlewareQueryException;
+	boolean mergeImportedData(List<InventoryDetails> originalList, ImportedInventoryList imported);
 }

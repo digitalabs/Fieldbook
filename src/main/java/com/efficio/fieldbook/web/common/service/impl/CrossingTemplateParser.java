@@ -130,10 +130,10 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 					.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo),programUUID);
 
 			ImportedCrosses importedCrosses = new ImportedCrosses(femaleListData, maleListData, 
-					femaleNursery, maleNursery, breedingMethod, crossingDate, 
-					seedsHarvested, notes, currentRow);
-			importedCrosses.setFemalePlotNo(femalePlotNo);
-			importedCrosses.setMalePlotNo(malePlotNo);
+					femaleNursery, maleNursery,femalePlotNo,malePlotNo,currentRow);
+
+			importedCrosses.setOptionalFields(breedingMethod, crossingDate,seedsHarvested, notes);
+
 			this.importedCrossesList.addImportedCrosses(importedCrosses);
 
 			currentRow++;

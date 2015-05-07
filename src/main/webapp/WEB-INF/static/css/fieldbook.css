@@ -1767,12 +1767,15 @@ td.accepted-value {
 
 .pedigreeDupe {
 	background-color: #E5D8DD;
+	color: #84324E;
 }
 
 .plotRecip {
 	background-color: #E0E4D7;
+	color: #4C5F07;
 }
 
 .pedigreeRecip {
 	background-color: #DCE9F2;
+	color: #6A83C7;
 }

@@ -3,14 +3,19 @@ package com.efficio.fieldbook.service;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
 import com.google.zxing.common.BitMatrix;
 
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -27,10 +32,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -65,7 +74,7 @@ public class LabelPrintingServiceImplTest {
     private InventoryService inventoryMiddlewareService;
 
 	@InjectMocks
-	LabelPrintingServiceImpl serviceDUT;
+	LabelPrintingServiceImpl serviceDUT = Mockito.spy(new LabelPrintingServiceImpl());
 
 	@Before
 	public void beforeTest() throws Exception {
@@ -239,6 +248,71 @@ public class LabelPrintingServiceImplTest {
 		BitMatrix bitMatrix = serviceDUT.encodeBarcode("乙七九", 100, 200);
 		Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii" , bitMatrix);
 	}
+	
+	@Test
+	public void testPopulateValuesFromMeasurementNoData(){
+		
+		Map<Integer, String> values = new HashMap<>();
+		LabelPrintingProcessingParams params = createLabelPrintingProcessingParams();
+		MeasurementRow measurementRow = createMeasurementRow();
+		
+		Boolean hasData = serviceDUT.populateValuesFromMeasurement(params, measurementRow, 1, values, true);
+		
+		Assert.assertFalse("should be false", hasData);
+	}
+	
+	@Test
+	public void testPopulateValuesFromMeasurementWithData(){
+		
+		Map<Integer, String> values = new HashMap<>();
+		LabelPrintingProcessingParams params = createLabelPrintingProcessingParams();
+		MeasurementRow measurementRow = createMeasurementRow();
+		
+		Boolean hasData = serviceDUT.populateValuesFromMeasurement(params, measurementRow, TermId.TRIAL_LOCATION.getId(), values, true);
+		
+		Assert.assertTrue("Should be true", hasData);
+		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila" ,values.get(TermId.TRIAL_LOCATION.getId()));
+		
+	}
+	
+	@Test
+	public void testPopulateValuesForTrial(){
+		
+		Integer testTermId =  TermId.TRIAL_LOCATION.getId();
+		
+		Mockito.doReturn(testTermId).when(serviceDUT).getCounterpartTermId(Mockito.anyInt());
+		
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		Map<Integer, String> values = new HashMap<>();
+		LabelPrintingProcessingParams params = createLabelPrintingProcessingParams();
+		
+		params.setVariableMap(new HashMap<Integer, MeasurementVariable>());
+		for (MeasurementVariable mv : workbook.getAllVariables()){
+			params.getVariableMap().put(mv.getTermId(), mv);
+		}
+		
+		params.setEnvironmentData(createMeasurementRow());
+		
+		serviceDUT.populateValuesForTrial(params, workbook, testTermId, values, true);
+		
+		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila" ,values.get(TermId.TRIAL_LOCATION.getId()));
+	}
+	
+	@Test
+	public void testPopulateValuesForNursery(){
+		
+		Integer testTermId =  TermId.TRIAL_LOCATION.getId();
+		
+		Mockito.doReturn(testTermId).when(serviceDUT).getCounterpartTermId(Mockito.anyInt());
+		
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		Map<Integer, String> values = new HashMap<>();
+		LabelPrintingProcessingParams params = createLabelPrintingProcessingParams();
+		
+		serviceDUT.populateValuesForNursery(params, workbook, testTermId, values, true);
+		
+		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "" ,values.get(TermId.TRIAL_LOCATION.getId()));
+	}
 
 	private List<GermplasmList> createGermplasmLists(int numOfEntries) {
 		List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>();
@@ -286,6 +360,35 @@ public class LabelPrintingServiceImplTest {
 		}
 		
 		return inventoryDetails;
+	}
+	
+	private LabelPrintingProcessingParams createLabelPrintingProcessingParams(){
+		LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
+		params.setLabelHeaders(new HashMap<Integer, String>());
+		return params;
+	}
+	
+	private MeasurementRow createMeasurementRow(){
+		
+		MeasurementRow measurementRow = new MeasurementRow();
+		List<MeasurementData> dataList = new ArrayList<>();
+		dataList.add(createMeasurementData(TermId.LOCATION_ID.getId(), "LOCATION_ID", "123"));
+		dataList.add(createMeasurementData(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Manila"));
+		dataList.add(createMeasurementData(111, "Some Variable", "Test Data"));
+		measurementRow.setDataList(dataList);
+		
+		return measurementRow;
+	}
+	
+	private MeasurementData createMeasurementData(Integer termId, String label, String value){
+		MeasurementData measurementData = new MeasurementData(label, value);
+		measurementData.setDataType("C");
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(termId);
+		measurementVariable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		
+		measurementData.setMeasurementVariable(measurementVariable);
+		return measurementData;
 	}
 	
 	

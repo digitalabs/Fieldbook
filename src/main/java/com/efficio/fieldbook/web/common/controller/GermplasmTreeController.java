@@ -16,18 +16,15 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.stock.StockIDGenerationSettings;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.service.StockService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
@@ -52,7 +49,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -80,8 +76,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	public static final String GERMPLASM_LIST_TYPE_ADVANCE = "advance";
 	public static final String GERMPLASM_LIST_TYPE_CROSS = "cross";
-	public static final String GERMPLASM_LIST_TYPE_STOCK = "stock";
-
 	/**
 	 * The Constant BATCH_SIZE.
 	 */
@@ -103,9 +97,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private CrossingService crossingService;
 
 	@Resource
-	private StockService stockService;
-
-	@Resource
 	private InventoryService inventoryService;
 
 	private static final String NAME_NOT_UNIQUE = "Name not unique";
@@ -125,9 +116,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@Resource
 	public ContextUtil contextUtil;
 
-	@Resource
-	private StockIDGenerationSettings generationSettings;
-
 	/**
 	 * Load initial germplasm tree.
 	 *
@@ -144,29 +132,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			List<UserDefinedField> germplasmListTypes = germplasmListManager
 					.getGermplasmListTypes();
 			form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
-			model.addAttribute(GERMPLASM_LIST_TYPES, germplasmListTypes);
-
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-		}
-
-		return super.showAjaxPage(model, COMMON_SAVE_GERMPLASM_LIST);
-	}
-
-	/**
-	 * Load initial germplasm tree.
-	 *
-	 * @return the string
-	 */
-	@RequestMapping(value = "/saveStockList", method = RequestMethod.GET)
-	public String saveStockList(@ModelAttribute("saveListForm") SaveListForm form,
-			Model model, HttpSession session) {
-
-		try {
-			form.setListDate(DateUtil.getCurrentDateInUIFormat());
-			List<UserDefinedField> germplasmListTypes = germplasmListManager
-					.getGermplasmListTypes();
-			form.setListType(AppConstants.GERMPLASM_LIST_TYPE_GENERIC_LIST.getString());
 			model.addAttribute(GERMPLASM_LIST_TYPES, germplasmListTypes);
 
 		} catch (Exception e) {
@@ -212,8 +177,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					results.put("advancedGermplasmListId", listDataProjectListId);
 				} else if (GERMPLASM_LIST_TYPE_CROSS.equals(form.getGermplasmListType())) {
 					results.put("crossesListId", listDataProjectListId);
-				} else if (GERMPLASM_LIST_TYPE_STOCK.equals(form.getGermplasmListType())) {
-					results.put("stockListId", listDataProjectListId);
 				}
 			} else {
 				results.put(IS_SUCCESS, 0);
@@ -254,12 +217,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 					importedCrossesList.getImportedCrosses());
 			return fieldbookMiddlewareService
 					.saveGermplasmList(listDataItems, germplasmList);
-		} else if (GERMPLASM_LIST_TYPE_STOCK.equals(form.getGermplasmListType())) {
-			List<ListDataProject> dataProjectList = fieldbookMiddlewareService
-					.getListDataProject(form.getSourceListId());
-			populateGermplasmListDataFromListDataProject(dataProjectList, germplasmList,
-					listDataItems);
-			return fieldbookMiddlewareService.saveGermplasmList(listDataItems, germplasmList);
 		} else {
 			throw new IllegalArgumentException(
 					"Unknown germplasm list type supplied when saving germplasm list");
@@ -277,8 +234,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			type = GermplasmListType.CROSSES;
 			//need to add the copying of the duplicate entry here
 			FieldbookUtil.copyDupeNotesToListDataProject(dataProjectList, userSelection.getImportedCrossesList().getImportedCrosses());
-		} else if (GERMPLASM_LIST_TYPE_STOCK.equals(form.getGermplasmListType())) {
-			type = GermplasmListType.STOCK;
 		} else {
 			throw new IllegalArgumentException(
 					"Unknown germplasm list type supplied when saving germplasm list");
@@ -296,26 +251,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 						germplasmListId,
 						dataProjectList, currentUserID);
 
-		if (GermplasmListType.STOCK == type) {
-			saveTransactionDataForGermplasmList(dataProjectList, dataListID);
-		}
+
 
 		return dataListID;
-	}
-
-	protected void saveTransactionDataForGermplasmList(List<ListDataProject> dataProjectList,
-			Integer germplasmListId) throws MiddlewareException {
-		String prefix = stockService.calculateNextStockIDPrefix(
-				generationSettings.getBreederIdentifier(), generationSettings.getSeparator());
-
-		for (ListDataProject data : dataProjectList) {
-			String inventoryID = prefix + data.getEntryId();
-			List<Integer> gidList = new ArrayList<>();
-			gidList.add(data.getGermplasmId());
-
-			inventoryService.addLotsForList(gidList, Location.UNKNOWN_LOCATION_ID, null, null, getCurrentIbdbUserId(),
-					Double.valueOf(0), germplasmListId, inventoryID);
-		}
 	}
 
 	/**

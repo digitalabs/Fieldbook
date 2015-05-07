@@ -11,11 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.service.api.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -56,6 +58,9 @@ public class GermplasmListController {
 	@Resource
 	private OntologyDataManager ontologyDataManager;
 
+	@Resource
+	private InventoryService inventoryService;
+
 	@RequestMapping(value = "/advance/{listId}", method = RequestMethod.GET)
 	public String displayAdvanceGermplasmList(@PathVariable Integer listId, HttpServletRequest req,
 			Model model) {
@@ -67,6 +72,27 @@ public class GermplasmListController {
 	public String displayCrossGermplasmList(@PathVariable Integer listId, HttpServletRequest req,
 			Model model) {
 		processGermplasmList(listId, GermplasmListType.CROSSES.name(), req, model);
+		return NURSERY_MANAGER_SAVED_FINAL_LIST;
+	}
+
+	@RequestMapping(value = "/stock/{listId}", method = RequestMethod.GET)
+	public String displayStockList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
+		try {
+			GermplasmList germplasmList = germplasmListManager.getGermplasmListById(listId);
+			List<InventoryDetails> detailList = inventoryService.getInventoryListByListDataProjectListId(listId,
+					GermplasmListType.valueOf(germplasmList.getType()));
+
+			model.addAttribute("totalNumberOfGermplasms", detailList.size());
+			model.addAttribute("listId", listId);
+			model.addAttribute("listNotes", germplasmList.getNotes());
+			model.addAttribute("listType", GermplasmListType.STOCK.name());
+			model.addAttribute("listName", germplasmList.getName());
+			model.addAttribute(GERMPLASM_LIST, detailList);
+			model.addAttribute(TABLE_HEADER_LIST, getGermplasmListTableHeaders(GermplasmListType.STOCK.name()));
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+
 		return NURSERY_MANAGER_SAVED_FINAL_LIST;
 	}
 
@@ -158,22 +184,13 @@ public class GermplasmListController {
 						messageSource.getMessage("seed.inventory.source", null, locale)));
 		
 		
-		if(germplasmListType.equals(GermplasmListType.CROSSES.name()) ||
-				germplasmListType.equals(GermplasmListType.STOCK.name())){
+		if(germplasmListType.equals(GermplasmListType.CROSSES.name())){
 			tableHeaderList.add(new TableHeader(
 					messageSource.getMessage("germplasm.list.duplicate", null, locale),
 					messageSource.getMessage("germplasm.list.duplicate", null, locale)));
 		}
 		
 		if(germplasmListType.equals(GermplasmListType.STOCK.name())){
-			tableHeaderList.add(new TableHeader(
-					messageSource.getMessage("germplasm.list.bulk.with", null, locale),
-					messageSource.getMessage("germplasm.list.bulk.with", null, locale)));
-			
-			tableHeaderList.add(new TableHeader(
-					messageSource.getMessage("germplasm.list.bulk.complete", null, locale),
-					messageSource.getMessage("germplasm.list.bulk.complete", null, locale)));
-			
 			tableHeaderList.add(new TableHeader(
 					ColumnLabels.LOT_LOCATION.getTermNameFromOntology(ontologyDataManager),
 					messageSource.getMessage("germplasm.list.storage.location", null, locale)));
@@ -185,10 +202,15 @@ public class GermplasmListController {
 			tableHeaderList.add(new TableHeader(
 					ColumnLabels.SCALE.getTermNameFromOntology(ontologyDataManager),
 					messageSource.getMessage("germplasm.list.scale", null, locale)));
+
+			tableHeaderList.add(new TableHeader(
+					ColumnLabels.STOCKID.getTermNameFromOntology(ontologyDataManager),
+					messageSource.getMessage("germplasm.stock.list.stockid", null, locale)));
 			
 			tableHeaderList.add(new TableHeader(
 					ColumnLabels.COMMENT.getTermNameFromOntology(ontologyDataManager),
 					messageSource.getMessage("germplasm.list.comment", null, locale)));
+
 		}
 		
 		return tableHeaderList;

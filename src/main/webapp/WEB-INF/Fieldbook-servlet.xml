@@ -335,6 +335,11 @@
         <aop:scoped-proxy/>
     </bean>
 
+    <bean id="inventoryDataManager" factory-bean="managerFactory"
+          factory-method="getInventoryDataManager" scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
     <bean id="dataImportService" factory-bean="managerFactory"
           factory-method="getDataImportService"
           scope="request">

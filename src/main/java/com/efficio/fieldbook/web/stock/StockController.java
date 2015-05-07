@@ -103,7 +103,7 @@ public class StockController extends AbstractBaseFieldbookController{
 			}
 
 		} catch (MiddlewareQueryException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 
 		return "/NurseryManager/blank";
@@ -117,6 +117,8 @@ public class StockController extends AbstractBaseFieldbookController{
 				resultMap.put("errorMessage", messageSource.getMessage(
 						"stock.generate.id.breeder.identifier.error.numbers.found", new Object[]{},
 						Locale.getDefault()));
+				break;
+			default : break;
 		}
 
 		return resultMap;

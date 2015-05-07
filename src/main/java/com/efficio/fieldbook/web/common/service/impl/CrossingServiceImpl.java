@@ -17,6 +17,8 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.service.api.PedigreeService;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,7 +46,13 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private CrossingTemplateParser crossingTemplateParser;
+	
+	@Resource
+	private CrossExpansionProperties crossExpansionProperties;
 
+	@Resource
+	private PedigreeService pedigreeService;
+	
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException{
 		return crossingTemplateParser.parseFile(file);
@@ -68,6 +76,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}			
 			Integer newGid = germplasmIdIterator.next();
 			cross.setGid(newGid.toString());
+			cross.setCross(pedigreeService.getCrossExpansion(newGid, this.crossExpansionProperties));
 		}
 		
 	}

@@ -1,22 +1,29 @@
 package com.efficio.fieldbook.web.stock;
 
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.commons.service.StockService;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.InventoryDataManager;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.service.api.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,7 +33,7 @@ import java.util.regex.Pattern;
  */
 @Controller
 @RequestMapping(value = StockController.URL)
-public class StockController {
+public class StockController extends AbstractBaseFieldbookController{
 	private static final Logger LOG = LoggerFactory.getLogger(StockController.class);
 
 	public static final String URL = "/stock";
@@ -43,17 +50,27 @@ public class StockController {
 	@Resource
 	private StockIDGenerationSettings generationSettings;
 
+	@Resource
+	private InventoryService inventoryService;
+
+	@Resource
+	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private GermplasmListManager germplasmListManager;
+
 	@ResponseBody
 	@RequestMapping(value = "/retrieveNextStockPrefix", method = RequestMethod.POST)
 	public Map<String, String> retrieveNextStockIDPrefix(@RequestBody StockIDGenerationSettings generationSettings) {
 		Map<String, String> resultMap = new HashMap<>();
+
+		Integer validationResult = generationSettings.validateSettings();
+
+		if (! validationResult.equals(StockIDGenerationSettings.VALID_SETTINGS)) {
+			return prepareValidationErrorMessages(validationResult);
+		}
+
 		try {
-
-			validateGenerationSettings(resultMap, generationSettings);
-			if (resultMap.containsKey(IS_SUCCESS) && resultMap.get(IS_SUCCESS).equals(FAILURE)) {
-				return resultMap;
-			}
-
 			String prefix = stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(), generationSettings.getSeparator());
 			// for UI purposes, we remove the separator from the generated prefix
 			prefix = prefix.substring(0, prefix.length() -1);
@@ -70,17 +87,111 @@ public class StockController {
 		return resultMap;
 	}
 
-	protected void validateGenerationSettings(Map<String, String> resultMap, StockIDGenerationSettings settings) {
-		// verify that only character letters are present in breeder identifier
+	@RequestMapping(value ="/generateStockTabIfNecessary/{listId}", method = RequestMethod.GET)
+	public String generateStockTabIfNecessary(@PathVariable Integer listId, Model model) {
 
-		Pattern pattern = Pattern.compile("[0-9]+");
-		Matcher matcher = pattern.matcher(settings.getBreederIdentifier());
+		try {
+			boolean transactionsExist = inventoryDataManager.transactionsExistForListProjectDataListID(listId);
+			if (transactionsExist) {
+				GermplasmList germplasmList = germplasmListManager.getGermplasmListById(listId);
 
-		if (matcher.find()) {
+
+				model.addAttribute("listName", germplasmList.getName());
+				model.addAttribute("listId", listId);
+
+				return "/NurseryManager/stockTab";
+			}
+
+		} catch (MiddlewareQueryException e) {
+			e.printStackTrace();
+		}
+
+		return "/NurseryManager/blank";
+	}
+
+	protected Map<String, String> prepareValidationErrorMessages(Integer validationResult) {
+		Map<String, String> resultMap = new HashMap<>();
+		switch (validationResult){
+			case StockIDGenerationSettings.NUMBERS_FOUND :
+				resultMap.put(IS_SUCCESS, FAILURE);
+				resultMap.put("errorMessage", messageSource.getMessage(
+						"stock.generate.id.breeder.identifier.error.numbers.found", new Object[]{},
+						Locale.getDefault()));
+		}
+
+		return resultMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/generateStockList/{listType}/{listId}", method = RequestMethod.POST)
+	public Map<String, String> generateStockList(@RequestBody StockIDGenerationSettings generationSettings,
+												 @PathVariable("listType") String listType,
+												 @PathVariable("listId") Integer listDataProjectListId) {
+		Map<String, String> resultMap = new HashMap<>();
+		Integer validationResult = generationSettings.validateSettings();
+
+		if (! validationResult.equals(StockIDGenerationSettings.VALID_SETTINGS)) {
+			return prepareValidationErrorMessages(validationResult);
+		}
+
+		try {
+			Integer listDataID = germplasmListManager.retrieveDataListIDFromListDataProjectListID(listDataProjectListId);
+			Map<ListDataProject, GermplasmListData> germplasmMap = generateGermplasmMap(listDataID, listDataProjectListId);
+
+			String prefix = stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(), generationSettings.getSeparator());
+
+			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
+                InventoryDetails details = new InventoryDetails();
+                details.setAmount(0d);
+                details.setLocationId(Location.UNKNOWN_LOCATION_ID);
+                details.setScaleId(null);
+                details.setUserId(getCurrentIbdbUserId());
+                details.setGid(entry.getKey().getGermplasmId());
+                details.setSourceId(listDataID);
+                details.setInventoryID(prefix + entry.getKey().getEntryId());
+
+                inventoryService.addLotAndTransaction(details, entry.getValue(), entry.getKey());
+            }
+
+			resultMap.put(IS_SUCCESS, SUCCESS);
+		} catch (MiddlewareException e) {
+			LOG.error(e.getMessage(), e);
 			resultMap.put(IS_SUCCESS, FAILURE);
 			resultMap.put("errorMessage", messageSource.getMessage(
-					"stock.generate.id.breeder.identifier.error.numbers.found", new Object[]{},
+					"common.default.error", new Object[]{},
 					Locale.getDefault()));
 		}
+
+		return resultMap;
+	}
+
+	protected Map<ListDataProject, GermplasmListData> generateGermplasmMap(Integer listDataID, Integer listDataProjectListId) throws MiddlewareException {
+		List<GermplasmListData> germplasmListDataList = germplasmListManager.getGermplasmListDataByListId(listDataID, 0, Integer.MAX_VALUE);
+		List<ListDataProject> listDataProjectList = germplasmListManager.retrieveSnapshotListData(listDataProjectListId);
+
+		Map<ListDataProject, GermplasmListData> germplasmMap = new HashMap<>();
+
+		for (ListDataProject listDataProject : listDataProjectList) {
+			boolean matchFound = false;
+			for (GermplasmListData germplasmListData : germplasmListDataList) {
+				if (germplasmListData.getEntryId().equals(listDataProject.getEntryId())) {
+					germplasmMap.put(listDataProject, germplasmListData);
+					matchFound = true;
+					break;
+				}
+			}
+
+			if (!matchFound) {
+				germplasmMap.put(listDataProject, null);
+			}
+
+		}
+
+		return germplasmMap;
+	}
+
+	@Override
+	public String getContentName() {
+		return null;
 	}
 }

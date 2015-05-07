@@ -162,13 +162,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     @Resource
     private InventoryService inventoryMiddlewareService;
     
-    private String UNSUPPORTED_CHARSET_IMG = "unsupported-char-set.png";
+    private static final String UNSUPPORTED_CHARSET_IMG = "unsupported-char-set.png";
+    
+    private static final String ARIAL_UNI = "arialuni.ttf";
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
 	 */
-
-    private String ARIAL_UNI = "arialuni.ttf";
     
     public LabelPrintingServiceImpl(){
     	super();

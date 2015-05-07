@@ -1,5 +1,8 @@
 package com.efficio.fieldbook.web.stock;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
@@ -7,6 +10,10 @@ package com.efficio.fieldbook.web.stock;
  * Time: 4:44 PM
  */
 public class StockIDGenerationSettings {
+	public static final int VALID_SETTINGS = 1;
+	public static final int NUMBERS_FOUND = -1;
+	public static final int SPACE_FOUND = -2;
+
 	private String breederIdentifier;
 	private String separator;
 
@@ -37,6 +44,30 @@ public class StockIDGenerationSettings {
 	public void copy(StockIDGenerationSettings settings) {
 		this.breederIdentifier = settings.getBreederIdentifier();
 		this.separator = settings.getSeparator();
+	}
+
+	public Integer validateSettings() {
+
+		if (hasNumber()) {
+			return NUMBERS_FOUND;
+		}
+
+		if (hasSpace()) {
+			return SPACE_FOUND;
+		}
+
+		return VALID_SETTINGS;
+	}
+
+	protected boolean hasNumber() {
+		Pattern pattern = Pattern.compile("[0-9]+");
+		Matcher matcher = pattern.matcher(getBreederIdentifier());
+
+		return matcher.find();
+	}
+
+	protected boolean hasSpace() {
+		return getBreederIdentifier().contains(" ");
 	}
 
 }

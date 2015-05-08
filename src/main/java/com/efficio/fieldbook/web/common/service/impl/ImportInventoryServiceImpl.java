@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.service.api.InventoryService;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.service.ImportInventoryService;

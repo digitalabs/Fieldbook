@@ -46,7 +46,7 @@ public class StockIDGenerationSettings {
 		this.separator = settings.getSeparator();
 	}
 
-	public Integer validateSettings() {
+	public int validateSettings() {
 
 		if (hasNumber()) {
 			return NUMBERS_FOUND;

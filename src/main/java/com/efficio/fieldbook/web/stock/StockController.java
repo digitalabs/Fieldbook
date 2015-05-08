@@ -40,15 +40,13 @@ public class StockController extends AbstractBaseFieldbookController{
 	public static final String IS_SUCCESS = "isSuccess";
 	public static final String FAILURE = "0";
 	public static final String SUCCESS = "1";
+	public static final String ERROR_MESSAGE = "errorMessage";
 
 	@Resource
 	private StockService stockService;
 
 	@Resource
 	private MessageSource messageSource;
-
-	@Resource
-	private StockIDGenerationSettings generationSettings;
 
 	@Resource
 	private InventoryService inventoryService;
@@ -77,8 +75,6 @@ public class StockController extends AbstractBaseFieldbookController{
 			resultMap.put(IS_SUCCESS, SUCCESS);
 			resultMap.put("prefix", prefix);
 
-			// store the current generation settings to session for later use
-			this.generationSettings.copy(generationSettings);
 		} catch (MiddlewareException e) {
 			LOG.error(e.getMessage(), e);
 			resultMap.put(IS_SUCCESS, FAILURE);
@@ -111,13 +107,17 @@ public class StockController extends AbstractBaseFieldbookController{
 
 	protected Map<String, String> prepareValidationErrorMessages(Integer validationResult) {
 		Map<String, String> resultMap = new HashMap<>();
+		resultMap.put(IS_SUCCESS, FAILURE);
 		switch (validationResult){
 			case StockIDGenerationSettings.NUMBERS_FOUND :
-				resultMap.put(IS_SUCCESS, FAILURE);
-				resultMap.put("errorMessage", messageSource.getMessage(
+				resultMap.put(ERROR_MESSAGE, messageSource.getMessage(
 						"stock.generate.id.breeder.identifier.error.numbers.found", new Object[]{},
 						Locale.getDefault()));
 				break;
+			case StockIDGenerationSettings.SPACE_FOUND:
+				resultMap.put(ERROR_MESSAGE, messageSource.getMessage(
+						"stock.generate.id.breeder.identifier.error.space.found", new Object[]{},
+						Locale.getDefault()));
 			default : break;
 		}
 
@@ -159,7 +159,7 @@ public class StockController extends AbstractBaseFieldbookController{
 		} catch (MiddlewareException e) {
 			LOG.error(e.getMessage(), e);
 			resultMap.put(IS_SUCCESS, FAILURE);
-			resultMap.put("errorMessage", messageSource.getMessage(
+			resultMap.put(ERROR_MESSAGE, messageSource.getMessage(
 					"common.default.error", new Object[]{},
 					Locale.getDefault()));
 		}

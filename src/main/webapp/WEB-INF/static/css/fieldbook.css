@@ -1779,3 +1779,6 @@ td.accepted-value {
 	background-color: #DCE9F2;
 	color: #6A83C7;
 }
+input.review-select-all{
+	margin-left: 52px;
+}

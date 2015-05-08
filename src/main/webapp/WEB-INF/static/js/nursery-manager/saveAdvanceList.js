@@ -201,18 +201,26 @@ var SaveAdvanceList = {};
 			}
 		});
 	};
+	SaveAdvanceList.verifyCheckboxesForSelectAll = function(){
+		'use strict';
+		if($('.review-select-all:checked') && $('input.reviewAdvancingListGid:not(:checked)').length > 0){
+			//this is the time we check if there are actual uncheck bxoes so we can uncheck this one
+			$('.review-select-all').prop('checked', false);
+
+		}
+	},
 	SaveAdvanceList.setupAdvanceListForReview = function(){
 		var sectionContainerDiv = 'reviewAdvanceNurseryModal';
-  		
-		$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(event){
+		
+		$('#'+getJquerySafeId(sectionContainerDiv) + ' .review-select-all').on('change', function(event){
 			//select all the checkbox in the section container div										
 				//needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
 				setTimeout(function(){
-					var isChecked = $('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').prop('checked');
+					var isChecked = $('#'+getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked');
 					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('selected');
   				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').removeClass('manual-selected');
-  				$('#'+getJquerySafeId(sectionContainerDiv) + ' input.advancingListGid').prop('checked', isChecked);
-  				
+  				$('#'+getJquerySafeId(sectionContainerDiv) + ' input.reviewAdvancingListGid').prop('checked', isChecked);
+
   				if(isChecked){
   					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('selected');
       				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('manual-selected');
@@ -240,6 +248,7 @@ var SaveAdvanceList = {};
 					}
 				}
 				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			},
 			onCtrl: function(row){
 				
@@ -260,12 +269,14 @@ var SaveAdvanceList = {};
 					}
 				}
 				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			},
 			onShift: function(){
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected-dummy').addClass('selected');					
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.selected input.reviewAdvancingListGid').prop('checked', true);
 				$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.selected) input.reviewAdvancingListGid').prop('checked', false);
 				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.primaryRow.selected').length);
+				SaveAdvanceList.verifyCheckboxesForSelectAll();
 			}
 		
 		});
@@ -283,6 +294,7 @@ var SaveAdvanceList = {};
 			$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr.manual-selected').addClass('selected');
 			$('#' + sectionContainerDiv + ' .advance-nursery-list-table tr:not(.manual-selected)').remove('selected');
 			$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+			SaveAdvanceList.verifyCheckboxesForSelectAll();
 		});
 		      
 		$('#reviewAdvanceNurseryModal').off('shown.bs.modal');
@@ -313,7 +325,11 @@ var SaveAdvanceList = {};
 		  });
 		new BMS.Fieldbook.AdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .advance-germplasm-items', '#'+sectionContainerDiv);
 		$('#advance-nursery-germplasm-list').css('opacity','1');
-		
+		if($('.total-review-items').html() === '0'){
+			$('.review-select-all-section').hide();
+		}else{
+			$('.review-select-all-section').show();
+		}
 	
 	};
 	SaveAdvanceList.selectAllReviewEntries = function(){
@@ -328,6 +344,7 @@ var SaveAdvanceList = {};
 			$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table tr').addClass('manual-selected');
 		}
 		$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+		$('#'+getJquerySafeId(sectionContainerDiv) + ' .review-select-all').prop('checked', isChecked);
 	};
 	SaveAdvanceList.deleteSelectedEntries = function(){
 		var entryNums = '',

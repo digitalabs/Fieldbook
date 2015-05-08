@@ -69,7 +69,8 @@ public class ExportAdvanceListServiceImplTest {
 	
 	@Test
 	public void testGenerateAdvanceListColumnValues(){
-		List<Map<Integer, ExportColumnValue>> exportColumnsValuesList = exportAdvanceListServiceImpl.generateAdvanceListColumnValues(generateSampleInventoryDetailsList(5), exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders());
+		List<Map<Integer, ExportColumnValue>> exportColumnsValuesList = exportAdvanceListServiceImpl.generateAdvanceListColumnValues(generateSampleInventoryDetailsList(5), 
+				exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(false));
 		Assert.assertEquals("There should be 5 set of column values", 5, exportColumnsValuesList.size());
 		//we check random data
 		Assert.assertEquals("The 1st GID should be 0", "0", exportColumnsValuesList.get(0).get(TermId.GID.getId()).getValue());
@@ -132,7 +133,7 @@ public class ExportAdvanceListServiceImplTest {
 	
 	@Test
 	public void testGenerateAdvanceListColumnHeaders(){
-		List<ExportColumnHeader> exportColumnHeaders = exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders();
+		List<ExportColumnHeader> exportColumnHeaders = exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(false);
 		
 		Assert.assertEquals("1st column should be ENTRY NO", exportColumnHeaders.get(0).getId().intValue(), TermId.ENTRY_NO.getId());
 		Assert.assertEquals("2nd column should be DESIG", exportColumnHeaders.get(1).getId().intValue(), TermId.DESIG.getId());
@@ -143,6 +144,24 @@ public class ExportAdvanceListServiceImplTest {
 		Assert.assertEquals("7th column should be INVENTORY_AMOUNT", exportColumnHeaders.get(6).getId().intValue(), AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt());
 		Assert.assertEquals("8th column should be INVENTORY_SCALE", exportColumnHeaders.get(7).getId().intValue(),AppConstants.TEMPORARY_INVENTORY_SCALE.getInt());
 		Assert.assertEquals("9th column should be INVENTORY_COMMENT", exportColumnHeaders.get(8).getId().intValue(), AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt());        		
+	}
+	
+	@Test
+	public void testGenerateAdvanceListColumnHeadersForCrosses(){
+		List<ExportColumnHeader> exportColumnHeaders = exportAdvanceListServiceImpl.generateAdvanceListColumnHeaders(true);
+		
+		Assert.assertEquals("1st column should be ENTRY NO", exportColumnHeaders.get(0).getId().intValue(), TermId.ENTRY_NO.getId());
+		Assert.assertEquals("2nd column should be DESIG", exportColumnHeaders.get(1).getId().intValue(), TermId.DESIG.getId());
+		Assert.assertEquals("3rd column should be CROSS", exportColumnHeaders.get(2).getId().intValue(), TermId.CROSS.getId());
+		Assert.assertEquals("4th column should be GID", exportColumnHeaders.get(3).getId().intValue(), TermId.GID.getId());
+		Assert.assertEquals("5th column should be SOURCE", exportColumnHeaders.get(4).getId().intValue(), TermId.SOURCE.getId());
+		Assert.assertEquals("6th column should be DUPLICATE", exportColumnHeaders.get(5).getId().intValue(), TermId.DUPLICATE.getId());
+		Assert.assertEquals("7th column should be BULK WITH", exportColumnHeaders.get(6).getId().intValue(), TermId.BULK_WITH.getId());
+		Assert.assertEquals("8th column should be BULK COMPL", exportColumnHeaders.get(7).getId().intValue(), TermId.BULK_COMPL.getId());
+		Assert.assertEquals("9th column should be LOCATION_ID", exportColumnHeaders.get(8).getId().intValue(), TermId.LOCATION_ID.getId());
+		Assert.assertEquals("10th column should be INVENTORY_AMOUNT", exportColumnHeaders.get(9).getId().intValue(), AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt());
+		Assert.assertEquals("11th column should be INVENTORY_SCALE", exportColumnHeaders.get(10).getId().intValue(),AppConstants.TEMPORARY_INVENTORY_SCALE.getInt());
+		Assert.assertEquals("12th column should be INVENTORY_COMMENT", exportColumnHeaders.get(11).getId().intValue(), AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt());        		
 	}
 	
 	@Test
@@ -246,6 +265,23 @@ public class ExportAdvanceListServiceImplTest {
 	}
 	
 	@Test 
+	public void testGetInventoryDetailValueInfo(){
+		Integer[] columnHeaderIds = new Integer[] {
+				TermId.ENTRY_NO.getId(),TermId.DESIG.getId(),TermId.CROSS.getId(),
+				TermId.GID.getId(),TermId.SOURCE.getId(),TermId.DUPLICATE.getId(),
+				TermId.BULK_WITH.getId(),TermId.BULK_COMPL.getId(),
+				TermId.LOCATION_ID.getId(),AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(),
+				AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(),
+				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()};
+		InventoryDetails inventoryDetails = getSampleInventoryDetails(1, 1);
+		for(int i=0;i<columnHeaderIds.length;i++) {
+			String result = exportAdvanceListServiceImpl.getInventoryDetailValueInfo(
+					inventoryDetails, columnHeaderIds[i]);
+			Assert.assertFalse("Inventory detail value should not be empty", "".equals(result));
+		}
+	}
+	
+	@Test 
 	public void testGetInventoryDetailValueInfoNotInCondition(){
 		InventoryDetails inventoryDetails = getSampleInventoryDetails(1,1);
 		String result = exportAdvanceListServiceImpl.getInventoryDetailValueInfo(inventoryDetails, 0);
@@ -262,11 +298,15 @@ public class ExportAdvanceListServiceImplTest {
 	
 	
 	private InventoryDetails getSampleInventoryDetails(int gid, int entryId){
-		InventoryDetails inventoryDetails = new InventoryDetails(gid, "germplasmName", 1,
+		InventoryDetails inventoryDetails = new InventoryDetails(
+				gid, "germplasmName", 1,
 				1, "locationName", 1,
-				null, 1, "sourceName",
+				2.0, 1, "sourceName",
 				1, "scaleName", "comment");
 		inventoryDetails.setEntryId(1);
+		inventoryDetails.setDuplicate("Plot Dupe: "+entryId+1);
+		inventoryDetails.setBulkWith("SID-"+(entryId+1)+"1");
+		inventoryDetails.setBulkCompl("Y");
 		return inventoryDetails;
 	}
 }

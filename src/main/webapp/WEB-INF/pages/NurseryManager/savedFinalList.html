@@ -51,7 +51,9 @@
 					<button type="button"
 						class="btn btn-info dropdown-toggle fbk-action-btn"
 						data-toggle="dropdown">
-						<span th:text="#{crosses.nursery.list.actions}">Actions</span>
+						<span th:text="#{advanced.list.actions}" th:if="*{listType == 'ADVANCED'}">Advanced List Actions</span>
+						<span th:text="#{crosses.nursery.list.actions}" th:if="*{listType == 'CROSSES'}">Cross List Actions</span>
+						<span th:text="#{stock.list.actions}" th:if="*{listType == 'STOCK'}">Stock List Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 						<li class="withMeasurementsOnly" th:if="*{listType == 'CROSSES' || listType == 'ADVANCED'}">
@@ -60,6 +62,14 @@
 								onclick="javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier());"
 								id="generate-stock-list" th:text="#{common.stock.list.generate}">
 									Generate Stock List
+							</a>
+						</li>
+						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
+							<a href=""
+								style="display: none" id="open-study-url"></a> <a href="javascript: void(0)"
+								th:onclick="'javascript: StockIDFunctions.exportList(\'' + ${listId} + '\');'"
+								id="generate-stock-list" th:text="#{common.export.inventory.template}">
+									Export Inventory Template
 							</a>
 						</li>
 					</ul>

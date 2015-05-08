@@ -247,6 +247,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				.saveOrUpdateListDataProject(studyId, type,
 						germplasmListId,
 						dataProjectList, currentUserID);
+
+
+
+		return dataListID;
 	}
 
 	/**

@@ -39,6 +39,10 @@ margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border
 
 label{
     font-weight: normal;
+    word-wrap: break-word;
+}
+label#list-notes {
+  width: 300px;
 }
 .btn-primary {
     color: #ffffff;
@@ -971,6 +975,18 @@ div.sectionContainer {
 .control-label-bold{
     font-weight: bold;
 }
+.control-label-italic{
+    font-style: italic;
+}
+.list-notes-display{
+	overflow:hidden;
+	text-overflow:ellipsis;	
+	white-space: nowrap;
+	width: 200px;
+	position: absolute;
+	padding-left: 3px;
+}
+
 .delete-icon {
     background:url(../img/delete-icon.png) left top;
     width:18px;
@@ -1153,11 +1169,10 @@ a.fbk-edit-experiment{
     text-align: left;
     vertical-align: middle
 }
-.advance-nursery-list-table table td.fbk-advance-check-box,
+table th.fbk-review-advance-check-box,table td.fbk-review-advance-check-box, .advance-nursery-list-table table td.fbk-advance-check-box,
 .advance-nursery-list-table table th.fbk-advance-check-box, .fbk-advance-check-box, .fbk-export-select-instance-check-box{
     text-align: center;
 }
-
 .enable-pointer-events {
     pointer-events: initial !important;
 }
@@ -1744,4 +1759,26 @@ td.accepted-value {
 
 #fbk-lbl-printing-delete-preset-confirm .modal-dialog {
     width: 40%;
+}
+
+.plotDupe {
+	background-color: #CCCCCC;
+}
+
+.pedigreeDupe {
+	background-color: #E5D8DD;
+	color: #84324E;
+}
+
+.plotRecip {
+	background-color: #E0E4D7;
+	color: #4C5F07;
+}
+
+.pedigreeRecip {
+	background-color: #DCE9F2;
+	color: #6A83C7;
+}
+input.review-select-all{
+	margin-left: 52px;
 }

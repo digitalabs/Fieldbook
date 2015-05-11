@@ -6,6 +6,8 @@ LabelPrinting = {
     excelOption: '',
     availableFieldIds : [],
     labelPrintingFields : {},
+    availableListFieldIds : [],
+    labelPrintingListFields : {},
 
     labelFormat: {
         'PDF': 1,
@@ -36,8 +38,13 @@ LabelPrinting = {
 
         // pluck only the ids
         for (var i = 0; i < availableFields.length; i++) {
-            LabelPrinting.availableFieldIds.push(availableFields[i].id);
-            LabelPrinting.labelPrintingFields[availableFields[i].id] = availableFields[i].name;
+        	if(availableFields[i].germplasmListField){
+        		LabelPrinting.availableListFieldIds.push(availableFields[i].id);
+                LabelPrinting.labelPrintingListFields[availableFields[i].id] = availableFields[i].name;
+        	} else {
+        		LabelPrinting.availableFieldIds.push(availableFields[i].id);
+                LabelPrinting.labelPrintingFields[availableFields[i].id] = availableFields[i].name;
+        	}
         }
 
         if (unavailableFields && unavailableFields.length > 0) {
@@ -55,8 +62,11 @@ LabelPrinting = {
 
         }
 
-        addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
-        addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
+        addToUIFieldsList($('#non-pdf-study-details-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
+        addToUIFieldsList($('#pdf-study-details-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
+        
+        addToUIFieldsList($('#non-pdf-study-list-details-fields'),LabelPrinting.labelPrintingListFields,LabelPrinting.availableListFieldIds);
+        addToUIFieldsList($('#pdf-study-list-details-fields'),LabelPrinting.labelPrintingListFields,LabelPrinting.availableListFieldIds);
 
         LabelPrinting.initializeUserPresets();
         LabelPrinting.showOrHideBarcodeFields();
@@ -159,7 +169,47 @@ LabelPrinting = {
 
         $( 'ul.droptrue' ).sortable({
             connectWith: 'ul',
-            receive: function(event, ui) {
+            receive: function(event, ui) {          	
+            	var receiverId = $(this).attr('id'),
+            		senderId = $(ui.sender).attr('id'),
+            		stvarId = parseInt(ui.item.context.id);
+            	
+            	// nursery/trial details items are not allowed to be dragged 
+            	// to nursery/trial list details and vice versa
+            	// and pdf
+            	if((receiverId == 'pdf-study-details-fields' 
+            		&& senderId == 'pdf-study-list-details-fields')
+            		|| (senderId == 'pdf-study-details-fields' 
+            			&& receiverId == 'pdf-study-list-details-fields')){
+            		$(ui.sender).sortable('cancel');
+            	}
+            	// for non-pdf
+            	if((receiverId == 'non-pdf-study-details-fields' 
+            		&& senderId == 'non-pdf-study-list-details-fields')
+            		|| (senderId == 'non-pdf-study-details-fields' 
+            			&& receiverId == 'non-pdf-study-list-details-fields')){
+            		$(ui.sender).sortable('cancel');
+            	}
+            	
+            	// selected fields is only allowed to be dragged back to their 
+            	// original group (details or list details)
+            	if(((receiverId == 'pdf-study-details-fields' 
+            		|| receiverId == 'non-pdf-study-details-fields') 
+            		&& (senderId == 'mainSelectedFields' 
+            			|| senderId == 'leftSelectedFields' 
+            				|| senderId == 'rightSelectedFields'))
+            		&& $.inArray(stvarId, LabelPrinting.availableFieldIds) === -1){
+            		$(ui.sender).sortable('cancel');
+            	}
+            	if(((receiverId == 'pdf-study-list-details-fields' 
+            		|| receiverId == 'non-pdf-study-list-details-fields') 
+            		&& (senderId == 'mainSelectedFields' 
+            			|| senderId == 'leftSelectedFields' 
+            				|| senderId == 'rightSelectedFields'))
+            		&& $.inArray(stvarId, LabelPrinting.availableListFieldIds) === -1){
+            		$(ui.sender).sortable('cancel');
+            	}
+            	
                 // so if > 10
                 if ($(this).hasClass('pdf-selected-fields') &&
                     $(this).children().length > 5) {
@@ -706,7 +756,7 @@ LabelPrinting = {
         diff = $(diff).not(pdfSetting.selectedRightFieldsList).get();
 
         //add diff to the pdf available fields list
-        addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.labelPrintingFields,diff);
+        addToUIFieldsList($('#pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diff);
         addToUIFieldsList($('#leftSelectedFields'),LabelPrinting.labelPrintingFields,pdfSetting.selectedLeftFieldsList);
         addToUIFieldsList($('#rightSelectedFields'),LabelPrinting.labelPrintingFields,pdfSetting.selectedRightFieldsList);
 
@@ -726,7 +776,7 @@ LabelPrinting = {
 
         var diff = $(LabelPrinting.availableFieldIds).not(setting.selectedFieldsList).get();
 
-        addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.labelPrintingFields,diff);
+        addToUIFieldsList($('#non-pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diff);
         addToUIFieldsList($('#mainSelectedFields'),LabelPrinting.labelPrintingFields,setting.selectedFieldsList);
 
     };

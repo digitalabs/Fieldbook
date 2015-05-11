@@ -76,7 +76,7 @@
 	
 	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
 
-	<bean id="fileService" class="com.efficio.fieldbook.service.FileServiceImpl"
+	<bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
 		init-method="init">
 		<constructor-arg value="${upload.directory}" />
 	</bean>
@@ -133,6 +133,11 @@
 	
 	<bean id="nurseryUserSelection" class="com.efficio.fieldbook.web.common.bean.UserSelection"
 		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+
+	<bean id="inventoryStockService" class="org.generationcp.commons.service.impl.InventoryStockServiceImpl"
+		  scope="session">
 		<aop:scoped-proxy />
 	</bean>
 	

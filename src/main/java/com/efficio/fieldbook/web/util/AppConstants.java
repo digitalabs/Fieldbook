@@ -83,6 +83,7 @@ public enum AppConstants {
     , NAME_SEPARATOR
     
     ,GERMPLASM_LIST_TYPE_HARVEST
+    ,GERMPLASM_LIST_TYPE_GENERIC_LIST
     
     , SEGMENT_STUDY
     , SEGMENT_PLOT

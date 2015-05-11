@@ -1,11 +1,15 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
-import com.efficio.fieldbook.util.parsing.AbstractExcelFileParser;
-import com.efficio.fieldbook.web.nursery.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.parsing.AbstractExcelFileParser;
+import org.generationcp.commons.parsing.DescriptionSheetParser;
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.parsing.pojo.ImportedFactor;
+import org.generationcp.commons.parsing.pojo.ImportedVariate;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -16,9 +20,9 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.annotation.Resource;
-import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -28,16 +32,8 @@ import java.util.*;
  */
 public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCrossesList> {
 
-	/**
-	 * The Constant FILE_INVALID.
-	 */
-	public static final String FILE_INVALID = "common.error.invalid.file";
 	public static final String NO_REFERENCES_ERROR_DESC = "study.import.crosses.error.no.references";
-	public static final String TEMPLATE_LIST_TYPE = "LST";
-	public static final int DESCRIPTION_SHEET_COL_SIZE = 8;
-	protected static final int DESCRIPTION_SHEET_NO = 0;
 	protected static final int OBSERVATION_SHEET_NO = 1;
-	protected static final int CONDITION_ROW_NO = 5;
 
 	/**
 	 * The Constant LOG.
@@ -67,20 +63,21 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	@Resource
 	private ContextUtil contextUtil;
 
+	private DescriptionSheetParser<ImportedCrossesList> descriptionSheetParser;
+
 	public CrossingTemplateParser() {
 
 	}
 
 	@Override public ImportedCrossesList parseWorkbook(Workbook workbook) throws
-			FileParsingException{
+			FileParsingException {
 		this.workbook = workbook;
-
 		try {
-			parseDescriptionSheet();
+			descriptionSheetParser = new DescriptionSheetParser<>(new ImportedCrossesList());
+
+			this.importedCrossesList = descriptionSheetParser.parseWorkbook(this.workbook);
+
 			parseObservationSheet(contextUtil.getCurrentProgramUUID());
-		} catch (ParseException e) {
-			LOG.debug(e.getMessage(), e);
-			throw new FileParsingException(messageSource.getMessage(FILE_INVALID, new Object[]{}, Locale.getDefault()));
 		} catch (MiddlewareQueryException e) {
 			LOG.debug(e.getMessage(), e);
 			throw new FileParsingException(messageSource.getMessage(NO_REFERENCES_ERROR_DESC, new Object[]{}, Locale.getDefault()));
@@ -89,17 +86,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		return importedCrossesList;
 	}
 
-	protected void parseDescriptionSheet() throws FileParsingException, ParseException {
-		parseCrossingListDetails();
-		parseConditions();
-		parseFactors();
-		parseConstants();
-		parseVariate();
-	}
-
 	/**
-	 * FIXME: For now, the headers are referenced to a static (APP_CONSTANTS) lookup
-	 *
 	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	protected void parseObservationSheet(String programUUID)
@@ -110,7 +97,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		currentRow = 1;
 		while (importFileIsValid && !isRowEmpty(OBSERVATION_SHEET_NO, currentRow,
-				sizeOfObservationHeader())) {
+				importedCrossesList.sizeOfObservationHeader())) {
 
 			String femaleNursery = getCellStringValue(OBSERVATION_SHEET_NO, currentRow,
 					observationColumnMap.get(AppConstants.FEMALE_NURSERY.getString()));
@@ -136,24 +123,21 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				throw new FileParsingException("Invalid Observation on row: " + currentRow);
 			}
 
-			// proceess female + male parent entries, will throw middleware query exception if no study valid or null
+			// process female + male parent entries, will throw middleware query exception if no study valid or null
 			ListDataProject femaleListData = this
 					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femaleEntry),programUUID);
 			ListDataProject maleListData = this
 					.getCrossingListProjectData(maleNursery, Integer.valueOf(maleEntry),programUUID);
 
-			this.importedCrossesList.addImportedCrosses(
-					new ImportedCrosses(femaleListData, maleListData, femaleNursery, maleNursery,
-							breedingMethod,
-							crossingDate, seedsHarvested, notes, currentRow));
+			ImportedCrosses importedCrosses = new ImportedCrosses(femaleListData, maleListData, 
+					femaleNursery, maleNursery,femalePlotNo,malePlotNo,currentRow);
+
+			importedCrosses.setOptionalFields(breedingMethod, crossingDate,seedsHarvested, notes);
+
+			this.importedCrossesList.addImportedCrosses(importedCrosses);
 
 			currentRow++;
 		}
-	}
-
-	protected int sizeOfObservationHeader() {
-		return importedCrossesList.getImportedFactors().size() + importedCrossesList
-				.getImportedVariates().size();
 	}
 
 	protected boolean isObservationRowValid(String femaleNursery, String femaleEntry,
@@ -167,230 +151,6 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 				(!StringUtils.isNotBlank(crossingDate)) || DateUtil
 						.isValidDate(crossingDate));
 	}
-
-	protected void parseCrossingListDetails() throws FileParsingException, ParseException {
-		String listName = getCellStringValue(DESCRIPTION_SHEET_NO, 0, 1);
-		String listTitle = getCellStringValue(DESCRIPTION_SHEET_NO, 1, 1);
-
-		String labelId = getCellStringValue(DESCRIPTION_SHEET_NO, 2, 0);
-
-		int listDateColNo = AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
-		int listTypeColNo = AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelId) ? 2 : 3;
-
-		Date listDate = DateUtil.parseDate(
-				getCellStringValue(DESCRIPTION_SHEET_NO, listDateColNo, 1),
-				DateUtil.DATE_AS_NUMBER_FORMAT);
-		String listType = getCellStringValue(DESCRIPTION_SHEET_NO, listTypeColNo, 1);
-
-		this.importedCrossesList = new ImportedCrossesList(originalFilename, listName,
-				listTitle, listType, listDate);
-
-		if (!TEMPLATE_LIST_TYPE.equalsIgnoreCase(listType)) {
-			throw new FileParsingException("Error parsing details : List type is invalid");
-		}
-	}
-
-	protected void parseConditions() {
-		// condition headers start at row = 5 (+ 1 : count starts from 0 )
-		currentRow = CONDITION_ROW_NO;
-
-		if (!isConditionHeadersInvalid(CONDITION_ROW_NO) && importFileIsValid) {
-			currentRow++;
-
-			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-				this.importedCrossesList.addImportedCondition(
-						new ImportedCondition(
-								getCellStringValue(DESCRIPTION_SHEET_NO,
-										currentRow, 0)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 1)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 2)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 3)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 4)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 5)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 6),
-								""
-						)
-				);
-
-				currentRow++;
-			}
-		}
-
-		while (isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-			currentRow++;
-		}
-	}
-
-	protected void parseFactors() throws FileParsingException{
-
-		if (!isFactorHeadersInvalid(currentRow) && importFileIsValid) {
-			currentRow++;
-
-			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-				final ImportedFactor factor = new ImportedFactor(
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								0)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								1)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								2)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								3)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								4)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								5)
-						, "");
-
-				importedCrossesList.addImportedFactor(factor);
-
-				currentRow++;
-			}
-
-			currentRow++;
-
-		} else {
-			throw new FileParsingException("Error parsing on factors header: Incorrect headers for factors.");
-		}
-
-		while (isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-			currentRow++;
-		}
-	}
-
-	protected void parseConstants() throws FileParsingException{
-		if (!isConstantsHeaderInvalid(currentRow) && importFileIsValid) {
-			currentRow++;
-			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-				importedCrossesList.addImportedConstant(new ImportedConstant(
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								0)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								1)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								2)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								3)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								4)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								5)
-						,
-						getCellStringValue(DESCRIPTION_SHEET_NO, currentRow,
-								6)));
-
-				currentRow++;
-			}
-			currentRow++;
-
-		} else {
-			// Incorrect headers for factors.
-			throw new FileParsingException("Error parsing on constants header: Incorrect headers for constants.");
-		}
-
-		while (isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-			currentRow++;
-		}
-	}
-
-	protected void parseVariate() throws FileParsingException{
-		if (!isVariateHeaderInvalid(currentRow) && importFileIsValid) {
-			currentRow++;
-			while (!isRowEmpty(DESCRIPTION_SHEET_NO, currentRow, DESCRIPTION_SHEET_COL_SIZE)) {
-				importedCrossesList.addImportedVariate(
-						new ImportedVariate(
-								getCellStringValue(DESCRIPTION_SHEET_NO,
-										currentRow, 0)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 1)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 2)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 3)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 4)
-								, getCellStringValue(DESCRIPTION_SHEET_NO,
-								currentRow, 5)));
-				currentRow++;
-			}
-
-		} else {
-			throw new FileParsingException("Error parsing on variates header: Incorrect headers for variates.");
-		}
-	}
-
-	protected boolean isConditionHeadersInvalid(int conditionHeaderRowNo) {
-		String[] headers = {
-				AppConstants.CONDITION.getString(),
-				AppConstants.DESCRIPTION.getString(),
-				AppConstants.PROPERTY.getString(),
-				AppConstants.SCALE.getString(),
-				AppConstants.METHOD.getString(),
-				AppConstants.DATA_TYPE.getString(),
-				AppConstants.VALUE.getString()
-		};
-
-		return isHeaderInvalid(conditionHeaderRowNo, DESCRIPTION_SHEET_NO, headers);
-	}
-
-
-
-	protected boolean isFactorHeadersInvalid(int factorHeaderRowNo) {
-		String[] headers = {
-				AppConstants.FACTOR.getString(),
-				AppConstants.DESCRIPTION.getString(),
-				AppConstants.PROPERTY.getString(),
-				AppConstants.SCALE.getString(),
-				AppConstants.METHOD.getString(),
-				AppConstants.DATA_TYPE.getString()
-		};
-
-		return isHeaderInvalid(factorHeaderRowNo,DESCRIPTION_SHEET_NO, headers);
-	}
-
-	protected boolean isConstantsHeaderInvalid(int constantHeaderRowNo) {
-		String[] headers = {
-				AppConstants.CONSTANT.getString(),
-				AppConstants.DESCRIPTION.getString(),
-				AppConstants.PROPERTY.getString(),
-				AppConstants.SCALE.getString(),
-				AppConstants.METHOD.getString(),
-				AppConstants.DATA_TYPE.getString(),
-				AppConstants.VALUE.getString()
-		};
-
-		return isHeaderInvalid(constantHeaderRowNo, DESCRIPTION_SHEET_NO,headers);
-	}
-
-	protected boolean isVariateHeaderInvalid(int variateHeaderRowNo) {
-		String[] headers = {
-				AppConstants.VARIATE.getString(),
-				AppConstants.DESCRIPTION.getString(),
-				AppConstants.PROPERTY.getString(),
-				AppConstants.SCALE.getString(),
-				AppConstants.METHOD.getString(),
-				AppConstants.DATA_TYPE.getString()
-		};
-
-		return isHeaderInvalid(variateHeaderRowNo, DESCRIPTION_SHEET_NO, headers);
-	}
-
 
 	protected boolean isObservationsHeaderInvalid() {
 		final List<ImportedFactor> importedFactors = new ArrayList<ImportedFactor>() {
@@ -422,7 +182,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		importedVariates.addAll(importedCrossesList.getImportedVariates());
 
-		final int headerSize = sizeOfObservationHeader();
+		final int headerSize = importedCrossesList.sizeOfObservationHeader();
 
 		for (int i = 0; i < headerSize; i++) {
 			// search the current header
@@ -456,8 +216,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		final Integer studyId = studyDataManager.getStudyIdByNameAndProgramUUID(studyName,programUUID);
 
 		if (null == studyId) {
-			throw new MiddlewareQueryException("no.such.study.exists",
-					"No study with \"" + studyName + "\" exists.");
+			throw new FileParsingException(messageSource.getMessage("no.such.study.exists",new String[]{studyName},
+					LocaleContextHolder.getLocale()));
 		}
 
 		final StudyType studyType = studyDataManager.getStudyType(studyId);
@@ -466,9 +226,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		List<GermplasmList> germplasmList = fieldbookMiddlewareService
 				.getGermplasmListsByProjectId(studyId, STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType));
 
-		if (null == germplasmList || germplasmList.isEmpty()) {
-			throw new MiddlewareQueryException("study.has.no.list",
-					"Study with \"" + studyName + "\" has no list.");
+		if (null == listdataResult) {
+			throw new FileParsingException(messageSource.getMessage("no.list.data.for.plot",new Object[]{studyName,genderedPlotNo},LocaleContextHolder.getLocale()));
 		}
 
 		return fieldbookMiddlewareService.getListDataProjectByListIdAndEntryNo(

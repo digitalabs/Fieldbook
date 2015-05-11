@@ -2,6 +2,9 @@
 <div class="row">
 	<div id="advance-nursery-modal-div"></div>
 </div>
+<div class="row">
+	<div id="review-advance-nursery-modal-div"></div>
+</div>
 
 <div class="row col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header edit-nursery-page-identifier">
@@ -283,10 +286,14 @@
 		<div th:id="${'advance-list' + crossesItem.id}" th:class="${'crosses-list' + crossesItem.id}">
 			
 		</div>
+		<div th:id="${'stock-list' + crossesItem.id}" th:class="${'crosses-list' + crossesItem.id}">
+			</div>
 	</div>	
 	<div th:id="${'list' + advanceItem.id}" class="tab-pane info" th:each="advanceItem : ${advancedList}">
 		<div th:id="${'advance-list' + advanceItem.id}">
 			
+		</div>
+		<div th:id="${'stock-list' + advanceItem.id}">
 		</div>
 	</div>	
 </div>
@@ -338,6 +345,11 @@
 </div>
 
 <div class="row">
+	<div id="open-germplasm"
+		th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
+</div>
+
+<div class="row">
 	<div id="export-study" th:include="/Common/includes/exportStudy"></div>
 </div>
 
@@ -352,6 +364,11 @@
 <div class="row">
 	<div id="export-advance" th:include="/Common/includes/exportAdvanceList"></div>
 </div>
+
+<div class="row">
+	<div th:include="/Common/includes/exportStockList"></div>
+</div>
+
 
 <div class="row">
 	<div class="row" id="addLotsModalDiv"></div>
@@ -394,6 +411,13 @@
 		<div th:include="/Common/includes/importInventory"/>
 	</div>
 </div>
+
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div th:include="Stock/generateStockIDModal"/>
+	</div>
+</div>
+
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -562,6 +586,11 @@
 			$('.nav-tabs').tabdrop({position: 'left'});
 			$('.nav-tabs').tabdrop('layout');
 			$('li#nursery-settings-li a').tab('show');
+			$('a[data-toggle="tab"]').each(function() {
+				if($(this).hasClass('crossesList') || $(this).hasClass('advanceList') ) {
+					StockIDFunctions.generateStockListTabIfNecessary($(this).data('list-id'));
+				}
+			});
 			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 				if($('.import-study-data').data('data-import') === '1'){
 					if($('.import-study-data').data('measurement-show-already') !== '1'){						
@@ -582,12 +611,18 @@
 			    	if($('#measurement-table').length !== 0 && $('#measurement-table').dataTable()){
 			    		$('#measurement-table').dataTable().fnAdjustColumnSizing()
 			    	}
-			    }else if($(this).hasClass('crossesList') && $(this).data('has-loaded') !== '1'){
+			    }else if($(this).hasClass('stockList') && $(this).data('has-loaded') !== '1'){
+					$(this).data('has-loaded', '1');
+					StockIDFunctions.displayStockList($(this).data('list-id'));
+
+				}else if($(this).hasClass('crossesList') && $(this).data('has-loaded') !== '1'){
 			    	$(this).data('has-loaded', '1');
 			    	ImportCrosses.displayCrossesList($(this).data('list-id'), $(this).data('list-id'), '', true);
+
 			    }else if($(this).hasClass('advanceList') && $(this).data('has-loaded') !== '1'){
 			    	$(this).data('has-loaded', '1');
 			    	displayAdvanceList($(this).data('list-id'), $(this).data('list-id'), '', true);
+
 			    }
 			});
 			$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {

@@ -997,11 +997,6 @@ function advanceNursery(tableName) {
 		return;
 	}
 
-	if($('.btn-save-advance-list').length > 0){
-		showAlertMessage('', errorAdvancingStudyMutipleTimes);
-		return;
-	}
-
 	var advanceStudyHref = '/Fieldbook/NurseryManager/advance/nursery';
 
 	if (tableName == 'nursery-table') {
@@ -1689,70 +1684,8 @@ function callAdvanceNursery() {
 		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 		return false;
 	} else if (validatePlantsSelected()) {
-		doAdvanceNursery();
+		SaveAdvanceList.doAdvanceNursery();
 	}
-}
-
-function doAdvanceNursery() {
-
-	var serializedData;
-
-	$('input[type=checkbox][name=methodChoice]').prop('disabled', false);
-	serializedData = $('#advanceNurseryModalForm').serialize();
-
-	$.ajax({
-		url: '/Fieldbook/NurseryManager/advance/nursery',
-		type: 'POST',
-		data: serializedData,
-		cache: false,
-		success: function(data) {
-			var advanceGermplasmChangeDetail = [];
-			if(data.isSuccess === '0'){
-				showErrorMessage('page-advance-modal-message', data.message);
-			}else{
-				if(data.listSize === 0){
-					showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
-				}else{
-					advanceGermplasmChangeDetail = (data.advanceGermplasmChangeDetails);
-					$('#advanceNurseryModal').modal('hide');
-					if(advanceGermplasmChangeDetail.length === 0){
-						showAdvanceGermplasmInfo(data.uniqueId);
-					}else{
-						showAdvanceGermplasmChangeConfirmationPopup(advanceGermplasmChangeDetail, data.uniqueId);
-					}
-				}
-			}
-
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log('The following error occured: ' + textStatus, errorThrown);
-		}
-	});
-}
-
-function showAdvanceGermplasmInfo(uniqueId){
-	'use strict';
-	$.ajax({
-		url: '/Fieldbook/NurseryManager/advance/nursery/info?uniqueId='+uniqueId,
-		type: 'GET',
-		cache: false,
-		success: function(html) {
-			var uniqueId,
-				close,
-				aHtml;
-				$('#advanceNurseryModal').modal('hide');
-				uniqueId = $(html).find('.uniqueId').attr('id');
-				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
-				aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + uniqueId + '" href="#advance-list' + uniqueId + '">Advance List' + close + '</a>';
-				$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li">' + aHtml + '</li>');
-				$('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + uniqueId + '">' + html + '</div>');
-				$('a#advanceHref'+uniqueId).tab('show');
-				$('.nav-tabs').tabdrop('layout');
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log('The following error occured: ' + textStatus, errorThrown);
-		}
-	});
 }
 
 function showSelectedAdvanceTab(uniqueId) {
@@ -1775,7 +1708,8 @@ function closeAdvanceListTab(uniqueId) {
 
 function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, advancedGermplasmListId) {
 	'use script';
-	var url = '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId;
+	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
+	var url = '/Fieldbook/germplasm/list/advance/' + id;
 	if(!isDefault){
 		$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
 		url += '?isSnapshot=0';

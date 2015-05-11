@@ -1,19 +1,26 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
+import org.generationcp.middleware.domain.dms.Experiment;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.VariableType;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.util.PoiUtil;
 
 import javax.annotation.Resource;
+
 import java.io.*;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +34,9 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
+	@Resource 
+	private StudyDataManager studyDataManager;
+	
 	@Resource
 	private FileService fileService;
 
@@ -53,13 +63,13 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 			// 3. update observation sheet
 			int rowIndex = 1;
 			final Sheet obsSheet = excelWorkbook.getSheetAt(1);
-
-			List<ListDataProject> gpListData = fieldbookMiddlewareService
-					.getListDataProject(gpList.getId());
-
-			for (ListDataProject gpData : gpListData) {
+			
+			int measurementDataSetId = fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
+			List<Experiment> experiments = studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, createPlotVariableTypeList());
+			
+			for (Experiment gpData : experiments) {
 				PoiUtil.setCellValue(obsSheet, 0, rowIndex, studyName);
-				PoiUtil.setCellValue(obsSheet, 1, rowIndex, gpData.getEntryId());
+				PoiUtil.setCellValue(obsSheet, 1, rowIndex, gpData.getFactors().getVariables().get(0).getValue());
 				rowIndex++;
 			}
 
@@ -101,6 +111,15 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 			return fileService.retrieveWorkbook(tempFile);
 		}
+	}
+	
+	protected VariableTypeList createPlotVariableTypeList() throws MiddlewareQueryException {
+		StandardVariable plotStandardVariable = fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
+		VariableType plotVariableType = new VariableType("PLOT_NO","Plot", plotStandardVariable, 1);
+		VariableTypeList plotVariableTypeList = new VariableTypeList();
+		plotVariableTypeList.add(plotVariableType);
+		
+		return plotVariableTypeList;
 	}
 
 	public void setTemplateFile(File templateFile) {

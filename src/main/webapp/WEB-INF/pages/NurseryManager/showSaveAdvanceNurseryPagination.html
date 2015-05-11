@@ -1,26 +1,25 @@
 
-<div class="advance-nursery-list-table" th:object="${advancingNurseryform}">
+<div class="advance-nursery-list-table">
 	<table class="table-curved table-condensed advance-germplasm-items">	
 		<thead>
 			<tr>
+				<th class="fbk-review-advance-check-box"> 
+               		<span class="glyphicon glyphicon-ok"></span>
+               	</th>
 				<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
 			</tr>
-		</thead>		
+		</thead>
+		<tbody>
+             <tr class="primaryRow" th:each="gid, row : ${advanceDataList}" th:attr="data-entry=${gid.get('entry')}">
+            	<td class="fbk-review-advance-check-box">
+            		<input type="checkbox" class="reviewAdvancingListGid" th:attr="data-entry=${gid.get('entry')}" name="reviewAdvancingListGid" id="reviewAdvancingListGid"/> 
+           		</td>
+               <td th:text="${gid.get('entry')}">.1</td> 
+               <td th:text="${gid.get('desig')}"></td>
+               <td th:text="${gid.get('parentage')}">.2</td>
+               <td th:text="${gid.get('gid')}"></td>
+               <td th:text="${gid.get('source')}">.2</td>                                   				       
+             </tr>             
+           </tbody>		
 	</table>
-</div>
-
-<div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		$( document ).ready(function() {
-			setTimeout(setupAdvanceListForReview, 150);									
-		});
-		function setupAdvanceListForReview(){
-			var advanceDataList = /*[[${advanceDataList}]]*/ [];
-			var listDivIdentifier = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
-			var sectionContainerDiv = 'advance-list'+listDivIdentifier;
-			new BMS.Fieldbook.AdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .advance-germplasm-items', '#'+sectionContainerDiv, advanceDataList);
-		}
-	//]]>
-	</script>
 </div>

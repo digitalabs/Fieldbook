@@ -105,7 +105,7 @@
 
     <bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl"/>
 
-    <bean id="fileService" class="com.efficio.fieldbook.service.FileServiceImpl"
+    <bean id="fileService" class="org.generationcp.commons.service.impl.FileServiceImpl"
           init-method="init">
         <constructor-arg value="${upload.directory}"/>
     </bean>
@@ -203,6 +203,10 @@
         <aop:scoped-proxy/>
     </bean>
 
+    <bean id="generationSettings" class="com.efficio.fieldbook.web.stock.StockIDGenerationSettings" scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
     <bean id="userFieldmap" class="com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap"
           scope="session">
         <aop:scoped-proxy/>
@@ -269,6 +273,11 @@
           class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="workbenchDataSource"/>
         <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            </props>
+        </property>
     </bean>
 
 
@@ -323,6 +332,11 @@
     <bean id="germplasmDataManagerV2" factory-bean="managerFactory"
           factory-method="getGermplasmDataManager"
           scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="inventoryDataManager" factory-bean="managerFactory"
+          factory-method="getInventoryDataManager" scope="request">
         <aop:scoped-proxy/>
     </bean>
 
@@ -386,15 +400,18 @@
         <property name="ruleSequenceConfiguration">
             <map>
                 <entry key="naming" value="${naming.rules}"/>
+                <entry key="stockid" value="${stockid.rules}"/>
             </map>
         </property>
     </bean>
+
 	<bean id="ruleService" class="org.generationcp.commons.ruleengine.impl.RulesServiceImpl" />
     <!--
         This component scan automatically registers all implementations of the Rule interface into the Spring context.
         In conjunction with the RulesPostProcessor above, this automatically populates the map in the RuleFactory
          -->
     <context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
+    <context:component-scan base-package="org.generationcp.commons.ruleengine.stockid"/>
 
     <bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
 
@@ -407,6 +424,10 @@
     </bean>
 
     <bean id="inventoryImportParser" class="com.efficio.fieldbook.web.util.parsing.InventoryImportParser" scope="prototype">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="stockService" class="org.generationcp.commons.service.impl.StockServiceImpl">
         <aop:scoped-proxy/>
     </bean>
 

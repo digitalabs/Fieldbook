@@ -13,8 +13,10 @@ import java.util.Map;
 
  */
 public class LabelPrintingProcessingParams {
+	
 	private Map<Integer, String> labelHeaders;
 	private List<Integer> selectedFieldIDs;
+	private List<Integer> allFieldIDs;
 	private Map<Integer, MeasurementVariable> variableMap;
 	private MeasurementRow environmentData;
 	private FieldMapTrialInstanceInfo instanceInfo;
@@ -79,5 +81,13 @@ public class LabelPrintingProcessingParams {
 
 	public void setUserSpecifiedLabels(Map<Integer, String> userSpecifiedLabels) {
 		this.userSpecifiedLabels = userSpecifiedLabels;
+	}
+
+	public List<Integer> getAllFieldIDs() {
+		return allFieldIDs;
+	}
+	
+	public void setAllFieldIDs(List<Integer> allFieldIds) {
+		this.allFieldIDs = allFieldIds;
 	}
 }

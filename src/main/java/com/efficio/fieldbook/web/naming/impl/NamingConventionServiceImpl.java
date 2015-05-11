@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.naming.impl;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
@@ -10,10 +11,9 @@ import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.util.AppConstants;
-
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
@@ -27,17 +27,19 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.TimerWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.util.*;
 
 @Service
 public class NamingConventionServiceImpl implements NamingConventionService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(NamingConventionServiceImpl.class);
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
@@ -144,14 +146,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     protected void addImportedGermplasmToList(List<ImportedGermplasm> list, AdvancingSource source, 
             String newGermplasmName, Method breedingMethod, int index, String nurseryName) 
     throws MiddlewareQueryException {
-
+    	//GCP-7652 use the entry number of the originial : index
         ImportedGermplasm germplasm = new ImportedGermplasm(
                 index
               , newGermplasmName
               , null /* gid */
               , source.getGermplasm().getCross()
-              , nurseryName + ":" + source.getGermplasm().getEntryId() //GCP-7652 use the entry number of the originial : index
-              , getEntryCode(index)
+              , nurseryName + ":" + source.getGermplasm().getEntryId() 
+              , FieldbookUtil.generateEntryCode(index)
               , null /* check */
               , breedingMethod.getMid());
         
@@ -166,9 +168,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
          list.add(germplasm);
     }
 
-    private String getEntryCode(int index) {
-        return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
-    }
+    
     
 
     protected void assignNames(ImportedGermplasm germplasm, AdvancingSource source) {
@@ -209,8 +209,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					}
 
 				} catch (RuleException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOG.error(e.getMessage(), e);
 				}
             }
         }
@@ -233,10 +232,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
         return context;
     }
-
-    private String getNonNullValue(String value) {
-    	return value != null ? value : "";
-    }
     
     // 1. RootNameGeneratorRule
     // FIXME : breedingMethodNameType NOT USED : hard coded 1 in the 'Expression'
@@ -255,23 +250,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	
     }
     
-    private Integer getCount(String countStr) {
-    	if (("").equals(countStr)) {
-    		return 1;
-    	}
-    	String[] countArray = countStr.split("\\D");
-    	if (countArray.length > 0) {
-	    	String count = countArray[countArray.length-1];
-	    	if (count.equals("")) {
-	    		return 1;
-	    	}
-	    	if (NumberUtils.isNumber(count)) {
-	    		return Integer.valueOf(count);
-	    	}
-    	}
-   		return null;
-    }
-
 	public void setMessageSource(ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}

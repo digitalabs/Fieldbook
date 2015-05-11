@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.util.parsing.validation;
 
 import org.apache.commons.lang.StringUtils;
+import org.generationcp.commons.parsing.validation.ParsingValidator;
 import org.generationcp.commons.util.DateUtil;
 
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.Date;
  * Date: 2/26/2015
  * Time: 5:27 PM
  */
-public class ValueTypeValidator extends ParsingValidator{
+public class ValueTypeValidator extends ParsingValidator {
 
 	private Class expectedClass;
 

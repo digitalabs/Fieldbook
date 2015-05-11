@@ -1,16 +1,11 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.common.service.CrossingService;
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
@@ -22,12 +17,13 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.service.api.PedigreeService;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
-import com.efficio.fieldbook.web.common.service.CrossingService;
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * Created by cyrus on 1/23/15.
@@ -50,7 +46,13 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private CrossingTemplateParser crossingTemplateParser;
+	
+	@Resource
+	private CrossExpansionProperties crossExpansionProperties;
 
+	@Resource
+	private PedigreeService pedigreeService;
+	
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException{
 		return crossingTemplateParser.parseFile(file);
@@ -62,12 +64,19 @@ public class CrossingServiceImpl implements CrossingService {
 		CrossNameSetting crossNameSetting = crossSetting.getCrossNameSetting();
 		
 		applyCrossNameSettingToImportedCrosses(crossNameSetting, importedCrossesList.getImportedCrosses());
-		Map<Germplasm, Name> germplasmToBeSaved = generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), userId);
+		Map<Germplasm, Name> germplasmToBeSaved = generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), userId, importedCrossesList.hasPlotDuplicate());
 		List<Integer> savedGermplasmIds = saveGermplasm(germplasmToBeSaved);
 		
 		Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
 		for (ImportedCrosses cross : importedCrossesList.getImportedCrosses()){
-			cross.setGid(germplasmIdIterator.next().toString());
+			//this will do the merging and using the gid and cross from the initial duplicate
+			if(FieldbookUtil.isContinueCrossingMerge(importedCrossesList.hasPlotDuplicate(), crossSetting.isPreservePlotDuplicates(), cross)){
+				FieldbookUtil.mergeCrossesPlotDuplicateData(cross, importedCrossesList.getImportedCrosses());
+				continue;
+			}			
+			Integer newGid = germplasmIdIterator.next();
+			cross.setGid(newGid.toString());
+			cross.setCross(pedigreeService.getCrossExpansion(newGid, this.crossExpansionProperties));
 		}
 		
 	}
@@ -87,7 +96,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 	} 
 	
-	protected Map<Germplasm, Name> generateGermplasmNameMap(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses, Integer userId) throws MiddlewareQueryException{
+	protected Map<Germplasm, Name> generateGermplasmNameMap(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses, Integer userId, boolean hasPlotDuplicate) throws MiddlewareQueryException{
 		
 		Map<Germplasm, Name> germplasmNameMap = new LinkedHashMap<>();
 		Integer crossingNameTypeId = getIDForUserDefinedFieldCrossingName();
@@ -108,6 +117,9 @@ public class CrossingServiceImpl implements CrossingService {
 		
 		for (ImportedCrosses cross : importedCrosses){
                         
+			if(FieldbookUtil.isContinueCrossingMerge(hasPlotDuplicate, crossSetting.isPreservePlotDuplicates(), cross)){
+				continue;
+			}
             Germplasm germplasm = new Germplasm();
             Name name = new Name();
             

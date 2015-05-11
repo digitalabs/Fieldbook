@@ -276,7 +276,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
-						<label class="control-label" th:utext="#{label.printing.choose.option.fields}">Choose up to six fields you would like printed on your labels.</label>
+						<label class="control-label" th:utext="(*{isTrial})? #{label.printing.choose.option.fields.trial}: #{label.printing.choose.option.fields.nursery}">Choose up to six fields you would like printed on your labels.</label>
 					</div>
 					
 				</div>
@@ -286,32 +286,37 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
-						<div class="col-xs-3 col-md-3">&nbsp;</div>
-						<div class="col-xs-6 col-md-6">	
+						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group"  >
-						      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.available.fields}">Available Fields</label></li>
+						      <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study Details</label></li>
 							</ul>
-							<ul id="pdf-available-fields" class="list-group droptrue" >
+							<ul id="pdf-study-details-fields" class="list-group droptrue">
 							</ul>
 						</div>
-						<div class="col-xs-3 col-md-3">&nbsp;</div>								
+						<div class="col-xs-6 col-md-6">	
+							<ul class="list-group field-group"  >
+						      <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.list.details}: #{label.printing.nursery.list.details}">Study List Details</label></li>
+							</ul>
+							<ul id="pdf-study-list-details-fields" class="list-group droptrue">
+							</ul>
+						</div>
 					</div>
 					<div class="col-xs-6 col-md-6">
-							<div class="col-xs-6 col-md-6">
-								<ul class="list-group field-group">
-							      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.left.selected.fields}">Selected Fields</label></li>
-								</ul>
-								<ul id="leftSelectedFields" class="list-group droptrue pdf-selected-fields" >				
-								</ul>
-		
-							</div>		
-							<div class="col-xs-6 col-md-6">
-								<ul class="list-group field-group"  >
-							      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.right.selected.fields}">Selected Fields</label></li>
-								</ul>		
-								<ul id="rightSelectedFields" class="list-group droptrue pdf-selected-fields" >				
-								</ul>		
-							</div>
+						<div class="col-xs-6 col-md-6">
+							<ul class="list-group field-group">
+						      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.left.selected.fields}">Selected Fields</label></li>
+							</ul>
+							<ul id="leftSelectedFields" class="list-group droptrue pdf-selected-fields" >				
+							</ul>
+	
+						</div>		
+						<div class="col-xs-6 col-md-6">
+							<ul class="list-group field-group"  >
+						      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.right.selected.fields}">Selected Fields</label></li>
+							</ul>		
+							<ul id="rightSelectedFields" class="list-group droptrue pdf-selected-fields" >				
+							</ul>		
+						</div>
 					</div>
 				</div>
 				
@@ -353,7 +358,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
-						<label class="control-label" th:utext="#{label.printing.choose.option.fields.csv.xls}">.</label>
+						<label class="control-label" th:utext="(*{isTrial})? #{label.printing.choose.option.fields.csv.xls.trial}: #{label.printing.choose.option.fields.csv.xls.nursery}">.</label>
 					</div>					
 				</div>
 			</div>
@@ -362,15 +367,20 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
-						<div class="col-xs-3 col-md-3">&nbsp;</div>
-						<div class="col-xs-6 col-md-6">	
+						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group"  >
-						      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.available.fields}">Available Fields</label></li>
+						      <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study Details</label></li>
 							</ul>
-							<ul id="non-pdf-available-fields" class="list-group droptrue" >
+							<ul id="non-pdf-study-details-fields" class="list-group droptrue" >
 							</ul>
 						</div>
-						<div class="col-xs-3 col-md-3">&nbsp;</div>								
+						<div class="col-xs-6 col-md-6">	
+							<ul class="list-group field-group"  >
+						      <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.list.details}: #{label.printing.nursery.list.details}">Study List Details</label></li>
+							</ul>
+							<ul id="non-pdf-study-list-details-fields" class="list-group droptrue" >
+							</ul>
+						</div>								
 					</div>
 					<div class="col-xs-1 col-md-1">&nbsp;</div>
 					<div class="col-xs-3 col-md-3">

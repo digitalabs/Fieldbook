@@ -262,7 +262,7 @@ function saveLots() {
 function displayAdvanceGermplasmDetails(listId) {
 	'use strict';
 	$.ajax({
-		url: "/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/" + listId,
+		url: "/Fieldbook/germplasm/list/advance/" + listId,
 		type: "GET",
 		cache: false,
 		success: function(html) {

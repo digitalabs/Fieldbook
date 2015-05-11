@@ -3,7 +3,6 @@ package com.efficio.fieldbook.web.common.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +15,7 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.service.ExportService;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -50,6 +50,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	
 	private static String ADVANCE_LIST_SHEET_NAME = "Advance List";
 
+	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Observation";
+
 	@Override
 	public File exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds,
 			String studyName, ExportService exportServiceImpl, String type) {
@@ -66,10 +68,10 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 				GermplasmList germplasmList = this.fieldbookMiddlewareService
 						.getGermplasmListById(advanceGermpasmListId);
 				String advanceListName = germplasmList.getName();
-				String filenamePath = this.getFileNamePath(advanceListName) + suffix;
+				String filenamePath = getFileNamePath(advanceListName) + suffix;
 				String sheetName =  WorkbookUtil.createSafeSheetName(ADVANCE_LIST_SHEET_NAME);
 				
-				exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, type);
+				exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, type, false);
 					
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
@@ -87,9 +89,50 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 
 		return new File(outputFilename);
 	}
+	
+	@Override
+	public File exportStockList(Integer stockListId, ExportService exportServiceImpl) {
 
-	protected void exportList(List<InventoryDetails> inventoryDetailList, String filenamePath, String sheetName, ExportService exportServiceImpl, String type) throws IOException {
-		List<ExportColumnHeader> exportColumnHeaders = this.generateAdvanceListColumnHeaders();
+		List<String> filenameList = new ArrayList<String>();
+		String outputFilename = NO_FILE;
+		String suffix = AppConstants.EXPORT_XLS_SUFFIX.getString();
+		
+			try {
+				GermplasmList germplasmList = this.fieldbookMiddlewareService
+						.getGermplasmListById(stockListId);
+				GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
+				List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService
+							.getInventoryListByListDataProjectListId(stockListId,germplasmListType);
+				
+				String advanceListName = germplasmList.getName();
+				String filenamePath = getFileNamePath(advanceListName) + suffix;
+				String sheetName =  org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(STOCK_LIST_EXPORT_SHEET_NAME);
+				
+				exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, 
+						AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), 
+						germplasmListType==GermplasmListType.CROSSES);
+					
+				outputFilename = filenamePath;
+				filenameList.add(filenamePath);
+			} catch (IOException e) {
+				LOG.error(e.getMessage(), e);
+			} catch (MiddlewareQueryException e) {
+				LOG.error(e.getMessage(), e);
+			}
+
+
+		return new File(outputFilename);
+	}
+
+	protected String getFileNamePath(String name) {
+			String filenamePath = this.fieldbookProperties.getUploadDirectory() + File.separator
+					+ SettingsUtil.cleanSheetAndFileName(name);
+			return filenamePath;
+	}
+	 
+	protected void exportList(List<InventoryDetails> inventoryDetailList, String filenamePath, 
+			String sheetName, ExportService exportServiceImpl, String type, boolean displayCrossRelatedColumns) throws IOException {
+		List<ExportColumnHeader> exportColumnHeaders = this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns);
 		if(AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
 			exportServiceImpl.generateExcelFileForSingleSheet(this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath, sheetName);
 		} else {
@@ -111,38 +154,47 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return advancedGermplasmListIds;
 	}
 
-	protected String getFileNamePath(String name) {
-		String filenamePath = this.fieldbookProperties.getUploadDirectory() + File.separator
-				+ SettingsUtil.cleanSheetAndFileName(name);
-		return filenamePath;
-	}
+	
 
-	protected List<ExportColumnHeader> generateAdvanceListColumnHeaders() {
+	protected List<ExportColumnHeader> generateAdvanceListColumnHeaders(boolean displayCrossRelatedColumns) {
 		List<ExportColumnHeader> exportColumnHeaders = new ArrayList<ExportColumnHeader>();
 		Locale locale = LocaleContextHolder.getLocale();
 
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(), this.messageSource
-				.getMessage("seed.entry.number", null, locale), true));
+				.getMessage("seed.entry.number", null, locale), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.DESIG.getId(), this.messageSource
-				.getMessage("seed.entry.designation", null, locale), true));
+				.getMessage("seed.entry.designation", null, locale), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.CROSS.getId(), this.messageSource
-				.getMessage("seed.entry.parentage", null, locale), true));
+				.getMessage("seed.entry.parentage", null, locale), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.GID.getId(), this.messageSource
-				.getMessage("seed.inventory.gid", null, locale), true));
+				.getMessage("seed.inventory.gid", null, locale), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.SOURCE.getId(), this.messageSource
-				.getMessage("seed.inventory.source", null, locale), true));
+				.getMessage("seed.inventory.source", null, locale), true, ExportColumnHeader.GREEN));
+		
+		if(displayCrossRelatedColumns) {
+			exportColumnHeaders
+				.add(new ExportColumnHeader(TermId.DUPLICATE.getId(), this.messageSource
+						.getMessage("seed.inventory.duplicate", null, locale), true, ExportColumnHeader.BLUE));
+			exportColumnHeaders
+				.add(new ExportColumnHeader(TermId.BULK_WITH.getId(), this.messageSource
+					.getMessage("seed.inventory.bulk.with", null, locale), true, ExportColumnHeader.BLUE));
+			exportColumnHeaders
+				.add(new ExportColumnHeader(TermId.BULK_COMPL.getId(), this.messageSource
+					.getMessage("seed.inventory.bulk.compl", null, locale), true, ExportColumnHeader.BLUE));
+		}
+		
 		exportColumnHeaders
 				.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(), this.messageSource
-						.getMessage("seed.inventory.table.location", null, locale), true));
+						.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(
 				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(), this.messageSource.getMessage(
-						"seed.inventory.amount", null, locale), true));
+						"seed.inventory.amount", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(
 				AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(), this.messageSource.getMessage(
-						"seed.inventory.table.scale", null, locale), true));
+						"seed.inventory.table.scale", null, locale), true, ExportColumnHeader.BLUE));
 		exportColumnHeaders.add(new ExportColumnHeader(
 				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(), this.messageSource.getMessage(
-						"seed.inventory.comment", null, locale), true));
+						"seed.inventory.comment", null, locale), true, ExportColumnHeader.BLUE));
 
 		return exportColumnHeaders;
 	}
@@ -173,6 +225,12 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 				val = inventoryDetails.getGid().toString();
 		} else if(columnHeaderId == TermId.SOURCE.getId()) { 
 				val = inventoryDetails.getSource();
+		} else if(columnHeaderId == TermId.DUPLICATE.getId()) { 
+			val = getInventoryValue(inventoryDetails.getDuplicate());
+		} else if(columnHeaderId == TermId.BULK_WITH.getId()) { 
+			val = getInventoryValue(inventoryDetails.getBulkWith());
+		} else if(columnHeaderId == TermId.BULK_COMPL.getId()) { 
+			val = getInventoryValue(inventoryDetails.getBulkCompl());
 		} else if(columnHeaderId == TermId.LOCATION_ID.getId()) {
 			// in preparation for BMS-143. Export the abbreviation instead of the whole name
 				val = inventoryDetails.getLocationAbbr();

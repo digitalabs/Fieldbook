@@ -121,14 +121,14 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
     		@ModelAttribute("seedStoreForm") SeedStoreForm form, HttpServletRequest req,
             Model model) {
         
-    	return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.ADVANCED.name(), "/NurseryManager/savedFinalAdvanceList");
+    	return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.ADVANCED.name(), "/NurseryManager/savedFinalList");
     }
     
     @RequestMapping(value="/crosses/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
     public String displayCrossesGermplasmDetails(@PathVariable Integer listId,  
     		@ModelAttribute("seedStoreForm") SeedStoreForm form, HttpServletRequest req,
             Model model) {
-        return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.CROSSES.name(), "/NurseryManager/savedFinalCrossesList");
+        return getInventoryGermplasmDetailsPage(form, listId, model, GermplasmListType.CROSSES.name(), "/NurseryManager/savedFinalList");
         
     }
     
@@ -160,23 +160,6 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
 
         for (String gid : form.getGidList().split(",")) {
             gidList.add(Integer.parseInt(gid));
-        }
-        
-        try {
-        	
-            inventoryMiddlewareService.addLotsForList(gidList,
-                    form.getInventoryLocationId(), form.getInventoryScaleId(),
-                    form.getInventoryComments(), this.getCurrentIbdbUserId(),
-                    form.getAmount(), form.getListId());
-           
-                result.put("message", messageSource
-                        .getMessage("seed.inventory.add.lot.save.success", null, local));
-                result.put("success", 1);
-
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-            result.put("message", "error: " + e.getMessage());
-            result.put("success", 0);
         }
         
         return result;

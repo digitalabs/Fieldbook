@@ -1,4 +1,4 @@
-<div class="table-responsive fieldmap-container" style="overflow:auto;">
+<div class="table-responsive fieldmap-container" style="overflow:auto; height:450px;">
 	<table id="field-map" class="table" border="1">
 
 		<thead>
@@ -32,14 +32,14 @@
 	</tr>
 	<tr>
 		<td class="header-row-main"></td>
-		<td class="sub-header-row" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+		<td class="sub-header-row" th:onclick ="'javascript:cancelRow(\''+${j-1}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 			<p th:text="'Column ' + ${j}"></p>
 		</td>
 	</tr>
 </thead>
 <tbody>
 	<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
-		<td class="sub-header-row"><p th:text="'Range ' + ${i}"></p></td>
+		<td class="sub-header-row" th:onclick="'javascript:cancelRange(\''+${i-1}+'\',\''+${#object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot}+'\')'"><p th:text="'Range ' + ${i}"></p></td>
 		<td class="plot" th:id="${j-1} + '_' + ${i-1}" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 			<span class="plotLabel" th:if="${not #arrays.isEmpty(#object.userFieldmap.fieldmap) and j-1 &lt; #arrays.length(#object.userFieldmap.fieldmap) and i-1 &lt; #arrays.length(#object.userFieldmap.fieldmap[__${j-1}__])}">
 				<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == false and #object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].savedAlready == false}" class="new-plot" th:utext="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
@@ -50,7 +50,7 @@
 	</tr>
 	<tr>
 		<td class="header-row-main"></td>
-		<td class="sub-header-row" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+		<td class="sub-header-row" th:onclick ="'javascript:cancelRow(\''+${j-1}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 			<p th:text="'Column ' + ${j}"></p>
 		</td>
 	</tr>
@@ -78,7 +78,7 @@
 </tr>
 <tr>
 	<td class="header-row-main">Rows</td>
-	<td class="header-row-data" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+	<td class="header-row-data" th:onclick ="'javascript:cancelRow(\''+${(j-1)/2}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
 		<p th:text="${j}"></p>
 	</td>
 </tr>

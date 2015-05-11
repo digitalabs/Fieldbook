@@ -263,6 +263,58 @@
 				})
 			}
 		});
+		
+		function cancelRange(i,length) {
+			var allClicked = true;
+			for(var j = 0; j<length;j++) {
+				if($("#"+j+"_"+i).hasClass('deleted') != true) {
+					allClicked = false;
+				}
+			}
+			if(allClicked == false) {
+				for(var j = 0; j<length; j++) {
+					if($("#"+j+"_"+i).hasClass('deleted') != true) {
+						$("#"+j+"_"+i).addClass('deleted');
+						$("#"+j+"_"+i).html("<label class='alert alert-danger'>X</label>");
+					}				
+				}
+			}
+			else {
+				for(var j = 0; j<length; j++) {
+					if($("#"+j+"_"+i).hasClass('deleted') == true) {
+						$("#"+j+"_"+i).removeClass('deleted');
+						$("#"+j+"_"+i).html('');
+					}				
+				}
+			}
+			
+		}
+		
+		function cancelRow(j,length) {
+			var allClicked = true;
+			for(var i = 0; i<length;i++) {
+				if($("#"+j+"_"+i).hasClass('deleted') != true) {
+					allClicked = false;
+				}
+			}
+			
+			if(allClicked == false) {
+				for(var i = 0; i<length; i++) {
+					if($("#"+j+"_"+i).hasClass('deleted') != true) {
+						$("#"+j+"_"+i).addClass('deleted');
+						$("#"+j+"_"+i).html("<label class='alert alert-danger'>X</label>");
+					}				
+				}
+			}
+			else {
+				for(var i = 0; i<length; i++) {
+					if($("#"+j+"_"+i).hasClass('deleted') == true) {
+						$("#"+j+"_"+i).removeClass('deleted');
+						$("#"+j+"_"+i).html('');
+					}				
+				}
+			}
+		}
 	//]]>
 </script>
 </div>

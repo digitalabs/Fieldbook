@@ -46,6 +46,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +120,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     @Resource
     private CrossExpansionProperties crossExpansionProperties;
     
+    @Resource
+    private GermplasmListManager germplasmListManager;
+    
     /**
      * Show trial label details.
      *
@@ -161,7 +166,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, true));
         form.setUserLabelPrinting(this.userLabelPrinting);
 
-        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(true, hasFieldMap, locale, id));
+        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(true, hasFieldMap, false, locale, id));
 
         form.setIsTrial(true);
         return super.show(model);
@@ -206,7 +211,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
         this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, false));
         form.setUserLabelPrinting(this.userLabelPrinting);
-        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(false, hasFieldMap, locale, id));
+        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(false, hasFieldMap, false, locale, id));
         form.setIsTrial(false);
         return super.show(model);
     }
@@ -252,6 +257,54 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         return super.show(model);
     }
 
+    @RequestMapping(value="/stock/{id}", method = RequestMethod.GET)
+    public String showStockListLabelDetails(
+            @ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model,
+            HttpServletRequest req, HttpSession session, @PathVariable int id, Locale locale) {
+
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+    	
+    	//retrieve the stock list
+    	GermplasmList stockList = null;
+    	try {
+            stockList = germplasmListManager.getGermplasmListById(id);            
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    	
+    	if(stockList != null){
+            Study study = null;
+            List<FieldMapInfo> fieldMapInfoList = null;
+            FieldMapInfo fieldMapInfo = null;
+            boolean hasFieldMap = false;
+            try {
+                study = fieldbookMiddlewareService.getStudy(stockList.getProjectId());
+                List<Integer> ids = new ArrayList<Integer>();
+                ids.add(stockList.getProjectId());
+                fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
+                for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
+                    fieldMapInfo = fieldMapInfoDetail;
+                    hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
+                }
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage(), e);
+            }
+            this.userLabelPrinting.setStudy(study);
+            this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
+            this.userLabelPrinting.setBarcodeNeeded("0");
+            this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
+            this.userLabelPrinting.setNumberOfLabelPerRow("3");
+
+            this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, false));
+            form.setUserLabelPrinting(this.userLabelPrinting);
+            model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(false, hasFieldMap, true, locale, stockList.getProjectId()));
+            form.setIsTrial(false);
+            form.setIsStockList(true);
+    	}
+    	
+        return super.show(model);
+    }
+    
     /**
      * Generate default filename.
      *

@@ -169,6 +169,12 @@ if (typeof StockIDFunctions === 'undefined') {
             return deferred;
         },
         
+        createLabels: function(stockId) {
+        	'use strict';
+        	var url =  $("#stock-list"+stockId+" #label-printing-url").attr('href') + "/" + stockId;
+    		location.href = url;
+        },
+        
         exportList: function(stockId) {		
     		'use strict';		
     		var formName = 'exportStockForm';

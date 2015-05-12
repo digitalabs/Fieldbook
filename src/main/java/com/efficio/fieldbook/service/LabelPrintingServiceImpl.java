@@ -885,7 +885,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
         params.setVariableMap(convertToMap(workbook.getConditions(), workbook.getFactors()));
         params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvert(selectedFields));
-        params.setAllFieldIDs(convertToListInteger(this.getAvailableLabelFields(isTrial, true, Locale.ENGLISH, workbook.getStudyId())));
+        params.setAllFieldIDs(convertToListInteger(this.getAvailableLabelFields(isTrial, true, false, Locale.ENGLISH, workbook.getStudyId())));
         Map<String, List<MeasurementRow>> measurementData = null;
         Map<String, MeasurementRow> environmentData = null;
 
@@ -1274,25 +1274,17 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt(), false));
-        if(hasFieldMap){
-            labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(), false));
-            labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY, null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), false));
-            labelFieldsList.add(new LabelFields(
-            		messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale)
-            		, AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt(), false));
-        }
+        
+        getAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
+        
         return labelFieldsList;
     }
 
 
-    public List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap,
+    public List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, boolean isStockList,
             Locale locale, int studyID) {
         List<LabelFields> labelFieldsList = new ArrayList<>();
-
+        
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt(), true));
@@ -1347,6 +1339,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
 		labelFieldsList.addAll(settingsService.retrieveTraitsAsLabels(workbook));
 
+		getAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
+
+		//add inventory fields if any
+		if(hasInventoryValues(studyID,workbook.isNursery())){
+			labelFieldsList.addAll(addInventoryRelatedLabelFields(studyID,locale));
+		}
+
+        return labelFieldsList;
+    }
+
+	private void getAvailableFieldsForFieldMap(boolean hasFieldMap, 
+			Locale locale, List<LabelFields> labelFieldsList) {
 		if (hasFieldMap) {
             labelFieldsList.add(new LabelFields(
                     messageSource
@@ -1362,14 +1366,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             .getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt(), false));
         }
-
-		//add inventory fields if any
-		if(hasInventoryValues(studyID,workbook.isNursery())){
-			labelFieldsList.addAll(addInventoryRelatedLabelFields(studyID,locale));
-		}
-
-        return labelFieldsList;
-    }
+	}
     
 	/***
 	 * Returned true if the current study's germplasm list has inventory details

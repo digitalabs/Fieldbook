@@ -75,7 +75,7 @@ public class LabelPrintingServiceTest {
 		when(settingsService.retrieveTraitsAsLabels(workbook)).thenReturn(traitLabels);
 		when(settingsService.retrieveGermplasmDescriptorsAsLabels(workbook)).thenReturn(germplasmLabels);
 
-		List<LabelFields> retrieved = dut.getAvailableLabelFields(true, false, Locale.getDefault(), DUMMY_TRIAL_ID);
+		List<LabelFields> retrieved = dut.getAvailableLabelFields(true, false, false, Locale.getDefault(), DUMMY_TRIAL_ID);
 
 		assertNotNull(retrieved);
 		verifyBaseLabelFieldsPresent(retrieved);
@@ -104,7 +104,7 @@ public class LabelPrintingServiceTest {
 				.thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved = dut
-				.getAvailableLabelFields(true, true, Locale.getDefault(), DUMMY_TRIAL_ID);
+				.getAvailableLabelFields(true, true, false, Locale.getDefault(), DUMMY_TRIAL_ID);
 
 		assertNotNull(retrieved);
 		verifyBaseLabelFieldsPresent(retrieved);
@@ -133,7 +133,7 @@ public class LabelPrintingServiceTest {
 				.thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved = dut
-				.getAvailableLabelFields(false, true, Locale.getDefault(), DUMMY_NURSERY_ID);
+				.getAvailableLabelFields(false, true, false, Locale.getDefault(), DUMMY_NURSERY_ID);
 
 		assertNotNull(retrieved);
 		verifyBaseLabelFieldsPresent(retrieved);
@@ -160,7 +160,7 @@ public class LabelPrintingServiceTest {
 				.thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved = dut
-				.getAvailableLabelFields(false, false, Locale.getDefault(), DUMMY_NURSERY_ID);
+				.getAvailableLabelFields(false, false, false, Locale.getDefault(), DUMMY_NURSERY_ID);
 
 		assertNotNull(retrieved);
 		verifyBaseLabelFieldsPresent(retrieved);

@@ -65,6 +65,15 @@
 							</a>
 						</li>
 						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
+							<a  href="" style="display: none" id="label-printing-url"
+								th:href="@{/LabelPrinting/specifyLabelDetails/stock}"></a>	
+							<a href="javascript: void(0)"
+								th:onclick="'javascript: StockIDFunctions.createLabels(\'' + ${listId} + '\');'"
+								id="label-printing-url-link" th:text="#{tools.create.label.printing}">
+								Create Labels
+							</a>
+						</li>
+						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
 							<a href=""
 								style="display: none" id="open-study-url"></a> <a href="javascript: void(0)"
 								th:onclick="'javascript: StockIDFunctions.exportList(\'' + ${listId} + '\');'"

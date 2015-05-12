@@ -782,7 +782,7 @@ LabelPrinting = {
         $('input[name="userLabelPrinting.includeColumnHeadinginNonPdf"][value="' + selectedValue + '"]').prop('checked', true).change();
 
         var diffDetails = $(LabelPrinting.availableFieldIds).not(setting.selectedFieldsList).get();
-        var diffListDetails = $(LabelPrinting.availableFieldIds).not(setting.selectedFieldsList).get();
+        var diffListDetails = $(LabelPrinting.availableListFieldIds).not(setting.selectedFieldsList).get();
 
         addToUIFieldsList($('#non-pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diffDetails);
         addToUIFieldsList($('#non-pdf-study-list-details-fields'),LabelPrinting.labelPrintingListFields,diffListDetails);

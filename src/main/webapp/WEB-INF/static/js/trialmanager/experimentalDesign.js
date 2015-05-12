@@ -27,10 +27,6 @@
                         id: 2,
                         name: 'Row-and-Column', params: 'rowAndColumnParams.html',
                         withResolvable: true
-                    },
-                    {
-                        id: 3,
-                        name: 'Other', params: 'rowAndColumnParams.html'
                     }
                 ];
 

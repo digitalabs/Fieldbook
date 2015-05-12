@@ -1,4 +1,4 @@
-<div ng-cloak="" ng-app="manageTrialApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
+<div ng-cloak="" ng-app="manageTrialApp" id="mainApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
 <!-- header -->
 <div class="row col-xs-12">
     <h1 class="page-header col-xs-12 edit-trial-page-identifier">
@@ -105,7 +105,7 @@
                             </li>
                             <li ng-show="displayGermplasmOnlyActions()">
 
-                                <a href="javascript: ImportDesign.showPopup();" id="import-design-url-link" th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
+                                <a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" id="import-design-url-link" th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
 
                             </li>
                         </ul>
@@ -477,5 +477,6 @@
 <script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 
 </div>

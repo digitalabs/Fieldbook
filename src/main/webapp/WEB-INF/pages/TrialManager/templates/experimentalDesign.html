@@ -2,7 +2,7 @@
     <section-container icon="bms-exp-design" heading="Experimental Design">
         <section-container name="content" heading="CHOOSE A DESIGN TYPE">
             <div class="row" name="content">
-                <div class="col-md-12 add-bottom-padding">
+                <div class="col-md-12">
                     <label class="control-label" style="vertical-align: top; position: relative; top: 6px;"><strong th:text="#{trial.experimental.design.select}">Select the design type you would like to use for this trial:</strong></label>
 
                     <div style="display:inline-block">
@@ -33,8 +33,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12 add-bottom-padding" ng-if="data.designType == null">
-					<label class="control-label">Or <a class="import-design" href="javascript: ImportDesign.showPopup();">import</a> an experimental design.</label>
+                <div class="col-md-12 add-bottom-padding">
+					<label class="control-label">Or <a class="import-design" onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a> an experimental design.</label>
 				</div>
             </div>
 
@@ -94,7 +94,3 @@
     <div id="measurementsDivTemp">
     </div>
 </form>
-
-<div layout:fragment="page-script">
-    <script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
-</div>

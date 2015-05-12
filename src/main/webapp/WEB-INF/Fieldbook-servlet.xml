@@ -426,6 +426,10 @@
     <bean id="inventoryImportParser" class="com.efficio.fieldbook.web.util.parsing.InventoryImportParser" scope="prototype">
         <aop:scoped-proxy/>
     </bean>
+    
+    <bean id="designImportParser" class="com.efficio.fieldbook.web.util.parsing.DesignImportParser" scope="prototype">
+        <aop:scoped-proxy/>
+    </bean>
 
     <bean id="stockService" class="org.generationcp.commons.service.impl.StockServiceImpl">
         <aop:scoped-proxy/>

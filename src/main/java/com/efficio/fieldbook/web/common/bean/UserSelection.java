@@ -142,6 +142,9 @@ public class UserSelection implements Serializable {
     /** The temporary workbook. */
     private Workbook temporaryWorkbook;
     
+    /* The data from imported Design file (CSV/Excel)*/
+    private DesignImportData designImportData;
+    
     /** The current page. */
     private int currentPage;
     
@@ -931,4 +934,12 @@ public class UserSelection implements Serializable {
     		importedCrossesId.add(crossesId);
     	}
     }
+
+	public DesignImportData getDesignImportData() {
+		return designImportData;
+	}
+
+	public void setDesignImportData(DesignImportData designImportData) {
+		this.designImportData = designImportData;
+	}
 }

@@ -7,23 +7,23 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 
 public class DesignImportData {
 
-	private List<String> unmappedHeaders;
-	private Map<PhenotypicType, List<MappedHeaderItem>> mappedHeaders;
+	private List<DesignHeaderItem> unmappedHeaders;
+	private Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders;
 	private Map<Integer, List<String>> csvData;
 
-	public List<String> getUnmappedHeaders() {
+	public List<DesignHeaderItem> getUnmappedHeaders() {
 		return unmappedHeaders;
 	}
 	
-	public void setUnmappedHeaders(List<String> unmappedHeaders) {
+	public void setUnmappedHeaders(List<DesignHeaderItem> unmappedHeaders) {
 		this.unmappedHeaders = unmappedHeaders;
 	}
 	
-	public Map<PhenotypicType, List<MappedHeaderItem>> getMappedHeaders() {
+	public Map<PhenotypicType, List<DesignHeaderItem>> getMappedHeaders() {
 		return mappedHeaders;
 	}
 	
-	public void setMappedHeaders(Map<PhenotypicType, List<MappedHeaderItem>> mappedHeaders) {
+	public void setMappedHeaders(Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders) {
 		this.mappedHeaders = mappedHeaders;
 	}
 	

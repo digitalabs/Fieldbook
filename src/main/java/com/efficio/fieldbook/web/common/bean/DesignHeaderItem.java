@@ -2,7 +2,7 @@ package com.efficio.fieldbook.web.common.bean;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 
-public class MappedHeaderItem {
+public class DesignHeaderItem {
 
 	private int id;
 	private String headerName;

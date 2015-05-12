@@ -752,14 +752,21 @@ LabelPrinting = {
         $safeId('#userLabelPrinting.sizeOfLabelSheet').val(pdfSetting.sizeOfLabelSheet).change();
         $safeId('#userLabelPrinting.numberOfRowsPerPageOfLabel').val(pdfSetting.numberOfRowsPerPage).change();
 
-        var diff = $(LabelPrinting.availableFieldIds).not(pdfSetting.selectedLeftFieldsList).get();
-        diff = $(diff).not(pdfSetting.selectedRightFieldsList).get();
+        var diffDetails = $(LabelPrinting.availableFieldIds).not(pdfSetting.selectedLeftFieldsList).get();
+        diffDetails = $(diffDetails).not(pdfSetting.selectedRightFieldsList).get();
+        
+        var diffListDetails = $(LabelPrinting.availableListFieldIds).not(pdfSetting.selectedLeftFieldsList).get();
+        diffListDetails = $(diffListDetails).not(pdfSetting.selectedRightFieldsList).get();
 
         //add diff to the pdf available fields list
-        addToUIFieldsList($('#pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diff);
+        addToUIFieldsList($('#pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diffDetails);
+        addToUIFieldsList($('#pdf-study-list-details-fields'),LabelPrinting.labelPrintingListFields,diffListDetails);
+        
         addToUIFieldsList($('#leftSelectedFields'),LabelPrinting.labelPrintingFields,pdfSetting.selectedLeftFieldsList);
+        addToUIFieldsList($('#leftSelectedFields'),LabelPrinting.labelPrintingListFields,pdfSetting.selectedLeftFieldsList);
+        
         addToUIFieldsList($('#rightSelectedFields'),LabelPrinting.labelPrintingFields,pdfSetting.selectedRightFieldsList);
-
+        addToUIFieldsList($('#rightSelectedFields'),LabelPrinting.labelPrintingListFields,pdfSetting.selectedRightFieldsList);
     };
 
     /**
@@ -774,10 +781,14 @@ LabelPrinting = {
         var selectedValue = (setting.includeColumnHeadingsInOutput) ? '1' : '0';
         $('input[name="userLabelPrinting.includeColumnHeadinginNonPdf"][value="' + selectedValue + '"]').prop('checked', true).change();
 
-        var diff = $(LabelPrinting.availableFieldIds).not(setting.selectedFieldsList).get();
+        var diffDetails = $(LabelPrinting.availableFieldIds).not(setting.selectedFieldsList).get();
+        var diffListDetails = $(LabelPrinting.availableFieldIds).not(setting.selectedFieldsList).get();
 
-        addToUIFieldsList($('#non-pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diff);
+        addToUIFieldsList($('#non-pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diffDetails);
+        addToUIFieldsList($('#non-pdf-study-list-details-fields'),LabelPrinting.labelPrintingListFields,diffListDetails);
+        
         addToUIFieldsList($('#mainSelectedFields'),LabelPrinting.labelPrintingFields,setting.selectedFieldsList);
+        addToUIFieldsList($('#mainSelectedFields'),LabelPrinting.labelPrintingListFields,setting.selectedFieldsList);
 
     };
 

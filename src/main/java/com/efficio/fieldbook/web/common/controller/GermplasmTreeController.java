@@ -96,9 +96,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@Resource
 	private CrossingService crossingService;
 
-	@Resource
-	private InventoryService inventoryService;
-
 	private static final String NAME_NOT_UNIQUE = "Name not unique";
 	private static final String HAS_CHILDREN = "Folder has children";
 	private static final String FOLDER = "FOLDER";
@@ -246,14 +243,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			studyId = userSelection.getWorkbook().getStudyDetails().getId();
 		}
 
-		int dataListID = fieldbookMiddlewareService
+		return fieldbookMiddlewareService
 				.saveOrUpdateListDataProject(studyId, type,
 						germplasmListId,
 						dataProjectList, currentUserID);
-
-
-
-		return dataListID;
 	}
 
 	/**

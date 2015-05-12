@@ -437,6 +437,10 @@
           scope="request">
         <aop:scoped-proxy/>
     </bean>
-    
+    <bean id="reportService" factory-bean="managerFactory"
+          factory-method="getReportService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
     
 </beans>

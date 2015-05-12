@@ -762,11 +762,9 @@ LabelPrinting = {
         addToUIFieldsList($('#pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diffDetails);
         addToUIFieldsList($('#pdf-study-list-details-fields'),LabelPrinting.labelPrintingListFields,diffListDetails);
         
-        addToUIFieldsList($('#leftSelectedFields'),LabelPrinting.labelPrintingFields,pdfSetting.selectedLeftFieldsList);
-        addToUIFieldsList($('#leftSelectedFields'),LabelPrinting.labelPrintingListFields,pdfSetting.selectedLeftFieldsList);
-        
-        addToUIFieldsList($('#rightSelectedFields'),LabelPrinting.labelPrintingFields,pdfSetting.selectedRightFieldsList);
-        addToUIFieldsList($('#rightSelectedFields'),LabelPrinting.labelPrintingListFields,pdfSetting.selectedRightFieldsList);
+        var availableFields = $.extend({}, LabelPrinting.labelPrintingListFields, LabelPrinting.labelPrintingFields);
+        addToUIFieldsList($('#leftSelectedFields'),availableFields,pdfSetting.selectedLeftFieldsList);
+        addToUIFieldsList($('#rightSelectedFields'),availableFields,pdfSetting.selectedRightFieldsList);
     };
 
     /**
@@ -787,8 +785,8 @@ LabelPrinting = {
         addToUIFieldsList($('#non-pdf-study-details-fields'),LabelPrinting.labelPrintingFields,diffDetails);
         addToUIFieldsList($('#non-pdf-study-list-details-fields'),LabelPrinting.labelPrintingListFields,diffListDetails);
         
-        addToUIFieldsList($('#mainSelectedFields'),LabelPrinting.labelPrintingFields,setting.selectedFieldsList);
-        addToUIFieldsList($('#mainSelectedFields'),LabelPrinting.labelPrintingListFields,setting.selectedFieldsList);
+        var availableFields = $.extend({}, LabelPrinting.labelPrintingListFields, LabelPrinting.labelPrintingFields);
+        addToUIFieldsList($('#mainSelectedFields'),availableFields,setting.selectedFieldsList);
 
     };
 

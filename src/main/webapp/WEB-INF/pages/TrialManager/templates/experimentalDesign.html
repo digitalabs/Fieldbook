@@ -12,6 +12,7 @@
                                         ng-model="currentDesignTypeId"
                                         ng-change="onSwitchDesignTypes(currentDesignTypeId)"
                                         ng-disabled="measurementDetails.hasMeasurement">
+                                    <option value="">Please Choose</option>
                                     <option value="{{item.id}}"
                                             ng-repeat="item in designTypes| filterExperimentalDesignType">
                                         {{item.name}}
@@ -30,15 +31,17 @@
                                 <input type="checkbox" ng-model="data.isResolvable" id="inlineCheckbox2" value="option2"/> <span>Design will be resolvable</span>
                             </label>
                         </div>
-
                     </div>
                 </div>
+                <div class="col-md-12 add-bottom-padding" ng-if="data.designType == null">
+					<label class="control-label">Or <a class="import-design" href="javascript: ImportDesign.showPopup();">import</a> an experimental design.</label>
+				</div>
             </div>
 
         </section-container>
     </section-container>
 
-    <div class="row">
+    <div class="row" ng-if="data.designType != null">
         <div class="col-md-6 col-sm-7">
             <section-container heading="SPECIFY DESIGN PARAMETERS">
                 <div name="content">
@@ -91,3 +94,7 @@
     <div id="measurementsDivTemp">
     </div>
 </form>
+
+<div layout:fragment="page-script">
+    <script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
+</div>

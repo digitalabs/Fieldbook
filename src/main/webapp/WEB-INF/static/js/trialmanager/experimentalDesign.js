@@ -27,6 +27,10 @@
                         id: 2,
                         name: 'Row-and-Column', params: 'rowAndColumnParams.html',
                         withResolvable: true
+                    },
+                    {
+                        id: 3,
+                        name: 'Other', params: 'rowAndColumnParams.html'
                     }
                 ];
 
@@ -41,8 +45,16 @@
                         $scope.data.designType = $scope.designTypes[0].id;
                     }
 
-                    $scope.currentDesignType = $scope.designTypes[$scope.data.designType];
-                    $scope.currentDesignTypeId = $scope.currentDesignType.id;
+                    if ($scope.data.designType != null){
+                    	$scope.currentDesignType = $scope.designTypes[$scope.data.designType];
+                        $scope.currentDesignTypeId = $scope.currentDesignType.id;
+                        $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+                        
+                        if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
+                            $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
+                        }
+                    }
+                    
                     $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
                     $scope.measurementDetails = TrialManagerDataService.trialMeasurement;
                     $scope.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ?
@@ -50,11 +62,8 @@
                     $scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
                     $scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
 
-                    $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
                     $scope.data.hasMeasurementData = TrialManagerDataService.trialMeasurement.hasMeasurement;
-                    if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
-                        $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
-                    }
+                   
                 };
                 
                 $scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable;
@@ -80,7 +89,7 @@
                 if (!$scope.data || Object.keys($scope.data).length === 0) {
                     angular.copy({
                         totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
-                        designType: 0,
+                        designType: null,
                         'replicationsCount': null,
                         isResolvable : true,
                         'blockSize': null,
@@ -106,9 +115,15 @@
                 $scope.replicationsArrangementGroupsOpts[3] = 'In adjacent columns';
 
                 $scope.onSwitchDesignTypes = function (newId) {
-                    $scope.currentDesignType = $scope.designTypes[newId];
-                    $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
-                    $scope.data.designType = $scope.currentDesignType.id;
+                	if (newId !== ''){
+                		$scope.currentDesignType = $scope.designTypes[newId];
+                        $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+                        $scope.data.designType = $scope.currentDesignType.id;
+                	}else{
+                		$scope.currentDesignType = null;
+                		$scope.data.designType = null;
+                		$scope.currentParams = '';
+                	}
                 };
 
                 // on click generate design button
@@ -347,7 +362,6 @@
 
                     return true;
                 };
-
 
             }])
 

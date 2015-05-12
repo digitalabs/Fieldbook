@@ -263,14 +263,21 @@
 				})
 			}
 		});
-		
+		/*
+		 * Function to cancel(x) out an entire range when making a fieldmap
+		 * Author: Zack Miller(zrm22@cornell.edu)
+		 * i is the range number
+		 * length is the number of columns
+		 */
 		function cancelRange(i,length) {
 			var allClicked = true;
+			//Check to see if the range is x'ed out
 			for(var j = 0; j<length;j++) {
 				if($("#"+j+"_"+i).hasClass('deleted') != true) {
 					allClicked = false;
 				}
 			}
+			//If it is add x's to everything
 			if(allClicked == false) {
 				for(var j = 0; j<length; j++) {
 					if($("#"+j+"_"+i).hasClass('deleted') != true) {
@@ -279,6 +286,7 @@
 					}				
 				}
 			}
+			//Otherwise remove all x's
 			else {
 				for(var j = 0; j<length; j++) {
 					if($("#"+j+"_"+i).hasClass('deleted') == true) {
@@ -289,15 +297,21 @@
 			}
 			
 		}
-		
-		function cancelRow(j,length) {
+		 /*
+			 * Function to cancel(x) out an entire column/row when making a fieldmap
+			 * Author: Zack Miller(zrm22@cornell.edu)
+			 * j is the column number
+			 * length is the number of ranges
+			 */
+		function cancelColumn(j,length) {
 			var allClicked = true;
+			//Check to see if all columns are x'ed
 			for(var i = 0; i<length;i++) {
 				if($("#"+j+"_"+i).hasClass('deleted') != true) {
 					allClicked = false;
 				}
 			}
-			
+			//If one or more are not, x all ranges in column
 			if(allClicked == false) {
 				for(var i = 0; i<length; i++) {
 					if($("#"+j+"_"+i).hasClass('deleted') != true) {
@@ -306,6 +320,7 @@
 					}				
 				}
 			}
+			//Else Remove all x's in column
 			else {
 				for(var i = 0; i<length; i++) {
 					if($("#"+j+"_"+i).hasClass('deleted') == true) {

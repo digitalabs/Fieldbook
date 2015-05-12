@@ -4,7 +4,7 @@
 		<thead>
 			<tr>
 				<td class="header-row-main" style="width: 70px" >Rows</td>
-				<td class="header-row-data" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+				<td class="header-row-data" th:onclick ="'javascript:cancelColumn(\''+${j-1}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
 					<p th:text="${j}"></p>
 				</td>
 			</tr>
@@ -32,7 +32,7 @@
 	</tr>
 	<tr>
 		<td class="header-row-main"></td>
-		<td class="sub-header-row" th:onclick ="'javascript:cancelRow(\''+${j-1}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+		<td class="sub-header-row" th:onclick ="'javascript:cancelColumn(\''+${j-1}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 			<p th:text="'Column ' + ${j}"></p>
 		</td>
 	</tr>
@@ -50,7 +50,7 @@
 	</tr>
 	<tr>
 		<td class="header-row-main"></td>
-		<td class="sub-header-row" th:onclick ="'javascript:cancelRow(\''+${j-1}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+		<td class="sub-header-row" th:onclick ="'javascript:cancelColumn(\''+${j-1}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 			<p th:text="'Column ' + ${j}"></p>
 		</td>
 	</tr>
@@ -78,7 +78,7 @@
 </tr>
 <tr>
 	<td class="header-row-main">Rows</td>
-	<td class="header-row-data" th:onclick ="'javascript:cancelRow(\''+${(j-1)/2}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+	<td class="header-row-data" th:onclick ="'javascript:cancelColumn(\''+${(j-1)/2}+'\',\''+${#object.userFieldmap.numberOfRangesInBlock}+'\')'" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
 		<p th:text="${j}"></p>
 	</td>
 </tr>

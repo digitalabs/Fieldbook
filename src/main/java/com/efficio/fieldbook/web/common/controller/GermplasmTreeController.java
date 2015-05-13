@@ -250,7 +250,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 
 
-		return dataListID;
 	}
 
 	/**

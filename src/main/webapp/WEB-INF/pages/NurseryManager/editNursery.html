@@ -76,7 +76,7 @@
                                 <a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link"
                                    th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
                             </li>
-                            <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+                            <li id="import-crosses" style="display:none;">
                                 <a href="javascript: void(0)" class="import-crosses"
                                    th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
                             </li>

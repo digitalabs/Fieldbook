@@ -1,8 +1,5 @@
 # PROJECT SPECIFIC IGNORES
-/src/main/resources/fieldbook.properties
-/src/main/resources/workbench.properties
 /src/test/resources/database.properties
-/src/test/resources/test.properties
 bin/
 *.doc
 FB.iml

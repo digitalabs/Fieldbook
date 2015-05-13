@@ -369,6 +369,7 @@
 	<bean id="crossExpansionProperties" class = "org.generationcp.middleware.util.CrossExpansionProperties">
         <property name="wheatLevel" value="0" />
         <property name="defaultLevel" value="1" />
+        <property name="profile" value="cimmyt" />
     </bean>
 
 </beans>

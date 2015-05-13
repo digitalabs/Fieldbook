@@ -494,7 +494,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				List<StandardPreset> standardPresetList = workbenchService.getStandardPresetByCrop(workbenchService.getFieldbookWebTool().getToolId().intValue(), contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(), ToolSection.FB_LBL_PRINT_CUSTOM_REPORT.name());
 				//we need to convert the standard preset for custom report type to custom report type pojo
 				for(int index = 0 ; index < standardPresetList.size() ; index++){
-					customReportTypes.addAll(CustomReportTypeUtil.readReportConfiguration(standardPresetList.get(index)));
+					customReportTypes.addAll(CustomReportTypeUtil.readReportConfiguration(standardPresetList.get(index), this.crossExpansionProperties.getProfile()));
 				}
 			}
 		} catch (MiddlewareQueryException e) {
@@ -773,6 +773,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 	public void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
+	}
+
+	public CrossExpansionProperties getCrossExpansionProperties() {
+		return crossExpansionProperties;
+	}
+
+	public void setCrossExpansionProperties(CrossExpansionProperties crossExpansionProperties) {
+		this.crossExpansionProperties = crossExpansionProperties;
 	}    
     
 }

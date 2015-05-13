@@ -132,7 +132,7 @@ public class CrossingServiceImpl implements CrossingService {
 
             germplasm.setMethodId(0);
             
-            Method breedingMethod = germplasmDataManager.getMethodByName(cross.getRawBreedingMethod());
+            Method breedingMethod = germplasmDataManager.getMethodByCode(cross.getRawBreedingMethod());
             if (breedingMethod.getMid()!= null && breedingMethod.getMid() != 0){
             	germplasm.setMethodId(breedingMethod.getMid());
             }

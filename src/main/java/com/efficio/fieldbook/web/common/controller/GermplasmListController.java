@@ -109,27 +109,14 @@ public class GermplasmListController {
 			model.addAttribute("listName", germplasmList.getName());
 			model.addAttribute("listNotes", germplasmList.getNotes());
 			model.addAttribute("listType", germplasmList.getType());
-			model.addAttribute("duplicateType", getDuplicateType(listData));
-			
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}
 	}
 
-	private Map<Integer,DuplicateType> getDuplicateType(List<ListDataProject> listData) {
-		 Map<Integer,DuplicateType> duplicateTypeMap = new HashMap<Integer, DuplicateType>();
-		 
-		 for(ListDataProject ldp : listData){
-			 Integer listDataProjectId = ldp.getListDataProjectId();
-			 duplicateTypeMap.put(listDataProjectId, new DuplicateType(listDataProjectId,ldp.getDuplicate()));
-		 }
-		 
-		return duplicateTypeMap;
-	}
-
-	private List<ListDataProject> getListDataProjectByListType(Integer listId,
+	protected List<ListDataProject> getListDataProjectByListType(Integer listId,
 			String germplasmListType) {
-		List<ListDataProject> listData = new ArrayList<ListDataProject>();
+		List<ListDataProject> listData = new ArrayList<>();
 		
 		try {	
 			if(germplasmListType.equals(GermplasmListType.ADVANCED.name())){

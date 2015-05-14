@@ -77,12 +77,12 @@ public class StockController extends AbstractBaseFieldbookController{
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveNextStockPrefix", method = RequestMethod.POST)
-	public Map<String, String> retrieveNextStockIDPrefix(@RequestBody StockIDGenerationSettings generationSettings) {
+	public Map<String, String> retrieveNextStockIDPrefix(@RequestBody StockListGenerationSettings generationSettings) {
 		Map<String, String> resultMap = new HashMap<>();
 
 		Integer validationResult = generationSettings.validateSettings();
 
-		if (! validationResult.equals(StockIDGenerationSettings.VALID_SETTINGS)) {
+		if (! validationResult.equals(StockListGenerationSettings.VALID_SETTINGS)) {
 			return prepareValidationErrorMessages(validationResult);
 		}
 
@@ -127,12 +127,12 @@ public class StockController extends AbstractBaseFieldbookController{
 		Map<String, String> resultMap = new HashMap<>();
 		resultMap.put(IS_SUCCESS, FAILURE);
 		switch (validationResult){
-			case StockIDGenerationSettings.NUMBERS_FOUND :
+			case StockListGenerationSettings.NUMBERS_FOUND :
 				resultMap.put(ERROR_MESSAGE, messageSource.getMessage(
 						"stock.generate.id.breeder.identifier.error.numbers.found", new Object[]{},
 						Locale.getDefault()));
 				break;
-			case StockIDGenerationSettings.SPACE_FOUND:
+			case StockListGenerationSettings.SPACE_FOUND:
 				resultMap.put(ERROR_MESSAGE, messageSource.getMessage(
 						"stock.generate.id.breeder.identifier.error.space.found", new Object[]{},
 						Locale.getDefault()));
@@ -145,13 +145,13 @@ public class StockController extends AbstractBaseFieldbookController{
 
 	@ResponseBody
 	@RequestMapping(value = "/generateStockList/{listType}/{listId}", method = RequestMethod.POST)
-	public Map<String, String> generateStockList(@RequestBody StockIDGenerationSettings generationSettings,
+	public Map<String, String> generateStockList(@RequestBody StockListGenerationSettings generationSettings,
 												 @PathVariable("listType") String listType,
 												 @PathVariable("listId") Integer listDataProjectListId) {
 		Map<String, String> resultMap = new HashMap<>();
 		Integer validationResult = generationSettings.validateSettings();
 
-		if (! validationResult.equals(StockIDGenerationSettings.VALID_SETTINGS)) {
+		if (! validationResult.equals(StockListGenerationSettings.VALID_SETTINGS)) {
 			return prepareValidationErrorMessages(validationResult);
 		}
 
@@ -160,6 +160,7 @@ public class StockController extends AbstractBaseFieldbookController{
 			Map<ListDataProject, GermplasmListData> germplasmMap = generateGermplasmMap(listDataID, listDataProjectListId);
 
 			String prefix = stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(), generationSettings.getSeparator());
+			Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
 
 			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
                 InventoryDetails details = new InventoryDetails();

@@ -190,6 +190,50 @@ if (typeof StockIDFunctions === 'undefined') {
     		$('#'+formName+' #filename').val(resp.filename);
     		$('#'+formName+' #contentType').val(resp.contentType);
     		$('#'+formName).submit();
+    	},
+    	
+    	showImportPopup: function(listId) { 
+    		$('#import-stock-list-id').val(listId);
+    		$('#fileupload-import-stock').val('');
+			$('.import-stock-section .modal').modal({ backdrop: 'static', keyboard: true });
+			$('.import-stock-section .modal .fileupload-exists').click();
+    	},
+    	
+    	importList: function() {
+    		'use strict';
+    		
+    		if ($('#fileupload-import-stock').val() === '') {
+				showErrorMessage('', 'Please choose a file to import');
+				return false;
+			}
+    		$('#importStockListUploadForm').ajaxForm({
+    			dataType: 'text', 
+    			success: StockIDFunctions.importListSuccessCallBack, 
+    			error: StockIDFunctions.importListErrorCallBack,
+    		}).submit();
+    	},
+    	
+    	importListErrorCallBack : function() {
+    		showErrorMessage('','Import Failed');
+    	},
+    	
+    	importListSuccessCallBack : function(responseText) {
+    		var resp = $.parseJSON(responseText);
+    		if (resp.hasError) {
+				showErrorMessage('',resp.errorMessage);
+			} else {
+				showSuccessfulMessage('','Import Success');
+				$('.import-stock-section .modal').modal('hide');
+				StockIDFunctions.displayStockList(resp.stockListId);
+			}
     	}
     };
-}
+};
+
+$(document).ready(function() {
+	$('.btn-import-stock').off('click');
+	$('.btn-import-stock').on('click', StockIDFunctions.importList);
+	$('.import-stock-section .modal').on('hide.bs.modal', function() {
+		$('div.import-stock-file-upload').parent().parent().removeClass('has-error');
+	});
+});

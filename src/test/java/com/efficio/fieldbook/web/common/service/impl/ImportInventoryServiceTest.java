@@ -1,21 +1,22 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.service.api.InventoryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,10 +33,10 @@ public class ImportInventoryServiceTest {
 	public static final int TEST_ORIGINAL_GID = 1;
 
 	@Mock
-	private InventoryService inventoryService;
-
-	@Mock
 	private InventoryImportParser parser;
+	
+	@Mock
+	private MessageSource messageSource;
 
 	@InjectMocks
 	private ImportInventoryServiceImpl dut;
@@ -46,17 +47,8 @@ public class ImportInventoryServiceTest {
 		ImportInventoryServiceImpl mole = spy(dut);
 		doReturn(false).when(mole).mergeIndividualDetailData(any(InventoryDetails.class), any(InventoryDetails.class));
 
-		List<InventoryDetails> original = new ArrayList<>();
-		List<InventoryDetails> imported = new ArrayList<>();
-
-		InventoryDetails orig1 = new InventoryDetails(TEST_ORIGINAL_GID, TEST_GERMPLASM_NAME_1, 1, 1, 10.0, 1, 1, 1);
-		original.add(orig1);
-
-		imported.add(new InventoryDetails(3, "TEST", 1, 1, 5.0, 1, 1, 2));
-
-		InventoryDetails imported2 = new InventoryDetails(TEST_ORIGINAL_GID, "TEST3", 1, 1, 5.0, 1, 1, 1);
-		imported.add(imported2);
-		ImportedInventoryList inventoryList = new ImportedInventoryList(imported, "test");
+		List<InventoryDetails> original = createOriginalInventoryDetailsList();
+		ImportedInventoryList inventoryList = createImportedInventoryList();
 
 		ArgumentCaptor<InventoryDetails> param1 = ArgumentCaptor.forClass(InventoryDetails.class);
 		ArgumentCaptor<InventoryDetails> param2 = ArgumentCaptor.forClass(InventoryDetails.class);
@@ -70,10 +62,55 @@ public class ImportInventoryServiceTest {
 		assertEquals("Data merging should only done on items with the same GID", param1.getValue().getGid(), param2.getValue().getGid());
 
 	}
+	
+
+
+	private ImportedInventoryList createImportedInventoryList() {
+		List<InventoryDetails> imported = new ArrayList<>();
+		imported.add(new InventoryDetails(TEST_ORIGINAL_GID, "TEST3", 1, 1, 5.0, 1, 1, 1));
+		return new ImportedInventoryList(imported, "test");
+	}
+
+
+
+	private List<InventoryDetails> createOriginalInventoryDetailsList() {
+		List<InventoryDetails> original = new ArrayList<>();
+		original.add(new InventoryDetails(TEST_ORIGINAL_GID, TEST_GERMPLASM_NAME_1, 1, 1, 10.0, 1, 1, 1));
+		original.add(new InventoryDetails(3, "TEST", 1, 1, 5.0, 1, 1, 2));
+		return original;
+	}
+
+
 
 	@Test
-	public void testMergeIndividualData() {
-
+	public void testMergeInventoryDetails() throws FieldbookException {
+		ImportInventoryServiceImpl mole = spy(dut);
+		GermplasmListType germplasmListType = GermplasmListType.CROSSES;
+		List<InventoryDetails> inventoryDetailListFromDB = createOriginalInventoryDetailsList();
+		ImportedInventoryList importedInventoryList = createImportedInventoryList();
+		mole.mergeInventoryDetails(inventoryDetailListFromDB , importedInventoryList, 
+				germplasmListType);
+		InventoryDetails inventoryDetailsFromDB = inventoryDetailListFromDB.get(0);
+		InventoryDetails inventoryDetailsFromImport = 
+				importedInventoryList.getImportedInventoryDetails().get(0);
+		verify(mole, atMost(1)).updateInventoryDetailsFromImport(inventoryDetailsFromDB,
+				inventoryDetailsFromImport,germplasmListType);
+		if(germplasmListType == GermplasmListType.CROSSES) {
+			assertEquals(inventoryDetailsFromImport.getDuplicate(),
+					inventoryDetailsFromDB.getDuplicate());
+			assertEquals(inventoryDetailsFromImport.getBulkWith(),
+					inventoryDetailsFromDB.getBulkWith());
+			assertEquals(inventoryDetailsFromImport.getBulkCompl(),
+					inventoryDetailsFromDB.getBulkCompl());
+		}
+		assertEquals(inventoryDetailsFromImport.getLocationId(),
+				inventoryDetailsFromDB.getLocationId());
+		assertEquals(inventoryDetailsFromImport.getScaleId(),
+				inventoryDetailsFromDB.getScaleId());
+		assertEquals(inventoryDetailsFromImport.getAmount(),
+				inventoryDetailsFromDB.getAmount());
+		assertEquals(inventoryDetailsFromImport.getComment(),
+				inventoryDetailsFromDB.getComment());
 	}
 
 }

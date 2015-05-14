@@ -75,10 +75,18 @@
 						</li>
 						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
 							<a href=""
-								style="display: none" id="open-study-url"></a> <a href="javascript: void(0)"
+								style="display: none" id="export-stock-list-url"></a> <a href="javascript: void(0)"
 								th:onclick="'javascript: StockIDFunctions.exportList(\'' + ${listId} + '\');'"
-								id="generate-stock-list" th:text="#{common.export.inventory.template}">
+								id="export-stock-list" th:text="#{common.export.inventory.template}">
 									Export Inventory Template
+							</a>
+						</li>
+						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
+							<a href=""
+								style="display: none" id="import-stock-list-url"></a> <a href="javascript: void(0)"
+								th:onclick="'javascript: StockIDFunctions.showImportPopup(\'' + ${listId} + '\');'"
+								id="import-stock-list" th:text="#{common.import.inventory.file}">
+									Import Inventory File
 							</a>
 						</li>
 					</ul>

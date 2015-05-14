@@ -1,7 +1,16 @@
 package com.efficio.fieldbook.web.stock;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.service.StockService;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -11,6 +20,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +29,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.form.ImportStockForm;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
+import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,6 +52,7 @@ public class StockController extends AbstractBaseFieldbookController{
 	public static final String FAILURE = "0";
 	public static final String SUCCESS = "1";
 	public static final String ERROR_MESSAGE = "errorMessage";
+	public static final String HAS_ERROR = "hasError";
 
 	@Resource
 	private StockService stockService;
@@ -56,6 +68,12 @@ public class StockController extends AbstractBaseFieldbookController{
 
 	@Resource
 	private GermplasmListManager germplasmListManager;
+	
+	@Resource
+	private ImportInventoryService importInventoryService;
+	
+	@Resource
+	private FieldbookService fieldbookMiddlewareService;
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveNextStockPrefix", method = RequestMethod.POST)
@@ -190,6 +208,52 @@ public class StockController extends AbstractBaseFieldbookController{
 		}
 
 		return germplasmMap;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value ="/import", method = RequestMethod.POST)
+	public Map<String,Object> importList(@ModelAttribute("importStockForm") ImportStockForm form) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		try {
+			Integer listId = form.getStockListId();
+			GermplasmList germplasmList = this.fieldbookMiddlewareService
+					.getGermplasmListById(listId);
+			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
+			Map<String,Object> additionalParams = new HashMap<String,Object>();
+			additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, 
+					InventoryHeaderLabels.headers(germplasmListType));
+			additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY,listId);
+			ImportedInventoryList importedInventoryList = 
+					importInventoryService.parseFile(form.getFile(),additionalParams);
+			List<InventoryDetails> inventoryDetailListFromDB = 
+					inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			importInventoryService.mergeInventoryDetails(
+					inventoryDetailListFromDB, importedInventoryList, germplasmListType);
+			updateInventory(listId,inventoryDetailListFromDB);
+			result.put(HAS_ERROR,false);
+			result.put("stockListId",listId);
+		} catch (FileParsingException e) {
+			LOG.error(e.getMessage(),e);
+			result.put(HAS_ERROR,true);
+			result.put(ERROR_MESSAGE,
+					messageSource.getMessage(e.getMessage(),
+							e.getMessageParameters(), Locale.getDefault()));
+		} catch (FieldbookException e) {
+			LOG.error(e.getMessage(),e);
+			result.put(HAS_ERROR,true);
+			result.put(ERROR_MESSAGE,e.getMessage());
+		} catch (Exception e) {
+			LOG.error(e.getMessage(),e);
+			result.put(HAS_ERROR,true);
+			result.put(ERROR_MESSAGE,messageSource.getMessage(
+					"common.import.failed", new Object[]{},Locale.getDefault()));
+		}
+		return result;
+	}
+
+	private void updateInventory(Integer listId,
+			List<InventoryDetails> inventoryDetailListFromDB) throws MiddlewareQueryException {
+		inventoryDataManager.updateInventory(listId,inventoryDetailListFromDB);
 	}
 
 	@Override

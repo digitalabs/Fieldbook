@@ -65,8 +65,8 @@
         };
     }]);
 
-    app.directive('selectStandardVariable', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'VARIABLE_SELECTED_EVENT_TYPE', 'DesignOntologyService',
-        function (VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE, DesignOntologyService) {
+    app.directive('designMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'DesignOntologyService',
+        function (VARIABLE_SELECTION_MODAL_SELECTOR, DesignOntologyService) {
             return {
                 restrict: 'A',
                 scope: {
@@ -102,7 +102,7 @@
 
 
 
-                            $('#variableSelectionModal .modal').modal('hide');
+                            $(VARIABLE_SELECTION_MODAL_SELECTOR).modal('hide');
                              setTimeout(function() {
                              $('#designMapModal').modal('show');
                              },600);

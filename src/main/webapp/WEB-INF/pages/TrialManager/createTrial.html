@@ -343,9 +343,14 @@
     <input type="hidden" th:field="*{measurementDataExisting}"/>
 </form>
 
+<!-- Design import map headers -->
+<div th:include="DesignImport/mapHeaders"></div>
+
 <!-- MAIN jS -->
+
 <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
@@ -477,7 +482,6 @@
 </script>
 
 <!-- Controller js files for each tabs -->
-<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/trialSettings.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/germplasm.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/treatment.js}"></script>

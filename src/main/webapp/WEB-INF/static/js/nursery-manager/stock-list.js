@@ -64,14 +64,14 @@ if (typeof StockIDFunctions === 'undefined') {
                     data : JSON.stringify(stockGenerationSettings),
                     success: function (result) {
                         if (result.isSuccess === '1') {
-                            StockIDFunctions.generateStockListTabIfNecessary(listId).done(function() {
-                                $('#generateStockIDModal').modal('hide');
-                                // logic for displaying the stock list immediately after successful saving
-                                $('#create-nursery-tabs .tab-pane.info').removeClass('active');
-                                $(this).data('has-loaded', '1');
-                                StockIDFunctions.displayStockList(listId);
-                                $('#stock-tab-pane' + listId).addClass('active');
-                            });
+                            StockIDFunctions.generateStockListTabIfNecessary(listId);
+                            $('#generateStockIDModal').modal('hide');
+                            // logic for displaying the stock list immediately after successful saving
+                            $('#create-nursery-tabs .tab-pane.info').removeClass('active');
+                            $(this).data('has-loaded', '1');
+                            StockIDFunctions.displayStockList(listId);
+                            $('#stock-tab-pane' + listId).addClass('active');
+
 
 
                         } else {

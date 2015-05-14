@@ -286,16 +286,24 @@
 		<div th:id="${'advance-list' + crossesItem.id}" th:class="${'crosses-list' + crossesItem.id}">
 			
 		</div>
-		<div th:id="${'stock-list' + crossesItem.id}" th:class="${'crosses-list' + crossesItem.id}">
-			</div>
-	</div>	
+
+	</div>
+	<div th:id="${'stock-tab-pane' + crossesItem.id}" class="tab-pane info" th:each="crossesItem : ${crossesList}">
+		<div th:id="${'stock-content-pane' + crossesItem.id}" th:class="${'stock-list' + crossesItem.id}">
+		</div>
+	</div>
+
 	<div th:id="${'list' + advanceItem.id}" class="tab-pane info" th:each="advanceItem : ${advancedList}">
 		<div th:id="${'advance-list' + advanceItem.id}">
 			
 		</div>
-		<div th:id="${'stock-list' + advanceItem.id}">
+
+	</div>
+	<div th:id="${'stock-tab-pane' + advanceItem.id}" class="tab-pane info" th:each="advanceItem : ${advancedList}">
+		<div th:id="${'stock-content-pane' + advanceItem.id}" th:class="${'advanceItem-list' + advanceItem.id}">
 		</div>
-	</div>	
+	</div>
+
 </div>
 
 <!-- Modal Dialog for Export Germplasm List -->

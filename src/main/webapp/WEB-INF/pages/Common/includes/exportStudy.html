@@ -53,12 +53,12 @@
 						</div>
 					</div>
 					<div class="row  form-group">&nbsp;</div>
-					<div class="row form-group">
+					<div class="row form-group data-collection-section">
 						<div class="col-xs-12 col-md-12">
 							<label class="control-label h4 label-bold" th:text="#{study.export.data.collection.header}"></label>
 						</div>
 					</div>
-					<div class="row form-group">
+					<div class="row form-group data-collection-section">
 						<div class="col-xs-5 col-md-5">
 							<label class="control-label add_top_padding label-bold" th:text="#{study.export.choose.data.collection.order}">Way to be exported:</label><span class="required">*</span>
 						</div>
@@ -161,10 +161,22 @@
 			'use strict';
 			$('#exportStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
 			$('#exportType').on('change', function(){
-				if ($(this).val() === '2') {
-					$('.exportRSection').css('display', 'block');
-				} else {
+				if(StudyCustomExportReports.isCustomReport()){
+					$('.data-collection-section').hide();
+					$('.exportTrialInstanceSection').addClass('fbk-hide');
 					$('.exportRSection').css('display', 'none');
+				}else if ($(this).val() === '2') {
+					$('.data-collection-section').show();
+					$('.exportRSection').css('display', 'block');
+					if(!isNursery()){
+						$('.exportTrialInstanceSection').removeClass('fbk-hide');
+					}
+				} else {
+					$('.data-collection-section').show();
+					$('.exportRSection').css('display', 'none');
+					if(!isNursery()){
+						$('.exportTrialInstanceSection').removeClass('fbk-hide');
+					}
 				}
 			});
 
@@ -185,6 +197,11 @@
 				// We are on the landing page
 				studyId = getCurrentStudyIdInTab();
 			}			
+			
+			if(StudyCustomExportReports.isCustomReport()){
+				StudyCustomExportReports.doExport();
+				return true;
+			}
 			
 			if(!isNursery()){				
 				if(checkedInstance !== null && checkedInstance.length === 0){
@@ -262,7 +279,7 @@
 			$('#exportStudyModal #heading-modal').html(exportHeader + " " + studyType + " " + exportBookHeader);
 			$('#selectedRTrait').empty();
 			$('#selectedRTrait').select2('destroy');
-
+			StudyCustomExportReports.showReports();
 			$.ajax({
 				url: '/Fieldbook/ExportManager/study/traits/?studyId='+studyId,
 				type: 'GET',
@@ -296,14 +313,14 @@
 					cache: false,
 					success: function (data) {
 						$('.exportTrialInstanceSection .trial-instance').html(data);
-						$('.exportTrialInstanceSection').removeClass('fbk-hide');
+						if(StudyCustomExportReports.isCustomReport()){
+							$('.exportTrialInstanceSection').addClass('fbk-hide');
+						}else{
+							$('.exportTrialInstanceSection').removeClass('fbk-hide');
+						}
 					}
 				});
 			}
-
-
-			
-
 		}
 		function showExportResponse(responseText, statusText, xhr, $form) {
 			'use strict';
@@ -316,6 +333,7 @@
 			$('#exportStudyModal').modal('hide');
 
 		}
+		
 	//]]>
 	</script>
 </div>

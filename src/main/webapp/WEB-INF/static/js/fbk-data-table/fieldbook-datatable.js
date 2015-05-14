@@ -1029,6 +1029,95 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 
 })(jQuery);
 
+
+BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
+	// FIXME Refactor to remove some of this code from the constructor function
+	/**
+	 * Creates a new PreviewDesignMeasurementsDataTable.
+	 *
+	 * @constructor
+	 * @alias module:fieldbook-datatable
+	 * @param {string} tableIdentifier the id of the table container
+	 * @param {string} ajaxUrl the URL from which to retrieve table data
+	 */
+	var dataTableConstructor = function PreviewDesignMeasurementsDataTable(tableIdentifier, dataList) {
+		'use strict';
+
+		var columns = [],
+			columnsDef = [],
+			table;
+
+		$(tableIdentifier + ' thead tr th').each(function() {
+			columns.push({data: $(this).html()});
+			if ($(this).data('term-id') == '8240') {
+				// For GID
+				columnsDef.push({
+					targets: columns.length - 1,
+					data: $(this).html(),
+					width: '100px',
+					render: function(data, type, full, meta) {
+						return '<a class="gid-link" href="javascript: void(0)" ' +
+							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+					}
+				});
+			} else if ($(this).data('term-id') == '8250') {
+				// For designation
+				columnsDef.push({
+					targets: columns.length - 1,
+					data: $(this).html(),
+					render: function(data, type, full, meta) {
+						return '<a class="desig-link" href="javascript: void(0)" ' +
+							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
+					}
+				});
+			}else{
+				columnsDef.push({
+					targets: columns.length - 1,
+					render: function ( data, type, full, meta ) {
+						if (data !== undefined){
+							if (Array.isArray(data)){
+								return ((data[0] != null) ? data[0] :  '');
+							}else{
+								return data;
+							}
+						} 
+					}
+				});
+			}
+			
+		});
+		table = $(tableIdentifier).DataTable({
+			data: dataList,
+			columns: columns,
+			scrollY: '600px',
+			scrollX: '100%',
+			scrollCollapse: true,
+			columnDefs: columnsDef,
+			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+			bAutoWidth: true,
+			iDisplayLength: 100,
+			dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+			// For column visibility
+			colVis: {
+				exclude: [0],
+				restore: 'Restore',
+				showAll: 'Show all'
+			},
+			// Problem with reordering plugin and fixed column for column re-ordering
+			colReorder: {
+				fixedColumns: 1
+			},
+			fnInitComplete: function(oSettings, json) {
+				oSettings.oInstance.fnAdjustColumnSizing();
+			}
+		});
+	};
+	return dataTableConstructor;
+
+})(jQuery);
+
 $(function(){
 	$(document).contextmenu({
 	    delegate: ".dataTable td[class*='invalid-value']",

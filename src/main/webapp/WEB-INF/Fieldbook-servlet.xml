@@ -180,6 +180,9 @@
     
     <bean id="excelImportStudyService" class="com.efficio.fieldbook.web.common.service.impl.ExcelImportStudyServiceImpl">
     </bean>
+    
+    <bean id="designImportService" class="com.efficio.fieldbook.web.common.service.impl.DesignImportServiceImpl">
+    </bean>
 
     <bean id="multipartResolver"
           class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

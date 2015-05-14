@@ -6,9 +6,10 @@ public class DesignHeaderItem {
 
 	private int id;
 	private String headerName;
-	private String hasError;
+	private boolean hasError;
 	private StandardVariable variable;
 	private boolean required;
+	private int columnIndex;
 	
 	public int getId() {
 		return id;
@@ -26,11 +27,11 @@ public class DesignHeaderItem {
 		this.headerName = headerName;
 	}
 
-	public String getHasError() {
+	public boolean getHasError() {
 		return hasError;
 	}
 
-	public void setHasError(String hasError) {
+	public void setHasError(boolean hasError) {
 		this.hasError = hasError;
 	}
 
@@ -48,6 +49,21 @@ public class DesignHeaderItem {
 
 	public void setRequired(boolean required) {
 		this.required = required;
+	}
+
+	public int getColumnIndex() {
+		return columnIndex;
+	}
+
+	public void setColumnIndex(int columnIndex) {
+		this.columnIndex = columnIndex;
+	}
+	
+	@Override
+	public String toString() {
+		return "DesignHeaderItem [id=" + id + ", headerName=" + headerName + ", hasError="
+				+ hasError + ", variable=" + variable + ", required=" + required + ", columnIndex="
+				+ columnIndex + "]";
 	}
 	
 }

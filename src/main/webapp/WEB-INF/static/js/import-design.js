@@ -15,6 +15,43 @@ var ImportDesign = {
 			
 			
 		},
+		
+		showReviewPopup : function() {
+			$('#reviewDesignModal').modal({ backdrop: 'static', keyboard: true });
+			ImportDesign.showReviewDesignData();
+		},
+		
+		showReviewDesignData : function() {
+					
+			$.ajax(
+				{ 
+					url: '/Fieldbook/DesignImport/showDetails',
+					type: 'GET',
+					success: function(html) {
+						$('#divDesignMeasurements').html(html);
+					}
+			});
+			     
+		},
+		
+		loadReviewDesignData : function() {
+			setTimeout(function(){
+				
+				$.ajax(
+						{ 
+						url: '/Fieldbook/DesignImport/showDetails/data',
+						type: 'GET',
+						data: '',
+						cache: false,
+						success: function(response) {
+							new  BMS.Fieldbook.PreviewDesignMeasurementsDataTable('#design-measurement-table', response);					
+						}
+					});
+				
+			}, 50);
+			
+		},
+		
 		doSubmitImport : function() {
 			'use strict';
 
@@ -31,6 +68,7 @@ var ImportDesign = {
 				}
 
 				$('#importDesignModal').modal('hide');
+				ImportDesign.showReviewPopup();
 
 			});
 

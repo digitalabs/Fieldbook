@@ -25,10 +25,13 @@ public class DesignImportParser extends AbstractCsvFileParser<DesignImportData> 
 	
 	private List<DesignHeaderItem> createDesignHeaders(List<String> headers){
 		List<DesignHeaderItem> list = new ArrayList<>();
+		int columnIndex = 0;
 		for (String headerName: headers){
 			DesignHeaderItem headerItem = new DesignHeaderItem();
 			headerItem.setHeaderName(headerName);
+			headerItem.setColumnIndex(columnIndex);
 			list.add(headerItem);
+			columnIndex++;
 		}
 		return list;
 	}

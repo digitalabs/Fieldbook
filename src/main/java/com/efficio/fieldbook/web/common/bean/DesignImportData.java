@@ -1,5 +1,7 @@
 package com.efficio.fieldbook.web.common.bean;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,9 @@ public class DesignImportData {
 	private Map<Integer, List<String>> csvData;
 
 	public List<DesignHeaderItem> getUnmappedHeaders() {
+		if (this.unmappedHeaders == null) {
+			this.unmappedHeaders = new ArrayList<DesignHeaderItem>();
+		}
 		return unmappedHeaders;
 	}
 	
@@ -20,6 +25,9 @@ public class DesignImportData {
 	}
 	
 	public Map<PhenotypicType, List<DesignHeaderItem>> getMappedHeaders() {
+		if (this.mappedHeaders == null) {
+			this.mappedHeaders = new HashMap<PhenotypicType, List<DesignHeaderItem>>();
+		}
 		return mappedHeaders;
 	}
 	

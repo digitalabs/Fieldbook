@@ -52,7 +52,7 @@ public class StockControllerTest {
     private MessageSource messageSource;
 
     @Mock
-    private StockIDGenerationSettings generationSettings;
+    private StockListGenerationSettings generationSettings;
 
     @Mock
     private InventoryService inventoryService;
@@ -68,7 +68,7 @@ public class StockControllerTest {
 
     @Test
     public void testGenerateValidPrefix() throws MiddlewareException{
-        StockIDGenerationSettings param = new StockIDGenerationSettings(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
+        StockListGenerationSettings param = new StockListGenerationSettings(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
         String validPrefix = TEST_BREEDER_IDENTIFIER + 1 + TEST_SEPARATOR;
         doReturn(validPrefix).when(stockService).calculateNextStockIDPrefix(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
 
@@ -79,7 +79,7 @@ public class StockControllerTest {
 
     @Test
     public void testCalculatePrefixMiddlewareExceptionThrown() throws MiddlewareException {
-        StockIDGenerationSettings param = new StockIDGenerationSettings(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
+        StockListGenerationSettings param = new StockListGenerationSettings(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
         doThrow(MiddlewareException.class).when(stockService).calculateNextStockIDPrefix(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
 
         Map<String, String> results = dut.retrieveNextStockIDPrefix(param);
@@ -89,7 +89,7 @@ public class StockControllerTest {
 
     @Test
     public void testCalculatePrefixValidationError() throws MiddlewareException {
-        StockIDGenerationSettings param = new StockIDGenerationSettings("AB12", TEST_SEPARATOR);
+        StockListGenerationSettings param = new StockListGenerationSettings("AB12", TEST_SEPARATOR);
         doReturn("ABC").when(messageSource).getMessage(anyString(), any(Object[].class), any(Locale.class));
         Map<String, String> results = dut.retrieveNextStockIDPrefix(param);
         assertEquals(StockController.FAILURE, results.get(StockController.IS_SUCCESS));
@@ -100,7 +100,7 @@ public class StockControllerTest {
 
     @Test
     public void testGenerateStockListForAdvanceList() throws MiddlewareException {
-        StockIDGenerationSettings param = new StockIDGenerationSettings(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
+        StockListGenerationSettings param = new StockListGenerationSettings(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
         String validPrefix = TEST_BREEDER_IDENTIFIER + 1 + TEST_SEPARATOR;
         doReturn(validPrefix).when(stockService).calculateNextStockIDPrefix(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);
         doReturn(TEST_GERMPLASM_LIST_DATA_LIST_ID).when(germplasmListManager).retrieveDataListIDFromListDataProjectListID(TEST_LISTDATA_PROJECT_LIST_ID);

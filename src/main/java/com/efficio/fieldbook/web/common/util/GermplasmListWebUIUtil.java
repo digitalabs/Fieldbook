@@ -11,6 +11,10 @@ public class GermplasmListWebUIUtil {
     public static final String PLOT_RECIPROCAL_CLASS = "plotRecip";
     public static final String PEDIGREE_RECIPROCAL_CLASS = "pedigreeRecip";
 
+    private GermplasmListWebUIUtil(){
+    	super();
+    }
+    
     public static String getCSSClassForDuplicateType(ListDataProject project) {
         if (project.isPedigreeDupe()) {
             return PEDIGREE_DUPE_CLASS;

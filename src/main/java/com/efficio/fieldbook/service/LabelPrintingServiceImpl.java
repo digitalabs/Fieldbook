@@ -111,6 +111,7 @@ import com.lowagie.text.pdf.PdfWriter;
 @Service
 public class LabelPrintingServiceImpl implements LabelPrintingService{
 
+	private static final String ADVANCED = "ADVANCED";
 	/** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceImpl.class);
     public static final String BARCODE = "barcode";
@@ -1196,7 +1197,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	
 	@Override
 	public GermplasmListType getStockListType(String type){
-		return type.equalsIgnoreCase("ADVANCED")? GermplasmListType.ADVANCED : GermplasmListType.CROSSES;
+		return type.equalsIgnoreCase(ADVANCED)? GermplasmListType.ADVANCED : GermplasmListType.CROSSES;
 	}
 
 	protected Boolean populateValuesFromMeasurement(LabelPrintingProcessingParams params,

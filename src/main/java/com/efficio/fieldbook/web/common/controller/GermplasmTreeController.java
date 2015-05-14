@@ -341,23 +341,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	}
 
-	private void populateGermplasmListDataFromListDataProject(List<ListDataProject> dataProjectList,
-			GermplasmList targetGermplasmList, Map<Germplasm, GermplasmListData> listDataItems) {
-		//Common germplasm list data fields
-		Integer listDataStatus = 0;
-		Integer localRecordId = 0;
-
-		for (ListDataProject data : dataProjectList) {
-			Germplasm germplasm = new Germplasm(data.getGermplasmId());
-
-			GermplasmListData newData = new GermplasmListData(null, targetGermplasmList,
-					data.getGermplasmId(),
-					data.getEntryId(), data.getEntryCode(), data.getSeedSource(),
-					data.getDesignation(), data.getGroupName(), listDataStatus, localRecordId);
-			listDataItems.put(germplasm, newData);
-		}
-	}
-
 	private void populateGermplasmListData(GermplasmList germplasmList,
 			Map<Germplasm, GermplasmListData> listDataItems,
 			List<ImportedCrosses> importedGermplasmList) {

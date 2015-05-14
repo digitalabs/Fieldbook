@@ -351,22 +351,11 @@
 	</div>
 </div>
 
-<div th:include="/NurseryManager/includes/variableSelectionModal"></div>
 
 </form>
 
-<div layout:fragment="page-script">
-<script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
-<link th:href="@{/static/css/lib/bootstrap/bootstrap-datepicker.css}" rel="stylesheet"/>
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
-<link th:href="@{/static/css/lib/bootstrap/bootstrap-spinedit.css}" rel="stylesheet"/>
-<link th:href="@{/static/css/fieldbook-spinner.css}" rel="stylesheet"/>
-<script type='text/javascript' th:inline="javascript">
+<script th:inline="javascript">
 //<![CDATA[
 
 // FIXME Should not be using global variables or functions
@@ -573,4 +562,3 @@ $(document).ready(function() {
 });
 //]]>
 </script>
-</div>

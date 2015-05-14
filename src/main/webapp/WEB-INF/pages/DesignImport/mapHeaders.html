@@ -1,10 +1,201 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+<section xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+    <div ng-cloak="" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="designMapModal" id="designMapModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="min-width: 98%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close closeTrigger" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" th:text="#{design.import.modal.title}">Import Experimental Design :)</h4>
+                </div>
+                <section ng-controller="designImportCtrl" class="modal-body" style="height:450pt; overflow-y: auto">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <strong class="sub-content-heading col-md-12" th:text="#{design.import.experimental.type}"></strong>
+                                </div>
 
-</body>
-</html>
+                                <div class="form-group">
+                                    <label for="design-type-select" class="col-md-6 col-sm-8 control-label" th:text="#{design.import.experimental.type.select}"></label>
+
+                                    <div class="col-md-6 col-sm-4">
+                                        <select id="design-type-select">
+                                            <option value="">Please Choose</option>
+                                            <option value="0">Randomized Complete Block Design</option>
+                                            <option value="1">Resolvable Incomplete Block Design</option>
+                                            <option value="2">Row-and-Column</option>
+                                            <option value="3">Other Design</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong class="sub-content-heading pull-left" th:text="#{design.import.map.column.header}"></strong>
+                            <span class="btn btn-link pull-right" th:text="#{ontology.browser.modal.scale.variable}"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p class="col-md-12" th:text="#{design.import.map.column.header.desc}"></p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4" >
+                            <div class="panel panel-danger">
+                                <div class="panel-heading"><b class="panel-title">Un-Mapped <span class="badge-danger counter" style="float:right">{{unmappedHeaders.length}}</span></b>
+                                </div>
+                                <div class="unmapped list-group" ui-sortable="{ 'connectWith': '.list-group' }" ng-model="unmappedHeaders">
+                                    <div class="list-group-item" ng-repeat="header in unmappedHeaders">
+                                        <h4>{{header.name}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-8">
+                            <mapping-group name="Environmental Factors" data="mappedEnvironmentalFactors" variable-type="8"></mapping-group>
+                            <mapping-group name="Design Factors" data="mappedDesignFactors" variable-type="1"></mapping-group>
+                            <mapping-group name="Germplasm Factors" data="mappedGermplasmFactors" variable-type="7"></mapping-group>
+                            <mapping-group name="Traits" data="mappedTraits" variable-type="3"></mapping-group>
+                        </div>
+
+                    </div>
+
+                </section>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default closeTrigger" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+                    <button type="button" class="btn btn-primary closeTrigger" th:text="#{common.form.next.text}" ng-click="next()">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/static/js/lib/angular/sortable.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/design-import/design-import-main.js}"></script>
+
+    <script th:inline="javascript">
+        //<![CDATA[
+
+        (function() {
+            angular.module('designImportApp')
+                    .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
+                    .constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
+                    .constant('VARIABLE_SELECTION_LABELS',{
+                        /*ENVIRONMENTAL FACTORS*/
+                        1: {
+                            label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+                            placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+                        },
+                        /*GERMPLASM FACTORS*/
+                        8: {
+                            label: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
+                            placeholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ ''
+                        },
+                        /*MEASUREMENT TRAITS*/
+                        3: {
+                            label: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
+                            placeholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ ''
+                        },
+                        /*DESIGN FACTORS*/
+                        4: {
+                            label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+                            placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+                        },
+                        /*TREATMENT FACTORS*/
+                        5: {
+                            label: /*[[#{trial.managesettings.add.treatmentfactor}]]*/ '',
+                            placeholder: /*[[#{trial.reminder.add.treatmentfactor}]]*/ ''
+                        },
+                        /*TRIAL CONDITIONS*/
+                        7: {
+                            label: /*[[#{trial.managesettings.add.trialcondition}]]*/ '',
+                            placeholder: /*[[#{trial.reminder.add.trialcondition}]]*/ ''
+                        },
+                        generalAjaxError : /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
+                        variableSelectedMessage : /*[[#{common.warning.variable.in.use}]]*/ '',
+                        invalidAliasError : /*[[#{variable.selection.alias.error}]]*/ ''
+                    })
+                    .constant('MESSAGES',[])
+                    .constant('UNMAPPED_HEADERS',[{name : 'unmapped_header_1'},{name : 'unmapped_header_2'},{name : 'unmapped_header_3'}])
+                    .constant('MAPPED_ENVIRONMENTAL_FACTORS',[
+                        {
+                            id : 0,
+                            name : 'unmapped00',
+                            hasError : false,
+                            variable : {
+                                name : 'variable name',
+                                property : 'property 01',
+                                method : 'method 01',
+                                scale : 'scale 01'
+                            }
+                        },
+                        {
+                            id : 1,
+                            name : 'unmapped01',
+                            hasError : true
+                        }
+                    ])
+                    .constant('MAPPED_DESIGN_FACTORS',[
+                        {
+                            id : 2,
+                            name : 'unmapped02',
+                            hasError : false,
+                            variable : {
+                                name : 'variable name',
+                                property : 'property 01',
+                                method : 'method 01',
+                                scale : 'scale 01'
+                            }
+                        },
+                        {
+                            id : 3,
+                            name : 'unmapped03',
+                            hasError : true
+                        }
+                    ])
+                    .constant('MAPPED_GERMPLASM_FACTORS',[
+                        {
+                            id : 4,
+                            name : 'unmapped00',
+                            hasError : false,
+                            variable : {
+                                name : 'variable name',
+                                property : 'property 01',
+                                method : 'method 01',
+                                scale : 'scale 01'
+                            }
+                        },
+                        {
+                            id : 5,
+                            name : 'unmapped01',
+                            hasError : true
+                        }
+                    ])
+                    .constant('MAPPED_TRAITS',[
+                        {
+                            id : 6,
+                            name : 'unmapped00',
+                            hasError : false,
+                            variable : {
+                                name : 'variable name',
+                                property : 'property 01',
+                                method : 'method 01',
+                                scale : 'scale 01'
+                            }
+                        },
+                        {
+                            id : 7,
+                            name : 'unmapped01',
+                            hasError : true
+                        }
+                    ]);
+
+        })();
+
+        // ]]>
+    </script>
+
+</section>

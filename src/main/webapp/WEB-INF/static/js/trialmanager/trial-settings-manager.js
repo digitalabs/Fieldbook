@@ -345,7 +345,8 @@ window.TrialSettingsManager = (function () {
                     propertyData: properties.inclusions,
                     excludedProperties: properties.exclusions,
                     variableUsageData: [],
-                    selectedVariables: selectedVariables
+                    selectedVariables: selectedVariables,
+                    callback: params.callback
                 });
             });
 

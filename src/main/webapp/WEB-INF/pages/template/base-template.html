@@ -8,6 +8,7 @@
 		<link th:href="@{/static/css/lib/bootstrap/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 		<link th:href="@{/static/css/lib/bootstrap/bootstrap-datepicker.css}" rel="stylesheet"/>
 		<link th:href="@{/static/css/lib/bootstrap/bootstrap-fileupload.css}" rel="stylesheet"/>
+		<link th:href="@{/static/css/lib/bootstrap/bootstrap-spinedit.css}" rel="stylesheet"/>
 		<link th:href="@{/static/css/lib/select2/select2.css}" rel="stylesheet"/>
 		<link th:href="@{/static/css/lib/select2/select2-bootstrap.css}" rel="stylesheet"/>
 		<link th:href="@{/static/css/lib/jquery/jquery.treegrid.css}" rel="stylesheet"/>
@@ -25,12 +26,14 @@
 		<link rel="stylesheet" th:href="@{/static/css/lib/datatable/dataTables.colReorder.css}"/>
 		<link th:href="@{/static/css/lib/notify/ui.notify.css}" rel="stylesheet"/>	
 		<link th:href="@{/static/css/fieldbook.css}" rel="stylesheet"/>
+		<link th:href="@{/static/css/fieldbook-spinner.css}" rel="stylesheet"/>
 
-        <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-1.10.2.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-1.10.2.min.js}"></script>
         <script type="text/javascript" th:src="@{/static/js/lib/jquery.fileDownload.js}"></script>
         <script type="text/javascript" th:src="@{/static/js/lib/jquery-ui.js}"></script>
 		<script type="text/javascript" th:src="@{/static/js/lib/jquery.ui-contextmenu.min.js}"></script>
 		<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
 		<script type="text/javascript" th:src="@{/static/js/lib/select2.min.js}"></script>
 		<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.blockUI.js}"></script>
 		<script type="text/javascript" th:src="@{/static/js/spinner.js}"></script>
@@ -57,6 +60,23 @@
 
         <script th:src="@{/static/js/lib/placeholder-shiv.js}" type="text/javascript"></script>
         <script type="text/javascript" th:src="@{/static/js/nursery-manager/stock-list.js}"></script>
+
+		<!-- angular base library -->
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/angular.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/ng-lodash.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/angular-resource.min.js}" ></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/angular-route.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/angular-ui-router.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/ct-ui-router-extras.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/ui-bootstrap-tpls-0.11.0.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/angular-select2.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/lib/angular/angular-local-storage.min.js}"></script>
+
+		<!-- FIXME: for the meantime, the legacy chooseSettings.js is needed by fieldbook-utils.js for the old ontology popup  -->
+
+		<!-- angular common modules -->
+		<script type="text/javascript" th:src="@{/static/js/angular/angular-utilities.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/angular/fieldbook-utils.js}"></script>
 
     </head>
 	<body>

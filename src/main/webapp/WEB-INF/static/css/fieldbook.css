@@ -5,6 +5,11 @@ body {
     font-size: 13px;
     margin: 0 !important;
 }
+
+body.modal-open {
+    overflow: hidden;
+}
+
 .heading{vertical-align: middle; color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;font-size:18px;height:18px;line-height:18px;font-weight:600;}
 h1,h2,h3,h4,h5,h6,
 .h1,.h2,.h2_no_transform,.h3,.h3_no_transform,.h4,.h5,.h6{display:block;color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box}
@@ -1781,4 +1786,19 @@ td.accepted-value {
 }
 input.review-select-all{
 	margin-left: 52px;
+}
+
+/* exp design remap css */
+.mapping-group .list-group {
+    min-height: 70pt;
+}
+
+.mapping-group .list-group-item {
+    cursor: pointer;
+}
+
+
+.mapping-group .list-group-item:hover {
+    cursor: pointer;
+    background: #BED6B2;
 }

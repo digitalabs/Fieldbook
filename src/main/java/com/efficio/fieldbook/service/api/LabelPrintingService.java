@@ -16,11 +16,14 @@ import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -79,18 +82,28 @@ public interface LabelPrintingService {
 	 * @param locale      the locale
 	 * @return the available label fields
 	 */
-	List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, Locale locale);
+	List<LabelFields> getAvailableLabelFieldsForFieldMap(boolean isTrial, boolean hasFieldMap, Locale locale);
 
 	/**
-	 * Gets the available label fields for Nursery, Trial and Stock List.
+	 * Gets the available label fields for Nursery, Trial.
 	 *
 	 * @param isTrial     the is trial
 	 * @param hasFieldMap the has field map
 	 * @param locale      the locale
 	 * @return the available label fields
 	 */
-	List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, boolean isStockList, Locale locale, int studyID);
+	List<LabelFields> getAvailableLabelFieldsForStudy(boolean isTrial, boolean hasFieldMap, Locale locale, int studyID);
 
+	/***
+	 * Get available label fields for Stock List
+	 * 
+	 * @param listType
+	 * @param locale
+	 * @param studyID
+	 * @return
+	 */
+	List<LabelFields> getAvailableLabelFieldsForStockList(GermplasmListType listType, Locale locale, int studyID);
+	
 	/**
 	 * Check and set fieldmap properties.
 	 *
@@ -161,7 +174,15 @@ public interface LabelPrintingService {
 			String xmlConfig,
 			Integer programId) throws MiddlewareQueryException;
 
-	public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields, boolean isTrial);
+	public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, 
+			String selectedFields, boolean isTrial, boolean isStockList);
 
 	void deleteProgramPreset(Integer programPresetId) throws MiddlewareQueryException;
+	
+	/**
+	 * Returns if the list is either ADVANCED list of CROSSES list
+	 * @param type
+	 * @return
+	 */
+	GermplasmListType getStockListType(String type);
 }

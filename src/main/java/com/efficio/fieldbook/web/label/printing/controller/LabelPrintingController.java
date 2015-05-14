@@ -11,7 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,17 +36,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
-import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
-
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -49,6 +48,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -56,21 +56,31 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
+import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
+import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-
-import org.springframework.web.util.WebUtils;
 
 /**
  * The Class LabelPrintingController.
@@ -166,7 +176,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, true));
         form.setUserLabelPrinting(this.userLabelPrinting);
 
-        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(true, hasFieldMap, false, locale, id));
+        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFieldsForStudy(true, hasFieldMap, locale, id));
 
         form.setIsTrial(true);
         return super.show(model);
@@ -211,7 +221,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
         this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, false));
         form.setUserLabelPrinting(this.userLabelPrinting);
-        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(false, hasFieldMap, false, locale, id));
+        model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFieldsForStudy(false, hasFieldMap, locale, id));
         form.setIsTrial(false);
         return super.show(model);
     }
@@ -250,7 +260,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         form.setUserLabelPrinting(this.userLabelPrinting);
 
         model.addAttribute(AVAILABLE_FIELDS
-                , labelPrintingService.getAvailableLabelFields(userFieldmap.isTrial(), true, locale));
+                , labelPrintingService.getAvailableLabelFieldsForFieldMap(userFieldmap.isTrial(), true, locale));
 
         form.setIsTrial(userFieldmap.isTrial());
 
@@ -284,6 +294,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
                 fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids, this.crossExpansionProperties);
                 for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
                     fieldMapInfo = fieldMapInfoDetail;
+                    fieldMapInfo.getDatasets().get(0).getTrialInstances().get(0).setStockList(stockList);
                     hasFieldMap = labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
                 }
             } catch (MiddlewareQueryException e) {
@@ -297,7 +308,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
             this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, false));
             form.setUserLabelPrinting(this.userLabelPrinting);
-            model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFields(false, hasFieldMap, true, locale, stockList.getProjectId()));
+            model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFieldsForStockList(
+            		labelPrintingService.getStockListType(stockList.getType()), locale, stockList.getProjectId()));
             form.setIsTrial(false);
             form.setIsStockList(true);
     	}
@@ -427,7 +439,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         if (workbook != null) {
         	String selectedLabelFields = getSelectedLabelFields(userLabelPrinting);
             labelPrintingService.populateUserSpecifiedLabelFields(this.userLabelPrinting.getFieldMapInfo().getDatasets().get(0).getTrialInstances()
-                    , workbook, selectedLabelFields, form.getIsTrial());
+                    , workbook, selectedLabelFields, form.getIsTrial(), form.getIsStockList());
         }
 
         List<StudyTrialInstanceInfo> trialInstances = null;

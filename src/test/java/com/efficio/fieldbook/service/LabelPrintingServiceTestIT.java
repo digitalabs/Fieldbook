@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -65,35 +66,35 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
     @Test
     public void testGetAvailableLabelFieldsFromTrialWithoutFieldMap() {
     	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(true, false, locale);
+    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFieldsForFieldMap(true, false, locale);
     	Assert.assertFalse(areFieldsInLabelList(labels));
     }
     
     @Test
     public void testGetAvailableLabelFieldsFromTrialWithFieldMap() {
     	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(true, true, locale);
+    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFieldsForFieldMap(true, true, locale);
     	Assert.assertTrue(areFieldsInLabelList(labels));
     }
     
     @Test
     public void testGetAvailableLabelFieldsFromNurseryWithoutFieldMap() {
     	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(false, false, locale);
+    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFieldsForFieldMap(false, false, locale);
     	Assert.assertFalse(areFieldsInLabelList(labels));
     }
     
     @Test
     public void testGetAvailableLabelFieldsFromNurseryWithFieldMap() {
     	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(false, true, locale);
+    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFieldsForFieldMap(false, true, locale);
     	Assert.assertTrue(areFieldsInLabelList(labels));
     }
     
     @Test
     public void testGetAvailableLabelFieldsFromFieldMap() {
     	Locale locale = new Locale("en", "US");
-    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFields(false, true, locale);
+    	List<LabelFields> labels = labelPrintingService.getAvailableLabelFieldsForFieldMap(false, true, locale);
     	Assert.assertTrue(areFieldsInLabelList(labels));
     }
     
@@ -460,7 +461,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
 		input.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
 
-		printingService.populateUserSpecifiedLabelFields(input, setupTestWorkbook(), testSelectedFields, false);
+		printingService.populateUserSpecifiedLabelFields(input, setupTestWorkbook(), testSelectedFields, false, false);
 
 		assertEquals(testDesigValue, input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));
 		assertEquals("1", input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.ENTRY_NO.getId()));

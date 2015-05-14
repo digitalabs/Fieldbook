@@ -31,16 +31,16 @@ public class NonEmptyValidatorTest {
 
 	@Test
 	public void testNonEmptyPass() {
-		assertTrue(dut.isParsedValueValid(RANDOM_TEST_STRING));
+		assertTrue(dut.isParsedValueValid(RANDOM_TEST_STRING,null));
 	}
 
 	@Test
 	public void testEmptyString() {
-		assertFalse(dut.isParsedValueValid(EMPTY_STRING));
+		assertFalse(dut.isParsedValueValid(EMPTY_STRING,null));
 	}
 
 	@Test
 	public void testNullString() {
-		assertFalse(dut.isParsedValueValid(null));
+		assertFalse(dut.isParsedValueValid(null,null));
 	}
 }

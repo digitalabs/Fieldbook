@@ -69,13 +69,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	}
 
 	@Override
-	public ImportedCrossesList parseWorkbook(Workbook workbook) throws
+	public ImportedCrossesList parseWorkbook(Workbook workbook, Map<String,Object> additionalParams) throws
 			FileParsingException {
 		this.workbook = workbook;
 		try {
 			descriptionSheetParser = new DescriptionSheetParser<>(new ImportedCrossesList());
 
-			this.importedCrossesList = descriptionSheetParser.parseWorkbook(this.workbook);
+			this.importedCrossesList = descriptionSheetParser.parseWorkbook(this.workbook,additionalParams);
 
 			parseObservationSheet(contextUtil.getCurrentProgramUUID());
 		} catch (MiddlewareQueryException e) {

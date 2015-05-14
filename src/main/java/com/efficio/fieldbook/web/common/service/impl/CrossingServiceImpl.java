@@ -55,7 +55,7 @@ public class CrossingServiceImpl implements CrossingService {
 	
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException{
-		return crossingTemplateParser.parseFile(file);
+		return crossingTemplateParser.parseFile(file,null);
 	}
 	
 	@Override

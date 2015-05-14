@@ -34,17 +34,17 @@ public class ValueRangeValidatorTest {
 
 	@Test
 	public void testValueInRange() {
-		assertTrue(dut.isParsedValueValid("B"));
+		assertTrue(dut.isParsedValueValid("B",null));
 	}
 
 	@Test
 	public void testValueNotInRange() {
-		assertFalse(dut.isParsedValueValid("Z"));
+		assertFalse(dut.isParsedValueValid("Z",null));
 	}
 
 	@Test
 	public void testBlankValueAndSkipIfEmptyTrue() {
-		assertTrue(dut.isParsedValueValid(null));
+		assertTrue(dut.isParsedValueValid(null,null));
 	}
 
 	@Test
@@ -55,13 +55,13 @@ public class ValueRangeValidatorTest {
 		validValues.add("C");
 		dut = new ValueRangeValidator(validValues, false);
 
-		assertFalse(dut.isParsedValueValid(null));
+		assertFalse(dut.isParsedValueValid(null,null));
 	}
 
 	@Test
 	public void testValueCheckAgainstBlankValid() {
 		dut = new ValueRangeValidator(null);
 
-		assertTrue(dut.isParsedValueValid("ZZ"));
+		assertTrue(dut.isParsedValueValid("ZZ",null));
 	}
 }

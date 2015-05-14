@@ -67,7 +67,7 @@ public class LabelPrintingForm{
      * Get the checks if it is a stock list
      * @return isStockList
      */
-	public boolean isStockList() {
+	public boolean getIsStockList() {
 		return isStockList;
 	}
 

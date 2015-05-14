@@ -213,7 +213,7 @@ if (typeof StockIDFunctions === 'undefined') {
         
         createLabels: function(stockId) {
         	'use strict';
-        	var url =  $("#stock-list"+stockId+" #label-printing-url").attr('href') + "/" + stockId;
+        	var url =  $("#stock-tab-pane"+stockId+" #label-printing-url").attr('href') + "/" + stockId;
     		location.href = url;
         },
         

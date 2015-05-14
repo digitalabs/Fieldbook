@@ -136,6 +136,7 @@ public class StockController extends AbstractBaseFieldbookController{
 				resultMap.put(ERROR_MESSAGE, messageSource.getMessage(
 						"stock.generate.id.breeder.identifier.error.space.found", new Object[]{},
 						Locale.getDefault()));
+				break;
 			default : break;
 		}
 

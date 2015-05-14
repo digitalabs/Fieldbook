@@ -1782,3 +1782,7 @@ td.accepted-value {
 input.review-select-all{
 	margin-left: 52px;
 }
+
+.vertical-spacer {
+    margin-bottom: 25px;
+}

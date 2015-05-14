@@ -77,10 +77,6 @@
                 link: function (scope, elem, attrs) {
                     console.log(scope.modeldata);
                     scope.processData = function (data) {
-                        if (!$('body').data('designModalIsOpened')) {
-                            return;
-                        }
-
                         scope.$apply(function () {
                             var out = {};
 

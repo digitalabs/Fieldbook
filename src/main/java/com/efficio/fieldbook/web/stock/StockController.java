@@ -144,9 +144,8 @@ public class StockController extends AbstractBaseFieldbookController{
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/generateStockList/{listType}/{listId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/generateStockList/{listId}", method = RequestMethod.POST)
 	public Map<String, String> generateStockList(@RequestBody StockListGenerationSettings generationSettings,
-												 @PathVariable("listType") String listType,
 												 @PathVariable("listId") Integer listDataProjectListId) {
 		Map<String, String> resultMap = new HashMap<>();
 		Integer validationResult = generationSettings.validateSettings();
@@ -171,8 +170,22 @@ public class StockController extends AbstractBaseFieldbookController{
                 details.setSourceId(listDataID);
                 details.setInventoryID(prefix + entry.getKey().getEntryId());
 
-                inventoryService.addLotAndTransaction(details, entry.getValue(), entry.getKey());
+                inventoryDetailMap.put(entry.getKey().getEntryId(), details);
             }
+
+			if (generationSettings.hasBulkInstructions()){
+				stockService.processBulkSettings(germplasmMap.keySet(), inventoryDetailMap,
+						generationSettings.isAddPedigreeDuplicate(), generationSettings.isAddPlotReciprocal(),
+						generationSettings.isAddPedigreeReciprocal());
+			}
+
+			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
+				ListDataProject project = entry.getKey();
+				GermplasmListData data = entry.getValue();
+				InventoryDetails details = inventoryDetailMap.get(project.getEntryId());
+				inventoryService.addLotAndTransaction(details, data, project);
+
+			}
 
 			resultMap.put(IS_SUCCESS, SUCCESS);
 		} catch (MiddlewareException e) {

@@ -159,6 +159,7 @@ public class StockController extends AbstractBaseFieldbookController{
 			Map<ListDataProject, GermplasmListData> germplasmMap = generateGermplasmMap(listDataID, listDataProjectListId);
 
 			String prefix = stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(), generationSettings.getSeparator());
+			Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
 
 			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
                 InventoryDetails details = new InventoryDetails();

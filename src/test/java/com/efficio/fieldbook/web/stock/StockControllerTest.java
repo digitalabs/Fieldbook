@@ -114,7 +114,7 @@ public class StockControllerTest {
 
         doReturn(TEST_CURRENT_USER_ID).when(dut).getCurrentIbdbUserId();
 
-        Map<String, String> resultMap = dut.generateStockList(param, "", TEST_LISTDATA_PROJECT_LIST_ID);
+        Map<String, String> resultMap = dut.generateStockList(param, TEST_LISTDATA_PROJECT_LIST_ID);
 
         ArgumentCaptor<InventoryDetails> detailParam = ArgumentCaptor.forClass(InventoryDetails.class);
         ArgumentCaptor<ListDataProject> listDataParam = ArgumentCaptor.forClass(ListDataProject.class);

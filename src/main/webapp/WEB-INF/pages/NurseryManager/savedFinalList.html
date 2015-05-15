@@ -86,8 +86,8 @@
 							<a href=""
 								style="display: none" id="export-stock-list-url"></a> <a href="javascript: void(0)"
 								th:onclick="'javascript: StockIDFunctions.exportList(\'' + ${listId} + '\');'"
-								id="export-stock-template" th:text="#{common.export.inventory.template}">
-									Export Inventory Template
+								id="export-stock-template" th:text="#{common.export.inventory.file}">
+									Export Inventory File
 							</a>
 						</li>
 						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">

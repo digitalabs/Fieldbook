@@ -50,7 +50,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	
 	private static String ADVANCE_LIST_SHEET_NAME = "Advance List";
 
-	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Observation";
+	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Inventory List";
 
 	@Override
 	public File exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds,

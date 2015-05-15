@@ -16,6 +16,10 @@ var StudyCustomExportReports = {
 	            	for(var i = 0 ; i < data.length ; i++){                   
 	            		$('#exportType').append(new Option(data[i].code + ' - ' + data[i].name, data[i].code));
 	                }
+	            	if(data.length != 0){
+	            		$('.report-type-section ').removeClass('col-xs-4').removeClass('col-md-4');
+	            		$('.report-type-section ').addClass('col-xs-7').addClass('col-md-7'); 
+	            	}
 	            	$('#exportType').select2({minimumResultsForSearch: 20});            	
 	            }
 	        });
@@ -35,8 +39,10 @@ var StudyCustomExportReports = {
     	if ($('#browser-nurseries').length !== 0) {
     		// Meaning we are on the landing page
     		studyId = getCurrentStudyIdInTab();
-    	}else{
-    		studyId = $('#createNurseryMainForm #studyId').val();
+    	}else if ($('#createNurseryMainForm #studyId').length === 1) {
+    		studyId = ($('#createNurseryMainForm #studyId').val());
+    	}else if ($('#createTrialMainForm #studyId').length === 1) {
+    		studyId = ($('#createTrialMainForm #studyId').val());
     	}
     	
     	$.ajax('/Fieldbook/ExportManager/export/custom/report', {

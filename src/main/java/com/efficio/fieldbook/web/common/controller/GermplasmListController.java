@@ -74,22 +74,7 @@ public class GermplasmListController {
 
 	@RequestMapping(value = "/stock/{listId}", method = RequestMethod.GET)
 	public String displayStockList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
-		try {
-			GermplasmList germplasmList = germplasmListManager.getGermplasmListById(listId);
-			List<InventoryDetails> detailList = inventoryService.getInventoryListByListDataProjectListId(listId,
-					GermplasmListType.valueOf(germplasmList.getType()));
-
-			model.addAttribute("totalNumberOfGermplasms", detailList.size());
-			model.addAttribute("listId", listId);
-			model.addAttribute("listNotes", germplasmList.getNotes());
-			model.addAttribute("listType", GermplasmListType.STOCK.name());
-			model.addAttribute("listName", germplasmList.getName());
-			model.addAttribute(GERMPLASM_LIST, detailList);
-			model.addAttribute(TABLE_HEADER_LIST, getGermplasmListTableHeaders(GermplasmListType.STOCK.name()));
-		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
-		}
-
+		processGermplasmList(listId, GermplasmListType.STOCK.name(), req, model);
 		return NURSERY_MANAGER_SAVED_FINAL_LIST;
 	}
 
@@ -97,15 +82,25 @@ public class GermplasmListController {
 			HttpServletRequest req, Model model) {
 		try {
 			GermplasmList germplasmList = germplasmListManager.getGermplasmListById(listId);
-			List<ListDataProject> listData = getListDataProjectByListType(listId,germplasmListType);
 			
+			if(GermplasmListType.STOCK.name().equals(germplasmListType)){
+				List<InventoryDetails> detailList = inventoryService.getInventoryListByListDataProjectListId(listId,
+						GermplasmListType.valueOf(germplasmList.getType()));
+				model.addAttribute(GERMPLASM_LIST, detailList);
+				model.addAttribute("listType", GermplasmListType.STOCK.name());
+				model.addAttribute("totalNumberOfGermplasms", detailList.size());
+			} else {
+				List<ListDataProject> listData = getListDataProjectByListType(listId,germplasmListType);
+				model.addAttribute(GERMPLASM_LIST, listData);
+				model.addAttribute("listType", germplasmList.getType());
+				model.addAttribute("totalNumberOfGermplasms", listData.size());
+			}
+
 			model.addAttribute(TABLE_HEADER_LIST, getGermplasmListTableHeaders(germplasmListType));
-			model.addAttribute(GERMPLASM_LIST, listData);
-			model.addAttribute("totalNumberOfGermplasms", listData.size());
 			model.addAttribute("listId", listId);
 			model.addAttribute("listName", germplasmList.getName());
 			model.addAttribute("listNotes", germplasmList.getNotes());
-			model.addAttribute("listType", germplasmList.getType());
+			
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}

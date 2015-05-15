@@ -56,10 +56,10 @@
 
                         </div>
                         <div class="col-sm-8">
-                            <mapping-group name="Environmental Factors" data="mappedEnvironmentalFactors" variable-type="8"></mapping-group>
-                            <mapping-group name="Design Factors" data="mappedDesignFactors" variable-type="1"></mapping-group>
-                            <mapping-group name="Germplasm Factors" data="mappedGermplasmFactors" variable-type="7"></mapping-group>
-                            <mapping-group name="Traits" data="mappedTraits" variable-type="3"></mapping-group>
+                            <mapping-group name="Environmental Factors" data="mappedEnvironmentalFactors" variable-type="1020"></mapping-group>
+                            <mapping-group name="Design Factors" data="mappedDesignFactors" variable-type="1030"></mapping-group>
+                            <mapping-group name="Germplasm Factors" data="mappedGermplasmFactors" variable-type="1040"></mapping-group>
+                            <mapping-group name="Traits" data="mappedTraits" variable-type="1043"></mapping-group>
                         </div>
 
                     </div>
@@ -85,34 +85,24 @@
                     .constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
                     .constant('VARIABLE_SELECTION_LABELS',{
                         /*ENVIRONMENTAL FACTORS*/
-                        1: {
-                            label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-                            placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
-                        },
-                        /*GERMPLASM FACTORS*/
-                        8: {
-                            label: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
-                            placeholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ ''
-                        },
-                        /*MEASUREMENT TRAITS*/
-                        3: {
-                            label: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
-                            placeholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ ''
+                        1020: {
+                            label: /*[[#{design.import.environmental.factors}]]*/ '',
+                            placeholder: /*[[#{design.import.environmental.factors.placeholder}]]*/ ''
                         },
                         /*DESIGN FACTORS*/
-                        4: {
-                            label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-                            placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+                        1030: {
+                            label: /*[[#{design.import.design.factors}]]*/ '',
+                            placeholder: /*[[#{design.import.design.factors.placeholder}]]*/ ''
                         },
-                        /*TREATMENT FACTORS*/
-                        5: {
-                            label: /*[[#{trial.managesettings.add.treatmentfactor}]]*/ '',
-                            placeholder: /*[[#{trial.reminder.add.treatmentfactor}]]*/ ''
+                        /*GERMPLASM FACTORS*/
+                        1040: {
+                            label: /*[[#{design.import.germplasm.factors}]]*/ '',
+                            placeholder: /*[[#{design.import.germplasm.factors.placeholder}]]*/ ''
                         },
-                        /*TRIAL CONDITIONS*/
-                        7: {
-                            label: /*[[#{trial.managesettings.add.trialcondition}]]*/ '',
-                            placeholder: /*[[#{trial.reminder.add.trialcondition}]]*/ ''
+                        /*TRAITS*/
+                        1043: {
+                            label: /*[[#{design.import.traits}]]*/ '',
+                            placeholder: /*[[#{design.import.traits.placeholder}]]*/ ''
                         },
                         generalAjaxError : /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
                         variableSelectedMessage : /*[[#{common.warning.variable.in.use}]]*/ '',

@@ -100,13 +100,7 @@
 
                             }
 
-
-
                             $(VARIABLE_SELECTION_MODAL_SELECTOR).modal('hide');
-                             setTimeout(function() {
-                             $('#designMapModal').modal('show');
-                             },600);
-
 
                             scope.$emit('variableAdded', out);
                         });
@@ -114,20 +108,24 @@
 
                     elem.on('click', function () {
                         // temporarily close the current modal
-                        $('#designMapModal').modal('hide');
+                        var $designMapModal = $('#designMapModal');
 
                         var params = {
                             variableType: attrs.group,
                             retrieveSelectedVariableFunction: function () {
                                 return {};
                             },
-                            callback: scope.processData
+                            callback: scope.processData,
+                            onHideCallback : function() {
+                                $designMapModal.modal('show');
+                            },
+                            apiUrl: '/Fieldbook/OntologyBrowser/getVariablesByPhenotype?phenotypeStorageId=' + attrs.group
                         };
 
-
-                        setTimeout(function() {
+                        $designMapModal.one('hidden.bs.modal',function() {
                             DesignOntologyService.openVariableSelectionDialog(params);
-                        },600);
+                        }).modal('hide');
+
                     });
                 }
             };

@@ -223,7 +223,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._group = group;
 		this._properties = properties;
 		this._callback = groupData.callback;
+		this._onHideCallback = groupData.onHideCallback;
 		this._excludedProperties = groupData.excludedProperties || [];
+
+		this._$modal.one('hidden.bs.modal', $.proxy(this._onHidden,this));
 
 		// Append title
 		title = $('<h4 class="modal-title" id="vs-modal-title">' + translations.label + '</h4>');
@@ -682,6 +685,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// Destroy the select dropdown
 		this._propertyDropdown.destroy();
 	};
+
+	VariableSelection.prototype._onHidden = function() {
+		if (this._onHideCallback) {
+			this._onHideCallback();
+		}
+	};
+
 
 	return VariableSelection;
 

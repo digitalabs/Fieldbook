@@ -1145,33 +1145,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 		InventoryDetails row = params.getInventoryDetailsMap().get(entryNo);		
 		String value = null;
 
-		if(termID.equals(TermId.GID.getId())){
-			value = getValueForStockList(row.getGid());
-		} else if(termID.equals(TermId.DESIG.getId())){
-			value = getValueForStockList(row.getGermplasmName());
-		} else if(termID.equals(TermId.ENTRY_NO.getId())){
-			value = getValueForStockList(row.getEntryId());
-		} else if(termID.equals(TermId.CROSS.getId())){
-			value = getValueForStockList(row.getCross());
-		} else if(termID.equals(TermId.SEED_SOURCE.getId())){
-			value = getValueForStockList(row.getSource());
-		} else if(termID.equals(TermId.STOCKID.getId())){
-			value = getValueForStockList(row.getInventoryID());
-		} else if(termID.equals(TermId.LOT_LOCATION_INVENTORY.getId())){
-			value = getValueForStockList(row.getLocationName());
-		} else if(termID.equals(TermId.AMOUNT_INVENTORY.getId())){
-			value = getValueForStockList(row.getAmount());
-		} else if(termID.equals(TermId.SCALE_INVENTORY.getId())){
-			value = getValueForStockList(row.getScaleName());
-		} else if(termID.equals(TermId.COMMENT_INVENTORY.getId())){
-			value = getValueForStockList(row.getComment());
-		} else if(termID.equals(TermId.DUPLICATE.getId())){
-			value = getValueForStockList(row.getDuplicate());
-		} else if(termID.equals(TermId.BULK_WITH.getId())){
-			value = getValueForStockList(row.getBulkWith());
-		} else if(termID.equals(TermId.BULK_COMPL.getId())){
-			value = getValueForStockList(row.getBulkCompl());
-		}
+		value = populateStockListFromGermplasmDescriptorVariables(termID,row);
+		
+		value = populateStockListFromInventoryVariables(termID,row);
+		
+		value = populateStockListFromCrossingVariables(termID,row);
 		
 		if(value != null){
 			
@@ -1186,6 +1164,52 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 			}
 		}
 
+	}
+
+	private String populateStockListFromGermplasmDescriptorVariables(
+			Integer termID, InventoryDetails row) {
+		String value = null;
+		if(termID.equals(TermId.GID.getId())){
+			value = getValueForStockList(row.getGid());
+		} else if(termID.equals(TermId.DESIG.getId())){
+			value = getValueForStockList(row.getGermplasmName());
+		} else if(termID.equals(TermId.ENTRY_NO.getId())){
+			value = getValueForStockList(row.getEntryId());
+		} else if(termID.equals(TermId.CROSS.getId())){
+			value = getValueForStockList(row.getCross());
+		} else if(termID.equals(TermId.SEED_SOURCE.getId())){
+			value = getValueForStockList(row.getSource());
+		} 
+		return value;
+	}
+
+	private String populateStockListFromInventoryVariables(Integer termID,
+			InventoryDetails row) {
+		String value = null;
+		if(termID.equals(TermId.STOCKID.getId())){
+			value = getValueForStockList(row.getInventoryID());
+		} else if(termID.equals(TermId.LOT_LOCATION_INVENTORY.getId())){
+			value = getValueForStockList(row.getLocationName());
+		} else if(termID.equals(TermId.AMOUNT_INVENTORY.getId())){
+			value = getValueForStockList(row.getAmount());
+		} else if(termID.equals(TermId.SCALE_INVENTORY.getId())){
+			value = getValueForStockList(row.getScaleName());
+		} else if(termID.equals(TermId.COMMENT_INVENTORY.getId())){
+			value = getValueForStockList(row.getComment());
+		} 
+		return value;
+	}
+
+	private String populateStockListFromCrossingVariables(Integer termID, InventoryDetails row) {
+		String value = null;
+		if(termID.equals(TermId.DUPLICATE.getId())){
+			value = getValueForStockList(row.getDuplicate());
+		} else if(termID.equals(TermId.BULK_WITH.getId())){
+			value = getValueForStockList(row.getBulkWith());
+		} else if(termID.equals(TermId.BULK_COMPL.getId())){
+			value = getValueForStockList(row.getBulkCompl());
+		}
+		return value;
 	}
 
 	private String getValueForStockList(Object value) {

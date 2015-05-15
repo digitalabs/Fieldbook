@@ -96,4 +96,9 @@ public class StockListGenerationSettings {
 	public void setAddPedigreeReciprocal(boolean addPedigreeReciprocal) {
 		this.addPedigreeReciprocal = addPedigreeReciprocal;
 	}
+
+	public boolean hasBulkInstructions() {
+		return isAddPedigreeReciprocal() || isAddPlotReciprocal() || isAddPedigreeDuplicate();
+	}
+
 }

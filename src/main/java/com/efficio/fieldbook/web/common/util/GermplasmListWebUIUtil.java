@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.common.util;
 
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.pojos.ListDataProject;
 
 /**
@@ -16,6 +17,22 @@ public class GermplasmListWebUIUtil {
     }
     
     public static String getCSSClassForDuplicateType(ListDataProject project) {
+        if (project.isPedigreeDupe()) {
+            return PEDIGREE_DUPE_CLASS;
+        } else if (project.isPedigreeRecip()) {
+            return PEDIGREE_RECIPROCAL_CLASS;
+        } else if (project.isPlotDupe()) {
+            return PLOT_DUPE_CLASS;
+        } else if (project.isPlotRecip()) {
+            return PLOT_RECIPROCAL_CLASS;
+        } else {
+            return "";
+        }
+    }
+
+    public static String getCSSClassForDuplicateType(InventoryDetails inventoryDetails) {
+        ListDataProject project = new ListDataProject();
+        project.setDuplicate(inventoryDetails.getDuplicate());
         if (project.isPedigreeDupe()) {
             return PEDIGREE_DUPE_CLASS;
         } else if (project.isPedigreeRecip()) {

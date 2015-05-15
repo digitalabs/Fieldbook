@@ -89,6 +89,13 @@
 									Import Inventory File
 							</a>
 						</li>
+						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
+							<a href=""
+								style="display: none" id="import-stock-list-url"></a> <a href="javascript: void(0)"
+								id="update-inventory-stock-list" th:text="#{seed.inventory.update.inventory}">
+									Update Inventory
+							</a>
+						</li>
 					</ul>
 				</div>
 			</div>

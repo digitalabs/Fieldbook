@@ -3,7 +3,7 @@ var StockIDFunctions = window.StockIDFunctions;
 
 if (typeof StockIDFunctions === 'undefined') {
     StockIDFunctions = {
-        defaultSeparator  : '-',
+        defaultSeparator: '-',
 
         openGenerateStockIDModal: function (sourceId, hasPedigreeDupe, hasPlotReciprocal, hasPedigreeReciprocal) {
             'use strict';
@@ -13,13 +13,13 @@ if (typeof StockIDFunctions === 'undefined') {
             $('#generateStockIDForm input[name=addPlotReciprocal][value=false]').prop('checked', 'checked');
             $('#generateStockIDForm input[name=addPedigreeReciprocal][value=false]').prop('checked', 'checked');
 
-            if (! (hasPedigreeDupe || hasPlotReciprocal || hasPedigreeReciprocal)) {
+            if (!(hasPedigreeDupe || hasPlotReciprocal || hasPedigreeReciprocal)) {
                 $('.withDupeReciprocalOnly').hide();
             } else {
                 $('.withDupeReciprocalOnly').show();
             }
 
-            if (! hasPedigreeDupe) {
+            if (!hasPedigreeDupe) {
                 $('.withPedigreeDupeOnly').hide();
             } else {
                 $('.withPedigreeDupeOnly').show();
@@ -38,14 +38,14 @@ if (typeof StockIDFunctions === 'undefined') {
             }
         },
 
-        saveStockList : function(listType) {
+        saveStockList: function () {
             var stockGenerationSettings = {
                 // use the default identifier of SID when user provides no value
-                breederIdentifier : $('#breederIdentifierField').val().trim() === '' ? 'SID': $('#breederIdentifierField').val().trim(),
+                breederIdentifier: $('#breederIdentifierField').val().trim() === '' ? 'SID' : $('#breederIdentifierField').val().trim(),
                 // default separator for now is -
-                separator : StockIDFunctions.defaultSeparator,
-                addPedigreeDuplicate : $('#generateStockIDForm input[name=addPedigreeDuplicate]:checked').val(),
-                addPlotReciprocal : $('#generateStockIDForm input[name=addPlotReciprocal]:checked').val(),
+                separator: StockIDFunctions.defaultSeparator,
+                addPedigreeDuplicate: $('#generateStockIDForm input[name=addPedigreeDuplicate]:checked').val(),
+                addPlotReciprocal: $('#generateStockIDForm input[name=addPlotReciprocal]:checked').val(),
                 addPedigreeReciprocal: $('#generateStockIDForm input[name=addPedigreeReciprocal]:checked').val()
             };
 
@@ -57,25 +57,25 @@ if (typeof StockIDFunctions === 'undefined') {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    url: '/Fieldbook/stock/generateStockList/' + listType + '/' + $('#stockIDModalSourceListID').val(),
+                    url: '/Fieldbook/stock/generateStockList/' + $('#stockIDModalSourceListID').val(),
                     type: 'POST',
                     cache: false,
-                    contentType : 'application/json',
-                    data : JSON.stringify(stockGenerationSettings),
+                    contentType: 'application/json',
+                    data: JSON.stringify(stockGenerationSettings),
                     success: function (result) {
                         if (result.isSuccess === '1') {
-                            StockIDFunctions.generateStockListTabIfNecessary(listId);
-                            $('#generateStockIDModal').modal('hide');
-                            // logic for displaying the stock list immediately after successful saving
-                            $('#create-nursery-tabs .tab-pane.info').removeClass('active');
-                            $(this).data('has-loaded', '1');
-                            StockIDFunctions.displayStockList(listId);
-                            $('#stock-tab-pane' + listId).addClass('active');
-
+                            StockIDFunctions.generateStockListTabIfNecessary(listId).done(function() {
+                                $('#generateStockIDModal').modal('hide');
+                                // logic for displaying the stock list immediately after successful saving
+                                $('#create-nursery-tabs .tab-pane.info').removeClass('active');
+                                $(this).data('has-loaded', '1');
+                                StockIDFunctions.displayStockList(listId);
+                                $('#stock-tab-pane' + listId).addClass('active');
+                            });
 
 
                         } else {
-
+                            showErrorMessage('', result.errorMessage);
                         }
                     }
                 }
@@ -83,20 +83,20 @@ if (typeof StockIDFunctions === 'undefined') {
 
         },
 
-        generateStockListTabIfNecessary : function(listId) {
+        generateStockListTabIfNecessary: function (listId) {
             'use strict';
 
             var url = '/Fieldbook/stock/generateStockTabIfNecessary/' + listId;
 
-            $.ajax({
+            return $.ajax({
                 url: url,
                 type: 'GET',
                 cache: false,
-                success: function(html) {
+                success: function (html) {
                     if (html && html.length > 0) {
                         $('#advance-list' + listId + '-li').after(html);
                         $('#advance-list' + listId).data('has-stock', 'true');
-                        $('#stock-list-anchor' + listId).on('shown.bs.tab', function() {
+                        $('#stock-list-anchor' + listId).on('shown.bs.tab', function () {
                             if ($(this).data('has-loaded') !== '1') {
                                 $(this).data('has-loaded', '1');
                                 StockIDFunctions.displayStockList($(this).data('list-id'));
@@ -107,7 +107,7 @@ if (typeof StockIDFunctions === 'undefined') {
             });
         },
 
-        displayStockList : function(listId) {
+        displayStockList: function (listId) {
             'use strict';
 
             var url = '/Fieldbook/germplasm/list/stock/' + listId;
@@ -126,12 +126,12 @@ if (typeof StockIDFunctions === 'undefined') {
             });
         },
 
-        closeStockList : function(listId) {
+        closeStockList: function (listId) {
             'use strict';
             $('li#stock-list' + listId + '-li').remove();
 
-            if($('#list'+listId).length === 1){
-                $('#list' + listId).remove();
+            if ($('#stock-list-anchor' + listId).length === 1) {
+                $('#stock-list-anchor' + listId).remove();
             }
 
             setTimeout(function() {
@@ -170,7 +170,7 @@ if (typeof StockIDFunctions === 'undefined') {
 
         updateLabels: function () {
             'use strict';
-            StockIDFunctions.retrieveNextStockIDPrefix().done(function(nextPrefix) {
+            StockIDFunctions.retrieveNextStockIDPrefix().done(function (nextPrefix) {
                 $('#samplePrefixLabel').html(nextPrefix);
                 $('#nextStockIDLabel').html(nextPrefix + StockIDFunctions.defaultSeparator + '1');
             });
@@ -202,6 +202,7 @@ if (typeof StockIDFunctions === 'undefined') {
                         if (result.isSuccess === '1') {
                             deferred.resolve(result.prefix);
                         } else {
+                            showErrorMessage('', result.errorMessage);
                             deferred.reject(result);
                         }
                     }

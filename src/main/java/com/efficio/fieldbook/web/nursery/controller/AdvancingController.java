@@ -55,9 +55,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-/**
- * The Class AddOrRemoveTraitsController.
- */
 @Controller
 @RequestMapping(AdvancingController.URL)
 public class AdvancingController extends AbstractBaseFieldbookController{

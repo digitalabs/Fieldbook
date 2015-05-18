@@ -38,6 +38,8 @@ import com.efficio.fieldbook.web.common.bean.TableHeader;
 @Controller
 @RequestMapping(GermplasmListController.URL)
 public class GermplasmListController {
+	private static final String GERMPLASM_LIST_DUPLICATE = "germplasm.list.duplicate";
+
 	private static final String NURSERY_MANAGER_SAVED_FINAL_LIST = "/NurseryManager/savedFinalList";
 
 	public static final String URL = "/germplasm/list";
@@ -178,8 +180,8 @@ public class GermplasmListController {
 				ColumnLabels.SEED_SOURCE.getTermNameFromOntology(ontologyDataManager),
 				messageSource.getMessage("seed.inventory.source", null, locale)));
 		tableHeaderList.add(new TableHeader(
-				messageSource.getMessage("germplasm.list.duplicate", null, locale),
-				messageSource.getMessage("germplasm.list.duplicate", null, locale)));
+				messageSource.getMessage(GERMPLASM_LIST_DUPLICATE, null, locale),
+				messageSource.getMessage(GERMPLASM_LIST_DUPLICATE, null, locale)));
 
 		tableHeaderList.add(new TableHeader(
 				messageSource.getMessage("germplasm.list.bulk.with", null, locale),
@@ -277,8 +279,8 @@ public class GermplasmListController {
 		
 		if(germplasmListType.equals(GermplasmListType.CROSSES.name())){
 			tableHeaderList.add(new TableHeader(
-					messageSource.getMessage("germplasm.list.duplicate", null, locale),
-					messageSource.getMessage("germplasm.list.duplicate", null, locale)));
+					messageSource.getMessage(GERMPLASM_LIST_DUPLICATE, null, locale),
+					messageSource.getMessage(GERMPLASM_LIST_DUPLICATE, null, locale)));
 		}
 
 		return tableHeaderList;

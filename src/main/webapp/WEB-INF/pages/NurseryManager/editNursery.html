@@ -539,6 +539,10 @@
 		$(document).ready(function() {
 			'use strict';
 		
+			if (measurementRowCount > 0){
+				$('#import-crosses').css('display', 'block');
+			}
+			
 			$('#basicDetails.toggle-icon').click(function(){
 				var expandedImg = $(this).find('.section-expanded'),
 					collapsedImg = $(this).find('.section-collapsed'),

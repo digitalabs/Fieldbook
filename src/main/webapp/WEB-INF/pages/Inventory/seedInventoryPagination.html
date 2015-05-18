@@ -1,6 +1,6 @@
 <div class="col-xs-12 col-md-12 main-inventory" style="opacity: 0.1">   
 <form id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
-  th:action="@{/SeedStoreManager/next}" method="post" enctype="multipart/form-data">
+  th:action="@{/stock}" method="post" enctype="multipart/form-data">
      
      <input type="hidden" th:field="*{listId}"/>
       
@@ -14,12 +14,16 @@
          <table id="inventory-table" th:if="*{not #lists.isEmpty(germplasmList)}"
          class="table-curved table-condensed final-advance-list">
            <thead>
-             <tr>
-               <th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
-             </tr>
+			<tr>
+				<th class="fbk-advance-check-box"><div><input type="checkbox" class="selectAllStock" name="selectAllStock" id="selectAllStock"/></div></th>
+               	<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
+			</tr>
            </thead>
            <tbody >
              <tr class="primaryRow" th:each="gid, row : *{germplasmList}" th:attr="data-gid=${gid.gid}" th:if="*{subListType == 'ADVANCED'}">
+             	<td th:class="${row.even}? 'even fbk-advance-check-box' : 'odd fbk-advance-check-box'">
+					<input type="checkbox" class="stockListEntryId" th:attr="data-entryId=${gid.entryId}" th:attrappend="data-lotId=${gid.entryId}" name="stockListEntryId" id="stockListEntryId"/> 
+				</td>
             	<td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                 <td th:class="${row.even}? 'even' : 'odd'" >
 					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.germplasmName}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.2</a>      
@@ -36,27 +40,30 @@
                <td data-truncate-limit="30" data-truncate-placement="left" th:class="${row.even}? 'even advance-list-comment' : 'odd advance-list-comment'" th:text="${gid.comment}">.6</td>
              </tr>
              <tr class="primaryRow" th:each="gid, row : *{germplasmList}" th:attr="data-gid=${gid.gid}" th:if="*{subListType == 'CROSSES'}">
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
-                 <td th:class="${row.even}? 'even' : 'odd'" >
-                     <a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.germplasmName}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.2</a>
-                 </td>
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.parentage}">.2</td>
-                 <td th:class="${row.even}? 'even' : 'odd'" >
-                     <a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.gid}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.3</a>
-                 </td>
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.inventoryID}">.2</td>
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.2</td>
+				<td th:class="${row.even}? 'even fbk-advance-check-box' : 'odd fbk-advance-check-box'">
+					<input type="checkbox" class="stockListEntryId" th:attr="data-entryId=${gid.entryId}" th:attrappend="data-lotId=${gid.entryId}" name="stockListEntryId" id="stockListEntryId"/> 
+				</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
+                <td th:class="${row.even}? 'even' : 'odd'" >
+                    <a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.germplasmName}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.2</a>
+                </td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.parentage}">.2</td>
+                <td th:class="${row.even}? 'even' : 'odd'" >
+                    <a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.gid}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.3</a>
+                </td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.inventoryID}">.2</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.2</td>
 
-                 <td th:class="${T(com.efficio.fieldbook.web.common.util.GermplasmListWebUIUtil).getCSSClassForDuplicateType(gid) + ' ' + (row.even ? 'even' : 'odd')}"
+                <td th:class="${T(com.efficio.fieldbook.web.common.util.GermplasmListWebUIUtil).getCSSClassForDuplicateType(gid) + ' ' + (row.even ? 'even' : 'odd')}"
 
                      th:text="${gid.duplicate}">.2</td>
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.bulkWith}">.2</td>
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.bulkCompl}">.2</td>
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
-                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.bulkWith}">.2</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.bulkCompl}">.2</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
 
-                 <td data-truncate-limit="30" data-truncate-placement="left" th:class="${row.even}? 'even advance-list-comment' : 'odd advance-list-comment'" th:text="${gid.comment}">.6</td>
+                <td data-truncate-limit="30" data-truncate-placement="left" th:class="${row.even}? 'even advance-list-comment' : 'odd advance-list-comment'" th:text="${gid.comment}">.6</td>
              </tr>
            </tbody>
          </table> 
@@ -82,6 +89,24 @@
                 }
                 
                 var sectionContainerDiv = 'stock-content-pane'+listDivIdentifier;
+                
+        		$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').on('change', function(event){
+        			//select all the checkbox in the section container div										
+       				//needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
+       				setTimeout(function(){
+       					var isChecked = $('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').prop('checked');
+       					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('selected');
+         				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('manual-selected');
+         				$('#'+getJquerySafeId(sectionContainerDiv) + ' input.stockListEntryId').prop('checked', isChecked);
+         				
+         				if(isChecked){
+         					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('selected');
+             				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('manual-selected');
+         				}
+         				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+       				}, 10);
+       				
+       			});
             	
           		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null);
         		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);

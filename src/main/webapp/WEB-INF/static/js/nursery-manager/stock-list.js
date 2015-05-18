@@ -269,6 +269,97 @@ if (typeof StockIDFunctions === 'undefined') {
 				$('.import-stock-section .modal').modal('hide');
 				StockIDFunctions.displayStockList(resp.stockListId);
 			}
+    	},
+    	
+    	getSelectedInventoryEntryIds : function(){
+    		'use strict';
+    		var ids = [],
+    			listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
+    			sectionContainerDiv = 'stock-tab-pane'+listDivIdentifier;
+    		$('#'+sectionContainerDiv + ' .stockListEntryId:checked').each(function(){
+    			ids.push($(this).data('entryid'));
+    		});
+    		return ids;
+    	},
+    	
+    	
+    	
+    	showUpdateInventoryModal : function(listId){
+    		'use strict';
+    		var entryIds = StockIDFunctions.getSelectedInventoryEntryIds();
+    		if(entryIds.length === 0){
+    			showErrorMessage('page-message', germplasmSelectError);
+    			moveToTopScreen();
+    			return;		
+    		}
+    		
+    		var entryIdList = entryIds.join();
+    		
+    		$.ajax({
+    			url: '/Fieldbook/stock/ajax/'+getCurrentAdvanceTabTempIdentifier() + '/' + entryIdList,
+    			type: 'GET',
+    			cache: false,
+    		    success: function(data) {
+    		    	$('#addLotsModalDiv').html(data);	    	
+    		    	$('#comments').val('');
+    		    	$('#amount').val('');
+    		    	$('#page-message-lots').html('');
+    		    	$('#addLotsModal').modal({ backdrop: 'static', keyboard: true });
+    		    	initializePossibleValuesComboInventory(inventoryLocationSuggestions, '#inventoryLocationIdAll', true, null);
+    		    	initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, '#inventoryLocationIdFavorite', false, null);
+    		  	  	initializePossibleValuesComboScale(scaleSuggestions, '#inventoryScaleId', false, null);
+    		  	    showCorrectLocationInventoryCombo();
+    		    }
+    		});
+    	},
+    	
+    	updateInventory : function(){
+    		'use strict';
+    		var entryIds = StockIDFunctions.getSelectedInventoryEntryIds();
+    		$('#entryIdList').val(entryIds);
+    		if($('#showFavoriteLocationInventory').is(':checked')){
+    			if($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data') !== null){
+    				$('#inventoryLocationId').val($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
+    			}
+    		}else{
+    			if($('#'+getJquerySafeId('inventoryLocationIdAll')).select2('data') !== null){
+    				$('#inventoryLocationId').val($('#'+getJquerySafeId('inventoryLocationIdAll')).select2('data').id);
+    			}
+    		}
+    		if ($('#inventoryLocationId').val() === '0' || $('#inventoryLocationId').val() === '') {
+    			showInvalidInputMessage(locationRequired);
+    			moveToTopScreen();
+    		} else if (!$('#inventoryScaleId').select2('data')) {
+    			showInvalidInputMessage(scaleRequired);
+    			moveToTopScreen();
+    		} else if ($('#amount').val() === '') {
+    			showInvalidInputMessage(inventoryAmountRequired);
+    			moveToTopScreen();
+    		} else if(isFloatNumber($('#amount').val()) === false || parseFloat($('#amount').val()) < 0) {
+    			showInvalidInputMessage(inventoryAmountPositiveRequired);
+    			moveToTopScreen();
+    		}  else if($('#inventoryComments').val().length > 250) {
+    			showInvalidInputMessage(commentLimitError);
+    			moveToTopScreen();
+    		} else {
+    			// update lots
+    			var serializedData = $('#add-plot-form').serialize();
+    			
+    			$.ajax({
+    				url: '/Fieldbook/stock/update/lots',
+    				type: 'POST',
+    				data: serializedData,
+    			    success: function(data) {
+    			    	if (data.success === 1) {
+    				    	showSuccessfulMessage('page-message', data.message);
+    				    	$('#addLotsModal').modal('hide');
+    				    	StockIDFunctions.displayStockList(data.listId);
+    			    	} else {
+    			    		showErrorMessage('page-message-lots', data.message);
+    			    	}
+    			    }
+    			});
+    		}
     	}
     };
 };

@@ -5,11 +5,11 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 public class DesignHeaderItem {
 
 	private int id;
-	private String headerName;
+	private String name;
 	private boolean hasError;
 	private StandardVariable variable;
 	private boolean required;
-	private int columnIndex;
+	private int	 columnIndex;
 	
 	public int getId() {
 		return id;
@@ -19,12 +19,12 @@ public class DesignHeaderItem {
 		this.id = id;
 	}
 	
-	public String getHeaderName() {
-		return headerName;
+	public String getName() {
+		return name;
 	}
 	
-	public void setHeaderName(String headerName) {
-		this.headerName = headerName;
+	public void setName(String headerName) {
+		this.name = headerName;
 	}
 
 	public boolean getHasError() {
@@ -61,7 +61,7 @@ public class DesignHeaderItem {
 	
 	@Override
 	public String toString() {
-		return "DesignHeaderItem [id=" + id + ", headerName=" + headerName + ", hasError="
+		return "DesignHeaderItem [id=" + id + ", name=" + name + ", hasError="
 				+ hasError + ", variable=" + variable + ", required=" + required + ", columnIndex="
 				+ columnIndex + "]";
 	}

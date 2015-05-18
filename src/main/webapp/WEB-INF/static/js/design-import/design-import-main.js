@@ -4,12 +4,7 @@
 
     app.controller('designImportCtrl', ['$scope','DesignMappingService',function(scope,DesignMappingService){
         // we can retrieve this from a service
-        scope.unmappedHeaders = DesignMappingService.unmappedHeaders;
-        scope.mappedEnvironmentalFactors = DesignMappingService.mappedEnvironmentalFactors;
-        scope.mappedDesignFactors = DesignMappingService.mappedDesignFactors;
-        scope.mappedGermplasmFactors = DesignMappingService.mappedGermplasmFactors;
-        scope.mappedTraits = DesignMappingService.mappedTraits;
-
+        scope.data = DesignMappingService.data;
     }]);
 
 
@@ -117,13 +112,17 @@
                             },
                             callback: scope.processData,
                             onHideCallback : function() {
-                                $designMapModal.modal('show');
+                                setTimeout(function() {
+                                    $designMapModal.modal('show');
+                                },200);
                             },
                             apiUrl: '/Fieldbook/OntologyBrowser/getVariablesByPhenotype?phenotypeStorageId=' + attrs.group
                         };
 
                         $designMapModal.one('hidden.bs.modal',function() {
-                            DesignOntologyService.openVariableSelectionDialog(params);
+                            setTimeout(function() {
+                                DesignOntologyService.openVariableSelectionDialog(params);
+                            },200);
                         }).modal('hide');
 
                     });
@@ -136,11 +135,13 @@
         MAPPED_GERMPLASM_FACTORS, MAPPED_TRAITS) {
 
             var service = {
-                unmappedHeaders : UNMAPPED_HEADERS,
-                mappedEnvironmentalFactors: MAPPED_ENVIRONMENTAL_FACTORS,
-                mappedDesignFactors : MAPPED_DESIGN_FACTORS,
-                mappedGermplasmFactors : MAPPED_GERMPLASM_FACTORS,
-                mappedTraits : MAPPED_TRAITS
+                data : {
+                    unmappedHeaders : UNMAPPED_HEADERS,
+                    mappedEnvironmentalFactors: MAPPED_ENVIRONMENTAL_FACTORS,
+                    mappedDesignFactors : MAPPED_DESIGN_FACTORS,
+                    mappedGermplasmFactors : MAPPED_GERMPLASM_FACTORS,
+                    mappedTraits : MAPPED_TRAITS
+                }
             };
 
             return service;
@@ -169,16 +170,6 @@
 
     /* we bind events on design map modal open, and when the design map modal workflow is done */
     $(function(){
-        var $designMapModal = $('#designMapModal');
-        var $body = $('body');
-        $designMapModal.on('shown.bs.modal',function() {
-            $body.data('designModalIsOpened',true);
-        });
-
-        var $designMapModalCloseTriggers = $designMapModal.find('.closeTrigger');
-        $designMapModalCloseTriggers.on('click',function() {
-           $body.data('designModalIsOpened',false);
-        });
     });
 
 })();

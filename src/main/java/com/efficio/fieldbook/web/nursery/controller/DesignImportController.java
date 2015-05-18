@@ -123,7 +123,27 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 		return resultsMap;
 	}
-	
+
+	@ResponseBody
+	@RequestMapping(value = "/getMappingData", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public Map<String,List<DesignHeaderItem>> importFile() {
+		Map<String,List<DesignHeaderItem>> mappingData = new HashMap<>();
+
+		mappingData.put("unmappedHeaders", userSelection.getDesignImportData().getUnmappedHeaders());
+		mappingData.put("mappedEnvironmentalFactors", userSelection.getDesignImportData().getMappedHeaders().get(
+				PhenotypicType.TRIAL_ENVIRONMENT));
+		mappingData.put("mappedDesignFactors", userSelection.getDesignImportData().getMappedHeaders().get(
+				PhenotypicType.TRIAL_DESIGN));
+		mappingData.put("mappedGermplasmFactors", userSelection.getDesignImportData().getMappedHeaders().get(
+				PhenotypicType.GERMPLASM));
+		mappingData.put("mappedTraits", userSelection.getDesignImportData().getMappedHeaders().get(
+				PhenotypicType.VARIATE));
+
+
+
+		return mappingData;
+	}
+
 	@RequestMapping(value = "/showDetails", method = RequestMethod.GET)
 	public String showDetails(Model model) {
 			
@@ -259,7 +279,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 		List<DesignHeaderItem> variate = new ArrayList<>();
 		
 		for (DesignHeaderItem item : designImportData.getUnmappedHeaders()){
-			StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariableByName(item.getHeaderName());
+			StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariableByName(item.getName());
 			item.setVariable(stdVar);
 			
 			if (stdVar.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT){

@@ -47,8 +47,8 @@
                             <div class="panel panel-danger">
                                 <div class="panel-heading"><b class="panel-title">Un-Mapped <span class="badge-danger counter" style="float:right">{{unmappedHeaders.length}}</span></b>
                                 </div>
-                                <div class="unmapped list-group" ui-sortable="{ 'connectWith': '.list-group' }" ng-model="unmappedHeaders">
-                                    <div class="list-group-item" ng-repeat="header in unmappedHeaders">
+                                <div class="unmapped list-group" ui-sortable="{ 'connectWith': '.list-group' }" ng-model="data.unmappedHeaders">
+                                    <div class="list-group-item" ng-repeat="header in data.unmappedHeaders">
                                         <h4>{{header.name}}</h4>
                                     </div>
                                 </div>
@@ -56,10 +56,10 @@
 
                         </div>
                         <div class="col-sm-8">
-                            <mapping-group name="Environmental Factors" data="mappedEnvironmentalFactors" variable-type="1020"></mapping-group>
-                            <mapping-group name="Design Factors" data="mappedDesignFactors" variable-type="1030"></mapping-group>
-                            <mapping-group name="Germplasm Factors" data="mappedGermplasmFactors" variable-type="1040"></mapping-group>
-                            <mapping-group name="Traits" data="mappedTraits" variable-type="1043"></mapping-group>
+                            <mapping-group name="Environmental Factors" data="data.mappedEnvironmentalFactors" variable-type="1020"></mapping-group>
+                            <mapping-group name="Design Factors" data="data.mappedDesignFactors" variable-type="1030"></mapping-group>
+                            <mapping-group name="Germplasm Factors" data="data.mappedGermplasmFactors" variable-type="1040"></mapping-group>
+                            <mapping-group name="Traits" data="data.mappedTraits" variable-type="1043"></mapping-group>
                         </div>
 
                     </div>

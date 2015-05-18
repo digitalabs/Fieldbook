@@ -15,6 +15,35 @@ var ImportDesign = {
 			
 			
 		},
+
+		showDesignMapPopup : function() {
+			setTimeout(function(){
+				$('#designMapModal').one('show.bs.modal',function() {
+					ImportDesign.initDesignMapPopup();
+				}).modal();
+			},300);
+
+		},
+
+		initDesignMapPopup : function() {
+			//get your angular element
+			var elem = angular.element('#designMapModal .modal-body[ng-controller=designImportCtrl]');
+
+			//get the injector.
+			var injector = elem.injector();
+
+			//get the service.
+			var myService = injector.get('DesignMappingService');
+
+			// retrieve initial data from the service
+			$.getJSON('/Fieldbook/DesignImport/getMappingData').done(function(data) {
+				myService.data = data;
+				elem.scope().data = myService.data;
+				//apply the changes to the scope.
+				elem.scope().$apply();
+			});
+
+		},
 		
 		showReviewPopup : function() {
 			$('#reviewDesignModal').modal({ backdrop: 'static', keyboard: true });
@@ -31,7 +60,7 @@ var ImportDesign = {
 						$('#divDesignMeasurements').html(html);
 					}
 			});
-			     
+
 		},
 		
 		generateDesign : function() {
@@ -90,8 +119,9 @@ var ImportDesign = {
 					showAlertMessage('', resp.warning);
 				}
 
-				$('#importDesignModal').modal('hide');
-				ImportDesign.showReviewPopup();
+				$('#importDesignModal').one('hidden.bs.modal',function() {
+					ImportDesign.showDesignMapPopup();
+				}).modal('hide');
 
 			});
 

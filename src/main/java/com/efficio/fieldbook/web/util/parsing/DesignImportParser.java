@@ -28,7 +28,7 @@ public class DesignImportParser extends AbstractCsvFileParser<DesignImportData> 
 		int columnIndex = 0;
 		for (String headerName: headers){
 			DesignHeaderItem headerItem = new DesignHeaderItem();
-			headerItem.setHeaderName(headerName);
+			headerItem.setName(headerName);
 			headerItem.setColumnIndex(columnIndex);
 			list.add(headerItem);
 			columnIndex++;

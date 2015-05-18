@@ -600,7 +600,11 @@
 			$('li#nursery-settings-li a').tab('show');
 			$('a[data-toggle="tab"]').each(function() {
 				if($(this).hasClass('crossesList') || $(this).hasClass('advanceList') ) {
-					StockIDFunctions.generateStockListTabIfNecessary($(this).data('list-id'));
+					StockIDFunctions.generateStockListTabIfNecessary($(this).data('list-id')).done(function() {
+						// re compute the tab drop whenever a new tab is generated
+						$('.nav-tabs').tabdrop({position: 'left'});
+						$('.nav-tabs').tabdrop('layout');
+					});
 				}
 			});
 			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {

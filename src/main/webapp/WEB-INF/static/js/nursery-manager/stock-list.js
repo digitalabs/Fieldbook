@@ -70,6 +70,7 @@ if (typeof StockIDFunctions === 'undefined') {
                                 $('#create-nursery-tabs .tab-pane.info').removeClass('active');
                                 $(this).data('has-loaded', '1');
                                 StockIDFunctions.displayStockList(listId);
+                                StockIDFunctions.disableGenerateStockListButton(listId);
                                 $('#stock-tab-pane' + listId).addClass('active');
                             });
 
@@ -81,6 +82,13 @@ if (typeof StockIDFunctions === 'undefined') {
                 }
             );
 
+        },
+
+        disableGenerateStockListButton : function(listId) {
+            var sectionContainerDiv = 'advance-list'+listId;
+            if ($('#' + sectionContainerDiv).data('has-stock') === 'true') {
+                $('#generateStockListMenuItem' + listId).addClass('disabled');
+            }
         },
 
         generateStockListTabIfNecessary: function (listId) {

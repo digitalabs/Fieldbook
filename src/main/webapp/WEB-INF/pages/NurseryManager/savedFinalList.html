@@ -56,17 +56,17 @@
 						<span th:text="#{stock.list.actions}" th:if="*{listType == 'STOCK'}">Stock List Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-						<li class="withMeasurementsOnly" th:if="*{listType == 'CROSSES' || listType == 'ADVANCED'}">
+						<li class="withMeasurementsOnly" th:id="*{'generateStockListMenuItem' + listId}" th:if="*{listType == 'CROSSES' || listType == 'ADVANCED'}">
 							<a href=""
 								style="display: none" id="open-study-url"></a>
-							<a th:id="*{'generateStockListButton' + listId}" th:if="*{listType == 'CROSSES'}" href="javascript: void(0)"
+							<a  th:if="*{listType == 'CROSSES'}" href="javascript: void(0)"
 								th:onclick="'javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier(), ' +
 									*{hasPedigreeDupe} + ',' + *{hasPlotRecip} + ',' + *{hasPedigreeRecip} + ',' + *{hasPlotDupe} + ');'"
 								th:text="#{common.stock.list.generate}">
 									Generate Stock List
 							</a>
 
-							<a th:id="*{'generateStockListButton' + listId}" th:if="*{listType == 'ADVANCED'}" href="javascript: void(0)"
+							<a th:if="*{listType == 'ADVANCED'}" href="javascript: void(0)"
 							   onclick="javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier());"
 							   th:text="#{common.stock.list.generate}">
 								Generate Stock List

@@ -107,6 +107,54 @@
        				}, 10);
        				
        			});
+        		
+        		$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').tableSelect({
+        			onClick: function(row) {
+        				//we clear all check
+        				if($('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click') === '1'){
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '0');
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected) input.stockListEntryId:checked').parent().parent().addClass('selected');
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.stockListEntryId:not(:checked)').parent().parent().removeClass('selected');
+        				}else{
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.stockListEntryId').prop('checked', false);
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').removeClass('manual-selected');
+        					if($(row).hasClass('selected')){
+        						$(row).find('input.stockListEntryId').prop('checked', true);
+        					}else{
+        						$(row).find('input.stockListEntryId').prop('checked', false);
+        					}
+        				}
+        				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+        			},
+        			onCtrl: function(row){
+        				
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.stockListEntryId').prop('checked', true);
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.stockListEntryId').prop('checked', false);
+        				if($(row).hasClass('manual-selected') || $(row).hasClass('selected')){
+        					$(row).find('input.stockListEntryId').prop('checked', true);
+        					$(row).addClass('selected');
+        				}else{
+        					$(row).find('input.stockListEntryId').prop('checked', false);
+        					$(row).removeClass('selected');
+        				}
+        				if($('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click') === '1'){
+        					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '0');
+        					if($(row).hasClass('selected') && $(row).hasClass('manual-selected') === false){
+        						$(row).find('input.stockListEntryId').prop('checked', false);
+        						$(row).removeClass('selected');	
+        					}
+        				}
+        				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
+        			},
+        			onShift: function(){
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected-dummy').addClass('selected');					
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.stockListEntryId').prop('checked', true);
+        				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.stockListEntryId').prop('checked', false);
+        				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.primaryRow.selected').length);
+        			}
+        		
+        		});
             	
           		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null);
         		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);

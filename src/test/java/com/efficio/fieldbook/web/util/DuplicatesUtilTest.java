@@ -26,25 +26,25 @@ public class DuplicatesUtilTest {
 		int entryId = 1;
 		for (ImportedCrosses importedCrosses : parseResults.getImportedCrosses()) {
 			switch(entryId) {
-				case 1: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"2,4", 
+				case 1: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"2, 4", 
 						importedCrosses.getDuplicate());
 						break;
-				case 2: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"1,3", 
+				case 2: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"1, 3", 
 						importedCrosses.getDuplicate());
 						break;
-				case 3: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"2,4", 
+				case 3: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"2, 4", 
 						importedCrosses.getDuplicate());
 						break;
-				case 4: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"1,3", 
+				case 4: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"1, 3", 
 						importedCrosses.getDuplicate());
 						break;
-				case 5: assertEquals(ImportedCrosses.PLOT_RECIP_PREFIX+"6,11", 
+				case 5: assertEquals(ImportedCrosses.PLOT_RECIP_PREFIX+"6, 11", 
 						importedCrosses.getDuplicate());
 						break;
 				case 6: assertEquals(ImportedCrosses.PLOT_DUPE_PREFIX+"11", 
 						importedCrosses.getDuplicate());
 						break;
-				case 7: assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX+"1,2,3,4", 
+				case 7: assertEquals(ImportedCrosses.PEDIGREE_DUPE_PREFIX+"1, 2, 3, 4", 
 						importedCrosses.getDuplicate());
 						break;
 				case 8: assertEquals(ImportedCrosses.PEDIGREE_RECIP_PREFIX+"9", 

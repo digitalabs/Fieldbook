@@ -189,9 +189,9 @@ public class DuplicatesUtil {
 	private static String getCommaSeparatedEntryIdsOfDuplicates(Collection<Integer> entries) {
 		String entryIDCSV = "";
 		for (Integer entryId : entries) {
-			entryIDCSV += entryId + ",";
+			entryIDCSV += entryId + ", ";
 		}
-		return entryIDCSV.substring(0,entryIDCSV.length()-1);
+		return entryIDCSV.substring(0,entryIDCSV.length()-2);
 	}
 
 	private static void getAllEntries(Collection<ImportedCrosses> importedCrossesList,

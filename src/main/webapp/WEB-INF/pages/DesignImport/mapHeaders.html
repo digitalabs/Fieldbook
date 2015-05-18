@@ -1,12 +1,12 @@
 <section xmlns:th="http://www.thymeleaf.org" th:remove="tag">
     <div ng-cloak="" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="designMapModal" id="designMapModal" aria-hidden="true">
         <div class="modal-dialog modal-lg" style="min-width: 98%">
-            <div class="modal-content">
+            <div class="modal-content" ng-controller="designImportCtrl">
                 <div class="modal-header">
                     <button type="button" class="close closeTrigger" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title" th:text="#{design.import.modal.title}">Import Experimental Design :)</h4>
                 </div>
-                <section ng-controller="designImportCtrl" class="modal-body" style="height:450pt; overflow-y: auto">
+                <section class="modal-body" style="height:450pt; overflow-y: auto">
                     <div class="row">
                         <div class="col-md-7">
                             <form class="form-horizontal">
@@ -67,7 +67,7 @@
                 </section>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default closeTrigger" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-                    <button type="button" class="btn btn-primary closeTrigger" th:text="#{common.form.next.text}" ng-click="next()">Next</button>
+                    <button type="button" class="btn btn-primary closeTrigger" th:text="#{common.form.next.text}" ng-click="validateAndSend()">Next</button>
                 </div>
             </div>
         </div>
@@ -82,7 +82,6 @@
         (function() {
             angular.module('designImportApp')
                     .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
-                    .constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
                     .constant('VARIABLE_SELECTION_LABELS',{
                         /*ENVIRONMENTAL FACTORS*/
                         1020: {
@@ -108,81 +107,8 @@
                         variableSelectedMessage : /*[[#{common.warning.variable.in.use}]]*/ '',
                         invalidAliasError : /*[[#{variable.selection.alias.error}]]*/ ''
                     })
-                    .constant('MESSAGES',[])
-                    .constant('UNMAPPED_HEADERS',[{name : 'unmapped_header_1'},{name : 'unmapped_header_2'},{name : 'unmapped_header_3'}])
-                    .constant('MAPPED_ENVIRONMENTAL_FACTORS',[
-                        {
-                            id : 0,
-                            name : 'unmapped00',
-                            hasError : false,
-                            variable : {
-                                name : 'variable name',
-                                property : 'property 01',
-                                method : 'method 01',
-                                scale : 'scale 01'
-                            }
-                        },
-                        {
-                            id : 1,
-                            name : 'unmapped01',
-                            hasError : true
-                        }
-                    ])
-                    .constant('MAPPED_DESIGN_FACTORS',[
-                        {
-                            id : 2,
-                            name : 'unmapped02',
-                            hasError : false,
-                            variable : {
-                                name : 'variable name',
-                                property : 'property 01',
-                                method : 'method 01',
-                                scale : 'scale 01'
-                            }
-                        },
-                        {
-                            id : 3,
-                            name : 'unmapped03',
-                            hasError : true
-                        }
-                    ])
-                    .constant('MAPPED_GERMPLASM_FACTORS',[
-                        {
-                            id : 4,
-                            name : 'unmapped00',
-                            hasError : false,
-                            variable : {
-                                name : 'variable name',
-                                property : 'property 01',
-                                method : 'method 01',
-                                scale : 'scale 01'
-                            }
-                        },
-                        {
-                            id : 5,
-                            name : 'unmapped01',
-                            hasError : true
-                        }
-                    ])
-                    .constant('MAPPED_TRAITS',[
-                        {
-                            id : 6,
-                            name : 'unmapped00',
-                            hasError : false,
-                            variable : {
-                                name : 'variable name',
-                                property : 'property 01',
-                                method : 'method 01',
-                                scale : 'scale 01'
-                            }
-                        },
-                        {
-                            id : 7,
-                            name : 'unmapped01',
-                            hasError : true
-                        }
-                    ]);
-
+                    /* INTERNATIONALIZED MESSAGES HERE */
+                    .constant('MESSAGES',[]);
         })();
 
         // ]]>

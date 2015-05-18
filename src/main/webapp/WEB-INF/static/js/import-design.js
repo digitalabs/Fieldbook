@@ -27,7 +27,7 @@ var ImportDesign = {
 
 		initDesignMapPopup : function() {
 			//get your angular element
-			var elem = angular.element('#designMapModal .modal-body[ng-controller=designImportCtrl]');
+			var elem = angular.element('#designMapModal .modal-content[ng-controller=designImportCtrl]');
 
 			//get the injector.
 			var injector = elem.injector();
@@ -46,8 +46,12 @@ var ImportDesign = {
 		},
 		
 		showReviewPopup : function() {
-			$('#reviewDesignModal').modal({ backdrop: 'static', keyboard: true });
-			ImportDesign.showReviewDesignData();
+			$('#designMapModal').one('hidden.bs.modal',function() {
+				setTimeout(function() {
+					$('#reviewDesignModal').modal({ backdrop: 'static', keyboard: true });
+					ImportDesign.showReviewDesignData();
+				},200);
+			}).modal('hide');
 		},
 		
 		showReviewDesignData : function() {

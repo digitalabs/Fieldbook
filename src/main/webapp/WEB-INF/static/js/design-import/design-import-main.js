@@ -1,10 +1,22 @@
 (function() {
     var app =  angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource','ui.sortable']);
 
-
-    app.controller('designImportCtrl', ['$scope','DesignMappingService',function(scope,DesignMappingService){
+    app.controller('designImportCtrl', ['$scope','DesignMappingService','ImportDesign',function(scope,DesignMappingService,ImportDesign){
         // we can retrieve this from a service
         scope.data = DesignMappingService.data;
+
+        scope.validateAndSend = function() {
+            var result = DesignMappingService.validateMapping();
+
+            if (result.result) {
+                // send mapped result data to server
+
+                // proceed next popup
+                ImportDesign.showReviewPopup();
+            }
+
+        };
+
     }]);
 
 
@@ -90,6 +102,19 @@
                                         scope.modeldata.id = value.variable.cvTermId;
                                         scope.modeldata.variable = value.variable;
 
+                                        // process propery, scale + method
+                                        scope.modeldata.variable.property = {
+                                            name : value.variable.property
+                                        };
+
+                                        scope.modeldata.variable.scale = {
+                                            name : value.variable.scale
+                                        };
+
+                                        scope.modeldata.variable.method = {
+                                            name : value.variable.method
+                                        };
+
                                     });
                                 }
 
@@ -130,18 +155,24 @@
             };
         }]);
 
-    app.service('DesignMappingService',['$http','$q','UNMAPPED_HEADERS','MAPPED_ENVIRONMENTAL_FACTORS','MAPPED_DESIGN_FACTORS',
-        'MAPPED_GERMPLASM_FACTORS', 'MAPPED_TRAITS',function($http,$q,UNMAPPED_HEADERS,MAPPED_ENVIRONMENTAL_FACTORS,MAPPED_DESIGN_FACTORS,
-        MAPPED_GERMPLASM_FACTORS, MAPPED_TRAITS) {
+    app.service('DesignMappingService',['$http','$q',function($http,$q) {
+
+            function validateMapping() {
+                return {
+                    result: true,
+                    message: 'all clear'
+                };
+            }
 
             var service = {
                 data : {
-                    unmappedHeaders : UNMAPPED_HEADERS,
-                    mappedEnvironmentalFactors: MAPPED_ENVIRONMENTAL_FACTORS,
-                    mappedDesignFactors : MAPPED_DESIGN_FACTORS,
-                    mappedGermplasmFactors : MAPPED_GERMPLASM_FACTORS,
-                    mappedTraits : MAPPED_TRAITS
-                }
+                    unmappedHeaders : [],
+                    mappedEnvironmentalFactors: [],
+                    mappedDesignFactors : [],
+                    mappedGermplasmFactors : [],
+                    mappedTraits : []
+                },
+                validateMapping : validateMapping
             };
 
             return service;
@@ -165,6 +196,9 @@
         };
     }]);
 
+    app.service('ImportDesign',function() {
+       return ImportDesign;
+    });
 
     /* non angularjs codes */
 

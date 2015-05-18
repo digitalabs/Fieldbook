@@ -5,19 +5,11 @@
 			aria-labelledby="reviewDesignModal" aria-hidden="true">
 			<div class="modal-dialog modal-large">
 				<div class="modal-content">
+					<div class="modal-header">
+		                    <button type="button" class="close closeTrigger" data-dismiss="modal" aria-hidden="true">&times;</button>
+		                    <h4 class="modal-title" th:text="#{design.import.select.header}"></h4>
+		            </div>
 					<div class="modal-body" id="reviewDesignModalBody">
-						<div class="row form-group">
-							<div class="col-xs-11 col-md-11">
-								<label class="modal-title fbk-modal-title" id="heading-modal"
-									th:text="#{design.import.select.header}"></label>
-							</div>
-							<div class="col-xs-1 col-md-1">
-								<button id="close" type="button"
-									class="close  pull-right glyphicon glyphicon-remove"
-									data-dismiss="modal" aria-hidden="true" />
-							</div>
-						</div>
-
 						<div class="row form-group">
 							<div class="col-xs-12 col-md-12">
 								<label class=""><strong
@@ -37,7 +29,7 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal"
 							aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-						<button type="button" class="btn btn-primary" aria-hidden="true">Finish</button>
+						<button type="button" class="btn btn-primary btn-import-generate" aria-hidden="true">Finish</button>
 					</div>
 				</div>
 			</div>

@@ -7,20 +7,12 @@
 			aria-labelledby="importDesignModal" aria-hidden="true">
 			<div class="modal-dialog modal-medium">
 				<div class="modal-content">
-
+					<div class="modal-header">
+	                    <button type="button" class="close closeTrigger" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                    <h4 class="modal-title" th:text="#{design.import.select.header}"></h4>
+	                </div>
 					<div class="modal-body" id="importDesignModalBody">
-						<div class="row form-group">
-							<div class="col-xs-11 col-md-11">
-								<label class="modal-title fbk-modal-title" id="heading-modal"
-									th:text="#{design.import.select.header}"></label>
-							</div>
-							<div class="col-xs-1 col-md-1">
-								<button id="close" type="button"
-									class="close  pull-right glyphicon glyphicon-remove"
-									data-dismiss="modal" aria-hidden="true" />
-							</div>
-						</div>
-
+				
 						<div class="row form-group">
 							<div id="page-import-study-message-modal"
 								class="col-xs-12 col-md-12"></div>

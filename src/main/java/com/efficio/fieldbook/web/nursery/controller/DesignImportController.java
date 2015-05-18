@@ -7,24 +7,37 @@ package com.efficio.fieldbook.web.nursery.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.common.service.DesignImportService;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -48,10 +61,16 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	private DesignImportParser parser;
 	
 	@Resource
-	private UserSelection studySelection;
+	private UserSelection userSelection;
 	
 	@Resource
 	private DesignImportService designImportService;
+	
+	@Resource
+    private MessageSource messageSource;
+	
+	@Resource
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
 	/* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#show(org.springframework.ui.Model)
@@ -75,11 +94,21 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 		
 		try {
 			
+			initializeTemporaryWorkbook();
+			
+			Workbook workbook = userSelection.getTemporaryWorkbook();
+			
 			DesignImportData designImportData = parser.parseFile(form.getFile());
 			
-			studySelection.setDesignImportData(designImportData);
+			createTestMapping(designImportData);
 			
-			List<MeasurementRow> measurementRows = designImportService.generateDesign();
+			userSelection.setDesignImportData(designImportData);
+			
+			designImportService.validateDesignData(designImportData);
+
+			if (!designImportService.areTrialInstancesMatchTheSelectedEnvironments(workbook, designImportData)){
+				resultsMap.put("warning", messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH));
+			}
 			
 			resultsMap.put("isSuccess", 1);
 			
@@ -98,7 +127,10 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/showDetails", method = RequestMethod.GET)
 	public String showDetails(Model model) {
 			
-			List<MeasurementVariable> measurementVariables = designImportService.getDesignMeasurementVariables();
+			Workbook workbook = userSelection.getTemporaryWorkbook();
+			DesignImportData designImportData = userSelection.getDesignImportData();
+			
+			Set<MeasurementVariable> measurementVariables = designImportService.getDesignMeasurementVariables(workbook, designImportData);
 	    	
 			model.addAttribute("measurementVariables", measurementVariables);
 			
@@ -112,11 +144,15 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	public List<Map<String, Object>> showDetailsData(Model model,
 			@ModelAttribute("importDesignForm") ImportDesignForm form) {
 			
+		
+		Workbook workbook = userSelection.getTemporaryWorkbook();
+		DesignImportData designImportData = userSelection.getDesignImportData();
+		
 			List<MeasurementRow> measurementRows = new ArrayList<>();
+			
 			try {
-				measurementRows = designImportService.generateDesign();
+				measurementRows = designImportService.generateDesign(workbook, designImportData);
 			} catch (DesignValidationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    	
@@ -131,6 +167,40 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	   	
 	    	return masterList;
 		
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/generate", produces = "application/json; charset=utf-8")
+	public Map<String, Object> showMeasurements() {
+
+		Map<String, Object> resultsMap = new HashMap<>();
+		
+		try {
+			
+			Workbook workbook = userSelection.getTemporaryWorkbook();
+			DesignImportData designImportData = userSelection.getDesignImportData();
+			
+			List<MeasurementRow> measurementRows;
+			Set<MeasurementVariable> measurementVariables;
+			
+			measurementRows = designImportService.generateDesign(workbook, designImportData);
+			measurementVariables = designImportService.getDesignMeasurementVariables(workbook, designImportData);
+			
+			workbook.setObservations(measurementRows);
+			workbook.setMeasurementDatasetVariables(new ArrayList<MeasurementVariable>(measurementVariables));
+			
+			resultsMap.put("isSuccess", 1);
+			
+		} catch (Exception e) {
+			
+			LOG.error(e.getMessage(), e);
+			
+			resultsMap.put("isSuccess", 0);
+			// error messages is still in .prop format,
+			resultsMap.put("error", new String[] {e.getMessage()});
+		}
+
+		return resultsMap;
 	}
 	
 	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix){
@@ -152,4 +222,64 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 		}
 		return dataMap;
     }
+	
+	public void initializeTemporaryWorkbook(){
+		
+	      List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
+	         List<SettingDetail> basicDetails = userSelection.getBasicDetails();
+	         // transfer over data from user input into the list of setting details stored in the session
+	    	 List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+	         combinedList.addAll(basicDetails);
+
+	         if (studyLevelConditions != null) {             
+	             combinedList.addAll(studyLevelConditions);
+	         }
+
+	         String name = "";
+
+	         
+	    	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
+	    			userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
+	    			userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
+
+	        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+	        StudyDetails details = new StudyDetails();
+	        details.setStudyType(StudyType.T);
+	        workbook.setStudyDetails(details);
+	        
+	        userSelection.setTemporaryWorkbook(workbook);
+	        
+	}
+	
+	protected void createTestMapping(DesignImportData designImportData) throws MiddlewareQueryException{
+		
+		List<DesignHeaderItem> trialEnv = new ArrayList<>();
+		List<DesignHeaderItem> germplasm = new ArrayList<>();
+		List<DesignHeaderItem> design = new ArrayList<>();
+		List<DesignHeaderItem> variate = new ArrayList<>();
+		
+		for (DesignHeaderItem item : designImportData.getUnmappedHeaders()){
+			StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariableByName(item.getHeaderName());
+			item.setVariable(stdVar);
+			
+			if (stdVar.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT){
+				trialEnv.add(item);
+			}
+			if (stdVar.getPhenotypicType() == PhenotypicType.GERMPLASM){
+				germplasm.add(item);
+			}
+			if (stdVar.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN){
+				design.add(item);
+			}
+			if (stdVar.getPhenotypicType() == PhenotypicType.VARIATE){
+				variate.add(item);
+			}
+		}
+		
+		designImportData.getMappedHeaders().put(PhenotypicType.TRIAL_ENVIRONMENT, trialEnv);
+		designImportData.getMappedHeaders().put(PhenotypicType.GERMPLASM, germplasm);
+		designImportData.getMappedHeaders().put(PhenotypicType.TRIAL_DESIGN, design);
+		designImportData.getMappedHeaders().put(PhenotypicType.VARIATE, variate);
+		
+	}
 }

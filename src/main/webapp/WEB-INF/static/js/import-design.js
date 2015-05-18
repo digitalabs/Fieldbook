@@ -34,6 +34,27 @@ var ImportDesign = {
 			     
 		},
 		
+		generateDesign : function() {
+			$.ajax(
+					{ 
+						url: '/Fieldbook/DesignImport/generate',
+						type: 'GET',
+						success: function(resp) {
+							if (resp.isSuccess) {
+								
+								$('#chooseGermplasmAndChecks').data('replace', '1');
+								$('body').data('expDesignShowPreview', '1');
+								$('body').data('needGenerateExperimentalDesign', '0');
+								
+								ImportDesign.closeReviewModal();
+							}else{
+								createErrorNotification(designImportErrorHeader,resp.error.join('<br/>'));
+								return;
+							}
+						}
+				});
+		},
+		
 		loadReviewDesignData : function() {
 			setTimeout(function(){
 				
@@ -65,6 +86,8 @@ var ImportDesign = {
 				if (!resp.isSuccess) {
 					createErrorNotification(designImportErrorHeader,resp.error.join('<br/>'));
 					return;
+				} else if (resp.warning){
+					showAlertMessage('', resp.warning);
 				}
 
 				$('#importDesignModal').modal('hide');
@@ -73,9 +96,8 @@ var ImportDesign = {
 			});
 
 		},
-		goBackToPage: function(hiddenModalSelector,shownModalSelector) {
-			$(hiddenModalSelector).modal('hide');
-			$(shownModalSelector).modal({ backdrop: 'static', keyboard: true });
+		closeReviewModal: function() {
+			$('#reviewDesignModal').modal('hide');
 		},
 		submitImport : function($importDesignUploadForm) {
 			'use strict';
@@ -99,6 +121,7 @@ var ImportDesign = {
 
 $(document).ready(function() {
     $('.btn-import-design').on('click', ImportDesign.doSubmitImport);
+    $('.btn-import-generate').on('click', ImportDesign.generateDesign);
     $('.import-design-section .modal').on('hide.bs.modal', function() {
 		$('#fileupload-import-design').parent().parent().removeClass('has-error');
 	});

@@ -90,17 +90,24 @@ public class GermplasmListController {
 			model.addAttribute(GERMPLASM_LIST, detailList);
 			List<TableHeader> tableHeaderList = null;
 
+			boolean hasCompletedBulking = false;
 			if (germplasmList.getType().equals(GermplasmListType.ADVANCED.name())) {
 				tableHeaderList = getAdvancedStockListTableHeaders();
 			} else if (germplasmList.getType().equals(GermplasmListType.CROSSES.name())) {
 				tableHeaderList = getCrossStockListTableHeaders();
+				hasCompletedBulking = stockHasCompletedBulking(listId);
 			}
 			model.addAttribute(TABLE_HEADER_LIST, tableHeaderList);
+			model.addAttribute("hasCompletedBulking", hasCompletedBulking);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}
 
 		return NURSERY_MANAGER_SAVED_FINAL_LIST;
+	}
+
+	private boolean stockHasCompletedBulking(Integer listId) throws MiddlewareQueryException {
+		return inventoryService.stockHasCompletedBulking(listId);
 	}
 
 	protected void processGermplasmList(Integer listId, String germplasmListType,

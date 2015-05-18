@@ -90,7 +90,7 @@
 									Export Inventory File
 							</a>
 						</li>
-						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
+						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and !hasCompletedBulking}">
 							<a href=""
 								style="display: none" id="import-stock-list-url"></a> <a href="javascript: void(0)"
 								th:onclick="'javascript: StockIDFunctions.showImportPopup(\'' + ${listId} + '\');'"

@@ -1,17 +1,20 @@
 package com.efficio.fieldbook.web.stock;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.service.StockService;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -22,17 +25,24 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.form.ImportStockForm;
 import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
 import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 
@@ -74,6 +84,54 @@ public class StockController extends AbstractBaseFieldbookController{
 	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+    @Resource
+    private OntologyService ontologyService;
+	
+	/**
+     * Gets the data types.
+     *
+     * @return the data types
+     */
+    @ModelAttribute("locationList")
+    public List<Location> getLocationList() {
+        try {
+            return fieldbookMiddlewareService.getAllSeedLocations();
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return new ArrayList<>();
+    }
+    /**
+     * Gets the favorite location list.
+     *
+     * @return the favorite location list
+     */
+    @ModelAttribute("favoriteLocationList")
+    public List<Location> getFavoriteLocationList() {
+        try {
+            
+            List<Long> locationsIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
+            return fieldbookMiddlewareService
+                                .getFavoriteLocationByProjectId(locationsIds);
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return new ArrayList<>();
+    }
+    
+    @ModelAttribute("scaleList")
+    public List<Scale> getScaleList() {
+        try {
+            return ontologyService.getAllInventoryScales();
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        return new ArrayList<>();
+    }
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveNextStockPrefix", method = RequestMethod.POST)
@@ -271,6 +329,66 @@ public class StockController extends AbstractBaseFieldbookController{
 		inventoryDataManager.updateInventory(listId,inventoryDetailListFromDB);
 	}
 
+    @RequestMapping(value="/ajax/{listId}/{entryIdList}", method = RequestMethod.GET)
+    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form,
+    		@PathVariable Integer listId, @PathVariable String entryIdList, Model model, HttpSession session) {
+    	form.setListId(listId);
+    	form.setEntryIdList(entryIdList);
+    	return super.showAjaxPage(model, "Inventory/addLotsModal");
+    }
+    
+	@ResponseBody
+    @RequestMapping(value="/update/lots", method = RequestMethod.POST)
+    public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm") SeedStoreForm form,
+            Model model, Locale local) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        List<Integer> entryIdList = new ArrayList<Integer>();
+
+        for (String gid : form.getEntryIdList().split(",")) {
+            entryIdList.add(Integer.parseInt(gid));
+        }
+        
+        //update of lots here
+        Integer listId = form.getListId();
+        
+		try {
+			GermplasmList germplasmList = this.fieldbookMiddlewareService
+					.getGermplasmListById(listId);
+			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
+			List<InventoryDetails> inventoryDetailListFromDB = 
+					inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+
+			Double amount = form.getAmount();
+			int inventoryLocationId = form.getInventoryLocationId();
+			int inventoryScaleId = form.getInventoryScaleId();
+			String inventoryComments = form.getInventoryComments();
+			
+			for(InventoryDetails inventoryDetail : inventoryDetailListFromDB){
+				if(entryIdList.contains(inventoryDetail.getEntryId())){
+					inventoryDetail.setAmount(amount);				
+					inventoryDetail.setLocationId(inventoryLocationId);
+					inventoryDetail.setScaleId(inventoryScaleId);
+					inventoryDetail.setComment(inventoryComments);
+				}
+			}
+			
+			updateInventory(listId,inventoryDetailListFromDB);
+			
+			result.put("message", messageSource.getMessage("seed.inventory.update.inventory.success", null, local));
+            result.put("success", 1);
+            result.put("listId", listId);
+			
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+			result.put("message", "error: " + e.getMessage());
+            result.put("success", 0);
+		}
+		
+        
+        
+        return result;
+    }
+    
 	@Override
 	public String getContentName() {
 		return null;

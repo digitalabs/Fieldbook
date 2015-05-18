@@ -4,18 +4,22 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.service.StockService;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.Model;
@@ -57,6 +61,12 @@ public class StockControllerTest {
     @Mock
     private InventoryService inventoryService;
 
+	@Mock
+	private FieldbookService fiedbookService;
+	
+	@Mock
+	private OntologyService ontologyService;
+
     @Mock
     private InventoryDataManager inventoryDataManager;
 
@@ -66,6 +76,30 @@ public class StockControllerTest {
     @InjectMocks
     private StockController dut = spy(new StockController());
 
+	@Test
+	public void testGetLocationList() throws MiddlewareQueryException{
+		dut.getLocationList();
+		Mockito.verify(fiedbookService, Mockito.times(1)).getAllSeedLocations();
+	}
+	
+	@Test
+	public void testGetFavoriteLocationList() throws MiddlewareQueryException{		
+		List<Long> locationsIds = new ArrayList<Long>();
+		locationsIds.add(new Long(1));
+		Mockito.when(fiedbookService.getFavoriteProjectLocationIds(Mockito.anyString())).thenReturn(locationsIds);
+		
+		dut.getFavoriteLocationList();
+		
+		Mockito.verify(fiedbookService, Mockito.times(1)).getFavoriteProjectLocationIds(Mockito.anyString());
+		Mockito.verify(fiedbookService, Mockito.times(1)).getFavoriteLocationByProjectId(locationsIds);
+	}
+	
+	@Test
+	public void testGetScaleList() throws MiddlewareQueryException{
+		dut.getScaleList();
+		Mockito.verify(ontologyService, Mockito.times(1)).getAllInventoryScales();
+	}
+	
     @Test
     public void testGenerateValidPrefix() throws MiddlewareException{
         StockListGenerationSettings param = new StockListGenerationSettings(TEST_BREEDER_IDENTIFIER, TEST_SEPARATOR);

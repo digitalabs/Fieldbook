@@ -50,6 +50,9 @@ public class SeedStoreForm {
     /** The gid list. */
     private String gidList;
     
+    /** The entry Id list */
+    private String entryIdList;
+    
     /** The list id. */
     private Integer listId;
     
@@ -283,6 +286,14 @@ public class SeedStoreForm {
     public void setGidList(String gidList) {
         this.gidList = gidList;
     }
+
+	public String getEntryIdList() {
+		return entryIdList;
+	}
+
+	public void setEntryIdList(String entryIdList) {
+		this.entryIdList = entryIdList;
+	}
 
 	/**
 	 * Gets the amount.

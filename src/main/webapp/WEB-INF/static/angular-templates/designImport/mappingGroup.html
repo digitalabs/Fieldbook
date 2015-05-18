@@ -1,9 +1,9 @@
 <div class="mapping-group panel panel-info">
-    <div class="panel-heading"><b class="panel-title"><a data-toggle="collapse" href="#collapseOne">{{name}}</a>
+    <div class="panel-heading"><b class="panel-title"><a ng-click="isCollapsed = !isCollapsed">{{name}} <i class="glyphicon" ng-class="{'glyphicon-chevron-down': !isCollapsed, 'glyphicon-chevron-right': isCollapsed}"></i></a>
         <span class="badge-info counter" style="float:right">{{mappingData.length}}</span></b>
     </div>
 
-    <div class="panel-collapse collapse in list-group" id="collapseOne" ui-sortable="sortableOptions" ng-model="mappingData" data-phenotype="trialEnvironment">
+    <div class="panel-collapse collapse in list-group" collapse="isCollapsed" ui-sortable="sortableOptions" ng-model="mappingData">
         <div class="list-group-item" ng-class="{'list-group-item-danger' : !header.variable}" ng-repeat="header in mappingData" data-empty="{{previewMode}}">
             <div class="row">
                 <div class="col-sm-12">

@@ -4,7 +4,7 @@
             <div class="modal-content" ng-controller="designImportCtrl">
                 <div class="modal-header">
                     <button type="button" class="close closeTrigger" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" th:text="#{design.import.modal.title}">Import Experimental Design :)</h4>
+                    <h4 class="modal-title" th:text="#{design.import.modal.title}">Import Experimental Design</h4>
                 </div>
                 <section class="modal-body" style="height:450pt; overflow-y: auto">
                     <div class="row">
@@ -18,7 +18,7 @@
                                     <label for="design-type-select" class="col-md-6 col-sm-8 control-label" th:text="#{design.import.experimental.type.select}"></label>
 
                                     <div class="col-md-6 col-sm-4">
-                                        <select id="design-type-select">
+                                        <select id="design-type-select" ng-model="designType" ng-change="onDesignTypeSelect()">
                                             <option value="">Please Choose</option>
                                             <option value="0">Randomized Complete Block Design</option>
                                             <option value="1">Resolvable Incomplete Block Design</option>
@@ -35,7 +35,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <strong class="sub-content-heading pull-left" th:text="#{design.import.map.column.header}"></strong>
-                            <span class="btn btn-link pull-right" th:text="#{ontology.browser.modal.scale.variable}"></span>
+                            <span class="btn btn-link pull-right" th:text="#{ontology.browser.modal.scale.variable}" ng-click="launchOntologyBrowser()"></span>
                         </div>
                     </div>
                     <div class="row">
@@ -108,7 +108,9 @@
                         invalidAliasError : /*[[#{variable.selection.alias.error}]]*/ ''
                     })
                     /* INTERNATIONALIZED MESSAGES HERE */
-                    .constant('MESSAGES',[]);
+                    .constant('Messages',{
+                        'OWN_DESIGN_SELECT_WARNING' : 'Please note that the analysis results for designs generated outside the BMS may be unreliable, and that analysis in the BMS may not be possible for some design types.'
+                    });
         })();
 
         // ]]>

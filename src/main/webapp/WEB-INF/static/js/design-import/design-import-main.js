@@ -1,10 +1,9 @@
 (function() {
     var app =  angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource','ui.sortable']);
 
-    app.controller('designImportCtrl', ['$scope','DesignMappingService','ImportDesign',function(scope,DesignMappingService,ImportDesign){
+    app.controller('designImportCtrl', ['$scope','DesignMappingService','ImportDesign','$modal','Messages',function(scope,DesignMappingService,ImportDesign,$modal,Messages){
         // we can retrieve this from a service
         scope.data = DesignMappingService.data;
-
         scope.validateAndSend = function() {
             var result = DesignMappingService.validateMapping();
 
@@ -17,8 +16,68 @@
 
         };
 
+        scope.launchOntologyBrowser = function () {
+            var $designMapModal = $('#designMapModal');
+            $designMapModal.one('hidden.bs.modal',function() {
+                setTimeout(function() {
+                    scope.$apply(function() {
+                        var title = 'Ontology Browser';
+                        var url = '/Fieldbook/OntologyManager/manage/variable';
+
+                        $modal.open({
+                            windowClass: 'modal-very-huge',
+                            controller: 'OntologyBrowserController',
+                            templateUrl: '/Fieldbook/static/angular-templates/ontologyBrowserPopup.html',
+                            resolve: {
+                                title: function () {
+                                    return title;
+                                },
+
+                                url: function () {
+                                    return url;
+                                }
+                            }
+                        }).result.finally(function() {
+                                // do something after this modal closes
+                                // TODO: refresh cached content for the variable selection
+
+                                setTimeout(function() {
+                                    $designMapModal.modal('show');
+                                },200);
+
+                            });
+
+                    });
+                },200);
+
+            }).modal('hide');
+
+        };
+
+        scope.designType = '';
+        scope.onDesignTypeSelect = function() {
+          console.log(scope.designType);
+
+          if (scope.designType === '3') {
+              // warning popup here
+              showAlertMessage('', Messages.OWN_DESIGN_SELECT_WARNING);
+          }
+
+        };
+
+
+
     }]);
 
+    app.controller('OntologyBrowserController', ['$scope', '$modalInstance', 'title', 'url',
+        function ($scope, $modalInstance, title, url) {
+            $scope.title = title;
+            $scope.url = url;
+            $scope.close = function () {
+                $modalInstance.dismiss('Cancelled');
+            };
+
+    }]);
 
     app.directive('mappingGroup', ['$parse',function ($parse) {
         return {

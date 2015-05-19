@@ -176,7 +176,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         
         Name name = new Name();
         name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
-        name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
+        name.setTypeId(source.getRootNameType());        
+        
         name.setNval(germplasm.getDesig());
         name.setNstat(1);
         names.add(name);

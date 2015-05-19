@@ -87,7 +87,10 @@ if (typeof StockIDFunctions === 'undefined') {
         disableGenerateStockListButton : function(listId) {
             var sectionContainerDiv = 'advance-list'+listId;
             if ($('#' + sectionContainerDiv).data('has-stock') === 'true') {
-                $('#generateStockListMenuItem' + listId).addClass('disabled');
+                $('#generateStockListMenuItem' + listId).parent('ul').remove();
+                $('#generateStockListMenuItem' + listId).remove();
+                $('#listActionButton' + listId).addClass('disabled');
+
             }
         },
 

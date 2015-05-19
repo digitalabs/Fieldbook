@@ -48,7 +48,7 @@
 		<div class="pull-right">
 			<div class="col-md-12">
 				<div class="btn-group">
-					<button type="button"
+					<button type="button" th:id="*{'listActionButton' + listId}"
 						class="btn btn-info dropdown-toggle fbk-action-btn"
 						data-toggle="dropdown">
 						<span th:text="#{advanced.list.actions}" th:if="*{listType == 'ADVANCED'}">Advanced List Actions</span>

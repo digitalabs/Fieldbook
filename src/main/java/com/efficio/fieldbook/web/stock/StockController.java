@@ -222,7 +222,7 @@ public class StockController extends AbstractBaseFieldbookController{
 			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
                 InventoryDetails details = new InventoryDetails();
                 details.setAmount(0d);
-                details.setLocationId(Location.UNKNOWN_LOCATION_ID);
+                details.setLocationId(null);
                 details.setScaleId(null);
                 details.setUserId(getCurrentIbdbUserId());
                 details.setGid(entry.getKey().getGermplasmId());

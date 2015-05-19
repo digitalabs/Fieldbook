@@ -82,6 +82,11 @@
                             </li>
                             <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
                                 <a href="" style="display: none" id="open-study-url"></a>
+                                <a href="javascript: ImportDesign.showPopup('true');" id="open-study-url-link"
+                                   th:text="#{nursery.nurserydetails.action.importDesign}">Import Design</a>
+                            </li>
+                            <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+                                <a href="" style="display: none" id="open-study-url"></a>
                                 <a href="javascript: showImportOptions();" id="open-study-url-link"
                                    th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
                             </li>
@@ -289,6 +294,9 @@
 <!-- Modal Dialog for Choosing Folder Location -->
 <div th:include="/Common/includes/studyTree" />
 
+<!-- Modal Dialog for Import Design option -->
+<div th:include="/DesignImport/importFile"></div>
+
 <div id="review-details-out-of-bounds" th:include="/Common/includes/reviewDetailsOutOfBoundsData"></div>
 
 <div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
@@ -355,6 +363,7 @@
 <div th:include="/Common/includes/importInventory"/>
 
 <div th:include="Stock/generateStockIDModal"/>
+
 
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
 	<div class="modal-dialog">

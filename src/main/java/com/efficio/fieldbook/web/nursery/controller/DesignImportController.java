@@ -4,15 +4,6 @@ package com.efficio.fieldbook.web.nursery.controller;
  * Created by cyrus on 5/8/15.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
@@ -23,14 +14,8 @@ import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.common.service.DesignImportService;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
-
 import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -44,6 +29,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * The Class DesignImportController.
@@ -100,16 +88,10 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			
 			DesignImportData designImportData = parser.parseFile(form.getFile());
 			
-			createTestMapping(designImportData);
+			performAutomap(designImportData);
 			
 			userSelection.setDesignImportData(designImportData);
-			
-			designImportService.validateDesignData(designImportData);
 
-			if (!designImportService.areTrialInstancesMatchTheSelectedEnvironments(workbook, designImportData)){
-				resultsMap.put("warning", messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH));
-			}
-			
 			resultsMap.put("isSuccess", 1);
 			
 		} catch (Exception e) {
@@ -176,7 +158,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 				e.printStackTrace();
 			}
 	    	
-	    	List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
+	    	List<Map<String, Object>> masterList = new ArrayList<>();
 	    	
 	    	for(MeasurementRow row : measurementRows){
 	    		    		
@@ -187,6 +169,26 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	   	
 	    	return masterList;
 		
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/validateAndSaveNewMapping", method = RequestMethod.POST)
+	public Map<String,Object> validateAndSaveNewMapping() {
+
+		Map<String,Object> resultsMap = new HashMap<>();
+		// do this after
+		try {
+			designImportService.validateDesignData(userSelection.getDesignImportData());
+
+			if (!designImportService.areTrialInstancesMatchTheSelectedEnvironments(userSelection.getWorkbook(), userSelection.getDesignImportData())){
+				resultsMap.put("warning", messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH));
+			}
+
+		} catch (DesignValidationException e) {
+			resultsMap.put("error",e.getMessage());
+		}
+
+		return resultsMap;
 	}
 	
 	@ResponseBody
@@ -271,35 +273,11 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	        
 	}
 	
-	protected void createTestMapping(DesignImportData designImportData) throws MiddlewareQueryException{
-		
-		List<DesignHeaderItem> trialEnv = new ArrayList<>();
-		List<DesignHeaderItem> germplasm = new ArrayList<>();
-		List<DesignHeaderItem> design = new ArrayList<>();
-		List<DesignHeaderItem> variate = new ArrayList<>();
-		
-		for (DesignHeaderItem item : designImportData.getUnmappedHeaders()){
-			StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariableByName(item.getName());
-			item.setVariable(stdVar);
-			
-			if (stdVar.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT){
-				trialEnv.add(item);
-			}
-			if (stdVar.getPhenotypicType() == PhenotypicType.GERMPLASM){
-				germplasm.add(item);
-			}
-			if (stdVar.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN){
-				design.add(item);
-			}
-			if (stdVar.getPhenotypicType() == PhenotypicType.VARIATE){
-				variate.add(item);
-			}
-		}
-		
-		designImportData.getMappedHeaders().put(PhenotypicType.TRIAL_ENVIRONMENT, trialEnv);
-		designImportData.getMappedHeaders().put(PhenotypicType.GERMPLASM, germplasm);
-		designImportData.getMappedHeaders().put(PhenotypicType.TRIAL_DESIGN, design);
-		designImportData.getMappedHeaders().put(PhenotypicType.VARIATE, variate);
-		
+	protected void performAutomap(DesignImportData designImportData) throws MiddlewareQueryException{
+		Map<PhenotypicType,List<DesignHeaderItem>> result = designImportService.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders());
+
+		designImportData.setMappedHeaders(result);
+		designImportData.setUnmappedHeaders(result.get(null));
+
 	}
 }

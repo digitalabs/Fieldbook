@@ -2,6 +2,7 @@
     var app =  angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource','ui.sortable']);
 
     app.controller('designImportCtrl', ['$scope','DesignMappingService','ImportDesign','$modal','Messages',function(scope,DesignMappingService,ImportDesign,$modal,Messages){
+        scope.Messages = Messages;
         // we can retrieve this from a service
         scope.data = DesignMappingService.data;
         scope.validateAndSend = function() {

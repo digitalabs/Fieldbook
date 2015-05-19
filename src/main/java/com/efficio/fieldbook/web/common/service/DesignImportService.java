@@ -1,14 +1,18 @@
 package com.efficio.fieldbook.web.common.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 public interface DesignImportService {
 
@@ -19,5 +23,8 @@ public interface DesignImportService {
 	void validateDesignData(DesignImportData designImportData) throws DesignValidationException;
 	
 	boolean areTrialInstancesMatchTheSelectedEnvironments(Workbook workbook, DesignImportData designImportData);
-	
+
+	Map<PhenotypicType,List<DesignHeaderItem>> categorizeHeadersByPhenotype(
+			List<DesignHeaderItem> designHeaders)
+			throws MiddlewareQueryException;
 }

@@ -35,14 +35,18 @@ var ImportDesign = {
 			//get the service.
 			var myService = injector.get('DesignMappingService');
 
+			var scope = elem.scope();
+			scope.designType = '';
+
 			// retrieve initial data from the service
 			$.getJSON('/Fieldbook/DesignImport/getMappingData').done(function(data) {
-				myService.data = data;
-				elem.scope().data = myService.data;
-				//apply the changes to the scope.
-				elem.scope().$apply();
-			});
 
+				myService.data = data;
+				scope.data = myService.data;
+
+				//apply the changes to the scope.
+				scope.$apply();
+			});
 		},
 		
 		showReviewPopup : function() {

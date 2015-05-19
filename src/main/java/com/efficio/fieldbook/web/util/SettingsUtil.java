@@ -2111,6 +2111,8 @@ public class SettingsUtil {
     					} else {
     						return String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId());
     					}
+    				} else if (param.getDesignType().equals(3)) {
+    					return String.valueOf(TermId.OTHER_DESIGN.getId());
     				}
     			}
     			break;

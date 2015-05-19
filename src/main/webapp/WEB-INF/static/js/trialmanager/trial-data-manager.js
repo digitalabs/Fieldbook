@@ -302,6 +302,8 @@
                 },
 
                 deletedEnvironment : 0,
+                
+                isGeneratedOwnDesign : false,
 
                 indicateUnappliedChangesAvailable: function () {
                     if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count != 0) {

@@ -12,6 +12,9 @@
         .controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService',
             'EXP_DESIGN_MSGS', '_',function ($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, EXP_DESIGN_MSGS) {
 
+        		$scope.isGeneratedOwnDesign = function(){
+        			return TrialManagerDataService.isGeneratedOwnDesign;
+        		};
                 $scope.Math = Math;
                 $scope.designTypes = [
                     {

@@ -4,19 +4,22 @@ package com.efficio.fieldbook.web.nursery.controller;
  * Created by cyrus on 5/8/15.
  */
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.common.service.DesignImportService;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.*;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -26,10 +29,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import java.util.*;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.common.service.DesignImportService;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+
 
 /**
  * The Class DesignImportController.
@@ -140,10 +158,12 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	
 	
 	@ResponseBody
-	@RequestMapping(value = "/showDetails/data", method = RequestMethod.GET)
-	public List<Map<String, Object>> showDetailsData(Model model,
+	@RequestMapping(value = "/showDetails/data", method = RequestMethod.POST, 
+		produces = "application/json; charset=utf-8")
+	public List<Map<String, Object>> showDetailsData(@RequestBody EnvironmentData environmentData, Model model,
 			@ModelAttribute("importDesignForm") ImportDesignForm form) {
 			
+		processEnvironmentData(environmentData);
 		
 		Workbook workbook = userSelection.getTemporaryWorkbook();
 		DesignImportData designImportData = userSelection.getDesignImportData();
@@ -151,7 +171,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			List<MeasurementRow> measurementRows = new ArrayList<>();
 			
 			try {
-				measurementRows = designImportService.generateDesign(workbook, designImportData);
+				measurementRows = designImportService.generateDesign(workbook, designImportData, environmentData);
 			} catch (DesignValidationException e) {
 				e.printStackTrace();
 			}
@@ -224,10 +244,13 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/generate", produces = "application/json; charset=utf-8")
-	public Map<String, Object> showMeasurements() {
+	@RequestMapping(value = "/generate",  method = RequestMethod.POST , 
+		produces = "application/json; charset=utf-8")
+	public Map<String, Object> showMeasurements(@RequestBody EnvironmentData environmentData) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
+		
+		processEnvironmentData(environmentData);
 		
 		try {
 			
@@ -236,13 +259,28 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			
 			List<MeasurementRow> measurementRows;
 			Set<MeasurementVariable> measurementVariables;
+			Set<StandardVariable> expDesignVariables;
+			Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 			
-			measurementRows = designImportService.generateDesign(workbook, designImportData);
+			measurementRows = designImportService.generateDesign(workbook, designImportData, environmentData);
 			measurementVariables = designImportService.getDesignMeasurementVariables(workbook, designImportData);
+			expDesignVariables = designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
+			experimentalDesignMeasurementVariables = designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
 			
 			workbook.setObservations(measurementRows);
-			workbook.setMeasurementDatasetVariables(
-					new ArrayList<MeasurementVariable>(measurementVariables));
+			workbook.setMeasurementDatasetVariables(new ArrayList<MeasurementVariable>(measurementVariables));
+			workbook.setExpDesignVariables(new ArrayList<StandardVariable>(expDesignVariables));
+			
+			userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>(experimentalDesignMeasurementVariables));
+		
+			ExpDesignParameterUi designParam = new ExpDesignParameterUi();
+			designParam.setDesignType(3);
+			userSelection.setExpDesignParams(designParam);
+			
+			List<Integer> expDesignTermIds = new ArrayList<>();
+			expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+			userSelection.setExpDesignVariables(expDesignTermIds);
+
 			
 			resultsMap.put("isSuccess", 1);
 
@@ -313,4 +351,15 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 		designImportData.setUnmappedHeaders(result.get(null));
 
 	}
+	
+	protected void processEnvironmentData(EnvironmentData data) {
+        for (int i = 0; i < data.getEnvironments().size(); i++) {
+            Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+            if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
+                values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+            } else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null || values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+                values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+            }
+        }
+    }
 }

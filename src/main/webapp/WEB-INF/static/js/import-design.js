@@ -4,6 +4,20 @@ var ImportDesign = {
 			return angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.germplasmListSelected;
 		},
 		
+		trialManagerCurrentData: function() {
+			return angular.element('#mainApp').injector().get('TrialManagerDataService').currentData;
+		}
+		,
+		
+		reloadMeasurementsFromAngularService: function(){
+			var angularElem = angular.element('#mainApp');
+			
+			angularElem.scope().$apply(function(){
+				var service = angularElem.injector().get('TrialManagerDataService');
+				service.isGeneratedOwnDesign = true;
+			});
+		},
+		
 		showPopup : function(hasGermplasmListSelected){
 			
 			
@@ -72,10 +86,17 @@ var ImportDesign = {
 		},
 		
 		generateDesign : function() {
+			
+			var environments = angular.copy(ImportDesign.trialManagerCurrentData().environments);
+			
 			$.ajax(
 					{ 
 						url: '/Fieldbook/DesignImport/generate',
-						type: 'GET',
+						type: 'POST',
+						data: JSON.stringify(environments),
+						dataType: 'json',
+		                contentType: 'application/json; charset=utf-8',
+						cache: false,
 						success: function(resp) {
 							if (resp.isSuccess) {
 								
@@ -84,6 +105,11 @@ var ImportDesign = {
 								$('body').data('needGenerateExperimentalDesign', '0');
 								
 								ImportDesign.closeReviewModal();
+								
+								ImportDesign.reloadMeasurementsFromAngularService();
+								
+								showSuccessfulMessage('', 'The trial design was imported successfully. Please review the Measurements tab.');
+								
 							}else{
 								createErrorNotification(designImportErrorHeader,resp.error.join('<br/>'));
 								return;
@@ -94,12 +120,16 @@ var ImportDesign = {
 		
 		loadReviewDesignData : function() {
 			setTimeout(function(){
-				
+			
+				var environments = angular.copy(ImportDesign.trialManagerCurrentData().environments);
+		
 				$.ajax(
 						{ 
 						url: '/Fieldbook/DesignImport/showDetails/data',
-						type: 'GET',
-						data: '',
+						type: 'POST',
+						data: JSON.stringify(environments),
+						dataType: 'json',
+		                contentType: 'application/json; charset=utf-8',
 						cache: false,
 						success: function(response) {
 							new  BMS.Fieldbook.PreviewDesignMeasurementsDataTable('#design-measurement-table', response);					

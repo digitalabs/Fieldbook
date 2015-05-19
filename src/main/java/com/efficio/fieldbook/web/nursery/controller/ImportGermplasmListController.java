@@ -226,7 +226,17 @@ public class ImportGermplasmListController extends SettingsController {
                     false, userSelection, ontologyService, fieldbookService);
             WorkbookUtil.addMeasurementDataToRowsExp(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook().getObservations(), 
                     true, userSelection, ontologyService, fieldbookService);
+            
+            
+            if (userSelection.getExperimentalDesignVariables() != null){
+            	Set<MeasurementVariable> unique = new HashSet<MeasurementVariable>(userSelection.getWorkbook().getFactors());
+            	unique.addAll(userSelection.getExperimentalDesignVariables());
+            	userSelection.getWorkbook().getFactors().clear();
+            	userSelection.getWorkbook().getFactors().addAll(unique);
+            }
+            
             Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil.createVariableList(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
+            
             WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables, userSelection.getWorkbook().getObservations());
             userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
             WorkbookUtil.updateTrialObservations(userSelection.getWorkbook(),userSelection.getTemporaryWorkbook());

@@ -333,6 +333,32 @@ public class WorkbookUtil {
         }
     }
      
+     public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, List<MeasurementRow> measurementRowList, boolean isVariate, 
+             UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService) throws MiddlewareQueryException{
+        //add new variables in measurement rows
+        for (MeasurementVariable variable : variableList) {
+            if (variable.getOperation().equals(Operation.ADD)) {
+                StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+                for (MeasurementRow row : measurementRowList) {
+                    MeasurementData measurementData = new MeasurementData(variable.getName(), 
+                            "", true,  
+                            getDataType(variable.getDataTypeId()),
+                            variable);
+                    
+                    measurementData.setPhenotypeId(null);
+                    int insertIndex = getInsertIndex(row.getDataList(), isVariate);
+                    row.getDataList().add(insertIndex, measurementData);
+                }
+                
+                if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
+                    variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true,DUMMY_PROGRAM_UUID));
+                } else {
+                    variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
+                }
+            }
+        }
+    }
+     
      /**
      * Gets the data type.
      *

@@ -22,6 +22,23 @@
                 
                 $scope.deletedEnvironment = 0;
                 
+                $scope.$watch(function(){
+                	return TrialManagerDataService.isGeneratedOwnDesign;
+                }, function(newValue){
+                	if (newValue === true){
+                		// update the measurement tab
+						$scope.reloadMeasurementPage();
+						TrialManagerDataService.clearUnappliedChangesFlag();
+                        TrialManagerDataService.applicationData.unsavedGeneratedDesign = true;
+						
+                        TrialManagerDataService.isGeneratedOwnDesign = false;
+						$scope.updateOccurred = true;
+                	}
+                	
+                }
+                		
+                );
+                
 				$scope.$watch(function(){
 					return TrialManagerDataService.deletedEnvironment;
 				}, function(newValue){

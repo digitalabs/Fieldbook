@@ -258,14 +258,16 @@
 			});
 			
 			$('#field-map td.sub-header-col').on('click',function() {
-				var colElements = getColElements($(this).parent().children().index($(this))-1, $(this).parent().parent().parent().children('tbody').children('tr').length-3),
+				var colElements = getColElements($(this).parent().children().index($(this)), $(this).parent().parent().parent().children('tbody').children('tr')),	
 					allUnusable = checkColumnOrRange(colElements);
+				console.log('Number of Cols: '+colElements.length);
 				setArrayToUnusable(colElements, allUnusable);
 			});
 			
 			$('#field-map td.sub-footer-col').on('click',function() {
-				var colElements = getColElements($(this).parent().children().index($(this))-1, $(this).parent().parent().children('tr').length-3),
-					allUnusable = checkColumnOrRange(colElements);
+				var colElements = getColElements($(this).parent().children().index($(this)), $(this).parent().parent().children('tr')),
+						allUnusable = checkColumnOrRange(colElements);
+				console.log('Number of Cols: '+colElements.length);
 				setArrayToUnusable(colElements, allUnusable);
 			});
 
@@ -295,19 +297,23 @@
 			return plotArray;
 		}
 		
+				
 		/**
 			getColElements() function to grab a single column
 			
 			@param <int> index index of the column
-			@param <int> length size of column
-		*/
-		function getColElements(index,length) {
+			@param <JQuery> JQuery Object of all the rows
+		*/			
+		function getColElements(index, rows) {
 			var plotArray = [];
-			for(var iteration = 0; iteration < length; iteration++) {
-				plotArray.push($('#'+index+'_'+iteration));
+			for(var iteration = 0; iteration < rows.length; iteration++) {
+				if(!$(rows[iteration]).hasClass('machineDirectionRow')) {
+					plotArray.push($($(rows[iteration]).children()[index]));
+				}
 			}
 			return plotArray;
 		}
+		
 		  	
 		/**
 			checkColumnOrRange() returns true if all plots are unavailable
@@ -317,7 +323,7 @@
 		*/
 		function checkColumnOrRange(arrayOfPlots) {
 			for(var index = 0; index < arrayOfPlots.length; index++) {
-				if(!arrayOfPlots[index].hasClass('deleted') && !arrayOfPlots[index].hasClass('planted')) {
+				if(arrayOfPlots[index].hasClass('plot') && !arrayOfPlots[index].hasClass('deleted') && !arrayOfPlots[index].hasClass('planted')) {
 					return false;
 				}
 			}
@@ -347,7 +353,7 @@
 			@param <Element> plot the plot to be set
 		*/
 		function setToUsable(plot) {
-			if(plot.hasClass('deleted')) {
+			if(plot.hasClass('plot') && plot.hasClass('deleted')) {
 				plot.removeClass('deleted');
 				plot.html('');
 			}
@@ -359,7 +365,7 @@
 			@param <Element> plot the plot to be set to Unusable
 		*/
 		function setToUnusable(plot) {
-			if(!plot.hasClass('deleted') && !plot.hasClass('planted')) {
+			if(plot.hasClass('plot') && !plot.hasClass('deleted') && !plot.hasClass('planted')) {
 				plot.addClass('deleted');
 				plot.html('<label class="alert alert-danger">X</label>');
 			}

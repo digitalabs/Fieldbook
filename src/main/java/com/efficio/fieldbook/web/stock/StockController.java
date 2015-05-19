@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.commons.exceptions.StockException;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.service.StockService;
@@ -328,6 +329,36 @@ public class StockController extends AbstractBaseFieldbookController{
 			List<InventoryDetails> inventoryDetailListFromDB) throws MiddlewareQueryException {
 		inventoryDataManager.updateInventory(listId,inventoryDetailListFromDB);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value ="/executeBulkingInstructions/{listId}", method = RequestMethod.POST)
+	public Map<String,Object> executeBulkingInstructions(@PathVariable Integer listId) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		try {
+			GermplasmList germplasmList = this.fieldbookMiddlewareService
+					.getGermplasmListById(listId);
+			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
+			List<InventoryDetails> inventoryDetailsList = 
+					inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			stockService.verifyIfBulkingForStockListCanProceed(listId, inventoryDetailsList);
+			stockService.executeBulkingInstructions(inventoryDetailsList);
+			result.put(HAS_ERROR,false);
+			result.put("stockListId",listId);
+		} catch (StockException e) {
+			LOG.error(e.getMessage(),e);
+			result.put(HAS_ERROR,true);
+			result.put(ERROR_MESSAGE,
+					messageSource.getMessage(e.getMessage(),
+							e.getMessageParameters(), Locale.getDefault()));
+		} catch (Exception e) {
+			LOG.error(e.getMessage(),e);
+			result.put(HAS_ERROR,true);
+			result.put(ERROR_MESSAGE,messageSource.getMessage(
+					"error.bulking.duplicates.and.reciprocals.failed", new Object[]{},Locale.getDefault()));
+		}
+		return result;
+	}
+	
 
     @RequestMapping(value="/ajax/{listId}/{entryIdList}", method = RequestMethod.GET)
     public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form,

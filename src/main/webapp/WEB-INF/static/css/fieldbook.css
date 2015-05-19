@@ -1761,21 +1761,21 @@ td.accepted-value {
     width: 40%;
 }
 
-.plotDupe {
+.plotDupe, table .plotDupe {
 	background-color: #CCCCCC;
 }
 
-.pedigreeDupe {
+.pedigreeDupe, table .pedigreeDupe {
 	background-color: #E5D8DD;
 	color: #84324E;
 }
 
-.plotRecip {
+.plotRecip, table .plotRecip {
 	background-color: #E0E4D7;
 	color: #4C5F07;
 }
 
-.pedigreeRecip {
+.pedigreeRecip, table .pedigreeRecip {
 	background-color: #DCE9F2;
 	color: #6A83C7;
 }

@@ -72,7 +72,14 @@
 								Generate Stock List
 							</a>
 						</li>
-
+						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and !hasCompletedBulking}">
+							<a href=""
+								style="display: none" id="import-stock-list-url"></a> <a href="javascript: void(0)"
+								th:onclick="'javascript: StockIDFunctions.executeBulkingInstructions(\'' + ${listId} + '\');'"
+								id="import-stock-list" th:text="#{bulk.duplicates.and.reciprocals}">
+									Bulk Duplicates and Reciprocals
+							</a>
+						</li>
 						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
 							<a  href="" style="display: none" id="label-printing-url"
 								th:href="@{/LabelPrinting/specifyLabelDetails/stock}"></a>	

@@ -222,7 +222,9 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		} else if(columnHeaderId == TermId.CROSS.getId() ){ 
 				val = inventoryDetails.getParentage();
 		} else if(columnHeaderId == TermId.GID.getId()) {
-				val = inventoryDetails.getGid().toString();
+				val = inventoryDetails.getGid()!=null?
+						inventoryDetails.getGid().toString():
+						"";
 		} else if(columnHeaderId == TermId.SOURCE.getId()) { 
 				val = inventoryDetails.getSource();
 		} else if(columnHeaderId == TermId.DUPLICATE.getId()) { 

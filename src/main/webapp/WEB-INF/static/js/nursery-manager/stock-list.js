@@ -281,7 +281,7 @@ if (typeof StockIDFunctions === 'undefined') {
 				StockIDFunctions.displayStockList(resp.stockListId);
 			}
     	},
-    	
+    
     	getSelectedInventoryEntryIds : function(){
     		'use strict';
     		var ids = [],
@@ -371,6 +371,22 @@ if (typeof StockIDFunctions === 'undefined') {
     			    }
     			});
     		}
+    	},
+    	
+    	executeBulkingInstructions: function(listId) {
+    		$.ajax({
+                url: '/Fieldbook/stock/executeBulkingInstructions/'+listId,
+                type: 'POST',
+                cache: false,
+                success: function (resp) {
+                	if (resp.hasError) {
+        				showErrorMessage('',resp.errorMessage);
+        			} else {
+        				showSuccessfulMessage('','Bulking duplicates and reciprocals completed');
+        				StockIDFunctions.displayStockList(resp.stockListId);
+        			}
+                }
+            });
     	}
     };
 };

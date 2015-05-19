@@ -662,6 +662,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 							germplasmList.getType()
 									.equalsIgnoreCase(GermplasmListType.TRIAL.toString())) ||
 					germplasmList.getType().equalsIgnoreCase(GermplasmListType.CHECK.toString()) ||
+					germplasmList.getType().equalsIgnoreCase(GermplasmListType.CROSSES.toString()) ||
 					germplasmList.getType().equalsIgnoreCase(GermplasmListType.ADVANCED.toString())
 					) {
 				dataResults.put("totalEntries", fieldbookMiddlewareService

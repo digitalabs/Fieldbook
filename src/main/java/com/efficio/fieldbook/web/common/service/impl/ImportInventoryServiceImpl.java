@@ -136,12 +136,12 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 			if(inventoryDetailsFromDB==null) {
 				throw new FieldbookException(messageSource.getMessage(
 						"common.error.import.entry.id.does.not.exist", new Object[]{
-								inventoryDetailsFromImport.getEntryId()},Locale.getDefault()));
+								inventoryDetailsFromImport.getEntryId().toString()},Locale.getDefault()));
 			} else if(!inventoryDetailsFromDB.getGid().equals(inventoryDetailsFromImport.getGid())){
 				throw new FieldbookException(messageSource.getMessage(
 						"common.error.import.gid.does.not.match", new Object[]{
-								inventoryDetailsFromDB.getEntryId(),
-								inventoryDetailsFromDB.getGid(),
+								inventoryDetailsFromDB.getEntryId().toString(),
+								inventoryDetailsFromDB.getGid().toString(),
 								inventoryDetailsFromImport.getEntryId()},
 								Locale.getDefault()));
 			} else {

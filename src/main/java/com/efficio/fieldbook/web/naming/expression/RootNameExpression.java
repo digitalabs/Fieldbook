@@ -9,6 +9,8 @@
 package com.efficio.fieldbook.web.naming.expression;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+
+import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.pojos.Name;
 
 import java.util.List;
@@ -23,11 +25,15 @@ public class RootNameExpression implements Expression {
 			List<Name> names = source.getNames();
 
 			assert names != null && !names.isEmpty();
-
+			//this checks the matching sname type of the method to the names
 			if (snametype != null) {
-				name = findNameUsingSNameType(snametype, names);
+				name = findNameUsingNameType(snametype, names);
 			}
-
+			//this checks the type id equal to 5
+			if (name == null) {
+				name = findNameUsingNameType(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), names);
+			}
+			//this checks the names with nstat == 1
 			if (name == null) {
 				//if no sname type defined or if no name found that matched the snametype
 				name = findPreferredName(names);
@@ -50,9 +56,9 @@ public class RootNameExpression implements Expression {
 		}
 	}
 
-	public Name findNameUsingSNameType(Integer snameType, List<Name> names) {
+	public Name findNameUsingNameType(Integer nameType, List<Name> names) {
 		for (Name name : names) {
-			if (name.getTypeId() != null && name.getTypeId().equals(snameType)) {
+			if (name.getTypeId() != null && name.getTypeId().equals(nameType)) {
 				return name;
 			}
 		}
@@ -68,7 +74,7 @@ public class RootNameExpression implements Expression {
 		}
 
 		return null;
-	}
+	}	
 
 	@Override
 	public String getExpressionKey() {

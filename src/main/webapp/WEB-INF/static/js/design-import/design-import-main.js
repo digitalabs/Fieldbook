@@ -2,18 +2,23 @@
     var app =  angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource','ui.sortable']);
 
     app.controller('designImportCtrl', ['$scope','DesignMappingService','ImportDesign','$modal','Messages',function(scope,DesignMappingService,ImportDesign,$modal,Messages){
-        scope.Messages = Messages;
         // we can retrieve this from a service
         scope.data = DesignMappingService.data;
         scope.validateAndSend = function() {
-            var result = DesignMappingService.validateMapping();
+            var onValidate = DesignMappingService.validateMapping();
 
-            if (result.result) {
-                // send mapped result data to server
+            onValidate.then(function(result) {
+                if (!result.success) {
+                    createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER,result.error.join('<br/>'));
+                    return;
+                }
 
-                // proceed next popup
+                if (result.warning) {
+                    showAlertMessage('', result.warning);
+                }
+
                 ImportDesign.showReviewPopup();
-            }
+            });
 
         };
 
@@ -80,7 +85,7 @@
 
     }]);
 
-    app.directive('mappingGroup', ['$parse',function ($parse) {
+    app.directive('mappingGroup', ['Messages',function (Messages) {
         return {
             restrict: 'E',
             scope: {
@@ -90,6 +95,7 @@
             templateUrl: '/Fieldbook/static/angular-templates/designImport/mappingGroup.html',
             controller: ['$scope', '$attrs', function ($scope, $attrs) {
                 // data structure
+                $scope.Messages = Messages;
                 $scope.variableType = $attrs.variableType;
 
                 $scope.sortableOptions = {
@@ -215,13 +221,28 @@
             };
         }]);
 
-    app.service('DesignMappingService',['$http','$q',function($http,$q) {
+    app.service('DesignMappingService',['$http','$q','_',function($http,$q,_) {
 
             function validateMapping() {
-                return {
-                    result: true,
-                    message: 'all clear'
-                };
+
+                var postData = angular.copy(service.data);
+                delete postData.unmappedHeaders;
+
+                // transform postData into simpler list of standard variable ids
+                // output should be in the format
+                // result : { mappedDesignFactors : [ { name : header_name, id : std_var_id } ] }
+
+                _.forIn(postData,function(value,key) {
+                    for (var i = 0; i < value.length; i++) {
+                        value[i].id = value[i].variable.id;
+                        value[i] = _.pick(value[i],['id','name','columnIndex']);
+                    }
+                });
+
+                return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping',postData).then(function(result) {
+                    return result.data;
+                });
+
             }
 
             var service = {

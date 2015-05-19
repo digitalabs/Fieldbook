@@ -15,6 +15,7 @@ import com.efficio.fieldbook.web.common.service.DesignImportService;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -25,10 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -173,10 +171,41 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/validateAndSaveNewMapping", method = RequestMethod.POST)
-	public Map<String,Object> validateAndSaveNewMapping() {
+	public Map<String,Object> validateAndSaveNewMapping(@RequestBody Map<String,List<DesignHeaderItem>> mappedHeaders) {
 
 		Map<String,Object> resultsMap = new HashMap<>();
-		// do this after
+		Map<PhenotypicType,List<DesignHeaderItem>> newMappingResults = new HashMap<>();
+
+		try {
+			for (Map.Entry<String,List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
+				for (DesignHeaderItem mappedHeader : item.getValue()) {
+
+					StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(
+							mappedHeader.getId());
+
+					mappedHeader.setVariable(stdVar);
+				}
+
+				if ("mappedEnvironmentalFactors".equals(item.getKey())) {
+					newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
+				} else if ("mappedDesignFactors".equals(item.getKey())) {
+					newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
+				} else if ("mappedGermplasmFactors".equals(item.getKey())) {
+					newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
+				} else if ("mappedTraits".equals(item.getKey())) {
+					newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
+				}
+			}
+
+			userSelection.getDesignImportData().setMappedHeaders(newMappingResults);
+
+		} catch (MiddlewareQueryException e) {
+			resultsMap.put("success", Boolean.FALSE);
+			resultsMap.put("error", e.getMessage());
+
+			return resultsMap;
+		}
+
 		try {
 			designImportService.validateDesignData(userSelection.getDesignImportData());
 
@@ -184,7 +213,10 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 				resultsMap.put("warning", messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH));
 			}
 
+			resultsMap.put("success", Boolean.TRUE);
+
 		} catch (DesignValidationException e) {
+			resultsMap.put("success", Boolean.FALSE);
 			resultsMap.put("error",e.getMessage());
 		}
 
@@ -209,10 +241,11 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			measurementVariables = designImportService.getDesignMeasurementVariables(workbook, designImportData);
 			
 			workbook.setObservations(measurementRows);
-			workbook.setMeasurementDatasetVariables(new ArrayList<MeasurementVariable>(measurementVariables));
+			workbook.setMeasurementDatasetVariables(
+					new ArrayList<MeasurementVariable>(measurementVariables));
 			
 			resultsMap.put("isSuccess", 1);
-			
+
 		} catch (Exception e) {
 			
 			LOG.error(e.getMessage(), e);

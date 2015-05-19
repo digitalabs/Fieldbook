@@ -20,6 +20,7 @@ import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -52,6 +53,9 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private PedigreeService pedigreeService;
+
+	@Resource
+	private MessageSource messageSource;
 	
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException{
@@ -65,6 +69,13 @@ public class CrossingServiceImpl implements CrossingService {
 		
 		applyCrossNameSettingToImportedCrosses(crossNameSetting, importedCrossesList.getImportedCrosses());
 		Map<Germplasm, Name> germplasmToBeSaved = generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), userId, importedCrossesList.hasPlotDuplicate());
+
+		boolean isValid = verifyGermplasmMethodPresent(germplasmToBeSaved);
+
+		if (! isValid) {
+			throw new MiddlewareQueryException(messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {}, Locale.getDefault()));
+		}
+
 		List<Integer> savedGermplasmIds = saveGermplasm(germplasmToBeSaved);
 		
 		Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
@@ -79,6 +90,16 @@ public class CrossingServiceImpl implements CrossingService {
 			cross.setCross(pedigreeService.getCrossExpansion(newGid, this.crossExpansionProperties));
 		}
 		
+	}
+
+	protected boolean verifyGermplasmMethodPresent(Map<Germplasm, Name> germplasmNameMap) {
+		for (Germplasm germplasm : germplasmNameMap.keySet()) {
+			if (germplasm.getMethodId() == null || germplasm.getMethodId() == 0) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 	
 	protected void applyCrossNameSettingToImportedCrosses(CrossNameSetting setting, List<ImportedCrosses> importedCrosses)
@@ -133,7 +154,8 @@ public class CrossingServiceImpl implements CrossingService {
             germplasm.setMethodId(0);
             
             Method breedingMethod = germplasmDataManager.getMethodByCode(cross.getRawBreedingMethod());
-            if (breedingMethod.getMid()!= null && breedingMethod.getMid() != 0){
+
+			if (breedingMethod != null && breedingMethod.getMid()!= null && breedingMethod.getMid() != 0){
             	germplasm.setMethodId(breedingMethod.getMid());
             }
 

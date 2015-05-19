@@ -944,7 +944,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 	 * @param {string} parentDiv parentdiv of that contains the table
 	 * @param {dataList} json representation of the data to be displayed
 	 */
-	var dataTableConstructor = function FinalAdvancedGermplasmListDataTable(tableIdentifier, parentDiv, dataList) {
+	var dataTableConstructor = function FinalAdvancedGermplasmListDataTable(tableIdentifier, parentDiv, dataList, tableAutoWidth) {
 		'use strict';
 		
 		var columns = [],
@@ -986,6 +986,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 			}
 		});
 		this.germplasmDataTable = $(tableIdentifier).dataTable({
+			autoWidth: tableAutoWidth,
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,

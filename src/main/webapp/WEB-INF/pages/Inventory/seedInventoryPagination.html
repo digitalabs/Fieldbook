@@ -88,7 +88,7 @@
                 }
                 
                 var sectionContainerDiv = 'stock-content-pane'+listDivIdentifier;
-                
+
         		$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllStock').on('change', function(event){
         			//select all the checkbox in the section container div										
        				//needed set time out since chrme is not able to rnder properly the checkbox if its checked or not
@@ -155,8 +155,8 @@
         		
         		});
             	
-          		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null);
-        		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);
+          		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null, false);
+          		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);
         	}	
         };
     

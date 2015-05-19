@@ -231,6 +231,7 @@
                     unsavedGeneratedDesign : false,
                     unsavedTraitsAvailable : false,
                     germplasmListCleared: false,
+                    isGeneratedOwnDesign : false,
                     germplasmListSelected : GERMPLASM_LIST_SIZE > 0
                 },
 
@@ -302,9 +303,6 @@
                 },
 
                 deletedEnvironment : 0,
-                
-                isGeneratedOwnDesign : false,
-
                 indicateUnappliedChangesAvailable: function () {
                     if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count != 0) {
                         service.applicationData.unappliedChangesAvailable = true;

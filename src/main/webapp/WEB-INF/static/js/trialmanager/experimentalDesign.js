@@ -12,9 +12,8 @@
         .controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService',
             'EXP_DESIGN_MSGS', '_',function ($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, EXP_DESIGN_MSGS) {
 
-        		$scope.isGeneratedOwnDesign = function(){
-        			return TrialManagerDataService.isGeneratedOwnDesign;
-        		};
+        		$scope.applicationData = TrialManagerDataService.applicationData;
+        		
                 $scope.Math = Math;
                 $scope.designTypes = [
                     {
@@ -30,6 +29,10 @@
                         id: 2,
                         name: 'Row-and-Column', params: 'rowAndColumnParams.html',
                         withResolvable: true
+                    },
+                    {
+                        id: 3,
+                        name: 'Other Design', params: null
                     }
                 ];
 
@@ -47,8 +50,13 @@
                     if ($scope.data.designType != null){
                     	$scope.currentDesignType = $scope.designTypes[$scope.data.designType];
                         $scope.currentDesignTypeId = $scope.currentDesignType.id;
-                        $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
                         
+                        if ($scope.currentDesignType.params !== null){
+                        	$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+                        }else{
+                        	$scope.currentParams = null;
+                        }
+                      
                         if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
                             $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
                         }
@@ -158,7 +166,9 @@
                         data : function() {
                             var data = [];
                             if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-                                data.push($scope.designTypes[0]);
+                            	if ($scope.designTypes[0].id !== 3){
+                            		data.push($scope.designTypes[0]);
+                            	}
                             } else {
                                 data = $scope.designTypes;
                             }

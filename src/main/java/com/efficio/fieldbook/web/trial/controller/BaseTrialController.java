@@ -160,6 +160,8 @@ public abstract class BaseTrialController extends SettingsController {
                 } else if (TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId() == designTypeTermID) {
                     data.setDesignType(2);
                     data.setUseLatenized(false);
+                } else if (TermId.OTHER_DESIGN.getId() == designTypeTermID) {
+                    data.setDesignType(3);
                 }
             }
 

@@ -14,7 +14,7 @@ var ImportDesign = {
 			
 			angularElem.scope().$apply(function(){
 				var service = angularElem.injector().get('TrialManagerDataService');
-				service.isGeneratedOwnDesign = true;
+				service.applicationData.isGeneratedOwnDesign = true;
 			});
 		},
 		

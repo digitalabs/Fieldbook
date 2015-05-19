@@ -157,7 +157,6 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 			InventoryDetails inventoryDetailsFromImport,
 			GermplasmListType germplasmListType) {
 		if(germplasmListType == GermplasmListType.CROSSES) {
-			inventoryDetailsFromDB.setDuplicate(inventoryDetailsFromImport.getDuplicate());
 			inventoryDetailsFromDB.setBulkWith(inventoryDetailsFromImport.getBulkWith());
 			inventoryDetailsFromDB.setBulkCompl(inventoryDetailsFromImport.getBulkCompl());
 		}

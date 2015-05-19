@@ -111,7 +111,7 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		Name resultName = resultIG.getNames().get(0);
 		Assert.assertNull(resultName.getNid());
 		Assert.assertEquals(new Integer(133), resultName.getGermplasmId());
-		Assert.assertEquals(new Integer(5), resultName.getTypeId());
+		Assert.assertEquals(new Integer(6), resultName.getTypeId());
 		Assert.assertEquals(new Integer(1), resultName.getNstat());
 		Assert.assertEquals("BARRA DE ORO DULCE-B", resultName.getNval());
 		

@@ -7,7 +7,7 @@
                     <h4 class="modal-title" th:text="#{design.import.modal.title}">Import Experimental Design</h4>
                 </div>
                 <section class="modal-body" style="height:450pt; overflow-y: auto">
-                    <div class="row">
+                    <div class="row" ng-show="enableDesignSelection">
                         <div class="col-md-7">
                             <form class="form-horizontal">
                                 <div class="form-group">
@@ -111,7 +111,8 @@
                     .constant('Messages',{
                         DESIGN_MAPPING_ERROR_HEADER : /*[[#{design.import.mapping.error.header}]]*/ 'DESIGN_MAPPING_ERROR_HEADER',
                         REQUIRED : /*[[#{common.form.required.text}]]*/ 'Required',
-                        OWN_DESIGN_SELECT_WARNING : /*[[#{design.import.own.design.select.warning}]]*/ 'OWN_DESIGN_SELECT_WARNING'
+                        OWN_DESIGN_SELECT_WARNING : /*[[#{design.import.own.design.select.warning}]]*/ 'OWN_DESIGN_SELECT_WARNING',
+                        DESIGN_IMPORT_MISSING_MAPPING : /*[[#{design.import.missing.mapping}]]*/ ''
                     });
         })();
 

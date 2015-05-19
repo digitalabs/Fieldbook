@@ -9,7 +9,7 @@
 
             onValidate.then(function(result) {
                 if (!result.success) {
-                    createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER,result.error.join('<br/>'));
+                    createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER,result.error);
                     return;
                 }
 
@@ -18,6 +18,10 @@
                 }
 
                 ImportDesign.showReviewPopup();
+            },function (failResult) {
+                var msg= Messages.DESIGN_IMPORT_MISSING_MAPPING.replace('{0}',failResult);
+
+                createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER,msg);
             });
 
         };
@@ -62,7 +66,6 @@
 
         scope.designType = '';
         scope.onDesignTypeSelect = function() {
-          console.log(scope.designType);
 
           if (scope.designType === '3') {
               // warning popup here
@@ -113,7 +116,8 @@
                             // note ui.item.sortable.cancel() will interrupt the dragging
 
                             if (!exists) {
-                                itemModel.variable = null;
+                                delete itemModel.variable;
+                                delete itemModel.required;
                             }
 
                         }
@@ -148,7 +152,6 @@
                 },
 
                 link: function (scope, elem, attrs) {
-                    console.log(scope.modeldata);
                     scope.processData = function (data) {
                         scope.$apply(function () {
                             var out = {};
@@ -161,8 +164,6 @@
                                 // if retrieved data is an array of values
                                 if (data.length && data.length > 0) {
                                     $.each(data, function (key, value) {
-                                        //scope.modeldata.push(value.variable.cvTermId, TrialManagerDataService.transformViewSettingsVariable(value));
-                                        //out[value.variable.cvTermId] = value;
                                         scope.callback({ result: { id: value.variable.cvTermId, variable: value.variable} });
 
                                         scope.modeldata.id = value.variable.cvTermId;
@@ -227,6 +228,28 @@
 
                 var postData = angular.copy(service.data);
                 delete postData.unmappedHeaders;
+                var allMapped = true;
+                var deferred = $q.defer();
+
+                // lets grab all variables that are in groups but does not have mapped variables
+                _.forEach(postData,function(value,key) {
+                    var results = _.filter(value,function(item,key2) {
+                        return !_.has(item,'variable');
+                    });
+
+                    if (results.length > 0) {
+                        allMapped = false;
+
+                        deferred.reject(results[0].name);
+
+                        return false;
+                    }
+                });
+
+
+                if (!allMapped) {
+                    return deferred.promise;
+                }
 
                 // transform postData into simpler list of standard variable ids
                 // output should be in the format
@@ -234,8 +257,19 @@
 
                 _.forIn(postData,function(value,key) {
                     for (var i = 0; i < value.length; i++) {
-                        value[i].id = value[i].variable.id;
-                        value[i] = _.pick(value[i],['id','name','columnIndex']);
+
+                        if (_.has(value[i],'variable')) {
+                            if (_.has(value[i].variable,'id') && value[i].variable.id) {
+                                value[i].id = value[i].variable.id;
+                            } else if (_.has(value[i].variable,'cvTermId') && value[i].variable.cvTermId) {
+                                value[i].id = value[i].variable.cvTermId;
+                            } else {
+                                value[i].id = 0;
+                            }
+
+                            value[i] = _.pick(value[i],['id','name','columnIndex']);
+                        }
+
                     }
                 });
 

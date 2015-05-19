@@ -1793,16 +1793,17 @@ input.review-select-all{
     width: 90%;
 }
 
-.mapping-group .list-group {
+.mapping-group .list-group, .unmapped.list-group {
     min-height: 70pt;
 }
 
-.mapping-group .list-group-item {
+.mapping-group .list-group-item .unmapped .list-group-item {
     cursor: pointer;
 }
 
 
-.mapping-group .list-group-item:hover {
+.mapping-group .list-group-item:hover,
+.unmapped .list-group-item:hover {
     cursor: pointer;
     background: #BED6B2;
 }

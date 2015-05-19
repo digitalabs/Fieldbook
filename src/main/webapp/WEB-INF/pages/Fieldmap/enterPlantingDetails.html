@@ -250,6 +250,24 @@
 				}
 			}
 			);
+			
+			$('#field-map td.sub-header-row').on('click',function() {
+				var rowElements = getRowElements($(this).parent().children('td.plot')),
+					allUnusable = checkColumnOrRange(rowElements);
+				setArrayToUnusable(rowElements, allUnusable);
+			});
+			
+			$('#field-map td.sub-header-col').on('click',function() {
+				var colElements = getColElements($(this).parent().children().index($(this))-1, $(this).parent().parent().parent().children('tbody').children('tr').length-3),
+					allUnusable = checkColumnOrRange(colElements);
+				setArrayToUnusable(colElements, allUnusable);
+			});
+			
+			$('#field-map td.sub-footer-col').on('click',function() {
+				var colElements = getColElements($(this).parent().children().index($(this))-1, $(this).parent().parent().children('tr').length-3),
+					allUnusable = checkColumnOrRange(colElements);
+				setArrayToUnusable(colElements, allUnusable);
+			});
 
 			if ($("#stepValue").val() == '2') {
 
@@ -263,73 +281,90 @@
 				})
 			}
 		});
-		/*
-		 * Function to cancel(x) out an entire range when making a fieldmap
-		 * Author: Zack Miller(zrm22@cornell.edu)
-		 * i is the range number
-		 * length is the number of columns
-		 */
-		function cancelRange(i,length) {
-			var allClicked = true;
-			//Check to see if the range is x'ed out
-			for(var j = 0; j<length;j++) {
-				if($("#"+j+"_"+i).hasClass('deleted') != true) {
-					allClicked = false;
-				}
-			}
-			//If it is add x's to everything
-			if(allClicked == false) {
-				for(var j = 0; j<length; j++) {
-					if($("#"+j+"_"+i).hasClass('deleted') != true) {
-						$("#"+j+"_"+i).addClass('deleted');
-						$("#"+j+"_"+i).html("<label class='alert alert-danger'>X</label>");
-					}				
-				}
-			}
-			//Otherwise remove all x's
-			else {
-				for(var j = 0; j<length; j++) {
-					if($("#"+j+"_"+i).hasClass('deleted') == true) {
-						$("#"+j+"_"+i).removeClass('deleted');
-						$("#"+j+"_"+i).html('');
-					}				
-				}
-			}
+		
+		/**
+			getRowElements() function to runwrap JQuery array to JS array to avoid repeat lookups
 			
+			@param <Array> rowArray JQuery object
+		*/
+		function getRowElements(rowArray) {
+			var plotArray = [];
+			for(var iteration = 0; iteration < rowArray.length; iteration++) {
+				plotArray.push($(rowArray[iteration]));
+			}
+			return plotArray;
 		}
-		 /*
-			 * Function to cancel(x) out an entire column/row when making a fieldmap
-			 * Author: Zack Miller(zrm22@cornell.edu)
-			 * j is the column number
-			 * length is the number of ranges
-			 */
-		function cancelColumn(j,length) {
-			var allClicked = true;
-			//Check to see if all columns are x'ed
-			for(var i = 0; i<length;i++) {
-				if($("#"+j+"_"+i).hasClass('deleted') != true) {
-					allClicked = false;
+		
+		/**
+			getColElements() function to grab a single column
+			
+			@param <int> index index of the column
+			@param <int> length size of column
+		*/
+		function getColElements(index,length) {
+			var plotArray = [];
+			for(var iteration = 0; iteration < length; iteration++) {
+				plotArray.push($('#'+index+'_'+iteration));
+			}
+			return plotArray;
+		}
+		  	
+		/**
+			checkColumnOrRange() returns true if all plots are unavailable
+			
+			@param <Array> arrayOfPlots
+			@return <boolean> true means all plots are unavailable, false means at least one is available
+		*/
+		function checkColumnOrRange(arrayOfPlots) {
+			for(var index = 0; index < arrayOfPlots.length; index++) {
+				if(!arrayOfPlots[index].hasClass('deleted') && !arrayOfPlots[index].hasClass('planted')) {
+					return false;
 				}
 			}
-			//If one or more are not, x all ranges in column
-			if(allClicked == false) {
-				for(var i = 0; i<length; i++) {
-					if($("#"+j+"_"+i).hasClass('deleted') != true) {
-						$("#"+j+"_"+i).addClass('deleted');
-						$("#"+j+"_"+i).html("<label class='alert alert-danger'>X</label>");
-					}				
+			return true;
+		}
+		
+		/**
+			setArrayToUnusable() function to set each plot to unusable or usable
+			
+			@param <Array> plotArray Array of Plots
+			@param <boolean> allUnusable if true, mark all plots to useable, if false mark them to unusable
+		*/
+		function setArrayToUnusable(plotArray, allUnusable) {
+			for(var index = 0; index < plotArray.length; index++) {
+				if(allUnusable) {
+					setToUsable(plotArray[index]);
 				}
-			}
-			//Else Remove all x's in column
-			else {
-				for(var i = 0; i<length; i++) {
-					if($("#"+j+"_"+i).hasClass('deleted') == true) {
-						$("#"+j+"_"+i).removeClass('deleted');
-						$("#"+j+"_"+i).html('');
-					}				
+				else {
+					setToUnusable(plotArray[index]);
 				}
 			}
 		}
+			
+		/**
+			setToUsable() function to set a plot usable
+			
+			@param <Element> plot the plot to be set
+		*/
+		function setToUsable(plot) {
+			if(plot.hasClass('deleted')) {
+				plot.removeClass('deleted');
+				plot.html('');
+			}
+		}
+			
+		/**
+			setToUnusable() function to set a plot to be unusable
+			
+			@param <Element> plot the plot to be set to Unusable
+		*/
+		function setToUnusable(plot) {
+			if(!plot.hasClass('deleted') && !plot.hasClass('planted')) {
+				plot.addClass('deleted');
+				plot.html('<label class="alert alert-danger">X</label>');
+			}
+		}
+		
 	//]]>
 </script>
 </div>

@@ -193,8 +193,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	public Boolean postSelectedNurseryType(@RequestBody String nurseryTypeId) {
 		if (StringUtils.isNumeric(nurseryTypeId)) {
 			Integer value = Integer.valueOf(nurseryTypeId);
-
-			//userSelection.setNurseryTypeForDesign(nurseryTypeId);
+			userSelection.setNurseryTypeForDesign(value);
 		}
 
 		return true;

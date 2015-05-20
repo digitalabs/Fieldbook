@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.common.bean;
 
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -147,6 +148,8 @@ public class UserSelection implements Serializable {
     
     /** The current page. */
     private int currentPage;
+    
+    private Integer nurseryTypeId;
     
     /** The measurement row list. */
     private List<MeasurementRow> measurementRowList;
@@ -941,5 +944,15 @@ public class UserSelection implements Serializable {
 
 	public void setDesignImportData(DesignImportData designImportData) {
 		this.designImportData = designImportData;
+	}
+	
+	public Integer getNurseryTypeForDesign() {
+		return this.nurseryTypeId;
+		
+	}
+
+	public void setNurseryTypeForDesign(Integer nurseryTypeId) {
+		this.nurseryTypeId = nurseryTypeId;
+		
 	}
 }

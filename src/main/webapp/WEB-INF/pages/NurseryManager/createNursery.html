@@ -16,6 +16,7 @@
 <div class="row">
 	<form id="createNurseryMainForm" role="form-horizontal" action="#"
 		  th:object="${createNurseryForm}" enctype="multipart/form-data">
+		  <input type="hidden" th:field="*{experimentTypeId}" />
 		<div class="row add-top-bottom-padding">
 			<div class="col-md-12">
 				<div class="pull-left">
@@ -332,6 +333,14 @@
 			$('.study-level-method-checkbox').click();
 		}
 		$('body').data('doAutoSave', '0');
+		
+		if ($('#experimentTypeId').val() !== ''){
+			$('#experimentalDesignExists').show();
+			$('#experimentalDesignNotExists').hide();
+		}else{
+			$('#experimentalDesignExists').hide();
+			$('#experimentalDesignNotExists').show();
+		}
 	});
 	//]]>
 </script>

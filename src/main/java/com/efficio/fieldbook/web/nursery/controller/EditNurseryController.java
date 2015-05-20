@@ -26,12 +26,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.ContextUtil;
+import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -317,6 +319,8 @@ public class EditNurseryController extends SettingsController {
     @RequestMapping(method = RequestMethod.POST)
     public Map<String, String> submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
         //get the name of the nursery
+    	
+    
         String name = null;
         for (SettingDetail nvar : form.getBasicDetails()) {
             if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
@@ -330,13 +334,16 @@ public class EditNurseryController extends SettingsController {
             studyLevelVariables.addAll(form.getStudyLevelVariables());
         }
         studyLevelVariables.addAll(form.getBasicDetails());
-
+ 
         List<SettingDetail> studyLevelVariablesSession = userSelection.getBasicDetails();
         userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
         if (userSelection.getRemovedConditions() != null) {
             studyLevelVariables.addAll(userSelection.getRemovedConditions());
             userSelection.getStudyLevelConditions().addAll(userSelection.getRemovedConditions());
         }
+        
+        addNurseryTypeFromDesignImport(studyLevelVariables);
+        addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
 
         //add hidden variables like OCC in factors list
         if (userSelection.getRemovedFactors() != null) {
@@ -433,6 +440,64 @@ public class EditNurseryController extends SettingsController {
         }
 
     }
+    
+    private void addNurseryTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
+		
+    	SettingDetail nurseryTypeSettingDetail = new SettingDetail();
+    	SettingVariable nurseryTypeSettingVariable = new SettingVariable();
+    	
+    	Integer nurseryTypeValue = userSelection.getNurseryTypeForDesign();
+    	
+    	nurseryTypeSettingDetail.setValue(String.valueOf(nurseryTypeValue));
+    	nurseryTypeSettingVariable.setCvTermId(TermId.NURSERY_TYPE.getId());
+    	nurseryTypeSettingVariable.setName("NURSERY_TYPE");
+    	nurseryTypeSettingVariable.setOperation(Operation.ADD);
+    	nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
+    	
+    	if (userSelection.getNurseryTypeForDesign() != null && nurseryTypeValue != null){
+   
+    		for (SettingDetail settingDetail : studyLevelVariables){
+        		if (settingDetail.getVariable().getCvTermId() == TermId.NURSERY_TYPE.getId()){
+        			settingDetail.setValue(String.valueOf(nurseryTypeValue));
+        			settingDetail.getVariable().setName("NURSERY_TYPE");
+        			userSelection.setNurseryTypeForDesign(null);
+        			return;
+        		}
+        	}
+    		
+        	studyLevelVariables.add(nurseryTypeSettingDetail);
+    	}
+    	
+    	userSelection.setNurseryTypeForDesign(null);
+    	
+	}
+    
+    private void addExperimentalDesignTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
+		
+    	SettingDetail nurseryTypeSettingDetail = new SettingDetail();
+    	SettingVariable nurseryTypeSettingVariable = new SettingVariable();
+    	
+    	
+    	nurseryTypeSettingDetail.setValue(String.valueOf(TermId.OTHER_DESIGN.getId()));
+    	nurseryTypeSettingVariable.setCvTermId(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+    	nurseryTypeSettingVariable.setName("EXPERIMENT_DESIGN");
+    	nurseryTypeSettingVariable.setOperation(Operation.ADD);
+    	nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
+    	
+    	if (userSelection.getExpDesignVariables() != null && !userSelection.getExpDesignVariables().isEmpty()){
+   
+    		for (SettingDetail settingDetail : studyLevelVariables){
+        		if (settingDetail.getVariable().getCvTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()){
+        			settingDetail.setValue(String.valueOf(TermId.OTHER_DESIGN.getId()));
+        			settingDetail.getVariable().setName("EXPERIMENT_DESIGN");
+        			return;
+        		}
+        	}
+
+        	studyLevelVariables.add(nurseryTypeSettingDetail);
+    	}
+    	
+	}
 
     private void setTrialObservationsFromVariables(Workbook workbook) {
         if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() &&
@@ -468,6 +533,12 @@ public class EditNurseryController extends SettingsController {
      * @param form the new form static data
      */
     protected void setFormStaticData(CreateNurseryForm form, String contextParams, Workbook workbook) {
+    	
+    	ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
+    	if (expDesignVar.getExperimentalDesign() != null){
+    		form.setExperimentTypeId(expDesignVar.getExperimentalDesign().getValue());
+    	}
+    	
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
         form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedingMethodsUrl());

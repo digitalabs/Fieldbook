@@ -20,6 +20,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.*;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -50,6 +51,7 @@ import org.springframework.web.util.WebUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.util.*;
 /**
@@ -278,7 +280,11 @@ public class CreateNurseryController extends SettingsController {
     	if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
     		studyLevelVariables.addAll(form.getStudyLevelVariables());
     	}
+    	
     	studyLevelVariables.addAll(form.getBasicDetails());
+    	
+    	addNurseryTypeFromDesignImport(studyLevelVariables);
+    	addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
     	 
     	List<SettingDetail> studyLevelVariablesSession = userSelection.getBasicDetails();
     	userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
@@ -305,7 +311,65 @@ public class CreateNurseryController extends SettingsController {
     }
             
     
-    /**
+    private void addNurseryTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
+		
+    	SettingDetail nurseryTypeSettingDetail = new SettingDetail();
+    	SettingVariable nurseryTypeSettingVariable = new SettingVariable();
+    	
+    	Integer nurseryTypeValue = userSelection.getNurseryTypeForDesign();
+    	
+    	nurseryTypeSettingDetail.setValue(String.valueOf(nurseryTypeValue));
+    	nurseryTypeSettingVariable.setCvTermId(TermId.NURSERY_TYPE.getId());
+    	nurseryTypeSettingVariable.setName("NURSERY_TYPE");
+    	nurseryTypeSettingVariable.setOperation(Operation.ADD);
+    	nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
+    	
+    	if (userSelection.getNurseryTypeForDesign() != null && nurseryTypeValue != null){
+   
+    		for (SettingDetail settingDetail : studyLevelVariables){
+        		if (settingDetail.getVariable().getCvTermId() == TermId.NURSERY_TYPE.getId()){
+        			settingDetail.setValue(String.valueOf(nurseryTypeValue));
+        			settingDetail.getVariable().setName("NURSERY_TYPE");
+        			userSelection.setNurseryTypeForDesign(null);
+        			return;
+        		}
+        	}
+    		
+        	studyLevelVariables.add(nurseryTypeSettingDetail);
+    	}
+    	
+    	userSelection.setNurseryTypeForDesign(null);
+    	
+	}
+    
+    private void addExperimentalDesignTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
+		
+    	SettingDetail nurseryTypeSettingDetail = new SettingDetail();
+    	SettingVariable nurseryTypeSettingVariable = new SettingVariable();
+    	
+    	
+    	nurseryTypeSettingDetail.setValue(String.valueOf(TermId.OTHER_DESIGN.getId()));
+    	nurseryTypeSettingVariable.setCvTermId(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+    	nurseryTypeSettingVariable.setName("EXPERIMENTAL_DESIGN");
+    	nurseryTypeSettingVariable.setOperation(Operation.ADD);
+    	nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
+    	
+    	if (userSelection.getExpDesignVariables() != null && !userSelection.getExpDesignVariables().isEmpty()){
+   
+    		for (SettingDetail settingDetail : studyLevelVariables){
+        		if (settingDetail.getVariable().getCvTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()){
+        			settingDetail.setValue(String.valueOf(TermId.OTHER_DESIGN.getId()));
+        			settingDetail.getVariable().setName("EXPERIMENTAL_DESIGN");
+        			return;
+        		}
+        	}
+
+        	studyLevelVariables.add(nurseryTypeSettingDetail);
+    	}
+    	
+	}
+
+	/**
      * Sets the form static data.
      *
      * @param form the new form static data

@@ -138,7 +138,14 @@ var ImportDesign = {
 								
 								ImportDesign.reloadMeasurements();
 								
-								showSuccessfulMessage('', 'The trial design was imported successfully. Please review the Measurements tab.');
+								if (isNursery()){
+									showSuccessfulMessage('', 'The nursery design was imported successfully. Please save your nursery before proceeding to Measurements tab.');
+									$('#experimentalDesignExists').show();
+									$('#experimentalDesignNotExists').hide();
+								}else{
+									showSuccessfulMessage('', 'The trial design was imported successfully. Please review the Measurements tab.');
+								}
+								
 								
 							}else{
 								createErrorNotification(designImportErrorHeader,resp.error.join('<br/>'));

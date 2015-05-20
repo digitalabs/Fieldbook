@@ -232,6 +232,9 @@
 	<li id="nursery-germplasm-list-li">
 		<a href="#nursery-germplasm-list" role="tab" class="germplasm" data-toggle="tab" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
 	</li>
+	<li id="nursery-experimental-design-li"><a role="tab"
+		data-toggle="tab" href="#nursery-experimental-design" th:text="#{nursery.create.nursery.experimental.design.tab}">.Experimental Design</a>
+	</li>
 	<li id="nursery-measurements-li">
 		<a href="#nursery-measurements" role="tab" class="measurements" data-toggle="tab" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
 	</li>
@@ -259,6 +262,12 @@
 	<div id="nursery-germplasm-list" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
 			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList" data-replace="0"></div>
+		</div>
+	</div>
+	<div id="nursery-experimental-design" class="tab-pane info">
+		<div class="col-xs-12 col-md-12">
+			<div id="chooseExperimentalDesign" th:include="/NurseryManager/experimentalDesign">
+			</div>
 		</div>
 	</div>
 	<div id="nursery-measurements" class="tab-pane info">
@@ -395,6 +404,7 @@
 
 <!-- Modal Dialog for Import Design option -->
 <div th:include="/DesignImport/importFile"></div>
+
 <div th:include="/DesignImport/reviewDetails"></div>
 
 <div th:include="/NurseryManager/includes/variableSelectionModal"></div>

@@ -1,7 +1,11 @@
 var ImportDesign = {
 
 		hasGermplasmListSelected : function(){
-			return ImportDesign.getTrialManagerDataService().applicationData.germplasmListSelected;
+			if (isNursery()){
+				return ($('#numberOfEntries').text() !== '');
+			}else{
+				return angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.germplasmListSelected;
+			}
 		},
 
 		getTrialManagerDataService : function() {

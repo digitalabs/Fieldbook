@@ -24,7 +24,6 @@ public class RootNameExpression implements Expression {
 			Name name = null;
 			List<Name> names = source.getNames();
 
-			assert names != null && !names.isEmpty();
 			//this checks the matching sname type of the method to the names
 			if (snametype != null) {
 				name = findNameUsingNameType(snametype, names);
@@ -38,14 +37,20 @@ public class RootNameExpression implements Expression {
 				//if no sname type defined or if no name found that matched the snametype
 				name = findPreferredName(names);
 			}
-
-			if (name == null) {
-				continue;
+			String nameString = "";
+			//the default is type id 5
+			Integer typeId = GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID();
+			//if the snametype for the method is not null, we use the method sname type
+			if(snametype != null){
+				typeId = snametype;
 			}
-
-			String nameString = name.getNval();
-			source.setRootNameType(name.getTypeId());
-
+			// if we found a matching name, we use the name type id instead	
+			if (name != null) {
+				nameString = name.getNval();
+				typeId = name.getTypeId();
+			}
+			
+			source.setRootNameType(typeId);
 			source.setRootName(nameString);
 
 			if (!checkNameIfEnclosed(nameString)) {

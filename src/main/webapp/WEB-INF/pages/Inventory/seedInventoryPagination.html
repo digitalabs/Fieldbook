@@ -115,7 +115,7 @@
         					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
         					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected) input.stockListEntryId:checked').parent().parent().addClass('selected');
         					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.stockListEntryId:not(:checked)').parent().parent().removeClass('selected');
-        				}else{
+        				} else {
         					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.stockListEntryId').prop('checked', false);
         					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').removeClass('manual-selected');
         					if($(row).hasClass('selected')){
@@ -153,6 +153,23 @@
         				$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('tr.primaryRow.selected').length);
         			}
         		
+        		});
+        		
+        		$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.stockListEntryId').on('click', function(){
+        			console.log("pumasok");
+        			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '1');
+        			if($(this).is(':checked')){
+        				//we highlight
+        				$(this).parent().parent().addClass('selected');
+        				$(this).parent().parent().addClass('manual-selected');
+        			}else{
+        				$(this).parent().parent().removeClass('selected');
+        				$(this).parent().parent().removeClass('manual-selected');
+        			}
+        			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.stockListEntryId').prop('checked', true);
+        			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
+        			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected)').remove('selected');
+        			$('#'+getJquerySafeId(sectionContainerDiv) + ' .numberOfAdvanceSelected').html($('#'+getJquerySafeId(sectionContainerDiv) + ' tr.primaryRow.selected').length);
         		});
             	
           		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null, false);

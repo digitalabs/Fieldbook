@@ -1,8 +1,10 @@
 package com.efficio.fieldbook.web.common.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -17,8 +19,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.jasperreports.engine.JRException;
+
+import org.generationcp.commons.constant.ToolSection;
+import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.service.ExportService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.CustomReportTypeUtil;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -26,10 +34,15 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.presets.StandardPreset;
+import org.generationcp.middleware.reports.BuildReportException;
+import org.generationcp.middleware.reports.Reporter;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -41,6 +54,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -114,6 +128,13 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     @Resource
     private CrossExpansionProperties crossExpansionProperties;
     
+    @Resource
+	private WorkbenchService workbenchService;
+    @Resource
+    private ContextUtil contextUtil;
+    @Resource
+    private ReportService reportService;
+    
     @Override
 	public String getContentName() {
 		return null;
@@ -170,6 +191,39 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	List<Integer> instancesList = new ArrayList<Integer>();
     	instancesList.add(1);
     	return doExport(exportType, selectedTraitTermId, response, isTrial,instancesList,exportWayType,data);
+    	
+    }
+    
+    
+    @ResponseBody
+    @RequestMapping(value="/export/custom/report", method = RequestMethod.POST)
+    public String exportCustomReport(@RequestBody Map<String,String> data,      		
+    		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
+    	String studyId = getStudyId(data);
+    	String reportCode = data.get("customReportCode");
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	String fileName = "";
+    	String outputFilename =  "";
+    	Reporter rep;
+		try {
+			rep = reportService.getStreamReport(reportCode, Integer.parseInt(studyId), baos);
+		
+			fileName = rep.getFileName();
+			outputFilename = fieldbookProperties.getUploadDirectory() + File.separator  + fileName;
+			    		    			
+			File reportFile = new File(outputFilename);
+			baos.writeTo(new FileOutputStream(reportFile));
+			
+	    	
+		} catch (NumberFormatException | MiddlewareException | JRException | IOException
+				| BuildReportException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		Map<String, Object> results = new HashMap<String, Object>();
+    	results.put("outputFilename", outputFilename);
+    	results.put("filename", SettingsUtil.cleanSheetAndFileName(fileName));
+    	results.put("contentType", response.getContentType());
+    	return super.convertObjectToJson(results);
     	
     }
     
@@ -538,6 +592,34 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	return super.convertObjectToJson(results);
     }
     
+	@ResponseBody
+	@RequestMapping(value = "/custom/nursery/reports", method = RequestMethod.GET)
+	public List<CustomReportType> getCustomNurseryReports() {
+		return getCustomReportTypes(ToolSection.FB_NURSE_MGR_CUSTOM_REPORT.name());
+	}	
+	
+	@ResponseBody
+	@RequestMapping(value = "/custom/trial/reports", method = RequestMethod.GET)
+	public List<CustomReportType> getCustomTrialReports() {
+		return getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
+	}	
+
+	
+	protected List<CustomReportType> getCustomReportTypes(String toolSection){
+		List<CustomReportType> customReportTypes = new ArrayList<CustomReportType>();
+		try {
+			List<StandardPreset> standardPresetList = workbenchService.getStandardPresetByCrop(workbenchService.getFieldbookWebTool().getToolId().intValue(), contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(), toolSection);
+			//we need to convert the standard preset for custom report type to custom report type pojo
+			for(int index = 0 ; index < standardPresetList.size() ; index++){
+				customReportTypes.addAll(CustomReportTypeUtil.readReportConfiguration(standardPresetList.get(index), this.crossExpansionProperties.getProfile()));
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+
+		return customReportTypes;
+	}
+    
     protected File exportAdvanceListItems(String exportType, String advancedListIds, StudyDetails studyDetails){
     	if(AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(exportType) 
     			|| AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString().equalsIgnoreCase(exportType)){    	
@@ -582,6 +664,17 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	protected void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-	
-	
+
+	public void setWorkbenchService(WorkbenchService workbenchService) {
+		this.workbenchService = workbenchService;
+	}
+
+	public void setCrossExpansionProperties(CrossExpansionProperties crossExpansionProperties) {
+		this.crossExpansionProperties = crossExpansionProperties;
+	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+		
 }

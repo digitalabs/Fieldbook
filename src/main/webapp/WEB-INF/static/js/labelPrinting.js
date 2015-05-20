@@ -6,6 +6,7 @@ LabelPrinting = {
     excelOption: '',
     availableFieldIds : [],
     labelPrintingFields : {},
+    customReports : [],
 
     labelFormat: {
         'PDF': 1,
@@ -58,6 +59,7 @@ LabelPrinting = {
         addToUIFieldsList($('#non-pdf-available-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
         addToUIFieldsList($('#pdf-available-fields'),LabelPrinting.labelPrintingFields,LabelPrinting.availableFieldIds);
 
+        LabelPrinting.initializeCustomExportReports();
         LabelPrinting.initializeUserPresets();
         LabelPrinting.showOrHideBarcodeFields();
 
@@ -112,19 +114,37 @@ LabelPrinting = {
         });
 
         $('#label-format').on('change', function(){
+        	
+        	
             if($('#label-format').val() === '1'){
                 //means pdf
                 $('.pdf-fields').show();
+                $('.barcode-options').show();
+                $('.save-label-settings').show();
                 $('.non-pdf-fields').hide();
                 $('.label-printing-details').show();
+                $('#fbk-lbl-printing-save-preset').show();
+                $('.label-filename').show();
             }else if($('#label-format').val() !== ''){
                 $('.pdf-fields').hide();
                 $('.non-pdf-fields').show();
+                $('.barcode-options').show();
+                $('.save-label-settings').show();
                 $('.label-printing-details').show();
+                $('#fbk-lbl-printing-save-preset').show();
+                $('.label-filename').show();
                 if($('#label-format').val() === '2'){
                     $('.non-pdf-type').html('XLS');
                 }else if($('#label-format').val() === '3'){
                     $('.non-pdf-type').html('CSV');
+                }else{
+                	//for custom cimmyt report
+                	$('.pdf-fields').hide();
+                    $('.non-pdf-fields').hide();
+                    $('.barcode-options').hide();
+                    $('.save-label-settings').hide();
+                    $('#fbk-lbl-printing-save-preset').hide();
+                	$('.label-filename').hide();
                 }
             }else{
                 $('.label-printing-details').hide();
@@ -295,6 +315,25 @@ LabelPrinting = {
     };
 
     /**
+     *  add custom export reports
+     */
+    LabelPrinting.initializeCustomExportReports = function(){
+        return $.ajax({
+            url: '/Fieldbook/LabelPrinting/specifyLabelDetails/custom/reports',
+            type: 'GET',
+            data: '',
+            cache: false,
+            success: function(data){
+            	$('#label-format').select2('destroy');
+            	LabelPrinting.customReports = (data);
+            	for(var i = 0 ; i < data.length ; i++){                   
+            		$('#label-format').append(new Option(data[i].code + ' - ' + data[i].name, data[i].code));
+                }
+            	$('#label-format').select2({minimumResultsForSearch: 20});            	
+            }
+        });
+    };
+    /**
      * Toggle for barcode fields
      */
     LabelPrinting.showOrHideBarcodeFields = function(){
@@ -456,30 +495,39 @@ LabelPrinting = {
 
     LabelPrinting.doExportLabel = function(type) {
         // perform export
+    	var isCustomReport = LabelPrinting.isCustomReport(type);
+    	$('#specifyLabelDetailsForm #isCustomReport').val(isCustomReport);
+    	
         var formElm = $('#specifyLabelDetailsForm');
-        var selectedPreset = LabelPrinting.getSelectedPreset();
+        $('#customReport').val(isCustomReport);
+        if(isCustomReport){        	
+        	LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
+        	LabelPrinting.proceedExport(formElm);        	
+        }else{
         
-        if(selectedPreset.length == 0){
-        	selectedPreset = [$('#label-format').select2('data').id,0];
+	        var selectedPreset = LabelPrinting.getSelectedPreset();
+	        
+	        if(selectedPreset.length == 0){
+	        	selectedPreset = [$('#label-format').select2('data').id,0];
+	        }
+	
+	        // 1. validate
+	        if (!LabelPrinting.validateEnterLabelFieldsPage(type)) {
+	            return false;
+	        }
+	
+	        // 2. update #specifyLabelDetailsForm for other hidden details
+	        LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
+	
+	        // 3. check if we need to alert user to save the presets
+	        LabelPrinting.isLabelPrintingIsModified(formElm.serialize(),selectedPreset[0],selectedPreset[1]).done(function(data) {
+	            if (data) {
+	                $('#fbk-lbl-printing-proceed-export-label').modal('show');
+	            } else {
+	                LabelPrinting.proceedExport(formElm);
+	            }
+	        });
         }
-
-        // 1. validate
-        if (!LabelPrinting.validateEnterLabelFieldsPage(type)) {
-            return false;
-        }
-
-        // 2. update #specifyLabelDetailsForm for other hidden details
-        LabelPrinting.updateAdditionalLabelSettingsFormDetails(type);
-
-        // 3. check if we need to alert user to save the presets
-        LabelPrinting.isLabelPrintingIsModified(formElm.serialize(),selectedPreset[0],selectedPreset[1]).done(function(data) {
-            if (data) {
-                $('#fbk-lbl-printing-proceed-export-label').modal('show');
-            } else {
-                LabelPrinting.proceedExport(formElm);
-            }
-        });
-
     };
 
     /**
@@ -495,7 +543,15 @@ LabelPrinting = {
             }
         });
     };
-
+    LabelPrinting.isCustomReport = function(val){
+    	//daniel
+    	for(var i = 0 ; i < LabelPrinting.customReports.length; i++){
+    		if(LabelPrinting.customReports[i].code == val){
+    			return true;
+    		}
+    	}
+    	return false;
+    },
     /**
      * Update update #specifyLabelDetailsForm hidden fields for additional details details
      * @param type

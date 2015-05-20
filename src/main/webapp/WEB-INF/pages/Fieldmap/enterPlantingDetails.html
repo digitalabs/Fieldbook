@@ -119,7 +119,7 @@
 				<div class="form-group">
 					<div class="col-xs-12 col-md-12">
 						<text th:text="#{fieldmap.instruction.unavailable.plots}">
-							If there are any plots in this block that are unusable, mark them with an X.
+							If there are any plots in this block that are unusable, mark them with an X. To set all plots in a Range or Column, click on the corresponding header.
 						</text>
 					</div>
 				</div>
@@ -252,24 +252,17 @@
 			);
 			
 			$('#field-map td.sub-header-row').on('click',function() {
-				var rowElements = getRowElements($(this).parent().children('td.plot')),
+				var rowElements = getColumnOrRowElements($(this).closest("tr").find("td.plot")),
 					allUnusable = checkColumnOrRange(rowElements);
 				setArrayToUnusable(rowElements, allUnusable);
 			});
 			
 			$('#field-map td.sub-header-col').on('click',function() {
-				var colElements = getColElements($(this).parent().children().index($(this)), $(this).parent().parent().parent().children('tbody').children('tr')),	
-					allUnusable = checkColumnOrRange(colElements);
-				console.log('Number of Cols: '+colElements.length);
+				var	colElements = getColumnOrRowElements($(this).closest("table").find("tr.plotRow td:nth-child(" + ($(this).index()+1) + ")")),
+			      	allUnusable = checkColumnOrRange(colElements);
 				setArrayToUnusable(colElements, allUnusable);
 			});
 			
-			$('#field-map td.sub-footer-col').on('click',function() {
-				var colElements = getColElements($(this).parent().children().index($(this)), $(this).parent().parent().children('tr')),
-						allUnusable = checkColumnOrRange(colElements);
-				console.log('Number of Cols: '+colElements.length);
-				setArrayToUnusable(colElements, allUnusable);
-			});
 
 			if ($("#stepValue").val() == '2') {
 
@@ -283,37 +276,20 @@
 				})
 			}
 		});
-		
-		/**
-			getRowElements() function to runwrap JQuery array to JS array to avoid repeat lookups
 			
-			@param <Array> rowArray JQuery object
+		/**
+			getColumnOrRowElements() function to grab a single column
+			
+			@param <Array> colOrRowArray JQuery object 
+			@return <Array> JavaScript Array 
 		*/
-		function getRowElements(rowArray) {
+		function getColumnOrRowElements(colOrRowArray) {
 			var plotArray = [];
-			for(var iteration = 0; iteration < rowArray.length; iteration++) {
-				plotArray.push($(rowArray[iteration]));
+			for(var i = 0; i< colOrRowArray.length; i++) {
+				plotArray.push($(colOrRowArray[i]));
 			}
 			return plotArray;
-		}
-		
-				
-		/**
-			getColElements() function to grab a single column
-			
-			@param <int> index index of the column
-			@param <JQuery> JQuery Object of all the rows
-		*/			
-		function getColElements(index, rows) {
-			var plotArray = [];
-			for(var iteration = 0; iteration < rows.length; iteration++) {
-				if(!$(rows[iteration]).hasClass('machineDirectionRow')) {
-					plotArray.push($($(rows[iteration]).children()[index]));
-				}
-			}
-			return plotArray;
-		}
-		
+		}		
 		  	
 		/**
 			checkColumnOrRange() returns true if all plots are unavailable
@@ -322,8 +298,8 @@
 			@return <boolean> true means all plots are unavailable, false means at least one is available
 		*/
 		function checkColumnOrRange(arrayOfPlots) {
-			for(var index = 0; index < arrayOfPlots.length; index++) {
-				if(arrayOfPlots[index].hasClass('plot') && !arrayOfPlots[index].hasClass('deleted') && !arrayOfPlots[index].hasClass('planted')) {
+			for(var i = 0; i < arrayOfPlots.length; i++) {
+				if(arrayOfPlots[i].hasClass('plot') && !arrayOfPlots[i].hasClass('deleted') && !arrayOfPlots[i].hasClass('planted')) {
 					return false;
 				}
 			}
@@ -337,12 +313,12 @@
 			@param <boolean> allUnusable if true, mark all plots to useable, if false mark them to unusable
 		*/
 		function setArrayToUnusable(plotArray, allUnusable) {
-			for(var index = 0; index < plotArray.length; index++) {
+			for(var i = 0; i < plotArray.length; i++) {
 				if(allUnusable) {
-					setToUsable(plotArray[index]);
+					setToUsable(plotArray[i]);
 				}
 				else {
-					setToUnusable(plotArray[index]);
+					setToUnusable(plotArray[i]);
 				}
 			}
 		}

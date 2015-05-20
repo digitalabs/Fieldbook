@@ -310,6 +310,11 @@
                             'To update the Measurements table, please review your settings and regenerate ' +
                             'the Experimental Design on the next tab', 10000);
                         $('body').data('needGenerateExperimentalDesign', '1');
+
+                        if (service.currentData.experimentalDesign.designType === 3 ) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+
                     }
                 },
 

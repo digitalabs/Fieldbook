@@ -12,8 +12,8 @@
         .controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService',
             'EXP_DESIGN_MSGS', '_',function ($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, EXP_DESIGN_MSGS) {
 
-        		$scope.applicationData = TrialManagerDataService.applicationData;
-        		
+                $scope.applicationData = TrialManagerDataService.applicationData;
+
                 $scope.Math = Math;
                 $scope.designTypes = [
                     {
@@ -48,13 +48,13 @@
                     }
 
                     if ($scope.data.designType != null){
-                    	$scope.currentDesignType = $scope.designTypes[$scope.data.designType];
+                        $scope.currentDesignType = $scope.designTypes[$scope.data.designType];
                         $scope.currentDesignTypeId = $scope.currentDesignType.id;
                         
                         if ($scope.currentDesignType.params !== null){
-                        	$scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+                            $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
                         }else{
-                        	$scope.currentParams = null;
+                            $scope.currentParams = null;
                         }
                       
                         if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
@@ -122,15 +122,15 @@
                 $scope.replicationsArrangementGroupsOpts[3] = 'In adjacent columns';
 
                 $scope.onSwitchDesignTypes = function (newId) {
-                	if (newId !== ''){
-                		$scope.currentDesignType = $scope.designTypes[newId];
+                    if (newId !== ''){
+                        $scope.currentDesignType = $scope.designTypes[newId];
                         $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
                         $scope.data.designType = $scope.currentDesignType.id;
-                	}else{
-                		$scope.currentDesignType = null;
-                		$scope.data.designType = null;
-                		$scope.currentParams = '';
-                	}
+                    }else{
+                        $scope.currentDesignType = null;
+                        $scope.data.designType = null;
+                        $scope.currentParams = '';
+                    }
                 };
 
                 // on click generate design button
@@ -161,46 +161,8 @@
                     );
                 };
 
-                $scope.designTypeOptions = function() {
-                    var options = {
-                        data : function() {
-                            var data = [];
-                            if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-                            	if ($scope.designTypes[0].id !== 3){
-                            		data.push($scope.designTypes[0]);
-                            	}
-                            } else {
-                                data = $scope.designTypes;
-                            }
-                            return {
-                                results : data
-                            };
-                        },
-                        formatResult : function(value) {
-                            return value.name;
-                        },
-                        formatSelection : function(value) {
-                            return value.name;
-                        },
-                        idAsValue : true
-                    };
-
-                    return options;
-                };
-
-                $scope.determineDesignTypeFilter = function() {
-                    if (TrialManagerDataService.settings.treatmentFactors.details) {
-                        return function(entry) {
-                            return entry.name === 'Randomized Complete Block Design';
-                        };
-                    }
-                    return function() {
-                        return true;
-                    };
-                };
-                
                 $scope.toggleDesignView = function(){
-                	return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);
+                    return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);
                 };
                 
                 $scope.doValidate = function () {
@@ -403,18 +365,23 @@
             };
         })
 
-        .filter('filterExperimentalDesignType', function(TrialManagerDataService) {
+        .filter('filterExperimentalDesignType', ['TrialManagerDataService','_',function(TrialManagerDataService,_) {
             return function(designTypes) {
                 var result = [];
+
+                var filteredDesignTypes = _.filter(designTypes,function(value,key) {
+                    return value.name !== 'Other Design';
+                });
+
                 if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
                     result.push(designTypes[0]);
                 } else {
-                    result = designTypes;
+                    result = filteredDesignTypes;
                 }
 
                 return result;
             };
-        });
+        }]);
 
 
 })();

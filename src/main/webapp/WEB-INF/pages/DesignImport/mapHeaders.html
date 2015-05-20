@@ -24,13 +24,37 @@
                                             <option value="1">Resolvable Incomplete Block Design</option>
                                             <option value="2">Row-and-Column</option>
                                             <option value="3">Other Design</option>
-
                                         </select>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
+
+                    <div class="row" ng-show="hasNurseryType">
+                        <div class="col-md-7">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <strong class="sub-content-heading col-md-12" th:text="#{design.import.nursery.design.type}"></strong>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="design-type-select" class="col-md-7 col-sm-8 control-label" th:text="#{design.import.nursery.design.type.select}"></label>
+
+                                    <div class="col-md-5 col-sm-4">
+                                        <select id="nursery-type-select" ng-model="selectedNurseryType" ng-change="onNurseryTypeSelect()">
+                                            <option value="">Please Choose</option>
+                                            <option ng-repeat="item in nurseryTypeList"
+                                                    value="{{item.id}}">
+                                                {{item.description}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
 
                     <div class="row">
                         <div class="col-md-12">

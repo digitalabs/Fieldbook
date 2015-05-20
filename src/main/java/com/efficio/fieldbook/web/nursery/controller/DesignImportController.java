@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -85,7 +86,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	}
 
 	@Override public String getContentName() {
-		return String.format("%s/designImportMain",URL);
+		return String.format("%s/designImportMain", URL);
 	}
 
 
@@ -185,6 +186,18 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	   	
 	    	return masterList;
 		
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/postSelectedNurseryType")
+	public Boolean postSelectedNurseryType(@RequestBody String nurseryTypeId) {
+		if (StringUtils.isNumeric(nurseryTypeId)) {
+			Integer value = Integer.valueOf(nurseryTypeId);
+
+			//userSelection.setNurseryTypeForDesign(nurseryTypeId);
+		}
+
+		return true;
 	}
 
 	@ResponseBody

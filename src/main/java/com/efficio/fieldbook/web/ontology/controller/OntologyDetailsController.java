@@ -23,6 +23,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.StandardVariableSummary;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -328,7 +329,18 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 		}
     	 			
     	return "[]";
-    } 
+    }
+
+	@ResponseBody
+	@RequestMapping(value = "/OntologyBrowser/getDistinctValue/{variableId}",method = RequestMethod.GET)
+	public List<ValueReference> getDistinctValues(@PathVariable int variableId) {
+		try {
+			return ontologyService.getDistinctStandardVariableValues(variableId);
+		} catch (MiddlewareQueryException e) {
+			return new ArrayList<>();
+		}
+	}
+
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -401,6 +413,6 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
-	} 
+	}
     
 }

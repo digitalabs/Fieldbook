@@ -74,7 +74,17 @@
 
         };
 
+        // nusery type if nursery
+        scope.hasNurseryType = isNursery();
+        scope.selectedNurseryType = '';
 
+        DesignMappingService.getDistinctNurseryTypes().then(function(result) {
+            scope.nurseryTypeList = result;
+        });
+
+        scope.onNurseryTypeSelect = function() {
+            DesignMappingService.postSelectedNurseryType(scope.selectedNurseryType);
+        };
 
     }]);
 
@@ -279,6 +289,20 @@
 
             }
 
+            function getDistinctNurseryTypes() {
+                return $http.get('/Fieldbook/OntologyBrowser/getDistinctValue/8065').then(function(result) {
+                    if (result.data && result.data.constructor === Array) {
+                        return result.data;
+                    }
+
+                    return false;
+                });
+            }
+
+            function postSelectedNurseryType(nurseryTypeId) {
+                return $http.post('/Fieldbook/DesignImport/postSelectedNurseryType',nurseryTypeId);
+            }
+
             var service = {
                 data : {
                     unmappedHeaders : [],
@@ -287,7 +311,9 @@
                     mappedGermplasmFactors : [],
                     mappedTraits : []
                 },
-                validateMapping : validateMapping
+                validateMapping : validateMapping,
+                getDistinctNurseryTypes : getDistinctNurseryTypes,
+                postSelectedNurseryType : postSelectedNurseryType
             };
 
             return service;

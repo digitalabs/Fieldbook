@@ -68,10 +68,12 @@ if (typeof StockIDFunctions === 'undefined') {
                                 $('#generateStockIDModal').modal('hide');
                                 // logic for displaying the stock list immediately after successful saving
                                 $('#create-nursery-tabs .tab-pane.info').removeClass('active');
+                                $('.advance-germplasm-items').removeClass('active');
                                 $(this).data('has-loaded', '1');
                                 StockIDFunctions.displayStockList(listId);
                                 StockIDFunctions.disableGenerateStockListButton(listId);
                                 $('#stock-tab-pane' + listId).addClass('active');
+                                $('#stock-list' + listId + '-li').addClass('active');
                             });
 
 

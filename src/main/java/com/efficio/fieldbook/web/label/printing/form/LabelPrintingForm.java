@@ -17,7 +17,7 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
  * The Class LabelPrintingForm.
  */
 public class LabelPrintingForm{
-    
+    private boolean isCustomReport;
     /** The is trial. */
     private boolean isTrial;
     
@@ -59,4 +59,13 @@ public class LabelPrintingForm{
     public void setIsTrial(boolean isTrial) {
         this.isTrial = isTrial;
     }
+
+	public boolean isCustomReport() {
+		return isCustomReport;
+	}
+
+	public void setCustomReport(boolean isCustomReport) {
+		this.isCustomReport = isCustomReport;
+	}
+    
 }

@@ -27,6 +27,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <input type="hidden" th:field="*{userLabelPrinting.generateType}"/>
 <input type="hidden" th:field="*{userLabelPrinting.fieldMapsExisting}" />
 <input type="hidden" th:field="*{isTrial}"/>
+<input type="hidden" th:field="*{customReport}"/>
 
 <div class="row">
 <div class="panel panel-default">
@@ -394,7 +395,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				&nbsp;
 			</div>
 		</div>
-		<div class="row">
+		<div class="row barcode-options">
 			<div class="col-xs-12 col-md-12">
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
@@ -459,7 +460,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row save-label-settings">
 		<br />
 			<div class="col-xs-12 col-md-12">
 				<div class="form-group">
@@ -481,7 +482,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row label-filename">
 		<br />
 			<div class="col-xs-12 col-md-12">
 				<div class="form-group">

@@ -28,7 +28,10 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.generationcp.commons.constant.ToolSection;
+import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
@@ -36,8 +39,13 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.presets.StandardPreset;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -47,6 +55,7 @@ import static org.mockito.Mockito.*;
 
 import org.mockito.MockitoAnnotations;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -55,6 +64,8 @@ import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.controller.LabelPrintingController;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 public class ExportStudyControllerTest{
@@ -483,7 +494,32 @@ public class ExportStudyControllerTest{
 		Assert.assertEquals("Expected that the returned filename is " + generatedFilename + ".zip but returned " + result.get("filename"),generatedFilename + ZIP_EXT, result.get("filename"));
 		Assert.assertEquals("Expected that the returned output filename is " + outputFilename + ".zip but returned " + result.get("outputFilename"),outputFilename + ZIP_EXT, result.get("outputFilename"));
 	}
-
+	@Test 
+	public void testGetCustomReportTypes() throws MiddlewareQueryException{
+		ExportStudyController controller = new ExportStudyController();
+		WorkbenchService workbenchService = Mockito.mock(WorkbenchService.class);		
+		controller.setWorkbenchService(workbenchService);
+		CrossExpansionProperties crossExpansionProperties = new CrossExpansionProperties();
+		crossExpansionProperties.setProfile("Cimmyt");
+		controller.setCrossExpansionProperties(crossExpansionProperties);
+		List<StandardPreset> standardPresets = new ArrayList<StandardPreset>();
+		StandardPreset preset = new StandardPreset();		
+		preset.setConfiguration("<reports><profile>cimmyt</profile><report><code>WLBL05</code><name>labels without design, wheat</name></report><report><code>WLBL21</code><name>labels with design, wheat</name></report></reports>");
+		standardPresets.add(preset);
+		Mockito.when(workbenchService.getStandardPresetByCrop(Mockito.anyInt(), Mockito.anyString(), Mockito.anyString())).thenReturn(standardPresets);
+		Tool fbTool = new Tool();
+		fbTool.setToolId(new Long(1));
+		Mockito.when(workbenchService.getFieldbookWebTool()).thenReturn(fbTool);
+		ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
+		Project project = new Project();
+		CropType cropType = new CropType();
+		cropType.setCropName("Test");
+		project.setCropType(cropType);
+		Mockito.when(contextUtil.getProjectInContext()).thenReturn(project);
+		controller.setContextUtil(contextUtil);		
+		List<CustomReportType> presets = controller.getCustomReportTypes(ToolSection.FB_TRIAL_MGR_CUSTOM_REPORT.name());
+		Assert.assertEquals("Should return 2 presets since there is a study", 2, presets.size());
+	}
 	private String getTrialInstanceString(List<Integer> instances) {
 		String trialInstances = "";
 		

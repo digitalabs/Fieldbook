@@ -36,8 +36,14 @@ import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting
 import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
 
+import net.sf.jasperreports.engine.JRException;
+
+import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.pojo.CustomReportType;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.CustomReportTypeUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.commons.util.StringUtil;
@@ -45,8 +51,16 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.presets.StandardPreset;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.reports.BuildReportException;
+import org.generationcp.middleware.reports.MissingReportException;
+import org.generationcp.middleware.reports.Reporter;
+import org.generationcp.middleware.reports.ReporterFactory;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -57,6 +71,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -117,6 +132,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     
     @Resource
     private CrossExpansionProperties crossExpansionProperties;
+    @Resource
+	private WorkbenchService workbenchService;
+    @Resource
+    private ContextUtil contextUtil;
+    @Resource
+    private ReportService reportService;
     
     /**
      * Show trial label details.
@@ -151,7 +172,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
-
+        this.userLabelPrinting.setStudyId(id);
         this.userLabelPrinting.setStudy(study);
         this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
         this.userLabelPrinting.setBarcodeNeeded("0");
@@ -198,6 +219,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
+        this.userLabelPrinting.setStudyId(id);
         this.userLabelPrinting.setStudy(study);
         this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
         this.userLabelPrinting.setBarcodeNeeded("0");
@@ -228,7 +250,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
         // sets the initial fieldMapInfo from fieldMapInfoList
         // this will be used later for the generation of labels in label printing
         FieldMapInfo fieldMapInfo = fieldMapInfoList.get(0);
-
+        this.userLabelPrinting.setStudyId(null);
         this.userLabelPrinting.setFieldMapInfo(fieldMapInfo);
         this.userLabelPrinting.setFieldMapInfoList(fieldMapInfoList);
         this.userLabelPrinting.setBarcodeNeeded("0");
@@ -391,7 +413,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             }
         }
 
-        return generateLabels(trialInstances);
+        return generateLabels(trialInstances, form.isCustomReport());
     }
 
 	protected String getSelectedLabelFields(UserLabelPrinting userLabelPrinting) {
@@ -404,12 +426,23 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		return selectedLabelFields;
 	}
 
-    protected Map<String,Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances) {
+    protected Map<String,Object> generateLabels(List<StudyTrialInstanceInfo> trialInstances, boolean isCustomReport) {
     	Map<String,Object> results = new HashMap<String, Object>();
     	try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    	String fileName = "";
-	    	if(this.userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())){
+	    	if(isCustomReport){
+	    		Integer studyId = this.userLabelPrinting.getStudyId();  	
+	    		Reporter rep = reportService.getStreamReport(this.userLabelPrinting.getGenerateType(), studyId, baos);
+	    		fileName = rep.getFileName();
+	    		this.userLabelPrinting.setFilename(fileName);
+	    		getFileNameAndSetFileLocations("");	    		
+	    		
+	    		//additionally creates the file in 'target' folder, for human validation ;) 
+	    		File reportFile = new File(this.userLabelPrinting.getFilenameDLLocation());
+	    		baos.writeTo(new FileOutputStream(reportFile));
+	    	    
+	    	}else if(this.userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())){
 	        	getFileNameAndSetFileLocations(".pdf");
 	            fileName = labelPrintingService.generatePDFLabels(trialInstances,
                         userLabelPrinting, baos);
@@ -423,7 +456,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	        }
 	        results.put(IS_SUCCESS, 1);
 	        results.put("fileName", fileName);
-	    } catch (MiddlewareQueryException e) {
+	    } catch (IOException | MiddlewareException | JRException | BuildReportException e) {
 	        LOG.error(e.getMessage(), e);
 	        results.put(IS_SUCCESS, 0);
 	        results.put(AppConstants.MESSAGE.getString(), e.getMessage());
@@ -433,10 +466,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	        Locale locale = LocaleContextHolder.getLocale();
 	        results.put(AppConstants.MESSAGE.getString(), messageSource.getMessage(
 	                e.getErrorCode(), new String[]{e.getLabelError()}, locale));
-	    } catch (IOException e) {
-	    	LOG.error(e.getMessage(), e);
-	    	results.put(IS_SUCCESS, 0);
-	        results.put(AppConstants.MESSAGE.getString(), e.getMessage());
 	    }
     	return results;
 	}
@@ -456,6 +485,25 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		return new ArrayList<>();
 	}
+	@ResponseBody
+	@RequestMapping(value = "/custom/reports", method = RequestMethod.GET)
+	public List<CustomReportType> getLabelPrintingCustomReports() {
+		List<CustomReportType> customReportTypes = new ArrayList<CustomReportType>();
+		try {
+			if(this.userLabelPrinting.getStudyId() != null){
+				List<StandardPreset> standardPresetList = workbenchService.getStandardPresetByCrop(workbenchService.getFieldbookWebTool().getToolId().intValue(), contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(), ToolSection.FB_LBL_PRINT_CUSTOM_REPORT.name());
+				//we need to convert the standard preset for custom report type to custom report type pojo
+				for(int index = 0 ; index < standardPresetList.size() ; index++){
+					customReportTypes.addAll(CustomReportTypeUtil.readReportConfiguration(standardPresetList.get(index), this.crossExpansionProperties.getProfile()));
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+
+		return customReportTypes;
+	}	
+	
 
 	@ResponseBody
 	@RequestMapping(value = "/presets/{presetType}/{presetId}", method = RequestMethod.GET, produces = "application/json")
@@ -630,7 +678,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
     private String getFileNameAndSetFileLocations(String extension) {
     	String fileName = this.userLabelPrinting.getFilename().replaceAll(" ",  "-") + extension;
-    	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
+    	String fileNameLocation = fieldbookProperties.getUploadDirectory() + File.separator  + fileName;
 
         this.userLabelPrinting.setFilenameDL(fileName);
         this.userLabelPrinting.setFilenameDLLocation(fileNameLocation);
@@ -718,4 +766,21 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
     public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
         this.userLabelPrinting = userLabelPrinting;
     }
+
+	public void setWorkbenchService(WorkbenchService workbenchService) {
+		this.workbenchService = workbenchService;
+	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+
+	public CrossExpansionProperties getCrossExpansionProperties() {
+		return crossExpansionProperties;
+	}
+
+	public void setCrossExpansionProperties(CrossExpansionProperties crossExpansionProperties) {
+		this.crossExpansionProperties = crossExpansionProperties;
+	}    
+    
 }

@@ -1,21 +1,27 @@
 var ImportDesign = {
 
 		hasGermplasmListSelected : function(){
-			return angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.germplasmListSelected;
+			return ImportDesign.getTrialManagerDataService().applicationData.germplasmListSelected;
+		},
+
+		getTrialManagerDataService : function() {
+			return isNursery() ? {currentData : {},applicationData :{}} : angular.element('#mainApp').injector().get('TrialManagerDataService');
+		},
+
+		trialManagerCurrentData: function() {
+			return ImportDesign.getTrialManagerDataService().currentData;
 		},
 		
-		trialManagerCurrentData: function() {
-			return angular.element('#mainApp').injector().get('TrialManagerDataService').currentData;
-		}
-		,
-		
-		reloadMeasurementsFromAngularService: function(){
-			var angularElem = angular.element('#mainApp');
-			
-			angularElem.scope().$apply(function(){
-				var service = angularElem.injector().get('TrialManagerDataService');
-				service.applicationData.isGeneratedOwnDesign = true;
-			});
+		reloadMeasurements: function(){
+			if (isNursery()) {
+				// reload nursery measurments here
+			} else {
+				var angularElem = angular.element('#mainApp');
+
+				angularElem.scope().$apply(function(){
+					ImportDesign.getTrialManagerDataService().applicationData.isGeneratedOwnDesign = true;
+				});
+			}
 		},
 		
 		showPopup : function(hasGermplasmListSelected){
@@ -84,10 +90,19 @@ var ImportDesign = {
 			});
 
 		},
+
+		nurseryEnvironmentDetails : {
+			noOfEnvironments : 1,
+			environments : [{
+				stockId : 0,
+				locationId : 0,
+				experimentId : 0
+			}]
+		},
 		
 		generateDesign : function() {
-			
-			var environments = angular.copy(ImportDesign.trialManagerCurrentData().environments);
+
+			var environments = isNursery() ? ImportDesign.nurseryEnvironmentDetails : angular.copy(ImportDesign.trialManagerCurrentData().environments);
 			
 			$.ajax(
 					{ 
@@ -95,24 +110,23 @@ var ImportDesign = {
 						type: 'POST',
 						data: JSON.stringify(environments),
 						dataType: 'json',
-		                contentType: 'application/json; charset=utf-8',
+						contentType: 'application/json; charset=utf-8',
 						cache: false,
 						success: function(resp) {
 							if (resp.isSuccess) {
-								
+								var $body = $('body');
 								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$('body').data('expDesignShowPreview', '1');
-								$('body').data('needGenerateExperimentalDesign', '0');
+								$body.data('expDesignShowPreview', '1');
+								$body.data('needGenerateExperimentalDesign', '0');
 								
 								ImportDesign.closeReviewModal();
 								
-								ImportDesign.reloadMeasurementsFromAngularService();
+								ImportDesign.reloadMeasurements();
 								
 								showSuccessfulMessage('', 'The trial design was imported successfully. Please review the Measurements tab.');
 								
 							}else{
 								createErrorNotification(designImportErrorHeader,resp.error.join('<br/>'));
-								return;
 							}
 						}
 				});
@@ -121,7 +135,7 @@ var ImportDesign = {
 		loadReviewDesignData : function() {
 			setTimeout(function(){
 			
-				var environments = angular.copy(ImportDesign.trialManagerCurrentData().environments);
+				var environments = isNursery() ? ImportDesign.nurseryEnvironmentDetails : angular.copy(ImportDesign.trialManagerCurrentData().environments);
 		
 				$.ajax(
 						{ 
@@ -129,7 +143,7 @@ var ImportDesign = {
 						type: 'POST',
 						data: JSON.stringify(environments),
 						dataType: 'json',
-		                contentType: 'application/json; charset=utf-8',
+						contentType: 'application/json; charset=utf-8',
 						cache: false,
 						success: function(response) {
 							new  BMS.Fieldbook.PreviewDesignMeasurementsDataTable('#design-measurement-table', response);					

@@ -1,4 +1,6 @@
-<div class="row col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
+<section xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+
+<div class="row col-xs-12 col-md-12">
 	<div class="page-header edit-nursery-page-identifier">
 		<h1>MANAGE NURSERIES</h1>
 	</div>
@@ -17,12 +19,12 @@
 				<div class="pull-left">
 					<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="" />
 
-                <span class="fbk-nursery-heading nursery-name-display">
-                    <span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
-                    <span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
-                    <span class="heading fieldmap-study-name fbk-hide" th:text="*{basicDetails[0].value}"></span>
-                    <span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
-                </span>
+			<span class="fbk-nursery-heading nursery-name-display">
+				<span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
+				<span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
+				<span class="heading fieldmap-study-name fbk-hide" th:text="*{basicDetails[0].value}"></span>
+				<span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
+			</span>
 
 					<div class="fbk-nursery-heading-btns">
 						<input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
@@ -53,8 +55,8 @@
 							</button>
 							<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 								<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-									<a href="" style="display: none" id="open-study-url"></a>
-									<a href="javascript: showExportOptions();" id="open-study-url-link"
+									<a href="" style="display: none" id="export-study-url"></a>
+									<a href="javascript: showExportOptions();" id="export-study-url-link"
 									   th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a>
 								</li>
 								<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
@@ -63,7 +65,7 @@
 									   th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
 								</li>
 								<li th:if="${createNurseryForm.measurementRowList.size() != 0} and ${createNurseryForm.hasFieldmap}" class="withMeasurementsOnly">
-									<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+									<a href="" style="display: none" id="field-details-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
 									<a href="javascript: showFieldMap('nursery-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
 								</li>
 								<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
@@ -80,13 +82,13 @@
 									   th:text="#{nursery.nurserydetails.action.export.crosses}">Export Crosses</a>
 								</li>
 								<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-									<a href="" style="display: none" id="open-study-url"></a>
-                                <a href="javascript: ImportDesign.showPopup('true');" id="open-study-url-link"
-                                   th:text="#{nursery.nurserydetails.action.importDesign}">Import Design</a>
-                            </li>
-                            <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-                                <a href="" style="display: none" id="open-study-url"></a>
-									<a href="javascript: showImportOptions();" id="open-study-url-link"
+									<a href="" style="display: none" id="import-design-url"></a>
+									<a href="javascript: ImportDesign.showPopup('true');" id="import-design-url-link"
+									   th:text="#{nursery.nurserydetails.action.importDesign}">Import Design</a>
+								</li>
+								<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+									<a href="" style="display: none" id="import-measurements-url"></a>
+									<a href="javascript: showImportOptions();" id="import-measurements-url-link"
 									   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
 								</li>
 								<li id="review-out-of-bounds-data-list" style="display:none;">
@@ -393,6 +395,7 @@
 
 <!-- Modal Dialog for Import Design option -->
 <div th:include="/DesignImport/importFile"></div>
+<div th:include="/DesignImport/reviewDetails"></div>
 
 <div th:include="/NurseryManager/includes/variableSelectionModal"></div>
 
@@ -567,3 +570,5 @@
 	});
 	//]]>
 </script>
+
+</section>

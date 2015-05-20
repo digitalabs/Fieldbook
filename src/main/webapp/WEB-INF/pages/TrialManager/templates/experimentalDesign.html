@@ -3,8 +3,8 @@
         <section-container name="content" heading="CHOOSE A DESIGN TYPE">
         	
             <div class="row" name="content">
-            	<div class="col-md-12" ng-show="applicationData.isGeneratedOwnDesign || data.designType == 3">Design based on an imported design file.</div>
-                <div class="col-md-12" ng-hide="applicationData.isGeneratedOwnDesign || data.designType == 3">
+            	<div class="col-md-12" ng-show="toggleDesignView()">Design based on an imported design file.</div>
+                <div class="col-md-12" ng-hide="toggleDesignView()">
                     <label class="control-label" style="vertical-align: top; position: relative; top: 6px;"><strong th:text="#{trial.experimental.design.select}">Select the design type you would like to use for this trial:</strong></label>
 
                     <div style="display:inline-block">
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12 add-bottom-padding" ng-hide="applicationData.isGeneratedOwnDesign || data.designType == 3">
+                <div class="col-md-12 add-bottom-padding" ng-hide="toggleDesignView()">
 					<label class="control-label">Or <a class="import-design" onclick="ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());">import</a> an experimental design.</label>
 				</div>
             </div>
@@ -43,7 +43,7 @@
         </section-container>
     </section-container>
 
-    <div class="row" ng-if="data.designType != null" ng-hide="applicationData.isGeneratedOwnDesign || data.designType == 3">
+    <div class="row" ng-if="data.designType != null" ng-hide="toggleDesignView()">
         <div class="col-md-6 col-sm-7">
             <section-container heading="SPECIFY DESIGN PARAMETERS">
                 <div name="content">

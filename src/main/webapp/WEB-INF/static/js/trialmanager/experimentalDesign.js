@@ -198,7 +198,11 @@
                         return true;
                     };
                 };
-
+                
+                $scope.toggleDesignView = function(){
+                	return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);
+                };
+                
                 $scope.doValidate = function () {
 
                     switch ($scope.currentDesignType.id) {

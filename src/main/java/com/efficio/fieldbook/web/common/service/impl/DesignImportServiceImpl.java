@@ -175,17 +175,21 @@ public class DesignImportServiceImpl implements DesignImportService {
 	@Override
 	public boolean areTrialInstancesMatchTheSelectedEnvironments(Workbook workbook, DesignImportData designImportData){
 		
-		DesignHeaderItem trialInstanceDesignHeaderItem = filterDesignHeaderItemsByTermId(
-				TermId.TRIAL_INSTANCE_FACTOR,
-				designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-		
-		if (trialInstanceDesignHeaderItem != null){
-			Map<String, Map<Integer, List<String>>> csvMap = groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, designImportData.getCsvData());
-			if (workbook.getTotalNumberOfInstances() == csvMap.size()){
-				return true;
+		if (workbook!=null){
+			DesignHeaderItem trialInstanceDesignHeaderItem = filterDesignHeaderItemsByTermId(
+					TermId.TRIAL_INSTANCE_FACTOR,
+					designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+			
+			if (trialInstanceDesignHeaderItem != null){
+				Map<String, Map<Integer, List<String>>> csvMap = groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, designImportData.getCsvData());
+				if (workbook.getTotalNumberOfInstances() == csvMap.size()){
+					return true;
+				}
 			}
+		}else{
+			return true;
 		}
-	
+		
 		return false;
 	}
 

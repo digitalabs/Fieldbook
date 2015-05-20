@@ -100,8 +100,6 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			
 			initializeTemporaryWorkbook();
 			
-			Workbook workbook = userSelection.getTemporaryWorkbook();
-			
 			DesignImportData designImportData = parser.parseFile(form.getFile());
 			
 			performAutomap(designImportData);
@@ -234,11 +232,13 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			}
 
 			resultsMap.put("success", Boolean.TRUE);
-
+			
 		} catch (DesignValidationException e) {
 			resultsMap.put("success", Boolean.FALSE);
 			resultsMap.put("error",e.getMessage());
 		}
+		
+		
 
 		return resultsMap;
 	}

@@ -102,13 +102,21 @@ var ImportDesign = {
 		
 		generateDesign : function() {
 
-			var environments = isNursery() ? ImportDesign.nurseryEnvironmentDetails : angular.copy(ImportDesign.trialManagerCurrentData().environments);
+			var environmentData = isNursery() ? ImportDesign.nurseryEnvironmentDetails : angular.copy(ImportDesign.trialManagerCurrentData().environments);
+			
+			$.each(environmentData.environments, function(key, data){
+				$.each(data.managementDetailValues, function(key, value){
+					if (value && value.id){
+						data.managementDetailValues[key] = value.id;
+					}
+				});
+			});
 			
 			$.ajax(
 					{ 
 						url: '/Fieldbook/DesignImport/generate',
 						type: 'POST',
-						data: JSON.stringify(environments),
+						data: JSON.stringify(environmentData),
 						dataType: 'json',
 						contentType: 'application/json; charset=utf-8',
 						cache: false,
@@ -135,13 +143,20 @@ var ImportDesign = {
 		loadReviewDesignData : function() {
 			setTimeout(function(){
 			
-				var environments = isNursery() ? ImportDesign.nurseryEnvironmentDetails : angular.copy(ImportDesign.trialManagerCurrentData().environments);
-		
+				var environmentData = isNursery() ? ImportDesign.nurseryEnvironmentDetails : angular.copy(ImportDesign.trialManagerCurrentData().environments);				
+				$.each(environmentData.environments, function(key, data){
+					$.each(data.managementDetailValues, function(key, value){
+						if (value && value.id){
+							data.managementDetailValues[key] = value.id;
+						}
+					});
+				});
+				
 				$.ajax(
 						{ 
 						url: '/Fieldbook/DesignImport/showDetails/data',
 						type: 'POST',
-						data: JSON.stringify(environments),
+						data: JSON.stringify(environmentData),
 						dataType: 'json',
 						contentType: 'application/json; charset=utf-8',
 						cache: false,

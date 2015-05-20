@@ -276,12 +276,14 @@ public class DesignImportServiceImpl implements DesignImportService {
 			if (headerDesignItem.getVariable().getId() == TermId.PLOT_NO.getId()){
 				for (Entry<Integer, List<String>> entry : csvMap.entrySet()){
 					String value = entry.getValue().get(headerDesignItem.getColumnIndex());
-					if (StringUtils.isNullOrEmpty(value) && set.contains(value)){
-						throw new DesignValidationException(messageSource.getMessage(
-								"design.import.error.plot.number.must.be.unique", null,
-								Locale.ENGLISH));
-					}else {
-						set.add(value);
+					if (!StringUtils.isNullOrEmpty(value)){
+						if (set.contains(value)){
+							throw new DesignValidationException(messageSource.getMessage(
+									"design.import.error.plot.number.must.be.unique", null,
+									Locale.ENGLISH));
+						}else {
+							set.add(value);
+						}
 					}
 				}
 			}

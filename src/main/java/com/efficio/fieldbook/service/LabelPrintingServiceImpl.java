@@ -280,8 +280,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 Map<String, String> moreFieldInfo = generateAddedInformationField(
                         fieldMapTrialInstanceInfo, trialInstance, "");
 
-                for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo
-                        .getFieldMapLabels()) {
+                for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
+                	
+                	if(userLabelPrinting.isStockList() 
+                			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
+                		continue;
+                	}
 
                     i++;
                     String barcodeLabelForCode = "";
@@ -798,6 +802,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         fieldMapTrialInstanceInfo, trialInstance, "");
 
                 for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
+                	
+                	if(userLabelPrinting.isStockList() 
+                			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
+                		continue;
+                	}
+                	
                     row = labelPrintingSheet.createRow(rowIndex++);
                     columnIndex = 0;
 
@@ -887,6 +897,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             
             Map<String,String> moreFieldInfo = generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
             for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
+            	
+            	if(userLabelPrinting.isStockList() 
+            			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
+            		continue;
+            	}
             	
             	String barcodeLabelForCode = generateBarcodeField(
                         moreFieldInfo, fieldMapLabel, firstBarcodeField,
@@ -1028,40 +1043,44 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         boolean firstEntry = true;
         
         if(params.isStockList()){
-        	GermplasmList stockList = params.getStockList();
-        	
-        	try {
-        		Map<String,InventoryDetails> inventoryDetailsMap = new HashMap<String, InventoryDetails>();
-        		List<InventoryDetails> listDataProjects = inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockList.getId(),getStockListType(stockList.getType()));
-				
-				for(InventoryDetails entry : listDataProjects){
-					setCross(entry);
-					inventoryDetailsMap.put(entry.getEntryId().toString(), entry);
-					params.setInventoryDetailsMap(inventoryDetailsMap);
-				}
-				
-        	} catch (MiddlewareQueryException e) {
-				LOG.error(e.getMessage(),e);
-			}
-        	
+        	params.setInventoryDetailsMap(getInventoryDetailsMap(params.getStockList()));
         } 
         
     	for (MeasurementRow measurement : params.getInstanceMeasurements()) {
-            FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
-                    measurement.getExperimentId());
-            
-            Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, measurement, firstEntry, workbook);
-            
-            params.setUserSpecifiedLabels(userSpecifiedLabels);
+    		String entryNo = measurement.getMeasurementData(TermId.ENTRY_NO.getId()).getValue();
+    		if(params.getInventoryDetailsMap().containsKey(entryNo)){
+                FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
+                        measurement.getExperimentId());
+                
+                Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, measurement, firstEntry, workbook);
+                
+                params.setUserSpecifiedLabels(userSpecifiedLabels);
 
-            label.setUserFields(userSpecifiedLabels);
+                label.setUserFields(userSpecifiedLabels);
 
-            if (firstEntry) {
-                firstEntry = false;
-            }
+                if (firstEntry) {
+                    firstEntry = false;
+                }
 
-            params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
+                params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
+    		}
         }
+    }
+    
+    public Map<String,InventoryDetails> getInventoryDetailsMap(GermplasmList stockList){
+    	Map<String,InventoryDetails> inventoryDetailsMap = new HashMap<String, InventoryDetails>();
+		List<InventoryDetails> listDataProjects;
+		try {
+			listDataProjects = inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockList.getId(),getStockListType(stockList.getType()));
+
+			for(InventoryDetails entry : listDataProjects){
+				setCross(entry);
+				inventoryDetailsMap.put(entry.getEntryId().toString(), entry);
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+		return inventoryDetailsMap;
     }
 
 	private void setCross(InventoryDetails entry) {
@@ -1147,9 +1166,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
 		value = populateStockListFromGermplasmDescriptorVariables(termID,row);
 		
-		value = populateStockListFromInventoryVariables(termID,row);
+		if(value == null){
+			value = populateStockListFromInventoryVariables(termID,row);
+		}
 		
-		value = populateStockListFromCrossingVariables(termID,row);
+		if(value == null){
+			value = populateStockListFromCrossingVariables(termID,row);
+		}
 		
 		if(value != null){
 			

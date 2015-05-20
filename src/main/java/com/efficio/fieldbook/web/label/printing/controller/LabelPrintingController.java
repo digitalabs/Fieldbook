@@ -305,7 +305,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
             this.userLabelPrinting.setBarcodeNeeded("0");
             this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
             this.userLabelPrinting.setNumberOfLabelPerRow("3");
-
+            this.userLabelPrinting.setIsStockList(true);
+            this.userLabelPrinting.setStockList(stockList);
+            this.userLabelPrinting.setInventoryDetailsMap(labelPrintingService.getInventoryDetailsMap(stockList));
             this.userLabelPrinting.setFilename(generateDefaultFilename(this.userLabelPrinting, false));
             form.setUserLabelPrinting(this.userLabelPrinting);
             model.addAttribute(AVAILABLE_FIELDS, labelPrintingService.getAvailableLabelFieldsForStockList(

@@ -15,12 +15,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
@@ -184,4 +187,12 @@ public interface LabelPrintingService {
 	 * @return
 	 */
 	GermplasmListType getStockListType(String type);
+	
+	/**
+	 *  
+	 * @param stockList
+	 * @return
+	 * @throws MiddlewareQueryException
+	 */
+	public Map<String,InventoryDetails> getInventoryDetailsMap(GermplasmList stockList);
 }

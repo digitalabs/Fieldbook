@@ -141,6 +141,17 @@ public class DesignImportServiceImpl implements DesignImportService {
 		//Add the variates from the added traits in workbook
 		measurementVariables.addAll(workbook.getVariates());
 		
+		if (!userSelection.isTrial()){
+			Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
+			while(iterator.hasNext()){
+				MeasurementVariable temp = iterator.next();
+				if (temp.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()){
+					iterator.remove();
+					break;
+				}
+			}
+		}
+		
 		
 		return measurementVariables;
 	}
@@ -385,16 +396,22 @@ public class DesignImportServiceImpl implements DesignImportService {
 					return null;
 				}
 				
-				if (headerItem.getVariable().getId() == TermId.ENTRY_NO.getId()){
+				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId() && !userSelection.isTrial()){
+					
+					// do not add the trial instance to measurement data list if the workbook is Nursery
+					
+				}else if (headerItem.getVariable().getId() == TermId.ENTRY_NO.getId()){
 					
 					Integer entryNo = Integer.parseInt(rowValues.get(headerItem.getColumnIndex()));
 					
 					addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables,
 							dataList, entryNo);
 					
-				} else if (headerItem.getVariable().getPhenotypicType() != PhenotypicType.GERMPLASM){
+				} else if (headerItem.getVariable().getPhenotypicType() != PhenotypicType.GERMPLASM) {
+					
 					String value = rowValues.get(headerItem.getColumnIndex());
 					dataList.add(createMeasurementData(headerItem.getVariable(), value));
+					
 				}
 				
 			}

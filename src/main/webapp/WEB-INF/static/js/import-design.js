@@ -100,7 +100,10 @@ var ImportDesign = {
 			environments : [{
 				stockId : 0,
 				locationId : 0,
-				experimentId : 0
+				experimentId : 0,
+				managementDetailValues : {},
+				trialDetailValues : {},
+				phenotypeIDMap : {}
 			}]
 		},
 		

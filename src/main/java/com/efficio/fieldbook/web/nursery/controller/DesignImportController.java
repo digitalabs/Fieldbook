@@ -331,6 +331,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	
 	public void initializeTemporaryWorkbook(){
 		
+		
 	      List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
 	         List<SettingDetail> basicDetails = userSelection.getBasicDetails();
 	         // transfer over data from user input into the list of setting details stored in the session
@@ -350,7 +351,12 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 	        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
 	        StudyDetails details = new StudyDetails();
-	        details.setStudyType(StudyType.T);
+	        
+	        if (userSelection.isTrial()){
+	        	 details.setStudyType(StudyType.T);
+	        }else{
+	        	 details.setStudyType(StudyType.N);
+	        }
 	        workbook.setStudyDetails(details);
 	        
 	        userSelection.setTemporaryWorkbook(workbook);

@@ -219,6 +219,7 @@ public class ImportGermplasmListController extends SettingsController {
         boolean isDeleteObservations = false;
 		String[] selectedCheck = form.getSelectedCheck();
 		boolean isNursery = userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N ? true : false;			
+		boolean hasTemporaryWorkbook = false;
 		
 	    if (userSelection.getTemporaryWorkbook() != null) {
             WorkbookUtil.manageExpDesignVariablesAndObs(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
@@ -241,9 +242,12 @@ public class ImportGermplasmListController extends SettingsController {
             userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
             WorkbookUtil.updateTrialObservations(userSelection.getWorkbook(),userSelection.getTemporaryWorkbook());
             userSelection.setTemporaryWorkbook(null);
+            hasTemporaryWorkbook = true;
             isDeleteObservations = true;
         
-        } else if (isNursery){
+        }  
+	    
+	    if (isNursery){
             if (selectedCheck != null && selectedCheck.length != 0) {
             	
             	ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = getUserSelection().getImportedCheckGermplasmMainInfo();
@@ -319,7 +323,7 @@ public class ImportGermplasmListController extends SettingsController {
                 //add or remove check variables if needed
                 fieldbookService.manageCheckVariables(userSelection, form);
             }
-        } else {
+        } else if (!hasTemporaryWorkbook) {
             isDeleteObservations = true;
             userSelection.setMeasurementRowList(null);
         }

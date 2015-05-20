@@ -142,7 +142,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 						"common.error.import.gid.does.not.match", new Object[]{
 								inventoryDetailsFromDB.getEntryId().toString(),
 								inventoryDetailsFromDB.getGid().toString(),
-								inventoryDetailsFromImport.getEntryId()},
+								inventoryDetailsFromImport.getGid().toString()},
 								Locale.getDefault()));
 			} else {
 				updateInventoryDetailsFromImport(inventoryDetailsFromDB,inventoryDetailsFromImport,

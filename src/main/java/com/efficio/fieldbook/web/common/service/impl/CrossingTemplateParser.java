@@ -1,6 +1,8 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
+import com.efficio.fieldbook.web.common.service.CrossingService;
 import com.efficio.fieldbook.web.util.AppConstants;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.AbstractExcelFileParser;
@@ -16,12 +18,17 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.service.api.PedigreeService;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.annotation.Resource;
+
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -61,6 +68,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 	@Resource
 	private ContextUtil contextUtil;
+	@Resource
+	private CrossingService crossingService;
+   
 
 	private DescriptionSheetParser<ImportedCrossesList> descriptionSheetParser;
 
@@ -127,14 +137,22 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			ListDataProject femaleListData = this
 					.getCrossingListProjectData(femaleNursery, Integer.valueOf(femalePlotNo),programUUID);
 			ListDataProject maleListData = this
-					.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo),programUUID);
+						.getCrossingListProjectData(maleNursery, Integer.valueOf(malePlotNo),programUUID);
 
 			ImportedCrosses importedCrosses = new ImportedCrosses(femaleListData, maleListData,
 					femaleNursery, maleNursery,femalePlotNo,malePlotNo,currentRow);
-
 			importedCrosses.setOptionalFields(breedingMethod, crossingDate,seedsHarvested, notes);
-
+			//this would set the correct cross string depending if the use is cimmyt wheat
+			Germplasm germplasm = new Germplasm();
+			germplasm.setGnpgs(2);
+			germplasm.setGid(Integer.MAX_VALUE);
+			germplasm.setGpid1(femaleListData.getGermplasmId());
+			germplasm.setGpid2(maleListData.getGermplasmId());			
+			String crossString = crossingService.getCross(germplasm, importedCrosses, "/");
+			importedCrosses.setCross(crossString);
+			
 			this.importedCrossesList.addImportedCrosses(importedCrosses);
+
 
 			currentRow++;
 		}

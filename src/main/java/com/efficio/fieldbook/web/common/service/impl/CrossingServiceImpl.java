@@ -2,6 +2,14 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
@@ -9,6 +17,7 @@ import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -23,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -49,14 +57,15 @@ public class CrossingServiceImpl implements CrossingService {
 	private CrossingTemplateParser crossingTemplateParser;
 	
 	@Resource
-	private CrossExpansionProperties crossExpansionProperties;
-
-	@Resource
-	private PedigreeService pedigreeService;
-
-	@Resource
 	private MessageSource messageSource;
-	
+
+    @Resource
+    private CrossExpansionProperties crossExpansionProperties;
+    @Resource
+    private PedigreeService pedigreeService;
+    @Resource
+    private ContextUtil contextUtil;
+
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException{
 		return crossingTemplateParser.parseFile(file,null);
@@ -87,7 +96,6 @@ public class CrossingServiceImpl implements CrossingService {
 			}			
 			Integer newGid = germplasmIdIterator.next();
 			cross.setGid(newGid.toString());
-			cross.setCross(pedigreeService.getCrossExpansion(newGid, this.crossExpansionProperties));
 		}
 		
 	}
@@ -113,9 +121,33 @@ public class CrossingServiceImpl implements CrossingService {
 				cross.setEntryId(entryIdCounter);
 				cross.setEntryCode(String.valueOf(entryIdCounter));
 				cross.setDesig(buildDesignationNameInSequence(nextNumberInSequence++, setting));
-				cross.setCross(buildCrossName(cross, setting));
+				
+				//this would set the correct cross string depending if the use is cimmyt wheat
+				Germplasm germplasm = new Germplasm();
+				germplasm.setGnpgs(2);
+				germplasm.setGid(Integer.MAX_VALUE);
+				germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
+				germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));			
+				String crossString = this.getCross(germplasm, cross, setting.getSeparator());
+				
+				cross.setCross(crossString);
 			}
 	} 
+	@Override
+	public String getCross(final Germplasm germplasm, ImportedCrosses crosses, String separator) {
+		try {
+			if (CrossingUtil.isCimmytWheat(crossExpansionProperties.getProfile(), contextUtil.getProjectInContext().getCropType().getCropName())) {
+				return pedigreeService.getCrossExpansion(germplasm, null, crossExpansionProperties);
+			}
+			return buildCrossName(crosses, separator);
+		} catch (MiddlewareQueryException e) {
+			throw new RuntimeException("There was a problem accessing communicating with the database. " +
+					 "Please contact support for further help.", e);
+		}
+
+	}
+	
+	
 	
 	protected Map<Germplasm, Name> generateGermplasmNameMap(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses, Integer userId, boolean hasPlotDuplicate) throws MiddlewareQueryException{
 		
@@ -220,8 +252,8 @@ public class CrossingServiceImpl implements CrossingService {
         return sb.toString();
     }
 	
-	protected String buildCrossName(ImportedCrosses importedCrosses, CrossNameSetting setting) {
-		return importedCrosses.getFemaleDesig() + setting.getSeparator() + importedCrosses.getMaleDesig();
+	protected String buildCrossName(ImportedCrosses crosses, String separator) {
+		return crosses.getFemaleDesig() + separator + crosses.getMaleDesig();
 	}
 	
 	

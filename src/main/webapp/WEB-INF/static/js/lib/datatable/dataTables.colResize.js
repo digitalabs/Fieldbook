@@ -456,6 +456,10 @@ var dt;
             //Save the state
             this.dt.settings.oInstance.oApi._fnSaveState(this.dt.settings);
             this.dom.origState = false;
+            
+            //this would trigger the resize event, workaround for now, needs 2 times to be called to be able to refresh it
+            $( window ).trigger('resize');
+            $( window ).trigger('resize');
         };
 
         ColResize.prototype.onMouseUp = function (e, col) {

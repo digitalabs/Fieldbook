@@ -54,7 +54,7 @@
                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.inventoryID}">.2</td>
                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.2</td>
 
-                <td th:class="${hasCompletedBulking}? '' : ${T(com.efficio.fieldbook.web.common.util.GermplasmListWebUIUtil).getCSSClassForDuplicateType(gid) + ' ' + (row.even ? 'even' : 'odd')}" 
+                <td th:class="${hasCompletedBulking}? (${row.even} ? 'even' : 'odd') : ${T(com.efficio.fieldbook.web.common.util.GermplasmListWebUIUtil).getCSSClassForDuplicateType(gid)}" 
                 	th:text="${gid.duplicate}">.2</td>
                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.bulkWith}">.2</td>
                 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.bulkCompl}">.2</td>

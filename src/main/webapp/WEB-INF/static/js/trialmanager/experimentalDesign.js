@@ -76,14 +76,15 @@
                 $scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable;
 
                 //FIXME: cheating a bit for the meantime.
+                var $totalGermplasms = $('#totalGermplasms');
                 if (!TrialManagerDataService.applicationData.germplasmListCleared) {
                     $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
-                        germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() :
+                        germplasmTotalListCount = parseInt($totalGermplasms.val() ? $totalGermplasms.val() :
                         TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount);
                 }
                 else {
                     $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
-                        germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
+                        germplasmTotalListCount = parseInt($totalGermplasms.val() ? $totalGermplasms.val() : 0);
                 }
 
                 if (isNaN($scope.totalGermplasmEntryListCount)) {
@@ -342,7 +343,7 @@
 
         // FILTERS USED FOR EXP DESIGN
 
-        .filter('filterFactors', function () {
+        .filter('filterFactors',['_', function (_) {
             return function (factorList, designTypeIndex) {
 
                 var excludes = [
@@ -351,25 +352,18 @@
                     [8220, 8200]
                 ];
 
-                var copyList = angular.copy(factorList);
-
-                angular.forEach(excludes[designTypeIndex], function (val) {
-                    for (var i = 0; i < copyList.length; i++) {
-                        if (copyList[i] === val) {
-                            copyList.splice(i, 1);
-                        }
-                    }
+                return _.filter(factorList,function(value) {
+                    return !_.contains(excludes[designTypeIndex],value);
                 });
 
-                return copyList;
             };
-        })
+        }])
 
         .filter('filterExperimentalDesignType', ['TrialManagerDataService','_',function(TrialManagerDataService,_) {
             return function(designTypes) {
                 var result = [];
 
-                var filteredDesignTypes = _.filter(designTypes,function(value,key) {
+                var filteredDesignTypes = _.filter(designTypes,function(value) {
                     return value.name !== 'Other Design';
                 });
 

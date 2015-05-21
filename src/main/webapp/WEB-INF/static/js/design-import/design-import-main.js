@@ -1,4 +1,10 @@
-(function() {
+/**
+ * Angular JS codes for the OWN design function, contains services, directives, and controller mainly used in the mapping page/modal
+ * Created by cyrus on 05/12/15.
+ */
+(function(_isNursery) {
+    'use strict';
+
     var app =  angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource','ui.sortable']);
 
     app.controller('designImportCtrl', ['$scope','DesignMappingService','ImportDesign','$modal','Messages',function(scope,DesignMappingService,ImportDesign,$modal,Messages){
@@ -14,6 +20,7 @@
                 }
 
                 if (result.warning) {
+                    /** @namespace result.warning */
                     showAlertMessage('', result.warning);
                 }
 
@@ -74,8 +81,8 @@
 
         };
 
-        // nusery type if nursery
-        scope.hasNurseryType = isNursery();
+        // if nursery, set the nursery type
+        scope.hasNurseryType = _isNursery();
         scope.selectedNurseryType = '';
 
         DesignMappingService.getDistinctNurseryTypes().then(function(result) {
@@ -142,11 +149,6 @@
                     }
                 };
 
-                $scope.onAdd = function(result) {
-
-                };
-
-
             }]
 
         };
@@ -164,42 +166,26 @@
                 link: function (scope, elem, attrs) {
                     scope.processData = function (data) {
                         scope.$apply(function () {
-                            var out = {};
-
                             if (data.responseData) {
                                 data = data.responseData;
                             }
                             if (data) {
-
                                 // if retrieved data is an array of values
                                 if (data.length && data.length > 0) {
                                     $.each(data, function (key, value) {
-                                        scope.callback({ result: { id: value.variable.cvTermId, variable: value.variable} });
-
                                         scope.modeldata.id = value.variable.cvTermId;
-                                        scope.modeldata.variable = value.variable;
-
-                                        // process propery, scale + method
-                                        scope.modeldata.variable.property = {
-                                            name : value.variable.property
+                                        scope.modeldata.variable = {
+                                            id : value.variable.cvTermId,
+                                            name : value.variable.name,
+                                            property : { name : value.variable.property },
+                                            scale : { name : value.variable.scale },
+                                            method : { name : value.variable.method }
                                         };
-
-                                        scope.modeldata.variable.scale = {
-                                            name : value.variable.scale
-                                        };
-
-                                        scope.modeldata.variable.method = {
-                                            name : value.variable.method
-                                        };
-
                                     });
                                 }
-
                             }
 
                             $(VARIABLE_SELECTION_MODAL_SELECTOR).modal('hide');
-
-                            scope.$emit('variableAdded', out);
                         });
                     };
 
@@ -237,13 +223,14 @@
             function validateMapping() {
 
                 var postData = angular.copy(service.data);
-                delete postData.unmappedHeaders;
                 var allMapped = true;
                 var deferred = $q.defer();
 
+                delete postData.unmappedHeaders;
+
                 // lets grab all variables that are in groups but does not have mapped variables
-                _.forEach(postData,function(value,key) {
-                    var results = _.filter(value,function(item,key2) {
+                _.forEach(postData,function(value) {
+                    var results = _.filter(value,function(item) {
                         return !_.has(item,'variable');
                     });
 
@@ -265,7 +252,7 @@
                 // output should be in the format
                 // result : { mappedDesignFactors : [ { name : header_name, id : std_var_id } ] }
 
-                _.forIn(postData,function(value,key) {
+                _.forIn(postData,function(value) {
                     for (var i = 0; i < value.length; i++) {
 
                         if (_.has(value[i],'variable')) {
@@ -341,10 +328,4 @@
        return ImportDesign;
     });
 
-    /* non angularjs codes */
-
-    /* we bind events on design map modal open, and when the design map modal workflow is done */
-    $(function(){
-    });
-
-})();
+})(isNursery);

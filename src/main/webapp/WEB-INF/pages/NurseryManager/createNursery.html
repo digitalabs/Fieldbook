@@ -53,6 +53,10 @@
 									<a href="javascript: void(0)" class="import-crosses"
 									   th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
 								</li>
+								<li>
+									<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" 
+									   th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -335,11 +339,9 @@
 		$('body').data('doAutoSave', '0');
 		
 		if ($('#experimentTypeId').val() !== ''){
-			$('#experimentalDesignExists').show();
-			$('#experimentalDesignNotExists').hide();
+			$('#nursery-experimental-design-li').show();
 		}else{
-			$('#experimentalDesignExists').hide();
-			$('#experimentalDesignNotExists').show();
+			$('#nursery-experimental-design-li').hide();
 		}
 	});
 	//]]>

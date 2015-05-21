@@ -27,7 +27,7 @@ public interface DesignImportService {
 	
 	void validateDesignData(DesignImportData designImportData) throws DesignValidationException;
 	
-	boolean areTrialInstancesMatchTheSelectedEnvironments(Workbook workbook, DesignImportData designImportData);
+	boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData);
 
 	Map<PhenotypicType,List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders) throws MiddlewareQueryException;
 

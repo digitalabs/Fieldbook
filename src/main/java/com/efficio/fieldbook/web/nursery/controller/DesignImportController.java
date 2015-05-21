@@ -168,7 +168,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			try {
 				measurementRows = designImportService.generateDesign(workbook, designImportData, environmentData);
 			} catch (DesignValidationException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(), e);
 			}
 	    	
 	    	List<Map<String, Object>> masterList = new ArrayList<>();
@@ -226,6 +226,9 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			userSelection.getDesignImportData().setMappedHeaders(newMappingResults);
 
 		} catch (MiddlewareQueryException e) {
+			
+			LOG.error(e.getMessage(), e);
+			
 			resultsMap.put("success", Boolean.FALSE);
 			resultsMap.put("error", e.getMessage());
 
@@ -235,13 +238,16 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 		try {
 			designImportService.validateDesignData(userSelection.getDesignImportData());
 
-			if (!designImportService.areTrialInstancesMatchTheSelectedEnvironments(userSelection.getWorkbook(), userSelection.getDesignImportData())){
+			if (!designImportService.areTrialInstancesMatchTheSelectedEnvironments(noOfEnvironments, userSelection.getDesignImportData())){
 				resultsMap.put("warning", messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH));
 			}
 
 			resultsMap.put("success", Boolean.TRUE);
 			
 		} catch (DesignValidationException e) {
+			
+			LOG.error(e.getMessage(), e);
+			
 			resultsMap.put("success", Boolean.FALSE);
 			resultsMap.put("error",e.getMessage());
 			resultsMap.put("message",e.getMessage());

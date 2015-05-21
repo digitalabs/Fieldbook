@@ -25,7 +25,8 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -34,6 +35,7 @@ import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.service.DesignImportService;
+import com.efficio.fieldbook.web.nursery.controller.DesignImportController;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
@@ -42,6 +44,8 @@ import com.mysql.jdbc.StringUtils;
 
 
 public class DesignImportServiceImpl implements DesignImportService {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DesignImportServiceImpl.class);
 
 	@Resource
     private UserSelection userSelection;
@@ -184,22 +188,20 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 	
 	@Override
-	public boolean areTrialInstancesMatchTheSelectedEnvironments(Workbook workbook, DesignImportData designImportData){
+	public boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData){
 		
-		if (workbook!=null){
+		
 			DesignHeaderItem trialInstanceDesignHeaderItem = filterDesignHeaderItemsByTermId(
 					TermId.TRIAL_INSTANCE_FACTOR,
 					designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 			
 			if (trialInstanceDesignHeaderItem != null){
 				Map<String, Map<Integer, List<String>>> csvMap = groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, designImportData.getCsvData());
-				if (workbook.getTotalNumberOfInstances() == csvMap.size()){
+				if (noOfEnvironments == csvMap.size()){
 					return true;
 				}
 			}
-		}else{
-			return true;
-		}
+		
 		
 		return false;
 	}
@@ -445,7 +447,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 				map.put(measurementVariable.getTermId(), fieldbookMiddlewareService.getStandardVariable(
 						measurementVariable.getTermId()));
 			} catch (MiddlewareQueryException e) {
-				//do nothing
+				LOG.error(e.getMessage(), e);
 			}
 		}
 
@@ -496,7 +498,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 			}
 			WorkbookUtil.addMeasurementDataToRows(new ArrayList<MeasurementVariable>(temporaryList), measurements, true, userSelection, ontologyService, fieldbookService);
 		} catch (MiddlewareQueryException e) {
-			//do nothing
+			LOG.error(e.getMessage(), e);
 		}
 	}
 	

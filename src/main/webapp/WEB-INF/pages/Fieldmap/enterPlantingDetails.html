@@ -252,13 +252,13 @@
 			);
 			
 			$('#field-map td.sub-header-row').on('click',function() {
-				var rowElements = getColumnOrRowElements($(this).closest("tr").find("td.plot")),
+				var rowElements = getColumnOrRowElements($(this).closest('tr').find('td.plot')),
 					allUnusable = checkColumnOrRange(rowElements);
 				setArrayToUnusable(rowElements, allUnusable);
 			});
 			
 			$('#field-map td.sub-header-col').on('click',function() {
-				var	colElements = getColumnOrRowElements($(this).closest("table").find("tr.plotRow td:nth-child(" + ($(this).index()+1) + ")")),
+				var	colElements = getColumnOrRowElements($(this).closest('table').find('tr.plotRow td:nth-child(' + ($(this).index()+1) + ')')),
 			      	allUnusable = checkColumnOrRange(colElements);
 				setArrayToUnusable(colElements, allUnusable);
 			});

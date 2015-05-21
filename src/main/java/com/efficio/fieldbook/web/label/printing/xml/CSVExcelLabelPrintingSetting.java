@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.label.printing.xml;
 
 import java.io.Serializable;
@@ -12,16 +13,15 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 
 	private static final long serialVersionUID = -6130830859384859857L;
 	public static final String DELIMITER = ",";
-			
+
 	private boolean isIncludeColumnHeadingsInOutput;
 	private String selectedFieldsString;
-	
-	public CSVExcelLabelPrintingSetting(){
-		
+
+	public CSVExcelLabelPrintingSetting() {
+
 	}
-	
-	public CSVExcelLabelPrintingSetting(boolean isIncludeColumnHeadingsInOutput,
-			String selectedFieldsString) {
+
+	public CSVExcelLabelPrintingSetting(boolean isIncludeColumnHeadingsInOutput, String selectedFieldsString) {
 		super();
 		this.isIncludeColumnHeadingsInOutput = isIncludeColumnHeadingsInOutput;
 		this.selectedFieldsString = selectedFieldsString;
@@ -29,7 +29,7 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 
 	@XmlAttribute
 	public boolean isIncludeColumnHeadingsInOutput() {
-		return isIncludeColumnHeadingsInOutput;
+		return this.isIncludeColumnHeadingsInOutput;
 	}
 
 	public void setIncludeColumnHeadingsInOutput(boolean isIncludeColumnHeadingsInOutput) {
@@ -38,9 +38,9 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 
 	public List<Integer> getSelectedFieldsList() {
 		List<Integer> selectedFieldsList = new ArrayList<Integer>();
-		if (!selectedFieldsString.isEmpty()){
-			for (String traitId : selectedFieldsString.split(DELIMITER)){
-				if (NumberUtils.isNumber(traitId)){
+		if (!this.selectedFieldsString.isEmpty()) {
+			for (String traitId : this.selectedFieldsString.split(CSVExcelLabelPrintingSetting.DELIMITER)) {
+				if (NumberUtils.isNumber(traitId)) {
 					selectedFieldsList.add(Integer.parseInt(traitId));
 				}
 			}
@@ -48,10 +48,9 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 		return selectedFieldsList;
 	}
 
-
 	@XmlAttribute
 	public String getSelectedFieldsString() {
-		return selectedFieldsString;
+		return this.selectedFieldsString;
 	}
 
 	public void setSelectedFieldsString(String selectedFieldsString) {
@@ -62,38 +61,40 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (isIncludeColumnHeadingsInOutput ? 1231 : 1237);
-		result = prime * result
-				+ ((selectedFieldsString == null) ? 0 : selectedFieldsString.hashCode());
+		result = prime * result + (this.isIncludeColumnHeadingsInOutput ? 1231 : 1237);
+		result = prime * result + (this.selectedFieldsString == null ? 0 : this.selectedFieldsString.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (this.getClass() != obj.getClass()) {
 			return false;
+		}
 		CSVExcelLabelPrintingSetting other = (CSVExcelLabelPrintingSetting) obj;
-		if (isIncludeColumnHeadingsInOutput != other.isIncludeColumnHeadingsInOutput)
+		if (this.isIncludeColumnHeadingsInOutput != other.isIncludeColumnHeadingsInOutput) {
 			return false;
-		if (selectedFieldsString == null) {
-			if (other.selectedFieldsString != null)
+		}
+		if (this.selectedFieldsString == null) {
+			if (other.selectedFieldsString != null) {
 				return false;
-		} else if (!selectedFieldsString.equals(other.selectedFieldsString))
+			}
+		} else if (!this.selectedFieldsString.equals(other.selectedFieldsString)) {
 			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "CSVExcelLabelPrintingSetting [isIncludeColumnHeadingsInOutput="
-				+ isIncludeColumnHeadingsInOutput + ", selectedFieldsString="
-				+ selectedFieldsString + "]";
+		return "CSVExcelLabelPrintingSetting [isIncludeColumnHeadingsInOutput=" + this.isIncludeColumnHeadingsInOutput + ", selectedFieldsString=" + this.selectedFieldsString
+				+ "]";
 	}
-	
-	
 
 }

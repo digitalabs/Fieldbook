@@ -85,7 +85,7 @@ public class GermplasmListController {
 			model.addAttribute("listId", listId);
 			model.addAttribute("listNotes", germplasmList.getNotes());
 			model.addAttribute("listType", GermplasmListType.STOCK.name());
-			model.addAttribute("subListType", germplasmList.getType());
+			model.addAttribute("sourceListType", germplasmList.getType());
 			model.addAttribute("listName", germplasmList.getName());
 			model.addAttribute(GERMPLASM_LIST, detailList);
 			List<TableHeader> tableHeaderList = null;

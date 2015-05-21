@@ -20,7 +20,7 @@
 			</tr>
            </thead>
            <tbody >
-             <tr class="primaryRow" th:each="gid, row : *{germplasmList}" th:attr="data-gid=${gid.gid}" th:if="*{subListType == 'ADVANCED'}">
+             <tr class="primaryRow" th:each="gid, row : *{germplasmList}" th:attr="data-gid=${gid.gid}" th:if="*{sourceListType == 'ADVANCED'}">
              	<td th:class="${row.even}? 'even fbk-advance-check-box' : 'odd fbk-advance-check-box'">
 					<input type="checkbox" class="stockListEntryId" th:attr="data-entryId=${gid.entryId}" th:attrappend="data-lotId=${gid.entryId}" name="stockListEntryId" id="stockListEntryId"/> 
 				</td>
@@ -39,7 +39,7 @@
 				 <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.inventoryID}">.6</td>
                <td data-truncate-limit="30" data-truncate-placement="left" th:class="${row.even}? 'even advance-list-comment' : 'odd advance-list-comment'" th:text="${gid.comment}">.6</td>
              </tr>
-             <tr class="primaryRow" th:each="gid, row : *{germplasmList}" th:attr="data-gid=${gid.gid}" th:if="*{subListType == 'CROSSES'}">
+             <tr class="primaryRow" th:each="gid, row : *{germplasmList}" th:attr="data-gid=${gid.gid}" th:if="*{sourceListType == 'CROSSES'}">
 				<td th:class="${row.even}? 'even fbk-advance-check-box' : 'odd fbk-advance-check-box'">
 					<input type="checkbox" class="stockListEntryId" th:attr="data-entryId=${gid.entryId}" th:attrappend="data-lotId=${gid.entryId}" name="stockListEntryId" id="stockListEntryId"/> 
 				</td>

@@ -7,7 +7,7 @@
 
     var app =  angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource','ui.sortable']);
 
-    app.controller('designImportCtrl', ['$scope','DesignMappingService','ImportDesign','$modal','Messages',function(scope,DesignMappingService,ImportDesign,$modal,Messages){
+    app.controller('designImportCtrl', ['$scope','DesignMappingService','DesignOntologyService','ImportDesign','$modal','Messages',function(scope,DesignMappingService,DesignOntologyService,ImportDesign,$modal,Messages){
         // we can retrieve this from a service
         scope.data = DesignMappingService.data;
         scope.validateAndSend = function() {
@@ -56,7 +56,7 @@
                             }
                         }).result.finally(function() {
                                 // do something after this modal closes
-                                // TODO: refresh cached content for the variable selection
+                                DesignOntologyService.clearData();
 
                                 setTimeout(function() {
                                     $designMapModal.modal('show');
@@ -319,6 +319,9 @@
             // @param = this map contains variables of the pair that will be filtered
             addDynamicFilterObj: function (_map, group) {
                 settingsManager._addDynamicFilter(_map, group);
+            },
+            clearData: function() {
+                settingsManager._clearCache();
             }
 
         };

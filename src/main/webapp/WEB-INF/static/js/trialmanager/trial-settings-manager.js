@@ -324,6 +324,12 @@ window.TrialSettingsManager = (function () {
         return selectedVariableList;
     };
 
+    TrialSettingsManager.prototype._clearCache = function () {
+        $.each(variableSelectionGroups,function(key) {
+            delete variableSelectionGroups[key].data;
+        });
+    };
+
     TrialSettingsManager.prototype._openVariableSelectionDialog = function (params) {
         var groupId = parseInt(params.variableType, 10),
             group = variableSelectionGroups[groupId],

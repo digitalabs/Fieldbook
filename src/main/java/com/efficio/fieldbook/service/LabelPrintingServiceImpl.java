@@ -948,6 +948,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             if(isStockList){
                 params.setStockList(instanceInfo.getStockList());
                 params.setIsStockList(true);
+                params.setInventoryDetailsMap(getInventoryDetailsMap(params.getStockList()));
             }
             
             if (isTrial) {
@@ -1042,28 +1043,27 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         params.setLabelHeaders(new HashMap<Integer, String>());
         boolean firstEntry = true;
         
-        if(params.isStockList()){
-        	params.setInventoryDetailsMap(getInventoryDetailsMap(params.getStockList()));
-        } 
-        
     	for (MeasurementRow measurement : params.getInstanceMeasurements()) {
-    		String entryNo = measurement.getMeasurementData(TermId.ENTRY_NO.getId()).getValue();
-    		if(params.getInventoryDetailsMap().containsKey(entryNo)){
-                FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
-                        measurement.getExperimentId());
-                
-                Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, measurement, firstEntry, workbook);
-                
-                params.setUserSpecifiedLabels(userSpecifiedLabels);
+    		String entryNo = measurement.getMeasurementData(
+					TermId.ENTRY_NO.getId()).getValue();
+			if (params.isStockList() && params.getInventoryDetailsMap() != null
+					&& !params.getInventoryDetailsMap().containsKey(entryNo)) {
+				continue;
+			}
+            FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
+                    measurement.getExperimentId());
+            
+            Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, measurement, firstEntry, workbook);
+            
+            params.setUserSpecifiedLabels(userSpecifiedLabels);
 
-                label.setUserFields(userSpecifiedLabels);
+            label.setUserFields(userSpecifiedLabels);
 
-                if (firstEntry) {
-                    firstEntry = false;
-                }
+            if (firstEntry) {
+                firstEntry = false;
+            }
 
-                params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
-    		}
+            params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
         }
     }
     

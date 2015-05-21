@@ -127,7 +127,7 @@ public class CrossingServiceImplTest {
 		
 		CrossNameSetting setting = createCrossNameSetting();
 		ImportedCrosses cross = createCross();
-		String crossName = crossingService.buildCrossName(cross.getFemaleDesig(), cross.getMaleDesig(), setting.getSeparator());
+		String crossName = crossingService.buildCrossName(cross, setting.getSeparator());
 		
 		assertEquals(cross.getFemaleDesig() + setting.getSeparator() + cross.getMaleDesig() , crossName);
 		

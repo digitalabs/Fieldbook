@@ -142,6 +142,8 @@ var ImportDesign = {
 									showSuccessfulMessage('', 'The nursery design was imported successfully. Please save your nursery before proceeding to Measurements tab.');
 									$('#nursery-experimental-design-li').show();
 								}else{
+									
+									ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
 									showSuccessfulMessage('', 'The trial design was imported successfully. Please review the Measurements tab.');
 								}
 								

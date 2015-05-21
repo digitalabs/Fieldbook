@@ -444,7 +444,13 @@ public class ObservationMatrixController extends
     	
     	UserSelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
-    	tempList.addAll(userSelection.getMeasurementRowList());
+    	
+    	if (userSelection.getTemporaryWorkbook() != null && userSelection.getMeasurementRowList() == null){
+    		tempList.addAll(userSelection.getTemporaryWorkbook().getObservations());
+    	}else{
+    		tempList.addAll(userSelection.getMeasurementRowList());
+    	}
+    	
     	form.setMeasurementRowList(tempList);
     	
     	List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();

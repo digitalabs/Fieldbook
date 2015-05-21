@@ -138,6 +138,13 @@
 			});
 			if(isNursery()){
 				addFakeCheckTable();
+				
+				// hide Import Crosses in Actions menu
+				if($('#createNurseryMainForm #studyId').length == 1){
+					$('#import-crosses').css('display', 'none');
+				} else {
+					$('#main-actions-btn').addClass('fbk-hide');
+				}
 			}
             else {
                 if (angular && angular.element("#manage-trial-tabs [ui-view='germplasm']").length === 1) {

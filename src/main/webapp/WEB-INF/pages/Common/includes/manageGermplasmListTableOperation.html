@@ -168,6 +168,14 @@
 							resetCheckList();
 						}
 						addFakeCheckTable();
+						
+						// show Import Crosses in Actions menu
+						if($('#createNurseryMainForm #studyId').length == 1){
+							$('#import-crosses').css('display', 'block');
+						} else {
+							$('#main-actions-btn').removeClass('fbk-hide');
+						}
+						
 					} else {
                         $(document).trigger('germplasmListUpdated');
                     }

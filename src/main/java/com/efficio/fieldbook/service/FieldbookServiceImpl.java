@@ -469,7 +469,7 @@ public class FieldbookServiceImpl implements FieldbookService {
         } else if (TermId.LOCATION_ID.getId() == id) {
             return getLocationById(valueId.intValue());
         } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id || TermId.STUDY_UID.getId() == id) {
-            return getPersonByPersonId(valueId.intValue());
+            return getPersonByUserId(valueId.intValue());
         } else if (isCategorical) {
             Term term = ontologyService.getTermById(valueId.intValue());
             if (term != null) {
@@ -511,15 +511,6 @@ public class FieldbookServiceImpl implements FieldbookService {
             return location.getLname();
         }
         return null;
-    }
-
-    @Override
-    public String getPersonByPersonId(int personId) throws MiddlewareQueryException {
-        Person person = userDataManager.getPersonById(personId);
-        if (person != null) {
-            return person.getDisplayName();
-        }
-        return "";
     }
 
     @Override
@@ -1156,5 +1147,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	public void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
+	}
+
+	public void setUserDataManager(UserDataManager userDataManager) {
+		this.userDataManager = userDataManager;
 	}
 }

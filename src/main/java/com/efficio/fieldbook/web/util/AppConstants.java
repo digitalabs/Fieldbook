@@ -107,8 +107,10 @@ public enum AppConstants {
     , OBJECTIVE
 
     , FEMALE_NURSERY
+    , FEMALE_ENTRY
     , FEMALE_PLOT
     , MALE_NURSERY
+    , MALE_ENTRY
     , MALE_PLOT
     , BREEDING_METHOD
     , CROSSING_DATE

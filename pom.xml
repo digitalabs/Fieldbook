@@ -5,7 +5,7 @@
 	<artifactId>Fieldbook</artifactId>
 	<packaging>war</packaging>
 	<name>Fieldbook Project</name>
-	<version>4.0.2.SNAPSHOT</version>
+	<version>4.0.2.SNAPSHOT-STOCKID</version>
 
 	<properties>
 		<ibpcommons.version>4.0.2.SNAPSHOT-STOCKID</ibpcommons.version>

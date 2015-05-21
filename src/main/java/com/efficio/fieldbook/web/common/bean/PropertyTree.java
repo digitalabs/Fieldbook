@@ -3,8 +3,6 @@ package com.efficio.fieldbook.web.common.bean;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.generationcp.middleware.domain.dms.StandardVariableSummary;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
@@ -44,6 +42,7 @@ public class PropertyTree {
 		traitClass.setTraitClassName(traitClassReference.getName());
 	}
 	
+	
 	public List<StandardVariableSummary> getStandardVariables() {
 		return standardVariables;
 	}
@@ -52,28 +51,4 @@ public class PropertyTree {
 	public void setStandardVariables(List<StandardVariableSummary> standardVariables) {
 		this.standardVariables = standardVariables;
 	}
-	
-	@JsonAutoDetect(fieldVisibility = Visibility.ANY)
-	final class TraitPojo {
-		
-		@SuppressWarnings("unused")
-		private Integer traitClassId;
-		
-		@SuppressWarnings("unused")
-		private String traitClassName;
-
-		
-		public void setTraitClassId(Integer traitClassId) {
-			this.traitClassId = traitClassId;
-		}
-
-		
-		public void setTraitClassName(String traitClassName) {
-			this.traitClassName = traitClassName;
-		}
-		
-	}
-	
-	
-	
 }

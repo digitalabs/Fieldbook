@@ -455,7 +455,7 @@
 				$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 			}			
 		}
-		function deleteCheckGermplasmList(entryNumber, gid, rowObj) {
+		function deleteCheckGermplasmList(entryNumber, gid, rowObj, isDropDelete) {
 			'use strict';
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/deleteCheckGermplasmDetails/' + gid,
@@ -487,16 +487,16 @@
 							}
 						}
 					}
-					
 					if(rowObj !== null && $(rowObj) != null){
 						if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
 							selectedCheckListDataTable.getDataTable().fnDeleteRow( $(rowObj), null, true);
 							if(selectedCheckListDataTable.getDataTable().$('tr').length == 0){
 								//we call the reset
 								resetCheckList();
+							}else if(isDropDelete !== true){
+								reloadCheckListTable();;
 							}
-						}
-							
+						}							
 					}	
 				}
 			});
@@ -633,14 +633,14 @@
 							moveToTopScreen();
 						}
 					} else if (isFunction(source.data) && $(this).hasClass('primary') &&
-						$(ui.helper.find('tr').get(0)).hasClass('checkRow')) {
-
+						$(ui.helper.find('tr').get(0)).hasClass('checkRow') && $('.popover-content .editCheck').length == 0) {
+						
 					// Removes the items from the check list						
 						$('.checkRow.checkGermplasmSelectedRow').each(function(){
 							
 							var entryNumber = $(this).data('entry'),
 							gid = '' + $(this).data('gid');
-							deleteCheckGermplasmList(entryNumber, gid, null);
+							deleteCheckGermplasmList(entryNumber, gid, $(this), true);
 							$.each($('.germplasm-list-items tbody tr'), function (index, row) {
 								if ($(row).data('entry') == entryNumber && $(row).data('gid') == gid) {
 									$(row).removeAttr('style');
@@ -651,6 +651,8 @@
 						$('.check-germplasm-list-items tr.checkGermplasmSelectedRow').remove();
 						if ($('.check-germplasm-list-items tbody tr').length === 0) {		
 							resetCheckList();
+						}else{
+							reloadCheckListTable();
 						}
 					}
 				}

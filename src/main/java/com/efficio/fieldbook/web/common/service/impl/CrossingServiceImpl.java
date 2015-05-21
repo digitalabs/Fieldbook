@@ -173,7 +173,7 @@ public class CrossingServiceImpl implements CrossingService {
 		}	
 		
 		CrossingUtil.applyBreedingMethodSetting(germplasmDataManager, crossSetting, germplasmNameMap);
-		
+		CrossingUtil.applyMethodNameType(germplasmDataManager, germplasmNameMap, crossingNameTypeId);
 		return germplasmNameMap;
 	}
 

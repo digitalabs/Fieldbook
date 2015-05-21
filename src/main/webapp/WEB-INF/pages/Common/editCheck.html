@@ -66,9 +66,8 @@
 					//we need to get the real index of the check
 					
 					if(listDataTable != null){
-						
-						listDataTable.getDataTable().fnUpdate($('#selectedCheck'+$('.editCheck #index').val()).val(), $('.editCheck #dataTableIndex').val(), columnIndex, false, false); // Single cell
-						listDataTable.getDataTable().fnDraw();
+						$('.check-table-popover .popover').hide();
+						listDataTable.getDataTable().fnUpdate($('#selectedCheck'+$('.editCheck #index').val()).val(), $('.editCheck #index').val(), columnIndex, false, false); // Single cell
 						listDataTable.getDataTable().$('.delete-check').off('click');
 						listDataTable.getDataTable().$('.delete-check').on('click', function(){
 							

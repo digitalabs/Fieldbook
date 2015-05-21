@@ -241,15 +241,15 @@ public class ImportGermplasmListController extends SettingsController {
             		//since for trial, we are using only the original info
             		importedGermplasmMainInfoToUse = getUserSelection().getImportedGermplasmMainInfo();
             	}
-            	if(importedGermplasmMainInfoToUse != null){
-    	            for (int i = 0; i < selectedCheck.length; i++) {
-    	                int realIndex = i;		                
-    	                if (NumberUtils.isNumber(selectedCheck[i])) {		                	
-    	                	importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
-    	                	importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));		                	
-    	                }
-    	            }
-            	}
+                if(importedGermplasmMainInfoToUse != null){
+                    for (int i = 0; i < selectedCheck.length; i++) {
+                        int realIndex = i;                        
+                        if (NumberUtils.isNumber(selectedCheck[i])) {                            
+                            importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
+                            importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));                            
+                        }
+                    }
+                }
             }else{
             	//we set the check to null
             	if(getUserSelection().getImportedGermplasmMainInfo() != null && 
@@ -1250,10 +1250,6 @@ public class ImportGermplasmListController extends SettingsController {
             if (!ontologyService.validateDeleteStandardVariableEnumeration(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()))) {
                 result.put(SUCCESS, "-1");
                 result.put(ERROR, messageSource.getMessage("nursery.manage.check.types.delete.error", 
-                        new Object[] {name}, local));
-            } else if (Integer.parseInt(form.getManageCheckCode()) > 0) {
-                result.put(SUCCESS, "-1");
-                result.put(ERROR, messageSource.getMessage("nursery.manage.check.types.delete.central", 
                         new Object[] {name}, local));
             } else {
                 ontologyService.deleteStandardVariableValidValue(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()));

@@ -1408,7 +1408,10 @@ function isNurseryNameUnique() {
 
 	return isStudyNameUnique(studyName, studyId);
 }
-
+function isCheckParametersEditable(){
+	'use strict';
+	return !$('#'+getJquerySafeId('checkVariables1.value')).prop('disabled');
+}
 function validateCreateNursery() {
 	var hasError = false
 		,name = ''
@@ -1507,7 +1510,7 @@ function validateCreateNursery() {
 	 */
 	if ($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null
 			&& (($('#chooseGermplasmAndChecks').data('replace') !== undefined && parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1)
-					|| ($('#studyId').length === 0 ))) {
+					|| ($('#studyId').length === 0 ) || isCheckParametersEditable())) {
 
 		selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 
@@ -1740,6 +1743,8 @@ function submitGermplasmAndCheck() {
 	var $form = $('#germplasm-list-form,#specify-checks-form'),
 		serializedData = $form.serialize() + '&lastDraggedChecksList='+lastDraggedChecksList;
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+		//we need to move to 1st page so the serialize would work properly
+		selectedCheckListDataTable.getDataTable().fnDraw();
 		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
 	serializedData += '&columnOrders='+(BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));

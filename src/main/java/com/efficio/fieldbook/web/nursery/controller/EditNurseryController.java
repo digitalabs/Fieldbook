@@ -535,7 +535,7 @@ public class EditNurseryController extends SettingsController {
     protected void setFormStaticData(CreateNurseryForm form, String contextParams, Workbook workbook) {
     	
     	ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
-    	if (expDesignVar.getExperimentalDesign() != null){
+    	if (expDesignVar != null && expDesignVar.getExperimentalDesign() != null){
     		form.setExperimentTypeId(expDesignVar.getExperimentalDesign().getValue());
     	}
     	

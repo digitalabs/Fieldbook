@@ -2161,6 +2161,8 @@ public class SettingsUtil {
 					} else if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {
 						param.setDesignType(2);
+					} else if (String.valueOf(TermId.OTHER_DESIGN.getId()).equals(var.getValue())){
+						param.setDesignType(3);
 					}
 					if (String.valueOf(TermId.RESOLVABLE_INCOMPLETE_BLOCK_LATIN.getId()).equals(var.getValue())
 							|| String.valueOf(TermId.RESOLVABLE_INCOMPLETE_ROW_COL_LATIN.getId()).equals(var.getValue())) {

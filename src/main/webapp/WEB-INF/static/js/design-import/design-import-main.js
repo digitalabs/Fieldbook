@@ -218,7 +218,7 @@
             };
         }]);
 
-    app.service('DesignMappingService',['$http','$q','_',function($http,$q,_) {
+    app.service('DesignMappingService',['$http','$q','_','ImportDesign',function($http,$q,_,ImportDesign) {
 
             function validateMapping() {
 
@@ -270,7 +270,9 @@
                     }
                 });
 
-                return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping',postData).then(function(result) {
+                var envCnt = _isNursery() ? 1 : ImportDesign.trialManagerCurrentData().environments.environments.length;
+
+                return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping/' + envCnt ,postData).then(function(result) {
                     return result.data;
                 });
 

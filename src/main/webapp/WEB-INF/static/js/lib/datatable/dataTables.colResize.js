@@ -1,8 +1,9 @@
 var dt;
 (function (dt) {
     var ColResize = (function () {
-        function ColResize(api, settings) {
+        function ColResize(api, settings, dataTableKey) {
             this.tableSize = -1;
+            this.dataTableKey = dataTableKey;
             this.initialized = false;
             this.dt = {};
             this.dom = {
@@ -464,6 +465,9 @@ var dt;
                 return;
             this.dom.resize = false;
             this.afterResizing();
+            if(this.dataTableKey !== false){
+            	$(this.dataTableKey).resize();
+            }
         };
 
         ColResize.prototype.canColumnBeResized = function (col, newWidth) {
@@ -630,15 +634,15 @@ var dt;
     $.fn.DataTable.models.oSettings.colResizeInitCompleted = [];
 
     //Register api function
-    $.fn.DataTable.Api.register('colResize.init()', function (settings) {
-        var colResize = new dt.ColResize(this, settings);
+    $.fn.DataTable.Api.register('colResize.init()', function (settings, datatableKey) {
+        var colResize = new dt.ColResize(this, settings, datatableKey);
         if (this.settings()[0]._bInitComplete)
             colResize.initialize();
         else{        	
             this.one('init.dt', function () {
                 colResize.initialize();
             });
-        }
+        }        
         return null;
     });
     

@@ -1014,7 +1014,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 				}
 				$(parentDiv).removeClass('fbk-hide-opacity');		
 				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize, tableIdentifier);
 				$(parentDiv + ' .dataTables_length select').select2({minimumResultsForSearch: 10});
 				oSettings.oInstance.fnAdjustColumnSizing();
 			}

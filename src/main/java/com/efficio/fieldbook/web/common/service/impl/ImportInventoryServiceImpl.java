@@ -1,19 +1,23 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.web.common.service.ImportInventoryService;
-import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
-import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
-import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.service.api.InventoryService;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.springframework.context.MessageSource;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.common.service.ImportInventoryService;
+import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,14 +28,13 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 
 	@Resource
 	private InventoryImportParser parser;
-
+	
 	@Resource
-	private InventoryService inventoryService;
+	private MessageSource messageSource;
 
-	@Override public ImportedInventoryList parseFile(MultipartFile file) throws
-			FileParsingException{
-
-		return parser.parseFile(file);
+	@Override public ImportedInventoryList parseFile(MultipartFile file, Map<String,Object> additionalParams) 
+			throws FileParsingException{
+		return parser.parseFile(file,additionalParams);
 	}
 
 	@Override public boolean mergeImportedData(List<InventoryDetails> originalList,
@@ -107,5 +110,70 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 		}
 
 		return list;
+	}
+	
+	@Override 
+	public void mergeInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB,
+			ImportedInventoryList importedInventoryList, GermplasmListType germplasmListType) throws FieldbookException {
+		List<InventoryDetails> inventoryDetailListFromImport =
+				importedInventoryList.getImportedInventoryDetails();
+		checkNumberOfEntries(inventoryDetailListFromDB,inventoryDetailListFromImport);
+		checkEntriesIfTheyMatchThenUpdate(inventoryDetailListFromImport,
+				inventoryDetailListFromDB,germplasmListType);
+	}
+
+	private void checkEntriesIfTheyMatchThenUpdate(
+			List<InventoryDetails> inventoryDetailListFromImport,
+			List<InventoryDetails> inventoryDetailListFromDB,
+			GermplasmListType germplasmListType) throws FieldbookException {
+		Map<Integer,InventoryDetails> entryIdInventoryMap = new HashMap<Integer,InventoryDetails>();
+		for (InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
+			entryIdInventoryMap.put(inventoryDetailsFromDB.getEntryId(), inventoryDetailsFromDB);
+		}
+		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+			InventoryDetails inventoryDetailsFromDB = 
+					entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
+			if(inventoryDetailsFromDB==null) {
+				throw new FieldbookException(messageSource.getMessage(
+						"common.error.import.entry.id.does.not.exist", new Object[]{
+								inventoryDetailsFromImport.getEntryId().toString()},Locale.getDefault()));
+			} else if(!inventoryDetailsFromDB.getGid().equals(inventoryDetailsFromImport.getGid())){
+				throw new FieldbookException(messageSource.getMessage(
+						"common.error.import.gid.does.not.match", new Object[]{
+								inventoryDetailsFromDB.getEntryId().toString(),
+								inventoryDetailsFromDB.getGid().toString(),
+								inventoryDetailsFromImport.getGid().toString()},
+								Locale.getDefault()));
+			} else {
+				updateInventoryDetailsFromImport(inventoryDetailsFromDB,inventoryDetailsFromImport,
+						germplasmListType);
+			}
+		}
+		
+	}
+
+	protected void updateInventoryDetailsFromImport(
+			InventoryDetails inventoryDetailsFromDB,
+			InventoryDetails inventoryDetailsFromImport,
+			GermplasmListType germplasmListType) {
+		if(germplasmListType == GermplasmListType.CROSSES) {
+			inventoryDetailsFromDB.setBulkWith(inventoryDetailsFromImport.getBulkWith());
+			inventoryDetailsFromDB.setBulkCompl(inventoryDetailsFromImport.getBulkCompl());
+		}
+		inventoryDetailsFromDB.setLocationId(inventoryDetailsFromImport.getLocationId());
+		inventoryDetailsFromDB.setScaleId(inventoryDetailsFromImport.getScaleId());
+		inventoryDetailsFromDB.setAmount(inventoryDetailsFromImport.getAmount());
+		inventoryDetailsFromDB.setComment(inventoryDetailsFromImport.getComment());
+	}
+
+	private void checkNumberOfEntries(
+			List<InventoryDetails> inventoryDetailListFromDB,
+			List<InventoryDetails> inventoryDetailListFromImport) throws 
+			FieldbookException {
+		if(inventoryDetailListFromImport.size() > inventoryDetailListFromDB.size()) {
+			throw new FieldbookException(messageSource.getMessage(
+					"common.error.import.incorrect.number.of.entries", new Object[]{
+							inventoryDetailListFromDB.size()},Locale.getDefault()));
+		}
 	}
 }

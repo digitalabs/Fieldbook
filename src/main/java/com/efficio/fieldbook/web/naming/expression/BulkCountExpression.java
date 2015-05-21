@@ -26,7 +26,7 @@ public class BulkCountExpression implements Expression {
 				
 				StringBuilder lastBulkCount = callback.getLastBulkCount();
 				if (lastBulkCount.length() > 0) {
-					value.replace(startIndex, endIndex, "-" + Integer.valueOf(lastBulkCount.toString()) + 1 + "B");
+					value.replace(startIndex, endIndex, "-" + (Integer.valueOf(lastBulkCount.toString()) + 1) + "B");
 				} else {
 					value.replace(startIndex, endIndex, "-B");
 				}

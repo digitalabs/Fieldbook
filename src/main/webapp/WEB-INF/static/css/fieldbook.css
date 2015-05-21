@@ -1766,26 +1766,30 @@ td.accepted-value {
     width: 40%;
 }
 
-.plotDupe {
+.plotDupe, table .plotDupe {
 	background-color: #CCCCCC;
 }
 
-.pedigreeDupe {
+.pedigreeDupe, table .pedigreeDupe {
 	background-color: #E5D8DD;
 	color: #84324E;
 }
 
-.plotRecip {
+.plotRecip, table .plotRecip {
 	background-color: #E0E4D7;
 	color: #4C5F07;
 }
 
-.pedigreeRecip {
+.pedigreeRecip, table .pedigreeRecip {
 	background-color: #DCE9F2;
 	color: #6A83C7;
 }
 input.review-select-all{
 	margin-left: 52px;
+}
+
+.vertical-spacer {
+    margin-bottom: 25px;
 }
 
 /* exp design remap css */
@@ -1800,7 +1804,6 @@ input.review-select-all{
 .mapping-group .list-group-item .unmapped .list-group-item {
     cursor: pointer;
 }
-
 
 .mapping-group .list-group-item:hover,
 .unmapped .list-group-item:hover {

@@ -1,10 +1,8 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.common.bean.DuplicateType;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 
 /**
@@ -41,6 +38,8 @@ import com.efficio.fieldbook.web.common.bean.TableHeader;
 @Controller
 @RequestMapping(GermplasmListController.URL)
 public class GermplasmListController {
+	private static final String GERMPLASM_LIST_DUPLICATE = "germplasm.list.duplicate";
+
 	private static final String NURSERY_MANAGER_SAVED_FINAL_LIST = "/NurseryManager/savedFinalList";
 
 	public static final String URL = "/germplasm/list";
@@ -86,9 +85,20 @@ public class GermplasmListController {
 			model.addAttribute("listId", listId);
 			model.addAttribute("listNotes", germplasmList.getNotes());
 			model.addAttribute("listType", GermplasmListType.STOCK.name());
+			model.addAttribute("sourceListType", germplasmList.getType());
 			model.addAttribute("listName", germplasmList.getName());
 			model.addAttribute(GERMPLASM_LIST, detailList);
-			model.addAttribute(TABLE_HEADER_LIST, getGermplasmListTableHeaders(GermplasmListType.STOCK.name()));
+			List<TableHeader> tableHeaderList = null;
+
+			boolean hasCompletedBulking = false;
+			if (germplasmList.getType().equals(GermplasmListType.ADVANCED.name())) {
+				tableHeaderList = getAdvancedStockListTableHeaders();
+			} else if (germplasmList.getType().equals(GermplasmListType.CROSSES.name())) {
+				tableHeaderList = getCrossStockListTableHeaders();
+				hasCompletedBulking = stockHasCompletedBulking(listId);
+			}
+			model.addAttribute(TABLE_HEADER_LIST, tableHeaderList);
+			model.addAttribute("hasCompletedBulking", hasCompletedBulking);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}
@@ -96,11 +106,15 @@ public class GermplasmListController {
 		return NURSERY_MANAGER_SAVED_FINAL_LIST;
 	}
 
+	private boolean stockHasCompletedBulking(Integer listId) throws MiddlewareQueryException {
+		return inventoryService.stockHasCompletedBulking(listId);
+	}
+
 	protected void processGermplasmList(Integer listId, String germplasmListType,
 			HttpServletRequest req, Model model) {
 		try {
 			GermplasmList germplasmList = germplasmListManager.getGermplasmListById(listId);
-			List<ListDataProject> listData = getListDataProjectByListType(listId,germplasmListType);
+			List<ListDataProject> listData = getListDataProjectByListType(listId, germplasmListType);
 			
 			model.addAttribute(TABLE_HEADER_LIST, getGermplasmListTableHeaders(germplasmListType));
 			model.addAttribute(GERMPLASM_LIST, listData);
@@ -109,27 +123,33 @@ public class GermplasmListController {
 			model.addAttribute("listName", germplasmList.getName());
 			model.addAttribute("listNotes", germplasmList.getNotes());
 			model.addAttribute("listType", germplasmList.getType());
-			model.addAttribute("duplicateType", getDuplicateType(listData));
-			
+
+			if (germplasmListType.equals(GermplasmListType.CROSSES.name())) {
+				boolean pedigreeDupeFound = false;
+				boolean pedigreeRecipFound = false;
+				boolean plotDupeFound = false;
+				boolean plotRecipFound = false;
+
+				for (ListDataProject dataProject : listData) {
+					pedigreeDupeFound |= dataProject.isPedigreeDupe();
+					pedigreeRecipFound |= dataProject.isPedigreeRecip();
+					plotDupeFound |= dataProject.isPlotDupe();
+					plotRecipFound |= dataProject.isPlotRecip();
+				}
+
+				model.addAttribute("hasPedigreeDupe", pedigreeDupeFound);
+				model.addAttribute("hasPedigreeRecip", pedigreeRecipFound);
+				model.addAttribute("hasPlotDupe", plotDupeFound);
+				model.addAttribute("hasPlotRecip", plotRecipFound);
+			}
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}
 	}
 
-	private Map<Integer,DuplicateType> getDuplicateType(List<ListDataProject> listData) {
-		 Map<Integer,DuplicateType> duplicateTypeMap = new HashMap<Integer, DuplicateType>();
-		 
-		 for(ListDataProject ldp : listData){
-			 Integer listDataProjectId = ldp.getListDataProjectId();
-			 duplicateTypeMap.put(listDataProjectId, new DuplicateType(listDataProjectId,ldp.getDuplicate()));
-		 }
-		 
-		return duplicateTypeMap;
-	}
-
-	private List<ListDataProject> getListDataProjectByListType(Integer listId,
+	protected List<ListDataProject> getListDataProjectByListType(Integer listId,
 			String germplasmListType) {
-		List<ListDataProject> listData = new ArrayList<ListDataProject>();
+		List<ListDataProject> listData = new ArrayList<>();
 		
 		try {	
 			if(germplasmListType.equals(GermplasmListType.ADVANCED.name())){
@@ -143,6 +163,86 @@ public class GermplasmListController {
 		}
 		
 		return listData;
+	}
+
+	protected List<TableHeader> getCrossStockListTableHeaders() {
+		Locale locale = LocaleContextHolder.getLocale();
+		List<TableHeader> tableHeaderList = new ArrayList<>();
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.ENTRY_ID.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("seed.entry.number", null, locale)));
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.DESIGNATION.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("seed.entry.designation", null, locale)));
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.PARENTAGE.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("seed.entry.parentage", null, locale)));
+		tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("seed.inventory.gid", null, locale)));
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.STOCKID.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.stock.list.stockid", null, locale)));
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.SEED_SOURCE.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("seed.inventory.source", null, locale)));
+		tableHeaderList.add(new TableHeader(
+				messageSource.getMessage(GERMPLASM_LIST_DUPLICATE, null, locale),
+				messageSource.getMessage(GERMPLASM_LIST_DUPLICATE, null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				messageSource.getMessage("germplasm.list.bulk.with", null, locale),
+				messageSource.getMessage("germplasm.list.bulk.with", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				messageSource.getMessage("germplasm.list.bulk.complete", null, locale),
+				messageSource.getMessage("germplasm.list.bulk.complete", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.LOT_LOCATION.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.list.storage.location", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.AMOUNT.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.list.amount", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.SCALE.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.list.scale", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.COMMENT.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.list.comment", null, locale)));
+
+		return tableHeaderList;
+	}
+
+	protected List<TableHeader> getAdvancedStockListTableHeaders() {
+
+		List<TableHeader> tableHeaderList = getGermplasmListTableHeaders(GermplasmListType.ADVANCED.name());
+		Locale locale = LocaleContextHolder.getLocale();
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.LOT_LOCATION.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.list.storage.location", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.AMOUNT.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.list.amount", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.SCALE.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.list.scale", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.STOCKID.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.stock.list.stockid", null, locale)));
+
+		tableHeaderList.add(new TableHeader(
+				ColumnLabels.COMMENT.getTermNameFromOntology(ontologyDataManager),
+				messageSource.getMessage("germplasm.list.comment", null, locale)));
+
+		return tableHeaderList;
 	}
 
 	protected List<TableHeader> getGermplasmListTableHeaders(String germplasmListType) {
@@ -186,33 +286,10 @@ public class GermplasmListController {
 		
 		if(germplasmListType.equals(GermplasmListType.CROSSES.name())){
 			tableHeaderList.add(new TableHeader(
-					messageSource.getMessage("germplasm.list.duplicate", null, locale),
-					messageSource.getMessage("germplasm.list.duplicate", null, locale)));
+					messageSource.getMessage(GERMPLASM_LIST_DUPLICATE, null, locale),
+					messageSource.getMessage(GERMPLASM_LIST_DUPLICATE, null, locale)));
 		}
-		
-		if(germplasmListType.equals(GermplasmListType.STOCK.name())){
-			tableHeaderList.add(new TableHeader(
-					ColumnLabels.LOT_LOCATION.getTermNameFromOntology(ontologyDataManager),
-					messageSource.getMessage("germplasm.list.storage.location", null, locale)));
-			
-			tableHeaderList.add(new TableHeader(
-					ColumnLabels.AMOUNT.getTermNameFromOntology(ontologyDataManager),
-					messageSource.getMessage("germplasm.list.amount", null, locale)));
-			
-			tableHeaderList.add(new TableHeader(
-					ColumnLabels.SCALE.getTermNameFromOntology(ontologyDataManager),
-					messageSource.getMessage("germplasm.list.scale", null, locale)));
 
-			tableHeaderList.add(new TableHeader(
-					ColumnLabels.STOCKID.getTermNameFromOntology(ontologyDataManager),
-					messageSource.getMessage("germplasm.stock.list.stockid", null, locale)));
-			
-			tableHeaderList.add(new TableHeader(
-					ColumnLabels.COMMENT.getTermNameFromOntology(ontologyDataManager),
-					messageSource.getMessage("germplasm.list.comment", null, locale)));
-
-		}
-		
 		return tableHeaderList;
 	}
 }

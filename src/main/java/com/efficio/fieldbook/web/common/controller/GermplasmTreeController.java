@@ -96,9 +96,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@Resource
 	private CrossingService crossingService;
 
-	@Resource
-	private InventoryService inventoryService;
-
 	private static final String NAME_NOT_UNIQUE = "Name not unique";
 	private static final String HAS_CHILDREN = "Folder has children";
 	private static final String FOLDER = "FOLDER";
@@ -246,14 +243,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			studyId = userSelection.getWorkbook().getStudyDetails().getId();
 		}
 
-		int dataListID = fieldbookMiddlewareService
+		return fieldbookMiddlewareService
 				.saveOrUpdateListDataProject(studyId, type,
 						germplasmListId,
 						dataProjectList, currentUserID);
 
 
 
-		return dataListID;
 	}
 
 	/**
@@ -343,23 +339,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return new GermplasmList(null, listName, dateLong, listType,
 				currentUserId, description, parent, status, saveListForm.getListNotes());
 
-	}
-
-	private void populateGermplasmListDataFromListDataProject(List<ListDataProject> dataProjectList,
-			GermplasmList targetGermplasmList, Map<Germplasm, GermplasmListData> listDataItems) {
-		//Common germplasm list data fields
-		Integer listDataStatus = 0;
-		Integer localRecordId = 0;
-
-		for (ListDataProject data : dataProjectList) {
-			Germplasm germplasm = new Germplasm(data.getGermplasmId());
-
-			GermplasmListData newData = new GermplasmListData(null, targetGermplasmList,
-					data.getGermplasmId(),
-					data.getEntryId(), data.getEntryCode(), data.getSeedSource(),
-					data.getDesignation(), data.getGroupName(), listDataStatus, localRecordId);
-			listDataItems.put(germplasm, newData);
-		}
 	}
 
 	private void populateGermplasmListData(GermplasmList germplasmList,
@@ -683,6 +662,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 							germplasmList.getType()
 									.equalsIgnoreCase(GermplasmListType.TRIAL.toString())) ||
 					germplasmList.getType().equalsIgnoreCase(GermplasmListType.CHECK.toString()) ||
+					germplasmList.getType().equalsIgnoreCase(GermplasmListType.CROSSES.toString()) ||
 					germplasmList.getType().equalsIgnoreCase(GermplasmListType.ADVANCED.toString())
 					) {
 				dataResults.put("totalEntries", fieldbookMiddlewareService

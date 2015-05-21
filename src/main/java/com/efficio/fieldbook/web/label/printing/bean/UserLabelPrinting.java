@@ -13,11 +13,14 @@ package com.efficio.fieldbook.web.label.printing.bean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.pojos.GermplasmList;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -29,7 +32,7 @@ public class UserLabelPrinting implements Serializable{
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    
+    private Integer studyId;
     /** The study. */
     private Study study;
     
@@ -87,7 +90,8 @@ public class UserLabelPrinting implements Serializable{
     private String filename;
     
     /** The generate type. */
-    private String generateType; //1 - pdf, 2 - xls
+    //1 - pdf, 2 - xls
+    private String generateType; 
     
     /** The order. */
     private String order;
@@ -104,6 +108,12 @@ public class UserLabelPrinting implements Serializable{
     private String settingsName;
     
     private String includeColumnHeadinginNonPdf;
+
+    private boolean isStockList;
+    
+    private GermplasmList stockList;
+    
+	private Map<String, InventoryDetails> inventoryDetailsMap;
     
     /**
      * Gets the field map info.
@@ -573,5 +583,38 @@ public class UserLabelPrinting implements Serializable{
 	public void setIncludeColumnHeadinginNonPdf(String includeColumnHeadinginNonPdf) {
 		this.includeColumnHeadinginNonPdf = includeColumnHeadinginNonPdf;
 	}
-		
+	
+	public boolean isStockList() {
+		return isStockList;
+	}
+	
+	public void setIsStockList(boolean isStockList) {
+		this.isStockList = isStockList;	
+	}
+
+	public GermplasmList getStockList() {
+		return stockList;
+	}
+
+	public void setStockList(GermplasmList stockList) {
+		this.stockList = stockList;
+	}
+
+	public Map<String, InventoryDetails> getInventoryDetailsMap() {
+		return inventoryDetailsMap;
+	}
+
+	public void setInventoryDetailsMap(
+			Map<String, InventoryDetails> inventoryDetailsMap) {
+		this.inventoryDetailsMap = inventoryDetailsMap;
+	}
+	
+	public Integer getStudyId() {
+		return studyId;
+	}
+
+	public void setStudyId(Integer studyId) {
+		this.studyId = studyId;
+	}
+	
 }

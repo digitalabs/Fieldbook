@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
@@ -51,14 +52,18 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.InventoryService;
+import org.generationcp.middleware.service.api.PedigreeService;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -67,10 +72,12 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.LabelPaperFactory;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
@@ -104,6 +111,7 @@ import com.lowagie.text.pdf.PdfWriter;
 @Service
 public class LabelPrintingServiceImpl implements LabelPrintingService{
 
+	private static final String ADVANCED = "ADVANCED";
 	/** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceImpl.class);
     public static final String BARCODE = "barcode";
@@ -156,11 +164,24 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     @Resource
     private SettingsService settingsService;
     
+	@Resource
+	protected FieldbookService fieldbookService;
+    
     @Resource
     private ContextUtil contextUtil;
     
     @Resource
     private InventoryService inventoryMiddlewareService;
+    
+    @Resource 
+    private PedigreeService pedigreeService;
+    
+    @Resource
+    private CrossExpansionProperties crossExpansionProperties;
+
+    
+    @Resource
+    private OntologyDataManager ontologyDataManager;
     
     private static final String UNSUPPORTED_CHARSET_IMG = "unsupported-char-set.png";
     
@@ -259,8 +280,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 Map<String, String> moreFieldInfo = generateAddedInformationField(
                         fieldMapTrialInstanceInfo, trialInstance, "");
 
-                for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo
-                        .getFieldMapLabels()) {
+                for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
+                	
+                	if(userLabelPrinting.isStockList() 
+                			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
+                		continue;
+                	}
 
                     i++;
                     String barcodeLabelForCode = "";
@@ -777,6 +802,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         fieldMapTrialInstanceInfo, trialInstance, "");
 
                 for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
+                	
+                	if(userLabelPrinting.isStockList() 
+                			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
+                		continue;
+                	}
+                	
                     row = labelPrintingSheet.createRow(rowIndex++);
                     columnIndex = 0;
 
@@ -867,6 +898,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             Map<String,String> moreFieldInfo = generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
             for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
             	
+            	if(userLabelPrinting.isStockList() 
+            			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
+            		continue;
+            	}
+            	
             	String barcodeLabelForCode = generateBarcodeField(
                         moreFieldInfo, fieldMapLabel, firstBarcodeField,
                         secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
@@ -880,12 +916,22 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         return columnValues;
 	}
 
-    public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields, boolean isTrial) {
+    @SuppressWarnings("unchecked")
+	public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, 
+    		String selectedFields, boolean isTrial, boolean isStockList) {
 
         LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
         params.setVariableMap(convertToMap(workbook.getConditions(), workbook.getFactors()));
         params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvert(selectedFields));
-        params.setAllFieldIDs(convertToListInteger(this.getAvailableLabelFields(isTrial, true, Locale.ENGLISH, workbook.getStudyId())));
+        
+        if(isStockList){
+        	GermplasmList stockList = trialFieldMap.get(0).getStockList();
+        	params.setAllFieldIDs(convertToListInteger(this.getAvailableLabelFieldsForStockList(
+        			getStockListType(stockList.getType()), Locale.ENGLISH, workbook.getStudyId())));
+        } else {
+        	params.setAllFieldIDs(convertToListInteger(this.getAvailableLabelFieldsForStudy(isTrial, true, Locale.ENGLISH, workbook.getStudyId())));
+        }
+        
         Map<String, List<MeasurementRow>> measurementData = null;
         Map<String, MeasurementRow> environmentData = null;
 
@@ -898,13 +944,17 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
         for (FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
             params.setInstanceInfo(instanceInfo);
+            
+            if(isStockList){
+                params.setStockList(instanceInfo.getStockList());
+                params.setIsStockList(true);
+            }
+            
             if (isTrial) {
-
-                params.setInstanceMeasurements(measurementData
-                                        .get(instanceInfo.getTrialInstanceNo()));
+                params.setInstanceMeasurements(measurementData.get(instanceInfo.getTrialInstanceNo()));
                 params.setEnvironmentData(environmentData.get(instanceInfo.getTrialInstanceNo()));
             } else {
-                params.setInstanceMeasurements(workbook.getObservations());
+            	params.setInstanceMeasurements(workbook.getObservations());
             }
             
             processUserSpecificLabelsForInstance(params, workbook);
@@ -986,30 +1036,64 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         return data;
     }
 
-    protected void processUserSpecificLabelsForInstance(LabelPrintingProcessingParams params, Workbook workbook) {
+    protected void processUserSpecificLabelsForInstance(LabelPrintingProcessingParams params, 
+    		Workbook workbook) {
 
         params.setLabelHeaders(new HashMap<Integer, String>());
         boolean firstEntry = true;
         
-        for (MeasurementRow measurement : params.getInstanceMeasurements()) {
-            FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
-                    measurement.getExperimentId());
-            
-            Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, measurement, firstEntry, workbook);
-            
-            params.setUserSpecifiedLabels(userSpecifiedLabels);
+        if(params.isStockList()){
+        	params.setInventoryDetailsMap(getInventoryDetailsMap(params.getStockList()));
+        } 
+        
+    	for (MeasurementRow measurement : params.getInstanceMeasurements()) {
+    		String entryNo = measurement.getMeasurementData(TermId.ENTRY_NO.getId()).getValue();
+    		if(params.getInventoryDetailsMap().containsKey(entryNo)){
+                FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
+                        measurement.getExperimentId());
+                
+                Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, measurement, firstEntry, workbook);
+                
+                params.setUserSpecifiedLabels(userSpecifiedLabels);
 
-            label.setUserFields(userSpecifiedLabels);
+                label.setUserFields(userSpecifiedLabels);
 
-            if (firstEntry) {
-                firstEntry = false;
-            }
+                if (firstEntry) {
+                    firstEntry = false;
+                }
 
-            params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
+                params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
+    		}
         }
     }
+    
+    public Map<String,InventoryDetails> getInventoryDetailsMap(GermplasmList stockList){
+    	Map<String,InventoryDetails> inventoryDetailsMap = new HashMap<String, InventoryDetails>();
+		List<InventoryDetails> listDataProjects;
+		try {
+			listDataProjects = inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockList.getId(),getStockListType(stockList.getType()));
 
-    protected Map<Integer, MeasurementVariable> convertToMap(List<MeasurementVariable>... variables) {
+			for(InventoryDetails entry : listDataProjects){
+				setCross(entry);
+				inventoryDetailsMap.put(entry.getEntryId().toString(), entry);
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+		return inventoryDetailsMap;
+    }
+
+	private void setCross(InventoryDetails entry) {
+		Integer gid = entry.getGid();
+		try {
+			String cross = pedigreeService.getCrossExpansion(gid, crossExpansionProperties);
+			entry.setCross(cross);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+	}
+
+	protected Map<Integer, MeasurementVariable> convertToMap(List<MeasurementVariable>... variables) {
         Map<Integer, MeasurementVariable> map = new HashMap<>();
 
         for (List<MeasurementVariable> variableList : variables) {
@@ -1026,8 +1110,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     	Map<Integer, String> values = new HashMap<>();
 
     	for (Integer termID : params.getAllFieldIDs()) {
-
-    		if (!populateValuesFromMeasurement(params, measurementRow, termID, values, populateHeaders)){
+    		
+    		if(params.isStockList()){
+    			
+    			String entryNo = measurementRow.getMeasurementData(TermId.ENTRY_NO.getId()).getValue();
+    			populateValuesForStockList(params,entryNo,termID,values,populateHeaders);
+    			populateValuesForNurseryManagement(params, workbook, termID, values, populateHeaders);
+    			
+    		} else if (!populateValuesFromMeasurement(params, measurementRow, termID, values, populateHeaders)){
     		
     			if (workbook.isNursery()){
 
@@ -1047,7 +1137,117 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
     }
 
-    protected Boolean populateValuesFromMeasurement(LabelPrintingProcessingParams params,
+	private void populateValuesForNurseryManagement(
+			LabelPrintingProcessingParams params, Workbook workbook,
+			Integer termID, Map<Integer, String> values, boolean populateHeaders) {
+    	List<MeasurementVariable> variables = new ArrayList<>();
+    	variables.addAll(workbook.getConditions());
+    	
+    	Integer newTermId = getCounterpartTermId(termID);
+    	
+    	MeasurementVariable factorVariable = getMeasurementVariableByTermId(newTermId, variables);
+    	
+    	if (factorVariable != null){
+    		values.put(newTermId, factorVariable.getValue());
+
+    		if (populateHeaders){
+    			params.getLabelHeaders().put(newTermId, factorVariable.getName());
+    		}
+
+    	}
+	}
+
+	private void populateValuesForStockList(
+			LabelPrintingProcessingParams params, String entryNo,
+			Integer termID, Map<Integer, String> values, boolean populateHeaders) {
+		
+		InventoryDetails row = params.getInventoryDetailsMap().get(entryNo);		
+		String value = null;
+
+		value = populateStockListFromGermplasmDescriptorVariables(termID,row);
+		
+		if(value == null){
+			value = populateStockListFromInventoryVariables(termID,row);
+		}
+		
+		if(value == null){
+			value = populateStockListFromCrossingVariables(termID,row);
+		}
+		
+		if(value != null){
+			
+			values.put(termID, value);
+
+			if (populateHeaders) {
+				try {
+					params.getLabelHeaders().put(termID, ontologyDataManager.getTermById(termID).getName());
+				} catch (MiddlewareQueryException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+
+	}
+
+	private String populateStockListFromGermplasmDescriptorVariables(
+			Integer termID, InventoryDetails row) {
+		String value = null;
+		if(termID.equals(TermId.GID.getId())){
+			value = getValueForStockList(row.getGid());
+		} else if(termID.equals(TermId.DESIG.getId())){
+			value = getValueForStockList(row.getGermplasmName());
+		} else if(termID.equals(TermId.ENTRY_NO.getId())){
+			value = getValueForStockList(row.getEntryId());
+		} else if(termID.equals(TermId.CROSS.getId())){
+			value = getValueForStockList(row.getCross());
+		} else if(termID.equals(TermId.SEED_SOURCE.getId())){
+			value = getValueForStockList(row.getSource());
+		} 
+		return value;
+	}
+
+	private String populateStockListFromInventoryVariables(Integer termID,
+			InventoryDetails row) {
+		String value = null;
+		if(termID.equals(TermId.STOCKID.getId())){
+			value = getValueForStockList(row.getInventoryID());
+		} else if(termID.equals(TermId.LOT_LOCATION_INVENTORY.getId())){
+			value = getValueForStockList(row.getLocationName());
+		} else if(termID.equals(TermId.AMOUNT_INVENTORY.getId())){
+			value = getValueForStockList(row.getAmount());
+		} else if(termID.equals(TermId.SCALE_INVENTORY.getId())){
+			value = getValueForStockList(row.getScaleName());
+		} else if(termID.equals(TermId.COMMENT_INVENTORY.getId())){
+			value = getValueForStockList(row.getComment());
+		} 
+		return value;
+	}
+
+	private String populateStockListFromCrossingVariables(Integer termID, InventoryDetails row) {
+		String value = null;
+		if(termID.equals(TermId.DUPLICATE.getId())){
+			value = getValueForStockList(row.getDuplicate());
+		} else if(termID.equals(TermId.BULK_WITH.getId())){
+			value = getValueForStockList(row.getBulkWith());
+		} else if(termID.equals(TermId.BULK_COMPL.getId())){
+			value = getValueForStockList(row.getBulkCompl());
+		}
+		return value;
+	}
+
+	private String getValueForStockList(Object value) {
+		if(value != null){
+			return value.toString();
+		}
+		return "";
+	}
+	
+	@Override
+	public GermplasmListType getStockListType(String type){
+		return type.equalsIgnoreCase(ADVANCED)? GermplasmListType.ADVANCED : GermplasmListType.CROSSES;
+	}
+
+	protected Boolean populateValuesFromMeasurement(LabelPrintingProcessingParams params,
     		MeasurementRow measurementRow, Integer termID, Map<Integer, String> values,
     		boolean populateHeaders) {
 
@@ -1231,7 +1431,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	 * @param locale      the locale
 	 * @return
 	 */
-	public List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap, Locale locale){
+	public List<LabelFields> getAvailableLabelFieldsForFieldMap(boolean isTrial, boolean hasFieldMap, Locale locale){
         List<LabelFields> labelFieldsList = new ArrayList<LabelFields>();
         
         labelFieldsList.add(new LabelFields(
@@ -1274,26 +1474,17 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt(), false));
-        if(hasFieldMap){
-            labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(), false));
-            labelFieldsList.add(new LabelFields(
-                    messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_COORDINATES_KEY, null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), false));
-            labelFieldsList.add(new LabelFields(
-            		messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale)
-            		, AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt(), false));
-        }
+        
+        addAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
+        
         return labelFieldsList;
     }
 
 
-    public List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean hasFieldMap,
-            Locale locale, int studyID) {
+    public List<LabelFields> getAvailableLabelFieldsForStudy(boolean isTrial, boolean hasFieldMap, Locale locale, int studyID) {
         List<LabelFields> labelFieldsList = new ArrayList<>();
 
-        labelFieldsList.add(new LabelFields(
+     	labelFieldsList.add(new LabelFields(
                 messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt(), true));
         labelFieldsList.add(new LabelFields(
@@ -1305,11 +1496,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_LOCATION_KEY, null, locale)
                 , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt(), false));
-
         labelFieldsList.add(new LabelFields(
-                        messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale)
-                        , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt(), false));
-
+                messageSource.getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_PLOT_KEY, null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt(), false));
+        
 		Workbook workbook = null;
 		if (isTrial) {
             labelFieldsList.add(new LabelFields(
@@ -1321,15 +1511,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 workbook = fieldbookMiddlewareService.getTrialDataSet(studyID);
 
                 labelFieldsList.addAll(settingsService.retrieveTrialSettingsAsLabels(workbook));
-                labelFieldsList.addAll(settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(
-                        workbook));
-                labelFieldsList.addAll(settingsService.retrieveGermplasmDescriptorsAsLabels(
-                        workbook));
+                labelFieldsList.addAll(settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(workbook));
+                labelFieldsList.addAll(settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
             } catch (MiddlewareQueryException e) {
                 LOG.error(e.getMessage(), e);
             }
+			
         } else {
+        	
             labelFieldsList.add(new LabelFields(
                                 messageSource.getMessage(
                                         LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale)
@@ -1338,15 +1528,123 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 workbook = fieldbookMiddlewareService.getNurseryDataSet(studyID);
 
                 labelFieldsList.addAll(settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
-                labelFieldsList.addAll(settingsService.retrieveGermplasmDescriptorsAsLabels(
-                                        workbook));
+                labelFieldsList.addAll(settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
+                
             } catch (MiddlewareQueryException e) {
                 LOG.error(e.getMessage(), e);
             }
         }
-
+		
+		// add trait fields
 		labelFieldsList.addAll(settingsService.retrieveTraitsAsLabels(workbook));
+		
+		// add field map fields
+		addAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
+		
+		// add inventory fields if any
+		if(hasInventoryValues(studyID,workbook.isNursery())){
+			labelFieldsList.addAll(addInventoryRelatedLabelFields(studyID,locale));
+		}
+		
+        return labelFieldsList;
+    }
+    
+	@Override
+	public List<LabelFields> getAvailableLabelFieldsForStockList(
+			GermplasmListType listType, Locale locale, int studyID) {
+		List<LabelFields> labelFieldsList = new ArrayList<>();
+		
+		// Nursery Management Fields
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage(
+                        LABEL_PRINTING_AVAILABLE_FIELDS_NURSERY_NAME_KEY, null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt(), false));
+        
+        Workbook workbook = null;
+        try {
+            workbook = fieldbookMiddlewareService.getNurseryDataSet(studyID);
 
+            labelFieldsList.addAll(settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
+            
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        // Stock List Specific Fields
+        labelFieldsList.addAll(addStockListDetailsFields(locale, listType));
+		
+		return labelFieldsList;
+	}
+
+	private List<LabelFields> addStockListDetailsFields(Locale locale, GermplasmListType listType) {
+		List<LabelFields> labelFieldList = new ArrayList<LabelFields>();
+
+		labelFieldList.addAll(getGermplasmDescriptors());
+
+		labelFieldList.add(new LabelFields(
+				ColumnLabels.STOCKID.getTermNameFromOntology(ontologyDataManager)
+                , TermId.STOCKID.getId(), true));
+    	
+    	labelFieldList.add(new LabelFields(
+    			ColumnLabels.LOT_LOCATION.getTermNameFromOntology(ontologyDataManager)
+                , TermId.LOT_LOCATION_INVENTORY.getId(), true));
+    	
+    	labelFieldList.add(new LabelFields(
+    			ColumnLabels.AMOUNT.getTermNameFromOntology(ontologyDataManager)
+                , TermId.AMOUNT_INVENTORY.getId(), true));
+				
+		labelFieldList.add(new LabelFields(
+				ColumnLabels.SCALE.getTermNameFromOntology(ontologyDataManager)
+                , TermId.SCALE_INVENTORY.getId(), true));
+		
+    	labelFieldList.add(new LabelFields(
+    			ColumnLabels.COMMENT.getTermNameFromOntology(ontologyDataManager)
+                , TermId.COMMENT_INVENTORY.getId(), true));
+    	
+    	if(listType.equals(GermplasmListType.CROSSES)){
+    		
+    		labelFieldList.add(new LabelFields(
+        			ColumnLabels.DUPLICATE.getTermNameFromOntology(ontologyDataManager)
+                    , TermId.DUPLICATE.getId(), true));
+    		
+    		labelFieldList.add(new LabelFields(
+        			ColumnLabels.BULK_WITH.getTermNameFromOntology(ontologyDataManager)
+                    , TermId.BULK_WITH.getId(), true));
+    		
+        	labelFieldList.add(new LabelFields(
+        			ColumnLabels.BULK_COMPL.getTermNameFromOntology(ontologyDataManager)
+                    , TermId.BULK_COMPL.getId(), true));
+        	
+    	}
+
+    	
+		return labelFieldList;	
+	}
+
+	private List<LabelFields> getGermplasmDescriptors() {
+		 List<LabelFields> germplasmDescriptors = new ArrayList<LabelFields>();
+		 
+		try {
+			List<StandardVariableReference> stdVars = fieldbookService.filterStandardVariablesForSetting(AppConstants.SEGMENT_GERMPLASM.getInt(), new ArrayList<SettingDetail>());
+			
+			for(StandardVariableReference stdVar : stdVars){
+				if(stdVar.getId() == TermId.GID.getId() 
+						|| stdVar.getId() == TermId.DESIG.getId()
+						|| stdVar.getId() == TermId.ENTRY_NO.getId()
+						|| stdVar.getId() == TermId.CROSS.getId()
+						|| stdVar.getId() == TermId.SEED_SOURCE.getId()){
+					germplasmDescriptors.add(new LabelFields(stdVar.getName(), stdVar.getId(), true));
+				}
+			}
+			
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+		return germplasmDescriptors;
+	}
+
+	private void addAvailableFieldsForFieldMap(boolean hasFieldMap, 
+			Locale locale, List<LabelFields> labelFieldsList) {
 		if (hasFieldMap) {
             labelFieldsList.add(new LabelFields(
                     messageSource
@@ -1362,14 +1660,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             .getMessage(LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale)
                     , AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt(), false));
         }
-
-		//add inventory fields if any
-		if(hasInventoryValues(studyID,workbook.isNursery())){
-			labelFieldsList.addAll(addInventoryRelatedLabelFields(studyID,locale));
-		}
-
-        return labelFieldsList;
-    }
+	}
     
 	/***
 	 * Returned true if the current study's germplasm list has inventory details

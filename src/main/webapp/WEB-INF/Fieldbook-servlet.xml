@@ -206,10 +206,6 @@
         <aop:scoped-proxy/>
     </bean>
 
-    <bean id="generationSettings" class="com.efficio.fieldbook.web.stock.StockIDGenerationSettings" scope="session">
-        <aop:scoped-proxy/>
-    </bean>
-
     <bean id="userFieldmap" class="com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap"
           scope="session">
         <aop:scoped-proxy/>
@@ -296,6 +292,7 @@
     <bean id="crossExpansionProperties" class = "org.generationcp.middleware.util.CrossExpansionProperties">
         <property name="wheatLevel" value="${wheat.generation.level}" />
         <property name="defaultLevel" value="${default.generation.level}" />
+        <property name="profile" value="${pedigree.profile}" />
     </bean>
 
     <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency" destroy-method="closeAllSessionFactories">
@@ -465,6 +462,10 @@
           scope="request">
         <aop:scoped-proxy/>
     </bean>
-    
+    <bean id="reportService" factory-bean="managerFactory"
+          factory-method="getReportService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
     
 </beans>

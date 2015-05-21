@@ -1,13 +1,14 @@
 package com.efficio.fieldbook.web.inventory.controller;
 
-import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
-import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.domain.oms.Scale;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -16,12 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.*;
+import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
+import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
 
 /**
  * The Class ManageNurseriesController.
@@ -50,54 +52,6 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
     @Resource
     private OntologyService ontologyService;
 
-	/**
-     * Gets the data types.
-     *
-     * @return the data types
-     */
-    @ModelAttribute("locationList")
-    public List<Location> getLocationList() {
-        try {
-            List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllSeedLocations();
-            List<Location> dataTypes = dataTypesOrig;
-            
-            return dataTypes;
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return new ArrayList<>();
-    }
-    /**
-     * Gets the favorite location list.
-     *
-     * @return the favorite location list
-     */
-    @ModelAttribute("favoriteLocationList")
-    public List<Location> getFavoriteLocationList() {
-        try {
-            
-            List<Long> locationsIds = fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-            return fieldbookMiddlewareService
-                                .getFavoriteLocationByProjectId(locationsIds);
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return new ArrayList<>();
-    }
-    
-    @ModelAttribute("scaleList")
-    public List<Scale> getScaleList() {
-        try {
-            return ontologyService.getAllInventoryScales();
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-        
-        return new ArrayList<>();
-    }
-    
     /**
      * Shows the manage nurseries screen
      *
@@ -109,11 +63,6 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {   	 
     	return super.show(model);
-    }    
-    @RequestMapping(value="/ajax/{listId}", method = RequestMethod.GET)
-    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form,@PathVariable Integer listId, Model model, HttpSession session) {
-    	form.setListId(listId);
-    	return super.showAjaxPage(model, "Inventory/addLotsModal");
     }
         
     @RequestMapping(value="/advance/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
@@ -149,20 +98,6 @@ public class SeedStoreManagerController extends SeedInventoryTableDisplayingCont
             LOG.error(e.getMessage(), e);
         }
         return super.showAjaxPage(model, page);
-    }
-
-	@ResponseBody
-    @RequestMapping(value="/save/lots", method = RequestMethod.POST)
-    public Map<String, Object> saveLots(@ModelAttribute("seedStoreForm") SeedStoreForm form,
-            Model model, Locale local) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        List<Integer> gidList = new ArrayList<Integer>();
-
-        for (String gid : form.getGidList().split(",")) {
-            gidList.add(Integer.parseInt(gid));
-        }
-        
-        return result;
     }
     
     /* (non-Javadoc)

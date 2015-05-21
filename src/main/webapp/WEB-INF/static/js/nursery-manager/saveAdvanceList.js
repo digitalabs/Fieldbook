@@ -118,12 +118,15 @@ var SaveAdvanceList = {};
 						var uniqueId,
 							close,
 							aHtml;
+						var id = data.advancedGermplasmListId ? data.advancedGermplasmListId : data.germplasmListId;
 							uniqueId = data.uniqueId;
-							close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
-							aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + uniqueId + '" href="#advance-list' + uniqueId + '">Advance List' + close + '</a>';
-							$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li">' + aHtml + '</li>');
-							$('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + uniqueId + '"></div>');
-							$('a#advanceHref'+uniqueId).tab('show');
+							close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+id+'" onclick="javascript: closeAdvanceListTab(' + id +')"></i>';
+							aHtml = '<a role="tab" data-toggle="tab" id="advanceHref' + id + '" href="#advance-list' + id + '">Advance List' + close + '</a>';
+							var stockHtml = '<div id="stock-content-pane' + id + '" class="stock-list' + id + '"></div>';
+							$('#create-nursery-tab-headers').append('<li id="advance-list' + id + '-li">' + aHtml + '</li>');
+							$('#create-nursery-tabs').append('<div class="tab-pane info" id="advance-list' + id + '"></div>');
+							$('#create-nursery-tabs').append('<div class="tab-pane info" id="stock-tab-pane' + id + '">' + stockHtml + '</div>');
+							$('a#advanceHref'+id).tab('show');
 														
 							setTimeout(function() {
 								$('.nav-tabs').tabdrop('layout');

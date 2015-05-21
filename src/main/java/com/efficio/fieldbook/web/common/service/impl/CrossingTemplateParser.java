@@ -69,13 +69,13 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	}
 
 	@Override
-	public ImportedCrossesList parseWorkbook(Workbook workbook) throws
+	public ImportedCrossesList parseWorkbook(Workbook workbook, Map<String,Object> additionalParams) throws
 			FileParsingException {
 		this.workbook = workbook;
 		try {
 			descriptionSheetParser = new DescriptionSheetParser<>(new ImportedCrossesList());
 
-			this.importedCrossesList = descriptionSheetParser.parseWorkbook(this.workbook);
+			this.importedCrossesList = descriptionSheetParser.parseWorkbook(this.workbook,additionalParams);
 
 			parseObservationSheet(contextUtil.getCurrentProgramUUID());
 		} catch (MiddlewareQueryException e) {
@@ -223,8 +223,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		final StudyType studyType = studyDataManager.getStudyType(studyId);
 
 		// 2. retrieve the list id of the particular study
-		ListDataProject listdataResult = fieldbookMiddlewareService.getListDataProjectByStudy(
-				studyId,
+		ListDataProject listdataResult = fieldbookMiddlewareService.getListDataProjectByStudy(studyId,
 				STUDY_TYPE_TO_LIST_TYPE_MAP.get(studyType),
 				genderedPlotNo);
 

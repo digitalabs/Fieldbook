@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * Date: 4/24/2015
  * Time: 4:44 PM
  */
-public class StockIDGenerationSettings {
+public class StockListGenerationSettings {
 	public static final int VALID_SETTINGS = 1;
 	public static final int NUMBERS_FOUND = -1;
 	public static final int SPACE_FOUND = -2;
@@ -17,10 +17,13 @@ public class StockIDGenerationSettings {
 	private String breederIdentifier;
 	private String separator;
 
-	public StockIDGenerationSettings() {
+	private boolean addPedigreeDuplicate;
+	private boolean addPlotReciprocal;
+	private boolean addPedigreeReciprocal;
+	public StockListGenerationSettings() {
 	}
 
-	public StockIDGenerationSettings(String breederIdentifier, String separator) {
+	public StockListGenerationSettings(String breederIdentifier, String separator) {
 		this.breederIdentifier = breederIdentifier;
 		this.separator = separator;
 	}
@@ -41,12 +44,12 @@ public class StockIDGenerationSettings {
 		this.separator = separator;
 	}
 
-	public void copy(StockIDGenerationSettings settings) {
+	public void copy(StockListGenerationSettings settings) {
 		this.breederIdentifier = settings.getBreederIdentifier();
 		this.separator = settings.getSeparator();
 	}
 
-	public Integer validateSettings() {
+	public int validateSettings() {
 
 		if (hasNumber()) {
 			return NUMBERS_FOUND;
@@ -68,6 +71,34 @@ public class StockIDGenerationSettings {
 
 	protected boolean hasSpace() {
 		return getBreederIdentifier().contains(" ");
+	}
+
+	public boolean isAddPedigreeDuplicate() {
+		return addPedigreeDuplicate;
+	}
+
+	public void setAddPedigreeDuplicate(boolean addPedigreeDuplicate) {
+		this.addPedigreeDuplicate = addPedigreeDuplicate;
+	}
+
+	public boolean isAddPlotReciprocal() {
+		return addPlotReciprocal;
+	}
+
+	public void setAddPlotReciprocal(boolean addPlotReciprocal) {
+		this.addPlotReciprocal = addPlotReciprocal;
+	}
+
+	public boolean isAddPedigreeReciprocal() {
+		return addPedigreeReciprocal;
+	}
+
+	public void setAddPedigreeReciprocal(boolean addPedigreeReciprocal) {
+		this.addPedigreeReciprocal = addPedigreeReciprocal;
+	}
+
+	public boolean hasBulkInstructions() {
+		return isAddPedigreeReciprocal() || isAddPlotReciprocal() || isAddPedigreeDuplicate();
 	}
 
 }

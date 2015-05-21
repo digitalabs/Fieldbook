@@ -368,10 +368,13 @@
     <bean id="pedigreeService" class="org.generationcp.middleware.service.pedigree.PedigreeDefaultServiceImpl">
     	<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
-    
+    <bean id="reportService" class="org.generationcp.middleware.service.ReportServiceImpl">
+          <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
+    </bean>
 	<bean id="crossExpansionProperties" class = "org.generationcp.middleware.util.CrossExpansionProperties">
         <property name="wheatLevel" value="0" />
         <property name="defaultLevel" value="1" />
+        <property name="profile" value="cimmyt" />
     </bean>
 
 </beans>

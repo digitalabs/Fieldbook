@@ -1711,7 +1711,7 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
 	var url = '/Fieldbook/germplasm/list/advance/' + id;
 	if(!isDefault){
-		$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
+		$('#advanceHref' + id + ' .fbk-close-tab').before(': [' + listName + ']');
 		url += '?isSnapshot=0';
 	}else{
 		url += '?isSnapshot=1';
@@ -1721,11 +1721,11 @@ function displayAdvanceList(uniqueId, germplasmListId, listName, isDefault, adva
 		type: 'GET',
 		cache: false,
 		success: function(html) {
-			$('#advance-list' + uniqueId).html(html);
+			$('#advance-list' + id).html(html);
 			//we just show the button
 			$('.export-advance-list-action-button').removeClass('fbk-hide');
-			$('#advance-list' + uniqueId+'-li').addClass('advance-germplasm-items');
-			$('#advance-list' + uniqueId+'-li').data('advance-germplasm-list-id', advancedGermplasmListId);
+			$('#advance-list' + id+'-li').addClass('advance-germplasm-items');
+			$('#advance-list' + id+'-li').data('advance-germplasm-list-id', advancedGermplasmListId);
 		}
 	});
 }

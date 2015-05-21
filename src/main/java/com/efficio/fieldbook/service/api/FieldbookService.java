@@ -124,15 +124,13 @@ public interface FieldbookService {
      */
     String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException;
 
+    
     /**
-     * Gets the person by id.
-     *
-     * @param id the id
-     * @return the person by id
-     * @throws MiddlewareQueryException the middleware query exception
+     * Retrieves the person by user id
+     * @param userId
+     * @return
+     * @throws MiddlewareQueryException
      */
-    String getPersonByPersonId(int id) throws MiddlewareQueryException;
-
     String getPersonByUserId(int userId) throws MiddlewareQueryException;
 
     /**

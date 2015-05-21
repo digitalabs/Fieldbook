@@ -1,10 +1,12 @@
 package com.efficio.fieldbook.util.parsing;
 
+import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.WorkbookRowConverter;
 import org.generationcp.commons.parsing.validation.ParsingValidator;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.pojos.Location;
@@ -38,31 +40,35 @@ public class WorkbookRowConverterTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Map<InventoryHeaderLabels,Integer> inventoryHeaderLabelsMap = 
+				InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
 		dut = new InventoryImportParser.InventoryRowConverter(mock(Workbook.class), 0, 0,
-				InventoryImportParser.HEADER_LABEL_ARRAY.length, InventoryImportParser.HEADER_LABEL_ARRAY, new HashMap<String, Location>(), new HashMap<String, Scale>());
-
+				inventoryHeaderLabelsMap.size(), inventoryHeaderLabelsMap,
+				new HashMap<String, Location>(), new HashMap<String, Scale>());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testApplyValidations() throws FileParsingException{
 		List<ParsingValidator> validatorList = new ArrayList<>();
 		ParsingValidator validator = mock(ParsingValidator.class);
-		when(validator.isParsedValueValid(anyString())).thenReturn(true);
+		when(validator.isParsedValueValid(anyString(),anyMap())).thenReturn(true);
 
 		validatorList.add(validator);
 
-		dut.applyValidation(TEST_VALUE, TEST_COLUMN, validatorList);
+		dut.applyValidation(TEST_VALUE, null, TEST_COLUMN, validatorList);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test(expected = FileParsingException.class)
 	public void testApplyValidationsParseErrorOccur() throws FileParsingException {
 		List<ParsingValidator> validatorList = new ArrayList<>();
 		ParsingValidator validator = mock(ParsingValidator.class);
-		when(validator.isParsedValueValid(anyString())).thenReturn(false);
+		when(validator.isParsedValueValid(anyString(),anyMap())).thenReturn(false);
 
 		validatorList.add(validator);
 
-		dut.applyValidation(TEST_VALUE, TEST_COLUMN, validatorList);
+		dut.applyValidation(TEST_VALUE, null, TEST_COLUMN, validatorList);
 	}
 
 	@Test

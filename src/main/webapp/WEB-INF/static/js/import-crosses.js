@@ -500,11 +500,13 @@ var ImportCrosses = {
 					var uniqueId,
 					close,
 					aHtml;
-					uniqueId = germplasmListId;
+					uniqueId = crossesListId;
 					close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
 					aHtml = '<a id="advance-list'+uniqueId+'" role="tab" class="advanceList crossesList crossesList'+uniqueId+'" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
+					var stockHtml = '<div id="stock-content-pane' + uniqueId + '" class="stock-list' + uniqueId + '"></div>';
 					$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
 					$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="advance-list' + uniqueId + '">' + html + '</div>');
+					$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
 					$('a#advance-list'+uniqueId).tab('show');
 					$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
 					$('.nav-tabs').tabdrop('layout');

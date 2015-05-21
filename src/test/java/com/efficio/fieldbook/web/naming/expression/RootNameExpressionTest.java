@@ -43,4 +43,31 @@ public class RootNameExpressionTest extends TestExpression {
 			i++;
 		}
 	}
+	
+	@Test
+	public void testIfThereIsNoMatchingName() throws Exception {
+		List<String> input = Arrays.asList("a(b/c)d", "a/bc", "/abc", "(ab)/(de)", "(abc)a/e", "((a/b))", "b/e(a/b)",
+				"(b/e)/(a/b)", "(CML146/CLQ-6203)/CML147", "(CLQ-6203/CML150)/CML144", "(L-133/LSA-297)/PA-1", "((P 47/MPSWCB 4) 11//(MPSWCB",
+				"(a//b)", "(a/b/c/d)");
+
+		RootNameExpression rne = new RootNameExpression();
+		AdvancingSource source = createAdvancingSourceTestData("Germplasm", null, null, null, null, true);
+		Name name = new Name();
+		name.setTypeId(11);
+		name.setNstat(2);
+		List<Name> names = new ArrayList<Name>();
+		names.add(name);
+		source.setNames(names);
+		source.getBreedingMethod().setSnametype(10);
+		for (String nameString : input) {
+			System.out.println("INPUT = " + nameString);
+			List<StringBuilder> builders = new ArrayList<StringBuilder>();
+			builders.add(new StringBuilder());
+			name.setNval(nameString);
+			rne.apply(builders, source);
+			String output =  builders.get(0).toString();
+			System.out.println("OUTPUT = " + output);
+			Assert.assertEquals("", output);
+		}
+	}
 }

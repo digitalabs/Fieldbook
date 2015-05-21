@@ -1,8 +1,8 @@
 /*globals selectedGidsForAdvance, getJquerySafeId, Spinner, showErrorMessage, triggerInventoryTableSelection*/
 /*globals initializePossibleValuesComboInventory, initializePossibleValuesComboScale, germplasmSelectError, inventoryLocationSuggestions*/
 /*globals initializePossibleValuesComboScale, scaleSuggestions, initializePossibleValuesComboInventory*/
-/*globals saveLots, caleRequired, inventoryFavoriteLocationSuggestions, locationRequired*/
-/*exported initializePossibleValuesComboInventory, triggerInventoryTableSelection, getCurrentAdvanceTabListIdentifier, addLot, initializePossibleValuesComboScale*/
+/*globals caleRequired, inventoryFavoriteLocationSuggestions, locationRequired*/
+/*exported initializePossibleValuesComboInventory, triggerInventoryTableSelection, getCurrentAdvanceTabListIdentifier, initializePossibleValuesComboScale*/
 function triggerInventoryTableSelection(tableName, sectionContainerDiv, listIdentifier){
 	'use strict';
 	$('#' + sectionContainerDiv + ' #'+tableName+' tr.primaryRow').on('click', function() {			
@@ -45,44 +45,6 @@ function getCurrentAdvanceTabListIdentifier(){
 	var sectionContainerDiv = 'advance-list'+getCurrentAdvanceTabTempIdentifier(),
 		listIdentifier = $('#'+getJquerySafeId(sectionContainerDiv) + ' #listId').val();
 	return listIdentifier;
-}
-function getSelectedInventoryGids(){
-	'use strict';
-	var ids = [],
-		listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
-		sectionContainerDiv = 'advance-list'+listDivIdentifier;
-	$('#'+sectionContainerDiv + ' .advancingListGid:checked').each(function(){
-		ids.push($(this).data('gid'));
-	});
-	return ids;
-}
-
-function addLot(){
-	'use strict';
-	var gids = getSelectedInventoryGids();
-	if(gids.length === 0){
-		showErrorMessage('page-message', germplasmSelectError);
-		moveToTopScreen();
-		return;		
-	}
-	
-	$.ajax({
-		url: '/Fieldbook/SeedStoreManager/ajax/'+getCurrentAdvanceTabListIdentifier(),
-		type: 'GET',
-		cache: false,
-	    success: function(data) {
-	    	$('#addLotsModalDiv').html(data);
-	    	$('#comments').val('');
-	    	$('#amount').val('');
-	    	$('#page-message-lots').html('');
-	    	$('#addLotsModal').modal({ backdrop: 'static', keyboard: true });
-	    	initializePossibleValuesComboInventory(inventoryLocationSuggestions, '#inventoryLocationIdAll', true, null);
-	    	initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, '#inventoryLocationIdFavorite', false, null);
-	  	  	initializePossibleValuesComboScale(scaleSuggestions, '#inventoryScaleId', false, null);
-	  	    showCorrectLocationInventoryCombo();
-	    }
-	});
-
 }
 
 function initializePossibleValuesComboScale(possibleValues, name, isLocation, defaultValue) {
@@ -201,61 +163,6 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 	
 	if(defaultJsonVal != null){
 		$(name).select2('data', defaultJsonVal).trigger('change');
-	}
-}
-
-
-
-function saveLots() {
-	'use strict';
-	var gids = getSelectedInventoryGids();
-	$('#gidList').val(gids);
-	if($('#showFavoriteLocationInventory').is(':checked')){
-		if($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data') !== null){
-			$('#inventoryLocationId').val($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
-		}
-	}else{
-		if($('#'+getJquerySafeId('inventoryLocationIdAll')).select2('data') !== null){
-			$('#inventoryLocationId').val($('#'+getJquerySafeId('inventoryLocationIdAll')).select2('data').id);
-		}
-	}
-	if ($('#inventoryLocationId').val() === '0' || $('#inventoryLocationId').val() === '') {
-		showInvalidInputMessage(locationRequired);
-		moveToTopScreen();
-	} else if (!$('#inventoryScaleId').select2('data')) {
-		showInvalidInputMessage(scaleRequired);
-		moveToTopScreen();
-	} else if ($('#amount').val() === '') {
-		showInvalidInputMessage(inventoryAmountRequired);
-		moveToTopScreen();
-	} else if(isFloatNumber($('#amount').val()) === false || parseFloat($('#amount').val()) < 0) {
-		showInvalidInputMessage(inventoryAmountPositiveRequired);
-		moveToTopScreen();
-	}  else if($('#inventoryComments').val().length > 250) {
-		showInvalidInputMessage(commentLimitError);
-		moveToTopScreen();
-	} else {
-		var serializedData = $('#add-plot-form').serialize();
-		
-		$.ajax({
-			url: '/Fieldbook/SeedStoreManager/save/lots',
-			type: 'POST',
-			data: serializedData,
-		    success: function(data) {
-		    	if (data.success === 1) {
-			    	showSuccessfulMessage('page-message', data.message);
-			    	$('#addLotsModal').modal('hide');
-			    	if(!isCurrentTabIdentifierAdvanced()){
-			    		displayAdvanceGermplasmDetails(getCurrentAdvanceTabListIdentifier());	
-			    	}else{
-			    		ImportCrosses.displayCrossesGermplasmDetails(getCurrentAdvanceTabListIdentifier());
-			    	}
-			    	
-		    	} else {
-		    		showErrorMessage('page-message-lots', data.message);
-		    	}
-		    }
-		});
 	}
 }
 

@@ -49,12 +49,8 @@
                	<td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.seedSource}">.2</td>
                
                	<td th:if="*{listType == 'CROSSES'}" 
-               		th:class="${row.even}? 'even' : 'odd'"
+               		th:class="${T(com.efficio.fieldbook.web.common.util.GermplasmListWebUIUtil).getCSSClassForDuplicateType(germplasm) + ' ' + (row.even ? 'even' : 'odd')}"
                		 
-               		th:style="${duplicateType[__germplasm.listDataProjectId__].isPedigreeDupe()}? 'background: #E5D8DD' :
-								( ${duplicateType[__germplasm.listDataProjectId__].isPlotDupe()}? 'background: #CCCCCC' :
-               						( ${duplicateType[__germplasm.listDataProjectId__].isPedigreeRecip()}? 'background: #DCE9F2' :
-										( ${duplicateType[__germplasm.listDataProjectId__].isPlotRecip()}? 'background: #E0E4D7' )))" 
 					th:text="${germplasm.duplicate}">.2</td>
              </tr>
            </tbody>
@@ -84,8 +80,9 @@
 
         		truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
 
-        		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null);
+        		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null, true);
         		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);
+                StockIDFunctions.disableGenerateStockListButton(listDivIdentifier);
         	}
         };
 

@@ -29,11 +29,7 @@ public class RootNameGeneratorRule extends OrderedRule<NamingRuleExecutionContex
 		List<String> input = context.getCurrentData();
 
 		String name = builders.get(0).toString();
-		if (name.length() == 0) {
-			throw new RuleException("error.advancing.nursery.no.root.name.found",
-					new Object[] {advancingSource.getGermplasm().getEntryId()}, LocaleContextHolder.getLocale());
-		}
-
+		
 		input.add(name);
 
 		context.setCurrentData(input);

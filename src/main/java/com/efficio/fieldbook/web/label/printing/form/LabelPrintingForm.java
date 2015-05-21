@@ -17,12 +17,15 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
  * The Class LabelPrintingForm.
  */
 public class LabelPrintingForm{
-    
+    private boolean isCustomReport;
     /** The is trial. */
     private boolean isTrial;
     
     /** The user label printing. */
     private UserLabelPrinting userLabelPrinting;
+    
+    /** Determine if it is a stock list */
+    private boolean isStockList;
     
     /**
      * Gets the user label printing.
@@ -59,4 +62,29 @@ public class LabelPrintingForm{
     public void setIsTrial(boolean isTrial) {
         this.isTrial = isTrial;
     }
+    
+    /**
+     * Get the checks if it is a stock list
+     * @return isStockList
+     */
+	public boolean getIsStockList() {
+		return isStockList;
+	}
+
+	/**
+	 * Sets if it is a stock list
+	 * @param isStockList
+	 */
+	public void setIsStockList(boolean isStockList) {
+		this.isStockList = isStockList;
+	}
+	
+	public boolean isCustomReport() {
+		return isCustomReport;
+	}
+
+	public void setCustomReport(boolean isCustomReport) {
+		this.isCustomReport = isCustomReport;
+	}
+	
 }

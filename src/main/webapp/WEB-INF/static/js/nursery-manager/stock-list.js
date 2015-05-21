@@ -9,10 +9,16 @@ if (typeof StockIDFunctions === 'undefined') {
             'use strict';
             $('#generateStockIDModal').modal({backdrop: 'static', keyboard: true});
             $('#stockIDModalSourceListID').val(sourceId);
+
+            // the following lines re-initializes the popup modal to clear their values
+            $('#breederIdentifierField').val('');
+            $('#samplePrefixLabel').html('');
+            $('#nextStockIDLabel').html('');
             $('#generateStockIDForm input[name=addPedigreeDuplicate][value=false]').prop('checked', 'checked');
             $('#generateStockIDForm input[name=addPlotReciprocal][value=false]').prop('checked', 'checked');
             $('#generateStockIDForm input[name=addPedigreeReciprocal][value=false]').prop('checked', 'checked');
 
+            // the following lines enable / disable bulk instruction related items depending on the cross list
             if (!(hasPedigreeDupe || hasPlotReciprocal || hasPedigreeReciprocal)) {
                 $('.withDupeReciprocalOnly').hide();
             } else {
@@ -74,6 +80,7 @@ if (typeof StockIDFunctions === 'undefined') {
                                 StockIDFunctions.disableGenerateStockListButton(listId);
                                 $('#stock-tab-pane' + listId).addClass('active');
                                 $('#stock-list' + listId + '-li').addClass('active');
+                                $('.nav-tabs').tabdrop('layout');
                             });
 
 

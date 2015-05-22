@@ -2,7 +2,7 @@
 	<!-- Modal -->
 	<form  class="import-design-section" id="importDesignUploadForm" method="post"
 		th:action="@{/DesignImport/import}" enctype="multipart/form-data">
-		<div class="modal fade import-study-data import-window"
+		<div class="modal fade import-window"
 			id="importDesignModal" role="dialog"
 			aria-labelledby="importDesignModal" aria-hidden="true">
 			<div class="modal-dialog modal-medium">
@@ -12,11 +12,6 @@
 	                    <h4 class="modal-title" th:text="#{design.import.select.header}"></h4>
 	                </div>
 					<div class="modal-body" id="importDesignModalBody">
-				
-						<div class="row form-group">
-							<div id="page-import-study-message-modal"
-								class="col-xs-12 col-md-12"></div>
-						</div>
 
 						<div class="row form-group">
 							<div class="col-xs-12 col-md-12">
@@ -36,7 +31,7 @@
 									class="required">*</span>
 							</div>
 							<div class="col-xs-5 col-md-5">
-								<select name="fileType" style="width: 205px" id="importType">
+								<select name="fileType" style="width: 205px" id="importDesignType">
 									<option value="0">Please Choose</option>
 									<option value="1" th:text="CSV" selected="selected"></option>
 								</select>

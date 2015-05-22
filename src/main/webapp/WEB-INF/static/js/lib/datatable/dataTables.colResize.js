@@ -465,9 +465,13 @@ var dt;
                 return;
             this.dom.resize = false;
             this.afterResizing();
+            /*
             if(this.dataTableKey !== false){
-            	$(this.dataTableKey).resize();
+            	
+            	//console.log(this.dataTableKey);
+            	//$(this.dataTableKey).resize();
             }
+            */
         };
 
         ColResize.prototype.canColumnBeResized = function (col, newWidth) {

@@ -50,11 +50,7 @@ var ImportDesign = {
 		
 		showPopup : function(hasGermplasmListSelected){
 			if (hasGermplasmListSelected && !ImportDesign.hasCheckListSelected()){
-				$('#importDesignModal').one('shown.bs.modal',function(){
-					if (!isNursery()) {
-						setTimeout(function() { ImportDesign.showDesignWarningMessage();  },200);
-					}
-				}).modal({ backdrop: 'static', keyboard: true });
+				$('#importDesignModal').modal({ backdrop: 'static', keyboard: true });
 			}else{
 				if (ImportDesign.hasCheckListSelected()){
 					showErrorMessage(designImportErrorHeader, 'You cannot import a design if you have Selected Checks specified.');

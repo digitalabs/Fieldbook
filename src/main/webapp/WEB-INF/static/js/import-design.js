@@ -17,7 +17,7 @@ var ImportDesign = {
 		},
 
 		showDesignWarningMessage : function() {
-			showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING);
+			showAlertMessage('',ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING, 5000);
 		},
 
 		getTrialManagerDataService : function() {
@@ -42,11 +42,7 @@ var ImportDesign = {
 		
 		showPopup : function(hasGermplasmListSelected){
 			if (hasGermplasmListSelected){
-				$('#importDesignModal').one('shown.bs.modal',function(){
-					if (!isNursery()) {
-						setTimeout(function() { ImportDesign.showDesignWarningMessage();  },200);
-					}
-				}).modal({ backdrop: 'static', keyboard: true });
+				$('#importDesignModal').modal({ backdrop: 'static', keyboard: true });
 			}else{
 				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
 			}
@@ -57,6 +53,11 @@ var ImportDesign = {
 			setTimeout(function(){
 				$('#designMapModal').one('show.bs.modal',function() {
 					ImportDesign.initDesignMapPopup();
+
+					if (!isNursery()) {
+						setTimeout(function() { ImportDesign.showDesignWarningMessage();  },200);
+					}
+
 				}).modal();
 			},300);
 

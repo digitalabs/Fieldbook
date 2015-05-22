@@ -87,15 +87,15 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 
 	@ResponseBody
-	@RequestMapping(value = "/import", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/import/{studyType}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	public Map<String, Object> importFile(Model model,
-			@ModelAttribute("importDesignForm") ImportDesignForm form) {
+			@ModelAttribute("importDesignForm") ImportDesignForm form, @PathVariable String studyType) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
 		
 		try {
 			
-			initializeTemporaryWorkbook();
+			initializeTemporaryWorkbook(studyType);
 			
 			DesignImportData designImportData = parser.parseFile(form.getFile());
 			
@@ -331,7 +331,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 		return dataMap;
     }
 	
-	public void initializeTemporaryWorkbook(){
+	public void initializeTemporaryWorkbook(String studyType){
 		
 		
 	      List<SettingDetail> studyLevelConditions = userSelection.getStudyLevelConditions();
@@ -354,7 +354,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
 	        StudyDetails details = new StudyDetails();
 	        
-	        if (userSelection.isTrial()){
+	        if ("T".equalsIgnoreCase(studyType)){
 	        	 details.setStudyType(StudyType.T);
 	        }else{
 	        	 details.setStudyType(StudyType.N);

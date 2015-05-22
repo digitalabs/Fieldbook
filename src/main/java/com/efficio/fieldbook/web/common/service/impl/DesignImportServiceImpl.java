@@ -20,6 +20,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -85,7 +86,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		int rowCounter = 1;
 
 		while(rowCounter <= csvData.size() - 1){
-			MeasurementRow measurementRow = createMeasurementRow(mappedHeaders, csvData.get(rowCounter), importedGermplasm, germplasmStandardVariables, generatedTrialInstancesFromUI);
+			MeasurementRow measurementRow = createMeasurementRow(workbook.getStudyDetails().getStudyType(),mappedHeaders, csvData.get(rowCounter), importedGermplasm, germplasmStandardVariables, generatedTrialInstancesFromUI);
 			if (measurementRow != null){
 				measurements.add(measurementRow);
 			}
@@ -145,7 +146,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		//Add the variates from the added traits in workbook
 		measurementVariables.addAll(workbook.getVariates());
 		
-		if (!userSelection.isTrial()){
+		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
 			Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
 			while(iterator.hasNext()){
 				MeasurementVariable temp = iterator.next();
@@ -385,7 +386,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurementVariables;
 	}
 	
-	protected MeasurementRow createMeasurementRow(Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders, List<String> rowValues, List<ImportedGermplasm> importedGermplasm, Map<Integer, StandardVariable> germplasmStandardVariables, Set<String> trialInstancesFromUI){
+	protected MeasurementRow createMeasurementRow(StudyType studyType, Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders, List<String> rowValues, List<ImportedGermplasm> importedGermplasm, Map<Integer, StandardVariable> germplasmStandardVariables, Set<String> trialInstancesFromUI){
 		MeasurementRow measurement = new MeasurementRow();
 
 		List<MeasurementData> dataList = new ArrayList<>();
@@ -398,7 +399,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 					return null;
 				}
 				
-				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId() && !userSelection.isTrial()){
+				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId() && studyType == StudyType.N){
 					
 					// do not add the trial instance to measurement data list if the workbook is Nursery
 					

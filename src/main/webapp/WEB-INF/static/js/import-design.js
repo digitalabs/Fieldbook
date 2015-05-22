@@ -218,6 +218,12 @@ var ImportDesign = {
 				return false;
 			}
 
+			if (isNursery()){
+				$('#importDesignUploadForm').attr('action', '/Fieldbook/DesignImport/import/N');
+			}else{
+				$('#importDesignUploadForm').attr('action', '/Fieldbook/DesignImport/import/T');
+			}
+			
 			ImportDesign.submitImport($('#importDesignUploadForm')).done(function(resp) {
 
 				if (!resp.isSuccess) {

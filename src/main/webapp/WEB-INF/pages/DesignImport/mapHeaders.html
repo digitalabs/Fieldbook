@@ -48,6 +48,7 @@
                                                     value="{{item.id}}">
                                                 {{item.description}}
                                             </option>
+                                            <option value="other-design">{{Messages.OWN_DESIGN}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -133,6 +134,7 @@
                     })
                     /* INTERNATIONALIZED MESSAGES HERE */
                     .constant('Messages',{
+                        OWN_DESIGN : /*[[#{design.import.own.design}]]*/ 'Own Design',
                         DESIGN_MAPPING_ERROR_HEADER : /*[[#{design.import.mapping.error.header}]]*/ 'DESIGN_MAPPING_ERROR_HEADER',
                         REQUIRED : /*[[#{common.form.required.text}]]*/ 'Required',
                         OWN_DESIGN_SELECT_WARNING : /*[[#{design.import.own.design.select.warning}]]*/ 'OWN_DESIGN_SELECT_WARNING',

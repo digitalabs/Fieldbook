@@ -8,6 +8,18 @@ var ImportDesign = {
 			}
 		},
 
+		getDesignImportNgApp : function() {
+			return angular.injector(['ng','designImportApp']);
+		},
+
+		getMessages : function() {
+			return ImportDesign.getDesignImportNgApp().get('Messages');
+		},
+
+		showDesignWarningMessage : function() {
+			showAlertMessage('', ImportDesign.getMessages().OWN_DESIGN_SELECT_WARNING);
+		},
+
 		getTrialManagerDataService : function() {
 			return isNursery() ? {currentData : {},applicationData :{}} : angular.element('#mainApp').injector().get('TrialManagerDataService');
 		},
@@ -29,15 +41,16 @@ var ImportDesign = {
 		},
 		
 		showPopup : function(hasGermplasmListSelected){
-			
-			
 			if (hasGermplasmListSelected){
-				$('#importDesignModal').modal({ backdrop: 'static', keyboard: true });
+				$('#importDesignModal').one('shown.bs.modal',function(){
+					if (!isNursery()) {
+						setTimeout(function() { ImportDesign.showDesignWarningMessage();  },200);
+					}
+				}).modal({ backdrop: 'static', keyboard: true });
 			}else{
 				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
 			}
-			
-			
+
 		},
 
 		showDesignMapPopup : function() {

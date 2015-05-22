@@ -9,6 +9,7 @@
 
     app.controller('designImportCtrl', ['$scope','DesignMappingService','DesignOntologyService','ImportDesign','$modal','Messages',function(scope,DesignMappingService,DesignOntologyService,ImportDesign,$modal,Messages){
         // we can retrieve this from a service
+        scope.Messages = Messages;
         scope.data = DesignMappingService.data;
         scope.validateAndSend = function() {
             var onValidate = DesignMappingService.validateMapping();

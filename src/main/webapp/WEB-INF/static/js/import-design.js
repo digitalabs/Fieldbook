@@ -1,4 +1,12 @@
 var ImportDesign = {
+		
+		hasCheckListSelected : function() {
+			if (isNursery()){
+				return $('.check-germplasm-list-items tbody tr').length != 0;
+			}else{
+				return false;
+			}
+		},
 
 		hasGermplasmListSelected : function(){
 			if (isNursery()){

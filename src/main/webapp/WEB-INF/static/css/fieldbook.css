@@ -700,7 +700,7 @@ td.nurseryLevelVariableSetting {
 div.possibleValuesDiv{
     padding-bottom: 5px;
 }
-#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li{
+#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li, #nursery-experimental-design-li {
     display: none;
 }
 .select-variable{

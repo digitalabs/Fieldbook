@@ -1,0 +1,18 @@
+
+<table id="design-measurement-table" width="100%" class="table-curved table-condensed" >
+	<thead>
+		<tr>
+			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId},data-term-data-type-id=${measurementVariable.dataTypeId},data-term-valid-values=${measurementVariable.possibleValuesString},data-min-range=${measurementVariable.minRange},data-max-range=${measurementVariable.maxRange}"
+			th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
+			th:each="measurementVariable, rowIndex : *{measurementVariables}"
+			th:utext="${measurementVariable.name}">.variable name</th>
+		</tr>
+	</thead>
+</table>
+
+<!--<script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>-->
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+	jQuery().ready(ImportDesign.loadReviewDesignData());
+//]]>
+</script>

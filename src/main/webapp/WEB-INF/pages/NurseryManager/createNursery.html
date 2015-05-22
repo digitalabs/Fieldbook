@@ -1,4 +1,6 @@
-<div class="row col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
+<section xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+
+<div class="row col-xs-12 col-md-12" >
 	<div class="page-header">
 		<h1>
 			MANAGE NURSERIES
@@ -12,172 +14,178 @@
 	</div>
 </div>
 <div class="row">
-<form id="createNurseryMainForm" role="form-horizontal" action="#"
-th:object="${createNurseryForm}" enctype="multipart/form-data">
-    <div class="row add-top-bottom-padding">
-        <div class="col-md-12">
-            <div class="pull-left">
-                <img width="30" height="30" th:src="@{/static/img/new-nursery.png}" />
+	<form id="createNurseryMainForm" role="form-horizontal" action="#"
+		  th:object="${createNurseryForm}" enctype="multipart/form-data">
+		  <input type="hidden" th:field="*{experimentTypeId}" />
+		<div class="row add-top-bottom-padding">
+			<div class="col-md-12">
+				<div class="pull-left">
+					<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" />
 
-                <span class="heading fbk-nursery-heading" th:text="#{nursery.create.nursery.label}">Create Nursery</span>
+					<span class="heading fbk-nursery-heading" th:text="#{nursery.create.nursery.label}">Create Nursery</span>
 
-                <div class="fbk-nursery-heading-btns">
-                    <input type="button" onclick="submitCreateForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
-                </div>
-            </div>
-            <div class="pull-right fbk-nursery-heading-right">
-                <div class="col-md-12">
-                    <a th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
-                </div>
-            </div>
+					<div class="fbk-nursery-heading-btns">
+						<input type="button" onclick="submitCreateForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
+					</div>
+				</div>
+				<div class="pull-right fbk-nursery-heading-right">
+					<div class="col-md-12">
+						<a th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
+					</div>
+				</div>
 
-        </div>
-    </div>
-
-	<div>
-		<div class="col-md-12">
-			<label class="control-label">
-				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
-			</label>
-			<div  class="pull-right">
-                <div class="col-md-12">
-                    <div id="main-actions-btn" class="btn-group fbk-hide" >
-                        <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-                            <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-                        </button>
-                        <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">                            
-                            <li>
-                                <a href="javascript: void(0)" class="import-crosses"
-                                   th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+			</div>
 		</div>
-		
-	</div>
 
-    <div class="col-md-12 nopadding-right">
-        <div >
-            <div class="row fbk-mandatory">
-                <div class="col-md-12 ">
-                    <label class=""><em th:utext="#{nursery.managesettings.mandatory.fields}">* indicates a mandatory field</em></label>
-                </div>
-            </div>
+		<div>
+			<div class="col-md-12">
+				<label class="control-label">
+					<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
+				</label>
+				<div  class="pull-right">
+					<div class="col-md-12">
+						<div id="main-actions-btn" class="btn-group fbk-hide">
+							<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+								<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+							</button>
+							<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+								<li>
+									<a href="javascript: void(0)" class="import-crosses"
+									   th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
+								</li>
+								<li>
+									<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" 
+									   th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
 
-            <!-- basic details -->
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class="row form-group">
-                        <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
-                        <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.nursery.name}"></b>: <span class="required">*</span></label>
-
-                        <div class="col-sm-8">
-                            <input maxlength="219" type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
-                        <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.description}" ></b>: <span class="required">*</span></label>
-
-                        <div class="col-sm-8">
-                            <input maxlength="250" type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
-                        <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.objective}"></b>:</label>
-
-                        <div class="col-sm-8">
-                            <textarea maxlength="250" class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- second col -->
-                <div class="col-xs-6">
-                    <div class="row form-group">
-                        <label class="control-label col-sm-4" id="folderLabel"><b th:text="#{nursery.savenursery.savein}"></b>: <span class="required">*</span></label>
-
-                        <div class="col-sm-8">
-                            <input type="hidden" th:field="*{folderId}" />
-                            <input type="hidden" th:field="*{folderName}" />
-
-                            <div class="pull-left">
-                                <label class="control-label" id="folderNameLabel" th:text="*{folderNameLabel}"></label>
-                            </div>
-
-                            <a href="javascript: void(0)" class="pull-right" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <input  class="cvTermIds" type="hidden" th:field="*{basicDetails[5].variable.cvTermId}" />
-                        <label  class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.created.by}"></b>: <span class="required">*</span></label>
-                        <input  class="cvTermIds" type="hidden" th:field="*{basicDetails[6].variable.cvTermId}" />
-
-                        <div class="col-sm-8">
-                            <input type="hidden" th:field="*{basicDetails[5].value}" />
-                            <input type="hidden" th:field="*{basicDetails[6].value}" />
-                            <label th:text="*{createdBy}"></label>
-                        </div>
-
-                    </div>
-
-                    <div class="row form-group">
-                        <input  class="cvTermIds" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
-                        <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.creation.date}" ></b>: <span class="required">*</span></label>
-                        <div class="col-sm-8">
-                            <input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
-                            <label for="basicDetails.value2" class="btn datepicker">
-                                <img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
-                        <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.completion.date}" ></b>:</label>
-
-                        <div class="col-sm-8">
-                            <input placeholder="yyyy-mm-dd" id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
-                            <label for="basicDetails.value4" class="btn datepicker">
-                                <img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-
-	<div class="form-group add_top_padding">
-		<div class="col-md-12">
-			<input type="checkbox" name="studyBuildOption" id="studyBuildOption"/>
-			<label class="fbk-use-previous-study" th:text="#{nursery.managesettings.create.nursery.label}">Use a previously created nursery as a template</label>
-			&nbsp;&nbsp;
-			<input type="button" onclick="javascript: openStudyTree(3);" 
-			th:value="#{common.form.choose.text}" 
-			class="btn btn-info fbk-hide" id="choosePreviousStudy" />
 		</div>
-	</div>
-	
-	
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			&nbsp;
+
+		<div class="col-md-12 nopadding-right">
+			<div >
+				<div class="row fbk-mandatory">
+					<div class="col-md-12 ">
+						<label class=""><em th:utext="#{nursery.managesettings.mandatory.fields}">* indicates a mandatory field</em></label>
+					</div>
+				</div>
+
+				<!-- basic details -->
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="row form-group">
+							<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
+							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.nursery.name}"></b>: <span class="required">*</span></label>
+
+							<div class="col-sm-8">
+								<input maxlength="219" type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
+							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.description}" ></b>: <span class="required">*</span></label>
+
+							<div class="col-sm-8">
+								<input maxlength="250" type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
+							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.objective}"></b>:</label>
+
+							<div class="col-sm-8">
+								<textarea maxlength="250" class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- second col -->
+					<div class="col-xs-6">
+						<div class="row form-group">
+							<label class="control-label col-sm-4" id="folderLabel"><b th:text="#{nursery.savenursery.savein}"></b>: <span class="required">*</span></label>
+
+							<div class="col-sm-8">
+								<input type="hidden" th:field="*{folderId}" />
+								<input type="hidden" th:field="*{folderName}" />
+
+								<div class="pull-left">
+									<label class="control-label" id="folderNameLabel" th:text="*{folderNameLabel}"></label>
+								</div>
+
+								<a href="javascript: void(0)" class="pull-right" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[5].variable.cvTermId}" />
+							<label  class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.created.by}"></b>: <span class="required">*</span></label>
+							<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[6].variable.cvTermId}" />
+
+							<div class="col-sm-8">
+								<input type="hidden" th:field="*{basicDetails[5].value}" />
+								<input type="hidden" th:field="*{basicDetails[6].value}" />
+								<label th:text="*{createdBy}"></label>
+							</div>
+
+						</div>
+
+						<div class="row form-group">
+							<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
+							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.creation.date}" ></b>: <span class="required">*</span></label>
+							<div class="col-sm-8">
+								<input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
+								<label for="basicDetails.value2" class="btn datepicker">
+									<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
+								</label>
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
+							<label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.completion.date}" ></b>:</label>
+
+							<div class="col-sm-8">
+								<input placeholder="yyyy-mm-dd" id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
+								<label for="basicDetails.value4" class="btn datepicker">
+									<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
-</form>
+
+
+		<div class="form-group add_top_padding">
+			<div class="col-md-12">
+				<input type="checkbox" name="studyBuildOption" id="studyBuildOption"/>
+				<label class="fbk-use-previous-study" th:text="#{nursery.managesettings.create.nursery.label}">Use a previously created nursery as a template</label>
+				&nbsp;&nbsp;
+				<input type="button" onclick="javascript: openStudyTree(3);"
+					   th:value="#{common.form.choose.text}"
+					   class="btn btn-info fbk-hide" id="choosePreviousStudy" />
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-xs-12 col-md-12">
+				&nbsp;
+			</div>
+		</div>
+	</form>
 </div>
 <ul id="create-nursery-tab-headers" class="nav nav-tabs row" role="tablist" >
 	<li id="nursery-settings-li" ><a role="tab" data-toggle="tab" href="#nursery-settings" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a></li>
 	<li id="nursery-germplasm-list-li"><a role="tab" data-toggle="tab" href="#nursery-germplasm-list" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a></li>
+	<li id="nursery-experimental-design-li"><a role="tab" data-toggle="tab" href="#nursery-experimental-design" th:text="#{nursery.create.nursery.experimental.design.tab}">.Experimental Design</a></li>
 	<li id="nursery-measurements-li"><a role="tab" data-toggle="tab" href="#nursery-measurements" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a></li>
 </ul>
 
@@ -191,6 +199,12 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<div id="nursery-germplasm-list" class="tab-pane info">
 		<div class="col-xs-12 col-md-12">
 			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList">
+			</div>
+		</div>
+	</div>
+	<div id="nursery-experimental-design" class="tab-pane info">
+		<div class="col-xs-12 col-md-12">
+			<div id="chooseExperimentalDesign" th:include="/NurseryManager/experimentalDesign">
 			</div>
 		</div>
 	</div>
@@ -208,143 +222,126 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 </div>
 
 <!-- Modal Dialog for Choosing Folder Location -->
-<div class="form-group" id="create-nursery">
-	<div th:include="/Common/includes/studyTree" />
-</div>
-<div class="row">
-	<div id="example-germplasm" th:include="/Common/includes/saveList"></div>
-</div>
-<div class="row">
-	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
-</div>
+<div id="create-nursery" th:include="/Common/includes/studyTree" ></div>
 
-<div class="row">
-	<div class="row" id="addLotsModalDiv"></div>	
-</div>
+<div id="example-germplasm" th:include="/Common/includes/saveList"></div>
 
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<div id="manage-location" th:include="/Common/includes/manageLocationsModal"></div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<div id="manage-methods" th:include="/Common/includes/manageMethodsModal"></div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<div id="import-crosses-screen" th:include="/Common/includes/importCrosses"></div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<div id="open-crosses" th:include="/Common/includes/openCrossesListModal"></div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<div id="crossImport" th:include="/Common/includes/crossingImportPresets"/>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<div th:include="/Common/includes/importInventory"/>
-	</div>
-</div>
-<div layout:fragment="page-script">
+<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
+
+<div id="import-germplasm" th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
+
+<div class="row" id="addLotsModalDiv"></div>
+
+<div id="manage-location" th:include="/Common/includes/manageLocationsModal"></div>
+
+<div id="manage-methods" th:include="/Common/includes/manageMethodsModal"></div>
+
+<div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+
+<div id="import-crosses-screen" th:include="/Common/includes/importCrosses"></div>
+
+<div id="open-crosses" th:include="/Common/includes/openCrossesListModal"></div>
+
+<div id="crossImport" th:include="/Common/includes/crossingImportPresets"></div>
+
+<div th:include="/Common/includes/importInventory"></div>
+
+<!-- Modal Dialog for Import Design option -->
+<div th:include="/DesignImport/importFile"></div>
+
+<div th:include="/NurseryManager/includes/variableSelectionModal"></div>
+
+<div th:include="DesignImport/mapHeaders" ng-app="designImportApp"></div>
+
+<div th:include="DesignImport/reviewDetails"></div>
+
+<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/trial-settings-manager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
-	<script type='text/javascript' th:inline="javascript">
+<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
+
+<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	    /* jshint ignore:start */
-		var measurementRowCount = 0;
-		/* jshint ignore:end */
-		
-		/*globals Spinner, submitGermplasmAndCheck, loadNurserySettingsForCreate, validateCreateNursery*/
-		/*globals validateStartEndDate, changeBuildOption, getJquerySafeId*/
-		/*exported submitCreateWorkbook, submitCreateForm*/
-		function submitCreateWorkbook(){
-			'use strict';
+	/* jshint ignore:start */
+	var measurementRowCount = 0;
+	/* jshint ignore:end */
 
-			var $form = $('#createNurseryForm, #createNurseryMainForm'),
+	/*globals Spinner, submitGermplasmAndCheck, loadNurserySettingsForCreate, validateCreateNursery*/
+	/*globals validateStartEndDate, changeBuildOption, getJquerySafeId*/
+	/*exported submitCreateWorkbook, submitCreateForm*/
+	function submitCreateWorkbook(){
+		'use strict';
+		var $form = $('#createNurseryForm, #createNurseryMainForm'),
 				serializedData = $form.serialize();
-
-
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/createNursery',
-				type: 'POST',
-				data: serializedData,
-				cache: false,
-				success: function() {
-					submitGermplasmAndCheck();
-					$('.import-study-data').data('data-import', '0');
-					$('.fbk-discard-imported-data').addClass('fbk-hide');
-				}
-			});
-		}
-
-		// FIXME This should not be global
-		function submitCreateForm() {
-			'use strict';
-			
-			if ($('#folderId').val() === '') {
-				openStudyTree(2, null, true);
-			}else if (validateCreateNursery()) {
-				if (!validateStartEndDate('nurseryLevelSettings')) {
-					return false;
-				}
-				if($('.import-study-data').data('data-import') === '1'){
-					doSaveImportedData();
-				}
-				else{
-					submitCreateWorkbook();
-				}
-
-
-                if (document.enableActions !== undefined) {
-                    document.enableActions();
-                }
-
-            }
-		}
-
-
-		$(document).ready(function() {
-			'use strict';
-
-			$('#selectedSettingId').on('change', function(){
-				loadNurserySettingsForCreate($(this).val());
-			});
-
-			$('#studyBuildOption').on('change', changeBuildOption);
-			$('#choosePreviousStudy').addClass('fbk-hide');
-
-			setTimeout(function() {
-				$('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());
-			}, 600);
-			$('.chs-add-variable').show();
-			displayStudyGermplasmSection(false, 0);
-			$('.nav-tabs').tabdrop({position: 'left'});
-			$('.nav-tabs').tabdrop('layout');
-			$('li#nursery-settings-li a').tab('show');
-			
-			$('body').on('DO_AUTO_SAVE', function(){
-				submitCreateForm();
-			});
-
-            // we check greater than 1 since theres a 'please choose' option
-            if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
-                $('.study-level-method-checkbox').click();
-            }
-
-            $('body').data('doAutoSave', '0');
+		$.ajax({
+			url: '/Fieldbook/NurseryManager/createNursery',
+			type: 'POST',
+			data: serializedData,
+			cache: false,
+			success: function() {
+				submitGermplasmAndCheck();
+				$('.import-study-data').data('data-import', '0');
+				$('.fbk-discard-imported-data').addClass('fbk-hide');
+			}
 		});
+	}
+	// FIXME This should not be global
+	function submitCreateForm() {
+		'use strict';
+
+		if ($('#folderId').val() === '') {
+			openStudyTree(2, null, true);
+		}else if (validateCreateNursery()) {
+			if (!validateStartEndDate('nurseryLevelSettings')) {
+				return false;
+			}
+			if($('.import-study-data').data('data-import') === '1'){
+				doSaveImportedData();
+			}
+			else{
+				submitCreateWorkbook();
+			}
+			if (document.enableActions !== undefined) {
+				document.enableActions();
+			}
+		}
+	}
+	$(document).ready(function() {
+		'use strict';
+		$('#selectedSettingId').on('change', function(){
+			loadNurserySettingsForCreate($(this).val());
+		});
+		$('#studyBuildOption').on('change', changeBuildOption);
+		$('#choosePreviousStudy').addClass('fbk-hide');
+		setTimeout(function() {
+			$('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());
+		}, 600);
+		$('.chs-add-variable').show();
+		displayStudyGermplasmSection(false, 0);
+		$('.nav-tabs').tabdrop({position: 'left'});
+		$('.nav-tabs').tabdrop('layout');
+		$('li#nursery-settings-li a').tab('show');
+
+		$('body').on('DO_AUTO_SAVE', function(){
+			submitCreateForm();
+		});
+		// we check greater than 1 since theres a 'please choose' option
+		if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
+			$('.study-level-method-checkbox').click();
+		}
+		$('body').data('doAutoSave', '0');
+		
+		if ($('#experimentTypeId').val() !== ''){
+			$('#nursery-experimental-design-li').show();
+		}else{
+			$('#nursery-experimental-design-li').hide();
+		}
+	});
 	//]]>
-	</script>
-</div>
+</script>
+
+</section>

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.FolderReference;
+import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -41,6 +43,16 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
     
     private static final List<GermplasmList> EMPTY_GERMPLASM_LIST_TEST_DATA = 
             new ArrayList<GermplasmList>();
+    
+    private static final Integer ROOT_STUDY = 1;
+    private static final String DUMMY_PROGRAM_UUID = "1234567890";
+    
+    private static final FolderReference FOLDER_1 = 
+            new FolderReference(ROOT_STUDY, 2, "Folder_1", "Folder 1", DUMMY_PROGRAM_UUID);
+    
+    private static final FolderReference TRIAL_OF_FOLDER_1 = 
+            new FolderReference(FOLDER_1.getId(), 3, "Trial_of_Folder_1", "Trial of Folder 1",
+            		DUMMY_PROGRAM_UUID);
     
     private static final List<GermplasmList> NULL_GERMPLASM_LIST_TEST_DATA = null;
     private static GermplasmListManager germplasmListManager;
@@ -175,6 +187,25 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 		List<TreeTableNode> treeTableNodes = TreeViewUtil.convertGermplasmListToTreeTableNodes(
 				EMPTY_GERMPLASM_LIST_TEST_DATA, userDataManager, germplasmListManager);
 		assertTrue("The list should be empty",treeTableNodes.isEmpty());
+	}
+    
+    @Test
+    public void convertReferenceToFolderReference() {
+    	List<Reference> folders = createReferenceListTestData();
+		List<FolderReference> folRefs = TreeViewUtil.
+				convertReferenceToFolderReference(folders);
+		assertNotNull(folRefs);
+		assertEquals(1,folRefs.size());
+		FolderReference folderReference = folRefs.get(0);
+		assertEquals(TRIAL_OF_FOLDER_1.getProgramUUID(), folderReference.getProgramUUID());
+		assertEquals(TRIAL_OF_FOLDER_1.getId(), folderReference.getId());
+		assertEquals(TRIAL_OF_FOLDER_1.getName(), folderReference.getName());
+    }
+
+	private List<Reference> createReferenceListTestData() {
+		List<Reference> references = new ArrayList<Reference>();
+		references.add(TRIAL_OF_FOLDER_1);
+		return references;
 	}
 	
 }

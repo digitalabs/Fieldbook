@@ -11,13 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-import java.util.List;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import java.util.List;
 
 // TODO: Auto-generated Javadoc
 /**

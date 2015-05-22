@@ -1,21 +1,20 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormatSymbols;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
+import com.efficio.fieldbook.web.common.service.CrossingService;
+import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
+import com.efficio.fieldbook.web.util.DuplicatesUtil;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
-
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
 import org.generationcp.commons.constant.ToolSection;
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.service.CrossNameService;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
@@ -36,17 +35,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.CrossImportSettings;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
-import com.efficio.fieldbook.web.common.form.ImportCrossesForm;
-import com.efficio.fieldbook.web.common.service.CrossingService;
-import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormatSymbols;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -66,13 +63,14 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
 	private static final String IS_SUCCESS = "isSuccess";
+	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
 
 	@Resource
 	private WorkbenchService workbenchService;
 
 	@Resource
 	private PresetDataManager presetDataManager;
-
+	
 	@Resource
 	private SettingsPresetService settingsPresetService;
 
@@ -254,7 +252,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			respHeaders.setContentLength(fileSystemResource.contentLength());
 			respHeaders
-					.setContentDispositionFormData("attachment", FieldbookUtil.getDownloadFileName(fileSystemResource.getFilename(), req));
+					.setContentDispositionFormData("attachment", FieldbookUtil
+							.getDownloadFileName(fileSystemResource.getFilename(), req));
 
 			return new ResponseEntity<>(fileSystemResource, respHeaders, HttpStatus.OK);
 
@@ -275,12 +274,14 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
 		try {
 			ImportedCrossesList parseResults = crossingService.parseFile(form.getFile());
-
-			// 2. Store the crosses to study selection if all validated
+			// 2. Process duplicates and set to ImportedCrossesList
+			DuplicatesUtil.processDuplicates(parseResults);
+			// 3. Store the crosses to study selection if all validated
 
 			studySelection.setimportedCrossesList(parseResults);
 
 			resultsMap.put(IS_SUCCESS, 1);
+			resultsMap.put(HAS_PLOT_DUPLICATE, parseResults.hasPlotDuplicate());
 
 		} catch (FileParsingException e) {
 			LOG.error(e.getMessage(),e);
@@ -290,6 +291,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 		return resultsMap;
 	}
+
+	
 
 	@ResponseBody
 	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
@@ -320,7 +323,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		dataMap.put("MALE PARENT", importedCrosses.getMaleDesig());
 		dataMap.put("MGID", importedCrosses.getMaleGid());
 		dataMap.put("SOURCE", importedCrosses.getSource());
-
+		dataMap.put("DUPLICATE", importedCrosses.getDuplicate());
 		return dataMap;
 
 	}

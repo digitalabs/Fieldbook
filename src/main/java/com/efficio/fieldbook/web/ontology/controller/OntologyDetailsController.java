@@ -13,10 +13,7 @@ package com.efficio.fieldbook.web.ontology.controller;
 
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -26,11 +23,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.StandardVariableSummary;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -67,7 +66,10 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
-    
+
+	@Resource
+	private OntologyDataManager ontologyDataManager;
+
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
     
@@ -127,10 +129,10 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
                 NumberFormat numberFormat = NumberFormat.getIntegerInstance();
                 
                 form.setProjectCount(numberFormat.format(
-                                ontologyService.countProjectsByVariable(variableId)));
+						ontologyService.countProjectsByVariable(variableId)));
                 form.setObservationCount(numberFormat.format(
-                                ontologyService.countExperimentsByVariable(
-                                        variableId, variable.getStoredIn().getId())));
+						ontologyService.countExperimentsByVariable(
+								variableId, variable.getStoredIn().getId())));
                 
                 form.setVariable(variable);
             } else {
@@ -214,6 +216,64 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     	return new ArrayList<PropertyTree>();
     }
 
+	@ResponseBody
+	@RequestMapping(value="/OntologyBrowser/getVariablesByPhenotype",method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	public List<PropertyTree> getStandardVariablesByPhenotype(@RequestParam("phenotypeStorageId") Integer termId) {
+		try {
+			PhenotypicType phenotype = PhenotypicType.getPhenotypicTypeById(termId);
+
+			if (phenotype == null) {
+				return new ArrayList<>();
+			}
+
+			Map<String,StandardVariable> standardVariableMap = ontologyDataManager.getStandardVariablesForPhenotypicType(
+					phenotype, 0, Integer.MAX_VALUE);
+
+
+			// create a Map - - we will select from this list to return, as the include method and scale information
+			Map<Integer, StandardVariableSummary> svMap = new HashMap<>();
+			List<StandardVariableReference> stdVars = new ArrayList<>();
+			List<Integer> ids = new ArrayList<>();
+
+			// transform standardVariableMap into standardVariableReference
+			for (Map.Entry<String,StandardVariable> standardVariable : standardVariableMap.entrySet()) {
+				ids.add(standardVariable.getValue().getId());
+				stdVars.add(new StandardVariableReference(standardVariable.getValue().getId(),standardVariable.getKey(),standardVariable.getValue().getDescription()));
+			}
+
+			// Fetch filtered Standard Variables using the list of ids just created
+			List<StandardVariableSummary> standardVariables = ontologyService.getStandardVariableSummaries(ids);
+
+			// fill the StandardVariableMap - keyed by svId
+			for (StandardVariableSummary standardVariable : standardVariables) {
+				svMap.put(standardVariable.getId(), standardVariable);
+				for (StandardVariableReference ref : stdVars) {
+					if (ref.getId().equals(standardVariable.getId())) {
+						standardVariable.setHasPair(ref.isHasPair());
+						break;
+					}
+				}
+			}
+
+			// property trees are designed to facade a PropertyReference, a TraitClassReference and a list of StandardVariables
+			List<PropertyTree> propertyTrees = new ArrayList<PropertyTree>();
+
+			// fetch the Ontology Tree and navigate through. Look for Properties that have Standard Variables.
+			// Create a Property Tree, check if SVs are in the filtered list and add if so.
+			List<TraitClassReference> tree = ontologyService.getAllTraitGroupsHierarchy(true);
+			for (TraitClassReference root : tree) {
+				propertyTrees = processTreeTraitClasses(0, svMap, stdVars, propertyTrees, root);
+			}
+			return propertyTrees;
+
+
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(),e);
+		}
+
+		return new ArrayList<>();
+	}
+
 
 	/**
      * Fetches Property and associated Standard Variables by PropertyId
@@ -269,7 +329,18 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 		}
     	 			
     	return "[]";
-    } 
+    }
+
+	@ResponseBody
+	@RequestMapping(value = "/OntologyBrowser/getDistinctValue/{variableId}",method = RequestMethod.GET)
+	public List<ValueReference> getDistinctValues(@PathVariable int variableId) {
+		try {
+			return ontologyService.getDistinctStandardVariableValues(variableId);
+		} catch (MiddlewareQueryException e) {
+			return new ArrayList<>();
+		}
+	}
+
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -342,6 +413,6 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
-	} 
+	}
     
 }

@@ -1,12 +1,18 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.service.FileService;
+import org.generationcp.middleware.domain.dms.Experiment;
+import org.generationcp.middleware.domain.dms.Variable;
+import org.generationcp.middleware.domain.dms.VariableList;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.junit.Before;
@@ -34,6 +40,9 @@ public class CrossingTemplateExcelExporterTest {
 	private static final int STUDY_ID = 1;
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	
+	@Mock
+	private StudyDataManager studyDataManager;
 
 	@Mock
 	private FileService fileService;
@@ -44,6 +53,7 @@ public class CrossingTemplateExcelExporterTest {
 	@InjectMocks
 	private CrossingTemplateExcelExporter exporter;
 
+	@InjectMocks
 	private CrossingTemplateExcelExporter DUT;
 
 	@Before
@@ -56,6 +66,10 @@ public class CrossingTemplateExcelExporterTest {
 		when(fieldbookMiddlewareService.getGermplasmListsByProjectId(
 				STUDY_ID,
 				GermplasmListType.NURSERY)).thenReturn(initializeCrossesList());
+		
+		doReturn(1).when(fieldbookMiddlewareService).getMeasurementDatasetId(anyInt(), anyString());
+		doReturn(mock(VariableTypeList.class)).when(DUT).createPlotVariableTypeList();
+		doReturn(intializeExperiments()).when(studyDataManager).getExperiments(anyInt(), anyInt(), anyInt(), any(VariableTypeList.class));
 
 		Workbook wb = mock(Workbook.class);
 		when(wb.getSheetAt(1)).thenReturn(mock(Sheet.class));
@@ -110,6 +124,21 @@ public class CrossingTemplateExcelExporterTest {
 			gplist.setId(i);
 			list.add(gplist);
 		}
+		return list;
+	}
+	
+	private List<Experiment> intializeExperiments(){
+		List<Experiment> list = new ArrayList<>();
+		Experiment experiment = new Experiment();
+		
+		VariableList factors = new VariableList();
+		Variable plotVariable = new Variable();
+		plotVariable.setValue("1");
+		factors.add(plotVariable);
+		
+		experiment.setFactors(factors);
+		
+		
 		return list;
 	}
 }

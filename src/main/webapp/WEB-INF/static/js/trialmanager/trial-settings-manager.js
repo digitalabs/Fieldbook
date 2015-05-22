@@ -161,11 +161,22 @@ window.TrialSettingsManager = (function () {
         this._dynamicExclusion = {};
         // Look for any existing variables and instaniate our list of them
 
-        $.each(MODES, function (key, value) {
-            variableSelectionGroups[value] = {
-                label: translations[value] ? translations[value].label : '',
-                placeholder: translations[value] ? translations[value].placeholder : ''
-            };
+
+        var isInt = function(value) {
+            return !isNaN(value) &&
+                parseInt(Number(value)) == value &&
+                !isNaN(parseInt(value, 10));
+        };
+
+        $.each(translations,function(key,value) {
+            if (isInt(key)) {
+                var groupKey = parseInt(key,10);
+
+                variableSelectionGroups[groupKey] = {
+                    label : value.label,
+                    placeholder : value.placeholder
+                };
+            }
         });
 
         this._translations = translations;
@@ -313,6 +324,12 @@ window.TrialSettingsManager = (function () {
         return selectedVariableList;
     };
 
+    TrialSettingsManager.prototype._clearCache = function () {
+        $.each(variableSelectionGroups,function(key) {
+            delete variableSelectionGroups[key].data;
+        });
+    };
+
     TrialSettingsManager.prototype._openVariableSelectionDialog = function (params) {
         var groupId = parseInt(params.variableType, 10),
             group = variableSelectionGroups[groupId],
@@ -321,7 +338,8 @@ window.TrialSettingsManager = (function () {
                 placeholderLabel: group.placeholder
             },
             thisInstance = this,
-            modal = this._variableSelection;
+            modal = this._variableSelection,
+            apiUrl = (params.apiUrl) ? params.apiUrl : '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&useTrialFiltering=true';
 
 
         // Initialise a variable selection modal if we haven't done so before
@@ -334,8 +352,7 @@ window.TrialSettingsManager = (function () {
 
         // If we haven't loaded data for this group before, then load it
         if (!group.data) {
-
-            $.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&useTrialFiltering=true', function (data) {
+            $.getJSON(apiUrl, function (data) {
                 group.data = data;
                 properties = thisInstance._filterProperties(group.data, selectedVariables, groupId);
 
@@ -345,7 +362,9 @@ window.TrialSettingsManager = (function () {
                     propertyData: properties.inclusions,
                     excludedProperties: properties.exclusions,
                     variableUsageData: [],
-                    selectedVariables: selectedVariables
+                    selectedVariables: selectedVariables,
+                    callback: params.callback,
+                    onHideCallback : params.onHideCallback
                 });
             });
 
@@ -358,7 +377,9 @@ window.TrialSettingsManager = (function () {
                 propertyData: properties.inclusions,
                 excludedProperties: properties.exclusions,
                 variableUsageData: [],
-                selectedVariables: selectedVariables
+                selectedVariables: selectedVariables,
+                callback: params.callback,
+                onHideCallback : params.onHideCallback
             });
         }
     };

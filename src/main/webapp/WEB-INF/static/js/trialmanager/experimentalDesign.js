@@ -12,6 +12,8 @@
         .controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC', 'TrialManagerDataService',
             'EXP_DESIGN_MSGS', '_',function ($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, TrialManagerDataService, EXP_DESIGN_MSGS) {
 
+                $scope.applicationData = TrialManagerDataService.applicationData;
+
                 $scope.Math = Math;
                 $scope.designTypes = [
                     {
@@ -27,6 +29,10 @@
                         id: 2,
                         name: 'Row-and-Column', params: 'rowAndColumnParams.html',
                         withResolvable: true
+                    },
+                    {
+                        id: 3,
+                        name: 'Other Design', params: null
                     }
                 ];
 
@@ -41,8 +47,21 @@
                         $scope.data.designType = $scope.designTypes[0].id;
                     }
 
-                    $scope.currentDesignType = $scope.designTypes[$scope.data.designType];
-                    $scope.currentDesignTypeId = $scope.currentDesignType.id;
+                    if ($scope.data.designType != null){
+                        $scope.currentDesignType = $scope.designTypes[$scope.data.designType];
+                        $scope.currentDesignTypeId = $scope.currentDesignType.id;
+                        
+                        if ($scope.currentDesignType.params !== null){
+                            $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+                        }else{
+                            $scope.currentParams = null;
+                        }
+                      
+                        if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
+                            $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
+                        }
+                    }
+                    
                     $scope.germplasmDescriptorSettings = TrialManagerDataService.settings.germplasm;
                     $scope.measurementDetails = TrialManagerDataService.trialMeasurement;
                     $scope.data.noOfEnvironments = TrialManagerDataService.currentData.environments.noOfEnvironments ?
@@ -50,24 +69,22 @@
                     $scope.data.treatmentFactors = TrialManagerDataService.settings.treatmentFactors.details;
                     $scope.data.treatmentFactorsData = TrialManagerDataService.currentData.treatmentFactors.currentData;
 
-                    $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
                     $scope.data.hasMeasurementData = TrialManagerDataService.trialMeasurement.hasMeasurement;
-                    if (!$scope.settings.showAdvancedOptions[$scope.currentDesignType.id]) {
-                        $scope.settings.showAdvancedOptions[$scope.currentDesignType.id] = $scope.data.useLatenized;
-                    }
+                   
                 };
                 
                 $scope.disableGenerateDesign = TrialManagerDataService.trialMeasurement.hasMeasurement && !TrialManagerDataService.applicationData.unappliedChangesAvailable;
 
                 //FIXME: cheating a bit for the meantime.
+                var $totalGermplasms = $('#totalGermplasms');
                 if (!TrialManagerDataService.applicationData.germplasmListCleared) {
                     $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
-                        germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() :
+                        germplasmTotalListCount = parseInt($totalGermplasms.val() ? $totalGermplasms.val() :
                         TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount);
                 }
                 else {
                     $scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
-                        germplasmTotalListCount = parseInt($('#totalGermplasms').val() ? $('#totalGermplasms').val() : 0);
+                        germplasmTotalListCount = parseInt($totalGermplasms.val() ? $totalGermplasms.val() : 0);
                 }
 
                 if (isNaN($scope.totalGermplasmEntryListCount)) {
@@ -80,7 +97,7 @@
                 if (!$scope.data || Object.keys($scope.data).length === 0) {
                     angular.copy({
                         totalGermplasmListCount: $scope.totalGermplasmEntryListCount,
-                        designType: 0,
+                        designType: null,
                         'replicationsCount': null,
                         isResolvable : true,
                         'blockSize': null,
@@ -106,9 +123,15 @@
                 $scope.replicationsArrangementGroupsOpts[3] = 'In adjacent columns';
 
                 $scope.onSwitchDesignTypes = function (newId) {
-                    $scope.currentDesignType = $scope.designTypes[newId];
-                    $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
-                    $scope.data.designType = $scope.currentDesignType.id;
+                    if (newId !== ''){
+                        $scope.currentDesignType = $scope.designTypes[newId];
+                        $scope.currentParams = EXPERIMENTAL_DESIGN_PARTIALS_LOC + $scope.currentDesignType.params;
+                        $scope.data.designType = $scope.currentDesignType.id;
+                    }else{
+                        $scope.currentDesignType = null;
+                        $scope.data.designType = null;
+                        $scope.currentParams = '';
+                    }
                 };
 
                 // on click generate design button
@@ -139,42 +162,10 @@
                     );
                 };
 
-                $scope.designTypeOptions = function() {
-                    var options = {
-                        data : function() {
-                            var data = [];
-                            if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
-                                data.push($scope.designTypes[0]);
-                            } else {
-                                data = $scope.designTypes;
-                            }
-                            return {
-                                results : data
-                            };
-                        },
-                        formatResult : function(value) {
-                            return value.name;
-                        },
-                        formatSelection : function(value) {
-                            return value.name;
-                        },
-                        idAsValue : true
-                    };
-
-                    return options;
+                $scope.toggleDesignView = function(){
+                    return !$scope.applicationData.unappliedChangesAvailable && ($scope.applicationData.isGeneratedOwnDesign || $scope.data.designType == 3);
                 };
-
-                $scope.determineDesignTypeFilter = function() {
-                    if (TrialManagerDataService.settings.treatmentFactors.details) {
-                        return function(entry) {
-                            return entry.name === 'Randomized Complete Block Design';
-                        };
-                    }
-                    return function() {
-                        return true;
-                    };
-                };
-
+                
                 $scope.doValidate = function () {
 
                     switch ($scope.currentDesignType.id) {
@@ -348,12 +339,11 @@
                     return true;
                 };
 
-
             }])
 
         // FILTERS USED FOR EXP DESIGN
 
-        .filter('filterFactors', function () {
+        .filter('filterFactors',['_', function (_) {
             return function (factorList, designTypeIndex) {
 
                 var excludes = [
@@ -362,32 +352,30 @@
                     [8220, 8200]
                 ];
 
-                var copyList = angular.copy(factorList);
-
-                angular.forEach(excludes[designTypeIndex], function (val) {
-                    for (var i = 0; i < copyList.length; i++) {
-                        if (copyList[i] === val) {
-                            copyList.splice(i, 1);
-                        }
-                    }
+                return _.filter(factorList,function(value) {
+                    return !_.contains(excludes[designTypeIndex],value);
                 });
 
-                return copyList;
             };
-        })
+        }])
 
-        .filter('filterExperimentalDesignType', function(TrialManagerDataService) {
+        .filter('filterExperimentalDesignType', ['TrialManagerDataService','_',function(TrialManagerDataService,_) {
             return function(designTypes) {
                 var result = [];
+
+                var filteredDesignTypes = _.filter(designTypes,function(value) {
+                    return value.name !== 'Other Design';
+                });
+
                 if (TrialManagerDataService.settings.treatmentFactors.details.keys().length > 0) {
                     result.push(designTypes[0]);
                 } else {
-                    result = designTypes;
+                    result = filteredDesignTypes;
                 }
 
                 return result;
             };
-        });
+        }]);
 
 
 })();

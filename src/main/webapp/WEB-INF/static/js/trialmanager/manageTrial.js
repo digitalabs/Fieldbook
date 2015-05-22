@@ -8,7 +8,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 (function () {
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils', 'fieldbook-utils',
+    var manageTrialApp = angular.module('manageTrialApp', ['designImportApp','leafnode-utils', 'fieldbook-utils',
         'ct.ui.router.extras', 'ui.bootstrap', 'ngLodash', 'ngResource','ngStorage']);
 
     // HTTP INTERCEPTOR CONFIGURATION START

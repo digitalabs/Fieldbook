@@ -1,15 +1,13 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.junit.Test;
-
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.service.MergeCheckService;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 

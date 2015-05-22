@@ -1694,18 +1694,12 @@ function recreateSessionVariables() {
 /* global loadNurserySettingsForCreate, getJquerySafeId, changeBuildOption */
 function refreshStudyAfterSave(studyId){
 	'use strict';
-	$.ajax({
-		url: '/Fieldbook/NurseryManager/editNursery/'+studyId,
-		type: 'GET',
-		data: 'isAjax=1',
-		dataType: 'html',
-		cache: false,
-		async: false,
-		success: function(html) {
-			$('.container .row:eq(0)').html(html);
-			displaySaveSuccessMessage('page-message', saveSuccessMessage);
-		}
-	});
+
+	displaySaveSuccessMessage('page-message', saveSuccessMessage);
+
+	setTimeout(function() {
+		window.location = '/Fieldbook/NurseryManager/editNursery/'+studyId;
+	},600);
 }
 
 function resetDesigConfirmationFields() {

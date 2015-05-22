@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.naming.impl;
 
+import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
@@ -10,10 +11,9 @@ import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.util.AppConstants;
-
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
@@ -33,7 +33,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.util.*;
 
 @Service
@@ -153,7 +152,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
               , null /* gid */
               , source.getGermplasm().getCross()
               , nurseryName + ":" + source.getGermplasm().getEntryId() 
-              , getEntryCode(index)
+              , FieldbookUtil.generateEntryCode(index)
               , null /* check */
               , breedingMethod.getMid());
         
@@ -168,9 +167,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
          list.add(germplasm);
     }
 
-    private String getEntryCode(int index) {
-        return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
-    }
+    
     
 
     protected void assignNames(ImportedGermplasm germplasm, AdvancingSource source) {
@@ -234,7 +231,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         context.setMessageSource(messageSource);
 
         return context;
-    }    
+    }
     
     // 1. RootNameGeneratorRule
     // FIXME : breedingMethodNameType NOT USED : hard coded 1 in the 'Expression'
@@ -252,7 +249,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	return name;
     	
     }
-
+    
 	public void setMessageSource(ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}

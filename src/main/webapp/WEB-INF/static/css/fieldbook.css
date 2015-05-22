@@ -5,6 +5,11 @@ body {
     font-size: 13px;
     margin: 0 !important;
 }
+
+body.modal-open {
+    overflow: hidden;
+}
+
 .heading{vertical-align: middle; color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;font-size:18px;height:18px;line-height:18px;font-weight:600;}
 h1,h2,h3,h4,h5,h6,
 .h1,.h2,.h2_no_transform,.h3,.h3_no_transform,.h4,.h5,.h6{display:block;color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box}
@@ -39,6 +44,10 @@ margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border
 
 label{
     font-weight: normal;
+    word-wrap: break-word;
+}
+label#list-notes {
+  width: 300px;
 }
 .btn-primary {
     color: #ffffff;
@@ -691,7 +700,7 @@ td.nurseryLevelVariableSetting {
 div.possibleValuesDiv{
     padding-bottom: 5px;
 }
-#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li{
+#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li, #nursery-experimental-design-li {
     display: none;
 }
 .select-variable{
@@ -971,6 +980,18 @@ div.sectionContainer {
 .control-label-bold{
     font-weight: bold;
 }
+.control-label-italic{
+    font-style: italic;
+}
+.list-notes-display{
+	overflow:hidden;
+	text-overflow:ellipsis;	
+	white-space: nowrap;
+	width: 200px;
+	position: absolute;
+	padding-left: 3px;
+}
+
 .delete-icon {
     background:url(../img/delete-icon.png) left top;
     width:18px;
@@ -1153,11 +1174,10 @@ a.fbk-edit-experiment{
     text-align: left;
     vertical-align: middle
 }
-.advance-nursery-list-table table td.fbk-advance-check-box,
+table th.fbk-review-advance-check-box,table td.fbk-review-advance-check-box, .advance-nursery-list-table table td.fbk-advance-check-box,
 .advance-nursery-list-table table th.fbk-advance-check-box, .fbk-advance-check-box, .fbk-export-select-instance-check-box{
     text-align: center;
 }
-
 .enable-pointer-events {
     pointer-events: initial !important;
 }
@@ -1744,4 +1764,49 @@ td.accepted-value {
 
 #fbk-lbl-printing-delete-preset-confirm .modal-dialog {
     width: 40%;
+}
+
+.plotDupe, table .plotDupe {
+	background-color: #CCCCCC;
+}
+
+.pedigreeDupe, table .pedigreeDupe {
+	background-color: #E5D8DD;
+	color: #84324E;
+}
+
+.plotRecip, table .plotRecip {
+	background-color: #E0E4D7;
+	color: #4C5F07;
+}
+
+.pedigreeRecip, table .pedigreeRecip {
+	background-color: #DCE9F2;
+	color: #6A83C7;
+}
+input.review-select-all{
+	margin-left: 52px;
+}
+
+.vertical-spacer {
+    margin-bottom: 25px;
+}
+
+/* exp design remap css */
+.modal-very-huge .modal-dialog {
+    width: 90%;
+}
+
+.mapping-group .list-group, .unmapped.list-group {
+    min-height: 70pt;
+}
+
+.mapping-group .list-group-item .unmapped .list-group-item {
+    cursor: pointer;
+}
+
+.mapping-group .list-group-item:hover,
+.unmapped .list-group-item:hover {
+    cursor: pointer;
+    background: #BED6B2;
 }

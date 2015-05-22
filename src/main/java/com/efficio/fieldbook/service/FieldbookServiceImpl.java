@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
 import com.efficio.fieldbook.util.FieldbookUtil;
@@ -32,6 +31,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;

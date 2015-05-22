@@ -1,0 +1,94 @@
+<div class="col-xs-12 col-md-12 main-inventory" style="opacity: 0.1">   
+<form id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
+  enctype="multipart/form-data">
+     
+     <input type="hidden" id="listId" th:value="*{listId}"/>
+      
+    <!-- case 1: no data means no table -->
+     <div th:if="*{germplasmList == null or #lists.isEmpty(germplasmList)}">
+       <span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
+     </div>
+     
+     <!-- case 2: advanced view of the importedGermplasm -->
+     <div  class="advance-nursery-list-table" th:if="*{germplasmList != null and not #lists.isEmpty(germplasmList)}">
+         <table id="inventory-table" th:if="*{not #lists.isEmpty(germplasmList)}"
+         class="table-curved table-condensed final-advance-list">
+           <thead>
+             <tr>
+               <th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
+             </tr>
+           </thead>
+           <tbody>
+             <tr class="primaryRow" th:each="germplasm, row : *{germplasmList}" th:attr="data-gid=${germplasm.germplasmId}">
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.entryId}">.1</td>
+                <td th:class="${row.even}? 'even' : 'odd'" >
+					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.designation}" th:attr="data-gid=${germplasm.germplasmId}" th:attrappend="data-desig=${germplasm.designation}">.2</a>
+				</td>
+              	<td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.groupName}">.2</td>
+
+
+               
+                <!-- Cross List Columns ONLY -->
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.femaleParent}" th:attr="data-gid=${germplasm.fgid}" th:attrappend="data-desig=${germplasm.femaleParent}">.2</a>	
+               	</td>
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.fgid}" th:attr="data-gid=${germplasm.fgid}" th:attrappend="data-desig=${germplasm.femaleParent}">.2</a>
+               	</td>
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.maleParent}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
+               	</td>
+               	<td th:if="*{listType == 'CROSSES' }" th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.mgid}" th:attr="data-gid=${germplasm.mgid}" th:attrappend="data-desig=${germplasm.maleParent}">.2</a>
+               	</td>
+               	<!-- End of Cross List Columns ONLY -->
+               
+               	<td th:class="${row.even}? 'even' : 'odd'" >
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${germplasm.germplasmId}" th:attr="data-gid=${germplasm.germplasmId}" th:attrappend="data-desig=${germplasm.designation}">.3</a>
+               	</td>
+               	<td th:class="${row.even}? 'even' : 'odd'" th:text="${germplasm.seedSource}">.2</td>
+               
+               	<td th:if="*{listType == 'CROSSES'}" 
+               		th:class="${T(com.efficio.fieldbook.web.common.util.GermplasmListWebUIUtil).getCSSClassForDuplicateType(germplasm) + ' ' + (row.even ? 'even' : 'odd')}"
+               		 
+					th:text="${germplasm.duplicate}">.2</td>
+             </tr>
+           </tbody>
+         </table> 
+     </div>	     
+     </form>
+     
+ </div>
+ <br />
+
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+    /*globals getJquerySafeId, showMultiTabPage, truncateStudyVariableNames*/
+    /*exported paginationUrl, options*/
+
+        var ListPage = {
+        	setupPage : function(){
+        		var listDivIdentifier  = '';
+                if($('#create-nursery-tab-headers .tabdrop').hasClass('active')){
+              	  //means the active is in the tab drop
+              	  listDivIdentifier  = $('#create-nursery-tab-headers .tabdrop li.active .fbk-close-tab').attr('id');
+                }else{
+              	  listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
+                }
+
+                var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+
+        		truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
+
+        		new BMS.Fieldbook.FinalAdvancedGermplasmListDataTable('#'+sectionContainerDiv + ' .final-advance-list', '#'+sectionContainerDiv, null, true);
+        		$('#' + sectionContainerDiv + ' .main-inventory').css('opacity', 1);
+                StockIDFunctions.disableGenerateStockListButton(listDivIdentifier);
+        	}
+        };
+
+        $( document ).ready(function() {
+            'use strict';
+             setTimeout(ListPage.setupPage, 3);
+          });
+      //]]>
+    </script>

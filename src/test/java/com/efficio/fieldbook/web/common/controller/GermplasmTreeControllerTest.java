@@ -1,362 +1,280 @@
-/*******************************************************************************
- * Copyright (c) 2013, All Rights Reserved.
- * 
- * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
- *******************************************************************************/
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.pojos.treeview.TreeNode;
-import com.efficio.pojos.treeview.TreeTableNode;
-import junit.framework.Assert;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import org.easymock.EasyMock;
+import com.efficio.fieldbook.web.common.form.SaveListForm;
+import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.settings.AdditionalDetailsSetting;
+import org.generationcp.commons.settings.BreedingMethodSetting;
+import org.generationcp.commons.settings.CrossNameSetting;
+import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.ui.ExtendedModelMap;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class GermplasmTreeControllerTest extends AbstractBaseControllerIntegrationTest {
+@RunWith(MockitoJUnitRunner.class)
+public class GermplasmTreeControllerTest {
+	
+	private static final String LIST_NAME_SHOULD_BE_UNIQUE = "List Name should be unique";
+	private static final String PROJECT_ID = "1";
+	private static final String LIST_PARENT_ID = PROJECT_ID;
+	private static final String LIST_TYPE = "GERMPLASM LITS";
+	private static final String LIST_NOTES = "LIST NOTES";
+	private static final String LIST_IDENTIFIER = "LIST IDENTIFIER";
+	private static final String LIST_DESCRIPTION = "LIST DESCRIPTION";
+	private static final String LIST_DATE = "2015-01-30";
+	private static final String SAVED_CROSSES_GID1 = "-9999";
+	private static final String SAVED_CROSSES_GID2 = "-8888";
+	private static final String LIST_NAME = "LIST 1";
+	private static final Integer SAVED_GERMPLASM_ID = 1;
+	private static final int SAVED_LISTPROJECT_ID = 2;
+	private static final String ERROR_MESSAGE = "middeware exception message";
+	
+	@InjectMocks
+	@Spy
+	private GermplasmTreeController controller;
+	
+	@Mock
+	private ResourceBundleMessageSource messageSource;
+	
+	@Mock
+	private GermplasmDataManager germplasmDataManager;
+	
+	@Mock
+	private GermplasmListManager germplasmListManager;
 
-    private static final String ROOT_FOLDER_NAME = "Lists";
+	@Mock
+	private UserSelection userSelection = new UserSelection();
+	
+	@Mock
+	private FieldbookService fieldbookMiddlewareService;
 
-	/** The controller. */
-    @Autowired
-    private GermplasmTreeController controller;
-    
-    private static final Integer LIST_USER_ID = 1;
-    private static final String TEST_GERMPLASM_LIST = "Test Germplasm List";
-    private static final String LISTS = "LISTS";
-    private static final String NAME_NOT_UNIQUE = "Name not unique";
-    
-    /** The Constant LIST_1. */
-    private static final GermplasmList LIST_1 = 
-            new GermplasmList(1, "List 1", null, "LST", LIST_USER_ID, "List 1", null, 1);
-    
-    /** The Constant LIST_2. */
-    private static final GermplasmList LIST_2 = 
-            new GermplasmList(2, "List 2", null, "LST", LIST_USER_ID, "List 2", null, 1);
-    
-    /** The Constant LOCAL_LIST_3. */
-    private static final GermplasmList LIST_3 = 
-            new GermplasmList(3, "List 3", null, "LST", LIST_USER_ID, "List 3", null, 1);
-    
-    /** The Constant LOCAL_GERMPLASM_LIST_TEST_DATA. */
-    private static final List<GermplasmList> GERMPLASM_LIST_TEST_DATA = 
-            Arrays.asList(LIST_1, LIST_2, LIST_3);
-    
-    private static final List<GermplasmList> EMPTY_GERMPLASM_LIST_TEST_DATA = 
-            new ArrayList<GermplasmList>();
+	private SaveListForm form;
+	
+	@Spy
+	private CrossingServiceImpl crossingService;
 
-	/** The object mapper. */
-    private ObjectMapper objectMapper = new ObjectMapper();
-    
-    /**
-     * Sets the up.
-     *
-     * @throws Exception the exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    	mockGermplasmListManagerAndItsMethods();
-    	mockUserDataManagerAndItsMethods();
-    }
-    
-    /**
-     * Test load initial tree.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testLoadInitialTree() throws Exception {
-        String jsonResponse = controller.loadInitialGermplasmTree("0");
-        
-        List<TreeNode> treeNodes = objectMapper.readValue(
-                jsonResponse, new TypeReference<List<TreeNode>>(){});
-        
-        assertEquals(1, treeNodes.size());
-        assertEquals(LISTS, treeNodes.get(0).getKey());
-    }
-    
-    /**
-     * Test expand germplasm tree local.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testExpandGermplasmTreeLocal() throws Exception {
-        String jsonResponse = controller.expandGermplasmTree(LISTS, "0");
-        assertNotNull(jsonResponse);
-        TreeNode[] treeNodes = objectMapper.readValue(jsonResponse, TreeNode[].class);
-        
-        assertEquals(3, treeNodes.length);
-        for (int i = 0; i < 3; i++) {
-            assertEquals(String.valueOf((i+1)), treeNodes[i].getKey());
-            assertEquals("List " + (i+1), treeNodes[i].getTitle());
-        }
-    }
-    
-    /**
-     * Test expand germplasm node.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testExpandGermplasmNode() throws Exception {
-        String jsonResponse = controller.expandGermplasmTree("List 1", "0");
-        assertEquals("[]", jsonResponse);
-    }
-    
-    /**
-     * Test load initial tree table.
-     *
-     * @throws Exception the exception
-     */
-    @SuppressWarnings("unchecked")
-	@Test
-    public void testLoadInitialTreeTable() throws Exception {
-        ExtendedModelMap model = new ExtendedModelMap();
-    	controller.loadInitialGermplasmTreeTable(model);
-        List<TreeTableNode> treeNodes = (List<TreeTableNode>)
-        		model.get(GermplasmTreeController.GERMPLASM_LIST_ROOT_NODES);
-        int numberOfRootNodes = 0;
-        List<TreeTableNode> rootNodes = new ArrayList<TreeTableNode>();
-        for (TreeTableNode treeTableNode : treeNodes) {
-			if(treeTableNode.getParentId()==null) {
-				rootNodes.add(treeTableNode);
-				numberOfRootNodes++;
-			}
+	@Before
+	public void setUp() throws MiddlewareQueryException {
+		
+		doReturn(createCrossSetting()).when(userSelection).getCrossSettings();
+		doReturn(createImportedCrossesList()).when(userSelection).getImportedCrossesList();
+		doReturn(createWorkBook()).when(userSelection).getWorkbook();
+		
+		doReturn(null).when(fieldbookMiddlewareService).getGermplasmIdByName(anyString());
+		doReturn(SAVED_GERMPLASM_ID).when(fieldbookMiddlewareService).saveGermplasmList(anyMap(),
+				any(GermplasmList.class));
+		doReturn(SAVED_LISTPROJECT_ID).when(fieldbookMiddlewareService).saveOrUpdateListDataProject(anyInt(), any(GermplasmListType.class), anyInt(), anyList(), anyInt());
+		
+		doReturn(PROJECT_ID).when(controller).getCurrentProjectId();
+		doReturn(1).when(controller).getCurrentIbdbUserId();
+		
+		doReturn(1).when(crossingService).getIDForUserDefinedFieldCrossingName();
+		
+		doReturn(new Method()).when(germplasmDataManager).getMethodByName(anyString());
+		doReturn(createGermplasmIds()).when(germplasmDataManager).addGermplasm(anyMap());
+		doReturn(createNameTypes()).when(germplasmListManager).getGermplasmNameTypes();
+		doReturn(createGermplasmListData()).when(germplasmListManager).getGermplasmListDataByListId(anyInt(), anyInt(), anyInt());
+		
+		crossingService.setGermplasmDataManager(germplasmDataManager);
+		crossingService.setGermplasmListManager(germplasmListManager);
+		
+		try{
+			doReturn(LIST_NAME_SHOULD_BE_UNIQUE).when(messageSource).getMessage("germplasm.save.list.name.unique.error", null, LocaleContextHolder.getLocale());
+		}catch(Exception e){
+			
 		}
-        
-        assertEquals("The number of root nodes should be 1", 1, numberOfRootNodes);
-        assertEquals("The first root node should be have an id of "+LISTS,
-        		LISTS,rootNodes.get(0).getId());
-    }
-
-	private void mockUserDataManagerAndItsMethods() throws MiddlewareQueryException {
-		UserDataManager userDataManager = mock(UserDataManager.class);
-		when(userDataManager.getUserById(LIST_USER_ID)).thenReturn(null);
-		ReflectionTestUtils.setField(controller, "userDataManager"
-                , userDataManager, UserDataManager.class);
-	}
-
-	private void mockGermplasmListManagerAndItsMethods() throws MiddlewareQueryException {
-		GermplasmListManager germplasmListManager = mock(GermplasmListManager.class);
-		when(germplasmListManager.getAllTopLevelListsBatched(
-        		GermplasmTreeController.BATCH_SIZE))
-        			.thenReturn(GERMPLASM_LIST_TEST_DATA);
-        when(germplasmListManager.getGermplasmListByParentFolderIdBatched(anyInt(), 
-        		anyInt())).thenReturn(EMPTY_GERMPLASM_LIST_TEST_DATA);
-        List<UserDefinedField> userDefinedFields = createGermplasmListUserDefinedFields();
-        when(germplasmListManager.getGermplasmListTypes())
-        	.thenReturn(userDefinedFields);
-        ReflectionTestUtils.setField(controller, "germplasmListManager"
-                , germplasmListManager, GermplasmListManager.class);
-	}
-
-	private List<UserDefinedField> createGermplasmListUserDefinedFields() {
-		List<UserDefinedField> userDefinedFields = new ArrayList<UserDefinedField>();
-		UserDefinedField listType = new UserDefinedField();
-		listType.setFcode("LST");
-		listType.setFname("LIST FOLDER");
-		userDefinedFields.add(listType);
-		UserDefinedField folderType = new UserDefinedField();
-		folderType.setFcode("FOLDER");
-		folderType.setFname("FOLDER");
-		userDefinedFields.add(folderType);
-		return userDefinedFields;
-	}
-	
-	@Test
-	public void testMarkIfHasChildren() throws MiddlewareQueryException {
-		TreeTableNode anyChildNode = new TreeTableNode(
-	    		Integer.toString(EasyMock.anyInt()), 
-	    		TEST_GERMPLASM_LIST, 
-	    		null, null, null, null, "1");
-		controller.markIfHasChildren(anyChildNode);
-		assertTrue(TEST_GERMPLASM_LIST+" should not have children",
-				anyChildNode.getNumOfChildren().equals("0"));
 		
-		TreeTableNode localRootNode = new TreeTableNode(
-	    		LISTS, AppConstants.LISTS.getString(), 
-	    		null, null, null, null, "1");
-		controller.markIfHasChildren(localRootNode);
-		assertFalse(AppConstants.LISTS.getString()+
-				" should have children",localRootNode.getNumOfChildren().equals("0"));
 	}
 	
 	@Test
-	public void testGetGermplasmListChildren() throws MiddlewareQueryException {
-		TreeTableNode anyChildNode = new TreeTableNode(
-	    		Integer.toString(EasyMock.anyInt()), 
-	    		TEST_GERMPLASM_LIST, 
-	    		null, null, null, null, "1");
-		List<GermplasmList> germplasmListChildren = 
-				controller.getGermplasmListChildren(anyChildNode.getId());
-		assertTrue(TEST_GERMPLASM_LIST+" should have "+germplasmListChildren.size()
-				+" number of children",germplasmListChildren.size()==
-				EMPTY_GERMPLASM_LIST_TEST_DATA.size());
+	public void testSaveCrossesListPostSuccessful(){
 		
-		TreeTableNode localRootNode = new TreeTableNode(
-				LISTS, AppConstants.LISTS.getString(), 
-	    		null, null, null, null, "1");
-		germplasmListChildren = 
-				controller.getGermplasmListChildren(localRootNode.getId());
-		assertTrue(AppConstants.LISTS.getString()+
-				" should have "+germplasmListChildren.size()
-				+" number of children",germplasmListChildren.size()==
-				GERMPLASM_LIST_TEST_DATA.size());
-	}
-	
-	@Test
-	public void testGetGermplasmListFolderChildNodes() throws MiddlewareQueryException {
-		TreeTableNode localRootNode = new TreeTableNode(
-				LISTS, AppConstants.LISTS.getString(), 
-	    		null, null, null, null, "1");
-		List<TreeTableNode> childNodes = controller.getGermplasmListFolderChildNodes(localRootNode);
-		assertTrue(AppConstants.LISTS.getString()+
-					" should have "+GERMPLASM_LIST_TEST_DATA.size()+" children",
-					localRootNode.getNumOfChildren().equals(
-							Integer.toString(GERMPLASM_LIST_TEST_DATA.size())));
-		assertTrue(AppConstants.LISTS.getString()+
-				" should have "+childNodes.size()+" children",!childNodes.isEmpty());
+		form = new SaveListForm();
+		form.setListName(LIST_NAME);
+		form.setListDate(LIST_DATE);
+		form.setListDescription(LIST_DESCRIPTION);
+		form.setListIdentifier(LIST_IDENTIFIER);
+		form.setListNotes(LIST_NOTES);
+		form.setListType(LIST_TYPE);
+		form.setParentId(LIST_PARENT_ID);
+		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 		
-		TreeTableNode anyChildNode = new TreeTableNode(
-	    		Integer.toString(EasyMock.anyInt()), 
-	    		TEST_GERMPLASM_LIST, 
-	    		null, null, null, null, "1");
-		childNodes = controller.getGermplasmListFolderChildNodes(anyChildNode);
-		assertTrue(TEST_GERMPLASM_LIST+
-					" should have children",anyChildNode.getNumOfChildren().equals("0"));
-		assertTrue(TEST_GERMPLASM_LIST+
-				" should have no children",childNodes.isEmpty());
-	}
-	
-	@Test
-	public void testGetGermplasmListFolderChildNodesById() throws MiddlewareQueryException {
-		List<TreeTableNode> childNodes = controller.getGermplasmListFolderChildNodes(LISTS);
-		assertTrue(AppConstants.LISTS.getString()+
-				" should have "+childNodes.size()+" children",!childNodes.isEmpty());
+		Map<String, Object> result = controller.savePost(form, mock(Model.class),
+				mock(HttpSession.class));
 		
-		childNodes = controller.getGermplasmListFolderChildNodes(Integer.toString(EasyMock.anyInt()));
-		assertTrue(TEST_GERMPLASM_LIST+
-				" should have no children",childNodes.isEmpty());
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testExpandGermplasmListFolder() throws MiddlewareQueryException {
-		ExtendedModelMap model = new ExtendedModelMap();
-		controller.expandGermplasmListFolder(LISTS, model);
-		List<TreeTableNode> treeNodes = (List<TreeTableNode>)
-        		model.get(GermplasmTreeController.GERMPLASM_LIST_CHILD_NODES);
-        assertEquals("The number of children under the node with id LOCAL should be 3",
-        		3, treeNodes.size());
-        for (TreeTableNode treeTableNode : treeNodes) {
-        	assertEquals("The parent id of "+treeTableNode.getName()+
-        			" should be "+LISTS, LISTS, treeTableNode.getParentId());
-		}
-	}
-	
-	@Test
-	public void testCheckIfUniqueUsingTheRootFolderAsAnInput() throws MiddlewareQueryException{
-		try {
-			controller.checkIfUnique(ROOT_FOLDER_NAME);
-		} catch (MiddlewareException e) {
-			Assert.assertEquals(NAME_NOT_UNIQUE, e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testCheckIfUniqueUsingExistingListAsInput() throws MiddlewareQueryException{
-		GermplasmListManager germplasmListManager = mock(GermplasmListManager.class);
-		String folderName = "Sample Folder Name";
+		assertEquals(1, result.get("isSuccess"));
+		assertEquals(1, result.get("germplasmListId"));
+		assertEquals(2, result.get("crossesListId"));
+		assertEquals(form.getListIdentifier(), result.get("uniqueId"));
+		assertEquals(form.getListName(), result.get("listName"));
 		
-		when(germplasmListManager.getGermplasmListByName(folderName, 0, 1, null))
-        			.thenReturn(GERMPLASM_LIST_TEST_DATA);
-        ReflectionTestUtils.setField(controller, "germplasmListManager"
-                , germplasmListManager, GermplasmListManager.class);
-		try {
-			controller.checkIfUnique(folderName);
-		} catch (MiddlewareException e) {
-			Assert.assertEquals(NAME_NOT_UNIQUE, e.getMessage());
-		}
 	}
 	
 	@Test
-	public void testIsSimilarToRootFolderNameReturnsTrueForItemNameSimilarToRootFolder(){
-		Assert.assertTrue("Expecting to return true for item name similar to \"Lists\" ", controller.isSimilarToRootFolderName(ROOT_FOLDER_NAME));
+	public void testSaveCrossesListPostWithExistingGermplasmList() throws MiddlewareQueryException{
+		
+		form = new SaveListForm();
+		form.setListName(LIST_NAME);
+		form.setListDate(LIST_DATE);
+		form.setListDescription(LIST_DESCRIPTION);
+		form.setListIdentifier(LIST_IDENTIFIER);
+		form.setListNotes(LIST_NOTES);
+		form.setListType(LIST_TYPE);
+		form.setParentId(LIST_PARENT_ID);
+		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
+		
+		doReturn(createGermplasmList()).when(fieldbookMiddlewareService).getGermplasmListByName(
+				anyString());
+		
+		Map<String, Object> result = controller.savePost(form, mock(Model.class),
+				mock(HttpSession.class));
+		
+		assertEquals(0, result.get("isSuccess"));
+		assertEquals(LIST_NAME_SHOULD_BE_UNIQUE, result.get("message"));
+		
 	}
 	
 	@Test
-	public void testIsSimilarToRootFolderNameReturnsTrueForItemNameNotSimilarToRootFolder(){
-		Assert.assertFalse("Expecting to return true for item name not similar to \"Lists\" ", controller.isSimilarToRootFolderName("Dummy Folder Name"));
+	public void testSaveCrossesListPostWithError() throws MiddlewareQueryException{
+		
+		form = new SaveListForm();
+		form.setListName(LIST_NAME);
+		form.setListDate(LIST_DATE);
+		form.setListDescription(LIST_DESCRIPTION);
+		form.setListIdentifier(LIST_IDENTIFIER);
+		form.setListNotes(LIST_NOTES);
+		form.setListType(LIST_TYPE);
+		form.setParentId(LIST_PARENT_ID);
+		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
+		
+		when(germplasmDataManager.getMethodByName(anyString())).thenThrow(
+				new MiddlewareQueryException(ERROR_MESSAGE));
+		
+		Map<String, Object> result = controller.savePost(form, mock(Model.class), mock(HttpSession.class));
+		
+		assertEquals(0, result.get("isSuccess"));
+		assertEquals(ERROR_MESSAGE, result.get("message"));
+		
 	}
 	
-	public void testSaveCrossesListIfStudyIsNull() throws MiddlewareQueryException{
-		UserSelection userSelection = new UserSelection();
-		userSelection.setWorkbook(null);
-		GermplasmTreeController treeController = new GermplasmTreeController();
-		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		Integer germplasmListId = 1;
-		Integer userId = 9;
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		Integer crossesId = 5;
-		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Mockito.anyInt(), Mockito.any(GermplasmListType.class), Mockito.anyInt(), Mockito.anyListOf(ListDataProject.class), Mockito.anyInt())).thenReturn(crossesId);
-		treeController.setUserSelection(userSelection);
-		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);
-		Assert.assertEquals("Should return the same crosses Id as per simulation of saving", crossesId.intValue(), savedCrossesId);
+	private CrossSetting createCrossSetting(){
+		CrossSetting crossSetting = new CrossSetting();
+    	
+    	CrossNameSetting crossNameSetting = new CrossNameSetting();
+    	crossNameSetting.setPrefix("PREFIX");
+    	crossNameSetting.setSuffix("SUFFIX");
+    	crossNameSetting.setAddSpaceBetweenPrefixAndCode(true);
+    	crossNameSetting.setAddSpaceBetweenSuffixAndCode(true);
+    	crossNameSetting.setSeparator("|");
+    	crossNameSetting.setStartNumber(100);
+    	crossNameSetting.setNumOfDigits(7);
+    	
+    	crossSetting.setCrossNameSetting(crossNameSetting);
+    	crossSetting.setBreedingMethodSetting(new BreedingMethodSetting());
+    	crossSetting.setAdditionalDetailsSetting(new AdditionalDetailsSetting());
+    	
+    	return crossSetting;
 	}
 	
-	@Test
-	public void testSaveCrossesListIfStudyIsNotNull() throws MiddlewareQueryException{
-		UserSelection userSelection = new UserSelection();
-		Workbook workbook = new Workbook();
+	private ImportedCrossesList createImportedCrossesList(){
+		
+		ImportedCrossesList importedCrossesList = new ImportedCrossesList();
+    	List<ImportedCrosses> importedCrosses = new ArrayList<>();
+    	ImportedCrosses cross = new ImportedCrosses();
+    	cross.setFemaleDesig("FEMALE-12345");
+    	cross.setFemaleGid("12345");
+    	cross.setMaleDesig("MALE-54321");
+    	cross.setMaleGid("54321");
+    	importedCrosses.add(cross);
+    	ImportedCrosses cross2 = new ImportedCrosses();
+    	cross2.setFemaleDesig("FEMALE-9999");
+    	cross2.setFemaleGid("9999");
+    	cross2.setMaleDesig("MALE-8888");
+    	cross2.setMaleGid("8888");
+    	importedCrosses.add(cross2);
+    	importedCrossesList.setImportedGermplasms(importedCrosses);
+    	
+    	return importedCrossesList;
+	}
+	
+	private List<UserDefinedField> createNameTypes(){
+		List<UserDefinedField> nameTypes = new ArrayList<>();
+		UserDefinedField udf = new UserDefinedField();
+		udf.setFcode(CrossingServiceImpl.USER_DEF_FIELD_CROSS_NAME[0]);
+		nameTypes.add(udf);
+		return nameTypes;
+	}
+	
+	private List<Integer> createGermplasmIds(){
+		List<Integer> ids = new ArrayList<>();
+		ids.add(Integer.valueOf(SAVED_CROSSES_GID1));
+		ids.add(Integer.valueOf(SAVED_CROSSES_GID2));
+		return ids;
+	}
+	
+	private List<GermplasmListData> createGermplasmListData(){
+		List<GermplasmListData> listData = new ArrayList<>();
+		
+		GermplasmListData data1 = new GermplasmListData();
+		data1.setGid(Integer.valueOf(SAVED_CROSSES_GID1));
+		data1.setDesignation("DESIG 1");
+		data1.setEntryId(1);
+		data1.setGroupName("GROUP 1");
+		data1.setSeedSource("SEED 1");
+		listData.add(data1);
+		GermplasmListData data2 = new GermplasmListData();
+		data2.setGid(Integer.valueOf(SAVED_CROSSES_GID2));
+		data2.setDesignation("DESIG 2");
+		data2.setEntryId(2);
+		data2.setGroupName("GROUP 2");
+		data2.setSeedSource("SEED 2");
+		listData.add(data2);
+		
+		return listData;
+		
+	}
+	
+	private Workbook createWorkBook(){
+		Workbook wb = new Workbook();
+		
 		StudyDetails studyDetails = new StudyDetails();
-		Integer studyId = 99;
-		studyDetails.setId(studyId);
-		workbook.setStudyDetails(studyDetails);
-		userSelection.setWorkbook(workbook);
-		GermplasmTreeController treeController = new GermplasmTreeController();
-		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		Integer germplasmListId = 1;
-		Integer userId = 9;
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		Integer crossesId = 88;
-		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Mockito.anyInt(), Mockito.any(GermplasmListType.class), Mockito.anyInt(), Mockito.anyListOf(ListDataProject.class), Mockito.anyInt())).thenReturn(crossesId);
-		treeController.setUserSelection(userSelection);
-		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);
-		Assert.assertEquals("Should return the same crosses Id as per simulation of saving", crossesId.intValue(), savedCrossesId);
+		studyDetails.setId(Integer.valueOf(PROJECT_ID));
+		wb.setStudyDetails(studyDetails);
+		return wb;
+		
+	}
+	
+	private GermplasmList createGermplasmList(){
+		GermplasmList germplasmList = new GermplasmList();
+		germplasmList.setId(1);
+		return germplasmList;
 	}
 }

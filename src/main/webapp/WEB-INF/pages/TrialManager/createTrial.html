@@ -1,4 +1,4 @@
-<div ng-cloak="" ng-app="manageTrialApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
+<div ng-cloak="" ng-app="manageTrialApp" id="mainApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
 <!-- header -->
 <div class="row col-xs-12">
     <h1 class="page-header col-xs-12 edit-trial-page-identifier">
@@ -101,6 +101,11 @@
                             <li ng-show="displayGermplasmOnlyActions()">
 
                                 <a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
+
+                            </li>
+                            <li ng-show="displayGermplasmOnlyActions()">
+
+                                <a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" id="import-design-url-link" th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
 
                             </li>
                         </ul>
@@ -268,6 +273,18 @@
 </div>
 
 <div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div th:include="/DesignImport/importFile"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div th:include="/DesignImport/reviewDetails"></div>
+    </div>
+</div>
+
+<div class="row">
     <div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
 
@@ -322,14 +339,16 @@
 	<div th:include="/Common/exportGermplasmList"></div>
 </div>
 
-
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
     <input type="hidden" th:field="*{measurementDataExisting}"/>
 </form>
 
+<!-- Design import map headers -->
+<div th:include="DesignImport/mapHeaders"></div>
+
 <!-- MAIN jS -->
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
@@ -467,5 +486,6 @@
 <script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/measurement.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 
 </div>

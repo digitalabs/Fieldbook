@@ -1,14 +1,13 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.lowagie.text.pdf.codec.Base64.InputStream;
+import org.generationcp.commons.service.FileService;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -22,14 +21,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
-import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.lowagie.text.pdf.codec.Base64.InputStream;
+import java.io.IOException;
+
+import static org.mockito.Mockito.*;
 
 public class ImportStudyControllerTest {
 	

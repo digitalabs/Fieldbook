@@ -1,18 +1,23 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.*;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.service.FileService;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -36,32 +41,12 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.ChangeType;
-import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.ImportResult;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
-import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExcelImportStudyService;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import org.generationcp.commons.util.DateUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 @RequestMapping(ImportStudyController.URL)
@@ -300,7 +285,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     @ResponseBody
     @RequestMapping(value="/apply/change/details", method=RequestMethod.POST)
-    public String applyChangeDetails(@RequestParam(value="data") String userResponses) throws FieldbookException {
+    public String applyChangeDetails(@RequestParam(value="data") String userResponses) throws
+			FieldbookException {
     	UserSelection userSelection = (UserSelection) getUserSelection(false);
     	GermplasmChangeDetail[] responseDetails = getResponseDetails(userResponses);
     	List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
@@ -314,7 +300,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
     			if (responseDetail.getStatus() == 1) { 
     				// add germplasm name to gid
-    				String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
+    				String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(),
+							responseDetail.getImportDate());
 					Integer dateInteger = Integer.valueOf(gDate);
 					addGermplasmName(responseDetail.getNewDesig(),
 							Integer.valueOf(responseDetail.getOriginalGid()),

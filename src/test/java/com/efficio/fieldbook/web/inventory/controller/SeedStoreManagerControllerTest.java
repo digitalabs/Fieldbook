@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.inventory.controller;
 
-import java.util.ArrayList;
+import static org.mockito.Mockito.when;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -24,9 +25,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import static org.mockito.Mockito.*;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.Model;
@@ -105,30 +103,6 @@ public class SeedStoreManagerControllerTest {
 		String germplasmListType = GermplasmListType.ADVANCED.name();
 		seedStoreManager.displayAdvanceGermplasmDetails(listId, Mockito.mock(SeedStoreForm.class), Mockito.mock(HttpServletRequest.class), Mockito.mock(Model.class));
 		Mockito.verify(inventoryService, Mockito.times(1)).getInventoryDetailsByGermplasmList(listId, germplasmListType);
-	}
-	
-	@Test
-	public void testGetLocationList() throws MiddlewareQueryException{
-		seedStoreManager.getLocationList();
-		Mockito.verify(fiedbookService, Mockito.times(1)).getAllSeedLocations();
-	}
-	
-	@Test
-	public void testGetFavoriteLocationList() throws MiddlewareQueryException{		
-		List<Long> locationsIds = new ArrayList<Long>();
-		locationsIds.add(new Long(1));
-		Mockito.when(fiedbookService.getFavoriteProjectLocationIds(Mockito.anyString())).thenReturn(locationsIds);
-		
-		seedStoreManager.getFavoriteLocationList();
-		
-		Mockito.verify(fiedbookService, Mockito.times(1)).getFavoriteProjectLocationIds(Mockito.anyString());
-		Mockito.verify(fiedbookService, Mockito.times(1)).getFavoriteLocationByProjectId(locationsIds);
-	}
-	
-	@Test
-	public void testGetScaleList() throws MiddlewareQueryException{
-		seedStoreManager.getScaleList();
-		Mockito.verify(ontologyService, Mockito.times(1)).getAllInventoryScales();
 	}
 	
 	@Test

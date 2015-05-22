@@ -2,6 +2,7 @@ var ImportCrosses = {
 		CROSSES_URL : '/Fieldbook/crosses',
 		showFavoriteMethodsOnly: true,
 		showFavoriteLocationsOnly: true,
+		preservePlotDuplicates: false,
 		showPopup : function(){
 			$('#fileupload-import-crosses').val('');
 			$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
@@ -24,16 +25,22 @@ var ImportCrosses = {
 					createErrorNotification(crossingImportErrorHeader,resp.error.join('<br/>'));
 					return;
 				}
-
+				ImportCrosses.preservePlotDuplicates = false;
 				$('.import-crosses-section .modal').modal('hide');
-
+				$('#openCrossesListModal').data('hasPlotDuplicate', resp.hasPlotDuplicate);
 				// show review crosses page
-				ImportCrosses.openCrossesList();
+				setTimeout(ImportCrosses.openCrossesList, 500);
 
 			});
 
 		},
-
+		hasPlotDuplicate : function(){
+			'use strict';
+			if($('#openCrossesListModal').data('hasPlotDuplicate') === true){
+				return true;
+			}
+			return false;
+		},
 		openCrossesList : function() {
 			'use strict';
 			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
@@ -46,8 +53,8 @@ var ImportCrosses = {
 
 			$('#openCrossListNextButton').off('click');
 			$('#openCrossListNextButton').on('click', function() {
-				$('#openCrossesListModal').modal('hide');
-				ImportCrosses.showImportSettingsPopup();
+				$('#openCrossesListModal').modal('hide');								
+				setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 			});
 
 			$('#goBackToImportCrossesButton').off('click');
@@ -89,11 +96,11 @@ var ImportCrosses = {
 			}).submit();
 
 			return deferred.promise();
-		},	
+		},
 		displayCrossesGermplasmDetails: function (listId) {
 			'use strict';
 			$.ajax({
-				url: '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + listId,
+				url: '/Fieldbook/germplasm/list/crosses/' + listId,
 				type: 'GET',
 				cache: false,
 				success: function(html) {
@@ -101,7 +108,25 @@ var ImportCrosses = {
 				}
 			});
 		},
-
+		showPlotDuplicateConfirmation : function(){
+			'use strict';
+			if(ImportCrosses.hasPlotDuplicate()){
+				//show the confirmation now
+				$('#duplicate-crosses-modal input[type=checkbox]').prop('checked',ImportCrosses.preservePlotDuplicates);
+				
+				$('#duplicate-crosses-modal').modal({ backdrop: 'static', keyboard: true });
+				
+				$('#continue-duplicate-crosses').off('click');
+				$('#continue-duplicate-crosses').on('click', function() {
+					//get the value of the checkbox
+					ImportCrosses.preservePlotDuplicates = $('#duplicate-crosses-modal input[type=checkbox]').is(':checked');
+					$('#duplicate-crosses-modal').modal('hide');				
+					setTimeout(ImportCrosses.showImportSettingsPopup, 500);
+				});
+			}else{
+				ImportCrosses.showImportSettingsPopup();
+			}			
+		},
 		showImportSettingsPopup : function() {
 			var crossSettingsPopupModal = $('#crossSettingsModal');
 			crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
@@ -124,8 +149,8 @@ var ImportCrosses = {
 
 			$('#goBackToOpenCrossesButton').off('click');
 			$('#goBackToOpenCrossesButton').on('click', function() {
-				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(":checked");
-				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(":checked");
+				ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(':checked');
+				ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(':checked');
 				ImportCrosses.goBackToPage('#crossSettingsModal','#openCrossesListModal');
 			});
 		},
@@ -354,7 +379,7 @@ var ImportCrosses = {
 			settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
 			settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
 			settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
-
+			settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
 			settingObject.additionalDetailsSetting = {};
 			settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
 			if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
@@ -430,7 +455,7 @@ var ImportCrosses = {
                     var downloadUrl = ImportCrosses.CROSSES_URL + '/download/file';
 
                     $.fileDownload(downloadUrl,{
-                        httpMethod: "POST",
+                    	httpMethod: 'POST',
                         data: result
                     });
 
@@ -442,7 +467,7 @@ var ImportCrosses = {
 
 		displayCrossesList: function (uniqueId, germplasmListId, listName, isDefault, crossesListId) {
 			'use strict';
-			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
+			var url = '/Fieldbook/germplasm/list/crosses/' + germplasmListId;
 			if(!isDefault){
 				$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
 				url += '?isSnapshot=0';
@@ -462,9 +487,8 @@ var ImportCrosses = {
 		},
 		displayTabCrossesList: function (germplasmListId, crossesListId, listName) {
 			'use strict';
-			var url = '/Fieldbook/SeedStoreManager/crosses/displayGermplasmDetails/' + germplasmListId;
+			var url = '/Fieldbook/germplasm/list/crosses/' + crossesListId;
 			url += '?isSnapshot=0';
-			
 			$.ajax({
 				url: url,
 				type: 'GET',
@@ -473,19 +497,19 @@ var ImportCrosses = {
 					$('#saveListTreeModal').modal('hide');
 					$('#saveListTreeModal').data('is-save-crosses', '0');
 					$('#create-nursery-tabs .tab-pane.info').removeClass('active');
-					
 					var uniqueId,
 					close,
 					aHtml;
-					uniqueId = germplasmListId;
+					uniqueId = crossesListId;
 					close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
 					aHtml = '<a id="advance-list'+uniqueId+'" role="tab" class="advanceList crossesList crossesList'+uniqueId+'" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
+					var stockHtml = '<div id="stock-content-pane' + uniqueId + '" class="stock-list' + uniqueId + '"></div>';
 					$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
 					$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="advance-list' + uniqueId + '">' + html + '</div>');
+					$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list'+uniqueId+'" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
 					$('a#advance-list'+uniqueId).tab('show');
 					$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
 					$('.nav-tabs').tabdrop('layout');
-					
 					$('a#advance-list'+uniqueId).on('click', function(){
 						$('#create-nursery-tabs .tab-pane.info').removeClass('active');
 						$('#advance-list'+uniqueId+'.tab-pane.info').addClass('active');
@@ -496,8 +520,7 @@ var ImportCrosses = {
 		openSaveListModal: function(){
 			'use strict';
 			var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
-			$.ajax(
-				{ 
+			$.ajax({
 					url: '/Fieldbook/ListTreeManager/saveCrossesList/',
 					type: 'GET',
 					cache: false,
@@ -521,6 +544,8 @@ var ImportCrosses = {
 };
 
 $(document).ready(function() {
+	$('.import-crosses').off('click');
+    $('.btn-import-crosses').off('click');    
 	$('.import-crosses').on('click', ImportCrosses.showPopup);
     $('.btn-import-crosses').on('click', ImportCrosses.doSubmitImport);
 	$('.import-crosses-section .modal').on('hide.bs.modal', function() {

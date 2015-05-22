@@ -1,21 +1,10 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-
 import junit.framework.Assert;
-
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
@@ -32,6 +21,18 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
@@ -209,5 +210,40 @@ public class AdvancingControllerTest {
 
 		doNothing().when(paginationListSelection).addAdvanceDetails(anyString(), eq(form));
 
+	}
+	@Test
+	public void testDeleteImportedGermplasmEntriesIfDeleted(){
+		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
+		for(int i = 0 ; i < 10 ; i++){
+			ImportedGermplasm germplasm = new ImportedGermplasm();
+			germplasm.setEntryId(i);
+			importedGermplasms.add(germplasm);
+		}
+		String entries[] = {"1","2","3"};
+		importedGermplasms = advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
+		Assert.assertEquals("Should have a total of 7 germplasms remaining", 7, importedGermplasms.size());
+	}
+	
+	private List<ImportedGermplasm> generateGermplasm(){
+		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
+		for(int i = 0 ; i < 10 ; i++){
+			ImportedGermplasm germplasm = new ImportedGermplasm();
+			germplasm.setEntryId(i);
+			importedGermplasms.add(germplasm);
+		}
+		return importedGermplasms;
+	}
+	@Test
+	public void testDeleteImportedGermplasmEntriesIfNoneDeleted(){
+		List<ImportedGermplasm> importedGermplasms = generateGermplasm();
+		String entries[] = {};
+		importedGermplasms = advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
+		Assert.assertEquals("Should have a total of 10 germplasms, since nothing is deleted", 10, importedGermplasms.size());
+	}
+	@Test
+	public void testSetupAdvanceReviewDataList(){
+		List<ImportedGermplasm> importedGermplasms = generateGermplasm();
+		List<Map<String, Object>> mapInfos = advancingController.setupAdvanceReviewDataList(importedGermplasms);
+		Assert.assertEquals("Should have the same number of records", importedGermplasms.size(), mapInfos.size());
 	}
 }

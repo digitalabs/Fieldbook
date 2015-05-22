@@ -1,11 +1,13 @@
 package com.efficio.pojos.labelprinting;
 
+import java.util.List;
+import java.util.Map;
+
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-
-import java.util.List;
-import java.util.Map;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.pojos.GermplasmList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,17 +15,22 @@ import java.util.Map;
 
  */
 public class LabelPrintingProcessingParams {
+	
 	private Map<Integer, String> labelHeaders;
 	private List<Integer> selectedFieldIDs;
+	private List<Integer> allFieldIDs;
 	private Map<Integer, MeasurementVariable> variableMap;
 	private MeasurementRow environmentData;
 	private FieldMapTrialInstanceInfo instanceInfo;
 	private List<MeasurementRow> instanceMeasurements;
 	private Map<Integer, String> userSpecifiedLabels;
+	private GermplasmList stockList;
+	private boolean isStockList;
+	private Map<String, InventoryDetails> inventoryDetailsMap;
 
 	public LabelPrintingProcessingParams() {
 	}
-
+	
 	public Map<Integer, String> getLabelHeaders() {
 		return labelHeaders;
 	}
@@ -79,5 +86,38 @@ public class LabelPrintingProcessingParams {
 
 	public void setUserSpecifiedLabels(Map<Integer, String> userSpecifiedLabels) {
 		this.userSpecifiedLabels = userSpecifiedLabels;
+	}
+
+	public List<Integer> getAllFieldIDs() {
+		return allFieldIDs;
+	}
+	
+	public void setAllFieldIDs(List<Integer> allFieldIds) {
+		this.allFieldIDs = allFieldIds;
+	}
+
+	public GermplasmList getStockList() {
+		return stockList;
+	}
+
+	public void setStockList(GermplasmList stockList) {
+		this.stockList = stockList;
+	}
+
+	public boolean isStockList() {
+		return isStockList;
+	}
+
+	public void setIsStockList(boolean isStockList) {
+		this.isStockList = isStockList;
+	}
+
+	public Map<String, InventoryDetails> getInventoryDetailsMap() {
+		return inventoryDetailsMap;
+	}
+
+	public void setInventoryDetailsMap(
+			Map<String, InventoryDetails> inventoryDetailsMap) {
+		this.inventoryDetailsMap = inventoryDetailsMap;
 	}
 }

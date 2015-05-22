@@ -1,17 +1,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -28,8 +18,17 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrossesList;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 public class CrossingServiceImplTest {
 
@@ -128,7 +127,7 @@ public class CrossingServiceImplTest {
 		
 		CrossNameSetting setting = createCrossNameSetting();
 		ImportedCrosses cross = createCross();
-		String crossName = crossingService.buildCrossName(cross, setting);
+		String crossName = crossingService.buildCrossName(cross, setting.getSeparator());
 		
 		assertEquals(cross.getFemaleDesig() + setting.getSeparator() + cross.getMaleDesig() , crossName);
 		
@@ -222,7 +221,7 @@ public class CrossingServiceImplTest {
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 		
-		Map<Germplasm, Name> germplasmNameMap = crossingService.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), USER_ID);
+		Map<Germplasm, Name> germplasmNameMap = crossingService.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), USER_ID, false);
 	
 		Iterator<Entry<Germplasm, Name>> iterator = germplasmNameMap.entrySet().iterator();
 		Entry<Germplasm, Name> entry1 = iterator.next();

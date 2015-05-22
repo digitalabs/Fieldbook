@@ -27,6 +27,9 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
  */
 public class CreateNurseryForm {
 
+	
+	private String experimentTypeId;
+	
     /** The project id. */
     private String projectId;
 	
@@ -1272,6 +1275,14 @@ public class CreateNurseryForm {
 
 		public void setColumnOrders(String columnOrders) {
 			this.columnOrders = columnOrders;
+		}
+		
+		public String getExperimentTypeId() {
+			return this.experimentTypeId;
+		}
+
+		public void setExperimentTypeId(String experimentTypeId) {
+			this.experimentTypeId = experimentTypeId;
 		}
 				
 }

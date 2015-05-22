@@ -1,19 +1,18 @@
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListDataProjectUtil {
 	
 	  public static List<ListDataProject> createListDataProject(List<ImportedGermplasm> importedGermplasmList){
 	    	
     	List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-        if (importedGermplasmList != null && importedGermplasmList.size() > 0) {
+        if (importedGermplasmList != null && !importedGermplasmList.isEmpty()) {
         	//need a copy of the germplasm list and save
             for (ImportedGermplasm aData : importedGermplasmList) {
             	ListDataProject listDataProj = new ListDataProject();
@@ -38,7 +37,7 @@ public class ListDataProjectUtil {
 	  public static List<ListDataProject> createListDataProjectFromGermplasmListData(List<GermplasmListData> germplasmListDatas){
 	    	
 	    	List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-	        if (germplasmListDatas != null && germplasmListDatas.size() > 0) {
+	        if (germplasmListDatas != null && !germplasmListDatas.isEmpty()) {
 	        	//need a copy of the germplasm list and save
 	            for (GermplasmListData aData : germplasmListDatas) {
 	            	ListDataProject listDataProj = new ListDataProject();
@@ -67,7 +66,7 @@ public class ListDataProjectUtil {
     public static List<ImportedGermplasm> transformListDataProjectToImportedGermplasm(List<ListDataProject> data) {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         int index = 1;
-        if (data != null && data.size() > 0) {
+        if (data != null && !data.isEmpty()) {
             for (ListDataProject aData : data) {
                 ImportedGermplasm germplasm = new ImportedGermplasm();
                 germplasm.setCheck(aData.getCheckType().toString());

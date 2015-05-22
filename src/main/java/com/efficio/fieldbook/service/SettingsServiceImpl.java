@@ -1,5 +1,19 @@
 package com.efficio.fieldbook.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.util.FieldbookUtil;
@@ -7,14 +21,6 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.TermId;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,6 +29,9 @@ import java.util.Map;
  * Time: 9:48 AM
  */
 public class SettingsServiceImpl implements SettingsService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SettingsServiceImpl.class);
+	private static final int GERMPLASM_GROUP = AppConstants.SEGMENT_GERMPLASM.getInt();
 
 	/**
 	 * The fieldbook service.
@@ -56,7 +65,7 @@ public class SettingsServiceImpl implements SettingsService {
 				.buildMeasurementVariableMap(measurementVariables);
 		for (MeasurementVariable var : measurementVariables) {
 			if (!basicDetailIDList.contains(var.getTermId()) && !hiddenFields.contains(var.getTermId())) {
-				LabelFields field = new LabelFields(var.getName(), var.getTermId());
+				LabelFields field = new LabelFields(var.getName(), var.getTermId(), isGermplasmListField(var.getTermId(), workbook.isNursery()));
 
 				//set local name of id variable to local name of name variable
 				String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(),
@@ -70,6 +79,32 @@ public class SettingsServiceImpl implements SettingsService {
 		}
 
 		return details;
+	}
+	
+	public boolean isGermplasmListField(Integer id, boolean isNursery){
+		
+		List<StandardVariableReference> stdVars = new ArrayList<StandardVariableReference>();
+   	 	try {
+            if (isNursery) {
+            	stdVars = fieldbookService.filterStandardVariablesForSetting(GERMPLASM_GROUP, new ArrayList<SettingDetail>());
+            } else {
+                stdVars = fieldbookService.filterStandardVariablesForTrialSetting(GERMPLASM_GROUP, new ArrayList<SettingDetail>());
+            }
+            
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+   	 	
+   	 	List<Integer> germplasmDescriptorIds = new ArrayList<Integer>();
+   	 	for(StandardVariableReference stdVar : stdVars){
+   	 		germplasmDescriptorIds.add(stdVar.getId());
+   	 	}
+   	 	
+   	 	if(germplasmDescriptorIds.contains(id)){
+   	 		return true;
+   	 	}
+
+		return false;
 	}
 
 	@Override
@@ -85,7 +120,7 @@ public class SettingsServiceImpl implements SettingsService {
 				.buildMeasurementVariableMap(measurementVariables);
 		for (MeasurementVariable var : measurementVariables) {
 			if (!hiddenFields.contains(var.getTermId())) {
-				LabelFields field = new LabelFields(var.getName(), var.getTermId());
+				LabelFields field = new LabelFields(var.getName(), var.getTermId(), isGermplasmListField(var.getTermId(), workbook.isNursery()));
 
 				//set local name of id variable to local name of name variable
 				String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(),
@@ -105,7 +140,7 @@ public class SettingsServiceImpl implements SettingsService {
 	public List<LabelFields> retrieveTraitsAsLabels(Workbook workbook) {
 		List<LabelFields> traitList = new ArrayList<>();
 		for (MeasurementVariable var : workbook.getVariates()) {
-			traitList.add(new LabelFields(var.getName(),var.getTermId()));
+			traitList.add(new LabelFields(var.getName(),var.getTermId(), isGermplasmListField(var.getTermId(), workbook.isNursery())));
 		}
 
 		return traitList;
@@ -128,7 +163,7 @@ public class SettingsServiceImpl implements SettingsService {
 			//set all variables with trial design role to hidden
 			if (var.getStoredIn() != TermId.TRIAL_DESIGN_INFO_STORAGE.getId()) {
 
-				LabelFields field = new LabelFields(var.getName(), var.getTermId());
+				LabelFields field = new LabelFields(var.getName(), var.getTermId(), isGermplasmListField(var.getTermId(), workbook.isNursery()));
 				detailList.add(field);
 			}
 
@@ -153,7 +188,7 @@ public class SettingsServiceImpl implements SettingsService {
 		for (MeasurementVariable var : workbook.getTrialConditions()) {
 
 			if (!hiddenFields.contains(var.getTermId()) && TermId.EXPERIMENT_DESIGN_FACTOR.getId() != var.getTermId())  {
-				LabelFields field = new LabelFields(var.getName(), var.getTermId());
+				LabelFields field = new LabelFields(var.getName(), var.getTermId(), isGermplasmListField(var.getTermId(), workbook.isNursery()));
 
 				//set local name of id variable to local name of name variable
 				String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(),

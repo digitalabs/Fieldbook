@@ -231,6 +231,7 @@
                     unsavedGeneratedDesign : false,
                     unsavedTraitsAvailable : false,
                     germplasmListCleared: false,
+                    isGeneratedOwnDesign : false,
                     germplasmListSelected : GERMPLASM_LIST_SIZE > 0
                 },
 
@@ -302,7 +303,6 @@
                 },
 
                 deletedEnvironment : 0,
-
                 indicateUnappliedChangesAvailable: function () {
                     if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count != 0) {
                         service.applicationData.unappliedChangesAvailable = true;
@@ -310,6 +310,11 @@
                             'To update the Measurements table, please review your settings and regenerate ' +
                             'the Experimental Design on the next tab', 10000);
                         $('body').data('needGenerateExperimentalDesign', '1');
+
+                        if (service.currentData.experimentalDesign.designType === 3 ) {
+                            service.currentData.experimentalDesign.designType = null;
+                        }
+
                     }
                 },
 

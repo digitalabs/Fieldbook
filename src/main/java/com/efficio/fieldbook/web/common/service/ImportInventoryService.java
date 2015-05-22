@@ -1,23 +1,23 @@
 package com.efficio.fieldbook.web.common.service;
 
-import com.efficio.fieldbook.web.common.exception.FileParsingException;
-import com.efficio.fieldbook.web.nursery.bean.ImportedInventoryList;
+import java.util.List;
+import java.util.Map;
+
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
+import com.efficio.fieldbook.util.FieldbookException;
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
 
  */
 public interface ImportInventoryService {
-	public ImportedInventoryList parseFile(MultipartFile file) throws FileParsingException;
-
-	public boolean mergeImportedData(List<InventoryDetails> originalList, ImportedInventoryList imported);
-
-	public boolean saveUpdatedInventoryDetails(List<InventoryDetails> updatedList, Integer currentUserID, Integer listID) throws
-			MiddlewareQueryException;
+	ImportedInventoryList parseFile(MultipartFile file, Map<String,Object> additionalParams) throws FileParsingException;
+	boolean mergeImportedData(List<InventoryDetails> originalList, ImportedInventoryList imported);
+	void mergeInventoryDetails(List<InventoryDetails> originalList, ImportedInventoryList imported, 
+			GermplasmListType germplasmListType) throws FieldbookException;
 }

@@ -1,11 +1,13 @@
 package com.efficio.fieldbook.util.parsing.validation;
 
+import org.generationcp.commons.parsing.validation.NonEmptyValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
@@ -29,16 +31,16 @@ public class NonEmptyValidatorTest {
 
 	@Test
 	public void testNonEmptyPass() {
-		assertTrue(dut.isParsedValueValid(RANDOM_TEST_STRING));
+		assertTrue(dut.isParsedValueValid(RANDOM_TEST_STRING,null));
 	}
 
 	@Test
 	public void testEmptyString() {
-		assertFalse(dut.isParsedValueValid(EMPTY_STRING));
+		assertFalse(dut.isParsedValueValid(EMPTY_STRING,null));
 	}
 
 	@Test
 	public void testNullString() {
-		assertFalse(dut.isParsedValueValid(null));
+		assertFalse(dut.isParsedValueValid(null,null));
 	}
 }

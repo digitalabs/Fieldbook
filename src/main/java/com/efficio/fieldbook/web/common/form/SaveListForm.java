@@ -31,10 +31,16 @@ public class SaveListForm {
 	
 	/** The list notes. */
 	private String listNotes;
-	
-	private String listIdentifier; //to be use for dynamic of advance list		
+
+	//to be use for dynamic of advance list
+	private String listIdentifier;
 	
 	private String parentId;
+
+	private String germplasmListType;
+
+	// to be used for saving of stock lists
+	private int sourceListId;
 	
 	
 	public String getParentId() {
@@ -142,5 +148,20 @@ public class SaveListForm {
 	public void setListNotes(String listNotes) {
 		this.listNotes = listNotes;
 	}
-	
+
+	public String getGermplasmListType() {
+		return germplasmListType;
+	}
+
+	public void setGermplasmListType(String germplasmListType) {
+		this.germplasmListType = germplasmListType;
+	}
+
+	public int getSourceListId() {
+		return sourceListId;
+	}
+
+	public void setSourceListId(int sourceListId) {
+		this.sourceListId = sourceListId;
+	}
 }

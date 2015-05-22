@@ -1,10 +1,7 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.List;
-import java.util.Map;
-
 import junit.framework.Assert;
-
+import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -14,10 +11,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.nursery.bean.ImportedCrosses;
+import java.util.Map;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class ImportCrossesControllerTest {
 	

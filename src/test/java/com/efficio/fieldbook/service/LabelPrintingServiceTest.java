@@ -75,7 +75,7 @@ public class LabelPrintingServiceTest {
 		when(settingsService.retrieveTraitsAsLabels(workbook)).thenReturn(traitLabels);
 		when(settingsService.retrieveGermplasmDescriptorsAsLabels(workbook)).thenReturn(germplasmLabels);
 
-		List<LabelFields> retrieved = dut.getAvailableLabelFields(true, false, Locale.getDefault(), DUMMY_TRIAL_ID);
+		List<LabelFields> retrieved = dut.getAvailableLabelFieldsForStudy(true, false, Locale.getDefault(), DUMMY_TRIAL_ID);
 
 		assertNotNull(retrieved);
 		verifyBaseLabelFieldsPresent(retrieved);
@@ -104,7 +104,7 @@ public class LabelPrintingServiceTest {
 				.thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved = dut
-				.getAvailableLabelFields(true, true, Locale.getDefault(), DUMMY_TRIAL_ID);
+				.getAvailableLabelFieldsForStudy(true, true, Locale.getDefault(), DUMMY_TRIAL_ID);
 
 		assertNotNull(retrieved);
 		verifyBaseLabelFieldsPresent(retrieved);
@@ -133,7 +133,7 @@ public class LabelPrintingServiceTest {
 				.thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved = dut
-				.getAvailableLabelFields(false, true, Locale.getDefault(), DUMMY_NURSERY_ID);
+				.getAvailableLabelFieldsForStudy(false, true, Locale.getDefault(), DUMMY_NURSERY_ID);
 
 		assertNotNull(retrieved);
 		verifyBaseLabelFieldsPresent(retrieved);
@@ -160,7 +160,7 @@ public class LabelPrintingServiceTest {
 				.thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved = dut
-				.getAvailableLabelFields(false, false, Locale.getDefault(), DUMMY_NURSERY_ID);
+				.getAvailableLabelFieldsForStudy(false, false, Locale.getDefault(), DUMMY_NURSERY_ID);
 
 		assertNotNull(retrieved);
 		verifyBaseLabelFieldsPresent(retrieved);
@@ -229,7 +229,7 @@ public class LabelPrintingServiceTest {
 		List<LabelFields> labelFields = new ArrayList<>();
 
 		LabelFields field = new LabelFields(DUMMY_NURSERY_LABEL_NAME,
-				DUMMY_NURSERY_LABEL_TERM_ID);
+				DUMMY_NURSERY_LABEL_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -238,7 +238,7 @@ public class LabelPrintingServiceTest {
 	protected List<LabelFields> createDummyTrialSettingLabels() {
 		List<LabelFields> labelFields = new ArrayList<>();
 
-		LabelFields field = new LabelFields(DUMMY_TRIAL_SETTING_LABEL_NAME, DUMMY_TRIAL_SETTING_LABEL_TERM_ID);
+		LabelFields field = new LabelFields(DUMMY_TRIAL_SETTING_LABEL_NAME, DUMMY_TRIAL_SETTING_LABEL_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -248,7 +248,7 @@ public class LabelPrintingServiceTest {
 		List<LabelFields> labelFields = new ArrayList<>();
 
 		LabelFields field = new LabelFields(DUMMY_TRIAL_ENVIRONMENT_LABEL_NAME,
-				DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID);
+				DUMMY_TRIAL_ENVIRONMENT_LABEL_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -258,7 +258,7 @@ public class LabelPrintingServiceTest {
 		List<LabelFields> labelFields = new ArrayList<>();
 
 		LabelFields field = new LabelFields(DUMMY_TRAIT_LABEL_NAME,
-				DUMMY_TRAIT_TERM_ID);
+				DUMMY_TRAIT_TERM_ID, false);
 		labelFields.add(field);
 
 		return labelFields;
@@ -268,7 +268,7 @@ public class LabelPrintingServiceTest {
 			List<LabelFields> labelFields = new ArrayList<>();
 
 			LabelFields field = new LabelFields(DUMMY_GERMPLASM_LABEL_NAME,
-					DUMMY_GERMPLASM_TERM_ID);
+					DUMMY_GERMPLASM_TERM_ID, false);
 			labelFields.add(field);
 
 			return labelFields;

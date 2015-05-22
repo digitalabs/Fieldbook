@@ -222,7 +222,11 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._currentlySelectedVariables = groupData.selectedVariables;
 		this._group = group;
 		this._properties = properties;
+		this._callback = groupData.callback;
+		this._onHideCallback = groupData.onHideCallback;
 		this._excludedProperties = groupData.excludedProperties || [];
+
+		this._$modal.one('hidden.bs.modal', $.proxy(this._onHidden,this));
 
 		// Append title
 		title = $('<h4 class="modal-title" id="vs-modal-title">' + translations.label + '</h4>');
@@ -395,7 +399,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
             variableSelectedMessage = this._translations.variableSelectedMessage,
 			variableName,
 			selectedVariable,
-			variableId;
+			variableId,
+			callback = this._callback;
 
 		// If the user is in the middle of entering an alias, close that before proceeding
 		if (container.find(aliasVariableInputSelector).length) {
@@ -456,11 +461,20 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				 * @property {number} group the group the variable belongs to
 				 * @property {object} responseData data returned from a successful call to /Fieldbook/manageSettings/addSettings/
 				 */
-				this._$modal.trigger({
-					type: VARIABLE_SELECT_EVENT,
-					group: this._group,
-					responseData: data
-				});
+
+				// do not trigger this event if callback override is present. this callback will be
+				// the one to handle the event
+				if (callback) {
+					callback(data);
+				} else {
+					this._$modal.trigger({
+						type: VARIABLE_SELECT_EVENT,
+						group: this._group,
+						responseData: data
+					});
+				}
+
+
 				if(data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0].possibleValues.length == 0){
 					showAlertMessage('', variableNoValidValueNotification);
 				}
@@ -671,6 +685,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		// Destroy the select dropdown
 		this._propertyDropdown.destroy();
 	};
+
+	VariableSelection.prototype._onHidden = function() {
+		if (this._onHideCallback) {
+			this._onHideCallback();
+		}
+	};
+
 
 	return VariableSelection;
 

@@ -11,18 +11,23 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.MergeCheckService;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.form.UpdateGermplasmCheckForm;
+import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ListDataProjectUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.ColumnLabels;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -47,28 +52,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.MergeCheckService;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.form.UpdateGermplasmCheckForm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
@@ -231,6 +219,7 @@ public class ImportGermplasmListController extends SettingsController {
         boolean isDeleteObservations = false;
 		String[] selectedCheck = form.getSelectedCheck();
 		boolean isNursery = userSelection.getWorkbook().getStudyDetails().getStudyType() == StudyType.N ? true : false;			
+		boolean hasTemporaryWorkbook = false;
 		
 	    if (userSelection.getTemporaryWorkbook() != null) {
             WorkbookUtil.manageExpDesignVariablesAndObs(userSelection.getWorkbook(), userSelection.getTemporaryWorkbook());
@@ -238,14 +227,27 @@ public class ImportGermplasmListController extends SettingsController {
                     false, userSelection, ontologyService, fieldbookService);
             WorkbookUtil.addMeasurementDataToRowsExp(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook().getObservations(), 
                     true, userSelection, ontologyService, fieldbookService);
+            
+            
+            if (userSelection.getExperimentalDesignVariables() != null){
+            	Set<MeasurementVariable> unique = new HashSet<MeasurementVariable>(userSelection.getWorkbook().getFactors());
+            	unique.addAll(userSelection.getExperimentalDesignVariables());
+            	userSelection.getWorkbook().getFactors().clear();
+            	userSelection.getWorkbook().getFactors().addAll(unique);
+            }
+            
             Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil.createVariableList(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
+            
             WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables, userSelection.getWorkbook().getObservations());
             userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
             WorkbookUtil.updateTrialObservations(userSelection.getWorkbook(),userSelection.getTemporaryWorkbook());
             userSelection.setTemporaryWorkbook(null);
+            hasTemporaryWorkbook = true;
             isDeleteObservations = true;
         
-        } else if (isNursery){
+        }  
+	    
+	    if (isNursery && !hasTemporaryWorkbook){
             if (selectedCheck != null && selectedCheck.length != 0) {
             	
             	ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = getUserSelection().getImportedCheckGermplasmMainInfo();
@@ -321,7 +323,7 @@ public class ImportGermplasmListController extends SettingsController {
                 //add or remove check variables if needed
                 fieldbookService.manageCheckVariables(userSelection, form);
             }
-        } else {
+        } else if (!hasTemporaryWorkbook) {
             isDeleteObservations = true;
             userSelection.setMeasurementRowList(null);
         }
@@ -356,7 +358,18 @@ public class ImportGermplasmListController extends SettingsController {
         	//we save the list
         	//we need to create a new germplasm list
         	Integer listId = getUserSelection().getImportedGermplasmMainInfo().getListId();
-        	List<ImportedGermplasm> importedGermplasmList = isNursery ? getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() : getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+        	List<ImportedGermplasm> importedGermplasmList;
+        	
+        	if (isNursery){
+        		if (getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() != null){
+        			importedGermplasmList = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms();
+        		}else{
+        			importedGermplasmList = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+        		}
+        	}else{
+        		importedGermplasmList = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+        	}
+
         	List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(importedGermplasmList);
         	fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject, getCurrentIbdbUserId());
         }else{

@@ -1,12 +1,14 @@
 package com.efficio.fieldbook.util.parsing.validation;
 
+import org.generationcp.commons.parsing.validation.ValueTypeValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,7 +26,7 @@ public class ValueTypeValidatorTest {
 	@Test
 	public void testIntegerStringMatch() {
 		dut = new ValueTypeValidator(Integer.class);
-		boolean result = dut.isParsedValueValid(TEST_INTEGER_STRING);
+		boolean result = dut.isParsedValueValid(TEST_INTEGER_STRING,null);
 
 		assertTrue("Validator unable to properly process integer string", result);
 	}
@@ -32,7 +34,7 @@ public class ValueTypeValidatorTest {
 	@Test
 	public void testIntegerStringFail() {
 		dut = new ValueTypeValidator(Integer.class);
-		boolean result = dut.isParsedValueValid(RANDOM_TEST_STRING);
+		boolean result = dut.isParsedValueValid(RANDOM_TEST_STRING,null);
 
 		assertFalse("Validator unable to properly process integer string", result);
 	}
@@ -40,7 +42,7 @@ public class ValueTypeValidatorTest {
 	@Test
 	public void testDoubleStringMatch() {
 		dut = new ValueTypeValidator(Double.class);
-		boolean result = dut.isParsedValueValid(TEST_DOUBLE_STRING);
+		boolean result = dut.isParsedValueValid(TEST_DOUBLE_STRING,null);
 
 		assertTrue("Validator unable to properly process double string", result);
 	}
@@ -48,7 +50,7 @@ public class ValueTypeValidatorTest {
 	@Test
 	public void testDoubleStringFail() {
 		dut = new ValueTypeValidator(Double.class);
-		boolean result = dut.isParsedValueValid(RANDOM_TEST_STRING);
+		boolean result = dut.isParsedValueValid(RANDOM_TEST_STRING,null);
 
 		assertFalse("Validator unable to properly process double string", result);
 	}
@@ -56,7 +58,7 @@ public class ValueTypeValidatorTest {
 	@Test
 	public void testExpectDoubleIntegerInput() {
 		dut = new ValueTypeValidator(Double.class);
-		boolean result = dut.isParsedValueValid(TEST_INTEGER_STRING);
+		boolean result = dut.isParsedValueValid(TEST_INTEGER_STRING,null);
 
 		assertTrue("Validator must still be able to process integer strings as double", result);
 	}
@@ -64,7 +66,7 @@ public class ValueTypeValidatorTest {
 	@Test
 	public void testDateStringMatch() {
 		dut = new ValueTypeValidator(Date.class);
-		boolean result = dut.isParsedValueValid(TEST_DATE_STRING);
+		boolean result = dut.isParsedValueValid(TEST_DATE_STRING,null);
 
 		assertTrue("Validator unable to properly process date string", result);
 	}
@@ -72,7 +74,7 @@ public class ValueTypeValidatorTest {
 	@Test
 	public void testDateStringFail() {
 		dut = new ValueTypeValidator(Date.class);
-		boolean result = dut.isParsedValueValid(RANDOM_TEST_STRING);
+		boolean result = dut.isParsedValueValid(RANDOM_TEST_STRING,null);
 
 		assertFalse("Validator unable to properly process date string", result);
 	}

@@ -41,10 +41,18 @@ var ImportDesign = {
 		},
 		
 		showPopup : function(hasGermplasmListSelected){
-			if (hasGermplasmListSelected){
-				$('#importDesignModal').modal({ backdrop: 'static', keyboard: true });
+			if (hasGermplasmListSelected && !ImportDesign.hasCheckListSelected()){
+				$('#importDesignModal').one('shown.bs.modal',function(){
+					if (!isNursery()) {
+						setTimeout(function() { ImportDesign.showDesignWarningMessage();  },200);
+					}
+				}).modal({ backdrop: 'static', keyboard: true });
 			}else{
-				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
+				if (ImportDesign.hasCheckListSelected()){
+					showErrorMessage(designImportErrorHeader, 'You cannot import a design if you have Selected Checks specified.');
+				}else{
+					showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
+				}
 			}
 
 		},

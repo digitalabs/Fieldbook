@@ -247,7 +247,7 @@ public class ImportGermplasmListController extends SettingsController {
         
         }  
 	    
-	    if (isNursery){
+	    if (isNursery && !hasTemporaryWorkbook){
             if (selectedCheck != null && selectedCheck.length != 0) {
             	
             	ImportedGermplasmMainInfo importedGermplasmMainInfoToUse = getUserSelection().getImportedCheckGermplasmMainInfo();
@@ -358,7 +358,18 @@ public class ImportGermplasmListController extends SettingsController {
         	//we save the list
         	//we need to create a new germplasm list
         	Integer listId = getUserSelection().getImportedGermplasmMainInfo().getListId();
-        	List<ImportedGermplasm> importedGermplasmList = isNursery ? getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() : getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+        	List<ImportedGermplasm> importedGermplasmList;
+        	
+        	if (isNursery){
+        		if (getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() != null){
+        			importedGermplasmList = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms();
+        		}else{
+        			importedGermplasmList = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+        		}
+        	}else{
+        		importedGermplasmList = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+        	}
+
         	List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(importedGermplasmList);
         	fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject, getCurrentIbdbUserId());
         }else{

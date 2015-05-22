@@ -82,7 +82,7 @@
 										<a href="javascript: void(0)" onclick="ImportCrosses.downloadCrosses()"  class="export-crosses-action"
 										   th:text="#{nursery.nurserydetails.action.export.crosses}">Export Crosses</a>
 									</li>
-									<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+									<li>
 										<a href="" style="display: none" id="import-design-url"></a>
 										<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" id="import-design-url-link"
 										   th:text="#{nursery.nurserydetails.action.importDesign}">Import Design</a>

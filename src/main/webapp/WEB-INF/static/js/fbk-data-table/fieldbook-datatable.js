@@ -432,15 +432,17 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					createdCell: function (td, cellData, rowData, row, col) {
-						if ($(td).text().startsWith('Plot Dupe')){
+						
+						if ($(td).text().indexOf('Plot Dupe') != -1){
 							$(td).addClass('plotDupe');
-						} else if ($(td).text().startsWith('Pedigree Dupe')){
+						} else if ($(td).text().indexOf('Pedigree Dupe') != -1){
 							$(td).addClass('pedigreeDupe');
-					    } else if ($(td).text().startsWith('Plot Recip')){
+					    } else if ($(td).text().indexOf('Plot Recip') != -1){
 							$(td).addClass('plotRecip');
-					    } else if ($(td).text().startsWith('Pedigree Recip')) {
+					    } else if ($(td).text().indexOf('Pedigree Recip') != -1) {
 							$(td).addClass('pedigreeRecip');
 					    }
+					    
 					}
 				});
 			}

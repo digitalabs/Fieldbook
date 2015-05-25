@@ -265,8 +265,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/germplasm", method = RequestMethod.POST, produces = "application/json")
-	public Map<String, Object> importFile(Model model,
+	@RequestMapping(value = "/germplasm", method = RequestMethod.POST)
+	public String importFile(Model model,
 			@ModelAttribute("importCrossesForm") ImportCrossesForm form) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
@@ -288,8 +288,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			resultsMap.put(IS_SUCCESS, 0);
 			resultsMap.put("error", new String[] {e.getMessage()});
 		}
-
-		return resultsMap;
+		return super.convertObjectToJson(resultsMap);
 	}
 
 	

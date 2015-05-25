@@ -286,7 +286,7 @@ public class StockController extends AbstractBaseFieldbookController{
 	
 	@ResponseBody
 	@RequestMapping(value ="/import", method = RequestMethod.POST)
-	public Map<String,Object> importList(@ModelAttribute("importStockForm") ImportStockForm form) {
+	public String importList(@ModelAttribute("importStockForm") ImportStockForm form) {
 		Map<String,Object> result = new HashMap<String,Object>();
 		try {
 			Integer listId = form.getStockListId();
@@ -322,7 +322,7 @@ public class StockController extends AbstractBaseFieldbookController{
 			result.put(ERROR_MESSAGE,messageSource.getMessage(
 					"common.import.failed", new Object[]{},Locale.getDefault()));
 		}
-		return result;
+		return convertObjectToJson(result);
 	}
 
 	private void updateInventory(Integer listId,

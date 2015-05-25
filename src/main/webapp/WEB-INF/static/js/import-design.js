@@ -225,12 +225,14 @@ var ImportDesign = {
 			}
 			
 			ImportDesign.submitImport($('#importDesignUploadForm')).done(function(resp) {
-
-				if (!resp.isSuccess) {
-					createErrorNotification(designImportErrorHeader,resp.error.join('<br/>'));
+				
+				var resultJson = JSON.parse(resp);
+				
+				if (!resultJson.isSuccess) {
+					createErrorNotification(designImportErrorHeader,resultJson.error.join('<br/>'));
 					return;
-				} else if (resp.warning){
-					showAlertMessage('', resp.warning);
+				} else if (resultJson.warning){
+					showAlertMessage('', resultJson.warning);
 				}
 
 				$('#importDesignModal').one('hidden.bs.modal',function() {
@@ -243,11 +245,14 @@ var ImportDesign = {
 		closeReviewModal: function() {
 			$('#reviewDesignModal').modal('hide');
 		},
+		
 		submitImport : function($importDesignUploadForm) {
 			'use strict';
 			var deferred = $.Deferred();
+			
+			
 			$importDesignUploadForm.ajaxForm({
-				dataType: 'json',
+				dataType: 'text',
 				success: function(response) {
 					deferred.resolve(response);
 				},

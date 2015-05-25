@@ -4,6 +4,7 @@ package com.efficio.fieldbook.web.nursery.controller;
  * Created by cyrus on 5/8/15.
  */
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -87,8 +90,8 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 
 	@ResponseBody
-	@RequestMapping(value = "/import/{studyType}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	public Map<String, Object> importFile(Model model,
+	@RequestMapping(value = "/import/{studyType}", method = RequestMethod.POST, produces="text/plain")
+	public String importFile(Model model,
 			@ModelAttribute("importDesignForm") ImportDesignForm form, @PathVariable String studyType) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
@@ -113,8 +116,8 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			// error messages is still in .prop format,
 			resultsMap.put("error", new String[] {e.getMessage()});
 		}
-
-		return resultsMap;
+		
+		return convertObjectToJson(resultsMap);
 	}
 
 	@ResponseBody
@@ -383,4 +386,5 @@ public class DesignImportController extends AbstractBaseFieldbookController {
             }
         }
     }
+	
 }

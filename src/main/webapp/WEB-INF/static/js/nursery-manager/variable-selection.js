@@ -431,69 +431,72 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		variableId = _convertVariableId(selectedVariable.id);
 
-		$.ajax({
-			url: '/Fieldbook/manageSettings/addSettings/' + this._group,
-			type: 'POST',
-			data: JSON.stringify({
-				selectedVariables: [{cvTermId: variableId, name: selectedVariable.alias || selectedVariable.name}]
-			}),
-			dataType: 'json',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			success: $.proxy(function(data) {
-				// Prevent this variable from being selected again
-				this._currentlySelectedVariables[selectedVariable.id] = selectedVariable.alias || selectedVariable.name;
+		if (callback) {
+			selectedVariable.cvTermId = variableId;
 
-				// Remove the edit button
-				selectButton.parents('.vs-variable').find(aliasVariableButtonSelector).remove();
+			callback({
+				responseData : [{variable : selectedVariable}]
+			});
+		} else {
+			$.ajax({
+				url: '/Fieldbook/manageSettings/addSettings/' + this._group,
+				type: 'POST',
+				data: JSON.stringify({
+					selectedVariables: [{cvTermId: variableId, name: selectedVariable.alias || selectedVariable.name}]
+				}),
+				dataType: 'json',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				success: $.proxy(function(data) {
+					// Prevent this variable from being selected again
+					this._currentlySelectedVariables[selectedVariable.id] = selectedVariable.alias || selectedVariable.name;
 
-				// Change the add button to a tick to indicate success
-				iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
-				selectButton.children('.vs-variable-select-label').text('');
+					// Remove the edit button
+					selectButton.parents('.vs-variable').find(aliasVariableButtonSelector).remove();
 
-				/**
-				 * Variable select event.
-				 *
-				 * @event VariableSelection#variable-select
-				 * @type {object}
-				 * @property {number} group the group the variable belongs to
-				 * @property {object} responseData data returned from a successful call to /Fieldbook/manageSettings/addSettings/
-				 */
+					// Change the add button to a tick to indicate success
+					iconContainer.removeClass('glyphicon-plus').addClass('glyphicon-ok');
+					selectButton.children('.vs-variable-select-label').text('');
 
-				// do not trigger this event if callback override is present. this callback will be
-				// the one to handle the event
-				if (callback) {
-					callback(data);
-				} else {
+					/**
+					 * Variable select event.
+					 *
+					 * @event VariableSelection#variable-select
+					 * @type {object}
+					 * @property {number} group the group the variable belongs to
+					 * @property {object} responseData data returned from a successful call to /Fieldbook/manageSettings/addSettings/
+					 */
+
 					this._$modal.trigger({
 						type: VARIABLE_SELECT_EVENT,
 						group: this._group,
 						responseData: data
 					});
+
+
+					if(data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0].possibleValues.length == 0){
+						showAlertMessage('', variableNoValidValueNotification);
+					}
+				}, this),
+				error: function(jqxhr, textStatus, error) {
+
+					var errorMessage;
+
+					showErrorMessage(null, generalErrorMessage);
+
+					if (console) {
+						errorMessage = textStatus + ', ' + error;
+						console.error('Failed to add variable with id ' + variableId + '. Error was: ' + errorMessage);
+					}
+
+					// Re-enable the add button
+					selectButton.removeAttr('disabled');
 				}
+			});
+		}
 
-
-				if(data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0].possibleValues.length == 0){
-					showAlertMessage('', variableNoValidValueNotification);
-				}
-			}, this),
-			error: function(jqxhr, textStatus, error) {
-
-				var errorMessage;
-
-				showErrorMessage(null, generalErrorMessage);
-
-				if (console) {
-					errorMessage = textStatus + ', ' + error;
-					console.error('Failed to add variable with id ' + variableId + '. Error was: ' + errorMessage);
-				}
-
-				// Re-enable the add button
-				selectButton.removeAttr('disabled');
-			}
-		});
 	};
 
 	/*

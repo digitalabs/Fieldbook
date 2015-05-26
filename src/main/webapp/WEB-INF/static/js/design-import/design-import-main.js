@@ -175,13 +175,7 @@
                                 if (data.length && data.length > 0) {
                                     $.each(data, function (key, value) {
                                         scope.modeldata.id = value.variable.cvTermId;
-                                        scope.modeldata.variable = {
-                                            id : value.variable.cvTermId,
-                                            name : value.variable.name,
-                                            property : { name : value.variable.property },
-                                            scale : { name : value.variable.scale },
-                                            method : { name : value.variable.method }
-                                        };
+                                        scope.modeldata.variable = value.variable;
                                     });
                                 }
                             }

@@ -146,4 +146,14 @@ public class FieldbookUtil {
 		  }
 	  }
   }
+  
+  public static List<Integer> getFilterForMeansAndStatisticalVars(){
+	  
+	  List<Integer> isAIds = new ArrayList<Integer>();
+	  StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
+	  while (token.hasMoreTokens()) {
+		  isAIds.add(Integer.valueOf(token.nextToken()));
+	  }
+	  return isAIds;
+  }
 }

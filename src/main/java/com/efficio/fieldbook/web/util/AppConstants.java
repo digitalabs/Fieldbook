@@ -295,6 +295,8 @@ public enum AppConstants {
 	,TEMPORARY_INVENTORY_COMMENT
 	
 	,ADVANCE_ZIP_DEFAULT_FILENAME
+	
+	,FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

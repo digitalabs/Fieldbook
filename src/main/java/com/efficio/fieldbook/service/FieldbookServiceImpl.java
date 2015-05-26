@@ -183,9 +183,10 @@ public class FieldbookServiceImpl implements FieldbookService {
                 }
             }
         }
-
+        result = fieldbookMiddlewareService.filterStandardVariablesByIsAIds(result, FieldbookUtil.getFilterForMeansAndStatisticalVars());
         Collections.sort(result);
-
+        
+        
         return result;
     }
 
@@ -250,7 +251,7 @@ public class FieldbookServiceImpl implements FieldbookService {
             }
         }
 
-
+        result = fieldbookMiddlewareService.filterStandardVariablesByIsAIds(result, FieldbookUtil.getFilterForMeansAndStatisticalVars());
         Collections.sort(result);
 
         return result;

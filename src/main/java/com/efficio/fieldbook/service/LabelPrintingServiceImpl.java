@@ -281,11 +281,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         fieldMapTrialInstanceInfo, trialInstance, "");
 
                 for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
-                	
-                	if(userLabelPrinting.isStockList() 
-                			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
-                		continue;
-                	}
 
                     i++;
                     String barcodeLabelForCode = "";
@@ -803,11 +798,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                 for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
                 	
-                	if(userLabelPrinting.isStockList() 
-                			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
-                		continue;
-                	}
-                	
                     row = labelPrintingSheet.createRow(rowIndex++);
                     columnIndex = 0;
 
@@ -897,12 +887,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             
             Map<String,String> moreFieldInfo = generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
             for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
-            	
-            	if(userLabelPrinting.isStockList() 
-            			&& !userLabelPrinting.getInventoryDetailsMap().containsKey(fieldMapLabel.getEntryNumber().toString())){
-            		continue;
-            	}
-            	
             	String barcodeLabelForCode = generateBarcodeField(
                         moreFieldInfo, fieldMapLabel, firstBarcodeField,
                         secondBarcodeField, thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
@@ -976,17 +960,19 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 		Integer studyId = workbook.getStudyDetails().getId();
 		Map<Integer,InventoryDetails> inventoryDetailsMap = retrieveInventoryDetailsMap(studyId,workbook);
 		
-		for (MeasurementRow measurement : params.getInstanceMeasurements()) {
-            FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
-                    measurement.getExperimentId());
-            
-            InventoryDetails inventoryDetails = inventoryDetailsMap.get(label.getGid());
-            if(inventoryDetails != null){
-                label.setInventoryAmount(inventoryDetails.getAmount());
-                label.setScaleName(inventoryDetails.getScaleName());
-                label.setLotId(inventoryDetails.getLotId());
-            }
-        }
+		if(!inventoryDetailsMap.isEmpty()){
+			for (MeasurementRow measurement : params.getInstanceMeasurements()) {
+	            FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
+	                    measurement.getExperimentId());
+	            
+	            InventoryDetails inventoryDetails = inventoryDetailsMap.get(label.getGid());
+	            if(inventoryDetails != null){
+	                label.setInventoryAmount(inventoryDetails.getAmount());
+	                label.setScaleName(inventoryDetails.getScaleName());
+	                label.setLotId(inventoryDetails.getLotId());
+	            }
+	        }
+		}
 	}
 
 	private Map<Integer, InventoryDetails> retrieveInventoryDetailsMap(Integer studyId, Workbook workbook) {
@@ -1043,28 +1029,59 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         params.setLabelHeaders(new HashMap<Integer, String>());
         boolean firstEntry = true;
         
-    	for (MeasurementRow measurement : params.getInstanceMeasurements()) {
-    		String entryNo = measurement.getMeasurementData(TermId.ENTRY_NO.getId()).getValue();
-    		if(params.isStockList() && params.getInventoryDetailsMap() != null
-    					&& !params.getInventoryDetailsMap().containsKey(entryNo)){
-    			continue;
-    		}
-    		
-            FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
-                    measurement.getExperimentId());
-            
-            Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, measurement, firstEntry, workbook);
-            
-            params.setUserSpecifiedLabels(userSpecifiedLabels);
+        if(params.isStockList()){
+        	List<FieldMapLabel> fieldMapLabels = new ArrayList<FieldMapLabel>();
+        	for (Map.Entry<String, InventoryDetails> entry : params.getInventoryDetailsMap().entrySet()) {
+        		String entryNo = entry.getKey();
+        		InventoryDetails inventoryDetail = entry.getValue();
+        		
+        		if(params.isStockList() && params.getInventoryDetailsMap() != null
+        					&& !params.getInventoryDetailsMap().containsKey(entryNo)){
+        			continue;
+        		}
+        		
+                FieldMapLabel label = new FieldMapLabel();
+                
+                Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, null, inventoryDetail, firstEntry, workbook);
+                
+                params.setUserSpecifiedLabels(userSpecifiedLabels);
 
-            label.setUserFields(userSpecifiedLabels);
+                label.setUserFields(userSpecifiedLabels);
 
-            if (firstEntry) {
-                firstEntry = false;
+                fieldMapLabels.add(label);
+                
+                if (firstEntry) {
+                    firstEntry = false;
+                }
+                
+                params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
             }
+        
+        	// this overrides the existing fieldMapLabel objects so that it will retrieve details from stock list 
+        	// and not from germplasm list of the nursery
+        	params.getInstanceInfo().setFieldMapLabels(fieldMapLabels);
+        	
+        } else {
+        	for (MeasurementRow measurement : params.getInstanceMeasurements()) {
+        		String entryNo = measurement.getMeasurementData(TermId.ENTRY_NO.getId()).getValue();
+        		
+                FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
+                        measurement.getExperimentId());
+                
+                Map<Integer, String> userSpecifiedLabels = extractDataForUserSpecifiedLabels(params, measurement, null, firstEntry, workbook);
+                
+                params.setUserSpecifiedLabels(userSpecifiedLabels);
 
-            params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
+                label.setUserFields(userSpecifiedLabels);
+
+                if (firstEntry) {
+                    firstEntry = false;
+                }
+
+                params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
+            }
         }
+
     }
     
     public Map<String,InventoryDetails> getInventoryDetailsMap(GermplasmList stockList){
@@ -1105,7 +1122,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         return map;
     }
 
-    protected Map<Integer, String> extractDataForUserSpecifiedLabels(LabelPrintingProcessingParams params, MeasurementRow measurementRow, boolean populateHeaders, Workbook workbook) {
+    protected Map<Integer, String> extractDataForUserSpecifiedLabels(LabelPrintingProcessingParams params, 
+    		MeasurementRow measurementRow, InventoryDetails inventoryDetail, boolean populateHeaders, Workbook workbook) {
     	
     	Map<Integer, String> values = new HashMap<>();
 
@@ -1113,7 +1131,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     		
     		if(params.isStockList()){
     			
-    			String entryNo = measurementRow.getMeasurementData(TermId.ENTRY_NO.getId()).getValue();
+    			String entryNo = inventoryDetail.getEntryId().toString();
     			populateValuesForStockList(params,entryNo,termID,values,populateHeaders);
     			populateValuesForNurseryManagement(params, workbook, termID, values, populateHeaders);
     			

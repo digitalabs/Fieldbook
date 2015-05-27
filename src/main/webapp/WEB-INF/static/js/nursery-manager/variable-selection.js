@@ -226,6 +226,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._onHideCallback = groupData.onHideCallback;
 		this._excludedProperties = groupData.excludedProperties || [];
 
+		if (groupData.options) {
+			var options = groupData.options;
+			this._variableSelectBtnName = options.variableSelectBtnName;
+			this._variableSelectBtnIco = options.variableSelectBtnIco;
+			this._noAlias = options.noAlias;
+		}
+
 		this._$modal.one('hidden.bs.modal', $.proxy(this._onHidden,this));
 
 		// Append title
@@ -333,6 +340,18 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			className: this._selectedProperty.traitClass.traitClassName,
 			variables: variables
 		}));
+
+		if (this._variableSelectBtnName) {
+			propertyVariableList.find('.vs-variable-select-label').text(this._variableSelectBtnName);
+		}
+
+		if (this._variableSelectBtnIco) {
+			propertyVariableList.find('.vs-variable-select-icon').switchClass('glyphicon-plus',this._variableSelectBtnIco);
+		}
+
+		if (this._noAlias) {
+			propertyVariableList.find('.vs-alias-edit').remove();
+		}
 
 		// Clear out any existing related properties, and update the related property class name
 		relatedPropertyList.empty();

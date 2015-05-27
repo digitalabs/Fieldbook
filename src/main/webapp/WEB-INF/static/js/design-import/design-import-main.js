@@ -156,8 +156,8 @@
 		};
 	}]);
 
-	app.directive('designMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'DesignOntologyService',
-		function(VARIABLE_SELECTION_MODAL_SELECTOR, DesignOntologyService) {
+	app.directive('designMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'DesignOntologyService','Messages',
+		function(VARIABLE_SELECTION_MODAL_SELECTOR, DesignOntologyService,Messages) {
 			return {
 				restrict: 'A',
 				scope: {
@@ -200,7 +200,12 @@
 									$designMapModal.modal('show');
 								}, 200);
 							},
-							apiUrl: '/Fieldbook/OntologyBrowser/getVariablesByPhenotype?phenotypeStorageId=' + attrs.group
+							apiUrl: '/Fieldbook/OntologyBrowser/getVariablesByPhenotype?phenotypeStorageId=' + attrs.group,
+							options: {
+                                variableSelectBtnName: Messages.SELECT_TEXT, //TODO i18n
+                                variableSelectBtnIco: 'glyphicon-chevron-right',
+                                noAlias: true
+                            }
 						};
 
 						$designMapModal.one('hidden.bs.modal', function() {

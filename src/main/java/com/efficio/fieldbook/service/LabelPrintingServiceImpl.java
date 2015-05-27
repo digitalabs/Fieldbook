@@ -1032,13 +1032,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         if(params.isStockList()){
         	List<FieldMapLabel> fieldMapLabels = new ArrayList<FieldMapLabel>();
         	for (Map.Entry<String, InventoryDetails> entry : params.getInventoryDetailsMap().entrySet()) {
-        		String entryNo = entry.getKey();
         		InventoryDetails inventoryDetail = entry.getValue();
-        		
-        		if(params.isStockList() && params.getInventoryDetailsMap() != null
-        					&& !params.getInventoryDetailsMap().containsKey(entryNo)){
-        			continue;
-        		}
         		
                 FieldMapLabel label = new FieldMapLabel();
                 
@@ -1063,8 +1057,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         	
         } else {
         	for (MeasurementRow measurement : params.getInstanceMeasurements()) {
-        		String entryNo = measurement.getMeasurementData(TermId.ENTRY_NO.getId()).getValue();
-        		
                 FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(
                         measurement.getExperimentId());
                 
@@ -1081,7 +1073,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 params.getInstanceInfo().setLabelHeaders(params.getLabelHeaders());
             }
         }
-
     }
     
     public Map<String,InventoryDetails> getInventoryDetailsMap(GermplasmList stockList){
@@ -1131,8 +1122,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     		
     		if(params.isStockList()){
     			
-    			String entryNo = inventoryDetail.getEntryId().toString();
-    			populateValuesForStockList(params,entryNo,termID,values,populateHeaders);
+    			populateValuesForStockList(params, inventoryDetail,termID,values,populateHeaders);
     			populateValuesForNurseryManagement(params, workbook, termID, values, populateHeaders);
     			
     		} else if (!populateValuesFromMeasurement(params, measurementRow, termID, values, populateHeaders)){
@@ -1176,20 +1166,19 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 	}
 
 	private void populateValuesForStockList(
-			LabelPrintingProcessingParams params, String entryNo,
+			LabelPrintingProcessingParams params, InventoryDetails inventoryDetails, 
 			Integer termID, Map<Integer, String> values, boolean populateHeaders) {
-		
-		InventoryDetails row = params.getInventoryDetailsMap().get(entryNo);		
+				
 		String value = null;
 
-		value = populateStockListFromGermplasmDescriptorVariables(termID,row);
+		value = populateStockListFromGermplasmDescriptorVariables(termID,inventoryDetails);
 		
 		if(value == null){
-			value = populateStockListFromInventoryVariables(termID,row);
+			value = populateStockListFromInventoryVariables(termID,inventoryDetails);
 		}
 		
 		if(value == null){
-			value = populateStockListFromCrossingVariables(termID,row);
+			value = populateStockListFromCrossingVariables(termID,inventoryDetails);
 		}
 		
 		if(value != null){

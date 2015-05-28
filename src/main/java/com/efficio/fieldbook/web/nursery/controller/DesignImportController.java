@@ -350,18 +350,35 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	         String name = "";
 
 	         
-	    	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
-	    			userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
-	    			userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
-
-	        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+	        Workbook workbook = null;
 	        StudyDetails details = new StudyDetails();
 	        
 	        if ("T".equalsIgnoreCase(studyType)){
-	        	 details.setStudyType(StudyType.T);
+	        	
+	        	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
+		    			userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
+		    			userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
+
+	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+	        	
+	        	details.setStudyType(StudyType.T);
+	        	
 	        }else{
-	        	 details.setStudyType(StudyType.N);
+	        	
+	        	List<SettingDetail> variatesList = new ArrayList<>();
+	        	variatesList.addAll(userSelection.getBaselineTraitsList());
+	        	variatesList.addAll(userSelection.getSelectionVariates());
+	        	
+	        	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
+		    			userSelection.getPlotsLevelList(), variatesList, userSelection, userSelection.getTrialLevelVariableList(),
+		    			userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), true);
+
+	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+	        	
+	        	details.setStudyType(StudyType.N);
+	        	
 	        }
+	        
 	        workbook.setStudyDetails(details);
 	        
 	        userSelection.setTemporaryWorkbook(workbook);

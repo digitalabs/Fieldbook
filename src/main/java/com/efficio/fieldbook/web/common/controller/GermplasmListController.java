@@ -47,6 +47,7 @@ public class GermplasmListController {
 	private static final Logger LOG = LoggerFactory.getLogger(GermplasmListController.class);
 	public static final String TABLE_HEADER_LIST = "tableHeaderList";
 	public static final String GERMPLASM_LIST = "germplasmList";
+	public static final String INVENTORY_VIEW_TOGGLED = "inventoryViewToggled";
 
 	@Resource
 	private GermplasmListManager germplasmListManager;
@@ -81,29 +82,53 @@ public class GermplasmListController {
 			List<InventoryDetails> detailList = inventoryService.getInventoryListByListDataProjectListId(listId,
 					GermplasmListType.valueOf(germplasmList.getType()));
 
-			model.addAttribute("totalNumberOfGermplasms", detailList.size());
-			model.addAttribute("listId", listId);
-			model.addAttribute("listNotes", germplasmList.getNotes());
-			model.addAttribute("listType", GermplasmListType.STOCK.name());
-			model.addAttribute("sourceListType", germplasmList.getType());
-			model.addAttribute("listName", germplasmList.getName());
-			model.addAttribute(GERMPLASM_LIST, detailList);
-			List<TableHeader> tableHeaderList = null;
+			model.addAttribute(INVENTORY_VIEW_TOGGLED, false);
 
-			boolean hasCompletedBulking = false;
-			if (germplasmList.getType().equals(GermplasmListType.ADVANCED.name())) {
-				tableHeaderList = getAdvancedStockListTableHeaders();
-			} else if (germplasmList.getType().equals(GermplasmListType.CROSSES.name())) {
-				tableHeaderList = getCrossStockListTableHeaders();
-				hasCompletedBulking = stockHasCompletedBulking(listId);
-			}
-			model.addAttribute(TABLE_HEADER_LIST, tableHeaderList);
-			model.addAttribute("hasCompletedBulking", hasCompletedBulking);
+			prepareStockList(model, listId, detailList, germplasmList);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}
 
 		return NURSERY_MANAGER_SAVED_FINAL_LIST;
+	}
+
+	@RequestMapping(value = "/stockinventory/{listId}", method = RequestMethod.GET)
+	public String displayStockInventoryList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
+		try {
+			GermplasmList germplasmList = germplasmListManager.getGermplasmListById(listId);
+			List<InventoryDetails> detailList = inventoryService.getSummedInventoryListByListDataProjectListId(listId,
+					GermplasmListType.valueOf(germplasmList.getType()));
+
+			model.addAttribute(INVENTORY_VIEW_TOGGLED, true);
+
+			prepareStockList(model, listId, detailList, germplasmList);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+
+		return NURSERY_MANAGER_SAVED_FINAL_LIST;
+	}
+
+	protected void prepareStockList(Model model, Integer listId, List<InventoryDetails> detailList, GermplasmList germplasmList) throws MiddlewareQueryException{
+
+		model.addAttribute("totalNumberOfGermplasms", detailList.size());
+		model.addAttribute("listId", listId);
+		model.addAttribute("listNotes", germplasmList.getNotes());
+		model.addAttribute("listType", GermplasmListType.STOCK.name());
+		model.addAttribute("sourceListType", germplasmList.getType());
+		model.addAttribute("listName", germplasmList.getName());
+		model.addAttribute(GERMPLASM_LIST, detailList);
+		List<TableHeader> tableHeaderList = null;
+
+		boolean hasCompletedBulking = false;
+		if (germplasmList.getType().equals(GermplasmListType.ADVANCED.name())) {
+			tableHeaderList = getAdvancedStockListTableHeaders();
+		} else if (germplasmList.getType().equals(GermplasmListType.CROSSES.name())) {
+			tableHeaderList = getCrossStockListTableHeaders();
+			hasCompletedBulking = stockHasCompletedBulking(listId);
+		}
+		model.addAttribute(TABLE_HEADER_LIST, tableHeaderList);
+		model.addAttribute("hasCompletedBulking", hasCompletedBulking);
 	}
 
 	private boolean stockHasCompletedBulking(Integer listId) throws MiddlewareQueryException {

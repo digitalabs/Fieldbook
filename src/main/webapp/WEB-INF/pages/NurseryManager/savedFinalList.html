@@ -72,6 +72,24 @@
 								Generate Stock List
 							</a>
 						</li>
+						<li class="withMeasurementsOnly"
+							th:if="*{listType == 'STOCK' and sourceListType != 'ADVANCED' and hasCompletedBulking and !inventoryViewToggled}">
+							<a href="" style="display: none"></a>
+							<a href="javascript: void(0)"
+							   th:onclick="'javascript: StockIDFunctions.displayStockListInventoryView(\'' + ${listId} + '\');'"
+							   th:text="#{stock.list.toggle.inventory.on}">
+							Show Completed Merges
+						</a>
+						</li>
+						<li class="withMeasurementsOnly"
+							th:if="*{listType == 'STOCK' and sourceListType != 'ADVANCED' and hasCompletedBulking and inventoryViewToggled}">
+							<a href="" style="display: none"></a>
+							<a href="javascript: void(0)"
+							   th:onclick="'javascript: StockIDFunctions.displayStockList(\'' + ${listId} + '\');'"
+							   th:text="#{stock.list.toggle.inventory.off}">
+								Hide Completed Merges
+							</a>
+						</li>
 						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and sourceListType != 'ADVANCED' and !hasCompletedBulking}">
 							<a href=""
 								style="display: none" id="import-stock-list-url"></a> <a href="javascript: void(0)"

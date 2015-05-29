@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.trial.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +44,10 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
+    public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model, HttpServletRequest request) {
     	model.addAttribute("type", StudyType.T.getName());
+		model.addAttribute("preloadSummaryId", request.getParameter("summaryId") != null ? request.getParameter("summaryId") : "");
+		model.addAttribute("preloadSummaryName", request.getParameter("summaryName") != null ? request.getParameter("summaryName") : "");		
     	return super.show(model);
     }
     

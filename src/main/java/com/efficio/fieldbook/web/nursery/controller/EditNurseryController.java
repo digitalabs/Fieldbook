@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +35,10 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -106,7 +109,10 @@ public class EditNurseryController extends SettingsController {
     @Resource
     private ErrorHandlerService errorHandlerService;
 
+    @Resource
+    private StudyDataManager studyDataManagerImpl;
 
+    
     @Override
     public String getContentName() {
         return "NurseryManager/editNursery";
@@ -136,7 +142,11 @@ public class EditNurseryController extends SettingsController {
         try {
             Workbook workbook = null;
             if (nurseryId != 0) {
-                //settings part
+            	DmsProject dmsProject  = studyDataManagerImpl.getProject(nurseryId);
+            	if(dmsProject.getProgramUUID() == null){
+            		return "redirect:" + ManageNurseriesController.URL + "?summaryId="+nurseryId+"&summaryName="+dmsProject.getName();
+            	}
+                //settings part            	
                 workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
 
                 userSelection.setConstantsWithLabels(workbook.getConstants());

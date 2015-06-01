@@ -86,7 +86,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		int rowCounter = 1;
 
 		while(rowCounter <= csvData.size() - 1){
-			MeasurementRow measurementRow = createMeasurementRow(workbook.getStudyDetails().getStudyType(),mappedHeaders, csvData.get(rowCounter), importedGermplasm, germplasmStandardVariables, generatedTrialInstancesFromUI);
+			MeasurementRow measurementRow = createMeasurementRow(workbook,mappedHeaders, csvData.get(rowCounter), importedGermplasm, germplasmStandardVariables, generatedTrialInstancesFromUI);
 			if (measurementRow != null){
 				measurements.add(measurementRow);
 			}
@@ -135,6 +135,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		//Add the germplasm factors from the selected germplasm in workbook
 		measurementVariables.addAll(workbook.getGermplasmFactors());
 		
+		
 		//Add the design factors that exists from csv file header
 		measurementVariables.addAll(
 				this.extractMeasurementVariable(PhenotypicType.TRIAL_DESIGN, mappedHeaders));
@@ -147,6 +148,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 		measurementVariables.addAll(workbook.getVariates());
 		
 		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
+			
+			measurementVariables.addAll(workbook.getFactors());
+			
 			Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
 			while(iterator.hasNext()){
 				MeasurementVariable temp = iterator.next();
@@ -386,7 +390,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurementVariables;
 	}
 	
-	protected MeasurementRow createMeasurementRow(StudyType studyType, Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders, List<String> rowValues, List<ImportedGermplasm> importedGermplasm, Map<Integer, StandardVariable> germplasmStandardVariables, Set<String> trialInstancesFromUI){
+	protected MeasurementRow createMeasurementRow(Workbook workbook, Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders, List<String> rowValues, List<ImportedGermplasm> importedGermplasm, Map<Integer, StandardVariable> germplasmStandardVariables, Set<String> trialInstancesFromUI){
+		
 		MeasurementRow measurement = new MeasurementRow();
 
 		List<MeasurementData> dataList = new ArrayList<>();
@@ -399,7 +404,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 					return null;
 				}
 				
-				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId() && studyType == StudyType.N){
+				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId() && workbook.getStudyDetails().getStudyType() == StudyType.N){
 					
 					// do not add the trial instance to measurement data list if the workbook is Nursery
 					
@@ -420,13 +425,39 @@ public class DesignImportServiceImpl implements DesignImportService {
 			}
 		}
 		
+		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
+			for (MeasurementVariable factor : workbook.getFactors()){
+				addFactorToDataListIfNecessary(factor, dataList);
+			}
+		}
+		
 		measurement.setDataList(dataList);
 		return measurement;
+	}
+	
+	protected void addFactorToDataListIfNecessary(MeasurementVariable factor, List<MeasurementData> dataList){
+		for (MeasurementData data : dataList){
+			if (data.getMeasurementVariable().equals(factor)){
+				return;
+			}
+		}
+		
+		dataList.add(createMeasurementData(factor, ""));
+		
 	}
 	
 	protected MeasurementData createMeasurementData(StandardVariable standardVariable, String value){ 
 		MeasurementData data = new MeasurementData();
 		data.setMeasurementVariable(createMeasurementVariable(standardVariable));
+		data.setValue(value);
+		data.setLabel(data.getMeasurementVariable().getName());
+		data.setDataType(data.getMeasurementVariable().getDataType());
+		return data;
+	}
+	
+	protected MeasurementData createMeasurementData(MeasurementVariable measurementVariable, String value){ 
+		MeasurementData data = new MeasurementData();
+		data.setMeasurementVariable(measurementVariable);
 		data.setValue(value);
 		data.setLabel(data.getMeasurementVariable().getName());
 		data.setDataType(data.getMeasurementVariable().getDataType());

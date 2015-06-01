@@ -146,6 +146,25 @@ if (typeof StockIDFunctions === 'undefined') {
             });
         },
 
+        displayStockListInventoryView : function(listId) {
+            'use strict';
+
+            var url = '/Fieldbook/germplasm/list/stockinventory/' + listId;
+
+            return $.ajax({
+                url: url,
+                type: 'GET',
+                cache: false,
+                success: function(html) {
+                    $('#stock-content-pane' + listId).html(html);
+                    //we just show the button
+                    $('.export-advance-list-action-button').removeClass('fbk-hide');
+                    $('#stock-list' + listId+'-li').addClass('advance-germplasm-items');
+                    $('#stock-list' + listId+'-li').data('advance-germplasm-list-id', listId);
+                }
+            });
+        },
+
         closeStockList: function (listId) {
             'use strict';
             $('li#stock-list' + listId + '-li').remove();

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +28,11 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController {
 	public static final String URL = "/NurseryManager/manageNurseries";
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String show(Model model) {
+	public String show(Model model, HttpServletRequest request) {
 		model.addAttribute("type", StudyType.N.getName());
+		model.addAttribute("preloadSummaryId", request.getParameter("summaryId") != null ? request.getParameter("summaryId") : "");
+		model.addAttribute("preloadSummaryName", request.getParameter("summaryName") != null ? request.getParameter("summaryName") : "");
+		
 		return super.show(model);
 	}
 

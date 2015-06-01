@@ -91,7 +91,28 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 		</div>
-		<div class="col-xs-6 col-md-6" th:unless="*{#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
+		<div class="col-xs-6 col-md-6" th:if="*{userLabelPrinting.isStockList()}">
+			<div class="col-xs-12 col-md-12">
+				<label class="control-label"><strong class="sub-content-heading"  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<table class="table table-curved table-condensed">
+					<thead>
+						<th th:text="#{fieldmap.trial.instance}">Instance</th>
+						<th th:if="*{isTrial == false}" th:text="#{label.printing.nursery.entries.labels.count}"># of Entries / Labels Needed</th>
+					</thead>
+					<tr>
+						<td th:class="odd" th:text="*{userLabelPrinting.numberOfInstances}">1</td>
+						<td th:class="odd" th:text="${#maps.size(labelPrintingForm.userLabelPrinting.inventoryDetailsMap)}"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-xs-12 col-md-12" align="right" th:if="*{isTrial == true}">
+				<label class="control-label label-bold" th:text="#{label.printing.total.number.of.labels} + ':'"> Total # of Labels to Print: </label> &nbsp;
+				<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
+			</div>
+		</div>
+		<div class="col-xs-6 col-md-6" th:if="*{!userLabelPrinting.isStockList()} and *{!#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
 			<div class="col-xs-12 col-md-12">
 				<label class="control-label"><strong class="sub-content-heading"  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
 			</div>

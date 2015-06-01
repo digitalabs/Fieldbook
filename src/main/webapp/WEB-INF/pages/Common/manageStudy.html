@@ -6,7 +6,8 @@
 		<h1 th:text="#{trial.managetrial.header}">Manage Trial</h1>
 	</div>
 </div>
-
+<input type="hidden" id="preloadSummaryId" th:value="${preloadSummaryId}"/>
+<input type="hidden" id="preloadSummaryName" th:value="${preloadSummaryName}"/>
 <div class="move-left col-xs-12 col-md-12">
 	<div class="form-group">
 		<div id="page-message"></div>
@@ -59,6 +60,9 @@
 		$('document').ready(function() {
 			if (redirectErrorMessage !== null && redirectErrorMessage !== '') {
 				createErrorNotification(errorMsgHeader,redirectErrorMessage);
+			}
+			if($('#preloadSummaryId').val() !== ''){
+				addDetailsTab($('#preloadSummaryId').val(), $('#preloadSummaryName').val());
 			}
 		});
 	})();

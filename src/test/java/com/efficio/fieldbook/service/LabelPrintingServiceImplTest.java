@@ -1,10 +1,15 @@
 package com.efficio.fieldbook.service;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
-import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
-import com.google.zxing.common.BitMatrix;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -12,6 +17,8 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -33,22 +40,19 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
+import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
+import com.google.zxing.common.BitMatrix;
 
 @RunWith(value = MockitoJUnitRunner.class)
 public class LabelPrintingServiceImplTest {
 
+	private static final int NO_OF_STOCK_LIST_ENTRIES = 20;
+	private static final int NO_OF_GERMPLASM_LIST_OBSERVATION = 10;
 	public static final Long TEST_PROJECT_ID = 1L;
 	public static final String MAIZE_CROP_STR = "maize";
 	public static final String TEST_EXISTING_PRESET_NAME = "TEST_EXISTING_PRESET_NAME";
@@ -312,6 +316,81 @@ public class LabelPrintingServiceImplTest {
 		serviceDUT.populateValuesForNursery(params, workbook, testTermId, values, true);
 		
 		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "" ,values.get(TermId.TRIAL_LOCATION.getId()));
+	}
+	
+	@Test
+	public void testProcessUserSpecificLabelsForInstanceForStockList(){
+		LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
+		params.setInstanceInfo(createFieldMapTrialInstanceInfo());
+		params.setIsStockList(true);
+		params.setInventoryDetailsMap(createInventoryDetailsMap());
+		
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(NO_OF_GERMPLASM_LIST_OBSERVATION, StudyType.N);
+		
+		Map<Integer, String> userSpecifiedLabels = new HashMap<Integer, String>();
+		for(InventoryDetails inventoryDetail : params.getInventoryDetailsMap().values()){
+			doReturn(userSpecifiedLabels).when(serviceDUT).extractDataForUserSpecifiedLabels(params, null, inventoryDetail, true, workbook);
+			doReturn(userSpecifiedLabels).when(serviceDUT).extractDataForUserSpecifiedLabels(params, null, inventoryDetail, false, workbook);
+		}
+		
+		serviceDUT.processUserSpecificLabelsForInstance(params,workbook);
+		
+		Assert.assertEquals(NO_OF_STOCK_LIST_ENTRIES, params.getInstanceInfo().getFieldMapLabels().size());
+	}
+	
+	@Test
+	public void testProcessUserSpecificLabelsForInstanceForStudy(){
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(NO_OF_GERMPLASM_LIST_OBSERVATION, StudyType.N);
+		setExperimentId(workbook);
+		LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
+		params.setInstanceInfo(createFieldMapTrialInstanceInfo());
+		params.setIsStockList(false);
+		params.setInstanceMeasurements(workbook.getObservations());
+		
+		Map<Integer, String> userSpecifiedLabels = new HashMap<Integer, String>();
+		for(MeasurementRow measurement : params.getInstanceMeasurements()){
+			doReturn(userSpecifiedLabels).when(serviceDUT).extractDataForUserSpecifiedLabels(params, measurement, null, true, workbook);
+			doReturn(userSpecifiedLabels).when(serviceDUT).extractDataForUserSpecifiedLabels(params, measurement, null, false, workbook);
+		}
+		
+		serviceDUT.processUserSpecificLabelsForInstance(params,workbook);
+		
+		Assert.assertEquals(NO_OF_GERMPLASM_LIST_OBSERVATION, params.getInstanceInfo().getFieldMapLabels().size());
+	}
+
+	private void setExperimentId(Workbook workbook) {
+		int i = 1; 
+		for(MeasurementRow measurement : workbook.getObservations()){
+			measurement.setExperimentId(i);
+			i++;
+		}
+	}
+
+	private FieldMapTrialInstanceInfo createFieldMapTrialInstanceInfo() {
+		FieldMapTrialInstanceInfo instanceInfo = new FieldMapTrialInstanceInfo();
+		instanceInfo.setFieldMapLabels(createFieldMapLabelList());
+		return instanceInfo;
+	}
+
+	private List<FieldMapLabel> createFieldMapLabelList() {
+		List<FieldMapLabel> labelFields = new ArrayList<FieldMapLabel>();
+		
+		for(int i = 1; i <= NO_OF_GERMPLASM_LIST_OBSERVATION; i++){
+			FieldMapLabel fieldMapLabel = new FieldMapLabel();
+			fieldMapLabel.setExperimentId(i);
+			labelFields.add(fieldMapLabel);
+		}
+		return labelFields;
+	}
+
+	private Map<String, InventoryDetails> createInventoryDetailsMap() {
+		Map<String, InventoryDetails> inventoryDetails = new HashMap<String,InventoryDetails>();
+		
+		for(int i = 1; i <= NO_OF_STOCK_LIST_ENTRIES; i++){
+			inventoryDetails.put(String.valueOf(i), new InventoryDetails());
+		}
+		
+		return inventoryDetails;
 	}
 
 	private List<GermplasmList> createGermplasmLists(int numOfEntries) {

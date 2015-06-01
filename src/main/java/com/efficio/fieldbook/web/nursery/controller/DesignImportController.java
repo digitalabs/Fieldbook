@@ -4,37 +4,6 @@ package com.efficio.fieldbook.web.nursery.controller;
  * Created by cyrus on 5/8/15.
  */
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
@@ -47,6 +16,24 @@ import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import org.apache.commons.lang.StringUtils;
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.*;
+import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 
 /**
@@ -91,7 +78,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/import/{studyType}", method = RequestMethod.POST, produces="text/plain")
-	public String importFile(Model model,
+	public String importFile(
 			@ModelAttribute("importDesignForm") ImportDesignForm form, @PathVariable String studyType) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
@@ -108,7 +95,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 			resultsMap.put("isSuccess", 1);
 			
-		} catch (Exception e) {
+		} catch (MiddlewareQueryException | FileParsingException e) {
 			
 			LOG.error(e.getMessage(), e);
 			
@@ -116,13 +103,14 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			// error messages is still in .prop format,
 			resultsMap.put("error", new String[] {e.getMessage()});
 		}
-		
+
+		// we return string instead of json to fix IE issue rel. DataTable
 		return convertObjectToJson(resultsMap);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/getMappingData", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public Map<String,List<DesignHeaderItem>> importFile() {
+	public Map<String,List<DesignHeaderItem>> getMappingData() {
 		Map<String,List<DesignHeaderItem>> mappingData = new HashMap<>();
 
 		mappingData.put("unmappedHeaders", userSelection.getDesignImportData().getUnmappedHeaders());
@@ -203,42 +191,9 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	public Map<String,Object> validateAndSaveNewMapping(@RequestBody Map<String,List<DesignHeaderItem>> mappedHeaders,@PathVariable Integer noOfEnvironments) {
 
 		Map<String,Object> resultsMap = new HashMap<>();
-		Map<PhenotypicType,List<DesignHeaderItem>> newMappingResults = new HashMap<>();
-
 		try {
-			for (Map.Entry<String,List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
-				for (DesignHeaderItem mappedHeader : item.getValue()) {
+			updateDesignMapping(mappedHeaders);
 
-					StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(
-							mappedHeader.getId());
-
-					mappedHeader.setVariable(stdVar);
-				}
-
-				if ("mappedEnvironmentalFactors".equals(item.getKey())) {
-					newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
-				} else if ("mappedDesignFactors".equals(item.getKey())) {
-					newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
-				} else if ("mappedGermplasmFactors".equals(item.getKey())) {
-					newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
-				} else if ("mappedTraits".equals(item.getKey())) {
-					newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
-				}
-			}
-
-			userSelection.getDesignImportData().setMappedHeaders(newMappingResults);
-
-		} catch (MiddlewareQueryException e) {
-			
-			LOG.error(e.getMessage(), e);
-			
-			resultsMap.put("success", Boolean.FALSE);
-			resultsMap.put("error", e.getMessage());
-
-			return resultsMap;
-		}
-
-		try {
 			designImportService.validateDesignData(userSelection.getDesignImportData());
 
 			if (!designImportService.areTrialInstancesMatchTheSelectedEnvironments(noOfEnvironments, userSelection.getDesignImportData())){
@@ -246,21 +201,45 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			}
 
 			resultsMap.put("success", Boolean.TRUE);
-			
-		} catch (DesignValidationException e) {
-			
+
+		} catch (MiddlewareQueryException | DesignValidationException e) {
+
 			LOG.error(e.getMessage(), e);
-			
+
 			resultsMap.put("success", Boolean.FALSE);
 			resultsMap.put("error",e.getMessage());
 			resultsMap.put("message",e.getMessage());
 		}
-		
-		
 
 		return resultsMap;
 	}
-	
+
+	protected void updateDesignMapping(Map<String, List<DesignHeaderItem>> mappedHeaders) throws MiddlewareQueryException {
+		Map<PhenotypicType,List<DesignHeaderItem>> newMappingResults = new HashMap<>();
+
+		for (Map.Entry<String,List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
+			for (DesignHeaderItem mappedHeader : item.getValue()) {
+
+				StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(
+						mappedHeader.getId());
+
+				mappedHeader.setVariable(stdVar);
+			}
+
+			if ("mappedEnvironmentalFactors".equals(item.getKey())) {
+				newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
+			} else if ("mappedDesignFactors".equals(item.getKey())) {
+				newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
+			} else if ("mappedGermplasmFactors".equals(item.getKey())) {
+				newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
+			} else if ("mappedTraits".equals(item.getKey())) {
+				newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
+			}
+		}
+
+		userSelection.getDesignImportData().setMappedHeaders(newMappingResults);
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/generate",  method = RequestMethod.POST , 
 		produces = "application/json; charset=utf-8")
@@ -350,18 +329,35 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	         String name = "";
 
 	         
-	    	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
-	    			userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
-	    			userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
-
-	        Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+	        Workbook workbook = null;
 	        StudyDetails details = new StudyDetails();
 	        
 	        if ("T".equalsIgnoreCase(studyType)){
-	        	 details.setStudyType(StudyType.T);
+	        	
+	        	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
+		    			userSelection.getPlotsLevelList(), userSelection.getBaselineTraitsList(), userSelection, userSelection.getTrialLevelVariableList(),
+		    			userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), false);
+
+	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+	        	
+	        	details.setStudyType(StudyType.T);
+	        	
 	        }else{
-	        	 details.setStudyType(StudyType.N);
+	        	
+	        	List<SettingDetail> variatesList = new ArrayList<>();
+	        	variatesList.addAll(userSelection.getBaselineTraitsList());
+	        	variatesList.addAll(userSelection.getSelectionVariates());
+	        	
+	        	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
+		    			userSelection.getPlotsLevelList(), variatesList, userSelection, userSelection.getTrialLevelVariableList(),
+		    			userSelection.getTreatmentFactors(), null, null, userSelection.getNurseryConditions(), true);
+
+	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+	        	
+	        	details.setStudyType(StudyType.N);
+	        	
 	        }
+	        
 	        workbook.setStudyDetails(details);
 	        
 	        userSelection.setTemporaryWorkbook(workbook);

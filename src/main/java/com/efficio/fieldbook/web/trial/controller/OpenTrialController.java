@@ -3,11 +3,13 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -19,9 +21,11 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -34,6 +38,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.util.*;
 
 @Controller
@@ -50,6 +55,8 @@ public class OpenTrialController extends
     public static final String MEASUREMENT_DATA_EXISTING = "measurementDataExisting";
     private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
     
+    @Resource
+    private StudyDataManager studyDataManagerImpl;
     @Resource
     private OntologyService ontologyService;
 
@@ -155,6 +162,10 @@ public class OpenTrialController extends
 
         try {
             if (trialId != null && trialId != 0) {
+            	DmsProject dmsProject  = studyDataManagerImpl.getProject(trialId);
+            	if(dmsProject.getProgramUUID() == null){
+            		return "redirect:" + ManageTrialController.URL + "?summaryId="+trialId+"&summaryName="+dmsProject.getName();
+            	}
                 final Workbook trialWorkbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
 
                 userSelection.setConstantsWithLabels(trialWorkbook.getConstants());

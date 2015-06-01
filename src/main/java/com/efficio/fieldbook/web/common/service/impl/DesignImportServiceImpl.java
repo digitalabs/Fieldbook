@@ -56,10 +56,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 	
 	@Resource
     private OntologyService ontologyService;
-	
-	@Resource
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
+	
 	@Resource
 	private OntologyDataManager ontologyDataManager;
 	
@@ -312,6 +310,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		
 		for (Entry<String,Map<Integer, List<String>>> entry : csvMapGrouped.entrySet()){
 			validateEntryNumberMustBeUnique(entryNoHeaderItem, entry.getValue());
+			
 		}
 		
 	}
@@ -476,7 +475,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		for (MeasurementVariable measurementVariable : list){
 			try {
-				map.put(measurementVariable.getTermId(), fieldbookMiddlewareService.getStandardVariable(
+				map.put(measurementVariable.getTermId(), ontologyService.getStandardVariable(
 						measurementVariable.getTermId()));
 			} catch (MiddlewareQueryException e) {
 				LOG.error(e.getMessage(), e);

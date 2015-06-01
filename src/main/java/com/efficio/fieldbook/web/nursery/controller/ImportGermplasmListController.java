@@ -230,10 +230,16 @@ public class ImportGermplasmListController extends SettingsController {
             
             
             if (userSelection.getExperimentalDesignVariables() != null){
-            	Set<MeasurementVariable> unique = new HashSet<MeasurementVariable>(userSelection.getWorkbook().getFactors());
-            	unique.addAll(userSelection.getExperimentalDesignVariables());
+            	Set<MeasurementVariable> unique = new HashSet<>(userSelection.getWorkbook().getFactors());
+                unique.addAll(userSelection.getExperimentalDesignVariables());
             	userSelection.getWorkbook().getFactors().clear();
             	userSelection.getWorkbook().getFactors().addAll(unique);
+
+
+                Set<MeasurementVariable> makeUniqueVariates = new HashSet<>(userSelection.getTemporaryWorkbook().getVariates());
+                makeUniqueVariates.addAll(userSelection.getWorkbook().getVariates());
+                userSelection.getWorkbook().getVariates().clear();
+                userSelection.getWorkbook().getVariates().addAll(makeUniqueVariates);
             }
             
             Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil.createVariableList(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());

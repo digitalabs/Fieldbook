@@ -91,7 +91,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 			rowCounter++;
 			
 		}
-		
+
+		// add trait data to the list of <easurementRow
 		addVariatesToMeasurementRows(workbook, measurements);
 		
 		return measurements;
@@ -376,8 +377,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 		return null;
 	}
-	
-	protected Set<MeasurementVariable> extractMeasurementVariable(PhenotypicType phenotypicType, Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders){
+
+	@Override
+	public Set<MeasurementVariable> extractMeasurementVariable(PhenotypicType phenotypicType, Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders){
 		
 		Set<MeasurementVariable> measurementVariables = new HashSet<>();
 		

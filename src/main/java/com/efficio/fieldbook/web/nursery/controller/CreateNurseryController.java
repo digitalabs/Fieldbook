@@ -267,8 +267,8 @@ public class CreateNurseryController extends SettingsController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
-    	
-    	String name = null;
+        //get the name of the nursery
+        String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
     		if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
     			name = nvar.getValue();

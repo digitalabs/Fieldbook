@@ -259,16 +259,21 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			Set<StandardVariable> expDesignVariables;
 			Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 			
-			measurementRows = designImportService.generateDesign(workbook, designImportData, environmentData);
-			measurementVariables = designImportService.getDesignMeasurementVariables(workbook, designImportData);
-			expDesignVariables = designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
-			experimentalDesignMeasurementVariables = designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
+			measurementRows = designImportService.generateDesign(workbook, designImportData,
+					environmentData);
+			measurementVariables = designImportService.getDesignMeasurementVariables(workbook,
+					designImportData);
+			expDesignVariables = designImportService.getDesignRequiredStandardVariables(workbook,
+					designImportData);
+			experimentalDesignMeasurementVariables = designImportService.getDesignRequiredMeasurementVariable(
+					workbook, designImportData);
 			
 			workbook.setObservations(measurementRows);
-			workbook.setMeasurementDatasetVariables(new ArrayList<MeasurementVariable>(measurementVariables));
-			workbook.setExpDesignVariables(new ArrayList<StandardVariable>(expDesignVariables));
-			
-			userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>(experimentalDesignMeasurementVariables));
+			workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
+			workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
+			workbook.setVariates(new ArrayList<>(designImportService.extractMeasurementVariable(PhenotypicType.VARIATE,designImportData.getMappedHeaders())));
+
+			userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 		
 			ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 			designParam.setDesignType(3);

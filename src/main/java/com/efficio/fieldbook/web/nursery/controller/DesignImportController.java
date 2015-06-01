@@ -273,17 +273,21 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			Set<StandardVariable> expDesignVariables;
 			Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 			
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData);
-			measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData);
-			expDesignVariables = this.designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
-			experimentalDesignMeasurementVariables =
-					this.designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
+			measurementRows = designImportService.generateDesign(workbook, designImportData,
+					environmentData);
+			measurementVariables = designImportService.getDesignMeasurementVariables(workbook,
+					designImportData);
+			expDesignVariables = designImportService.getDesignRequiredStandardVariables(workbook,
+					designImportData);
+			experimentalDesignMeasurementVariables = designImportService.getDesignRequiredMeasurementVariable(
+					workbook, designImportData);
 			
 			workbook.setObservations(measurementRows);
-			workbook.setMeasurementDatasetVariables(new ArrayList<MeasurementVariable>(measurementVariables));
-			workbook.setExpDesignVariables(new ArrayList<StandardVariable>(expDesignVariables));
+			workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
+			workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
+			workbook.setVariates(new ArrayList<>(designImportService.extractMeasurementVariable(PhenotypicType.VARIATE,designImportData.getMappedHeaders())));
 			
-			this.userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>(experimentalDesignMeasurementVariables));
+			this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 		
 			ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 			designParam.setDesignType(3);
@@ -292,7 +296,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			List<Integer> expDesignTermIds = new ArrayList<>();
 			expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 			this.userSelection.setExpDesignVariables(expDesignTermIds);
-
+			
 			resultsMap.put("isSuccess", 1);
 
 		} catch (Exception e) {

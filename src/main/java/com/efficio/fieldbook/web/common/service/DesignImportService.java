@@ -35,4 +35,6 @@ public interface DesignImportService {
 
 	Set<MeasurementVariable> getDesignRequiredMeasurementVariable(Workbook workbook, DesignImportData designImportData);
 
+	Set<MeasurementVariable> extractMeasurementVariable(PhenotypicType phenotypicType,
+			Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders);
 }

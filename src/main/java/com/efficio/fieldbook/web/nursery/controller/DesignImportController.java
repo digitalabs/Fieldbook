@@ -345,8 +345,14 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	        }else{
 	        	
 	        	List<SettingDetail> variatesList = new ArrayList<>();
-	        	variatesList.addAll(userSelection.getBaselineTraitsList());
-	        	variatesList.addAll(userSelection.getSelectionVariates());
+	        	
+	        	if (userSelection.getBaselineTraitsList() != null){
+	        		variatesList.addAll(userSelection.getBaselineTraitsList());
+	        	}
+	        	
+	        	if (userSelection.getSelectionVariates() != null){
+	        		variatesList.addAll(userSelection.getSelectionVariates());
+	        	}
 	        	
 	        	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, combinedList,
 		    			userSelection.getPlotsLevelList(), variatesList, userSelection, userSelection.getTrialLevelVariableList(),

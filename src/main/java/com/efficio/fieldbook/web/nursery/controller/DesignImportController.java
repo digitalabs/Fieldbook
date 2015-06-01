@@ -60,30 +60,30 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 public class DesignImportController extends AbstractBaseFieldbookController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportController.class);
-
+	
 	public static final String URL = "/DesignImport";
 	public static final String REVIEW_DETAILS_PAGINATION_TEMPLATE = "/DesignImport/reviewDetailsPagination";
 
 	@Resource
 	private DesignImportParser parser;
-
+	
 	@Resource
 	private UserSelection userSelection;
-
+	
 	@Resource
 	private DesignImportService designImportService;
-
+	
 	@Resource
-	private MessageSource messageSource;
-
+    private MessageSource messageSource;
+	
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#show(org.springframework.ui.Model)
-	 */
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#show(org.springframework.ui.Model)
+     */
 	@Override
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(Model model) {
@@ -100,23 +100,23 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	public String importFile(@ModelAttribute("importDesignForm") ImportDesignForm form, @PathVariable String studyType) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
-
+		
 		try {
-
+			
 			this.initializeTemporaryWorkbook(studyType);
-
+			
 			DesignImportData designImportData = this.parser.parseFile(form.getFile());
-
+			
 			this.performAutomap(designImportData);
-
+			
 			this.userSelection.setDesignImportData(designImportData);
 
 			resultsMap.put("isSuccess", 1);
-
+			
 		} catch (MiddlewareQueryException | FileParsingException e) {
-
+			
 			DesignImportController.LOG.error(e.getMessage(), e);
-
+			
 			resultsMap.put("isSuccess", 0);
 			// error messages is still in .prop format,
 			resultsMap.put("error", new String[] {e.getMessage()});
@@ -145,47 +145,47 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 	@RequestMapping(value = "/showDetails", method = RequestMethod.GET)
 	public String showDetails(Model model) {
-
+			
 		Workbook workbook = this.userSelection.getTemporaryWorkbook();
 		DesignImportData designImportData = this.userSelection.getDesignImportData();
-
+			
 		Set<MeasurementVariable> measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData);
-
-		model.addAttribute("measurementVariables", measurementVariables);
-
+	    	
+			model.addAttribute("measurementVariables", measurementVariables);
+			
 		return super.showAjaxPage(model, DesignImportController.REVIEW_DETAILS_PAGINATION_TEMPLATE);
-
+		
 	}
-
+	
 	@ResponseBody
 	@RequestMapping(value = "/showDetails/data", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	public List<Map<String, Object>> showDetailsData(@RequestBody EnvironmentData environmentData, Model model,
 			@ModelAttribute("importDesignForm") ImportDesignForm form) {
-
+			
 		this.processEnvironmentData(environmentData);
-
+		
 		Workbook workbook = this.userSelection.getTemporaryWorkbook();
 		DesignImportData designImportData = this.userSelection.getDesignImportData();
-
-		List<MeasurementRow> measurementRows = new ArrayList<>();
-
-		try {
+		
+			List<MeasurementRow> measurementRows = new ArrayList<>();
+			
+			try {
 			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData);
-		} catch (DesignValidationException e) {
+			} catch (DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
-		}
-
-		List<Map<String, Object>> masterList = new ArrayList<>();
-
+			}
+	    	
+	    	List<Map<String, Object>> masterList = new ArrayList<>();
+	    	
 		for (MeasurementRow row : measurementRows) {
-
+	    		    		
 			Map<String, Object> dataMap = this.generateDatatableDataMap(row, null);
-
-			masterList.add(dataMap);
-		}
-
-		return masterList;
-
+	    		
+	    		masterList.add(dataMap);
+	    	}
+	   	
+	    	return masterList;
+		
 	}
 
 	@ResponseBody
@@ -260,35 +260,35 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 	public Map<String, Object> showMeasurements(@RequestBody EnvironmentData environmentData) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
-
+		
 		this.processEnvironmentData(environmentData);
-
+		
 		try {
-
+			
 			Workbook workbook = this.userSelection.getTemporaryWorkbook();
 			DesignImportData designImportData = this.userSelection.getDesignImportData();
-
+			
 			List<MeasurementRow> measurementRows;
 			Set<MeasurementVariable> measurementVariables;
 			Set<StandardVariable> expDesignVariables;
 			Set<MeasurementVariable> experimentalDesignMeasurementVariables;
-
+			
 			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData);
 			measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData);
 			expDesignVariables = this.designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
 			experimentalDesignMeasurementVariables =
 					this.designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
-
+			
 			workbook.setObservations(measurementRows);
 			workbook.setMeasurementDatasetVariables(new ArrayList<MeasurementVariable>(measurementVariables));
 			workbook.setExpDesignVariables(new ArrayList<StandardVariable>(expDesignVariables));
-
+			
 			this.userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>(experimentalDesignMeasurementVariables));
-
+		
 			ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 			designParam.setDesignType(3);
 			this.userSelection.setExpDesignParams(designParam);
-
+			
 			List<Integer> expDesignTermIds = new ArrayList<>();
 			expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 			this.userSelection.setExpDesignVariables(expDesignTermIds);
@@ -296,9 +296,9 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			resultsMap.put("isSuccess", 1);
 
 		} catch (Exception e) {
-
+			
 			DesignImportController.LOG.error(e.getMessage(), e);
-
+			
 			resultsMap.put("isSuccess", 0);
 			// error messages is still in .prop format,
 			resultsMap.put("error", new String[] {e.getMessage()});
@@ -306,16 +306,16 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 		return resultsMap;
 	}
-
+	
 	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
+    	Map<String, Object> dataMap = new HashMap<String, Object>();
 		// the 4 attributes are needed always
 		for (MeasurementData data : row.getDataList()) {
 			String displayVal = data.getDisplayValue();
 			if (suffix != null) {
 				displayVal += suffix;
 			}
-
+			
 			if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
 					|| data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())) {
 				Object[] categArray = new Object[] {displayVal, data.isAccepted()};
@@ -325,67 +325,67 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			}
 		}
 		return dataMap;
-	}
-
+    }
+	
 	public void initializeTemporaryWorkbook(String studyType) {
-
+		
 		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
-		// transfer over data from user input into the list of setting details stored in the session
-		List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
-		combinedList.addAll(basicDetails);
+	         // transfer over data from user input into the list of setting details stored in the session
+	    	 List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+	         combinedList.addAll(basicDetails);
 
-		if (studyLevelConditions != null) {
-			combinedList.addAll(studyLevelConditions);
-		}
+	         if (studyLevelConditions != null) {             
+	             combinedList.addAll(studyLevelConditions);
+	         }
 
-		String name = "";
+	         String name = "";
 
-		Workbook workbook = null;
-		StudyDetails details = new StudyDetails();
-
+	        Workbook workbook = null;
+	        StudyDetails details = new StudyDetails();
+	        
 		if ("T".equalsIgnoreCase(studyType)) {
-
+	        	
 			Dataset dataset =
 					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
 							this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
 							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
 							this.userSelection.getNurseryConditions(), false);
 
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
-
-			details.setStudyType(StudyType.T);
-
+	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+	        	
+	        	details.setStudyType(StudyType.T);
+	        	
 		} else {
-
-			List<SettingDetail> variatesList = new ArrayList<>();
-
+	        	
+	        	List<SettingDetail> variatesList = new ArrayList<>();
+	        	
 			if (this.userSelection.getBaselineTraitsList() != null) {
 				variatesList.addAll(this.userSelection.getBaselineTraitsList());
-			}
-
+	        	}
+	        	
 			if (this.userSelection.getSelectionVariates() != null) {
 				variatesList.addAll(this.userSelection.getSelectionVariates());
-			}
-
+	        	}
+	        	
 			Dataset dataset =
 					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
 							this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
 							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
 							this.userSelection.getNurseryConditions(), true);
 
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
-
-			details.setStudyType(StudyType.N);
-
-		}
-
-		workbook.setStudyDetails(details);
-
+	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+	        	
+	        	details.setStudyType(StudyType.N);
+	        	
+	        }
+	        
+	        workbook.setStudyDetails(details);
+	        
 		this.userSelection.setTemporaryWorkbook(workbook);
-
+	        
 	}
-
+	
 	protected void performAutomap(DesignImportData designImportData) throws MiddlewareQueryException {
 		Map<PhenotypicType, List<DesignHeaderItem>> result =
 				this.designImportService.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders());
@@ -394,17 +394,17 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 		designImportData.setUnmappedHeaders(result.get(null));
 
 	}
-
+	
 	protected void processEnvironmentData(EnvironmentData data) {
-		for (int i = 0; i < data.getEnvironments().size(); i++) {
-			Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
-			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+        for (int i = 0; i < data.getEnvironments().size(); i++) {
+            Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+            if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
+                values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
 					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
-			}
-		}
-	}
-
+                values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+            }
+        }
+    }
+	
 }

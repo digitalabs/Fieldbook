@@ -98,7 +98,7 @@
 									Bulk Duplicates and Reciprocals
 							</a>
 						</li>
-						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
+						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and !inventoryViewToggled}">
 							<a  href="" style="display: none" id="label-printing-url"
 								th:href="@{/LabelPrinting/specifyLabelDetails/stock}"></a>	
 							<a href="javascript: void(0)"
@@ -107,7 +107,7 @@
 								Create Labels
 							</a>
 						</li>
-						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK'}">
+						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and !inventoryViewToggled}">
 							<a href=""
 								style="display: none" id="export-stock-list-url"></a> <a href="javascript: void(0)"
 								th:onclick="'javascript: StockIDFunctions.exportList(\'' + ${listId} + '\');'"

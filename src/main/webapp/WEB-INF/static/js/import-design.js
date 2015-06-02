@@ -177,7 +177,7 @@ var ImportDesign = {
 								}else{
 									// gonna get get that settings.managementDetails if trial
 									$.each(environmentData,function(key,value) {
-										//ImportDesign.getTrialManagerDataService().settings.managementDetails.push(value.variable.cvTermId, ImportDesign.getTrialManagerDataService().transformViewSettingsVariable(value));
+										ImportDesign.getTrialManagerDataService().settings.environments.managementDetails.push(value.variable.cvTermId, ImportDesign.getTrialManagerDataService().transformViewSettingsVariable(value));
 									});
 
 

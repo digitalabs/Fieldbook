@@ -296,7 +296,7 @@ public class CreateNurseryController extends SettingsController {
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
         //get the name of the nursery
-    	String name = null;
+        String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
 			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null
 					&& nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
@@ -739,39 +739,7 @@ public class CreateNurseryController extends SettingsController {
     }
     
     private void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId) {
-        SettingDetail newSetting = null;
-        for (SettingDetail setting : currentList) {
-            if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-                newSetting = setting;
-            }
-        }
-        
-        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-			if (this.userSelection.getDeletedStudyLevelConditions() == null) {
-				this.userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
-            } 
-			this.userSelection.getDeletedStudyLevelConditions().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-			if (this.userSelection.getDeletedPlotLevelList() == null) {
-				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
-            } 
-			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-            } 
-			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
-			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-            } 
-			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
-			if (this.userSelection.getDeletedNurseryConditions() == null) {
-				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
-            } 
-			this.userSelection.getDeletedNurseryConditions().add(newSetting);
-        }
+        this.addVariableInDeletedList(currentList, mode, variableId, false);
     }
     
     private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {

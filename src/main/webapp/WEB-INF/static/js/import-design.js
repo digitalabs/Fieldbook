@@ -159,15 +159,9 @@ var ImportDesign = {
 								
 								var $body = $('body');
 								var environmentData = resp.environmentData;
-								
-								var angularElem = angular.element('#mainApp');
+								console.log(resp);
 
-								angularElem.scope().$apply(function(){
-									ImportDesign.getTrialManagerDataService().applicationData.environmments = environmentData;
-								});
-								
-								ImportDesign.getTrialManagerDataService();
-								
+
 								
 								$('#chooseGermplasmAndChecks').data('replace', '1');
 								$body.data('expDesignShowPreview', '1');
@@ -181,7 +175,12 @@ var ImportDesign = {
 									showSuccessfulMessage('', 'The nursery design was imported successfully. Please save your nursery before proceeding to Measurements tab.');
 									$('#nursery-experimental-design-li').show();
 								}else{
-									
+									// gonna get get that settings.managementDetails if trial
+									$.each(environmentData,function(key,value) {
+										//ImportDesign.getTrialManagerDataService().settings.managementDetails.push(value.variable.cvTermId, ImportDesign.getTrialManagerDataService().transformViewSettingsVariable(value));
+									});
+
+
 									ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
 									showSuccessfulMessage('', 'The trial design was imported successfully. Please review the Measurements tab.');
 								}

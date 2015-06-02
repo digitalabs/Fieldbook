@@ -710,39 +710,7 @@ public class CreateNurseryController extends SettingsController {
     }
     
     private void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId) {
-        SettingDetail newSetting = null;
-        for (SettingDetail setting : currentList) {
-            if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-                newSetting = setting;
-            }
-        }
-        
-        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-            if (userSelection.getDeletedStudyLevelConditions() == null) {
-                userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
-            } 
-            userSelection.getDeletedStudyLevelConditions().add(newSetting);            
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-            if (userSelection.getDeletedPlotLevelList() == null) {
-                userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
-            } 
-            userSelection.getDeletedPlotLevelList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-            if (userSelection.getDeletedBaselineTraitsList() == null) {
-                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-            } 
-            userSelection.getDeletedBaselineTraitsList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
-            if (userSelection.getDeletedBaselineTraitsList() == null) {
-                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-            } 
-            userSelection.getDeletedBaselineTraitsList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
-            if (userSelection.getDeletedNurseryConditions() == null) {
-                userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
-            } 
-            userSelection.getDeletedNurseryConditions().add(newSetting);
-        }
+        addVariableInDeletedList(currentList,mode,variableId,false);
     }
     
     private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {

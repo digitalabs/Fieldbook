@@ -251,34 +251,36 @@ public class ManageSettingsController extends SettingsController {
 				.getIdNamePairForRetrieveAndSave();
 		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
 
-			addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId);
-			deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
+			addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId,true);
+			SettingsUtil.deleteVariableInSession(userSelection.getStudyLevelConditions(),
+					variableId);
 			if (idNameRetrieveSaveMap.get(variableId) != null) {
 				//special case so we must delete it as well
 				addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode,
-						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
-				deleteVariableInSession(userSelection.getStudyLevelConditions(),
+						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)),true);
+				SettingsUtil.deleteVariableInSession(userSelection.getStudyLevelConditions(),
 						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
 			}
 		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()
 				|| mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
-			addVariableInDeletedList(userSelection.getPlotsLevelList(), mode, variableId);
-			deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+			addVariableInDeletedList(userSelection.getPlotsLevelList(), mode, variableId,true);
+			SettingsUtil.deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
 		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-			addVariableInDeletedList(userSelection.getBaselineTraitsList(), mode, variableId);
-			deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
+			addVariableInDeletedList(userSelection.getBaselineTraitsList(), mode, variableId,true);
+			SettingsUtil.deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
 		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
-			addVariableInDeletedList(userSelection.getSelectionVariates(), mode, variableId);
-			deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
+			addVariableInDeletedList(userSelection.getSelectionVariates(), mode, variableId,true);
+			SettingsUtil.deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
 		} else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
-			addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId);
-			deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
+			addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId,true);
+			SettingsUtil.deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
 		} else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
-			addVariableInDeletedList(userSelection.getTreatmentFactors(), mode, variableId);
-			deleteVariableInSession(userSelection.getTreatmentFactors(), variableId);
+			addVariableInDeletedList(userSelection.getTreatmentFactors(), mode, variableId,true);
+			SettingsUtil.deleteVariableInSession(userSelection.getTreatmentFactors(), variableId);
 		} else {
-			addVariableInDeletedList(userSelection.getTrialLevelVariableList(), mode, variableId);
-			deleteVariableInSession(userSelection.getTrialLevelVariableList(), variableId);
+			addVariableInDeletedList(userSelection.getTrialLevelVariableList(), mode, variableId,true);
+			SettingsUtil.deleteVariableInSession(userSelection.getTrialLevelVariableList(),
+					variableId);
 		}
 		return "";
 	}
@@ -299,71 +301,6 @@ public class ManageSettingsController extends SettingsController {
 		return "";
 	}
 
-	private void addVariableInDeletedList(List<SettingDetail> currentList, int mode,
-			int variableId) {
-		SettingDetail newSetting = null;
-		for (SettingDetail setting : currentList) {
-			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-				newSetting = setting;
-			}
-		}
-
-		if (newSetting == null) {
-			try {
-				newSetting = createSettingDetail(variableId, "");
-				newSetting.getVariable().setOperation(Operation.UPDATE);
-			} catch (MiddlewareQueryException e) {
-				LOG.error(e.getMessage(), e);
-			}
-		}
-
-		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-			if (userSelection.getDeletedStudyLevelConditions() == null) {
-				userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
-			}
-			userSelection.getDeletedStudyLevelConditions().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()
-				|| mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
-			if (userSelection.getDeletedPlotLevelList() == null) {
-				userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
-			}
-			userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-			if (userSelection.getDeletedBaselineTraitsList() == null) {
-				userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-			}
-			userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
-			if (userSelection.getDeletedBaselineTraitsList() == null) {
-				userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-			}
-			userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
-			if (userSelection.getDeletedNurseryConditions() == null) {
-				userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
-			}
-			userSelection.getDeletedNurseryConditions().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
-			if (userSelection.getDeletedTrialLevelVariables() == null) {
-				userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
-			}
-			userSelection.getDeletedTrialLevelVariables().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
-			if (userSelection.getDeletedTreatmentFactors() == null) {
-				userSelection.setDeletedTreatmentFactors(new ArrayList<SettingDetail>());
-			}
-			userSelection.getDeletedTreatmentFactors().add(newSetting);
-		}
-	}
-
-	private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
-		Iterator<SettingDetail> iter = variableList.iterator();
-		while (iter.hasNext()) {
-			if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-				iter.remove();
-			}
-		}
-	}
 
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)

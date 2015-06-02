@@ -44,7 +44,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping(DesignImportController.URL)
-public class DesignImportController extends AbstractBaseFieldbookController {
+public class DesignImportController extends SettingsController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportController.class);
 	
@@ -53,19 +53,13 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private DesignImportParser parser;
-	
-	@Resource
-	private UserSelection userSelection;
-	
+
 	@Resource
 	private DesignImportService designImportService;
 	
 	@Resource
     private MessageSource messageSource;
-	
-	@Resource
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	
+
 	/* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#show(org.springframework.ui.Model)
      */
@@ -262,9 +256,12 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			Set<StandardVariable> expDesignVariables;
 			Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 			
-			measurementRows = designImportService.generateDesign(workbook, designImportData, environmentData);
-			measurementVariables = designImportService.getDesignMeasurementVariables(workbook, designImportData);
-			expDesignVariables = designImportService.getDesignRequiredStandardVariables(workbook, designImportData);
+			measurementRows = designImportService.generateDesign(workbook, designImportData,
+					environmentData);
+			measurementVariables = designImportService.getDesignMeasurementVariables(workbook,
+					designImportData);
+			expDesignVariables = designImportService.getDesignRequiredStandardVariables(workbook,
+					designImportData);
 			experimentalDesignMeasurementVariables = designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
 			
 			workbook.setObservations(measurementRows);
@@ -273,13 +270,16 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
 			
 			Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
-			uniqueFactors.addAll(designImportService.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,designImportData.getMappedHeaders()));
+			uniqueFactors.addAll(designImportService
+					.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,
+							designImportData.getMappedHeaders()));
 			workbook.getFactors().clear();
 			workbook.getFactors().addAll((new ArrayList<>(uniqueFactors)));
-			
-			
+
 			Set<MeasurementVariable> uniqueVariates = new HashSet<>(workbook.getVariates());
-			uniqueVariates.addAll(designImportService.extractMeasurementVariable(PhenotypicType.VARIATE,designImportData.getMappedHeaders()));
+			uniqueVariates.addAll(designImportService
+					.extractMeasurementVariable(PhenotypicType.VARIATE,
+							designImportData.getMappedHeaders()));
 			workbook.getVariates().clear();
 			workbook.getVariates().addAll((new ArrayList<>(uniqueVariates)));
 
@@ -293,9 +293,21 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			List<Integer> expDesignTermIds = new ArrayList<>();
 			expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 			userSelection.setExpDesignVariables(expDesignTermIds);
-			
-			
-			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(workbook.getFactors(), fieldbookMiddlewareService);
+
+			// retrieve all trial level factors and convert them to setting details
+			Set<MeasurementVariable> trialLevelFactors = new HashSet<>();
+			for (MeasurementVariable factor : workbook.getFactors()) {
+				if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(factor.getLabel())) {
+
+					// remove this variable in the selection
+					addVariableInDeletedList(userSelection.getTrialLevelVariableList(), AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt(), factor.getTermId(),false);
+					SettingsUtil.deleteVariableInSession(userSelection.getTrialLevelVariableList(),factor.getTermId());
+
+					trialLevelFactors.add(factor);
+				}
+			}
+
+			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(new ArrayList<MeasurementVariable>(trialLevelFactors), fieldbookMiddlewareService);
 			SettingsUtil.addNewSettingDetails(AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt(), newDetails, userSelection);
 
 			resultsMap.put("isSuccess", 1);

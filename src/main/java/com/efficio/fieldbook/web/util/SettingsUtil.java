@@ -1707,7 +1707,8 @@ public class SettingsUtil {
 
     private static List<String> getSelectedVariatesPropertyNames(FieldbookService fieldbookService) throws MiddlewareQueryException {
         List<String> names = new ArrayList<String>();
-        List<String> ids = Arrays.asList(AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(","));
+        List<String> ids = Arrays.asList(
+                AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(","));
         for (String id : ids) {
             Term term = fieldbookService.getTermById(Integer.valueOf(id));
             if (term != null) {
@@ -2312,5 +2313,14 @@ public class SettingsUtil {
 				userSelection.getNurseryConditions().addAll(newDetails);
 			}
 		}
+    }
+
+    public static void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
+        Iterator<SettingDetail> iter = variableList.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+                iter.remove();
+            }
+        }
     }
 }

@@ -156,7 +156,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     public List<StudyDetails> getTrialList() {
         try {
             return fieldbookMiddlewareService.getAllLocalTrialStudyDetails(
-            		contextUtil.getCurrentProgramUUID());
+                    contextUtil.getCurrentProgramUUID());
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -426,7 +426,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
 					stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
-			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+			svar.setCropOntologyId(
+                    stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			return svar;
 		}
@@ -711,18 +712,19 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             }
         }
     }
-    
+
     /**
      * Removes the hidden variables.
-     *
-     * @param nurseryLevelConditions the nursery level conditions
+     * @param settingList
+     * @param hiddenVarList
      */
     private void removeHiddenVariables(List<SettingDetail> settingList, String hiddenVarList) {
         if (settingList != null) {
             
             Iterator<SettingDetail> iter = settingList.iterator();
             while (iter.hasNext()) {
-                if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), hiddenVarList)) {
+                if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(),
+                        hiddenVarList)) {
                     iter.remove();
                 }
             }
@@ -906,6 +908,64 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected void setUserSelection(UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
-	
-	
+
+    protected void addVariableInDeletedList(List<SettingDetail> currentList, int mode,
+            int variableId,boolean createNewSettingIfNull) {
+        SettingDetail newSetting = null;
+        for (SettingDetail setting : currentList) {
+            if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+                newSetting = setting;
+            }
+        }
+
+        if (newSetting == null && createNewSettingIfNull) {
+            try {
+                newSetting = createSettingDetail(variableId, "");
+                newSetting.getVariable().setOperation(Operation.UPDATE);
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        } else if (newSetting == null) {
+            return;
+        }
+
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            if (userSelection.getDeletedStudyLevelConditions() == null) {
+                userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedStudyLevelConditions().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()
+                || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
+            if (userSelection.getDeletedPlotLevelList() == null) {
+                userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedPlotLevelList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+            if (userSelection.getDeletedBaselineTraitsList() == null) {
+                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedBaselineTraitsList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+            if (userSelection.getDeletedBaselineTraitsList() == null) {
+                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedBaselineTraitsList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+            if (userSelection.getDeletedNurseryConditions() == null) {
+                userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedNurseryConditions().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+            if (userSelection.getDeletedTrialLevelVariables() == null) {
+                userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedTrialLevelVariables().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+            if (userSelection.getDeletedTreatmentFactors() == null) {
+                userSelection.setDeletedTreatmentFactors(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedTreatmentFactors().add(newSetting);
+        }
+    }
+
 }

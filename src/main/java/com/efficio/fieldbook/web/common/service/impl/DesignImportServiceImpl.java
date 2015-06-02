@@ -36,7 +36,6 @@ import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.service.DesignImportService;
-import com.efficio.fieldbook.web.nursery.controller.DesignImportController;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
@@ -107,15 +106,13 @@ public class DesignImportServiceImpl implements DesignImportService {
 				designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 		DesignHeaderItem entryNoDesignHeaderItem = validateIfEntryNumberExists(
 				designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
-		validateIfPlotNumberExists(
-				designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
-		validateIfPlotNumberIsUnique(
-				designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN),
-				designImportData.getCsvData());
+		validateIfPlotNumberExists(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
+		
 		
 		 Map<String, Map<Integer, List<String>>> csvMap = groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, csvData);
 		
 		validateEntryNoMustBeUniquePerInstance(entryNoDesignHeaderItem, csvMap);
+		validateIfPlotNumberIsUniquePerInstance(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), csvMap);
 		
 	}
 
@@ -190,6 +187,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurementVariables;
 		
 	}
+	
 	
 	@Override
 	public boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData){
@@ -287,21 +285,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 				"design.import.error.plot.no.is.required", null, Locale.ENGLISH));
 	}
 	
-	protected void validateIfPlotNumberIsUnique(List<DesignHeaderItem> headerDesignItems, Map<Integer, List<String>> csvMap) throws DesignValidationException {
-		Set<String> set = new HashSet<String>();
+	protected void validateIfPlotNumberIsUniquePerInstance(List<DesignHeaderItem> headerDesignItems, Map<String, Map<Integer, List<String>>> csvMap) throws DesignValidationException {
+		
 		for (DesignHeaderItem headerDesignItem : headerDesignItems){
 			if (headerDesignItem.getVariable().getId() == TermId.PLOT_NO.getId()){
-				for (Entry<Integer, List<String>> entry : csvMap.entrySet()){
-					String value = entry.getValue().get(headerDesignItem.getColumnIndex());
-					if (!StringUtils.isNullOrEmpty(value)){
-						if (set.contains(value)){
-							throw new DesignValidationException(messageSource.getMessage(
-									"design.import.error.plot.number.must.be.unique", null,
-									Locale.ENGLISH));
-						}else {
-							set.add(value);
-						}
-					}
+				for (Entry<String,Map<Integer, List<String>>> entry : csvMap.entrySet()){
+					validatePlotNumberMustBeUnique(headerDesignItem, entry.getValue());
 				}
 			}
 		}
@@ -312,6 +301,27 @@ public class DesignImportServiceImpl implements DesignImportService {
 		for (Entry<String,Map<Integer, List<String>>> entry : csvMapGrouped.entrySet()){
 			validateEntryNumberMustBeUnique(entryNoHeaderItem, entry.getValue());
 			
+		}
+		
+	}
+	
+	protected void validatePlotNumberMustBeUnique(DesignHeaderItem plotNoHeaderItem, Map<Integer, List<String>> csvMap) throws DesignValidationException{
+		
+		Set<String> set = new HashSet<String>();
+		
+		Iterator<Entry<Integer, List<String>>> iterator = csvMap.entrySet().iterator();
+		while(iterator.hasNext()){
+			String value = iterator.next().getValue().get(plotNoHeaderItem.getColumnIndex());
+			
+			if (!StringUtils.isNullOrEmpty(value)){
+				if (set.contains(value)){
+					throw new DesignValidationException(messageSource.getMessage(
+							"design.import.error.plot.number.must.be.unique", null,
+							Locale.ENGLISH));
+				}else {
+					set.add(value);
+				}
+			}
 		}
 		
 	}

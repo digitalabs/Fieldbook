@@ -477,9 +477,13 @@ public class DesignImportServiceImplTest {
 		
 		createDesignHeaderItemMap(designImportData);
 		
+		DesignHeaderItem trialInstanceHeaderItem = service.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+		Map<String, Map<Integer, List<String>>> csvMap = service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getCsvData());
+		
 		try {
 			
-			service.validateIfPlotNumberIsUnique(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), designImportData.getCsvData());
+			
+			service.validateIfPlotNumberIsUniquePerInstance(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), csvMap);
 			
 		} catch (DesignValidationException e){
 			
@@ -490,11 +494,12 @@ public class DesignImportServiceImplTest {
 	}
 	
 	@Test
-	public void testValidateIfPlotNumberIsUniquePlotNoIsNotUnique() throws MiddlewareQueryException{
+	public void testValidateIfPlotNumberIsUniquePerInstance() throws MiddlewareQueryException{
 		
 		
 		createDesignHeaderItemMap(designImportData);
 		
+		DesignHeaderItem trialInstanceHeaderItem = service.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 		DesignHeaderItem plotNoHeaderItem = service.filterDesignHeaderItemsByTermId(TermId.PLOT_NO, designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
 		
 		Map<Integer, List<String>> csvData = designImportData.getCsvData();
@@ -502,11 +507,13 @@ public class DesignImportServiceImplTest {
 		csvData.get(1).set(plotNoHeaderItem.getColumnIndex(), "1");
 		csvData.get(2).set(plotNoHeaderItem.getColumnIndex(), "1");
 		
+		Map<String, Map<Integer, List<String>>> csvMap = service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, csvData);
+		
 		try {
 			
-			service.validateIfPlotNumberIsUnique(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), csvData);
+			service.validateIfPlotNumberIsUniquePerInstance(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), csvMap);
 			
-			Assert.fail("The list shouldn't pass the validateIfPlotNumberIsUniquePlotNoIsNotUnique test");
+			Assert.fail("The list shouldn't pass the validateIfPlotNumberIsUniquePerInstance test");
 		
 		} catch (DesignValidationException e){
 			

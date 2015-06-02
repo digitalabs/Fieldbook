@@ -155,7 +155,20 @@ var ImportDesign = {
 						cache: false,
 						success: function(resp) {
 							if (resp.isSuccess) {
+								
+								
 								var $body = $('body');
+								var environmentData = resp.environmentData;
+								
+								var angularElem = angular.element('#mainApp');
+
+								angularElem.scope().$apply(function(){
+									ImportDesign.getTrialManagerDataService().applicationData.environmments = environmentData;
+								});
+								
+								ImportDesign.getTrialManagerDataService();
+								
+								
 								$('#chooseGermplasmAndChecks').data('replace', '1');
 								$body.data('expDesignShowPreview', '1');
 								$body.data('needGenerateExperimentalDesign', '0');

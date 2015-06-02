@@ -32,6 +32,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 /**
@@ -158,51 +159,9 @@ public class ManageSettingsController extends SettingsController {
 	 */
 	private void addNewSettingDetails(int mode
 			, List<SettingDetail> newDetails) throws Exception {
-		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-			if (userSelection.getStudyLevelConditions() == null) {
-				userSelection.setStudyLevelConditions(newDetails);
-			} else {
-				userSelection.getStudyLevelConditions().addAll(newDetails);
-			}
-
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()
-				|| mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
-			if (userSelection.getPlotsLevelList() == null) {
-				userSelection.setPlotsLevelList(newDetails);
-			} else {
-				userSelection.getPlotsLevelList().addAll(newDetails);
-			}
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-			if (userSelection.getBaselineTraitsList() == null) {
-				userSelection.setBaselineTraitsList(newDetails);
-			} else {
-				userSelection.getBaselineTraitsList().addAll(newDetails);
-			}
-		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
-			if (userSelection.getSelectionVariates() == null) {
-				userSelection.setSelectionVariates(newDetails);
-			} else {
-				userSelection.getSelectionVariates().addAll(newDetails);
-			}
-		} else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
-			if (userSelection.getTreatmentFactors() == null) {
-				userSelection.setTreatmentFactors(newDetails);
-			} else {
-				userSelection.getTreatmentFactors().addAll(newDetails);
-			}
-		} else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
-			if (userSelection.getTrialLevelVariableList() == null) {
-				userSelection.setTrialLevelVariableList(newDetails);
-			} else {
-				userSelection.getTrialLevelVariableList().addAll(newDetails);
-			}
-		} else {
-			if (userSelection.getNurseryConditions() == null) {
-				userSelection.setNurseryConditions(newDetails);
-			} else {
-				userSelection.getNurseryConditions().addAll(newDetails);
-			}
-		}
+		
+		SettingsUtil.addNewSettingDetails(mode, newDetails, userSelection);
+		
 	}
 
 	private Operation removeVarFromDeletedList(SettingVariable var, int mode) {

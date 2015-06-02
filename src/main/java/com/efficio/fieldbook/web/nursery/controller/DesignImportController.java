@@ -14,8 +14,10 @@ import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.common.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -33,6 +35,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
 import java.util.*;
 
 
@@ -265,10 +268,23 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			experimentalDesignMeasurementVariables = designImportService.getDesignRequiredMeasurementVariable(workbook, designImportData);
 			
 			workbook.setObservations(measurementRows);
-			workbook.setMeasurementDatasetVariables(new ArrayList<MeasurementVariable>(measurementVariables));
-			workbook.setExpDesignVariables(new ArrayList<StandardVariable>(expDesignVariables));
+
+			workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
+			workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
 			
-			userSelection.setExperimentalDesignVariables(new ArrayList<MeasurementVariable>(experimentalDesignMeasurementVariables));
+			Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
+			uniqueFactors.addAll(designImportService.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,designImportData.getMappedHeaders()));
+			workbook.getFactors().clear();
+			workbook.getFactors().addAll((new ArrayList<>(uniqueFactors)));
+			
+			
+			Set<MeasurementVariable> uniqueVariates = new HashSet<>(workbook.getVariates());
+			uniqueVariates.addAll(designImportService.extractMeasurementVariable(PhenotypicType.VARIATE,designImportData.getMappedHeaders()));
+			workbook.getVariates().clear();
+			workbook.getVariates().addAll((new ArrayList<>(uniqueVariates)));
+
+			userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
+
 		
 			ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 			designParam.setDesignType(3);
@@ -277,9 +293,13 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			List<Integer> expDesignTermIds = new ArrayList<>();
 			expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 			userSelection.setExpDesignVariables(expDesignTermIds);
-
 			
+			
+			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(workbook.getFactors(), fieldbookMiddlewareService);
+			SettingsUtil.addNewSettingDetails(AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt(), newDetails, userSelection);
+
 			resultsMap.put("isSuccess", 1);
+			resultsMap.put("environmentData", userSelection.getTrialLevelVariableList());
 
 		} catch (Exception e) {
 			

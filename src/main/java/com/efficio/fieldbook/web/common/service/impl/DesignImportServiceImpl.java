@@ -29,6 +29,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
@@ -535,7 +536,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 			for (MeasurementVariable mvar : workbook.getVariates()){
 				if (mvar.getOperation() == Operation.ADD || mvar.getOperation() == Operation.UPDATE){
 					MeasurementVariable copy = mvar.copy();
-					copy.setOperation(Operation.ADD);
 					temporaryList.add(copy);
 				}
 			}

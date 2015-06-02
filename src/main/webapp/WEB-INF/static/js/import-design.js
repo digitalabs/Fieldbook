@@ -173,9 +173,13 @@ var ImportDesign = {
 									$('#nursery-experimental-design-li').show();
 							} else {
 									// gonna get get that settings.managementDetails if trial
-									$.each(environmentData,function(key,value) {
-										ImportDesign.getTrialManagerDataService().settings.environments.managementDetails.push(value.variable.cvTermId, ImportDesign.getTrialManagerDataService().transformViewSettingsVariable(value));
+									var angularElem = angular.element('#mainApp');
+									angularElem.scope().$apply(function() {
+										$.each(environmentData,function(key,value) {
+											ImportDesign.getTrialManagerDataService().settings.environments.managementDetails.push(value.variable.cvTermId, ImportDesign.getTrialManagerDataService().transformViewSettingsVariable(value));
+										});
 									});
+
 
 
 									ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();

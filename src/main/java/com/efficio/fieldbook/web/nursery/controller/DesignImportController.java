@@ -5,14 +5,17 @@ package com.efficio.fieldbook.web.nursery.controller;
  * Created by cyrus on 5/8/15.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.common.service.DesignImportService;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
@@ -39,18 +42,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.common.service.DesignImportService;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import javax.annotation.Resource;
+
+import java.util.*;
+
 
 /**
  * The Class DesignImportController.
@@ -283,9 +278,21 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 					workbook, designImportData);
 			
 			workbook.setObservations(measurementRows);
+
 			workbook.setMeasurementDatasetVariables(new ArrayList<>(measurementVariables));
 			workbook.setExpDesignVariables(new ArrayList<>(expDesignVariables));
-			workbook.setVariates(new ArrayList<>(designImportService.extractMeasurementVariable(PhenotypicType.VARIATE,designImportData.getMappedHeaders())));
+			
+			Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
+			uniqueFactors.addAll(designImportService.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,designImportData.getMappedHeaders()));
+			workbook.getFactors().clear();
+			workbook.getFactors().addAll((new ArrayList<>(uniqueFactors)));
+			
+			
+			Set<MeasurementVariable> uniqueVariates = new HashSet<>(workbook.getVariates());
+			uniqueVariates.addAll(designImportService.extractMeasurementVariable(PhenotypicType.VARIATE,designImportData.getMappedHeaders()));
+			workbook.setVariates(new ArrayList<>(uniqueVariates));
+
+			userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 			
 			this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 		
@@ -297,7 +304,11 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 			this.userSelection.setExpDesignVariables(expDesignTermIds);
 			
+			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(workbook.getFactors(), fieldbookMiddlewareService);
+			SettingsUtil.addNewSettingDetails(AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt(), newDetails, userSelection);
+
 			resultsMap.put("isSuccess", 1);
+			resultsMap.put("environmentData", userSelection.getTrialLevelVariableList());
 
 		} catch (Exception e) {
 			
@@ -367,11 +378,11 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 			if (this.userSelection.getBaselineTraitsList() != null) {
 				variatesList.addAll(this.userSelection.getBaselineTraitsList());
 	        	}
-	        	
+	        
 			if (this.userSelection.getSelectionVariates() != null) {
 				variatesList.addAll(this.userSelection.getSelectionVariates());
 	        	}
-	        	
+	
 			Dataset dataset =
 					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
 							this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,

@@ -33,6 +33,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 /**
@@ -146,56 +147,18 @@ public class ManageSettingsController extends SettingsController {
 	/**
 	 * Adds the new setting details.
 	 *
-	 * @param mode the mode
+	 * @param mode       the mode
 	 * @param newDetails the new details
 	 * @return the string
 	 * @throws Exception the exception
 	 */
 	private void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception {
-		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
 			if (this.userSelection.getStudyLevelConditions() == null) {
 				this.userSelection.setStudyLevelConditions(newDetails);
-			} else {
 				this.userSelection.getStudyLevelConditions().addAll(newDetails);
-			}
 
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt() || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
-			if (this.userSelection.getPlotsLevelList() == null) {
-				this.userSelection.setPlotsLevelList(newDetails);
-			} else {
-				this.userSelection.getPlotsLevelList().addAll(newDetails);
-			}
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-			if (this.userSelection.getBaselineTraitsList() == null) {
-				this.userSelection.setBaselineTraitsList(newDetails);
-			} else {
-				this.userSelection.getBaselineTraitsList().addAll(newDetails);
-			}
-		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
-			if (this.userSelection.getSelectionVariates() == null) {
-				this.userSelection.setSelectionVariates(newDetails);
-			} else {
-				this.userSelection.getSelectionVariates().addAll(newDetails);
-			}
-		} else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
-			if (this.userSelection.getTreatmentFactors() == null) {
-				this.userSelection.setTreatmentFactors(newDetails);
-			} else {
-				this.userSelection.getTreatmentFactors().addAll(newDetails);
-			}
-		} else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
-			if (this.userSelection.getTrialLevelVariableList() == null) {
-				this.userSelection.setTrialLevelVariableList(newDetails);
-			} else {
-				this.userSelection.getTrialLevelVariableList().addAll(newDetails);
-			}
-		} else {
-			if (this.userSelection.getNurseryConditions() == null) {
-				this.userSelection.setNurseryConditions(newDetails);
-			} else {
-				this.userSelection.getNurseryConditions().addAll(newDetails);
-			}
-		}
+		SettingsUtil.addNewSettingDetails(mode, newDetails, userSelection);
+		
 	}
 
 	private Operation removeVarFromDeletedList(SettingVariable var, int mode) {
@@ -401,49 +364,49 @@ public class ManageSettingsController extends SettingsController {
 		}
 		return false;
 	}
-
+	
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/environmentNo/{environmentNo}", method = RequestMethod.POST)
 	public boolean hasMeasurementDataOnEnvironment(@RequestBody List<Integer> ids, @PathVariable int environmentNo) {
 		Workbook workbook = this.userSelection.getWorkbook();
 		List<MeasurementRow> observationsOnEnvironment = this.getObservationsOnEnvironment(workbook, environmentNo);
-
+		
 		for (Integer variableId : ids) {
 			if (SettingsController.hasMeasurementDataEntered(variableId, observationsOnEnvironment)) {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
 
 	protected List<MeasurementRow> getObservationsOnEnvironment(Workbook workbook, int environmentNo) {
 		List<MeasurementRow> observations = workbook.getObservations();
 		List<MeasurementRow> filteredObservations = new ArrayList<MeasurementRow>();
-
+		
 		// we do a matching of the name here so there won't be a problem in the data table
 		for (MeasurementRow row : observations) {
-			List<MeasurementData> dataList = row.getDataList();
+        	List<MeasurementData> dataList = row.getDataList();
 			for (MeasurementData data : dataList) {
 				if (this.isEnvironmentNotDeleted(data, environmentNo)) {
-					filteredObservations.add(row);
-					break;
-				}
-
-			}
-		}
+        			filteredObservations.add(row);                    	
+                	break;
+        		}
+        		
+        	}
+        }
 		return filteredObservations;
 	}
 
 	private boolean isEnvironmentNotDeleted(MeasurementData data, int environmentNo) {
 		if (data.getMeasurementVariable() != null) {
 			MeasurementVariable var = data.getMeasurementVariable();
-			if (var != null && var.getName() != null
-					&& ("TRIAL_INSTANCE".equalsIgnoreCase(var.getName()) || "TRIAL".equalsIgnoreCase(var.getName()))
+            if (var != null && var.getName() != null 
+            		&& ("TRIAL_INSTANCE".equalsIgnoreCase(var.getName()) || "TRIAL".equalsIgnoreCase(var.getName()))
 					&& data.getValue().equals(String.valueOf(environmentNo))) {
-				return true;
-			}
-		}
+            	return true;
+            }
+        }
 		return false;
 	}
 

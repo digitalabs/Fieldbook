@@ -167,7 +167,7 @@
                     data: '',
                     cache: false,
                     success: function (html) {
-                    	$('body').data('columnReordered', '0');
+                        $('body').data('columnReordered', '0');
                         $('#measurementsDiv').html(html);
                         showSuccessfulMessage('', saveSuccessMessage);
                     }
@@ -205,7 +205,7 @@
 
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
                 {id: '@id'}, { 'get': {method: 'get', isArray: true} });
-            var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, { });
+            var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 
             var service = {
                 // user input data and default values of standard variables
@@ -277,10 +277,9 @@
 
                 refreshMeasurementTableAfterDeletingEnvironment : function(){
                     var noOfEnvironments = service.currentData.environments.noOfEnvironments;
-                	
                     var data = service.currentData.experimentalDesign;
                     //update the no of environments in experimental design tab
-                	data.noOfEnvironments = noOfEnvironments;
+                    data.noOfEnvironments = noOfEnvironments;
 
 					service.generateExpDesign(data).then(
                         function (response) {
@@ -314,7 +313,6 @@
                         if (service.currentData.experimentalDesign.designType === 3 ) {
                             service.currentData.experimentalDesign.designType = null;
                         }
-
                     }
                 },
 
@@ -326,23 +324,23 @@
                 extractSettings: extractSettings,
                 extractTreatmentFactorSettings : extractTreatmentFactorSettings,
                 saveCurrentData: function () {
-                	if(!processInlineEditInput()){				
-        				return false;
-        			}
-                	if(hasMeasurementsInvalidValue()){
-        				//we check if there is invalid value in the measurements
-        				showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
-        				return false;
-        			}
+                    if(!processInlineEditInput()){
+                        return false;
+                    }
+                    if(hasMeasurementsInvalidValue()){
+                        //we check if there is invalid value in the measurements
+                        showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
+                        return false;
+                    }
                     if (service.applicationData.unappliedChangesAvailable) {
                         showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
                             'regenerate the design on the Experimental Design tab', 10000);
                     } else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         performDataCleanup();
                         var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-                		var serializedData = (JSON.stringify(columnsOrder));
+                        var serializedData = (JSON.stringify(columnsOrder));
                         if (!service.isOpenTrial()) {
-                        	service.currentData.columnOrders = serializedData;
+                            service.currentData.columnOrders = serializedData;
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
                                 success(function () {
                                     submitGermplasmList().then(function (generatedID) {
@@ -374,7 +372,6 @@
                                     });
                                 });
 
-
 							}
                             else if (service.trialMeasurement.count > 0 &&
                                 (($('#chooseGermplasmAndChecks').length !== 0 &&
@@ -382,7 +379,7 @@
                                     parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
                                     service.applicationData.unsavedGeneratedDesign === false)
                                 ) {
-                            	service.currentData.columnOrders = serializedData;
+                                service.currentData.columnOrders = serializedData;
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function () {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
@@ -403,7 +400,7 @@
                                 });
                             }
                             else {
-                            	service.currentData.columnOrders = serializedData;
+                                service.currentData.columnOrders = serializedData;
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
                                     success(function () {
                                         submitGermplasmList().then(function (trialID) {
@@ -611,7 +608,6 @@
                             hasError = true;
                             customMessage = unpairedTreatmentFactor;
                         }
-
                     }
 
                     if (hasError) {
@@ -643,9 +639,7 @@
                         createErrorNotification(isValidVariables.customHeader,isValidVariables.customMessage);
                     }
 
-                    //valid = false;    // remove later
-
-
+                    //valid = false    // remove later
 
                     return valid;
 
@@ -741,20 +735,20 @@
                 validateAllTreatmentFactorLabels : function(results) {
                     //  validate all treatments variable inputs
                     _.find(service.currentData.treatmentFactors.currentData, function (item, key) {
-                        var settings_var = service.settings.treatmentFactors.treatmentLevelPairs[key].
+                        var settingsVar = service.settings.treatmentFactors.treatmentLevelPairs[key].
                             val(service.currentData.treatmentFactors.currentData[key].variableId).variable;
-                        if (!(!settings_var.maxRange && !settings_var.minRange)) {
+                        if (!(!settingsVar.maxRange && !settingsVar.minRange)) {
                             _.find(item.labels, function (val, index) {
 
                                 if (!!val) {
-                                    if (settings_var.maxRange < Number(val)) {
+                                    if (settingsVar.maxRange < Number(val)) {
                                         results.customMessage = 'Invalid maximum range on variable ' +
-                                            settings_var.name + ' at level ' + (Number(index) + Number(1));
+                                        settingsVar.name + ' at level ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
-                                    } else if (settings_var.minRange > Number(val)) {
+                                    } else if (settingsVar.minRange > Number(val)) {
                                         results.customMessage = 'Invalid minimum range on variable ' +
-                                            settings_var.name + ' at level ' + (Number(index) + Number(1));
+                                        settingsVar.name + ' at level ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     }
@@ -808,8 +802,6 @@
 
             setupSettingsVariables();
 
-
-
             return service;
         }
     ])
@@ -817,8 +809,6 @@
     .service('TrialSettingsManager', ['TRIAL_VARIABLE_SELECTION_LABELS', function(TRIAL_VARIABLE_SELECTION_LABELS) {
         var TrialSettingsManager = window.TrialSettingsManager;
         var settingsManager = new TrialSettingsManager(TRIAL_VARIABLE_SELECTION_LABELS);
-
-
 
         return {
             openVariableSelectionDialog: function (params) {
@@ -829,7 +819,6 @@
             addDynamicFilterObj: function (_map, group) {
                 settingsManager._addDynamicFilter(_map, group);
             }
-
 
         };
     }]);

@@ -5,17 +5,15 @@ package com.efficio.fieldbook.web.nursery.controller;
  * Created by cyrus on 5/8/15.
  */
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.common.service.DesignImportService;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
@@ -42,9 +40,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-
-import java.util.*;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.common.form.ImportDesignForm;
+import com.efficio.fieldbook.web.common.service.DesignImportService;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 
 /**
@@ -61,13 +68,13 @@ public class DesignImportController extends SettingsController {
 
 	@Resource
 	private DesignImportParser parser;
-	
+
 	@Resource
 	private DesignImportService designImportService;
 	
 	@Resource
     private MessageSource messageSource;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -282,7 +289,7 @@ public class DesignImportController extends SettingsController {
 							designImportData.getMappedHeaders()));
 			workbook.getFactors().clear();
 			workbook.getFactors().addAll((new ArrayList<>(uniqueFactors)));
-			
+
 			Set<MeasurementVariable> uniqueVariates = new HashSet<>(workbook.getVariates());
 			uniqueVariates.addAll(designImportService
 					.extractMeasurementVariable(PhenotypicType.VARIATE,
@@ -291,8 +298,6 @@ public class DesignImportController extends SettingsController {
 
 			userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 
-			this.userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
-		
 			ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 			designParam.setDesignType(3);
 			this.userSelection.setExpDesignParams(designParam);
@@ -300,16 +305,11 @@ public class DesignImportController extends SettingsController {
 			List<Integer> expDesignTermIds = new ArrayList<>();
 			expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 			this.userSelection.setExpDesignVariables(expDesignTermIds);
-			
+
 			// retrieve all trial level factors and convert them to setting details
 			Set<MeasurementVariable> trialLevelFactors = new HashSet<>();
 			for (MeasurementVariable factor : workbook.getFactors()) {
 				if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(factor.getLabel())) {
-
-					// remove this variable in the selection
-					addVariableInDeletedList(userSelection.getTrialLevelVariableList(), AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt(), factor.getTermId(),false);
-					SettingsUtil.deleteVariableInSession(userSelection.getTrialLevelVariableList(),factor.getTermId());
-
 					trialLevelFactors.add(factor);
 				}
 			}
@@ -317,8 +317,27 @@ public class DesignImportController extends SettingsController {
 			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(new ArrayList<MeasurementVariable>(trialLevelFactors), fieldbookMiddlewareService);
 			SettingsUtil.addNewSettingDetails(AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt(), newDetails, userSelection);
 
+			//add experiment design factor
+			TermId termId = TermId.getById(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+			SettingsUtil.addTrialCondition(termId, designParam, workbook, fieldbookMiddlewareService);
+			
+			//get the Experiment Design MeasurementVariable
+			List<MeasurementVariable> trialVariables = new ArrayList<>(designImportService.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,designImportData.getMappedHeaders()));
+			for (MeasurementVariable trialCondition :workbook.getTrialConditions()){
+				if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()){
+					trialVariables.add(trialCondition);
+				}
+			}
+		
+			List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(
+					environmentData.getEnvironments(), 
+					trialVariables,
+					userSelection.getExpDesignParams());
+			
+		    workbook.setTrialObservations(trialEnvironmentValues);
+
 			resultsMap.put("isSuccess", 1);
-			resultsMap.put("environmentData", userSelection.getTrialLevelVariableList());
+			resultsMap.put("environmentData", environmentData);
 
 		} catch (Exception e) {
 			

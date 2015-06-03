@@ -338,6 +338,7 @@ public class DesignImportController extends SettingsController {
 
 			resultsMap.put("isSuccess", 1);
 			resultsMap.put("environmentData", environmentData);
+			resultsMap.put("environmentSettings", userSelection.getTrialLevelVariableList());
 
 		} catch (Exception e) {
 			

@@ -119,7 +119,7 @@
 				<div class="form-group">
 					<div class="col-xs-12 col-md-12">
 						<text th:text="#{fieldmap.instruction.unavailable.plots}">
-							If there are any plots in this block that are unusable, mark them with an X.
+							If there are any plots in this block that are unusable, mark them with an X. To set all plots in a Range or Column, click on the corresponding header.
 						</text>
 					</div>
 				</div>
@@ -250,6 +250,19 @@
 				}
 			}
 			);
+			
+			$('#field-map td.sub-header-row').on('click',function() {
+				var rowElements = getColumnOrRowElements($(this).closest('tr').find('td.plot')),
+					allUnusable = checkColumnOrRange(rowElements);
+				setArrayToUnusable(rowElements, allUnusable);
+			});
+			
+			$('#field-map td.sub-header-col').on('click',function() {
+				var	colElements = getColumnOrRowElements($(this).closest('table').find('tr.plotRow td:nth-child(' + ($(this).index()+1) + ')')),
+			      	allUnusable = checkColumnOrRange(colElements);
+				setArrayToUnusable(colElements, allUnusable);
+			});
+			
 
 			if ($("#stepValue").val() == '2') {
 
@@ -263,6 +276,77 @@
 				})
 			}
 		});
+			
+		/**
+			getColumnOrRowElements() function to grab a single column
+			
+			@param <Array> colOrRowArray JQuery object 
+			@return <Array> JavaScript Array 
+		*/
+		function getColumnOrRowElements(colOrRowArray) {
+			var plotArray = [];
+			for(var i = 0; i< colOrRowArray.length; i++) {
+				plotArray.push($(colOrRowArray[i]));
+			}
+			return plotArray;
+		}		
+		  	
+		/**
+			checkColumnOrRange() returns true if all plots are unavailable
+			
+			@param <Array> arrayOfPlots
+			@return <boolean> true means all plots are unavailable, false means at least one is available
+		*/
+		function checkColumnOrRange(arrayOfPlots) {
+			for(var i = 0; i < arrayOfPlots.length; i++) {
+				if(arrayOfPlots[i].hasClass('plot') && !arrayOfPlots[i].hasClass('deleted') && !arrayOfPlots[i].hasClass('planted')) {
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		/**
+			setArrayToUnusable() function to set each plot to unusable or usable
+			
+			@param <Array> plotArray Array of Plots
+			@param <boolean> allUnusable if true, mark all plots to useable, if false mark them to unusable
+		*/
+		function setArrayToUnusable(plotArray, allUnusable) {
+			for(var i = 0; i < plotArray.length; i++) {
+				if(allUnusable) {
+					setToUsable(plotArray[i]);
+				}
+				else {
+					setToUnusable(plotArray[i]);
+				}
+			}
+		}
+			
+		/**
+			setToUsable() function to set a plot usable
+			
+			@param <Element> plot the plot to be set
+		*/
+		function setToUsable(plot) {
+			if(plot.hasClass('plot') && plot.hasClass('deleted')) {
+				plot.removeClass('deleted');
+				plot.html('');
+			}
+		}
+			
+		/**
+			setToUnusable() function to set a plot to be unusable
+			
+			@param <Element> plot the plot to be set to Unusable
+		*/
+		function setToUnusable(plot) {
+			if(plot.hasClass('plot') && !plot.hasClass('deleted') && !plot.hasClass('planted')) {
+				plot.addClass('deleted');
+				plot.html('<label class="alert alert-danger">X</label>');
+			}
+		}
+		
 	//]]>
 </script>
 </div>

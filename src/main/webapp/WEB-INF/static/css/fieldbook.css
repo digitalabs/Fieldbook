@@ -419,6 +419,7 @@ td.validValueDesc {
     text-align:center;
     vertical-align: middle;
     word-wrap: break-word;
+    cursor: pointer;
 }
 
 #field-map td.plot label {
@@ -436,8 +437,10 @@ td.validValueDesc {
     background-color: #BEBEBA;
     width: 80px;
 }
-#field-map td.sub-header-row{
+#field-map td.sub-header-row,
+#field-map td.sub-header-col{
     background-color: #EEEEE9;
+    cursor: pointer;
 }
 
 

@@ -29,7 +29,6 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
@@ -57,18 +56,20 @@ public class DesignImportServiceImpl implements DesignImportService {
 	@Resource
     private OntologyService ontologyService;
 
-	
 	@Resource
 	private OntologyDataManager ontologyDataManager;
 	
 	@Resource
     private MessageSource messageSource;
 	
-	
 	@Override
 	public List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData) throws DesignValidationException {
 		
 		Set<String> generatedTrialInstancesFromUI = extractTrialInstancesFromEnvironmentData(environmentData);
+		
+		/** this will add the trial environment factors and their values to ManagementDetailValues 
+		so we can pass them to the UI and reflect the values in the Environments Tab **/
+		populateEnvironmentDataWithValuesFromCsvFile(environmentData,workbook , designImportData);
 		
 		List<ImportedGermplasm> importedGermplasm = userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 		
@@ -91,13 +92,20 @@ public class DesignImportServiceImpl implements DesignImportService {
 			rowCounter++;
 			
 		}
-
-		// add trait data to the list of <easurementRow
+		
+		// add factor data to the list of measurement row
+		addFactorsToMeasurementRows(workbook, measurements);
+		
+		// add trait data to the list of measurement row
 		addVariatesToMeasurementRows(workbook, measurements);
 		
 		return measurements;
 	}
-	
+
+	private String getTheFirstValueFromCsv(DesignHeaderItem item, Map<Integer, List<String>> map) {
+		return map.entrySet().iterator().next().getValue().get(item.getColumnIndex());
+	}
+
 	@Override
 	public void validateDesignData(DesignImportData designImportData) throws DesignValidationException {
 		
@@ -144,10 +152,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 		//Add the variates from the added traits in workbook
 		measurementVariables.addAll(workbook.getVariates());
 		
+		
 		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
 			
 			measurementVariables.addAll(workbook.getFactors());
 			
+			//remove the trial instance factor if the Study is Nursery because it only has 1 trial instance by default
 			Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
 			while(iterator.hasNext()){
 				MeasurementVariable temp = iterator.next();
@@ -188,7 +198,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurementVariables;
 		
 	}
-	
 	
 	@Override
 	public boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData){
@@ -360,7 +369,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 	}
 
-	
 	protected Map<String, Map<Integer, List<String>>> groupCsvRowsIntoTrialInstance(DesignHeaderItem trialInstanceHeaderItem, Map<Integer, List<String>> csvMap){
 		
 		Map<String, Map<Integer, List<String>>> csvMapGrouped = new HashMap<>();
@@ -437,27 +445,10 @@ public class DesignImportServiceImpl implements DesignImportService {
 			}
 		}
 		
-		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
-			for (MeasurementVariable factor : workbook.getFactors()){
-				addFactorToDataListIfNecessary(factor, dataList);
-			}
-		}
-		
 		measurement.setDataList(dataList);
 		return measurement;
 	}
-	
-	protected void addFactorToDataListIfNecessary(MeasurementVariable factor, List<MeasurementData> dataList){
-		for (MeasurementData data : dataList){
-			if (data.getMeasurementVariable().equals(factor)){
-				return;
-			}
-		}
-		
-		dataList.add(createMeasurementData(factor, ""));
-		
-	}
-	
+
 	protected MeasurementData createMeasurementData(StandardVariable standardVariable, String value){ 
 		MeasurementData data = new MeasurementData();
 		data.setMeasurementVariable(createMeasurementVariable(standardVariable));
@@ -530,6 +521,18 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 	}
 	
+	private void addFactorsToMeasurementRows(Workbook workbook, List<MeasurementRow> measurements) {
+		
+		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
+			for (MeasurementVariable factor : workbook.getFactors()){
+				for (MeasurementRow row : measurements){
+					addFactorToDataListIfNecessary(factor, row.getDataList());
+				}
+				
+			}
+		}
+	}
+	
 	protected void addVariatesToMeasurementRows(Workbook workbook, List<MeasurementRow> measurements) {
 		try {
 			Set<MeasurementVariable> temporaryList = new HashSet<>();
@@ -545,12 +548,42 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 	}
 	
+	protected void addFactorToDataListIfNecessary(MeasurementVariable factor, List<MeasurementData> dataList){
+		for (MeasurementData data : dataList){
+			if (data.getMeasurementVariable().equals(factor)){
+				return;
+			}
+		}
+		dataList.add(createMeasurementData(factor, ""));
+	}
+	
 	protected Set<String> extractTrialInstancesFromEnvironmentData(EnvironmentData environmentData){
 		Set<String> generatedTrialInstancesFromUI = new HashSet<>();
 		for (Environment env : environmentData.getEnvironments()){
 			generatedTrialInstancesFromUI.add(env.getManagementDetailValues().get(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId())));
 		}
 		return generatedTrialInstancesFromUI;
+	}
+	
+	protected void populateEnvironmentDataWithValuesFromCsvFile(EnvironmentData environmentData,
+			Workbook workbook, DesignImportData designImportData) {
+		
+		if (workbook.getStudyDetails().getStudyType() == StudyType.T){
+			
+			List<DesignHeaderItem> trialEnvironmentsDesignHeaderItems = designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT);
+			DesignHeaderItem trialInstanceHeaderItem = filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, trialEnvironmentsDesignHeaderItems);
+			Map<String, Map<Integer, List<String>>> groupedCsvRows = groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getCsvData());
+			
+			for (Environment environment : environmentData.getEnvironments()){
+				String trialInstanceNo = environment.getManagementDetailValues().get(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId()));
+				for (DesignHeaderItem item : trialEnvironmentsDesignHeaderItems){
+					String value = getTheFirstValueFromCsv(item, groupedCsvRows.get(trialInstanceNo));
+					environment.getManagementDetailValues().put(String.valueOf(item.getId()), value);
+				}
+			}
+	
+		}
+		
 	}
 
 	

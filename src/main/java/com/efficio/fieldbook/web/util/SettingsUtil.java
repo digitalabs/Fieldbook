@@ -1995,7 +1995,7 @@ public class SettingsUtil {
     	}
     }
     
-    private static void addTrialCondition(TermId termId, ExpDesignParameterUi param, Workbook workbook,
+    public static void addTrialCondition(TermId termId, ExpDesignParameterUi param, Workbook workbook,
     		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
     	
     	String value = getExperimentalDesignValue(param, termId);

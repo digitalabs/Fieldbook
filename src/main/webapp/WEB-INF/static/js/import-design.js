@@ -144,57 +144,52 @@ var ImportDesign = {
 					}
 				});
 			});
-			
-			$.ajax(
-					{ 
-						url: '/Fieldbook/DesignImport/generate',
-						type: 'POST',
-						data: JSON.stringify(environmentData),
-						dataType: 'json',
-						contentType: 'application/json; charset=utf-8',
-						cache: false,
-						success: function(resp) {
-							if (resp.isSuccess) {
-								
-								
-								var $body = $('body');
-								var environmentData = resp.environmentData;
-								console.log(resp);
 
+			$.ajax({
+				type: 'POST',
+				url: '/Fieldbook/DesignImport/generate',
+				data: JSON.stringify(environmentData),
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8'
+			}).done(ImportDesign.updateEnvironmentAndMeasurements);
+		},
 
-								
-								$('#chooseGermplasmAndChecks').data('replace', '1');
-								$body.data('expDesignShowPreview', '1');
-								$body.data('needGenerateExperimentalDesign', '0');
-								
-								ImportDesign.closeReviewModal();
-								
-								ImportDesign.reloadMeasurements();
-								
-								if (isNursery()){
-									showSuccessfulMessage('', 'The nursery design was imported successfully. Please save your nursery before proceeding to Measurements tab.');
-									$('#nursery-experimental-design-li').show();
-								}else{
-									// gonna get get that settings.managementDetails if trial
-									var angularElem = angular.element('#mainApp');
-									angularElem.scope().$apply(function() {
-										$.each(environmentData,function(key,value) {
-											ImportDesign.getTrialManagerDataService().settings.environments.managementDetails.push(value.variable.cvTermId, ImportDesign.getTrialManagerDataService().transformViewSettingsVariable(value));
-										});
-									});
+		updateEnvironmentAndMeasurements : function(resp) {
+			if (!resp.isSuccess) {
+				createErrorNotification(designImportErrorHeader,resp.error.join('<br/>'));
+				return;
+			}
 
+			var $body = $('body');
 
+			$('#chooseGermplasmAndChecks').data('replace', '1');
+			$body.data('expDesignShowPreview', '1');
+			$body.data('needGenerateExperimentalDesign', '0');
 
-									ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
-									showSuccessfulMessage('', 'The trial design was imported successfully. Please review the Measurements tab.');
-								}
-								
-								
-							}else{
-								createErrorNotification(designImportErrorHeader,resp.error.join('<br/>'));
-							}
-						}
+			ImportDesign.closeReviewModal();
+			ImportDesign.reloadMeasurements();
+
+			if (isNursery()) {
+				showSuccessfulMessage('', 'The nursery design was imported successfully. Please save your nursery before proceeding to Measurements tab.');
+				$('#nursery-experimental-design-li').show();
+
+			} else {
+				var environmentData = resp.environmentData,
+					environmentSettings = resp.environmentSettings,
+					trialService = ImportDesign.getTrialManagerDataService();
+
+				$.each(environmentSettings,function(key,value) {
+					trialService.settings.environments.managementDetails.remove(value.variable.cvTermId);
+					trialService.settings.environments.managementDetails.push(value.variable.cvTermId, trialService.transformViewSettingsVariable(value));
 				});
+
+				trialService.updateCurrentData('environments', environmentData);
+
+				angular.element('#mainApp').scope().$apply();
+
+				ImportDesign.getTrialManagerDataService().clearUnappliedChangesFlag();
+				showSuccessfulMessage('', 'The trial design was imported successfully. Please review the Measurements tab.');
+			}
 		},
 		
 		loadReviewDesignData : function() {

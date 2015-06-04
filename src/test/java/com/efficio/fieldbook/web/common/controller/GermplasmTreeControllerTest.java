@@ -3,28 +3,34 @@ package com.efficio.fieldbook.web.common.controller;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
+
+import org.generationcp.commons.constant.ListTreeState;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.UserProgramStateDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -32,10 +38,12 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpSession;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -183,6 +191,44 @@ public class GermplasmTreeControllerTest {
 		assertEquals(0, result.get("isSuccess"));
 		assertEquals(ERROR_MESSAGE, result.get("message"));
 		
+	}
+	
+	@Test
+	public void testSaveTreeState() throws MiddlewareQueryException{
+		String[] expandedNodes = {"2","5","6"};
+		GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
+		ContextUtil contextUtil = Mockito.spy(new ContextUtil());
+		Mockito.doReturn(new Integer(1)).when(contextUtil).getCurrentWorkbenchUserId();
+		Project project = new Project();
+		project.setUniqueID("1234567890");
+		Mockito.doReturn(project).when(contextUtil).getProjectInContext();
+		UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
+		germplasmTreeController.setUserProgramStateDataManager(manager);
+		germplasmTreeController.setContextUtil(contextUtil);
+		String response = germplasmTreeController.saveTreeState(ListTreeState.GERMPLASM_LIST.toString(), expandedNodes);
+		Assert.assertEquals("Should return ok", "OK", response);
+	}
+	
+	@Test
+	public void testLoadTreeState() throws MiddlewareQueryException{
+		
+		GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
+		ContextUtil contextUtil = Mockito.spy(new ContextUtil());
+		Mockito.doReturn(new Integer(1)).when(contextUtil).getCurrentWorkbenchUserId();
+		Project project = new Project();
+		project.setUniqueID("1234567890");
+		Mockito.doReturn(project).when(contextUtil).getProjectInContext();
+		UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
+		List<String> response = new ArrayList<String>();
+		response.add("1");
+		response.add("2");
+		Mockito.doReturn(response).when(manager).getUserProgramTreeStateByUserIdProgramUuidAndType(Mockito.anyInt(), Mockito.anyString(), Mockito.anyString());				
+		
+		germplasmTreeController.setUserProgramStateDataManager(manager);
+		germplasmTreeController.setContextUtil(contextUtil);
+		String returnData = germplasmTreeController.retrieveTreeState(ListTreeState.GERMPLASM_LIST.toString());
+		
+		Assert.assertEquals("Should return [1, 2]", "[\"1\",\"2\"]", returnData);
 	}
 	
 	private CrossSetting createCrossSetting(){

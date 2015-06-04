@@ -910,8 +910,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/save/state/{type}")
 	public String saveTreeState(
-			@PathVariable String type,
-			Model model, HttpServletRequest request, @RequestParam(value = "expandedNodes[]") String[] expandedNodes) {
+			@PathVariable String type, @RequestParam(value = "expandedNodes[]") String[] expandedNodes) {
 		LOG.debug("Save the debug nodes");
 		List<String> states = new ArrayList<String>();
 		String status = "OK";		
@@ -922,6 +921,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			userProgramStateDataManager.saveOrUpdateUserProgramTreeState(contextUtil.getCurrentWorkbenchUserId(), contextUtil.getProjectInContext().getUniqueID(), type, states);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
+			status = "ERROR";	
 		}
 		return status;
 	}
@@ -929,8 +929,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/retrieve/state/{type}", method = RequestMethod.GET)
 	public String retrieveTreeState(
-			@PathVariable String type,
-			Model model, HttpSession session) {
+			@PathVariable String type) {
 		
 		List<String> stateList = new ArrayList<String>();
 		try {
@@ -952,6 +951,14 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	protected void setUserSelection(UserSelection userSelection) {
 		this.userSelection = userSelection;
+	}
+
+	public void setUserProgramStateDataManager(UserProgramStateDataManager userProgramStateDataManager) {
+		this.userProgramStateDataManager = userProgramStateDataManager;
+	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 
 }

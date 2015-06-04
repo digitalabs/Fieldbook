@@ -2910,12 +2910,17 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 		backdrop : 'static',
 		keyboard : true
 	});
+	$('#studyTreeModal').off('hide.bs.modal');
+	$('#studyTreeModal').on('hide.bs.modal', function() {
+			TreePersist.saveStudyTreeState(false, '#studyTree');
+	});
 	choosingType = type;
 	if(isNursery()){
 		$('.fbk-study-tree-title.nursery').removeClass('fbk-hide');
 	}else{
 		$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
 	}
+	TreePersist.preLoadStudyTreeState(false, '#studyTree');
 }
 
 function isNursery(){

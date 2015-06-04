@@ -110,6 +110,7 @@
 			}
 			function displayGermplasmListTreeTable(divId) {
 				'use strict';
+				TreePersist.saveGermplasmTreeState(true, '#'+divId);
 				$.ajax({
 					url : '/Fieldbook/ListTreeManager/loadInitGermplasmTreeTable',
 					type : 'GET',

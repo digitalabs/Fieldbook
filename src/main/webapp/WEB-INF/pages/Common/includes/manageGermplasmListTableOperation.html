@@ -220,6 +220,7 @@
 			$('#page-import-message-modal').html('');
 			additionalLazyLoadUrl = '/0';
 			$('.popover').hide();
+			TreePersist.preLoadGermplasmTreeState(true, '#germplasmTreeTable');
 		}
 		function folderChangeKeypress(event, type){
 			'use strict';

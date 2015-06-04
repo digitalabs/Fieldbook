@@ -21,6 +21,7 @@ import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
@@ -35,6 +36,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
+import org.generationcp.middleware.manager.api.UserProgramStateDataManager;
 import org.generationcp.middleware.pojos.*;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
@@ -49,6 +51,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -76,6 +79,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	public static final String GERMPLASM_LIST_TYPE_ADVANCE = "advance";
 	public static final String GERMPLASM_LIST_TYPE_CROSS = "cross";
+	
 	/**
 	 * The Constant BATCH_SIZE.
 	 */
@@ -112,6 +116,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private UserSelection userSelection;
 	@Resource
 	public ContextUtil contextUtil;
+	@Resource
+	private UserProgramStateDataManager userProgramStateDataManager;
 
 	/**
 	 * Load initial germplasm tree.
@@ -899,6 +905,40 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			LOG.error(e.getMessage(), e);
 		}
 		return resultsMap;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/save/state/{type}")
+	public String saveTreeState(
+			@PathVariable String type,
+			Model model, HttpServletRequest request, @RequestParam(value = "expandedNodes[]") String[] expandedNodes) {
+		LOG.debug("Save the debug nodes");
+		List<String> states = new ArrayList<String>();
+		String status = "OK";		
+		try {
+			for(int index = 0 ; index < expandedNodes.length ; index++){
+				states.add(expandedNodes[index]);
+			}			
+			userProgramStateDataManager.saveOrUpdateUserProgramTreeState(contextUtil.getCurrentWorkbenchUserId(), contextUtil.getProjectInContext().getUniqueID(), type, states);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return status;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/retrieve/state/{type}", method = RequestMethod.GET)
+	public String retrieveTreeState(
+			@PathVariable String type,
+			Model model, HttpSession session) {
+		
+		List<String> stateList = new ArrayList<String>();
+		try {
+			stateList = userProgramStateDataManager.getUserProgramTreeStateByUserIdProgramUuidAndType(contextUtil.getCurrentWorkbenchUserId(), contextUtil.getProjectInContext().getUniqueID(), type);
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return super.convertObjectToJson(stateList);
 	}
 
 	@Override

@@ -75,6 +75,19 @@ var ImportDesign = {
 
 		},
 
+        hideDesignMapPopup : function() {
+            var deferred = $.Deferred();
+
+            setTimeout(function() {
+                $('#designMapModal').one('hidden.bs.modal',function() {
+                    deferred.resolve();
+                }).modal('hide');
+
+            },300);
+
+            return deferred.promise();
+        },
+
 		initDesignMapPopup : function() {
 			//get your angular element
 			var elem = angular.element('#designMapModal .modal-content[ng-controller=designImportCtrl]');
@@ -98,27 +111,17 @@ var ImportDesign = {
 				scope.$apply();
 			});
 		},
-		
+
 		showReviewPopup : function() {
-			$('#designMapModal').one('hidden.bs.modal',function() {
-				setTimeout(function() {
-					$('#reviewDesignModal').modal({ backdrop: 'static', keyboard: true });
-					ImportDesign.showReviewDesignData();
-				},200);
-			}).modal('hide');
+            return ImportDesign.showReviewDesignData().then(function(html) {
+                $('#reviewDesignModal').one('shown.bs.modal',function() {
+                        $('#divDesignMeasurements').html(html);
+                }).modal({ backdrop: 'static', keyboard: true });
+            });
 		},
 		
 		showReviewDesignData : function() {
-					
-			$.ajax(
-				{ 
-					url: '/Fieldbook/DesignImport/showDetails',
-					type: 'GET',
-					success: function(html) {
-						$('#divDesignMeasurements').html(html);
-					}
-			});
-
+			return $.get('/Fieldbook/DesignImport/showDetails');
 		},
 
 		nurseryEnvironmentDetails : {

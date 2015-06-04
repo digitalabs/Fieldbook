@@ -15,6 +15,10 @@
             var onValidate = DesignMappingService.validateMapping();
 
             onValidate.then(function(result) {
+                if (result.cancelDesignImport) {
+                    return;
+                }
+
                 if (!result.success) {
                     createErrorNotification(Messages.DESIGN_MAPPING_ERROR_HEADER,result.error);
                     return;
@@ -218,7 +222,7 @@
             };
         }]);
 
-    app.service('DesignMappingService',['$http','$q','_','ImportDesign',function($http,$q,_,ImportDesign) {
+    app.service('DesignMappingService',['$http','$q','_','ImportDesign','Messages',function($http,$q,_,ImportDesign,Messages) {
 
             function validateMapping() {
 
@@ -273,9 +277,50 @@
                 var envCnt = _isNursery() ? 1 : ImportDesign.trialManagerCurrentData().environments.environments.length;
 
                 return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping/' + envCnt ,postData).then(function(result) {
-                    return result.data;
+                    var deferred = $q.defer();
+                    // note that angular $q promises is different from jquery's implem therefore we need to convert it to angular's defer()
+                    ImportDesign.hideDesignMapPopup().then(function() {
+                        deferred.resolve(result);
+                    });
+                    return deferred.promise;
+                }).then(function(result) {
+                    return checkMeasurementsConflict(result.data);
                 });
+            }
 
+            function checkMeasurementsConflict(result) {
+               var deferred = $q.defer();
+
+               if (result.hasConflict) {
+                   // NOTE: by default, bootbox.confirm local is set to EN
+                   bootbox.dialog({
+                       title: Messages.DESIGN_IMPORT_CONFLICT_ALERT_HEADER,
+                       message: Messages.DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE,
+                       closeButton: false,
+                       onEscape: false,
+                       buttons: {
+                           yes: {
+                               label: Messages.YES,
+                               className: 'btn-primary',
+                               callback: function () {
+                                   deferred.resolve(result);
+                               }
+                           },
+                           no: {
+                               label: Messages.NO,
+                               className: 'btn-default',
+                               callback: function () {
+                                   result.cancelDesignImport = true;
+                                   deferred.resolve(result);
+                               }
+                           }
+                       }
+                   });
+               } else {
+                   deferred.resolve(result);
+               }
+
+               return deferred.promise;
             }
 
             function getDistinctNurseryTypes() {

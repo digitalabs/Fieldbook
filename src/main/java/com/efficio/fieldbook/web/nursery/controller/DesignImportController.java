@@ -212,8 +212,14 @@ public class DesignImportController extends SettingsController {
 						this.messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH));
 			}
 
-			resultsMap.put("success", Boolean.TRUE);
+			boolean hasConflict = userSelection.getWorkbook() != null && hasConflict(
+					designImportService.getDesignMeasurementVariables(userSelection.getTemporaryWorkbook(),
+									userSelection.getDesignImportData()),
+					new HashSet<>(userSelection.getWorkbook().getMeasurementDatasetVariables()));
 
+
+			resultsMap.put("success", Boolean.TRUE);
+			resultsMap.put("hasConflict",hasConflict);
 		} catch (MiddlewareQueryException | DesignValidationException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
@@ -224,6 +230,26 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return resultsMap;
+	}
+
+	protected boolean hasConflict(Set<MeasurementVariable> setA,Set<MeasurementVariable> setB) {
+		Set<MeasurementVariable> a;
+		Set<MeasurementVariable> b;
+
+		if (setA.size() <= setB.size()) {
+			a = setA;
+			b = setB;
+		} else {
+			a = setB;
+			b = setA;
+		}
+
+		for (MeasurementVariable e : a) {
+			if (b.contains(e)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected void updateDesignMapping(Map<String, List<DesignHeaderItem>> mappedHeaders) throws MiddlewareQueryException {
@@ -253,10 +279,10 @@ public class DesignImportController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/generate", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	public Map<String, Object> showMeasurements(@RequestBody EnvironmentData environmentData) {
+	public Map<String, Object> generateMeasurements(@RequestBody EnvironmentData environmentData) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
-		
+
 		this.processEnvironmentData(environmentData);
 		
 		try {
@@ -268,7 +294,7 @@ public class DesignImportController extends SettingsController {
 			Set<MeasurementVariable> measurementVariables;
 			Set<StandardVariable> expDesignVariables;
 			Set<MeasurementVariable> experimentalDesignMeasurementVariables;
-			
+
 			measurementRows = designImportService.generateDesign(workbook, designImportData,
 					environmentData);
 			measurementVariables = designImportService.getDesignMeasurementVariables(workbook,

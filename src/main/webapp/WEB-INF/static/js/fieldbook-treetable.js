@@ -4,6 +4,9 @@ function expandGermplasmListInTreeTable(id) {
 	expandGermplasmListNode(node);
 }
 function expandGermplasmListNode(node) {
+	if(typeof node === "undefined"){
+		return;
+	}
 	$.ajax({
 	 	async: false,
 	 	url: '/Fieldbook/ListTreeManager/expandGermplasmListFolder/'+node.id

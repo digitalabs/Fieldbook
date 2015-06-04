@@ -334,6 +334,12 @@
           scope="request">
         <aop:scoped-proxy/>
     </bean>
+    
+    <bean id="userProgramStateDataManager" factory-bean="managerFactory"
+          factory-method="getUserProgramStateDataManager"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
 
     <bean id="inventoryDataManager" factory-bean="managerFactory"
           factory-method="getInventoryDataManager" scope="request">

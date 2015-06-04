@@ -10,6 +10,10 @@ var SaveAdvanceList = {};
 	SaveAdvanceList.initializeGermplasmListTree = function() {
 		displayGermplasmListTree('germplasmFolderTree', true, 1);
 		changeBrowseGermplasmButtonBehavior(false);
+		$('#saveListTreeModal').off('hide.bs.modal');
+		$('#saveListTreeModal').on('hide.bs.modal', function() {
+			TreePersist.saveGermplasmTreeState(false, '#germplasmFolderTree');
+		});
 		$('#saveListTreeModal').on('hidden.bs.modal', function() {
 			$('#germplasmFolderTree').dynatree('getTree').reload();
 			changeBrowseGermplasmButtonBehavior(false);
@@ -35,7 +39,10 @@ var SaveAdvanceList = {};
 				success: function(html) {
 					$('#saveListTreeModal').data('is-save-crosses', '0');
 					$('#saveGermplasmRightSection').html(html);
-					setTimeout(function(){$('#saveListTreeModal').modal({ backdrop: 'static', keyboard: true });}, 300);
+					setTimeout(function(){
+						$('#saveListTreeModal').modal({ backdrop: 'static', keyboard: true });
+						TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree');
+						}, 300);
 					//we preselect the program lists
 					if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LISTS') !== null){
 						germplasmTreeNode.getNodeByKey('LISTS').activate();

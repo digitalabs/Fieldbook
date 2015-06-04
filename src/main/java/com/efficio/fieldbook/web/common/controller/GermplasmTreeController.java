@@ -918,7 +918,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			for(int index = 0 ; index < expandedNodes.length ; index++){
 				states.add(expandedNodes[index]);
 			}			
-			userProgramStateDataManager.saveOrUpdateUserProgramTreeState(contextUtil.getCurrentWorkbenchUserId(), contextUtil.getProjectInContext().getUniqueID(), type, states);
+			userProgramStateDataManager.saveOrUpdateUserProgramTreeState(contextUtil.getCurrentWorkbenchUserId(), contextUtil.getCurrentProgramUUID(), type, states);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 			status = "ERROR";	
@@ -933,7 +933,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		
 		List<String> stateList = new ArrayList<String>();
 		try {
-			stateList = userProgramStateDataManager.getUserProgramTreeStateByUserIdProgramUuidAndType(contextUtil.getCurrentWorkbenchUserId(), contextUtil.getProjectInContext().getUniqueID(), type);
+			stateList = userProgramStateDataManager.getUserProgramTreeStateByUserIdProgramUuidAndType(contextUtil.getCurrentWorkbenchUserId(), contextUtil.getCurrentProgramUUID(), type);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
 		}

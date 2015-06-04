@@ -199,9 +199,7 @@ public class GermplasmTreeControllerTest {
 		GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
 		ContextUtil contextUtil = Mockito.spy(new ContextUtil());
 		Mockito.doReturn(new Integer(1)).when(contextUtil).getCurrentWorkbenchUserId();
-		Project project = new Project();
-		project.setUniqueID("1234567890");
-		Mockito.doReturn(project).when(contextUtil).getProjectInContext();
+		Mockito.doReturn("1234567890").when(contextUtil).getCurrentProgramUUID();
 		UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
 		germplasmTreeController.setUserProgramStateDataManager(manager);
 		germplasmTreeController.setContextUtil(contextUtil);
@@ -215,9 +213,7 @@ public class GermplasmTreeControllerTest {
 		GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
 		ContextUtil contextUtil = Mockito.spy(new ContextUtil());
 		Mockito.doReturn(new Integer(1)).when(contextUtil).getCurrentWorkbenchUserId();
-		Project project = new Project();
-		project.setUniqueID("1234567890");
-		Mockito.doReturn(project).when(contextUtil).getProjectInContext();
+		Mockito.doReturn("1234567890").when(contextUtil).getCurrentProgramUUID();
 		UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
 		List<String> response = new ArrayList<String>();
 		response.add("1");

@@ -4,210 +4,206 @@
 
 /*global angular*/
 /*global showBaselineTraitDetailsModal*/
-(function () {
-    'use strict';
+(function() {
+	'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp');
+	var manageTrialApp = angular.module('manageTrialApp');
 
-    manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q', '$http',
-        function ($scope, TrialManagerDataService, _, $q, $http) {
+	manageTrialApp.controller('TreatmentCtrl', ['$scope', 'TrialManagerDataService', '_', '$q', '$http',
+		function($scope, TrialManagerDataService, _, $q, $http) {
 
+			$scope.disableTreatment = TrialManagerDataService.trialMeasurement.hasMeasurement;
 
-        $scope.disableTreatment = TrialManagerDataService.trialMeasurement.hasMeasurement;
+			$scope.settings = TrialManagerDataService.settings.treatmentFactors;
+			$scope.data = TrialManagerDataService.currentData.treatmentFactors;
 
-        $scope.settings = TrialManagerDataService.settings.treatmentFactors;
-        $scope.data = TrialManagerDataService.currentData.treatmentFactors;
+			// watch $scope.settings, since we are sure that $scope.settings is an orderedhash even empty, we could just
+			// use $watchCollection, for every added change we retrieve the 'AMOUNT ' pairs dynamically. also creat a
+			// store to $scope.currentData for the variable levels.
 
-        // watch $scope.settings, since we are sure that $scope.settings is an orderedhash even empty, we could just
-        // use $watchCollection, for every added change we retrieve the 'AMOUNT ' pairs dynamically. also creat a
-        // store to $scope.currentData for the variable levels.
-        
-        $scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
+			$scope.trialMeasurement = TrialManagerDataService.trialMeasurement;
 
-        TrialManagerDataService.onUpdateSettings('treatmentFactors', function(newValue) {
-            TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
-        });
+			TrialManagerDataService.onUpdateSettings('treatmentFactors', function(newValue) {
+				TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
+			});
 
-        // map containing the treatment factor level pairs
-        TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
+			// map containing the treatment factor level pairs
+			TrialManagerDataService.specialSettings.treatmentLevelPairs = $scope.settings.treatmentLevelPairs;
 
-        $scope.generateTreatmentLevelPair = function (key) {
-            var deferred = $q.defer();
-            TrialManagerDataService.retrieveVariablePairs(key).then(function (data) {
-                $scope.settings.treatmentLevelPairs[key] = new angular.OrderedHash();
-                angular.forEach(data, function (val1) {
-                    $scope.settings.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
-                });
+			$scope.generateTreatmentLevelPair = function(key) {
+				var deferred = $q.defer();
+				TrialManagerDataService.retrieveVariablePairs(key).then(function(data) {
+					$scope.settings.treatmentLevelPairs[key] = new angular.OrderedHash();
+					angular.forEach(data, function(val1) {
+						$scope.settings.treatmentLevelPairs[key].push(val1.variable.cvTermId, val1);
+					});
 
-                deferred.resolve();
-            });
+					deferred.resolve();
+				});
 
-            return deferred.promise;
-        };
-        
-        $scope.onAddVariable = function(result) {
+				return deferred.promise;
+			};
 
-            angular.forEach(result, function (val, key) {
-                // there's no existing treatmentLevelPair
-                if (!$scope.settings.treatmentLevelPairs[key]) {
-                    $scope.generateTreatmentLevelPair(key).then(function() {
-                        $scope.data.currentData[key] = {
-                            levels: 0,
-                            labels: [],
-                            variableId: 0
-                        };
-                    });
-                } else {
-                    $scope.data.currentData[key] = {
-                        levels: 0,
-                        labels: [],
-                        variableId: 0
-                    };
-                }
-            });
+			$scope.onAddVariable = function(result) {
 
-            TrialManagerDataService.indicateUnappliedChangesAvailable();
-        };
+				angular.forEach(result, function(val, key) {
+					// there's no existing treatmentLevelPair
+					if (!$scope.settings.treatmentLevelPairs[key]) {
+						$scope.generateTreatmentLevelPair(key).then(function() {
+							$scope.data.currentData[key] = {
+								levels: 0,
+								labels: [],
+								variableId: 0
+							};
+						});
+					} else {
+						$scope.data.currentData[key] = {
+							levels: 0,
+							labels: [],
+							variableId: 0
+						};
+					}
+				});
 
-        $scope.invalidBlockSizeMsg = '<b class="text-danger">Invalid Block Size</b>';
-        $scope.addVariable = function () {
-            return !TrialManagerDataService.trialMeasurement.hasMeasurement;
-        };
+				TrialManagerDataService.indicateUnappliedChangesAvailable();
+			};
 
-        $scope.generateDropdownList = function(key) {
-            if (!$scope.settings.treatmentLevelPairs[key]) {
-                return [];
-            } else {
-                var options = _.filter($scope.settings.treatmentLevelPairs[key].vals(), function (entry) {
-                    var found = false;
-                    angular.forEach($scope.data.currentData, function (value, key2) {
-                        if (key == key2) {
-                            return true;
-                        }
+			$scope.invalidBlockSizeMsg = '<b class="text-danger">Invalid Block Size</b>';
+			$scope.addVariable = function() {
+				return !TrialManagerDataService.trialMeasurement.hasMeasurement;
+			};
 
-                        if (!value) {
-                            return true;
-                        } else if (value.variableId == entry.variable.cvTermId) {
-                            found = true;
-                            return false;
-                        } else if (value.variableId.variable && value.variableId.variable.cvTermId == entry.variable.cvTermId) {
-                            found = true;
-                            return false;
-                        }
-                    });
-                    return !found;
-                });
+			$scope.generateDropdownList = function(key) {
+				if (!$scope.settings.treatmentLevelPairs[key]) {
+					return [];
+				} else {
+					var options = _.filter($scope.settings.treatmentLevelPairs[key].vals(), function(entry) {
+						var found = false;
+						angular.forEach($scope.data.currentData, function(value, key2) {
+							if (key == key2) {
+								return true;
+							}
 
-                return options;
-            }
-        };
+							if (!value) {
+								return true;
+							} else if (value.variableId == entry.variable.cvTermId) {
+								found = true;
+								return false;
+							} else if (value.variableId.variable && value.variableId.variable.cvTermId == entry.variable.cvTermId) {
+								found = true;
+								return false;
+							}
+						});
+						return !found;
+					});
 
-        $scope.generateDropdownOption = function (key) {
+					return options;
+				}
+			};
 
-            var options = {
-                data: function () {
-                    return {
-                        results : $scope.generateDropdownList(key)
-                    };
-                },
+			$scope.generateDropdownOption = function(key) {
 
-                formatSelection: function (value) {
-                    return value.variable.name;
-                },
+				var options = {
+					data: function() {
+						return {
+							results: $scope.generateDropdownList(key)
+						};
+					},
 
-                formatResult: function (value) {
-                    return value.variable.name;
-                },
+					formatSelection: function(value) {
+						return value.variable.name;
+					},
 
-                minimumResultsForSearch: -1,
-                id: function (value) {
-                    return value.variable.cvTermId;
-                },
-                idAsValue : true
-            };
+					formatResult: function(value) {
+						return value.variable.name;
+					},
 
-            if ($scope.data.currentData[key] && $scope.data.currentData[key].variableId) {
-                options.initSelection = function(element, callback) {
-                    angular.forEach($scope.generateDropdownList(key), function(value) {
-                        if (value.variable.cvTermId === $scope.data.currentData[key].variableId) {
-                            callback(value);
-                        }
-                    });
-                };
-            }
+					minimumResultsForSearch: -1,
+					id: function(value) {
+						return value.variable.cvTermId;
+					},
+					idAsValue: true
+				};
 
-            return options;
-        };
+				if ($scope.data.currentData[key] && $scope.data.currentData[key].variableId) {
+					options.initSelection = function(element, callback) {
+						angular.forEach($scope.generateDropdownList(key), function(value) {
+							if (value.variable.cvTermId === $scope.data.currentData[key].variableId) {
+								callback(value);
+							}
+						});
+					};
+				}
 
-        // TODO : fix the select2 initial selection so that this is no longer necessary
-        $scope.retrievePairDetail = function(key) {
-            if ($scope.data.currentData[key]) {
-                var current = $scope.data.currentData[key];
-                var pairId;
-                if (current.variableId) {
-                    if (current.variableId.variable) {
-                        pairId = current.variableId.variable.cvTermId;
-                        $scope.data.currentData[key].variableId = current.variableId.variable.cvTermId;
-                    } else if (! isNaN(current.variableId)){
-                        pairId = current.variableId;
-                    }
-                }
+				return options;
+			};
 
-                if (pairId) {
-                    return $scope.settings.treatmentLevelPairs[key].val(pairId);
-                }
+			// TODO : fix the select2 initial selection so that this is no longer necessary
+			$scope.retrievePairDetail = function(key) {
+				if ($scope.data.currentData[key]) {
+					var current = $scope.data.currentData[key];
+					var pairId;
+					if (current.variableId) {
+						if (current.variableId.variable) {
+							pairId = current.variableId.variable.cvTermId;
+							$scope.data.currentData[key].variableId = current.variableId.variable.cvTermId;
+						} else if (! isNaN(current.variableId)) {
+							pairId = current.variableId;
+						}
+					}
 
-            }
-        };
+					if (pairId) {
+						return $scope.settings.treatmentLevelPairs[key].val(pairId);
+					}
 
-        $scope.isDisableLevel = function(key) {
-            return !($scope.data.currentData[key] && $scope.data.currentData[key].variableId);
-        };
+				}
+			};
 
-        $scope.performDelete = function(key) {
-            var numericKey = parseInt(key, 10);
-            $http.post('/Fieldbook/manageSettings/deleteTreatmentFactorVariable', {
-                levelID : numericKey,
-                valueID : $scope.data.currentData[key].variableId ? $scope.data.currentData[key].variableId : 0
-            }).then(function () {
-                $scope.settings.details.remove(key);
-                delete $scope.data.currentData[key];
-                TrialManagerDataService.indicateUnappliedChangesAvailable();
-            });
-        };
+			$scope.isDisableLevel = function(key) {
+				return !($scope.data.currentData[key] && $scope.data.currentData[key].variableId);
+			};
 
-        $scope.onLabelChange = function () {
-            TrialManagerDataService.indicateUnappliedChangesAvailable();
-        };
+			$scope.performDelete = function(key) {
+				var numericKey = parseInt(key, 10);
+				$http.post('/Fieldbook/manageSettings/deleteTreatmentFactorVariable', {
+					levelID: numericKey,
+					valueID: $scope.data.currentData[key].variableId ? $scope.data.currentData[key].variableId : 0
+				}).then(function() {
+					$scope.settings.details.remove(key);
+					delete $scope.data.currentData[key];
+					TrialManagerDataService.indicateUnappliedChangesAvailable();
+				});
+			};
 
-        $scope.onLevelChange = function(key,levels) {
-            if (isNaN(levels)) {
-                return;
-            }
+			$scope.onLabelChange = function() {
+				TrialManagerDataService.indicateUnappliedChangesAvailable();
+			};
 
-            levels = parseInt(levels);
+			$scope.onLevelChange = function(key, levels) {
+				if (isNaN(levels)) {
+					return;
+				}
 
-            var diff = Math.abs($scope.data.currentData[key].labels.length - levels);
+				levels = parseInt(levels);
 
-            // remove items if no of levels is less thant array
-            if ($scope.data.currentData[key].labels.length > levels) {
-                while ($scope.data.currentData[key].labels.length > levels) {
-                    $scope.data.currentData[key].labels.pop();
-                }
-            }
+				var diff = Math.abs($scope.data.currentData[key].labels.length - levels);
 
-            // add items if no of levels is more thant array
-            else {
-                for (var j = 0; j < diff; j++) {
-                    $scope.data.currentData[key].labels.push(null);
-                }
-            }
+				// remove items if no of levels is less thant array
+				if ($scope.data.currentData[key].labels.length > levels) {
+					while ($scope.data.currentData[key].labels.length > levels) {
+						$scope.data.currentData[key].labels.pop();
+					}
+				} else {
+				// add items if no of levels is more thant array
+					for (var j = 0; j < diff; j++) {
+						$scope.data.currentData[key].labels.push(null);
+					}
+				}
 
-            TrialManagerDataService.indicateUnappliedChangesAvailable();
+				TrialManagerDataService.indicateUnappliedChangesAvailable();
 
-        }; // end 
+			};
 
+		}]);
 
-    }]);
-
-})();
+	})();

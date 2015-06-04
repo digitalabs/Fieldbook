@@ -18,7 +18,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 	var VARIABLE_SELECT_EVENT = 'variable-select',
 		MODAL_SELECTOR = '.vs-modal',
-        TREATMENT_FACTOR_GROUP = 5,
+		TREATMENT_FACTOR_GROUP = 5,
 
 		modalHeaderSelector = '.modal-header',
 		variableNameContainerSelector = '.vs-variable-name-container',
@@ -226,7 +226,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._onHideCallback = groupData.onHideCallback;
 		this._excludedProperties = groupData.excludedProperties || [];
 
-		this._$modal.one('hidden.bs.modal', $.proxy(this._onHidden,this));
+		this._$modal.one('hidden.bs.modal', $.proxy(this._onHidden, this));
 
 		// Append title
 		title = $('<h4 class="modal-title" id="vs-modal-title">' + translations.label + '</h4>');
@@ -302,7 +302,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			filteredProperties;
 
 		// If we know of aliases for any of the variables we're loading, set them now
-        // DMV : leverage existing loop to set property used for displaying treatment factor specific UI
+		// DMV : leverage existing loop to set property used for displaying treatment factor specific UI
 		for (i = 0; i < variables.length; i++) {
 			variableId = variables[i].id;
 			selectedVariableName = selectedVariables[variableId];
@@ -318,9 +318,9 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				variables[i].selected = true;
 			}
 
-            if (this._group === TREATMENT_FACTOR_GROUP && !variables[i].hasPair) {
-                variables[i].showTreatmentFactorValidationMessage = true;
-            }
+			if (this._group === TREATMENT_FACTOR_GROUP && !variables[i].hasPair) {
+				variables[i].showTreatmentFactorValidationMessage = true;
+			}
 		}
 
 		// Update our saved property list to reflect our new knowledge of aliases and which variables are selected
@@ -344,7 +344,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 			var groupId = this._group,
 				url = '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&classId=' + classId;
-			if(!isNursery()){
+			if (!isNursery()) {
 				url += '&useTrialFiltering=true';
 			}
 			$.getJSON(url, $.proxy(function(data) {
@@ -396,7 +396,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		var container = selectButton.parent('.vs-variable-select-container'),
 			iconContainer = selectButton.children('.glyphicon'),
 			generalErrorMessage = this._translations.generalAjaxError,
-            variableSelectedMessage = this._translations.variableSelectedMessage,
+			variableSelectedMessage = this._translations.variableSelectedMessage,
 			variableName,
 			selectedVariable,
 			variableId,
@@ -420,14 +420,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		}
 
 		// remove the click functionality to avoid selecting twice
-        selectButton.off('click');
-        selectButton.on('click', function() {
-            showAlertMessage('', variableSelectedMessage);
-        });
-        selectButton.attr('title', variableSelectedMessage);
-        selectButton.removeClass('vs-variable-select');
-        selectButton.addClass('vs-variable-button');
-
+		selectButton.off('click');
+		selectButton.on('click', function() {
+			showAlertMessage('', variableSelectedMessage);
+		});
+		selectButton.attr('title', variableSelectedMessage);
+		selectButton.removeClass('vs-variable-select');
+		selectButton.addClass('vs-variable-button');
 
 		variableId = _convertVariableId(selectedVariable.id);
 
@@ -475,8 +474,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 						responseData: data
 					});
 
-
-					if(data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0].possibleValues.length == 0){
+					if (data[0].variable.dataTypeId === 1130 &&  data[0].variable.widgetType === 'DROPDOWN' && data[0].possibleValues.length == 0) {
 						showAlertMessage('', variableNoValidValueNotification);
 					}
 				}, this),
@@ -635,7 +633,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 * Loads the selected property.
 	 *
 	 * @param {string} propertyId the id of the property to load.
-	 */
 	VariableSelection.prototype._loadProperty = function(propertyId) {
 
 		var property,
@@ -694,7 +691,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			this._onHideCallback();
 		}
 	};
-
 
 	return VariableSelection;
 

@@ -34,8 +34,7 @@ function checkMethod() {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
 			showErrorMessage('page-advance-modal-message', noMethodVariatesError);
-		}
-		else {
+		} else {
 			displaySectionsPerMethodVariateValues();
 		}
 	}
@@ -46,17 +45,15 @@ function displaySectionsPerMethodVariateValues() {
 	var id = $('#methodVariateId').val();
 	if (id !== '') {
 		$.ajax({
-			url : '/Fieldbook/NurseryManager/advance/nursery/checkMethodTypeMode/' + id,
-			type : 'GET',
-			cache : false,
-			success : function(data) {
+			url: '/Fieldbook/NurseryManager/advance/nursery/checkMethodTypeMode/' + id,
+			type: 'GET',
+			cache: false,
+			success: function(data) {
 				if (data === 'LINE') {
 					$('.lines-section').css('display', 'block');
-				}
-				else if (data === 'BULK') {
+				} else if (data === 'BULK') {
 					$('.bulk-section').css('display', 'block');
-				}
-				else if (data === 'MIXED') {
+				} else if (data === 'MIXED') {
 					$('.lines-section').css('display', 'block');
 					$('.bulk-section').css('display', 'block');
 				}
@@ -265,9 +262,9 @@ function replacePossibleJsonValues(favoriteJson, allJson, index) {
 
 function setComboValues(suggestions_obj, id, name) {
 	var dataVal = {
-		id : '',
-		text : '',
-		description : ''
+		id: '',
+		text: '',
+		description: ''
 	}; // default value
 	if (id != '') {
 		var count = 0;
@@ -288,17 +285,17 @@ function initializeStandardVariableSearch(variables) {
 	var stdVariableSuggestions_obj = [];
 	$.each(variables, function(index, value) {
 		stdVariableSuggestions_obj.push({
-			'id' : value.id,
-			'text' : value.name
+			'id': value.id,
+			'text': value.name
 		});
 	});
 
 	stdVariableSuggestions_obj = sortByKey(stdVariableSuggestions_obj, 'text');
 
 	$('#stdVarSearch').select2({
-		query : function(query) {
+		query: function(query) {
 			var data = {
-				results : stdVariableSuggestions_obj
+				results: stdVariableSuggestions_obj
 			};
 			// return the array that matches
 			data.results = $.grep(data.results, function(item, index) {
@@ -307,8 +304,8 @@ function initializeStandardVariableSearch(variables) {
 			});
 			if (data.results.length === 0) {
 				data.results.unshift({
-					id : query.term,
-					text : query.term
+					id: query.term,
+					text: query.term
 				});
 			}
 
@@ -319,8 +316,8 @@ function initializeStandardVariableSearch(variables) {
 		getStandardVariableDetailsModal($('#stdVarSearch').select2('data').id);
 	});
 	var dataVal = {
-		'id' : '',
-		'text' : ''
+		'id': '',
+		'text': ''
 	};
 	$('#stdVarSearch').select2('data', dataVal).trigger('change');
 }
@@ -330,11 +327,11 @@ function getStandardVariableDetailsModal(id) {
 	if (id !== '') {
 		$
 				.ajax({
-					url : '/Fieldbook/NurseryManager/createNursery/showVariableDetails/'
+					url: '/Fieldbook/NurseryManager/createNursery/showVariableDetails/'
 							+ id,
-					type : 'GET',
-					cache : false,
-					success : function(data) {
+					type: 'GET',
+					cache: false,
+					success: function(data) {
 						$('#var-info').slideDown('slow');
 						populateAttributeFields($.parseJSON(data));
 					}
@@ -367,17 +364,17 @@ function checkIfEmpty(value) {
 
 function hideDummyRow(tableId) {
 	'use strict';
-	if($('#'+tableId).find('.dummy-col').parent().length !== 0){
-		$('#'+tableId).find('.dummy-col').parent().remove();
+	if ($('#' + tableId).find('.dummy-col').parent().length !== 0) {
+		$('#' + tableId).find('.dummy-col').parent().remove();
 	}
 }
 
 function showDummyRow(tableId) {
 	var dummyRow = '<tr class="dummy-row"> ' +
-                	'<td class="even dummy-col">&nbsp;</td> ' +
-                	'<td class="even">&nbsp;</td> ' +
-                	'<td class="even">&nbsp;</td> </tr>';
-	$('#'+tableId+' tbody').append(dummyRow);
+					'<td class="even dummy-col">&nbsp;</td> ' +
+					'<td class="even">&nbsp;</td> ' +
+					'<td class="even">&nbsp;</td> </tr>';
+	$('#' + tableId + ' tbody').append(dummyRow);
 }
 
 function getLastRowIndex(name, hasTBody) {
@@ -406,8 +403,8 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		// include delete button if variable is deletable
 		if (settingDetail.deletable) {
 			isDelete = '<input class="remove-indv-btn"'
-				+ ' type="checkbox" data-variable-type="'+varType+'"'
-				+ ' data-cv-term-id="'+settingDetail.variable.cvTermId+'"/>';
+				+ ' type="checkbox" data-variable-type="' + varType + '"'
+				+ ' data-cv-term-id="' + settingDetail.variable.cvTermId + '"/>';
 		}
 
 		// create html elements dynamically
@@ -448,13 +445,13 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		}
 		newRow = newRow + inputHtml;
 
-        // we want to keep track of location/method checkbox id
-        var locMethodCbxId = null;
+		// we want to keep track of location/method checkbox id
+		var locMethodCbxId = null;
 
 		if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
 				parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
 			// show favorite method
-            locMethodCbxId = name + ctr;
+			locMethodCbxId = name + ctr;
 			newRow = newRow
 					+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
 					+ name
@@ -493,8 +490,8 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 		} else if (settingDetail.variable.cvTermId == locationId) {
 			// show favorite location
-            locMethodCbxId = name + ctr;
-            newRow = newRow
+			locMethodCbxId = name + ctr;
+			newRow = newRow
 					+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
 					+ name
 					+ ctr
@@ -538,8 +535,8 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 					+ JSON.stringify(settingDetail.possibleValues)
 					+ '</div></div>';
 		}
-        // the element will be appended to the dom
-		if(tableId === 'nurseryLevelSettings-dev' || tableId === 'nurseryConditionsSettings') {
+		// the element will be appended to the dom
+		if (tableId === 'nurseryLevelSettings-dev' || tableId === 'nurseryConditionsSettings') {
 			$('#' + tableId + ' .remove-all-section').before(newRow);
 		} else {
 			$('#' + tableId).append(newRow);
@@ -561,12 +558,12 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 			}
 		}
 
-        // after the combo box have been added to the DOM
-        // if locMethodCbxId is not null lets toggle it
-        // lets make sure that we have a favorite items before we toggle the checkbox
-        if (!!locMethodCbxId && settingDetail.possibleValuesFavorite.length > 0 ) {
-            $('input[type=checkbox][id*='+locMethodCbxId + ']').click();
-        }
+		// after the combo box have been added to the DOM
+		// if locMethodCbxId is not null lets toggle it
+		// lets make sure that we have a favorite items before we toggle the checkbox
+		if (!!locMethodCbxId && settingDetail.possibleValuesFavorite.length > 0) {
+			$('input[type=checkbox][id*=' + locMethodCbxId + ']').click();
+		}
 
 		ctr++;
 	});
@@ -577,12 +574,12 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
 	var possibleValues;
-	var showFavorite = $('#'+favoriteCheckId).is(':checked');
+	var showFavorite = $('#' + favoriteCheckId).is(':checked');
 	var selectedVal = '';
 
 	// get previously selected value
-	if ($('#'+comboId).select2('data')) {
-		selectedVal = $('#'+comboId).select2('data').id;
+	if ($('#' + comboId).select2('data')) {
+		selectedVal = $('#' + comboId).select2('data').id;
 	}
 
 	// reset select2 combo
@@ -660,25 +657,25 @@ function toggleLocationDropdown(rowIndex) {
 				false, null);
 
 	// get possible values based on checkbox
-    if (showFavorite) {
-        possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
-        showAll = false;
-        $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-        		.parent().find('.selectedValue')).val(selectedVal);
-        selectedVal = $(
-            $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-            .parent().find('.selectedValueFave')).val();
-    } else {
-        possibleValues = $('#possibleValuesJson' + rowIndex).text();
-        $($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
-        		.parent().find('.selectedValueFave')).val(selectedVal);
-        selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
-        	+ rowIndex + '.value')).parent().find('.selectedValue')).val();
-    }
+	if (showFavorite) {
+		possibleValues = $('#possibleValuesFavoriteJson' + rowIndex).text();
+		showAll = false;
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+				.parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $(
+			$('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+			.parent().find('.selectedValueFave')).val();
+	} else {
+		possibleValues = $('#possibleValuesJson' + rowIndex).text();
+		$($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value'))
+				.parent().find('.selectedValueFave')).val(selectedVal);
+		selectedVal = $($('#' + getJquerySafeId('studyLevelVariables'
+			+ rowIndex + '.value')).parent().find('.selectedValue')).val();
+	}
 
-    // recreate select2 combo
-    initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
-    		+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'), showAll, selectedVal);
+	// recreate select2 combo
+	initializePossibleValuesCombo($.parseJSON(possibleValues), '#'
+			+ getJquerySafeId('studyLevelVariables' + rowIndex + '.value'), showAll, selectedVal);
 }
 
 function createTableSettingVariables(data, name, tableId, varType) {
@@ -686,7 +683,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 		data,
 		function(index, settingDetail) {
 		var length = $('#' + tableId + ' tbody tr').length+1;
-		var className = length % 2 == 1 ? 'even' : 'odd';
+		var className = length % 2 == 1 ? 'even': 'odd';
 		var rowClass = '';
 		if (varType == 3) {
 			rowClass = 'baseline-traits';
@@ -697,7 +694,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 		if (settingDetail.deletable) {
 			isDelete = '<input class="remove-indv-btn"'
 				+ ' type="checkbox" data-variable-type="'+varType+'"'
-				+ ' data-cv-term-id="'+settingDetail.variable.cvTermId+'"/>';
+				+ ' data-cv-term-id="'+settingDetail.variable.cvTermId + '"/>';
 		}
 		newRow = newRow
 				+ '<td style="text-align: center" class="fbk-delete-link '
@@ -745,29 +742,28 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 			var jsonVal;
 			if (isBreedingMethodSetting && value.id !== undefined) {
 				jsonVal = {
-						'id' : value.key,
-						'text' : value.description,
-						'description' : value.name
-					};
-			}
-			else if (value.id !== undefined) {
+					'id': value.key,
+					'text': value.description,
+					'description': value.name
+				};
+			} else if (value.id !== undefined) {
 				jsonVal = {
-					'id' : value.key,
-					'text' : value.description
+					'id': value.key,
+					'text': value.description
 				};
 			} else if (value.locid !== undefined) {
 				var locNameDisplay = value.lname;
-				if(value.labbr != null && value.labbr != ''){
-					locNameDisplay  += ' - ('+value.labbr+')';
+				if (value.labbr != null && value.labbr != '') {
+					locNameDisplay  += ' - (' + value.labbr + ')';
 				}
 				jsonVal = {
-					'id' : value.locid,
-					'text' : locNameDisplay
+					'id': value.locid,
+					'text': locNameDisplay
 				};
 			} else {
 				jsonVal = {
-					'id' : value.mid,
-					'text' : value.mname + (value.mcode !== undefined ? ' - ' + value.mcode : ''),
+					'id': value.mid,
+					'text': value.mname + (value.mcode !== undefined ? ' - ' + value.mcode : ''),
 					'description': value.mdesc
 				};
 			}
@@ -785,10 +781,11 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 
 	if (isLocation) {
 		$(name).select2(
-				{ 	minimumResultsForSearch: (possibleValues_obj != null && possibleValues_obj.length != 0) ? 20 : -1,
-					query : function(query) {
+				{
+					minimumResultsForSearch: (possibleValues_obj != null && possibleValues_obj.length != 0) ? 20 : -1,
+					query: function(query) {
 						var data = {
-							results : possibleValues_obj
+							results: possibleValues_obj
 						};
 						// return the array that matches
 						data.results = $.grep(data.results, function(item,
@@ -803,10 +800,10 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 	} else if ($(name).parent().next().children('.breeding-method-tooltip').length > 0) {
 		$(name).select2(
 				{
-					minimumResultsForSearch: (possibleValues_obj != null && possibleValues_obj.length != 0) ? 20 : -1,
-					query : function(query) {
+					minimumResultsForSearch: (possibleValues_obj != null && possibleValues_obj.length != 0) ? 20: -1,
+					query: function(query) {
 						var data = {
-							results : possibleValues_obj
+							results: possibleValues_obj
 						};
 						// return the array that matches
 						data.results = $.grep(data.results, function(item,
@@ -822,22 +819,22 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						$('.breeding-method-tooltip').attr('title', $(name).select2('data').description);
 						$('.help-tooltip-nursery').tooltip('destroy');
 						$('.help-tooltip-nursery').tooltip();
-						if($(name).select2('data') != null && $(name).select2('data').id === '0'){
+						if ($(name).select2('data') != null && $(name).select2('data').id === '0') {
 							$('.breeding-method-tooltip').addClass('fbk-hide');
-						}else{
+						} else {
 							$('.breeding-method-tooltip').removeClass('fbk-hide');
 						}
 					}
 				});
 	} else {
-		var minResults = (possibleValues_obj.length > 0) ? 20 : -1;
+		var minResults = (possibleValues_obj.length > 0) ? 20: -1;
 
 		$(name).select2(
 				{
 					minimumResultsForSearch: minResults,
-					query : function(query) {
+					query: function(query) {
 						var data = {
-							results : possibleValues_obj
+							results: possibleValues_obj
 						};
 						// return the array that matches
 						data.results = $.grep(data.results, function(item,
@@ -858,12 +855,12 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 function checkMeasurementData(variableType, variableId) {
 	var hasData = '0';
 	$.ajax({
-		url : '/Fieldbook/NurseryManager/editNursery/checkMeasurementData/'
+		url: '/Fieldbook/NurseryManager/editNursery/checkMeasurementData/'
 				+ variableType + '/' + variableId,
-		cache : false,
-		type : 'GET',
-		async : false,
-		success : function(data) {
+		cache: false,
+		type: 'GET',
+		async: false,
+		success: function(data) {
 			hasData = data.hasMeasurementData;
 		}
 	});
@@ -879,17 +876,17 @@ function deleteMultiVariable(variableType, variableIds, sectionDiv) {
 	// if no data for measurement rows is saved yet, proceed with delete
 	if (hasMeasurementData === '0') {
 		// remove row from UI
-		$('.'+sectionDiv+' .remove-indv-btn:checked').each(function(){
+		$('.' + sectionDiv + ' .remove-indv-btn:checked').each(function() {
 			$(this).parent().parent().remove();
 		});
 		checkShowSettingsFormReminder();
 		// remove row from session
 		$.ajax({
-			url : '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
+			url: '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
 					+ variableType + '/' + variableIds,
-			cache : false,
-			type : 'POST',
-			success : function() {
+			cache: false,
+			type: 'POST',
+			success: function() {
 			}
 		});
 
@@ -904,25 +901,24 @@ function deleteMultiVariable(variableType, variableIds, sectionDiv) {
 		sortVariableIdsAndNames(variableType);
 		inputChange = true;
 
+		// disable actions if applicable
+		if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass('disabled')) {
+			document.initialEnabledStat = true;
+		} else {
+			document.initialEnabledStat = false;
+		}
 
-        // disable actions if applicable
-        if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass('disabled')) {
-            document.initialEnabledStat = true;
-        } else {
-            document.initialEnabledStat = false;
-        }
-
-        if (document.disableActions !== undefined) {
-            document.disableActions();
-            eval($(this).attr('onclick'));
-        }
-        checkNurseryIfShowRemoveVariableLinks();
+		if (document.disableActions !== undefined) {
+			document.disableActions();
+			eval($(this).attr('onclick'));
+		}
+		checkNurseryIfShowRemoveVariableLinks();
 		return true;
 	} else {
 		// show confirmation popup
 		$('#variateDeleteConfirmationModal').modal({
-			backdrop : 'static',
-			keyboard : false
+			backdrop: 'static',
+			keyboard: false
 		});
 		$('#varToDelete').val(variableIds);
 		$('#variableType').val(variableType);
@@ -939,22 +935,22 @@ function proceedWithDelete() {
 	var deleteButton = buttonToDelete;
 
 	// remove row from UI
-	if($('#variateDeleteConfirmationModal').data('section-delete') !== '') {
+	if ($('#variateDeleteConfirmationModal').data('section-delete') !== '') {
 		var sectionDiv = $('#variateDeleteConfirmationModal').data('section-delete');
-		$('.'+sectionDiv+' .remove-indv-btn:checked').each(function(){
+		$('.' + sectionDiv + ' .remove-indv-btn:checked').each(function() {
 			$(this).parent().parent().remove();
 		});
-	} else if(deleteButton !== null) {
+	} else if (deleteButton !== null) {
 		deleteButton.parent().parent().remove();
 	}
 
 	// remove row from session
 	$.ajax({
-		url : '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
+		url: '/Fieldbook/NurseryManager/createNursery/deleteVariable/'
 				+ variableType + '/' + variableId,
-		cache : false,
-		type : 'POST',
-		success : function() {
+		cache: false,
+		type: 'POST',
+		success: function() {
 		}
 	});
 	// add dummy row to selection variates/traits if no record is left
@@ -1012,7 +1008,7 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 			} else if (row.innerHTML.indexOf('date-input') > -1) {
 				recreateDateInput(index, row, selectedVal, name);
 			} else {
-				$('#'+getJquerySafeId(name+index+'.value')).val(selectedVal);
+				$('#' + getJquerySafeId(name + index + '.value')).val(selectedVal);
 			}
 		});
 	initializeDateAndSliderInputs();
@@ -1103,8 +1099,8 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 			$(row).find('.possibleValuesFavoriteJson' + posValSuffix)).text();
 	var cvTermId = $(
 			$(row).find('.1st')
-				  .find('#' + getJquerySafeId(name + index + '.variable.cvTermId')))
-				  .val();
+				.find('#' + getJquerySafeId(name + index + '.variable.cvTermId')))
+				.val();
 
 	// hidden field for select2
 	var newCell = '<input type="hidden" id="' + name + index + '.value" name="'
@@ -1183,10 +1179,10 @@ function hideDeleteConfirmation() {
 function clearSettings() {
 
 	$.ajax({
-		url : '/Fieldbook/NurseryManager/createNursery/clearSettings',
-		type : 'GET',
-		cache : false,
-		success : function(html) {
+		url: '/Fieldbook/NurseryManager/createNursery/clearSettings',
+		type: 'GET',
+		cache: false,
+		success: function(html) {
 			$('#chooseSettingsDiv').html(html);
 			$('.chs-add-variable-factor').show();
 			moveToTopScreen();
@@ -1236,7 +1232,6 @@ function doSaveSettings() {
 	}
 }
 
-
 function createSliderInput(ctr, minVal, maxVal, name) {
 	return '<input data-slider-orientation="horizontal" data-slider-selection="after" type="text" data-min="'
 			+ minVal
@@ -1285,16 +1280,16 @@ function initializeDateAndSliderInputs() {
 	if ($('.date-input').length > 0) {
 		$('.date-input').placeholder().each(function() {
 			$(this).datepicker({
-				'format' : 'yyyy-mm-dd'
+				'format': 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {
 				$(this).datepicker('hide');
-			}).on('change', function (e) {
+			}).on('change', function(e) {
 				var curDate = $(this).val();
 				try {
 					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
 					$(this).datepicker('setDate', r);
-				} catch(e) {
-					if(curDate !== '') {
+				} catch (e) {
+					if (curDate !== '') {
 						$(this).datepicker('setDate', new Date());
 					}
 				}
@@ -1313,11 +1308,11 @@ function initializeDateAndSliderInputs() {
 					var currentVal = $(this).val() == '' ? parseFloat($(this)
 							.data('min')) : parseFloat($(this).val());
 					$(this).spinedit({
-						minimum : parseFloat($(this).data('min')),
-						maximum : parseFloat($(this).data('max')),
-						step : parseFloat($(this).data('step')),
-						value : currentVal,
-						numberOfDecimals : 4
+						minimum: parseFloat($(this).data('min')),
+						maximum: parseFloat($(this).data('max')),
+						step: parseFloat($(this).data('step')),
+						value: currentVal,
+						numberOfDecimals: 4
 					});
 				});
 	}
@@ -1329,20 +1324,20 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 	var serializedData = $form.serialize();
 
 	$.ajax({
-		url : '/Fieldbook/NurseryManager/createNursery/view/'
+		url: '/Fieldbook/NurseryManager/createNursery/view/'
 				+ templateSettingsId,
-		type : 'POST',
-		data : serializedData,
-		cache : false,
-		timeout : 70000,
-		success : function(html) {
+		type: 'POST',
+		data: serializedData,
+		cache: false,
+		timeout: 70000,
+		success: function(html) {
 			$('#chooseSettingsDiv').html(html);
 		},
-		error : function(jqXHR, textStatus, errorThrown) {
+		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus,
 					errorThrown);
 		},
-		complete : function() {
+		complete: function() {
 		}
 	});
 }
@@ -1362,11 +1357,11 @@ function choosePreviousNursery(studyId) {
 	}
 
 	$.ajax({
-		url : url + studyId,
-		type : 'GET',
-		cache : false,
-		data : '',
-		success : function(html) {
+		url: url + studyId,
+		type: 'GET',
+		cache: false,
+		data: '',
+		success: function(html) {
 			if ($('#chooseSettingsDiv').length !== 0) {
 				$('#chooseSettingsDiv').html(html);
 			} else {
@@ -1377,14 +1372,14 @@ function choosePreviousNursery(studyId) {
 			}
 			$('.chs-add-variable-factor').show();
 		},
-		complete : function () {
+		complete: function() {
 			url = '/Fieldbook/NurseryManager/createNursery/nursery/getChecks/';
 			$.ajax({
-				url : url + studyId,
-				type : 'GET',
-				cache : false,
-				data : '',
-				success : function(html) {
+				url: url + studyId,
+				type: 'GET',
+				cache: false,
+				data: '',
+				success: function(html) {
 					console.log(html);
 					if ($('#specifyCheckSection').length !== 0) {
 						$('#specifyCheckSection').html(html);
@@ -1397,7 +1392,7 @@ function choosePreviousNursery(studyId) {
 function isNurseryNameUnique() {
 	'use strict';
 	var studyId = '0';
-	if ($('#createNurseryMainForm #studyId').length !== 0){
+	if ($('#createNurseryMainForm #studyId').length !== 0) {
 		studyId = $('#createNurseryMainForm #studyId').val();
 		// we dont need to call the is name unique again since its not editable
 		// anymore in edit
@@ -1408,7 +1403,7 @@ function isNurseryNameUnique() {
 
 	return isStudyNameUnique(studyName, studyId);
 }
-function isCheckParametersEditable(){
+function isCheckParametersEditable() {
 	'use strict';
 	return !$('#'+getJquerySafeId('checkVariables1.value')).prop('disabled');
 }
@@ -1425,10 +1420,10 @@ function validateCreateNursery() {
 	});
 
 	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
-	if($.trim($('#' + getJquerySafeId('basicDetails0.value')).val()) === ''){
+	if ($.trim($('#' + getJquerySafeId('basicDetails0.value')).val()) === '') {
 		hasError = true;
 		name = 'Name';
-	}else if($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === ''){
+	}else if ($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === '') {
 		hasError = true;
 		name = 'Description';
 	}else if (isNurseryNameUnique() === false) {
@@ -1444,15 +1439,15 @@ function validateCreateNursery() {
 	} else if ($('#checkId').val() === '') {
 		hasError = true;
 		customMessage = checkTypeIsRequired;
-	} else if ($('.check-germplasm-list-items tbody tr').length > 0 && $('.germplasm-list-items tbody tr').length === 0){
+	} else if ($('.check-germplasm-list-items tbody tr').length > 0 && $('.germplasm-list-items tbody tr').length === 0) {
 		hasError = true;
 		customMessage = nurseryGermplasmListIsRequired;
 	}
 	var invalidDateMsg = validateAllDates();
-    if(invalidDateMsg !== '') {
-    	hasError = true;
-    	customMessage = invalidDateMsg;
-    }
+	if (invalidDateMsg !== '') {
+		hasError = true;
+		customMessage = invalidDateMsg;
+	}
 	if (hasError) {
 		var errMsg = '';
 		if (name !== '') {
@@ -1475,7 +1470,7 @@ function validateCreateNursery() {
 	$.each($('.numeric-input'), function(index, textField) {
 		if (isNaN($(textField).val())) {
 			hasError = true;
-			if($(this).parent().prev().hasClass('variable-tooltip')) {
+			if ($(this).parent().prev().hasClass('variable-tooltip')) {
 				name = $(this).parent().prev().data('original-title');
 			}else {
 				name = $(this).parent().prev().find('.control-label').html();
@@ -1488,7 +1483,7 @@ function validateCreateNursery() {
 		if (parseFloat($(textField).val()) > $(textField).data('max')
 				|| parseFloat($(textField).val()) < $(textField).data('min')) {
 			hasError = true;
-			if($(this).parent().prev().hasClass('variable-tooltip')) {
+			if ($(this).parent().prev().hasClass('variable-tooltip')) {
 				name = $(this).parent().prev().data('original-title');
 			}else {
 				name = $(this).parent().prev().find('.control-label').html();
@@ -1520,13 +1515,13 @@ function validateCreateNursery() {
 			var hasCheckError = false;
 			var checkStartIndex = $('#' + getJquerySafeId('checkVariables0.value')).val();
 			var checkInterval = $('#' + getJquerySafeId('checkVariables1.value')).val();
-			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(){
-				  if($(this).val() === ''){
-					  hasCheckError = true;
-				  }
+			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function() {
+				if ($(this).val() === '') {
+					hasCheckError = true;
+				}
 			});
 
-			if(hasCheckError == true){
+			if (hasCheckError == true) {
 				showInvalidInputMessage(selectedCheckError);
 				return false;
 			}
@@ -1560,18 +1555,17 @@ function validateCreateNursery() {
 	return true;
 }
 
-
 function nurseryValidateStartEndDateBasic() {
 	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
 	var endDate = $('#' + getJquerySafeId('basicDetails.value4')).val();
 
 	var returnVal =  (validateStartEndDateBasic(startDate, endDate));
 	if (returnVal === true) {
-        return true;
-    } else {
-        showInvalidInputMessage(returnVal);
-        return false;
-    }
+		return true;
+	} else {
+		showInvalidInputMessage(returnVal);
+		return false;
+	}
 
 }
 
@@ -1579,14 +1573,13 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	var selectedMethodAll = $('#methodIdAll').val();
 	var selectedMethodFavorite = $('#methodIdFavorite').val();
 
-
 	$.ajax({
-		url : '/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods',
-		type : 'GET',
-		cache : false,
-		data : '',
-		async : false,
-		success : function(data) {
+		url: '/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods',
+		type: 'GET',
+		cache: false,
+		data: '',
+		async: false,
+		success: function(data) {
 			if (data.success == '1') {
 				if (selectedMethodAll != null) {
 					// recreate the select2 combos to get updated list of
@@ -1608,7 +1601,6 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					var selectedVal = null;
 					// get index of breeding method row
 					var index = getBreedingMethodRowIndex();
-
 
 					if ($('#' + getJquerySafeId(comboName)).select2('data')) {
 						selectedVal = $('#' + getJquerySafeId(comboName))
@@ -1662,7 +1654,7 @@ function refreshEditNursery() {
 	$('#page-message').html('');
 }
 
-function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
+function displaySaveSuccessMessage(idDomSelector, messageToDisplay) {
 	'use strict';
 
 	createSuccessNotification(successMsgHeader, messageToDisplay);
@@ -1677,7 +1669,7 @@ function recreateSessionVariables() {
 		type: 'GET',
 		data: '',
 		cache: false,
-		success: function (html) {
+		success: function(html) {
 			$('#measurementsDiv').html(html);
 			displayEditFactorsAndGermplasmSection();
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
@@ -1692,14 +1684,14 @@ function recreateSessionVariables() {
  * validateStartEndDate, moveToTopScreen
  */
 /* global loadNurserySettingsForCreate, getJquerySafeId, changeBuildOption */
-function refreshStudyAfterSave(studyId){
+function refreshStudyAfterSave(studyId) {
 	'use strict';
 
 	displaySaveSuccessMessage('page-message', saveSuccessMessage);
 
 	setTimeout(function() {
-		window.location = '/Fieldbook/NurseryManager/editNursery/'+studyId;
-	},600);
+		window.location = '/Fieldbook/NurseryManager/editNursery/' + studyId;
+	}, 600);
 }
 
 function resetDesigConfirmationFields() {
@@ -1714,14 +1706,14 @@ function resetDesigConfirmationFields() {
 
 function validateGermplasmInput(importDate, importLocationId, importMethodId) {
 	'use strict';
-	if ($('#import-action-type').val() === '2' || $('#import-action-type').val() === '1'){
-		if(importDate === ''){
+	if ($('#import-action-type').val() === '2' || $('#import-action-type').val() === '1') {
+		if (importDate === '') {
 			showInvalidInputMessage(importDateRequired);
 			return false;
-		}else if(importLocationId === '' || importLocationId === null){
+		}else if (importLocationId === '' || importLocationId === null) {
 			showInvalidInputMessage(importLocationRequired);
 			return false;
-		}else if((importMethodId === '' || importMethodId === null) && $('#import-action-type').val() === '2'){
+		}else if ((importMethodId === '' || importMethodId === null) && $('#import-action-type').val() === '2') {
 			showInvalidInputMessage(importMethodRequired);
 			return false;
 		}
@@ -1735,13 +1727,13 @@ function submitGermplasmAndCheck() {
 	$('#lastDraggedChecksList').val(lastDraggedChecksList);
 
 	var $form = $('#germplasm-list-form,#specify-checks-form'),
-		serializedData = $form.serialize() + '&lastDraggedChecksList='+lastDraggedChecksList;
-	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+		serializedData = $form.serialize() + '&lastDraggedChecksList=' + lastDraggedChecksList;
+	if ($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null) {
 		//we need to move to 1st page so the serialize would work properly
 		selectedCheckListDataTable.getDataTable().fnDraw();
 		serializedData += '&' + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
-	serializedData += '&columnOrders='+(BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
+	serializedData += '&columnOrders=' + (BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table'));
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
 		type: 'POST',
@@ -1753,64 +1745,64 @@ function submitGermplasmAndCheck() {
 		}
 	});
 }
-function addFakeCheckTable(){
+function addFakeCheckTable() {
 	'use strict';
-	if($('.germplasm-list-items tbody tr').length > 0 && $('.check-germplasm-list-items tbody tr').length == 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 0){
+	if ($('.germplasm-list-items tbody tr').length > 0 && $('.check-germplasm-list-items tbody tr').length == 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 0) {
 		// we add the fake table
 		$('.fake-check-germplasm-list-items').clone().removeClass('fbk-hide').appendTo('#check-germplasm-list');
-	}else if($('.germplasm-list-items tbody tr').length === 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 1){
+	}else if ($('.germplasm-list-items tbody tr').length === 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 1) {
 		// we remove if there are no nursery check and the selected check is
 		// fake
 		$('#check-germplasm-list .fake-check-germplasm-list-items').remove();
 	}
 }
-function checkShowSettingsFormReminder(){
+function checkShowSettingsFormReminder() {
 	'use strict';
 	// we check management details if there are entries
-	if($('.nurseryLevelSettings .1st').length === 0){
+	if ($('.nurseryLevelSettings .1st').length === 0) {
 		$('.management-details-section-reminder').removeClass('fbk-hide');
-	}else{
+	} else {
 		$('.management-details-section-reminder').addClass('fbk-hide');
 	}
 
-	if($('.nurseryConditionsSettings .1st').length === 0){
+	if ($('.nurseryConditionsSettings .1st').length === 0) {
 		$('.constants-section-reminder').removeClass('fbk-hide');
-	}else{
+	} else {
 		$('.constants-section-reminder').addClass('fbk-hide');
 	}
 }
-function discardImportedData(){
+function discardImportedData() {
 	$('#discardImportDataConfirmation').modal({
-		backdrop : 'static',
-		keyboard : true
+		backdrop: 'static',
+		keyboard: true
 	});
 }
 
 function checkFavoritesIfValIsAFavorite(rowIndex) {
-    'use strict';
-
-    var valueOfDropdown = parseInt($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).val(),10);
-    var possibleValuesElm = $('#possibleValuesFavoriteJson' + rowIndex);
-    var possibleValuesFavoriteArr = $.parseJSON(possibleValuesElm.text());
-
-    if ('' === possibleValuesElm.text().trim()) {
-        return false;
-    }
-    if(possibleValuesFavoriteArr !== null) {
-    	$.each(possibleValuesFavoriteArr,function(index,val) {
-            if (val.id === valueOfDropdown) {
-                $('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
-                return false;
-            }
-        });
-    }
-}
-function checkNurseryIfShowRemoveVariableLinks(){
 	'use strict';
-	$('.remove-all-section .remove-all-vars').each(function(){
+
+	var valueOfDropdown = parseInt($('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.value')).val(), 10);
+	var possibleValuesElm = $('#possibleValuesFavoriteJson' + rowIndex);
+	var possibleValuesFavoriteArr = $.parseJSON(possibleValuesElm.text());
+
+	if ('' === possibleValuesElm.text().trim()) {
+		return false;
+	}
+	if (possibleValuesFavoriteArr !== null) {
+		$.each(possibleValuesFavoriteArr, function(index, val) {
+			if (val.id === valueOfDropdown) {
+				$('#' + getJquerySafeId('studyLevelVariables' + rowIndex + '.favorite1')).click();
+				return false;
+			}
+		});
+	}
+}
+function checkNurseryIfShowRemoveVariableLinks() {
+	'use strict';
+	$('.remove-all-section .remove-all-vars').each(function() {
 		var sectionDiv = $(this).data('section');
-		var availableCheckboxes = $('.'+sectionDiv+' .remove-indv-btn');
-		if(availableCheckboxes.length !== 0) {
+		var availableCheckboxes = $('.' + sectionDiv + ' .remove-indv-btn');
+		if (availableCheckboxes.length !== 0) {
 			//we show the remove all
 			$(this).parents('.remove-all-section').removeClass('fbk-hide');
 			$(this).siblings('.remove-btn').prop('checked', false);

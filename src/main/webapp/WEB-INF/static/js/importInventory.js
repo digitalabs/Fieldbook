@@ -1,129 +1,128 @@
 var ImportInventoryFunctions  = window.ImportInventoryFunctions;
 
 if (typeof ImportInventoryFunctions === 'undefined') {
-    ImportInventoryFunctions = {
+	ImportInventoryFunctions = {
 
-        openImportInventoryModal : function(source) {
-            $('#importInventoryModal').modal({backdrop: 'static', keyboard: true});
+		openImportInventoryModal: function(source) {
+			$('#importInventoryModal').modal({backdrop: 'static', keyboard: true});
 
-            $('#import-list-id').val(getCurrentAdvanceTabListIdentifier());
-            $('#importUploadClearButton').click();
-            $('#importInventorySubmitButton').off('click');
-            $('#importInventorySubmitButton').on('click', ImportInventoryFunctions.processImport);
+			$('#import-list-id').val(getCurrentAdvanceTabListIdentifier());
+			$('#importUploadClearButton').click();
+			$('#importInventorySubmitButton').off('click');
+			$('#importInventorySubmitButton').on('click', ImportInventoryFunctions.processImport);
 
-            $('#import-source-string').val(source);
-        },
+			$('#import-source-string').val(source);
+		},
 
-        processImport: function () {
-            'use strict';
+		processImport: function() {
+			'use strict';
 
-            if ($('#fileupload-import-inventory').val() === '') {
-                showErrorMessage('', 'Please choose a file to import');
-                return false;
-            }
+			if ($('#fileupload-import-inventory').val() === '') {
+				showErrorMessage('', 'Please choose a file to import');
+				return false;
+			}
 
-            ImportInventoryFunctions.submitImport().done(function (response) {
+			ImportInventoryFunctions.submitImport().done(function(response) {
 
-                if (!response.isSuccess) {
-                    showErrorMessage('', response.error);
-                    return;
-                }
+				if (!response.isSuccess) {
+					showErrorMessage('', response.error);
+					return;
+				}
 
-                if (response.isOverwrite) {
-                    showAlertMessage('', 'Data will be overwritten');
-                }
+				if (response.isOverwrite) {
+					showAlertMessage('', 'Data will be overwritten');
+				}
 
-                $('#importInventoryModal').modal('hide');
+				$('#importInventoryModal').modal('hide');
 
-                if ($('#import-source-string').val() === 'advance') {
-                    ImportInventoryFunctions.displayUpdatedAdvanceGermplasmDetails($('#import-list-id').val());
-                } else {
-                    ImportInventoryFunctions.displayUpdatedCrossGermplasmDetails($('#import-list-id').val());
-                }
+				if ($('#import-source-string').val() === 'advance') {
+					ImportInventoryFunctions.displayUpdatedAdvanceGermplasmDetails($('#import-list-id').val());
+				} else {
+					ImportInventoryFunctions.displayUpdatedCrossGermplasmDetails($('#import-list-id').val());
+				}
 
+				// this is to prevent the user from performing other activities even tab navigation prior to saving the imported data
+				$('.import-inventory').data('data-import', '1');
+			});
 
-                // this is to prevent the user from performing other activities even tab navigation prior to saving the imported data
-                $('.import-inventory').data('data-import', '1');
-            });
+		},
 
-        },
+		submitImport: function() {
+			'use strict';
+			var deferred = $.Deferred();
+			$('#importInventoryForm').ajaxForm({
+				dataType: 'json',
+				success: function(response) {
+					deferred.resolve(response);
+				},
+				error: function(response) {
 
-        submitImport : function() {
-            'use strict';
-            var deferred = $.Deferred();
-            $('#importInventoryForm').ajaxForm({
-                dataType: 'json',
-                success: function (response) {
-                    deferred.resolve(response);
-                },
-                error: function (response) {
+					showErrorMessage('', 'Error occurred while importing file');
 
-                    showErrorMessage('', 'Error occurred while importing file');
+					deferred.reject(response);
+				}
+			}).submit();
 
-                    deferred.reject(response);
-                }
-            }).submit();
+			return deferred.promise();
+		},
 
-            return deferred.promise();
-        },
+		saveImport: function(source) {
+			'use strict';
+			$.post('/Fieldbook/importInventory/save', function(result) {
+				if (result.isSuccess) {
+					ImportInventoryFunctions.displayFinalizedInventoryDetails(getCurrentAdvanceTabListIdentifier(), source);
+				}
+			});
+		},
 
-        saveImport: function (source) {
-            'use strict';
-            $.post('/Fieldbook/importInventory/save', function (result) {
-                if (result.isSuccess) {
-                    ImportInventoryFunctions.displayFinalizedInventoryDetails(getCurrentAdvanceTabListIdentifier(), source);
-                }
-            });
-        },
+		discardImport: function(source) {
+			'use strict';
+			ImportInventoryFunctions.displayFinalizedInventoryDetails(getCurrentAdvanceTabListIdentifier(), source);
+		},
 
-        discardImport : function(source) {
-            'use strict';
-            ImportInventoryFunctions.displayFinalizedInventoryDetails(getCurrentAdvanceTabListIdentifier(), source);
-        },
+		displayFinalizedInventoryDetails: function(listId, source) {
+			'use strict';
+			var url;
 
-        displayFinalizedInventoryDetails : function(listId, source) {
-            'use strict';
-            var url;
+			if (source === 'advance') {
+				url = '/Fieldbook/germplasm/list/advance/' + listId;
+			} else {
+				url = '/Fieldbook/germplasm/list/crosses/' + listId;
+			}
 
-            if (source === 'advance') {
-                url = "/Fieldbook/germplasm/list/advance/" + listId;
-            } else {
-                url = "/Fieldbook/germplasm/list/crosses/" + listId;
-            }
+			$.ajax({
+				url: url,
+				type: 'GET',
+				cache: false,
+				success: function(html) {
+					$('.import-inventory').data('data-import', '0');
+					$('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
+				}
+			});
+		},
 
-            $.ajax({
-                url: url,
-                type: "GET",
-                cache: false,
-                success: function (html) {
-                    $('.import-inventory').data('data-import', '0');
-                    $('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
-                }
-            });
-        },
+		displayUpdatedAdvanceGermplasmDetails: function(listId) {
+			'use strict';
+			$.ajax({
+				url: '/Fieldbook/importInventory/displayTemporaryAdvanceGermplasmDetails/' + listId,
+				type: 'GET',
+				cache: false,
+				success: function(html) {
+					$('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
+				}
+			});
+		},
 
-        displayUpdatedAdvanceGermplasmDetails : function(listId) {
-        	'use strict';
-        	$.ajax({
-        		url: "/Fieldbook/importInventory/displayTemporaryAdvanceGermplasmDetails/" + listId,
-        		type: "GET",
-        		cache: false,
-        		success: function(html) {
-        			$('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
-        		}
-        	});
-        },
-
-        displayUpdatedCrossGermplasmDetails: function (listId) {
-            'use strict';
-            $.ajax({
-                url: "/Fieldbook/importInventory/displayTemporaryCrossGermplasmDetails/" + listId,
-                type: "GET",
-                cache: false,
-                success: function (html) {
-                    $('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
-                }
-            });
-        }
-    };
+		displayUpdatedCrossGermplasmDetails: function(listId) {
+			'use strict';
+			$.ajax({
+				url: '/Fieldbook/importInventory/displayTemporaryCrossGermplasmDetails/' + listId,
+				type: 'GET',
+				cache: false,
+				success: function(html) {
+					$('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
+				}
+			});
+		}
+	};
 }

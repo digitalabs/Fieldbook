@@ -117,6 +117,7 @@
 					node.appendAjax({
 						url: lazyLoadUrl + node.data.key + additionalLazyLoadUrl,
 						dataType: 'json',
+						async: false,
 						success: function(node) {
 							//do nothing
 

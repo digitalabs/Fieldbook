@@ -1,140 +1,140 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.nursery.form;
+
+import java.util.List;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
-
-import java.util.List;
 
 /**
  * The Class AdvancingNurseryForm.
  */
 public class AdvancingNurseryForm {
-	
-    /** The method choice. */
-    private String methodChoice;
-	
-    /** The line choice. */
-    private String lineChoice;
-	
-    /** The line selected. */
-    private String lineSelected;
-	
-    /** The harvest date. */
-    private String harvestDate;
-	
-    /** The harvest location. */
-    private String harvestLocation;
-	
-    /** The field location id all. */
-    private String harvestLocationIdAll;
-    
-    /** The field location id favorite. */
-    private String harvestLocationIdFavorite;
-    
-    /** The harvest location id. */
-    private String harvestLocationId;
-    
-    /** The harvest location name. */
-    private String harvestLocationName;
-    
-    /** The harvest location abbreviation. */
-    private String harvestLocationAbbreviation;
-    
-    /** The default method id. */
-    private String defaultMethodId;
-       
-    /** The breeding method id. */
-    private String advanceBreedingMethodId;
-    
-    /** The field location id all. */
-    private String methodIdAll;
-    
-    /** The field location id favorite. */
-    private String methodIdFavorite;
-    
-    /** The project id. */
-    private String projectId;
-    
-    /** The nursery advance name. */
-    private String nurseryAdvanceName;
-    
-    /** The nursery advance description. */
-    private String nurseryAdvanceDescription;
-    
-    /** The entries. */
-    private int entries;
-    
-    /** The germplasm list. */
-    private List<ImportedGermplasm> germplasmList;
-    
-    /** The paginated germplasm list. */
-    private List<ImportedGermplasm> paginatedGermplasmList;	
-	
+
+	/** The method choice. */
+	private String methodChoice;
+
+	/** The line choice. */
+	private String lineChoice;
+
+	/** The line selected. */
+	private String lineSelected;
+
+	/** The harvest date. */
+	private String harvestDate;
+
+	/** The harvest location. */
+	private String harvestLocation;
+
+	/** The field location id all. */
+	private String harvestLocationIdAll;
+
+	/** The field location id favorite. */
+	private String harvestLocationIdFavorite;
+
+	/** The harvest location id. */
+	private String harvestLocationId;
+
+	/** The harvest location name. */
+	private String harvestLocationName;
+
+	/** The harvest location abbreviation. */
+	private String harvestLocationAbbreviation;
+
+	/** The default method id. */
+	private String defaultMethodId;
+
+	/** The breeding method id. */
+	private String advanceBreedingMethodId;
+
+	/** The field location id all. */
+	private String methodIdAll;
+
+	/** The field location id favorite. */
+	private String methodIdFavorite;
+
+	/** The project id. */
+	private String projectId;
+
+	/** The nursery advance name. */
+	private String nurseryAdvanceName;
+
+	/** The nursery advance description. */
+	private String nurseryAdvanceDescription;
+
+	/** The entries. */
+	private int entries;
+
+	/** The germplasm list. */
+	private List<ImportedGermplasm> germplasmList;
+
+	/** The paginated germplasm list. */
+	private List<ImportedGermplasm> paginatedGermplasmList;
+
 	/** The current page. */
 	private int currentPage;
-	
+
 	/** The total pages. */
 	private int totalPages;
-	
+
 	/** The result per page. */
 	private int resultPerPage = 100;
-	
+
 	/** The plots with plants selected. */
 	private int plotsWithPlantsSelected;
-	
+
 	/** The location url. */
 	private String locationUrl;
-    
-    /** The breeding method url. */
-    private String breedingMethodUrl;
-    
-    /** The nursery id. */
-    private String nurseryId;
-    
-    private int cropType;
-    
-    private Integer methodVariateId;
-    
-    private Integer lineVariateId;
-    
-    private List<StandardVariableReference> methodVariates;
-    
-    private List<StandardVariableReference> lineVariates;
-    
-    private String harvestYear;
-    
-    private String harvestMonth;
-    
-    private Long uniqueId;
-    
-    private String allPlotsChoice;
-    
-    private List<StandardVariableReference> plotVariates;
-    
-    private Integer plotVariateId;
-    
-    private String errorInAdvance;
-    
-    private String checkAdvanceLinesUnique;
-    
+
+	/** The breeding method url. */
+	private String breedingMethodUrl;
+
+	/** The nursery id. */
+	private String nurseryId;
+
+	private int cropType;
+
+	private Integer methodVariateId;
+
+	private Integer lineVariateId;
+
+	private List<StandardVariableReference> methodVariates;
+
+	private List<StandardVariableReference> lineVariates;
+
+	private String harvestYear;
+
+	private String harvestMonth;
+
+	private Long uniqueId;
+
+	private String allPlotsChoice;
+
+	private List<StandardVariableReference> plotVariates;
+
+	private Integer plotVariateId;
+
+	private String errorInAdvance;
+
+	private String checkAdvanceLinesUnique;
+
 	/**
 	 * Gets the method id all.
 	 *
 	 * @return the method id all
 	 */
 	public String getMethodIdAll() {
-		return methodIdAll;
+		return this.methodIdAll;
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class AdvancingNurseryForm {
 	 * @return the method id favorite
 	 */
 	public String getMethodIdFavorite() {
-		return methodIdFavorite;
+		return this.methodIdFavorite;
 	}
 
 	/**
@@ -170,9 +170,9 @@ public class AdvancingNurseryForm {
 	 * @return the harvest location abbreviation
 	 */
 	public String getHarvestLocationAbbreviation() {
-		return harvestLocationAbbreviation;
+		return this.harvestLocationAbbreviation;
 	}
-	
+
 	/**
 	 * Sets the harvest location abbreviation.
 	 *
@@ -181,16 +181,16 @@ public class AdvancingNurseryForm {
 	public void setHarvestLocationAbbreviation(String harvestLocationAbbreviation) {
 		this.harvestLocationAbbreviation = harvestLocationAbbreviation;
 	}
-	
+
 	/**
 	 * Gets the default method id.
 	 *
 	 * @return the default method id
 	 */
 	public String getDefaultMethodId() {
-		return defaultMethodId;
+		return this.defaultMethodId;
 	}
-	
+
 	/**
 	 * Sets the default method id.
 	 *
@@ -199,16 +199,16 @@ public class AdvancingNurseryForm {
 	public void setDefaultMethodId(String defaultMethodId) {
 		this.defaultMethodId = defaultMethodId;
 	}
-	
+
 	/**
 	 * Gets the harvest location id all.
 	 *
 	 * @return the harvest location id all
 	 */
 	public String getHarvestLocationIdAll() {
-		return harvestLocationIdAll;
+		return this.harvestLocationIdAll;
 	}
-	
+
 	/**
 	 * Sets the harvest location id all.
 	 *
@@ -217,16 +217,16 @@ public class AdvancingNurseryForm {
 	public void setHarvestLocationIdAll(String harvestLocationIdAll) {
 		this.harvestLocationIdAll = harvestLocationIdAll;
 	}
-	
+
 	/**
 	 * Gets the harvest location id favorite.
 	 *
 	 * @return the harvest location id favorite
 	 */
 	public String getHarvestLocationIdFavorite() {
-		return harvestLocationIdFavorite;
+		return this.harvestLocationIdFavorite;
 	}
-	
+
 	/**
 	 * Sets the harvest location id favorite.
 	 *
@@ -235,16 +235,16 @@ public class AdvancingNurseryForm {
 	public void setHarvestLocationIdFavorite(String harvestLocationIdFavorite) {
 		this.harvestLocationIdFavorite = harvestLocationIdFavorite;
 	}
-	
+
 	/**
 	 * Gets the harvest location id.
 	 *
 	 * @return the harvest location id
 	 */
 	public String getHarvestLocationId() {
-		return harvestLocationId;
+		return this.harvestLocationId;
 	}
-	
+
 	/**
 	 * Sets the harvest location id.
 	 *
@@ -253,16 +253,16 @@ public class AdvancingNurseryForm {
 	public void setHarvestLocationId(String harvestLocationId) {
 		this.harvestLocationId = harvestLocationId;
 	}
-	
+
 	/**
 	 * Gets the harvest location name.
 	 *
 	 * @return the harvest location name
 	 */
 	public String getHarvestLocationName() {
-		return harvestLocationName;
+		return this.harvestLocationName;
 	}
-	
+
 	/**
 	 * Sets the harvest location name.
 	 *
@@ -271,16 +271,16 @@ public class AdvancingNurseryForm {
 	public void setHarvestLocationName(String harvestLocationName) {
 		this.harvestLocationName = harvestLocationName;
 	}
-	
+
 	/**
 	 * Gets the harvest date.
 	 *
 	 * @return the harvest date
 	 */
 	public String getHarvestDate() {
-		return harvestDate;
+		return this.harvestDate;
 	}
-	
+
 	/**
 	 * Sets the harvest date.
 	 *
@@ -289,16 +289,16 @@ public class AdvancingNurseryForm {
 	public void setHarvestDate(String harvestDate) {
 		this.harvestDate = harvestDate;
 	}
-	
+
 	/**
 	 * Gets the harvest location.
 	 *
 	 * @return the harvest location
 	 */
 	public String getHarvestLocation() {
-		return harvestLocation;
+		return this.harvestLocation;
 	}
-	
+
 	/**
 	 * Sets the harvest location.
 	 *
@@ -307,15 +307,14 @@ public class AdvancingNurseryForm {
 	public void setHarvestLocation(String harvestLocation) {
 		this.harvestLocation = harvestLocation;
 	}
-	
-	
+
 	/**
 	 * Gets the breeding method id.
 	 *
 	 * @return the breeding method id
 	 */
 	public String getAdvanceBreedingMethodId() {
-		return advanceBreedingMethodId;
+		return this.advanceBreedingMethodId;
 	}
 
 	/**
@@ -333,9 +332,9 @@ public class AdvancingNurseryForm {
 	 * @return the method choice
 	 */
 	public String getMethodChoice() {
-		return methodChoice;
+		return this.methodChoice;
 	}
-	
+
 	/**
 	 * Sets the method choice.
 	 *
@@ -344,18 +343,16 @@ public class AdvancingNurseryForm {
 	public void setMethodChoice(String methodChoice) {
 		this.methodChoice = methodChoice;
 	}
-	
-	
-	
+
 	/**
 	 * Gets the line choice.
 	 *
 	 * @return the line choice
 	 */
 	public String getLineChoice() {
-		return lineChoice;
+		return this.lineChoice;
 	}
-	
+
 	/**
 	 * Sets the line choice.
 	 *
@@ -364,16 +361,16 @@ public class AdvancingNurseryForm {
 	public void setLineChoice(String lineChoice) {
 		this.lineChoice = lineChoice;
 	}
-	
+
 	/**
 	 * Gets the line selected.
 	 *
 	 * @return the line selected
 	 */
 	public String getLineSelected() {
-		return lineSelected;
+		return this.lineSelected;
 	}
-	
+
 	/**
 	 * Sets the line selected.
 	 *
@@ -382,229 +379,224 @@ public class AdvancingNurseryForm {
 	public void setLineSelected(String lineSelected) {
 		this.lineSelected = lineSelected;
 	}
-	
+
 	/**
 	 * Gets the project id.
 	 *
 	 * @return the project id
 	 */
 	public String getProjectId() {
-            return projectId;
-        }
-	
+		return this.projectId;
+	}
+
 	/**
 	 * Sets the project id.
 	 *
 	 * @param projectId the new project id
 	 */
 	public void setProjectId(String projectId) {
-            this.projectId = projectId;
-        }
-	
+		this.projectId = projectId;
+	}
+
 	/**
 	 * Gets the nursery advance name.
 	 *
 	 * @return the nursery advance name
 	 */
 	public String getNurseryAdvanceName() {
-	    return nurseryAdvanceName;
+		return this.nurseryAdvanceName;
 	}
-	
+
 	/**
 	 * Sets the nursery advance name.
 	 *
 	 * @param nurseryAdvanceName the new nursery advance name
 	 */
 	public void setNurseryAdvanceName(String nurseryAdvanceName) {
-	    this.nurseryAdvanceName = nurseryAdvanceName;
+		this.nurseryAdvanceName = nurseryAdvanceName;
 	}
-	
+
 	/**
 	 * Gets the nursery advance description.
 	 *
 	 * @return the nursery advance description
 	 */
 	public String getNurseryAdvanceDescription() {
-            return nurseryAdvanceDescription;
-        }
-        
-        /**
-         * Sets the nursery advance description.
-         *
-         * @param nurseryAdvanceDescription the new nursery advance description
-         */
-        public void setNurseryAdvanceDescription(String nurseryAdvanceDescription) {
-            this.nurseryAdvanceDescription = nurseryAdvanceDescription;
-        }
-        
-        /**
-         * Gets the entries.
-         *
-         * @return the entries
-         */
-        public int getEntries() {
-            return entries;
-        }
-        
-        /**
-         * Sets the entries.
-         *
-         * @param entries the new entries
-         */
-        public void setEntries(int entries) {
-            this.entries = entries;
-        }
-        
-        /**
-         * Gets the germplasm list.
-         *
-         * @return the germplasm list
-         */
-        public List<ImportedGermplasm> getGermplasmList() {
-            return germplasmList;
-        }
-        
-        /**
-         * Sets the germplasm list.
-         *
-         * @param germplasmList the new germplasm list
-         */
-        public void setGermplasmList(List<ImportedGermplasm> germplasmList) {
-            this.germplasmList = germplasmList;
-        }
-        
-        
+		return this.nurseryAdvanceDescription;
+	}
 
-        /**
-         * Gets the paginated germplasm list.
-         *
-         * @return the paginated germplasm list
-         */
-        public List<ImportedGermplasm> getPaginatedGermplasmList() {
-			return paginatedGermplasmList;
+	/**
+	 * Sets the nursery advance description.
+	 *
+	 * @param nurseryAdvanceDescription the new nursery advance description
+	 */
+	public void setNurseryAdvanceDescription(String nurseryAdvanceDescription) {
+		this.nurseryAdvanceDescription = nurseryAdvanceDescription;
+	}
+
+	/**
+	 * Gets the entries.
+	 *
+	 * @return the entries
+	 */
+	public int getEntries() {
+		return this.entries;
+	}
+
+	/**
+	 * Sets the entries.
+	 *
+	 * @param entries the new entries
+	 */
+	public void setEntries(int entries) {
+		this.entries = entries;
+	}
+
+	/**
+	 * Gets the germplasm list.
+	 *
+	 * @return the germplasm list
+	 */
+	public List<ImportedGermplasm> getGermplasmList() {
+		return this.germplasmList;
+	}
+
+	/**
+	 * Sets the germplasm list.
+	 *
+	 * @param germplasmList the new germplasm list
+	 */
+	public void setGermplasmList(List<ImportedGermplasm> germplasmList) {
+		this.germplasmList = germplasmList;
+	}
+
+	/**
+	 * Gets the paginated germplasm list.
+	 *
+	 * @return the paginated germplasm list
+	 */
+	public List<ImportedGermplasm> getPaginatedGermplasmList() {
+		return this.paginatedGermplasmList;
+	}
+
+	/**
+	 * Sets the paginated germplasm list.
+	 *
+	 * @param paginatedGermplasmList the new paginated germplasm list
+	 */
+	public void setPaginatedGermplasmList(List<ImportedGermplasm> paginatedGermplasmList) {
+		this.paginatedGermplasmList = paginatedGermplasmList;
+	}
+
+	/**
+	 * Gets the current page.
+	 *
+	 * @return the current page
+	 */
+	public int getCurrentPage() {
+		return this.currentPage;
+	}
+
+	/**
+	 * Sets the current page.
+	 *
+	 * @param currentPage the new current page
+	 */
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	/**
+	 * Gets the total pages.
+	 *
+	 * @return the total pages
+	 */
+	public int getTotalPages() {
+		if (this.germplasmList != null && !this.germplasmList.isEmpty()) {
+			this.totalPages = (int) Math.ceil(this.germplasmList.size() * 1f / this.getResultPerPage());
+		} else {
+			this.totalPages = 0;
 		}
+		return this.totalPages;
+	}
 
-		/**
-		 * Sets the paginated germplasm list.
-		 *
-		 * @param paginatedGermplasmList the new paginated germplasm list
-		 */
-		public void setPaginatedGermplasmList(
-				List<ImportedGermplasm> paginatedGermplasmList) {
-			this.paginatedGermplasmList = paginatedGermplasmList;
-		}
+	/**
+	 * Sets the total pages.
+	 *
+	 * @param totalPages the new total pages
+	 */
+	public void setTotalPages(int totalPages) {
+		this.totalPages = totalPages;
+	}
 
-		/**
-		 * Gets the current page.
-		 *
-		 * @return the current page
-		 */
-		public int getCurrentPage() {
-			return currentPage;
-		}
+	/**
+	 * Gets the result per page.
+	 *
+	 * @return the result per page
+	 */
+	public int getResultPerPage() {
+		return this.resultPerPage;
+	}
 
-		/**
-		 * Sets the current page.
-		 *
-		 * @param currentPage the new current page
-		 */
-		public void setCurrentPage(int currentPage) {
+	/**
+	 * Sets the result per page.
+	 *
+	 * @param resultPerPage the new result per page
+	 */
+	public void setResultPerPage(int resultPerPage) {
+		this.resultPerPage = resultPerPage;
+	}
+
+	/**
+	 * Change page.
+	 *
+	 * @param currentPage the current page
+	 */
+	public void changePage(int currentPage) {
+		// assumption is there is an imported germplasm already
+		if (this.germplasmList != null && !this.germplasmList.isEmpty()) {
+			int totalItemsPerPage = this.getResultPerPage();
+			int start = (currentPage - 1) * totalItemsPerPage;
+			int end = start + totalItemsPerPage;
+			if (this.germplasmList.size() < end) {
+				end = this.germplasmList.size();
+			}
+			this.paginatedGermplasmList = this.germplasmList.subList(start, end);
 			this.currentPage = currentPage;
+		} else {
+			this.currentPage = 0;
 		}
+	}
 
-		/**
-		 * Gets the total pages.
-		 *
-		 * @return the total pages
-		 */
-		public int getTotalPages() {
-			 if(germplasmList != null && !germplasmList.isEmpty()){           
-	            totalPages = (int) Math.ceil((germplasmList.size() * 1f) / getResultPerPage()); 
-	        }else{
-	            totalPages = 0;
-	        }
-		    return totalPages;
-		}
-
-		/**
-		 * Sets the total pages.
-		 *
-		 * @param totalPages the new total pages
-		 */
-		public void setTotalPages(int totalPages) {
-			this.totalPages = totalPages;
-		}
-
-		/**
-		 * Gets the result per page.
-		 *
-		 * @return the result per page
-		 */
-		public int getResultPerPage() {
-			return resultPerPage;
-		}
-
-		/**
-		 * Sets the result per page.
-		 *
-		 * @param resultPerPage the new result per page
-		 */
-		public void setResultPerPage(int resultPerPage) {
-			this.resultPerPage = resultPerPage;
-		}
-		
-		/**
-		 * Change page.
-		 *
-		 * @param currentPage the current page
-		 */
-		public void changePage(int currentPage){
-	    	 //assumption is there is an imported germplasm already
-	        if(germplasmList != null && !germplasmList.isEmpty()){
-	            int totalItemsPerPage = getResultPerPage();
-	            int start = (currentPage - 1) * totalItemsPerPage;
-	            int end = start + totalItemsPerPage;
-	            if(germplasmList.size() < end){
-	                end = germplasmList.size();
-	            }
-	            paginatedGermplasmList = germplasmList.subList(start, end);
-	            this.currentPage = currentPage;
-	        }else{
-	            this.currentPage = 0;
-	        }
-		}
-	
 	/**
 	 * Gets the plots with plants selected.
 	 *
 	 * @return the plots with plants selected
 	 */
 	public int getPlotsWithPlantsSelected() {
-	    return plotsWithPlantsSelected;
+		return this.plotsWithPlantsSelected;
 	}
-	
+
 	/**
 	 * Sets the plots with plants selected.
 	 *
 	 * @param plotsWithPlantsSelected the new plots with plants selected
 	 */
 	public void setPlotsWithPlantsSelected(int plotsWithPlantsSelected) {
-	    this.plotsWithPlantsSelected = plotsWithPlantsSelected;
+		this.plotsWithPlantsSelected = plotsWithPlantsSelected;
 	}
-	
+
 	/**
 	 * Gets the location url.
 	 *
 	 * @return the location url
 	 */
 	public String getLocationUrl() {
-		return locationUrl;
+		return this.locationUrl;
 	}
-	
-	
 
 	public int getCropType() {
-		return cropType;
+		return this.cropType;
 	}
 
 	public void setCropType(int cropType) {
@@ -626,7 +618,7 @@ public class AdvancingNurseryForm {
 	 * @return the breeding method url
 	 */
 	public String getBreedingMethodUrl() {
-		return breedingMethodUrl;
+		return this.breedingMethodUrl;
 	}
 
 	/**
@@ -637,14 +629,14 @@ public class AdvancingNurseryForm {
 	public void setBreedingMethodUrl(String breedingMethodUrl) {
 		this.breedingMethodUrl = breedingMethodUrl;
 	}
-	
+
 	/**
 	 * Gets the nursery id.
 	 *
 	 * @return the nursery id
 	 */
 	public String getNurseryId() {
-		return nurseryId;
+		return this.nurseryId;
 	}
 
 	/**
@@ -655,12 +647,12 @@ public class AdvancingNurseryForm {
 	public void setNurseryId(String nurseryId) {
 		this.nurseryId = nurseryId;
 	}
-	
+
 	/**
 	 * @return the methodVariateId
 	 */
 	public Integer getMethodVariateId() {
-		return methodVariateId;
+		return this.methodVariateId;
 	}
 
 	/**
@@ -674,7 +666,7 @@ public class AdvancingNurseryForm {
 	 * @return the lineVariateId
 	 */
 	public Integer getLineVariateId() {
-		return lineVariateId;
+		return this.lineVariateId;
 	}
 
 	/**
@@ -684,11 +676,11 @@ public class AdvancingNurseryForm {
 		this.lineVariateId = lineVariateId;
 	}
 
-		/**
+	/**
 	 * @return the methodVariates
 	 */
 	public List<StandardVariableReference> getMethodVariates() {
-		return methodVariates;
+		return this.methodVariates;
 	}
 
 	/**
@@ -702,7 +694,7 @@ public class AdvancingNurseryForm {
 	 * @return the lineVariates
 	 */
 	public List<StandardVariableReference> getLineVariates() {
-		return lineVariates;
+		return this.lineVariates;
 	}
 
 	/**
@@ -711,12 +703,12 @@ public class AdvancingNurseryForm {
 	public void setLineVariates(List<StandardVariableReference> lineVariates) {
 		this.lineVariates = lineVariates;
 	}
-	
+
 	/**
 	 * @return the harvestYear
 	 */
 	public String getHarvestYear() {
-		return harvestYear;
+		return this.harvestYear;
 	}
 
 	/**
@@ -730,7 +722,7 @@ public class AdvancingNurseryForm {
 	 * @return the harvestMonth
 	 */
 	public String getHarvestMonth() {
-		return harvestMonth;
+		return this.harvestMonth;
 	}
 
 	/**
@@ -744,7 +736,7 @@ public class AdvancingNurseryForm {
 	 * @return the uniqueId
 	 */
 	public Long getUniqueId() {
-		return uniqueId;
+		return this.uniqueId;
 	}
 
 	/**
@@ -754,11 +746,11 @@ public class AdvancingNurseryForm {
 		this.uniqueId = uniqueId;
 	}
 
-		/**
+	/**
 	 * @return the allPlotsChoice
 	 */
 	public String getAllPlotsChoice() {
-		return allPlotsChoice;
+		return this.allPlotsChoice;
 	}
 
 	/**
@@ -772,7 +764,7 @@ public class AdvancingNurseryForm {
 	 * @return the plotVariates
 	 */
 	public List<StandardVariableReference> getPlotVariates() {
-		return plotVariates;
+		return this.plotVariates;
 	}
 
 	/**
@@ -782,11 +774,11 @@ public class AdvancingNurseryForm {
 		this.plotVariates = plotVariates;
 	}
 
-		/**
+	/**
 	 * @return the plotVariateId
 	 */
 	public Integer getPlotVariateId() {
-		return plotVariateId;
+		return this.plotVariateId;
 	}
 
 	/**
@@ -796,11 +788,11 @@ public class AdvancingNurseryForm {
 		this.plotVariateId = plotVariateId;
 	}
 
-		/**
+	/**
 	 * @return the errorInAdvance
 	 */
 	public String getErrorInAdvance() {
-		return errorInAdvance;
+		return this.errorInAdvance;
 	}
 
 	/**
@@ -809,60 +801,62 @@ public class AdvancingNurseryForm {
 	public void setErrorInAdvance(String errorInAdvance) {
 		this.errorInAdvance = errorInAdvance;
 	}
-	
+
 	public String getCheckAdvanceLinesUnique() {
-		return checkAdvanceLinesUnique;
+		return this.checkAdvanceLinesUnique;
 	}
 
 	public void setCheckAdvanceLinesUnique(String checkAdvanceLinesUnique) {
 		this.checkAdvanceLinesUnique = checkAdvanceLinesUnique;
 	}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
-		@Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("AdvancingNurseryForm [methodChoice=");
-            builder.append(methodChoice);
-            builder.append(", lineChoice=");
-            builder.append(lineChoice);
-            builder.append(", lineSelected=");
-            builder.append(lineSelected);
-            builder.append(", harvestDate=");
-            builder.append(harvestDate);
-            builder.append(", harvestLocation=");
-            builder.append(harvestLocation);
-            builder.append(", harvestLocationIdAll=");
-            builder.append(harvestLocationIdAll);
-            builder.append(", harvestLocationIdFavorite=");
-            builder.append(harvestLocationIdFavorite);
-            builder.append(", harvestLocationId=");
-            builder.append(harvestLocationId);
-            builder.append(", harvestLocationName=");
-            builder.append(harvestLocationName);
-            builder.append(", harvestLocationAbbreviation=");
-            builder.append(harvestLocationAbbreviation);
-            builder.append(", defaultMethodId=");
-            builder.append(defaultMethodId);
-            builder.append(", breedingMethodId=");
-            builder.append(advanceBreedingMethodId);
-            builder.append(", methodIdAll=");
-            builder.append(methodIdAll);
-            builder.append(", methodIdFavorite=");
-            builder.append(methodIdFavorite);
-            builder.append(", projectId=");
-            builder.append(projectId);
-            builder.append(", nurseryAdvanceName=");
-            builder.append(nurseryAdvanceName);
-            builder.append(", nurseryAdvanceDescription=");
-            builder.append(nurseryAdvanceDescription);
-            builder.append(", entries=");
-            builder.append(entries);
-            builder.append(", germplasmList=");
-            builder.append(germplasmList);
-            builder.append("]");
-            return builder.toString();
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AdvancingNurseryForm [methodChoice=");
+		builder.append(this.methodChoice);
+		builder.append(", lineChoice=");
+		builder.append(this.lineChoice);
+		builder.append(", lineSelected=");
+		builder.append(this.lineSelected);
+		builder.append(", harvestDate=");
+		builder.append(this.harvestDate);
+		builder.append(", harvestLocation=");
+		builder.append(this.harvestLocation);
+		builder.append(", harvestLocationIdAll=");
+		builder.append(this.harvestLocationIdAll);
+		builder.append(", harvestLocationIdFavorite=");
+		builder.append(this.harvestLocationIdFavorite);
+		builder.append(", harvestLocationId=");
+		builder.append(this.harvestLocationId);
+		builder.append(", harvestLocationName=");
+		builder.append(this.harvestLocationName);
+		builder.append(", harvestLocationAbbreviation=");
+		builder.append(this.harvestLocationAbbreviation);
+		builder.append(", defaultMethodId=");
+		builder.append(this.defaultMethodId);
+		builder.append(", breedingMethodId=");
+		builder.append(this.advanceBreedingMethodId);
+		builder.append(", methodIdAll=");
+		builder.append(this.methodIdAll);
+		builder.append(", methodIdFavorite=");
+		builder.append(this.methodIdFavorite);
+		builder.append(", projectId=");
+		builder.append(this.projectId);
+		builder.append(", nurseryAdvanceName=");
+		builder.append(this.nurseryAdvanceName);
+		builder.append(", nurseryAdvanceDescription=");
+		builder.append(this.nurseryAdvanceDescription);
+		builder.append(", entries=");
+		builder.append(this.entries);
+		builder.append(", germplasmList=");
+		builder.append(this.germplasmList);
+		builder.append("]");
+		return builder.toString();
+	}
 }

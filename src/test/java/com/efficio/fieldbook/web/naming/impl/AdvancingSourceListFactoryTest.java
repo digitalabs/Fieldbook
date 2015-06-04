@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.impl;
 
 import junit.framework.Assert;
@@ -8,8 +9,9 @@ import org.junit.Test;
 import org.springframework.context.NoSuchMessageException;
 
 public class AdvancingSourceListFactoryTest {
+
 	@Test
-	public void testCheckIfGermplasmIsExistingIfGermplasmIsNull(){
+	public void testCheckIfGermplasmIsExistingIfGermplasmIsNull() {
 		AdvancingSourceListFactory factory = new AdvancingSourceListFactory();
 		Germplasm germplasm = null;
 		boolean throwsError = false;
@@ -22,12 +24,12 @@ public class AdvancingSourceListFactoryTest {
 		} catch (NullPointerException e) {
 			throwsError = true;
 		}
-		
+
 		Assert.assertTrue("Should throw an error since germplasm is null", throwsError);
 	}
-	
+
 	@Test
-	public void testCheckIfGermplasmIsExistingIfGermplasmIsNotNull(){
+	public void testCheckIfGermplasmIsExistingIfGermplasmIsNotNull() {
 		AdvancingSourceListFactory factory = new AdvancingSourceListFactory();
 		Germplasm germplasm = new Germplasm();
 		boolean throwsError = false;
@@ -38,7 +40,7 @@ public class AdvancingSourceListFactoryTest {
 		} catch (NullPointerException e) {
 			throwsError = true;
 		}
-		
+
 		Assert.assertFalse("Should not throw an error since germplasm is null", throwsError);
 	}
 }

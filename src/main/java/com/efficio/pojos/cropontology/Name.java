@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.pojos.cropontology;
 
 import java.io.Serializable;
@@ -28,13 +28,13 @@ public class Name implements Serializable {
 
 	/** The Constant ENGLISH. */
 	public static final String ENGLISH = "english";
-	
+
 	/** The Constant CHINESE. */
 	public static final String CHINESE = "chinese";
 
 	/** The names. */
 	private Map<String, String> names = new LinkedHashMap<String, String>();
-	
+
 	/**
 	 * Instantiates a new name.
 	 *
@@ -42,9 +42,9 @@ public class Name implements Serializable {
 	 */
 	@JsonCreator
 	public Name(@JsonProperty String name) {
-		this.names.put(ENGLISH, name);
+		this.names.put(Name.ENGLISH, name);
 	}
-	
+
 	/**
 	 * Instantiates a new name.
 	 *
@@ -61,7 +61,7 @@ public class Name implements Serializable {
 	 * @return the names
 	 */
 	public Map<String, String> getNames() {
-		return names;
+		return this.names;
 	}
 
 	/**
@@ -73,12 +73,14 @@ public class Name implements Serializable {
 		this.names = names;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Name [names=" + names + "]";
+		return "Name [names=" + this.names + "]";
 	}
 
 }

@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.trial.form;
 
 import java.util.List;
@@ -22,73 +22,71 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
  * The Class AddOrRemoveTraitsForm.
  */
 public class ManageSettingsForm {
-	
+
 	/** The selected setting id. */
 	private int selectedSettingId;
-	
+
 	/** The setting name. */
 	private String settingName;
-	
+
 	/** The nursery level variables. */
 	private List<SettingDetail> studyLevelVariables;
-	
+
 	/** The plot level variables. */
 	private List<SettingDetail> plotLevelVariables;
-	
+
 	/** The baseline trait variables. */
 	private List<SettingDetail> baselineTraitVariables;
-	
+
 	/** The trial level variables. */
 	private List<SettingDetail> trialLevelVariables;
-	
+
 	/** The treatment factors. */
 	private List<SettingDetail> treatmentFactors;
-	
+
 	/** The is default. */
 	private boolean isDefault;
-	
+
 	/** The selected variables. */
 	private List<SettingVariable> selectedVariables;
-	
+
 	/** The project id. */
 	private String projectId;
-	
+
 	/** The initial load. */
 	private String initialLoad;
-	
-    /** The tree data. */
-    private String treeData;
-    //convert to json 1 level for the property and standard variable
-    /** The search tree data. */
-    private String searchTreeData;
-    /** The trait reference list. */
-    private List<TraitClassReference> traitClassReferenceList;
-    
-    /** The location id. */
-    private String locationId;
-    
-    /** The breeding method id. */
-    private String breedingMethodId;
-    
-    /** The location url. */
-    private String locationUrl;
-    
-    /** The breeding method url. */
-    private String breedingMethodUrl;
-    
-    /** The id name variables. */
-    private String idNameVariables;
-    
-    /** The number of instances. */
-    private String numberOfInstances;
-    
-    /** The start date id. */
-    private String startDateId;
-    
-    /** The end date id. */
-    private String endDateId;
-    
-    
+
+	/** The tree data. */
+	private String treeData;
+	// convert to json 1 level for the property and standard variable
+	/** The search tree data. */
+	private String searchTreeData;
+	/** The trait reference list. */
+	private List<TraitClassReference> traitClassReferenceList;
+
+	/** The location id. */
+	private String locationId;
+
+	/** The breeding method id. */
+	private String breedingMethodId;
+
+	/** The location url. */
+	private String locationUrl;
+
+	/** The breeding method url. */
+	private String breedingMethodUrl;
+
+	/** The id name variables. */
+	private String idNameVariables;
+
+	/** The number of instances. */
+	private String numberOfInstances;
+
+	/** The start date id. */
+	private String startDateId;
+
+	/** The end date id. */
+	private String endDateId;
 
 	/**
 	 * Gets the number of instances.
@@ -96,7 +94,7 @@ public class ManageSettingsForm {
 	 * @return the number of instances
 	 */
 	public String getNumberOfInstances() {
-		return numberOfInstances;
+		return this.numberOfInstances;
 	}
 
 	/**
@@ -114,396 +112,387 @@ public class ManageSettingsForm {
 	 * @return the selected setting id
 	 */
 	public int getSelectedSettingId() {
-	    return selectedSettingId;
+		return this.selectedSettingId;
 	}
-	
+
 	/**
 	 * Sets the selected setting id.
 	 *
 	 * @param selectedSettingId the new selected setting id
 	 */
 	public void setSelectedSettingId(int selectedSettingId) {
-	    this.selectedSettingId = selectedSettingId;
+		this.selectedSettingId = selectedSettingId;
 	}
-	
+
 	/**
 	 * Gets the setting name.
 	 *
 	 * @return the setting name
 	 */
 	public String getSettingName() {
-            return settingName;
-        }
-        
-        /**
-         * Sets the setting name.
-         *
-         * @param settingName the new setting name
-         */
-        public void setSettingName(String settingName) {
-            this.settingName = settingName;
-        }
-        
-        
-        
-        
-		/**
-		 * Gets the study level variables.
-		 *
-		 * @return the study level variables
-		 */
-		public List<SettingDetail> getStudyLevelVariables() {
-			return studyLevelVariables;
-		}
+		return this.settingName;
+	}
 
-		/**
-		 * Sets the study level variables.
-		 *
-		 * @param studyLevelVariables the new study level variables
-		 */
-		public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
-			this.studyLevelVariables = studyLevelVariables;
-		}
+	/**
+	 * Sets the setting name.
+	 *
+	 * @param settingName the new setting name
+	 */
+	public void setSettingName(String settingName) {
+		this.settingName = settingName;
+	}
 
-		/**
-         * Gets the plot level variables.
-         *
-         * @return the plot level variables
-         */
-        public List<SettingDetail> getPlotLevelVariables() {
-            return plotLevelVariables;
-        }
-        
-        /**
-         * Sets the plot level variables.
-         *
-         * @param plotLevelVariables the new plot level variables
-         */
-        public void setPlotLevelVariables(List<SettingDetail> plotLevelVariables) {
-            this.plotLevelVariables = plotLevelVariables;
-        }
-        
-        /**
-         * Gets the baseline trait variables.
-         *
-         * @return the baseline trait variables
-         */
-        public List<SettingDetail> getBaselineTraitVariables() {
-            return baselineTraitVariables;
-        }
-        
-        /**
-         * Sets the baseline trait variables.
-         *
-         * @param baselineTraitVariables the new baseline trait variables
-         */
-        public void setBaselineTraitVariables(List<SettingDetail> baselineTraitVariables) {
-            this.baselineTraitVariables = baselineTraitVariables;
-        }
-        
-        /**
-         * Gets the checks if is default.
-         *
-         * @return the checks if is default
-         */
-        public boolean getIsDefault() {
-            return isDefault;
-        }
-        
-        /**
-         * Sets the checks if is default.
-         *
-         * @param isDefault the new checks if is default
-         */
-        public void setIsDefault(boolean isDefault) {
-            this.isDefault = isDefault;
-        }
-        
-        /**
-         * Gets the project id.
-         *
-         * @return the project id
-         */
-        public String getProjectId() {
-            return projectId;
-        }
-        
-        /**
-         * Sets the project id.
-         *
-         * @param projectId the new project id
-         */
-        public void setProjectId(String projectId) {
-            this.projectId = projectId;
-        }
+	/**
+	 * Gets the study level variables.
+	 *
+	 * @return the study level variables
+	 */
+	public List<SettingDetail> getStudyLevelVariables() {
+		return this.studyLevelVariables;
+	}
 
-		/**
-		 * Gets the selected variables.
-		 *
-		 * @return the selected variables
-		 */
-		public List<SettingVariable> getSelectedVariables() {
-			return selectedVariables;
-		}
+	/**
+	 * Sets the study level variables.
+	 *
+	 * @param studyLevelVariables the new study level variables
+	 */
+	public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
+		this.studyLevelVariables = studyLevelVariables;
+	}
 
-		/**
-		 * Sets the selected variables.
-		 *
-		 * @param selectedVariables the new selected variables
-		 */
-		public void setSelectedVariables(List<SettingVariable> selectedVariables) {
-			this.selectedVariables = selectedVariables;
-		}
-		
-		
+	/**
+	 * Gets the plot level variables.
+	 *
+	 * @return the plot level variables
+	 */
+	public List<SettingDetail> getPlotLevelVariables() {
+		return this.plotLevelVariables;
+	}
 
-		
-		/**
-		 * Gets the initial load.
-		 *
-		 * @return the initial load
-		 */
-		public String getInitialLoad() {
-			return initialLoad;
-		}
+	/**
+	 * Sets the plot level variables.
+	 *
+	 * @param plotLevelVariables the new plot level variables
+	 */
+	public void setPlotLevelVariables(List<SettingDetail> plotLevelVariables) {
+		this.plotLevelVariables = plotLevelVariables;
+	}
 
-		/**
-		 * Sets the initial load.
-		 *
-		 * @param initialLoad the new initial load
-		 */
-		public void setInitialLoad(String initialLoad) {
-			this.initialLoad = initialLoad;
-		}
-		
-		
+	/**
+	 * Gets the baseline trait variables.
+	 *
+	 * @return the baseline trait variables
+	 */
+	public List<SettingDetail> getBaselineTraitVariables() {
+		return this.baselineTraitVariables;
+	}
 
-		/**
-		 * Gets the tree data.
-		 *
-		 * @return the tree data
-		 */
-		public String getTreeData() {
-			return treeData;
-		}
+	/**
+	 * Sets the baseline trait variables.
+	 *
+	 * @param baselineTraitVariables the new baseline trait variables
+	 */
+	public void setBaselineTraitVariables(List<SettingDetail> baselineTraitVariables) {
+		this.baselineTraitVariables = baselineTraitVariables;
+	}
 
-		/**
-		 * Sets the tree data.
-		 *
-		 * @param treeData the new tree data
-		 */
-		public void setTreeData(String treeData) {
-			this.treeData = treeData;
-		}
+	/**
+	 * Gets the checks if is default.
+	 *
+	 * @return the checks if is default
+	 */
+	public boolean getIsDefault() {
+		return this.isDefault;
+	}
 
-		/**
-		 * Gets the search tree data.
-		 *
-		 * @return the search tree data
-		 */
-		public String getSearchTreeData() {
-			return searchTreeData;
-		}
+	/**
+	 * Sets the checks if is default.
+	 *
+	 * @param isDefault the new checks if is default
+	 */
+	public void setIsDefault(boolean isDefault) {
+		this.isDefault = isDefault;
+	}
 
-		/**
-		 * Sets the search tree data.
-		 *
-		 * @param searchTreeData the new search tree data
-		 */
-		public void setSearchTreeData(String searchTreeData) {
-			this.searchTreeData = searchTreeData;
-		}
-		
-		/**
-		 * Gets the trait class reference list.
-		 *
-		 * @return the trait class reference list
-		 */
-		public List<TraitClassReference> getTraitClassReferenceList() {
-			return traitClassReferenceList;
-		}
+	/**
+	 * Gets the project id.
+	 *
+	 * @return the project id
+	 */
+	public String getProjectId() {
+		return this.projectId;
+	}
 
-		/**
-		 * Sets the trait class reference list.
-		 *
-		 * @param traitClassReferenceList the new trait class reference list
-		 */
-		public void setTraitClassReferenceList(
-				List<TraitClassReference> traitClassReferenceList) {
-			this.traitClassReferenceList = traitClassReferenceList;
-		}
+	/**
+	 * Sets the project id.
+	 *
+	 * @param projectId the new project id
+	 */
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 
-		/**
-		 * Clear.
-		 */
-		public void clear() {
-			this.selectedSettingId = 0;
-			this.settingName = null;
-			this.studyLevelVariables = null;
-			this.plotLevelVariables = null;
-			this.baselineTraitVariables = null;
-			this.isDefault = false;
-			this.selectedVariables = null;
-			this.trialLevelVariables = null;
-			this.treatmentFactors = null;
-		}
+	/**
+	 * Gets the selected variables.
+	 *
+	 * @return the selected variables
+	 */
+	public List<SettingVariable> getSelectedVariables() {
+		return this.selectedVariables;
+	}
 
-		/**
-		 * Gets the location id.
-		 *
-		 * @return the location id
-		 */
-		public String getLocationId() {
-			return locationId;
-		}
+	/**
+	 * Sets the selected variables.
+	 *
+	 * @param selectedVariables the new selected variables
+	 */
+	public void setSelectedVariables(List<SettingVariable> selectedVariables) {
+		this.selectedVariables = selectedVariables;
+	}
 
-		/**
-		 * Sets the location id.
-		 *
-		 * @param locationId the new location id
-		 */
-		public void setLocationId(String locationId) {
-			this.locationId = locationId;
-		}
+	/**
+	 * Gets the initial load.
+	 *
+	 * @return the initial load
+	 */
+	public String getInitialLoad() {
+		return this.initialLoad;
+	}
 
-		/**
-		 * Gets the breeding method id.
-		 *
-		 * @return the breeding method id
-		 */
-		public String getBreedingMethodId() {
-			return breedingMethodId;
-		}
+	/**
+	 * Sets the initial load.
+	 *
+	 * @param initialLoad the new initial load
+	 */
+	public void setInitialLoad(String initialLoad) {
+		this.initialLoad = initialLoad;
+	}
 
-		/**
-		 * Sets the breeding method id.
-		 *
-		 * @param breedingMethodId the new breeding method id
-		 */
-		public void setBreedingMethodId(String breedingMethodId) {
-			this.breedingMethodId = breedingMethodId;
-		}
+	/**
+	 * Gets the tree data.
+	 *
+	 * @return the tree data
+	 */
+	public String getTreeData() {
+		return this.treeData;
+	}
 
-		/**
-		 * Gets the location url.
-		 *
-		 * @return the location url
-		 */
-		public String getLocationUrl() {
-			return locationUrl;
-		}
+	/**
+	 * Sets the tree data.
+	 *
+	 * @param treeData the new tree data
+	 */
+	public void setTreeData(String treeData) {
+		this.treeData = treeData;
+	}
 
-		/**
-		 * Sets the location url.
-		 *
-		 * @param locationUrl the new location url
-		 */
-		public void setLocationUrl(String locationUrl) {
-			this.locationUrl = locationUrl;
-		}
+	/**
+	 * Gets the search tree data.
+	 *
+	 * @return the search tree data
+	 */
+	public String getSearchTreeData() {
+		return this.searchTreeData;
+	}
 
-		/**
-		 * Gets the breeding method url.
-		 *
-		 * @return the breeding method url
-		 */
-		public String getBreedingMethodUrl() {
-			return breedingMethodUrl;
-		}
+	/**
+	 * Sets the search tree data.
+	 *
+	 * @param searchTreeData the new search tree data
+	 */
+	public void setSearchTreeData(String searchTreeData) {
+		this.searchTreeData = searchTreeData;
+	}
 
-		/**
-		 * Sets the breeding method url.
-		 *
-		 * @param breedingMethodUrl the new breeding method url
-		 */
-		public void setBreedingMethodUrl(String breedingMethodUrl) {
-			this.breedingMethodUrl = breedingMethodUrl;
-		}
-		
-		/**
-		 * Gets the id name variables.
-		 *
-		 * @return the id name variables
-		 */
-		public String getIdNameVariables() {
-		        return this.idNameVariables;
-		}
-		
-		/**
-		 * Sets the id name variables.
-		 *
-		 * @param idNameVariables the new id name variables
-		 */
-		public void setIdNameVariables(String idNameVariables) {
-		        this.idNameVariables = idNameVariables;
-		}
+	/**
+	 * Gets the trait class reference list.
+	 *
+	 * @return the trait class reference list
+	 */
+	public List<TraitClassReference> getTraitClassReferenceList() {
+		return this.traitClassReferenceList;
+	}
 
-		/**
-		 * Gets the trial level variables.
-		 *
-		 * @return the trial level variables
-		 */
-		public List<SettingDetail> getTrialLevelVariables() {
-			return trialLevelVariables;
-		}
+	/**
+	 * Sets the trait class reference list.
+	 *
+	 * @param traitClassReferenceList the new trait class reference list
+	 */
+	public void setTraitClassReferenceList(List<TraitClassReference> traitClassReferenceList) {
+		this.traitClassReferenceList = traitClassReferenceList;
+	}
 
-		/**
-		 * Sets the trial level variables.
-		 *
-		 * @param trialLevelVariables the new trial level variables
-		 */
-		public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
-			this.trialLevelVariables = trialLevelVariables;
-		}
+	/**
+	 * Clear.
+	 */
+	public void clear() {
+		this.selectedSettingId = 0;
+		this.settingName = null;
+		this.studyLevelVariables = null;
+		this.plotLevelVariables = null;
+		this.baselineTraitVariables = null;
+		this.isDefault = false;
+		this.selectedVariables = null;
+		this.trialLevelVariables = null;
+		this.treatmentFactors = null;
+	}
 
-		/**
-		 * Gets the start date id.
-		 *
-		 * @return the start date id
-		 */
-		public String getStartDateId() {
-			return startDateId;
-		}
+	/**
+	 * Gets the location id.
+	 *
+	 * @return the location id
+	 */
+	public String getLocationId() {
+		return this.locationId;
+	}
 
-		/**
-		 * Sets the start date id.
-		 *
-		 * @param startDateId the new start date id
-		 */
-		public void setStartDateId(String startDateId) {
-			this.startDateId = startDateId;
-		}
+	/**
+	 * Sets the location id.
+	 *
+	 * @param locationId the new location id
+	 */
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
 
-		/**
-		 * Gets the end date id.
-		 *
-		 * @return the end date id
-		 */
-		public String getEndDateId() {
-			return endDateId;
-		}
+	/**
+	 * Gets the breeding method id.
+	 *
+	 * @return the breeding method id
+	 */
+	public String getBreedingMethodId() {
+		return this.breedingMethodId;
+	}
 
-		/**
-		 * Sets the end date id.
-		 *
-		 * @param endDateId the new end date id
-		 */
-		public void setEndDateId(String endDateId) {
-			this.endDateId = endDateId;
-		}
+	/**
+	 * Sets the breeding method id.
+	 *
+	 * @param breedingMethodId the new breeding method id
+	 */
+	public void setBreedingMethodId(String breedingMethodId) {
+		this.breedingMethodId = breedingMethodId;
+	}
 
-		/**
-		 * @return the treatmentFactors
-		 */
-		public List<SettingDetail> getTreatmentFactors() {
-			return treatmentFactors;
-		}
+	/**
+	 * Gets the location url.
+	 *
+	 * @return the location url
+	 */
+	public String getLocationUrl() {
+		return this.locationUrl;
+	}
 
-		/**
-		 * @param treatmentFactors the treatmentFactors to set
-		 */
-		public void setTreatmentFactors(List<SettingDetail> treatmentFactors) {
-			this.treatmentFactors = treatmentFactors;
-		}
-		
+	/**
+	 * Sets the location url.
+	 *
+	 * @param locationUrl the new location url
+	 */
+	public void setLocationUrl(String locationUrl) {
+		this.locationUrl = locationUrl;
+	}
+
+	/**
+	 * Gets the breeding method url.
+	 *
+	 * @return the breeding method url
+	 */
+	public String getBreedingMethodUrl() {
+		return this.breedingMethodUrl;
+	}
+
+	/**
+	 * Sets the breeding method url.
+	 *
+	 * @param breedingMethodUrl the new breeding method url
+	 */
+	public void setBreedingMethodUrl(String breedingMethodUrl) {
+		this.breedingMethodUrl = breedingMethodUrl;
+	}
+
+	/**
+	 * Gets the id name variables.
+	 *
+	 * @return the id name variables
+	 */
+	public String getIdNameVariables() {
+		return this.idNameVariables;
+	}
+
+	/**
+	 * Sets the id name variables.
+	 *
+	 * @param idNameVariables the new id name variables
+	 */
+	public void setIdNameVariables(String idNameVariables) {
+		this.idNameVariables = idNameVariables;
+	}
+
+	/**
+	 * Gets the trial level variables.
+	 *
+	 * @return the trial level variables
+	 */
+	public List<SettingDetail> getTrialLevelVariables() {
+		return this.trialLevelVariables;
+	}
+
+	/**
+	 * Sets the trial level variables.
+	 *
+	 * @param trialLevelVariables the new trial level variables
+	 */
+	public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
+		this.trialLevelVariables = trialLevelVariables;
+	}
+
+	/**
+	 * Gets the start date id.
+	 *
+	 * @return the start date id
+	 */
+	public String getStartDateId() {
+		return this.startDateId;
+	}
+
+	/**
+	 * Sets the start date id.
+	 *
+	 * @param startDateId the new start date id
+	 */
+	public void setStartDateId(String startDateId) {
+		this.startDateId = startDateId;
+	}
+
+	/**
+	 * Gets the end date id.
+	 *
+	 * @return the end date id
+	 */
+	public String getEndDateId() {
+		return this.endDateId;
+	}
+
+	/**
+	 * Sets the end date id.
+	 *
+	 * @param endDateId the new end date id
+	 */
+	public void setEndDateId(String endDateId) {
+		this.endDateId = endDateId;
+	}
+
+	/**
+	 * @return the treatmentFactors
+	 */
+	public List<SettingDetail> getTreatmentFactors() {
+		return this.treatmentFactors;
+	}
+
+	/**
+	 * @param treatmentFactors the treatmentFactors to set
+	 */
+	public void setTreatmentFactors(List<SettingDetail> treatmentFactors) {
+		this.treatmentFactors = treatmentFactors;
+	}
+
 }

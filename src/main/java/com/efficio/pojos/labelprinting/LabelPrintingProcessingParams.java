@@ -1,3 +1,4 @@
+
 package com.efficio.pojos.labelprinting;
 
 import java.util.List;
@@ -10,12 +11,10 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.pojos.GermplasmList;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
-
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public class LabelPrintingProcessingParams {
-	
+
 	private Map<Integer, String> labelHeaders;
 	private List<Integer> selectedFieldIDs;
 	private List<Integer> allFieldIDs;
@@ -30,9 +29,9 @@ public class LabelPrintingProcessingParams {
 
 	public LabelPrintingProcessingParams() {
 	}
-	
+
 	public Map<Integer, String> getLabelHeaders() {
-		return labelHeaders;
+		return this.labelHeaders;
 	}
 
 	public void setLabelHeaders(Map<Integer, String> labelHeaders) {
@@ -40,7 +39,7 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public List<Integer> getSelectedFieldIDs() {
-		return selectedFieldIDs;
+		return this.selectedFieldIDs;
 	}
 
 	public void setSelectedFieldIDs(List<Integer> selectedFieldIDs) {
@@ -48,7 +47,7 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public Map<Integer, MeasurementVariable> getVariableMap() {
-		return variableMap;
+		return this.variableMap;
 	}
 
 	public void setVariableMap(Map<Integer, MeasurementVariable> variableMap) {
@@ -56,7 +55,7 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public MeasurementRow getEnvironmentData() {
-		return environmentData;
+		return this.environmentData;
 	}
 
 	public void setEnvironmentData(MeasurementRow environmentData) {
@@ -65,7 +64,7 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public FieldMapTrialInstanceInfo getInstanceInfo() {
-		return instanceInfo;
+		return this.instanceInfo;
 	}
 
 	public void setInstanceInfo(FieldMapTrialInstanceInfo instanceInfo) {
@@ -73,7 +72,7 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public List<MeasurementRow> getInstanceMeasurements() {
-		return instanceMeasurements;
+		return this.instanceMeasurements;
 	}
 
 	public void setInstanceMeasurements(List<MeasurementRow> instanceMeasurements) {
@@ -81,7 +80,7 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public Map<Integer, String> getUserSpecifiedLabels() {
-		return userSpecifiedLabels;
+		return this.userSpecifiedLabels;
 	}
 
 	public void setUserSpecifiedLabels(Map<Integer, String> userSpecifiedLabels) {
@@ -89,15 +88,15 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public List<Integer> getAllFieldIDs() {
-		return allFieldIDs;
+		return this.allFieldIDs;
 	}
-	
+
 	public void setAllFieldIDs(List<Integer> allFieldIds) {
 		this.allFieldIDs = allFieldIds;
 	}
 
 	public GermplasmList getStockList() {
-		return stockList;
+		return this.stockList;
 	}
 
 	public void setStockList(GermplasmList stockList) {
@@ -105,7 +104,7 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public boolean isStockList() {
-		return isStockList;
+		return this.isStockList;
 	}
 
 	public void setIsStockList(boolean isStockList) {
@@ -113,11 +112,10 @@ public class LabelPrintingProcessingParams {
 	}
 
 	public Map<String, InventoryDetails> getInventoryDetailsMap() {
-		return inventoryDetailsMap;
+		return this.inventoryDetailsMap;
 	}
 
-	public void setInventoryDetailsMap(
-			Map<String, InventoryDetails> inventoryDetailsMap) {
+	public void setInventoryDetailsMap(Map<String, InventoryDetails> inventoryDetailsMap) {
 		this.inventoryDetailsMap = inventoryDetailsMap;
 	}
 }

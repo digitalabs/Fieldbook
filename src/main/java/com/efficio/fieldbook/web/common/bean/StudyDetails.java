@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.util.HashMap;
@@ -22,222 +22,222 @@ import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
  *
  * @author Chezka Camille Arevalo
  */
-public class StudyDetails{
-    
+public class StudyDetails {
+
 	private Integer id;
-	
+
 	/** The program_uuid */
 	private String programUUID;
-	
-    /** The name. */
-    private String name;
-    
-    /** The title. */
-    private String title;
-    
-    /** The objective. */
-    private String objective;
-    
-    /** The start date. */
-    private String startDate;
-    
-    /** The end date. */
-    private String endDate;
-    
-    /** The principal investigator. */
-    private String principalInvestigator;
-    
-    /** The site name. */
-    private String siteName;
-    
-    private List<SettingDetail> basicStudyDetails;
-    
-    private List<SettingDetail> managementDetails;
-    
-    private List<SettingDetail> nurseryConditionDetails;
-    
-    private List<SettingDetail> factorDetails;
-    
-    private List<SettingDetail> variateDetails;
-    
-    private List<SettingDetail> selectionVariateDetails;
-    
-    private List<SettingDetail> environmentManagementDetails;
-    
-    private List<SettingDetail> germplasmDescriptors;
-    
-    private List<TreatmentFactorDetail> treatmentFactorDetails;
-    
-    private boolean hasMeasurements;
-    
-    private int numberOfEnvironments;
-    
-    private ExperimentalDesignVariable experimentalDesignDetails;
-    
-    private Map<Integer, SettingDetail> factorsMap;
-    
-    private String errorMessage;
 
-    /**
-     * Instantiates a new study details.
-     */
-    public StudyDetails(){
-        
-    }
-    
-    /**
-     * Instantiates a new study details.
-     *
-     * @param name the name
-     * @param title the title
-     * @param objective the objective
-     * @param startDate the start date
-     * @param endDate the end date
-     * @param principalInvestigator the principal investigator
-     * @param siteName the site name
-     */
-    public StudyDetails(String name, String title, String objective, 
-            String startDate, String endDate, String principalInvestigator, String siteName){
-        this.name = name;
-        this.title = title;
-        this.objective = objective;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.principalInvestigator = principalInvestigator;
-        this.siteName = siteName;
-    }
-    
-    /**
-     * Gets the name.
-     *
-     * @return the name
-     */
-    public String getName(){
-        return name;
-    }
-    
-    /**
-     * Sets the name.
-     *
-     * @param name the new name
-     */
-    public void setName(String name){
-        this.name = name;
-    }
-    
-    /**
-     * Gets the title.
-     *
-     * @return the title
-     */
-    public String getTitle(){
-        return title;
-    }
-    
-    /**
-     * Sets the title.
-     *
-     * @param title the new title
-     */
-    public void setTitle(String title){
-        this.title= title;
-    }
-    
-    /**
-     * Gets the objective.
-     *
-     * @return the objective
-     */
-    public String getObjective(){
-        return objective;
-    }
-    
-    /**
-     * Sets the objective.
-     *
-     * @param objective the new objective
-     */
-    public void setObjective(String objective){
-        this.objective = objective;
-    }
+	/** The name. */
+	private String name;
 
-    /**
-     * Gets the start date.
-     *
-     * @return the start date
-     */
-    public String getStartDate(){
-        return startDate;
-    }
-    
-    /**
-     * Sets the start date.
-     *
-     * @param startDate the new start date
-     */
-    public void setStartDate(String startDate){
-        this.startDate = startDate;
-    }
-    
-    /**
-     * Gets the end date.
-     *
-     * @return the end date
-     */
-    public String getEndDate(){
-        return endDate;
-    }
-    
-    /**
-     * Sets the end date.
-     *
-     * @param endDate the new end date
-     */
-    public void setEndDate(String endDate){
-        this.endDate = endDate;
-    }
-    
-    /**
-     * Gets the principal investigator.
-     *
-     * @return the principal investigator
-     */
-    public String getPrincipalInvestigator(){
-        return principalInvestigator;
-    }
-    
-    /**
-     * Sets the principal investigator.
-     *
-     * @param principalInvestigator the new principal investigator
-     */
-    public void setPrincipalInvestigator(String principalInvestigator){
-        this.principalInvestigator = principalInvestigator;
-    }
-    
-    /**
-     * Gets the site name.
-     *
-     * @return the site name
-     */
-    public String getSiteName(){
-        return siteName;
-    }
-    
-    /**
-     * Sets the site name.
-     *
-     * @param siteName the new site name
-     */
-    public void setSiteName(String siteName){
-        this.siteName = siteName;
-    }
+	/** The title. */
+	private String title;
+
+	/** The objective. */
+	private String objective;
+
+	/** The start date. */
+	private String startDate;
+
+	/** The end date. */
+	private String endDate;
+
+	/** The principal investigator. */
+	private String principalInvestigator;
+
+	/** The site name. */
+	private String siteName;
+
+	private List<SettingDetail> basicStudyDetails;
+
+	private List<SettingDetail> managementDetails;
+
+	private List<SettingDetail> nurseryConditionDetails;
+
+	private List<SettingDetail> factorDetails;
+
+	private List<SettingDetail> variateDetails;
+
+	private List<SettingDetail> selectionVariateDetails;
+
+	private List<SettingDetail> environmentManagementDetails;
+
+	private List<SettingDetail> germplasmDescriptors;
+
+	private List<TreatmentFactorDetail> treatmentFactorDetails;
+
+	private boolean hasMeasurements;
+
+	private int numberOfEnvironments;
+
+	private ExperimentalDesignVariable experimentalDesignDetails;
+
+	private Map<Integer, SettingDetail> factorsMap;
+
+	private String errorMessage;
+
+	/**
+	 * Instantiates a new study details.
+	 */
+	public StudyDetails() {
+
+	}
+
+	/**
+	 * Instantiates a new study details.
+	 *
+	 * @param name the name
+	 * @param title the title
+	 * @param objective the objective
+	 * @param startDate the start date
+	 * @param endDate the end date
+	 * @param principalInvestigator the principal investigator
+	 * @param siteName the site name
+	 */
+	public StudyDetails(String name, String title, String objective, String startDate, String endDate, String principalInvestigator,
+			String siteName) {
+		this.name = name;
+		this.title = title;
+		this.objective = objective;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.principalInvestigator = principalInvestigator;
+		this.siteName = siteName;
+	}
+
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
+	public String getName() {
+		return this.name;
+	}
+
+	/**
+	 * Sets the name.
+	 *
+	 * @param name the new name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Gets the title.
+	 *
+	 * @return the title
+	 */
+	public String getTitle() {
+		return this.title;
+	}
+
+	/**
+	 * Sets the title.
+	 *
+	 * @param title the new title
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * Gets the objective.
+	 *
+	 * @return the objective
+	 */
+	public String getObjective() {
+		return this.objective;
+	}
+
+	/**
+	 * Sets the objective.
+	 *
+	 * @param objective the new objective
+	 */
+	public void setObjective(String objective) {
+		this.objective = objective;
+	}
+
+	/**
+	 * Gets the start date.
+	 *
+	 * @return the start date
+	 */
+	public String getStartDate() {
+		return this.startDate;
+	}
+
+	/**
+	 * Sets the start date.
+	 *
+	 * @param startDate the new start date
+	 */
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	/**
+	 * Gets the end date.
+	 *
+	 * @return the end date
+	 */
+	public String getEndDate() {
+		return this.endDate;
+	}
+
+	/**
+	 * Sets the end date.
+	 *
+	 * @param endDate the new end date
+	 */
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	/**
+	 * Gets the principal investigator.
+	 *
+	 * @return the principal investigator
+	 */
+	public String getPrincipalInvestigator() {
+		return this.principalInvestigator;
+	}
+
+	/**
+	 * Sets the principal investigator.
+	 *
+	 * @param principalInvestigator the new principal investigator
+	 */
+	public void setPrincipalInvestigator(String principalInvestigator) {
+		this.principalInvestigator = principalInvestigator;
+	}
+
+	/**
+	 * Gets the site name.
+	 *
+	 * @return the site name
+	 */
+	public String getSiteName() {
+		return this.siteName;
+	}
+
+	/**
+	 * Sets the site name.
+	 *
+	 * @param siteName the new site name
+	 */
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
+	}
 
 	/**
 	 * @return the basicStudyDetails
 	 */
 	public List<SettingDetail> getBasicStudyDetails() {
-		return basicStudyDetails;
+		return this.basicStudyDetails;
 	}
 
 	/**
@@ -251,7 +251,7 @@ public class StudyDetails{
 	 * @return the managementDetails
 	 */
 	public List<SettingDetail> getManagementDetails() {
-		return managementDetails;
+		return this.managementDetails;
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class StudyDetails{
 	 * @return the factorDetails
 	 */
 	public List<SettingDetail> getFactorDetails() {
-		return factorDetails;
+		return this.factorDetails;
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class StudyDetails{
 	 * @return the variateDetails
 	 */
 	public List<SettingDetail> getVariateDetails() {
-		return variateDetails;
+		return this.variateDetails;
 	}
 
 	/**
@@ -293,7 +293,7 @@ public class StudyDetails{
 	 * @return the id
 	 */
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	/**
@@ -307,14 +307,13 @@ public class StudyDetails{
 	 * @return the nurseryConditionDetails
 	 */
 	public List<SettingDetail> getNurseryConditionDetails() {
-		return nurseryConditionDetails;
+		return this.nurseryConditionDetails;
 	}
 
 	/**
 	 * @param nurseryConditionDetails the nurseryConditionDetails to set
 	 */
-	public void setNurseryConditionDetails(
-			List<SettingDetail> nurseryConditionDetails) {
+	public void setNurseryConditionDetails(List<SettingDetail> nurseryConditionDetails) {
 		this.nurseryConditionDetails = nurseryConditionDetails;
 	}
 
@@ -322,14 +321,13 @@ public class StudyDetails{
 	 * @return the selectionVariateDetails
 	 */
 	public List<SettingDetail> getSelectionVariateDetails() {
-		return selectionVariateDetails;
+		return this.selectionVariateDetails;
 	}
 
 	/**
 	 * @param selectionVariateDetails the selectionVariateDetails to set
 	 */
-	public void setSelectionVariateDetails(
-			List<SettingDetail> selectionVariateDetails) {
+	public void setSelectionVariateDetails(List<SettingDetail> selectionVariateDetails) {
 		this.selectionVariateDetails = selectionVariateDetails;
 	}
 
@@ -337,7 +335,7 @@ public class StudyDetails{
 	 * @return the hasMeasurements
 	 */
 	public boolean isHasMeasurements() {
-		return hasMeasurements;
+		return this.hasMeasurements;
 	}
 
 	/**
@@ -351,14 +349,13 @@ public class StudyDetails{
 	 * @return the environmentManagementDetails
 	 */
 	public List<SettingDetail> getEnvironmentManagementDetails() {
-		return environmentManagementDetails;
+		return this.environmentManagementDetails;
 	}
 
 	/**
 	 * @param environmentManagementDetails the environmentManagementDetails to set
 	 */
-	public void setEnvironmentManagementDetails(
-			List<SettingDetail> environmentManagementDetails) {
+	public void setEnvironmentManagementDetails(List<SettingDetail> environmentManagementDetails) {
 		this.environmentManagementDetails = environmentManagementDetails;
 	}
 
@@ -366,7 +363,7 @@ public class StudyDetails{
 	 * @return the germplasmDescriptors
 	 */
 	public List<SettingDetail> getGermplasmDescriptors() {
-		return germplasmDescriptors;
+		return this.germplasmDescriptors;
 	}
 
 	/**
@@ -380,14 +377,13 @@ public class StudyDetails{
 	 * @return the treatmentFactorDetails
 	 */
 	public List<TreatmentFactorDetail> getTreatmentFactorDetails() {
-		return treatmentFactorDetails;
+		return this.treatmentFactorDetails;
 	}
 
 	/**
 	 * @param treatmentFactorDetails the treatmentFactorDetails to set
 	 */
-	public void setTreatmentFactorDetails(
-			List<TreatmentFactorDetail> treatmentFactorDetails) {
+	public void setTreatmentFactorDetails(List<TreatmentFactorDetail> treatmentFactorDetails) {
 		this.treatmentFactorDetails = treatmentFactorDetails;
 	}
 
@@ -395,7 +391,7 @@ public class StudyDetails{
 	 * @return the numberOfEnvironments
 	 */
 	public int getNumberOfEnvironments() {
-		return numberOfEnvironments;
+		return this.numberOfEnvironments;
 	}
 
 	/**
@@ -409,32 +405,30 @@ public class StudyDetails{
 	 * @return the experimentalDesignDetails
 	 */
 	public ExperimentalDesignVariable getExperimentalDesignDetails() {
-		return experimentalDesignDetails;
+		return this.experimentalDesignDetails;
 	}
 
 	/**
 	 * @param experimentalDesignDetails the experimentalDesignDetails to set
 	 */
-	public void setExperimentalDesignDetails(
-			ExperimentalDesignVariable experimentalDesignDetails) {
+	public void setExperimentalDesignDetails(ExperimentalDesignVariable experimentalDesignDetails) {
 		this.experimentalDesignDetails = experimentalDesignDetails;
 	}
-	
+
 	public Map<Integer, SettingDetail> getFactorsMap() {
 		if (this.factorsMap == null) {
 			this.factorsMap = new HashMap<Integer, SettingDetail>();
-			if (factorDetails != null) {
-				buildFactorsMapFromSettingDetailsList(factorDetails);
+			if (this.factorDetails != null) {
+				this.buildFactorsMapFromSettingDetailsList(this.factorDetails);
 			}
-			if (germplasmDescriptors != null) {
-				buildFactorsMapFromSettingDetailsList(germplasmDescriptors);
+			if (this.germplasmDescriptors != null) {
+				this.buildFactorsMapFromSettingDetailsList(this.germplasmDescriptors);
 			}
 		}
 		return this.factorsMap;
 	}
 
-	private void buildFactorsMapFromSettingDetailsList(
-			List<SettingDetail> settingDetails) {
+	private void buildFactorsMapFromSettingDetailsList(List<SettingDetail> settingDetails) {
 		for (SettingDetail settingDetail : settingDetails) {
 			if (settingDetail.getVariable() != null) {
 				this.factorsMap.put(settingDetail.getVariable().getCvTermId(), settingDetail);
@@ -443,7 +437,7 @@ public class StudyDetails{
 	}
 
 	public String getErrorMessage() {
-		return errorMessage;
+		return this.errorMessage;
 	}
 
 	public void setErrorMessage(String errorMessage) {
@@ -451,13 +445,11 @@ public class StudyDetails{
 	}
 
 	public String getProgramUUID() {
-		return programUUID;
+		return this.programUUID;
 	}
 
 	public void setProgramUUID(String programUUID) {
 		this.programUUID = programUUID;
 	}
-	
-	
 
 }

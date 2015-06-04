@@ -1,22 +1,19 @@
+
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.List;
 
 import org.generationcp.commons.ruleengine.OrderedRuleExecutionContext;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.springframework.context.MessageSource;
 
-import java.util.List;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 2/14/2015
- * Time: 12:53 AM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/14/2015 Time: 12:53 AM
  */
-public class NamingRuleExecutionContext extends OrderedRuleExecutionContext{
-
+public class NamingRuleExecutionContext extends OrderedRuleExecutionContext {
 
 	private ProcessCodeService processCodeService;
 	private AdvancingSource advancingSource;
@@ -26,25 +23,23 @@ public class NamingRuleExecutionContext extends OrderedRuleExecutionContext{
 
 	private List<String> tempData;
 
-	public NamingRuleExecutionContext(List<String> executionOrder,
-			ProcessCodeService processCodeService,
-			AdvancingSource advancingSource, GermplasmDataManager germplasmDataManager,
-			List<String> currentData) {
+	public NamingRuleExecutionContext(List<String> executionOrder, ProcessCodeService processCodeService, AdvancingSource advancingSource,
+			GermplasmDataManager germplasmDataManager, List<String> currentData) {
 		super(executionOrder);
 		this.processCodeService = processCodeService;
 		this.advancingSource = advancingSource;
 		this.currentData = currentData;
-		this.germplasmDataManager  = germplasmDataManager;
+		this.germplasmDataManager = germplasmDataManager;
 
 	}
 
 	@Override
 	public Object getRuleExecutionOutput() {
-		return currentData;
+		return this.currentData;
 	}
 
 	public ProcessCodeService getProcessCodeService() {
-		return processCodeService;
+		return this.processCodeService;
 	}
 
 	public void setProcessCodeService(ProcessCodeService processCodeService) {
@@ -52,7 +47,7 @@ public class NamingRuleExecutionContext extends OrderedRuleExecutionContext{
 	}
 
 	public AdvancingSource getAdvancingSource() {
-		return advancingSource;
+		return this.advancingSource;
 	}
 
 	public void setAdvancingSource(AdvancingSource advancingSource) {
@@ -60,7 +55,7 @@ public class NamingRuleExecutionContext extends OrderedRuleExecutionContext{
 	}
 
 	public List<String> getCurrentData() {
-		return currentData;
+		return this.currentData;
 	}
 
 	public void setCurrentData(List<String> currentData) {
@@ -68,7 +63,7 @@ public class NamingRuleExecutionContext extends OrderedRuleExecutionContext{
 	}
 
 	public GermplasmDataManager getGermplasmDataManager() {
-		return germplasmDataManager;
+		return this.germplasmDataManager;
 	}
 
 	public void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
@@ -76,7 +71,7 @@ public class NamingRuleExecutionContext extends OrderedRuleExecutionContext{
 	}
 
 	public List<String> getTempData() {
-		return tempData;
+		return this.tempData;
 	}
 
 	public void setTempData(List<String> tempData) {
@@ -84,7 +79,7 @@ public class NamingRuleExecutionContext extends OrderedRuleExecutionContext{
 	}
 
 	public MessageSource getMessageSource() {
-		return messageSource;
+		return this.messageSource;
 	}
 
 	public void setMessageSource(MessageSource messageSource) {

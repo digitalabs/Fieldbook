@@ -1,14 +1,14 @@
-package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import org.generationcp.middleware.manager.GermplasmNameType;
-import org.junit.Test;
+package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.generationcp.middleware.manager.GermplasmNameType;
+import org.junit.Assert;
+import org.junit.Test;
 
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class BracketsExpressionTest extends TestExpression {
 
@@ -17,30 +17,29 @@ public class BracketsExpressionTest extends TestExpression {
 	@Test
 	public void testBracketsNonCross() {
 		String testRootName = "CMLI452";
-		AdvancingSource source = createAdvancingSourceTestData(testRootName, "-", null, null, null, false);
+		AdvancingSource source = this.createAdvancingSourceTestData(testRootName, "-", null, null, null, false);
 		source.setRootName(testRootName);
 		List<StringBuilder> builders = new ArrayList<>();
 		builders.add(new StringBuilder(source.getRootName() + BracketsExpression.KEY));
 
-		dut.apply(builders, source);
+		this.dut.apply(builders, source);
 
-		assertEquals(testRootName, builders.get(0).toString());
+		Assert.assertEquals(testRootName, builders.get(0).toString());
 	}
 
 	@Test
 	public void testBracketsCross() {
 		String testRootName = "CMLI452 X POSI105";
-		AdvancingSource source = createAdvancingSourceTestData(testRootName, "-", null, null, null,
-				false);
+		AdvancingSource source = this.createAdvancingSourceTestData(testRootName, "-", null, null, null, false);
 		source.setRootName(testRootName);
 		source.setRootNameType(GermplasmNameType.CROSS_NAME.getUserDefinedFieldID());
 
 		List<StringBuilder> builders = new ArrayList<>();
 		builders.add(new StringBuilder(source.getRootName() + BracketsExpression.KEY));
 
-		dut.apply(builders, source);
+		this.dut.apply(builders, source);
 
-		assertEquals("(" + testRootName + ")", builders.get(0).toString());
+		Assert.assertEquals("(" + testRootName + ")", builders.get(0).toString());
 	}
 
 }

@@ -1,7 +1,13 @@
+
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -15,20 +21,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
-*/
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte
+ */
 
 @Controller
 @RequestMapping(BreedingMethodController.URL)
-public class BreedingMethodController extends AbstractBaseFieldbookController{
+public class BreedingMethodController extends AbstractBaseFieldbookController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
 	public static final String URL = "/breedingMethod";
@@ -38,25 +40,25 @@ public class BreedingMethodController extends AbstractBaseFieldbookController{
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
 
-	@Override public String getContentName() {
+	@Override
+	public String getContentName() {
 		return null;
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/programMethodURL", method = RequestMethod.GET)
 	public String getBreedingMethodProgramURL() {
-		return fieldbookProperties.getProgramBreedingMethodsUrl();
+		return this.fieldbookProperties.getProgramBreedingMethodsUrl();
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/programID", method = RequestMethod.GET)
 	public Long getCurrentProgramID(HttpServletRequest request) {
-		ContextInfo contextInfo = (ContextInfo) WebUtils
-						.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
+		ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 
 		return contextInfo.getSelectedProjectId();
 	}
@@ -72,13 +74,10 @@ public class BreedingMethodController extends AbstractBaseFieldbookController{
 		Map<String, Object> result = new HashMap<>();
 
 		try {
-			List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods(false);
-			List<Integer> methodIds = fieldbookMiddlewareService.getFavoriteProjectMethods(
-					contextUtil.getCurrentProgramUUID());
-			List<Method> favoriteMethods = fieldbookMiddlewareService
-					.getFavoriteBreedingMethods(methodIds, false);
-			List<Method> allNonGenerativeMethods = fieldbookMiddlewareService
-					.getAllBreedingMethods(true);
+			List<Method> breedingMethods = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
+			List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(this.contextUtil.getCurrentProgramUUID());
+			List<Method> favoriteMethods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);
+			List<Method> allNonGenerativeMethods = this.fieldbookMiddlewareService.getAllBreedingMethods(true);
 
 			result.put("success", "1");
 			result.put("allMethods", breedingMethods);
@@ -86,7 +85,7 @@ public class BreedingMethodController extends AbstractBaseFieldbookController{
 			result.put("allNonGenerativeMethods", allNonGenerativeMethods);
 			result.put("favoriteNonGenerativeMethods", favoriteMethods);
 		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
+			BreedingMethodController.LOG.error(e.getMessage(), e);
 			result.put("success", "-1");
 			result.put("errorMessage", e.getMessage());
 		}

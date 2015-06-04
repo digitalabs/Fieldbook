@@ -1,30 +1,28 @@
+
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 2/17/2015
- * Time: 3:17 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/17/2015 Time: 3:17 PM
  */
 
 @RunWith(MockitoJUnitRunner.class)
@@ -51,140 +49,133 @@ public class EnforceUniqueNameRuleTest {
 
 	@Before
 	public void setUp() throws Exception {
-		dut = new EnforceUniqueNameRule();
+		this.dut = new EnforceUniqueNameRule();
 	}
 
 	@Test
-	public void testUniqueNameCheckNoMatch() throws MiddlewareQueryException, RuleException{
+	public void testUniqueNameCheckNoMatch() throws MiddlewareQueryException, RuleException {
 
-		setupTestExecutionContext();
-		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(false);
-		dut.runRule(context);
+		this.setupTestExecutionContext();
+		Mockito.when(this.germplasmDataManager.checkIfMatches(Matchers.anyString())).thenReturn(false);
+		this.dut.runRule(this.context);
 
-		verify(context, never()).setCurrentData(tempData);
-		verify(source, never()).setCurrentMaxSequence(TEST_MAX_SEQUENCE + 1);
-		verify(source, never()).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+		Mockito.verify(this.context, Mockito.never()).setCurrentData(this.tempData);
+		Mockito.verify(this.source, Mockito.never()).setCurrentMaxSequence(EnforceUniqueNameRuleTest.TEST_MAX_SEQUENCE + 1);
+		Mockito.verify(this.source, Mockito.never()).setChangeDetail(Matchers.any(AdvanceGermplasmChangeDetail.class));
 	}
 
 	@Test
-	public void testUniqueNameCheckMatchFoundNoCount() throws MiddlewareQueryException, RuleException{
+	public void testUniqueNameCheckMatchFoundNoCount() throws MiddlewareQueryException, RuleException {
 
-		setupTestExecutionContext();
-		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true);
-		dut.runRule(context);
+		this.setupTestExecutionContext();
+		Mockito.when(this.germplasmDataManager.checkIfMatches(Matchers.anyString())).thenReturn(true);
+		this.dut.runRule(this.context);
 
 		// verify that current rule execution state is pointed back to previous stored data
-		verify(context).setCurrentData(tempData);
-		verify(source).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+		Mockito.verify(this.context).setCurrentData(this.tempData);
+		Mockito.verify(this.source).setChangeDetail(Matchers.any(AdvanceGermplasmChangeDetail.class));
 
 		// verify that force unique name generation flag is set
-		verify(source).setForceUniqueNameGeneration(true);
+		Mockito.verify(this.source).setForceUniqueNameGeneration(true);
 		// verify that default count rule is provided so that count rule execution will proceed
-		verify(breedingMethod).setCount(CountRule.DEFAULT_COUNT);
+		Mockito.verify(this.breedingMethod).setCount(CountRule.DEFAULT_COUNT);
 	}
 
 	@Test
-	public void testUniqueNameCheckMatchFoundFlagSet()
-			throws MiddlewareQueryException, RuleException {
+	public void testUniqueNameCheckMatchFoundFlagSet() throws MiddlewareQueryException, RuleException {
 
-		setupTestExecutionContext();
-		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true);
-		when(source.isForceUniqueNameGeneration()).thenReturn(true);
-		dut.runRule(context);
+		this.setupTestExecutionContext();
+		Mockito.when(this.germplasmDataManager.checkIfMatches(Matchers.anyString())).thenReturn(true);
+		Mockito.when(this.source.isForceUniqueNameGeneration()).thenReturn(true);
+		this.dut.runRule(this.context);
 
 		// verify that current rule execution state is pointed back to previous stored data
-		verify(context).setCurrentData(tempData);
-		verify(source).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+		Mockito.verify(this.context).setCurrentData(this.tempData);
+		Mockito.verify(this.source).setChangeDetail(Matchers.any(AdvanceGermplasmChangeDetail.class));
 
 		// verify that max sequence is incremented
-		verify(source).setCurrentMaxSequence(TEST_MAX_SEQUENCE + 1);
+		Mockito.verify(this.source).setCurrentMaxSequence(EnforceUniqueNameRuleTest.TEST_MAX_SEQUENCE + 1);
 
 	}
 
 	@Test
-	public void testUniqueNameCheckMatchFoundIsBulking()
-			throws MiddlewareQueryException, RuleException {
+	public void testUniqueNameCheckMatchFoundIsBulking() throws MiddlewareQueryException, RuleException {
 
-		setupTestExecutionContext();
-		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true);
-		when(source.isBulk()).thenReturn(true);
+		this.setupTestExecutionContext();
+		Mockito.when(this.germplasmDataManager.checkIfMatches(Matchers.anyString())).thenReturn(true);
+		Mockito.when(this.source.isBulk()).thenReturn(true);
 
-		dut.runRule(context);
+		this.dut.runRule(this.context);
 
 		// verify that current rule execution state is pointed back to previous stored data
-		verify(context).setCurrentData(tempData);
-		verify(source).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+		Mockito.verify(this.context).setCurrentData(this.tempData);
+		Mockito.verify(this.source).setChangeDetail(Matchers.any(AdvanceGermplasmChangeDetail.class));
 
 		// verify that force unique name generation flag is set
-		verify(source).setForceUniqueNameGeneration(true);
+		Mockito.verify(this.source).setForceUniqueNameGeneration(true);
 	}
 
 	@Test
-	public void testUniqueNameCheckMatchFoundHasCountNonBulking()
-			throws MiddlewareQueryException, RuleException {
+	public void testUniqueNameCheckMatchFoundHasCountNonBulking() throws MiddlewareQueryException, RuleException {
 
-		setupTestExecutionContext();
-		when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true);
-		when(breedingMethod.getCount()).thenReturn(CountRule.DEFAULT_COUNT);
+		this.setupTestExecutionContext();
+		Mockito.when(this.germplasmDataManager.checkIfMatches(Matchers.anyString())).thenReturn(true);
+		Mockito.when(this.breedingMethod.getCount()).thenReturn(CountRule.DEFAULT_COUNT);
 
-		dut.runRule(context);
+		this.dut.runRule(this.context);
 
 		// verify that max sequence is incremented
-		verify(source).setCurrentMaxSequence(TEST_MAX_SEQUENCE + 1);
+		Mockito.verify(this.source).setCurrentMaxSequence(EnforceUniqueNameRuleTest.TEST_MAX_SEQUENCE + 1);
 
 		// verify that current rule execution state is pointed back to previous stored data
-		verify(context).setCurrentData(tempData);
-		verify(source).setChangeDetail(any(AdvanceGermplasmChangeDetail.class));
+		Mockito.verify(this.context).setCurrentData(this.tempData);
+		Mockito.verify(this.source).setChangeDetail(Matchers.any(AdvanceGermplasmChangeDetail.class));
 
 		// verify that flag is not set so as to preserve previous count rule logic when incrementing the count
-		verify(source, never()).setForceUniqueNameGeneration(true);
+		Mockito.verify(this.source, Mockito.never()).setForceUniqueNameGeneration(true);
 	}
 
 	@Test
-	public void testGetNextStepKeyNoMatchFound() throws Exception{
-		setupTestExecutionContext();
+	public void testGetNextStepKeyNoMatchFound() throws Exception {
+		this.setupTestExecutionContext();
 
 		// when no duplicate is found, a change detail object is not created in the advancing source. we simulate that state here
-		when(source.getChangeDetail()).thenReturn(null);
+		Mockito.when(this.source.getChangeDetail()).thenReturn(null);
 
-		String nextKey = dut.getNextRuleStepKey(context);
+		String nextKey = this.dut.getNextRuleStepKey(this.context);
 
-		assertNull("Expected next key is null because unique name check is last in sequence and unique name check should pass", nextKey);
+		Assert.assertNull("Expected next key is null because unique name check is last in sequence and unique name check should pass",
+				nextKey);
 	}
 
 	@Test
 	public void testGetNextStepKeyDuplicateFoundCheckFail() throws Exception {
-		setupTestExecutionContext();
-		AdvanceGermplasmChangeDetail detail = mock(AdvanceGermplasmChangeDetail.class);
+		this.setupTestExecutionContext();
+		AdvanceGermplasmChangeDetail detail = Mockito.mock(AdvanceGermplasmChangeDetail.class);
 
-		when(source.getChangeDetail()).thenReturn(detail);
-		// if a duplicate has been found in previous steps, and a passing name has not yet been found, then the new advance name should still be null on the germplasm change detail object
-		when(detail.getNewAdvanceName()).thenReturn(null);
+		Mockito.when(this.source.getChangeDetail()).thenReturn(detail);
+		// if a duplicate has been found in previous steps, and a passing name has not yet been found, then the new advance name should
+		// still be null on the germplasm change detail object
+		Mockito.when(detail.getNewAdvanceName()).thenReturn(null);
 
-		String nextKey = dut.getNextRuleStepKey(context);
+		String nextKey = this.dut.getNextRuleStepKey(this.context);
 
-		assertNotNull(
-				"Duplicate has been found and check still fails, so next key should not be null",
-				nextKey);
-		assertEquals(
-				"Rule does not pass execution control to CountRule even after failing the check",
-				CountRule.KEY, nextKey);
+		Assert.assertNotNull("Duplicate has been found and check still fails, so next key should not be null", nextKey);
+		Assert.assertEquals("Rule does not pass execution control to CountRule even after failing the check", CountRule.KEY, nextKey);
 	}
 
 	@Test
 	public void testGetNextStepKeyDuplicateFoundCheckPass() throws Exception {
-		setupTestExecutionContext();
-		AdvanceGermplasmChangeDetail detail = mock(AdvanceGermplasmChangeDetail.class);
+		this.setupTestExecutionContext();
+		AdvanceGermplasmChangeDetail detail = Mockito.mock(AdvanceGermplasmChangeDetail.class);
 
-		when(source.getChangeDetail()).thenReturn(detail);
+		Mockito.when(this.source.getChangeDetail()).thenReturn(detail);
 		// if a duplicate has been found in previous steps, and a passing name has been found, then the new advance name should not be null
-		when(detail.getNewAdvanceName()).thenReturn(new String());
+		Mockito.when(detail.getNewAdvanceName()).thenReturn(new String());
 
-		String nextKey = dut.getNextRuleStepKey(context);
+		String nextKey = this.dut.getNextRuleStepKey(this.context);
 
-		assertNull(
-				"Duplicate has been found and but check passes, so next key should be null",
-				nextKey);
+		Assert.assertNull("Duplicate has been found and but check passes, so next key should be null", nextKey);
 
 	}
 
@@ -197,20 +188,20 @@ public class EnforceUniqueNameRuleTest {
 		dummyInitialState.add("ETFN 1-1");
 		dummyInitialState.add("ETFN 1-2");
 
-		tempData = new ArrayList<>();
-		tempData.add("ETFN 1-");
+		this.tempData = new ArrayList<>();
+		this.tempData.add("ETFN 1-");
 
-		when(context.getAdvancingSource()).thenReturn(source);
-		when(context.getGermplasmDataManager()).thenReturn(germplasmDataManager);
-		when(context.getExecutionOrder()).thenReturn(dummySequenceOrder);
-		when(context.getCurrentData()).thenReturn(dummyInitialState);
-		when(context.getTempData()).thenReturn(tempData);
-		when(context.getMessageSource()).thenReturn(mock(MessageSource.class));
+		Mockito.when(this.context.getAdvancingSource()).thenReturn(this.source);
+		Mockito.when(this.context.getGermplasmDataManager()).thenReturn(this.germplasmDataManager);
+		Mockito.when(this.context.getExecutionOrder()).thenReturn(dummySequenceOrder);
+		Mockito.when(this.context.getCurrentData()).thenReturn(dummyInitialState);
+		Mockito.when(this.context.getTempData()).thenReturn(this.tempData);
+		Mockito.when(this.context.getMessageSource()).thenReturn(Mockito.mock(MessageSource.class));
 
-		when(source.getBreedingMethod()).thenReturn(breedingMethod);
-		when(source.getCurrentMaxSequence()).thenReturn(TEST_MAX_SEQUENCE);
+		Mockito.when(this.source.getBreedingMethod()).thenReturn(this.breedingMethod);
+		Mockito.when(this.source.getCurrentMaxSequence()).thenReturn(EnforceUniqueNameRuleTest.TEST_MAX_SEQUENCE);
 
-		when(context.getCurrentExecutionIndex()).thenReturn(ENFORCE_RULE_INDEX);
+		Mockito.when(this.context.getCurrentExecutionIndex()).thenReturn(EnforceUniqueNameRuleTest.ENFORCE_RULE_INDEX);
 
 	}
 }

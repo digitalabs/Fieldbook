@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
@@ -25,46 +25,46 @@ public class TreatmentFactorDetail implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-	
+
 	/** The level id. */
 	private Integer levelId;
-	
+
 	/** The amount id. */
 	private Integer amountId;
-	
+
 	/** The level value. */
 	private String levelValue;
-	
+
 	/** The amount value. */
 	private String amountValue;
-	
+
 	/** The level name. */
 	private String levelName;
-	
+
 	/** The amount name. */
 	private String amountName;
-	
+
 	/** The amount data type id. */
 	private Integer amountDataTypeId;
-	
+
 	/** The possible values json. */
 	private String possibleValuesJson;
-	
+
 	/** The widget type. */
-	private WidgetType widgetType; 
-	
+	private WidgetType widgetType;
+
 	/** The min range. */
 	private Double minRange;
-	
+
 	/** The max range. */
 	private Double maxRange;
-	
+
 	private String levelDescription;
 
 	/**
 	 * Instantiates a new treatment factor detail.
 	 */
-	public TreatmentFactorDetail(){
+	public TreatmentFactorDetail() {
 		super();
 	}
 
@@ -80,9 +80,8 @@ public class TreatmentFactorDetail implements Serializable {
 	 * @param amountDataTypeId the amount data type id
 	 * @param possibleValuesJson the possible values json
 	 */
-	public TreatmentFactorDetail(Integer levelId, Integer amountId, String levelValue, 
-	        String amountValue, String levelName, String amountName, Integer amountDataTypeId, String possibleValuesJson,
-	        Double minRange, Double maxRange) {
+	public TreatmentFactorDetail(Integer levelId, Integer amountId, String levelValue, String amountValue, String levelName,
+			String amountName, Integer amountDataTypeId, String possibleValuesJson, Double minRange, Double maxRange) {
 		super();
 		this.setLevelId(levelId);
 		this.setAmountId(amountId);
@@ -94,234 +93,232 @@ public class TreatmentFactorDetail implements Serializable {
 		this.possibleValuesJson = possibleValuesJson;
 		this.minRange = minRange;
 		this.maxRange = maxRange;
-		setWidgetType();
+		this.setWidgetType();
 	}
 
-    
-        /**
-         * Gets the amount value.
-         *
-         * @return the amountValue
-         */
-        public String getAmountValue() {
-            return amountValue;
-        }
-    
-        /**
-         * Sets the amount value.
-         *
-         * @param amountValue the amountValue to set
-         */
-        public void setAmountValue(String amountValue) {
-            this.amountValue = amountValue;
-        }
-    
-        /**
-         * Gets the level name.
-         *
-         * @return the levelName
-         */
-        public String getLevelName() {
-            return levelName;
-        }
-    
-        /**
-         * Sets the level name.
-         *
-         * @param levelName the levelName to set
-         */
-        public void setLevelName(String levelName) {
-            this.levelName = levelName;
-        }
-    
-        /**
-         * Gets the amount name.
-         *
-         * @return the amountName
-         */
-        public String getAmountName() {
-            return amountName;
-        }
-    
-        /**
-         * Sets the amount name.
-         *
-         * @param amountName the amountName to set
-         */
-        public void setAmountName(String amountName) {
-            this.amountName = amountName;
-        }
+	/**
+	 * Gets the amount value.
+	 *
+	 * @return the amountValue
+	 */
+	public String getAmountValue() {
+		return this.amountValue;
+	}
 
-        /**
-         * Gets the level id.
-         *
-         * @return the levelId
-         */
-        public Integer getLevelId() {
-            return levelId;
-        }
+	/**
+	 * Sets the amount value.
+	 *
+	 * @param amountValue the amountValue to set
+	 */
+	public void setAmountValue(String amountValue) {
+		this.amountValue = amountValue;
+	}
 
-        /**
-         * Sets the level id.
-         *
-         * @param levelId the levelId to set
-         */
-        public void setLevelId(Integer levelId) {
-            this.levelId = levelId;
-        }
+	/**
+	 * Gets the level name.
+	 *
+	 * @return the levelName
+	 */
+	public String getLevelName() {
+		return this.levelName;
+	}
 
-        /**
-         * Gets the amount id.
-         *
-         * @return the amountId
-         */
-        public Integer getAmountId() {
-            return amountId;
-        }
+	/**
+	 * Sets the level name.
+	 *
+	 * @param levelName the levelName to set
+	 */
+	public void setLevelName(String levelName) {
+		this.levelName = levelName;
+	}
 
-        /**
-         * Sets the amount id.
-         *
-         * @param amountId the amountId to set
-         */
-        public void setAmountId(Integer amountId) {
-            this.amountId = amountId;
-        }
+	/**
+	 * Gets the amount name.
+	 *
+	 * @return the amountName
+	 */
+	public String getAmountName() {
+		return this.amountName;
+	}
 
-        /**
-         * Gets the level value.
-         *
-         * @return the levelValue
-         */
-        public String getLevelValue() {
-            return levelValue;
-        }
+	/**
+	 * Sets the amount name.
+	 *
+	 * @param amountName the amountName to set
+	 */
+	public void setAmountName(String amountName) {
+		this.amountName = amountName;
+	}
 
-        /**
-         * Sets the level value.
-         *
-         * @param levelValue the levelValue to set
-         */
-        public void setLevelValue(String levelValue) {
-            this.levelValue = levelValue;
-        }
+	/**
+	 * Gets the level id.
+	 *
+	 * @return the levelId
+	 */
+	public Integer getLevelId() {
+		return this.levelId;
+	}
 
-        /**
-         * Gets the widget type.
-         *
-         * @return the widgetType
-         */
-        public WidgetType getWidgetType() {
-            if (amountDataTypeId != null) {
-                    if (amountDataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
-                            this.widgetType = WidgetType.DATE;
-                    } else if (minRange != null && maxRange != null) {
-                        this.widgetType = WidgetType.SLIDER;
-                    } else if (amountDataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-                            this.widgetType = WidgetType.DROPDOWN;
-                    } else if (amountDataTypeId.equals(TermId.NUMERIC_VARIABLE.getId()) 
-                                    || amountDataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {
-                            this.widgetType = WidgetType.NTEXT;
-                    } else {
-                            this.widgetType = WidgetType.CTEXT;
-                    }                                       
-            }
-                
-            return this.widgetType;
-        }
+	/**
+	 * Sets the level id.
+	 *
+	 * @param levelId the levelId to set
+	 */
+	public void setLevelId(Integer levelId) {
+		this.levelId = levelId;
+	}
 
-        /**
-         * Sets the widget type.
-         *
-         */
-        public void setWidgetType() {
-        }
+	/**
+	 * Gets the amount id.
+	 *
+	 * @return the amountId
+	 */
+	public Integer getAmountId() {
+		return this.amountId;
+	}
 
-        /**
-         * Gets the amount data type id.
-         *
-         * @return the amountDataTypeId
-         */
-        public Integer getAmountDataTypeId() {
-            return amountDataTypeId;
-        }
+	/**
+	 * Sets the amount id.
+	 *
+	 * @param amountId the amountId to set
+	 */
+	public void setAmountId(Integer amountId) {
+		this.amountId = amountId;
+	}
 
-        /**
-         * Sets the amount data type id.
-         *
-         * @param amountDataTypeId the amountDataTypeId to set
-         */
-        public void setAmountDataTypeId(Integer amountDataTypeId) {
-            this.amountDataTypeId = amountDataTypeId;
-        }
+	/**
+	 * Gets the level value.
+	 *
+	 * @return the levelValue
+	 */
+	public String getLevelValue() {
+		return this.levelValue;
+	}
 
-        /**
-         * Gets the possible values json.
-         *
-         * @return the possibleValuesJson
-         */
-        public String getPossibleValuesJson() {
-            return possibleValuesJson;
-        }
+	/**
+	 * Sets the level value.
+	 *
+	 * @param levelValue the levelValue to set
+	 */
+	public void setLevelValue(String levelValue) {
+		this.levelValue = levelValue;
+	}
 
-        /**
-         * Sets the possible values json.
-         *
-         * @param possibleValuesJson the possibleValuesJson to set
-         */
-        public void setPossibleValuesJson(String possibleValuesJson) {
-            this.possibleValuesJson = possibleValuesJson;
-        }
-	
-        /**
-         * Gets the min range.
-         *
-         * @return the min range
-         */
-        public Double getMinRange() {
-            return minRange;
-        }
-        
-        /**
-         * Sets the min range.
-         *
-         * @param minRange the new min range
-         */
-        public void setMinRange(Double minRange) {
-            this.minRange = minRange;
-        }
-        
-        /**
-         * Gets the max range.
-         *
-         * @return the max range
-         */
-        public Double getMaxRange() {
-            return maxRange;
-        }
-        
-        /**
-         * Sets the max range.
-         *
-         * @param maxRange the new max range
-         */
-        public void setMaxRange(Double maxRange) {
-            this.maxRange = maxRange;
-        }
-
-		/**
-		 * @return the levelDescription
-		 */
-		public String getLevelDescription() {
-			return levelDescription;
+	/**
+	 * Gets the widget type.
+	 *
+	 * @return the widgetType
+	 */
+	public WidgetType getWidgetType() {
+		if (this.amountDataTypeId != null) {
+			if (this.amountDataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
+				this.widgetType = WidgetType.DATE;
+			} else if (this.minRange != null && this.maxRange != null) {
+				this.widgetType = WidgetType.SLIDER;
+			} else if (this.amountDataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+				this.widgetType = WidgetType.DROPDOWN;
+			} else if (this.amountDataTypeId.equals(TermId.NUMERIC_VARIABLE.getId())
+					|| this.amountDataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {
+				this.widgetType = WidgetType.NTEXT;
+			} else {
+				this.widgetType = WidgetType.CTEXT;
+			}
 		}
 
-		/**
-		 * @param levelDescription the levelDescription to set
-		 */
-		public void setLevelDescription(String levelDescription) {
-			this.levelDescription = levelDescription;
-		}
-        
-        
+		return this.widgetType;
+	}
+
+	/**
+	 * Sets the widget type.
+	 *
+	 */
+	public void setWidgetType() {
+	}
+
+	/**
+	 * Gets the amount data type id.
+	 *
+	 * @return the amountDataTypeId
+	 */
+	public Integer getAmountDataTypeId() {
+		return this.amountDataTypeId;
+	}
+
+	/**
+	 * Sets the amount data type id.
+	 *
+	 * @param amountDataTypeId the amountDataTypeId to set
+	 */
+	public void setAmountDataTypeId(Integer amountDataTypeId) {
+		this.amountDataTypeId = amountDataTypeId;
+	}
+
+	/**
+	 * Gets the possible values json.
+	 *
+	 * @return the possibleValuesJson
+	 */
+	public String getPossibleValuesJson() {
+		return this.possibleValuesJson;
+	}
+
+	/**
+	 * Sets the possible values json.
+	 *
+	 * @param possibleValuesJson the possibleValuesJson to set
+	 */
+	public void setPossibleValuesJson(String possibleValuesJson) {
+		this.possibleValuesJson = possibleValuesJson;
+	}
+
+	/**
+	 * Gets the min range.
+	 *
+	 * @return the min range
+	 */
+	public Double getMinRange() {
+		return this.minRange;
+	}
+
+	/**
+	 * Sets the min range.
+	 *
+	 * @param minRange the new min range
+	 */
+	public void setMinRange(Double minRange) {
+		this.minRange = minRange;
+	}
+
+	/**
+	 * Gets the max range.
+	 *
+	 * @return the max range
+	 */
+	public Double getMaxRange() {
+		return this.maxRange;
+	}
+
+	/**
+	 * Sets the max range.
+	 *
+	 * @param maxRange the new max range
+	 */
+	public void setMaxRange(Double maxRange) {
+		this.maxRange = maxRange;
+	}
+
+	/**
+	 * @return the levelDescription
+	 */
+	public String getLevelDescription() {
+		return this.levelDescription;
+	}
+
+	/**
+	 * @param levelDescription the levelDescription to set
+	 */
+	public void setLevelDescription(String levelDescription) {
+		this.levelDescription = levelDescription;
+	}
+
 }

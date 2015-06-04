@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.util;
 
 import junit.framework.Assert;
@@ -12,19 +13,14 @@ public class WorkbookUtilTest {
 	@Test
 	public void testUpdateTrialObservations() {
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook currentWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10,
-				3);
+		Workbook currentWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
 		WorkbookDataUtil.setTestWorkbook(null);
-		Workbook temporaryWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(
-				10, 2);
+		Workbook temporaryWorkbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 2);
 
-		WorkbookUtil
-				.updateTrialObservations(currentWorkbook, temporaryWorkbook);
+		WorkbookUtil.updateTrialObservations(currentWorkbook, temporaryWorkbook);
 
-		Assert.assertEquals(
-				"Expecting that the trial observations of temporary workbook is copied to current workbook. ",
-				currentWorkbook.getTrialObservations(),
-				temporaryWorkbook.getTrialObservations());
+		Assert.assertEquals("Expecting that the trial observations of temporary workbook is copied to current workbook. ",
+				currentWorkbook.getTrialObservations(), temporaryWorkbook.getTrialObservations());
 	}
 }

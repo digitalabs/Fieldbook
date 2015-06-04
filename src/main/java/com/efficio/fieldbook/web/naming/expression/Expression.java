@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
@@ -8,5 +9,5 @@ public interface Expression {
 
 	public void apply(List<StringBuilder> values, AdvancingSource source);
 
-    public String getExpressionKey();
+	public String getExpressionKey();
 }

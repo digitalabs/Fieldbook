@@ -1,74 +1,73 @@
+
 package com.efficio.fieldbook.web.trial.bean;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 7/8/2014
- * Time: 5:08 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 7/8/2014 Time: 5:08 PM
  */
-public class Environment{
-    private long stockId;
-    private long locationId;
-    private long experimentId;
+public class Environment {
 
-    private Map<String, String> managementDetailValues;
-    private Map<String, String> trialDetailValues;
-    private Map<String, Integer> phenotypeIDMap;
+	private long stockId;
+	private long locationId;
+	private long experimentId;
 
-    public Environment() {
-        managementDetailValues = new HashMap<String, String>();
-        trialDetailValues = new HashMap<String, String>();
-        phenotypeIDMap = new HashMap<String, Integer>();
-    }
+	private Map<String, String> managementDetailValues;
+	private Map<String, String> trialDetailValues;
+	private Map<String, Integer> phenotypeIDMap;
 
-    public Map<String, String> getManagementDetailValues() {
-        return managementDetailValues;
-    }
+	public Environment() {
+		this.managementDetailValues = new HashMap<String, String>();
+		this.trialDetailValues = new HashMap<String, String>();
+		this.phenotypeIDMap = new HashMap<String, Integer>();
+	}
 
-    public void setManagementDetailValues(Map<String, String> managementDetailValues) {
-        this.managementDetailValues = managementDetailValues;
-    }
+	public Map<String, String> getManagementDetailValues() {
+		return this.managementDetailValues;
+	}
 
-    public Map<String, String> getTrialDetailValues() {
-        return trialDetailValues;
-    }
+	public void setManagementDetailValues(Map<String, String> managementDetailValues) {
+		this.managementDetailValues = managementDetailValues;
+	}
 
-    public void setTrialDetailValues(Map<String, String> trialDetailValues) {
-        this.trialDetailValues = trialDetailValues;
-    }
+	public Map<String, String> getTrialDetailValues() {
+		return this.trialDetailValues;
+	}
 
-    public long getStockId() {
-        return stockId;
-    }
+	public void setTrialDetailValues(Map<String, String> trialDetailValues) {
+		this.trialDetailValues = trialDetailValues;
+	}
 
-    public void setStockId(long stockId) {
-        this.stockId = stockId;
-    }
+	public long getStockId() {
+		return this.stockId;
+	}
 
-    public long getLocationId() {
-        return locationId;
-    }
+	public void setStockId(long stockId) {
+		this.stockId = stockId;
+	}
 
-    public void setLocationId(long locationId) {
-        this.locationId = locationId;
-    }
+	public long getLocationId() {
+		return this.locationId;
+	}
 
-    public long getExperimentId() {
-        return experimentId;
-    }
+	public void setLocationId(long locationId) {
+		this.locationId = locationId;
+	}
 
-    public void setExperimentId(long experimentId) {
-        this.experimentId = experimentId;
-    }
+	public long getExperimentId() {
+		return this.experimentId;
+	}
 
-    public Map<String, Integer> getPhenotypeIDMap() {
-        return phenotypeIDMap;
-    }
+	public void setExperimentId(long experimentId) {
+		this.experimentId = experimentId;
+	}
 
-    public void setPhenotypeIDMap(Map<String, Integer> phenotypeIDMap) {
-        this.phenotypeIDMap = phenotypeIDMap;
-    }
+	public Map<String, Integer> getPhenotypeIDMap() {
+		return this.phenotypeIDMap;
+	}
+
+	public void setPhenotypeIDMap(Map<String, Integer> phenotypeIDMap) {
+		this.phenotypeIDMap = phenotypeIDMap;
+	}
 }

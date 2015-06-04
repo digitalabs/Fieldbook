@@ -1,11 +1,5 @@
-package com.efficio.fieldbook.web.util.parsing;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+package com.efficio.fieldbook.web.util.parsing;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,20 +27,18 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 2/26/2015
- * Time: 4:42 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/26/2015 Time: 4:42 PM
  */
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,7 +55,7 @@ public class InventoryImportParserTest {
 
 	@Mock
 	private OntologyService ontologyService;
-	
+
 	@Mock
 	private InventoryDataManager inventoryDataManager;
 
@@ -82,29 +74,29 @@ public class InventoryImportParserTest {
 	private List<Location> testLocationList;
 	private List<Scale> testScaleList;
 	private List<String> testStockIds;
-	
+
 	private String[] headers;
-	private Map<InventoryHeaderLabels,Integer> inventoryHeaderLabelsMap;
-	
+	private Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap;
+
 	@Before
 	public void setUp() throws Exception {
-		moled = spy(parser);
-		testLocationList = createDummyLocationList();
-		testScaleList = createDummyScaleList();
-		testStockIds = createDummyStockIds();
-		doReturn(testLocationList).when(fieldbookMiddlewareService).getAllLocations();
-		doReturn(testScaleList).when(ontologyService).getAllInventoryScales();
-		doReturn(testStockIds).when(inventoryDataManager).
-			getStockIdsByListDataProjectListId(TEST_LIST_ID);
+		this.moled = Mockito.spy(this.parser);
+		this.testLocationList = this.createDummyLocationList();
+		this.testScaleList = this.createDummyScaleList();
+		this.testStockIds = this.createDummyStockIds();
+		Mockito.doReturn(this.testLocationList).when(this.fieldbookMiddlewareService).getAllLocations();
+		Mockito.doReturn(this.testScaleList).when(this.ontologyService).getAllInventoryScales();
+		Mockito.doReturn(this.testStockIds).when(this.inventoryDataManager)
+				.getStockIdsByListDataProjectListId(InventoryImportParserTest.TEST_LIST_ID);
 	}
 
 	private Workbook createWorkbook(GermplasmListType germplasmListType) throws Exception {
-		String filename = TEST_FILE_NAME;
-		if(germplasmListType == GermplasmListType.CROSSES) {
-			filename = TEST_FILE_NAME_WITH_BULKING;
+		String filename = InventoryImportParserTest.TEST_FILE_NAME;
+		if (germplasmListType == GermplasmListType.CROSSES) {
+			filename = InventoryImportParserTest.TEST_FILE_NAME_WITH_BULKING;
 		}
 		File workbookFile = new File(ClassLoader.getSystemClassLoader().getResource(filename).toURI());
-		
+
 		assert workbookFile.exists();
 
 		return WorkbookFactory.create(workbookFile);
@@ -112,110 +104,90 @@ public class InventoryImportParserTest {
 
 	private List<String> createDummyStockIds() {
 		List<String> stockIds = new ArrayList<String>();
-		for(int i=0;i<5;i++) {
-			stockIds.add(STOCKID_PREFIX+"1-"+i);
+		for (int i = 0; i < 5; i++) {
+			stockIds.add(InventoryImportParserTest.STOCKID_PREFIX + "1-" + i);
 		}
 		return stockIds;
 	}
 
 	@Test
 	public void testBuildAllowedLocationList() {
-		moled.setLocations(testLocationList);
-		List<String> allowedLocationsList = moled.buildAllowedLocationsList();
-		assertEquals(testLocationList.size(), allowedLocationsList.size());
+		this.moled.setLocations(this.testLocationList);
+		List<String> allowedLocationsList = this.moled.buildAllowedLocationsList();
+		Assert.assertEquals(this.testLocationList.size(), allowedLocationsList.size());
 
 	}
 
 	@Test
 	public void testBuildAllowedScaleList() {
-		moled.setScales(testScaleList);
-		List<String> allowedScaleList = moled.buildAllowedScaleList();
+		this.moled.setScales(this.testScaleList);
+		List<String> allowedScaleList = this.moled.buildAllowedScaleList();
 
-		assertEquals(testScaleList.size(), allowedScaleList.size());
+		Assert.assertEquals(this.testScaleList.size(), allowedScaleList.size());
 	}
 
 	@Test
 	public void testConvertToLocationMap() {
-		Map<String, Location> locationMap = moled.convertToLocationMap(testLocationList);
+		Map<String, Location> locationMap = this.moled.convertToLocationMap(this.testLocationList);
 
-		assertEquals(locationMap.size(), testLocationList.size());
+		Assert.assertEquals(locationMap.size(), this.testLocationList.size());
 		Collection<Location> values = locationMap.values();
-		for (Location location : testLocationList) {
-			assertTrue(values.contains(location));
+		for (Location location : this.testLocationList) {
+			Assert.assertTrue(values.contains(location));
 		}
 	}
 
 	@Test
 	public void testConvertToScaleMap() {
-		Map<String, Scale> scaleMap = moled.convertToScaleMap(testScaleList);
+		Map<String, Scale> scaleMap = this.moled.convertToScaleMap(this.testScaleList);
 
-		assertEquals(scaleMap.size(), testScaleList.size());
+		Assert.assertEquals(scaleMap.size(), this.testScaleList.size());
 		Collection<Scale> values = scaleMap.values();
-		for (Scale scale : testScaleList) {
-			assertTrue(values.contains(scale));
+		for (Scale scale : this.testScaleList) {
+			Assert.assertTrue(values.contains(scale));
 		}
 	}
 
 	@Test
 	public void testSetupParsingValidations() {
-		generateHeaders(GermplasmListType.CROSSES);
-		ParseValidationMap map = moled.setupIndividualColumnValidation();
-		assertTrue(!map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).isEmpty());
-		assertTrue(!map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE)).isEmpty());
-		assertTrue(!map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).isEmpty());
-		assertTrue(!map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).isEmpty());
-		assertTrue(!map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).isEmpty());
-		assertTrue(!map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH)).isEmpty());
-		assertTrue(!map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL)).isEmpty());
+		this.generateHeaders(GermplasmListType.CROSSES);
+		ParseValidationMap map = this.moled.setupIndividualColumnValidation();
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).isEmpty());
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE)).isEmpty());
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).isEmpty());
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).isEmpty());
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).isEmpty());
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH)).isEmpty());
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL)).isEmpty());
 
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).get(0) instanceof ValueRangeValidator);
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE)).get(0) instanceof ValueRangeValidator);
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).get(0) instanceof ValueTypeValidator);
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).get(0) instanceof ValueTypeValidator);
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).get(0) instanceof ValueTypeValidator);
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).get(1) instanceof NonEmptyValidator);
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).get(1) instanceof NonEmptyValidator);
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH)).get(0) instanceof CommaDelimitedValueValidator);
-		assertTrue(map.getValidations(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL)).get(0) instanceof BulkComplValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).get(0) instanceof ValueRangeValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE)).get(0) instanceof ValueRangeValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).get(0) instanceof ValueTypeValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).get(0) instanceof ValueTypeValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).get(0) instanceof ValueTypeValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).get(1) instanceof NonEmptyValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).get(1) instanceof NonEmptyValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH)).get(0) instanceof CommaDelimitedValueValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL)).get(0) instanceof BulkComplValidator);
 	}
 
 	private void generateHeaders(GermplasmListType crosses) {
-		inventoryHeaderLabelsMap = 
-				InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
-		headers = InventoryHeaderLabels.getHeaderNames(inventoryHeaderLabelsMap);
-		moled.setInventoryHeaderLabelsMap(inventoryHeaderLabelsMap);
-		moled.setHeaders(headers);
+		this.inventoryHeaderLabelsMap = InventoryHeaderLabels.headers(GermplasmListType.CROSSES);
+		this.headers = InventoryHeaderLabels.getHeaderNames(this.inventoryHeaderLabelsMap);
+		this.moled.setInventoryHeaderLabelsMap(this.inventoryHeaderLabelsMap);
+		this.moled.setHeaders(this.headers);
 	}
 
 	@Test(expected = FileParsingException.class)
-	public void testObjectConversionNotAllInventoryItemsPresent() throws Exception{
+	public void testObjectConversionNotAllInventoryItemsPresent() throws Exception {
 		GermplasmListType germplasmListType = GermplasmListType.CROSSES;
-		generateHeaders(germplasmListType);
-		InventoryImportParser.InventoryRowConverter rowConverter = createForTestingRowConverter(
-				createWorkbook(germplasmListType));
+		this.generateHeaders(germplasmListType);
+		InventoryImportParser.InventoryRowConverter rowConverter =
+				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
 		Map<Integer, String> testRowValue = new HashMap<>();
-		testRowValue.put(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
-		testRowValue.put(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-		testRowValue.put(
-				inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "DUMMY LOCATION");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "DUMMY LOCATION");
 
 		// only location has a value out of the three inventory related columns, an exception needs to be thrown
 		rowConverter.convertToObject(testRowValue);
@@ -224,53 +196,49 @@ public class InventoryImportParserTest {
 	@Test
 	public void testObjectConversionNoInventoryItemsPresent() throws Exception {
 		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
-		generateHeaders(germplasmListType);
-		InventoryImportParser.InventoryRowConverter rowConverter = createForTestingRowConverter(
-				createWorkbook(germplasmListType));
+		this.generateHeaders(germplasmListType);
+		InventoryImportParser.InventoryRowConverter rowConverter =
+				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
 		Map<Integer, String> testRowValue = new HashMap<>();
-		testRowValue.put(inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
-		testRowValue.put(inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
 
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
-		assertNotNull(
-				"Inventory details could not be properly created when all inventory related columns are blank",
-				details);
-		assertNull(details.getAmount());
-		assertNull(details.getComment());
+		Assert.assertNotNull("Inventory details could not be properly created when all inventory related columns are blank", details);
+		Assert.assertNull(details.getAmount());
+		Assert.assertNull(details.getComment());
 	}
 
 	@Test
 	public void testObjectConversionAllInventoryItemsPresent() throws Exception {
 		GermplasmListType germplasmListType = GermplasmListType.CROSSES;
-		generateHeaders(germplasmListType);
-		InventoryImportParser.InventoryRowConverter rowConverter = 
-				createForTestingRowConverter(createWorkbook(germplasmListType));
+		this.generateHeaders(germplasmListType);
+		InventoryImportParser.InventoryRowConverter rowConverter =
+				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
 		Map<Integer, String> testRowValue = new HashMap<>();
-		testRowValue.put(inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
-		testRowValue.put(inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-		testRowValue.put(inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
-		testRowValue.put(inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE), "SCALE2");
-		testRowValue.put(inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT), "15");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE), "SCALE2");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT), "15");
 
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
-		assertNotNull(
-				"Inventory details could not be properly created when all inventory related columns are present",
-				details);
+		Assert.assertNotNull("Inventory details could not be properly created when all inventory related columns are present", details);
 
-		assertEquals(details.getAmount(), 15.0, 0);
-		assertEquals("Inventory details not created with proper location abbr", "TEST1", details.getLocationAbbr());
-		assertEquals("Inventory details not created with proper location id", new Integer(1), details.getLocationId());
-		assertEquals("Inventory details not created with proper location name", "Test Location 1", details.getLocationName());
-		assertEquals("Inventory details not created with proper scale id", new Integer(2), details.getScaleId());
-		assertEquals("Inventory details not created with proper scale name", "SCALE2", details.getScaleName());
+		Assert.assertEquals(details.getAmount(), 15.0, 0);
+		Assert.assertEquals("Inventory details not created with proper location abbr", "TEST1", details.getLocationAbbr());
+		Assert.assertEquals("Inventory details not created with proper location id", new Integer(1), details.getLocationId());
+		Assert.assertEquals("Inventory details not created with proper location name", "Test Location 1", details.getLocationName());
+		Assert.assertEquals("Inventory details not created with proper scale id", new Integer(2), details.getScaleId());
+		Assert.assertEquals("Inventory details not created with proper scale name", "SCALE2", details.getScaleName());
 	}
 
 	protected InventoryImportParser.InventoryRowConverter createForTestingRowConverter(Workbook workbook) {
-		Map<String, Location> locationMap = moled.convertToLocationMap(testLocationList);
-		Map<String, Scale> scaleMap = moled.convertToScaleMap(testScaleList);
-		return new InventoryImportParser.InventoryRowConverter(workbook, DUMMY_INDEX,
-				InventoryImportParser.INVENTORY_SHEET,
-				inventoryHeaderLabelsMap.size(), inventoryHeaderLabelsMap, locationMap, scaleMap);
+		Map<String, Location> locationMap = this.moled.convertToLocationMap(this.testLocationList);
+		Map<String, Scale> scaleMap = this.moled.convertToScaleMap(this.testScaleList);
+		return new InventoryImportParser.InventoryRowConverter(workbook, InventoryImportParserTest.DUMMY_INDEX,
+				InventoryImportParser.INVENTORY_SHEET, this.inventoryHeaderLabelsMap.size(), this.inventoryHeaderLabelsMap, locationMap,
+				scaleMap);
 	}
 
 	protected List<Location> createDummyLocationList() {
@@ -288,7 +256,6 @@ public class InventoryImportParserTest {
 		location.setLname("Test Location 2");
 		locationList.add(location);
 
-
 		return locationList;
 	}
 
@@ -305,17 +272,14 @@ public class InventoryImportParserTest {
 
 		return scaleList;
 	}
-	
+
 	@Test
-	public void testParseWorkbook_Crosses() throws Exception  {
+	public void testParseWorkbook_Crosses() throws Exception {
 		GermplasmListType germplasmListType = GermplasmListType.CROSSES;
-		Map<String,Object> additionalParams = new HashMap<String,Object>();
-		additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, 
-				InventoryHeaderLabels.headers(GermplasmListType.CROSSES));
-		additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY,TEST_LIST_ID);
-		ImportedInventoryList importedInventoryList = moled.parseWorkbook(
-				createWorkbook(germplasmListType), additionalParams);
-		assertNotNull(importedInventoryList);
+		Map<String, Object> additionalParams = new HashMap<String, Object>();
+		additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(GermplasmListType.CROSSES));
+		additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, InventoryImportParserTest.TEST_LIST_ID);
+		ImportedInventoryList importedInventoryList = this.moled.parseWorkbook(this.createWorkbook(germplasmListType), additionalParams);
+		Assert.assertNotNull(importedInventoryList);
 	}
 }
-

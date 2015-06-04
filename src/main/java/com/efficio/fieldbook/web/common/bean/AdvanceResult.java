@@ -1,20 +1,21 @@
+
 package com.efficio.fieldbook.web.common.bean;
 
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-
 import java.util.List;
+
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 
 public class AdvanceResult {
 
 	private List<ImportedGermplasm> advanceList;
-	
+
 	private List<AdvanceGermplasmChangeDetail> changeDetails;
 
 	/**
 	 * @return the advanceList
 	 */
 	public List<ImportedGermplasm> getAdvanceList() {
-		return advanceList;
+		return this.advanceList;
 	}
 
 	/**
@@ -28,7 +29,7 @@ public class AdvanceResult {
 	 * @return the changeDetails
 	 */
 	public List<AdvanceGermplasmChangeDetail> getChangeDetails() {
-		return changeDetails;
+		return this.changeDetails;
 	}
 
 	/**
@@ -37,6 +38,5 @@ public class AdvanceResult {
 	public void setChangeDetails(List<AdvanceGermplasmChangeDetail> changeDetails) {
 		this.changeDetails = changeDetails;
 	}
-	
-	
+
 }

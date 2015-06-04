@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web;
 
 import org.junit.Before;
@@ -17,45 +18,45 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 
 public abstract class AbstractBaseControllerIntegrationTest extends AbstractBaseIntegrationTest {
-	
+
 	@Autowired
 	protected RequestMappingHandlerAdapter handleAdapter;
 
 	@Autowired
 	protected RequestMappingHandlerMapping handlerMapping;
-	
+
 	protected MockHttpServletRequest request;
 	protected MockHttpServletResponse response;
 	protected MockHttpSession session;
-	
+
 	@Before
 	public void beforeEachTest() {
 		// This is required for Spring to create and manage session scoped beans.
-		((GenericApplicationContext) applicationContext).getBeanFactory().registerScope("session", new SessionScope());
-		
-		request = new MockHttpServletRequest();
-		response = new MockHttpServletResponse();
-		session = new MockHttpSession();
-		request.setSession(session);
-		
+		((GenericApplicationContext) this.applicationContext).getBeanFactory().registerScope("session", new SessionScope());
+
+		this.request = new MockHttpServletRequest();
+		this.response = new MockHttpServletResponse();
+		this.session = new MockHttpSession();
+		this.request.setSession(this.session);
+
 		// This is required for binding the request to current thread in Spring context.
-		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(this.request));
 	}
-	
+
 	protected ModelAndView request(String url, String method) throws Exception {
-	
-		request.setRequestURI(url);
-		request.setMethod(method);
 
-		Object handler = handlerMapping.getHandler(request).getHandler();
-		return handleAdapter.handle(request, response, handler);	
+		this.request.setRequestURI(url);
+		this.request.setMethod(method);
+
+		Object handler = this.handlerMapping.getHandler(this.request).getHandler();
+		return this.handleAdapter.handle(this.request, this.response, handler);
 	}
 
-	protected boolean verifyHandler(String url, String method, Class handlerClass, String methodName) throws Exception{
-		request.setRequestURI(url);
-		request.setMethod(method);
+	protected boolean verifyHandler(String url, String method, Class handlerClass, String methodName) throws Exception {
+		this.request.setRequestURI(url);
+		this.request.setMethod(method);
 
-		Object handler = handlerMapping.getHandler(request).getHandler();
+		Object handler = this.handlerMapping.getHandler(this.request).getHandler();
 
 		if (handler instanceof HandlerMethod) {
 			HandlerMethod methodCalled = (HandlerMethod) handler;

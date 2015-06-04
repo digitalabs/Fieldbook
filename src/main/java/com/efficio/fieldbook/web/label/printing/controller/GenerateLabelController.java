@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.label.printing.controller;
 
 import javax.annotation.Resource;
@@ -28,67 +28,68 @@ import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 
 /**
  * The Class GenerateLabelController.
- * 
+ *
  * Code is not currently being use.
  */
 @Controller
 @RequestMapping({GenerateLabelController.URL})
-public class GenerateLabelController extends AbstractBaseFieldbookController{
+public class GenerateLabelController extends AbstractBaseFieldbookController {
 
-    /** The Constant URL. */
-    public static final String URL = "/LabelPrinting/generateLabel";
+	/** The Constant URL. */
+	public static final String URL = "/LabelPrinting/generateLabel";
 
-    /** The user label printing. */
-    @Resource
-    private UserLabelPrinting userLabelPrinting;  
-    
-    
-    /** The fieldbook middleware service. */
-    @Resource
-    private FieldbookService fieldbookMiddlewareService;
-    
-    /** The Constant BUFFER_SIZE. */
-    private static final int BUFFER_SIZE = 4096 * 4;
+	/** The user label printing. */
+	@Resource
+	private UserLabelPrinting userLabelPrinting;
 
-    /**
-     * Show trial label details.
-     *
-     * @param form the form
-     * @param model the model
-     * @param session the session
-     * @param response the response
-     * @return the string
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
-            Model model, HttpSession session, HttpServletResponse response) {
-        return super.show(model);
-    }
-    
-    /* (non-Javadoc)
-     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
-     */
-    @Override
-    public String getContentName() {
-        return "LabelPrinting/generateLabel";
-    }
-    
-    /**
-     * Gets the user label printing.
-     *
-     * @return the user label printing
-     */
-    public UserLabelPrinting getUserLabelPrinting() {
-        return userLabelPrinting;
-    }
-    
-    /**
-     * Sets the user label printing.
-     *
-     * @param userLabelPrinting the new user label printing
-     */
-    public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
-        this.userLabelPrinting = userLabelPrinting;
-    }
-    
+	/** The fieldbook middleware service. */
+	@Resource
+	private FieldbookService fieldbookMiddlewareService;
+
+	/** The Constant BUFFER_SIZE. */
+	private static final int BUFFER_SIZE = 4096 * 4;
+
+	/**
+	 * Show trial label details.
+	 *
+	 * @param form the form
+	 * @param model the model
+	 * @param session the session
+	 * @param response the response
+	 * @return the string
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, HttpSession session,
+			HttpServletResponse response) {
+		return super.show(model);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+	 */
+	@Override
+	public String getContentName() {
+		return "LabelPrinting/generateLabel";
+	}
+
+	/**
+	 * Gets the user label printing.
+	 *
+	 * @return the user label printing
+	 */
+	public UserLabelPrinting getUserLabelPrinting() {
+		return this.userLabelPrinting;
+	}
+
+	/**
+	 * Sets the user label printing.
+	 *
+	 * @param userLabelPrinting the new user label printing
+	 */
+	public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
+		this.userLabelPrinting = userLabelPrinting;
+	}
+
 }

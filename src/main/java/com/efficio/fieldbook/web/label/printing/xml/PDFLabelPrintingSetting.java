@@ -23,7 +23,8 @@ public class PDFLabelPrintingSetting implements Serializable {
 
 	}
 
-	public PDFLabelPrintingSetting(String sizeOfLabelSheet, int numberOfRowsPerPage, String selectedLeftFieldsString, String selectedRightFieldsString) {
+	public PDFLabelPrintingSetting(String sizeOfLabelSheet, int numberOfRowsPerPage, String selectedLeftFieldsString,
+			String selectedRightFieldsString) {
 		super();
 		this.sizeOfLabelSheet = sizeOfLabelSheet;
 		this.numberOfRowsPerPage = numberOfRowsPerPage;
@@ -143,8 +144,9 @@ public class PDFLabelPrintingSetting implements Serializable {
 
 	@Override
 	public String toString() {
-		return "PDFLabelPrintingSetting [sizeOfLabelSheet=" + this.sizeOfLabelSheet + ", numberOfRowsPerPage=" + this.numberOfRowsPerPage + ", selectedLeftFieldsString="
-				+ this.selectedLeftFieldsString + ", selectedRightFieldsString=" + this.selectedRightFieldsString + "]";
+		return "PDFLabelPrintingSetting [sizeOfLabelSheet=" + this.sizeOfLabelSheet + ", numberOfRowsPerPage=" + this.numberOfRowsPerPage
+				+ ", selectedLeftFieldsString=" + this.selectedLeftFieldsString + ", selectedRightFieldsString="
+				+ this.selectedRightFieldsString + "]";
 	}
 
 }

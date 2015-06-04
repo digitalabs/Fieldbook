@@ -1,20 +1,20 @@
 
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import org.generationcp.commons.ruleengine.OrderedRule;
-import org.generationcp.commons.ruleengine.RuleException;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.generationcp.commons.ruleengine.OrderedRule;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.springframework.stereotype.Component;
+
+import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+
 @Component
 public class RootNameGeneratorRule extends OrderedRule<NamingRuleExecutionContext> {
+
 	public static final String KEY = "RootNameGenerator";
-	
 
 	@Override
 	public Object runRule(NamingRuleExecutionContext context) throws RuleException {
@@ -29,7 +29,7 @@ public class RootNameGeneratorRule extends OrderedRule<NamingRuleExecutionContex
 		List<String> input = context.getCurrentData();
 
 		String name = builders.get(0).toString();
-		
+
 		input.add(name);
 
 		context.setCurrentData(input);
@@ -37,7 +37,8 @@ public class RootNameGeneratorRule extends OrderedRule<NamingRuleExecutionContex
 		return input;
 	}
 
-	@Override public String getKey() {
-		return KEY;
+	@Override
+	public String getKey() {
+		return RootNameGeneratorRule.KEY;
 	}
 }

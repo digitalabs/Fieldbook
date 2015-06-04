@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.HashMap;
@@ -21,32 +22,32 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 @RequestMapping(DeleteNurseryController.URL)
 public class DeleteNurseryController extends AbstractBaseFieldbookController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DeleteNurseryController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DeleteNurseryController.class);
 
-    public static final String URL = "/NurseryManager/deleteNursery";
-    
-    @Resource
-    private FieldbookService fieldbookMiddlewareService;
-    
+	public static final String URL = "/NurseryManager/deleteNursery";
+
+	@Resource
+	private FieldbookService fieldbookMiddlewareService;
+
 	@Override
 	public String getContentName() {
 		return null;
 	}
 
-    @ResponseBody
-    @RequestMapping(value="/{studyId}", method = RequestMethod.POST)
-    public Map<String, Object> submitDelete(@PathVariable int studyId) throws MiddlewareQueryException {
-    	Map<String, Object> results = new HashMap<String, Object>();
-    	
-    	try {
-    		fieldbookMiddlewareService.deleteStudy(studyId);
-    		results.put("isSuccess", "1");
-    		
-    	} catch (Exception e) {
-    		LOG.error(e.getMessage(), e);
-    		results.put("isSuccess", "0");
-    	}
-    	
-    	return results;
-    }    	
+	@ResponseBody
+	@RequestMapping(value = "/{studyId}", method = RequestMethod.POST)
+	public Map<String, Object> submitDelete(@PathVariable int studyId) throws MiddlewareQueryException {
+		Map<String, Object> results = new HashMap<String, Object>();
+
+		try {
+			this.fieldbookMiddlewareService.deleteStudy(studyId);
+			results.put("isSuccess", "1");
+
+		} catch (Exception e) {
+			DeleteNurseryController.LOG.error(e.getMessage(), e);
+			results.put("isSuccess", "0");
+		}
+
+		return results;
+	}
 }

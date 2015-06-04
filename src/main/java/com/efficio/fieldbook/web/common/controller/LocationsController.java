@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.HashMap;
@@ -24,75 +25,69 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 2/2/2015
- * Time: 2:30 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/2/2015 Time: 2:30 PM
  */
 
 @Controller
 @RequestMapping(LocationsController.URL)
 public class LocationsController extends AbstractBaseFieldbookController {
+
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
-		public static final String URL = "/locations";
+	public static final String URL = "/locations";
 
-		@Resource
-		private FieldbookProperties fieldbookProperties;
+	@Resource
+	private FieldbookProperties fieldbookProperties;
 
-		@Resource
-		private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-		
-		@Resource
-		private ContextUtil contextUtil;
+	@Resource
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
-		@Override public String getContentName() {
-			return null;
+	@Resource
+	private ContextUtil contextUtil;
+
+	@Override
+	public String getContentName() {
+		return null;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/programLocationsURL", method = RequestMethod.GET)
+	public String getProgramLocationsURL() {
+		return this.fieldbookProperties.getProgramLocationsUrl();
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/programID", method = RequestMethod.GET)
+	public Long getCurrentProgramID(HttpServletRequest request) {
+		ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
+
+		return contextInfo.getSelectedProjectId();
+	}
+
+	/**
+	 * Gets the breeding methods.
+	 *
+	 * @return the breeding methods
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getLocations", method = RequestMethod.GET)
+	public Map<String, Object> getLocations() {
+		Map<String, Object> result = new HashMap<>();
+
+		try {
+			List<Long> locationsIds =
+					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.contextUtil.getCurrentProgramUUID());
+			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationsIds);
+			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();
+			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
+			result.put("success", "1");
+			result.put("favoriteLocations", faveLocations);
+			result.put("allBreedingLocations", allBreedingLocations);
+			result.put("allSeedStorageLocations", allSeedStorageLocations);
+		} catch (MiddlewareQueryException e) {
+			LocationsController.LOG.error(e.getMessage(), e);
+			result.put("success", "-1");
 		}
 
-		@ResponseBody
-		@RequestMapping(value = "/programLocationsURL", method = RequestMethod.GET)
-		public String getProgramLocationsURL() {
-			return fieldbookProperties.getProgramLocationsUrl();
-		}
-
-		@ResponseBody
-		@RequestMapping(value = "/programID", method = RequestMethod.GET)
-		public Long getCurrentProgramID(HttpServletRequest request) {
-			ContextInfo contextInfo = (ContextInfo) WebUtils
-							.getSessionAttribute(request,
-									ContextConstants.SESSION_ATTR_CONTEXT_INFO);
-
-			return contextInfo.getSelectedProjectId();
-		}
-
-		/**
-		 * Gets the breeding methods.
-		 *
-		 * @return the breeding methods
-		 */
-		@ResponseBody
-		@RequestMapping(value = "/getLocations", method = RequestMethod.GET)
-		public Map<String, Object> getLocations() {
-			Map<String, Object> result = new HashMap<>();
-
-			try {
-				List<Long> locationsIds = fieldbookMiddlewareService
-						.getFavoriteProjectLocationIds(contextUtil.getCurrentProgramUUID());
-				List<Location> faveLocations = fieldbookMiddlewareService
-						.getFavoriteLocationByProjectId(locationsIds);
-				List<Location> allBreedingLocations = fieldbookMiddlewareService
-						.getAllBreedingLocations();
-				List<Location> allSeedStorageLocations = fieldbookMiddlewareService
-						.getAllSeedLocations();
-				result.put("success", "1");
-				result.put("favoriteLocations", faveLocations);
-				result.put("allBreedingLocations", allBreedingLocations);
-				result.put("allSeedStorageLocations", allSeedStorageLocations);
-			} catch (MiddlewareQueryException e) {
-				LOG.error(e.getMessage(), e);
-				result.put("success", "-1");
-			}
-
-			return result;
-		}
+		return result;
+	}
 }

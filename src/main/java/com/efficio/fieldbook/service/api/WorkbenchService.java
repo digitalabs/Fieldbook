@@ -4,20 +4,20 @@
  * Generation Challenge Programme (GCP)
  *
  *
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
  *******************************************************************************/
+
 package com.efficio.fieldbook.service.api;
+
+import java.util.List;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
-
-import java.util.List;
 
 /**
  * The Interface WorkbenchService.
@@ -42,8 +42,7 @@ public interface WorkbenchService {
 	 * @return the template settings
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter)
-			throws MiddlewareQueryException;
+	List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) throws MiddlewareQueryException;
 
 	/**
 	 * Return all standard presets
@@ -71,12 +70,10 @@ public interface WorkbenchService {
 	 * @return
 	 * @throws MiddlewareQueryException
 	 */
-	List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName, String toolSection)
-			throws MiddlewareQueryException;
+	List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName, String toolSection) throws MiddlewareQueryException;
 
-	List<StandardPreset> getStandardPresetByCropAndPresetName(String presetName, int toolId,
-			String cropName,
-			String toolSection) throws MiddlewareQueryException;
+	List<StandardPreset> getStandardPresetByCropAndPresetName(String presetName, int toolId, String cropName, String toolSection)
+			throws MiddlewareQueryException;
 
 	/**
 	 * Returns the specific fieldbook web tool
@@ -102,8 +99,7 @@ public interface WorkbenchService {
 	 * @return
 	 * @throws MiddlewareQueryException
 	 */
-	StandardPreset saveOrUpdateStandardPreset(StandardPreset preset)
-			throws MiddlewareQueryException;
+	StandardPreset saveOrUpdateStandardPreset(StandardPreset preset) throws MiddlewareQueryException;
 
 	/**
 	 * Adds the template setting.
@@ -132,13 +128,12 @@ public interface WorkbenchService {
 	/**
 	 * Gets the current ibdb user id.
 	 *
-	 * @param projectId       the project id
+	 * @param projectId the project id
 	 * @param workbenchUserId the current workbench user id
 	 * @return the current ibdb user id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId)
-			throws MiddlewareQueryException;
+	Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId) throws MiddlewareQueryException;
 
 	/**
 	 * Gets the project by id.

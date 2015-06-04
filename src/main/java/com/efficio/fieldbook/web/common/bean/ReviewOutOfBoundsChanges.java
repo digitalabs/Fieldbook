@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.util.ArrayList;
@@ -10,20 +11,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class ReviewOutOfBoundsChanges {
 
 	private List<Datum> data = new ArrayList<Datum>();
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 	/**
-	 * 
+	 *
 	 * @return The data
 	 */
 	public List<Datum> getData() {
-		return data;
+		return this.data;
 	}
 
 	/**
-	 * 
-	 * @param data
-	 *            The data
+	 *
+	 * @param data The data
 	 */
 	public void setData(List<Datum> data) {
 		this.data = data;

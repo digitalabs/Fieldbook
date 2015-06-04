@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.pojos.cropontology;
 
 import java.io.Serializable;
@@ -26,19 +26,19 @@ public class Ontology implements Serializable {
 
 	/** The id. */
 	private String id;
-	
+
 	/** The name. */
 	private String name;
-	
+
 	/** The summary. */
 	private String summary;
-	
+
 	/** The username. */
 	private String username;
-	
+
 	/** The user id. */
 	private Integer userId;
-	
+
 	/**
 	 * Instantiates a new ontology.
 	 *
@@ -49,7 +49,7 @@ public class Ontology implements Serializable {
 	 * @param userId the user id
 	 */
 	@JsonCreator
-	public Ontology(@JsonProperty("ontology_id") String id, @JsonProperty("ontology_name") String name, 
+	public Ontology(@JsonProperty("ontology_id") String id, @JsonProperty("ontology_name") String name,
 			@JsonProperty("ontology_summary") String summary, @JsonProperty("username") String username,
 			@JsonProperty("userid") Integer userId) {
 		this.id = id;
@@ -58,16 +58,16 @@ public class Ontology implements Serializable {
 		this.username = username;
 		this.userId = userId;
 	}
-	
+
 	/**
 	 * Gets the id.
 	 *
 	 * @return the id
 	 */
 	public String getId() {
-		return id;
+		return this.id;
 	}
-	
+
 	/**
 	 * Sets the id.
 	 *
@@ -76,16 +76,16 @@ public class Ontology implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Gets the name.
 	 *
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
-	
+
 	/**
 	 * Sets the name.
 	 *
@@ -94,16 +94,16 @@ public class Ontology implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * Gets the summary.
 	 *
 	 * @return the summary
 	 */
 	public String getSummary() {
-		return summary;
+		return this.summary;
 	}
-	
+
 	/**
 	 * Sets the summary.
 	 *
@@ -112,16 +112,16 @@ public class Ontology implements Serializable {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
-	
+
 	/**
 	 * Gets the username.
 	 *
 	 * @return the username
 	 */
 	public String getUsername() {
-		return username;
+		return this.username;
 	}
-	
+
 	/**
 	 * Sets the username.
 	 *
@@ -130,16 +130,16 @@ public class Ontology implements Serializable {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	/**
 	 * Gets the user id.
 	 *
 	 * @return the user id
 	 */
 	public Integer getUserId() {
-		return userId;
+		return this.userId;
 	}
-	
+
 	/**
 	 * Sets the user id.
 	 *
@@ -149,13 +149,15 @@ public class Ontology implements Serializable {
 		this.userId = userId;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Ontology [id=" + id + ", name=" + name + ", summary=" + summary
-				+ ", username=" + username + ", userid=" + userId + "]";
+		return "Ontology [id=" + this.id + ", name=" + this.name + ", summary=" + this.summary + ", username=" + this.username
+				+ ", userid=" + this.userId + "]";
 	}
-	
+
 }

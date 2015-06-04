@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.bean;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -9,26 +10,26 @@ public class DesignHeaderItem {
 	private boolean hasError;
 	private StandardVariable variable;
 	private boolean required;
-	private int	 columnIndex;
-	
+	private int columnIndex;
+
 	public int getId() {
-		return id;
+		return this.id;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public String getName() {
-		return name;
+		return this.name;
 	}
-	
+
 	public void setName(String headerName) {
 		this.name = headerName;
 	}
 
 	public boolean getHasError() {
-		return hasError;
+		return this.hasError;
 	}
 
 	public void setHasError(boolean hasError) {
@@ -36,7 +37,7 @@ public class DesignHeaderItem {
 	}
 
 	public StandardVariable getVariable() {
-		return variable;
+		return this.variable;
 	}
 
 	public void setVariable(StandardVariable variable) {
@@ -44,7 +45,7 @@ public class DesignHeaderItem {
 	}
 
 	public boolean isRequired() {
-		return required;
+		return this.required;
 	}
 
 	public void setRequired(boolean required) {
@@ -52,18 +53,17 @@ public class DesignHeaderItem {
 	}
 
 	public int getColumnIndex() {
-		return columnIndex;
+		return this.columnIndex;
 	}
 
 	public void setColumnIndex(int columnIndex) {
 		this.columnIndex = columnIndex;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "DesignHeaderItem [id=" + id + ", name=" + name + ", hasError="
-				+ hasError + ", variable=" + variable + ", required=" + required + ", columnIndex="
-				+ columnIndex + "]";
+		return "DesignHeaderItem [id=" + this.id + ", name=" + this.name + ", hasError=" + this.hasError + ", variable=" + this.variable
+				+ ", required=" + this.required + ", columnIndex=" + this.columnIndex + "]";
 	}
-	
+
 }

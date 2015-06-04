@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,37 +13,31 @@ import org.springframework.web.servlet.ModelAndView;
 public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 
 	@Autowired
-	private WorkbenchDataManagerImpl workbenchDataManager; 
-	
+	private WorkbenchDataManagerImpl workbenchDataManager;
+
 	@Autowired
-	private DynamicManagerFactoryProviderConcurrency managerFactoryProvider; 
-	
-	
+	private DynamicManagerFactoryProviderConcurrency managerFactoryProvider;
+
 	public FieldbookHandlerInterceptor() {
-		
+
 	}
 
 	@Override
-	public boolean preHandle(HttpServletRequest request,
-			HttpServletResponse response, Object handler) throws Exception {
-		
-		
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
 		return true;
 	}
 
 	@Override
-	public void postHandle(HttpServletRequest request,
-			HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
-		// TODO Auto-generated method stub		
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
+			throws Exception {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void afterCompletion(HttpServletRequest request,
-			HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
-		
-		managerFactoryProvider.close();
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+
+		this.managerFactoryProvider.close();
 	}
 
 }

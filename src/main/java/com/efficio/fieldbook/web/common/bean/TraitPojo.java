@@ -1,12 +1,14 @@
+
 package com.efficio.fieldbook.web.common.bean;
 
 public class TraitPojo {
+
 	private Integer traitClassId;
-	
+
 	private String traitClassName;
 
 	public Integer getTraitClassId() {
-		return traitClassId;
+		return this.traitClassId;
 	}
 
 	public void setTraitClassId(Integer traitClassId) {
@@ -14,12 +16,11 @@ public class TraitPojo {
 	}
 
 	public String getTraitClassName() {
-		return traitClassName;
+		return this.traitClassName;
 	}
 
 	public void setTraitClassName(String traitClassName) {
 		this.traitClassName = traitClassName;
 	}
 
-	
 }

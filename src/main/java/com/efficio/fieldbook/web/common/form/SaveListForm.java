@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.common.form;
 
 // TODO: Auto-generated Javadoc
@@ -16,35 +16,34 @@ package com.efficio.fieldbook.web.common.form;
  * The Class SaveListForm.
  */
 public class SaveListForm {
-	
+
 	/** The list name. */
 	private String listName;
-	
+
 	/** The list description. */
 	private String listDescription;
-	
+
 	/** The list type. */
 	private String listType;
-	
+
 	/** The list date. */
 	private String listDate;
-	
+
 	/** The list notes. */
 	private String listNotes;
 
-	//to be use for dynamic of advance list
+	// to be use for dynamic of advance list
 	private String listIdentifier;
-	
+
 	private String parentId;
 
 	private String germplasmListType;
 
 	// to be used for saving of stock lists
 	private int sourceListId;
-	
-	
+
 	public String getParentId() {
-		return parentId;
+		return this.parentId;
 	}
 
 	public void setParentId(String parentId) {
@@ -52,7 +51,7 @@ public class SaveListForm {
 	}
 
 	public String getListIdentifier() {
-		return listIdentifier;
+		return this.listIdentifier;
 	}
 
 	public void setListIdentifier(String listIdentifier) {
@@ -65,9 +64,9 @@ public class SaveListForm {
 	 * @return the list name
 	 */
 	public String getListName() {
-		return listName;
+		return this.listName;
 	}
-	
+
 	/**
 	 * Sets the list name.
 	 *
@@ -76,16 +75,16 @@ public class SaveListForm {
 	public void setListName(String listName) {
 		this.listName = listName;
 	}
-	
+
 	/**
 	 * Gets the list description.
 	 *
 	 * @return the list description
 	 */
 	public String getListDescription() {
-		return listDescription;
+		return this.listDescription;
 	}
-	
+
 	/**
 	 * Sets the list description.
 	 *
@@ -94,16 +93,16 @@ public class SaveListForm {
 	public void setListDescription(String listDescription) {
 		this.listDescription = listDescription;
 	}
-	
+
 	/**
 	 * Gets the list type.
 	 *
 	 * @return the list type
 	 */
 	public String getListType() {
-		return listType;
+		return this.listType;
 	}
-	
+
 	/**
 	 * Sets the list type.
 	 *
@@ -112,16 +111,16 @@ public class SaveListForm {
 	public void setListType(String listType) {
 		this.listType = listType;
 	}
-	
+
 	/**
 	 * Gets the list date.
 	 *
 	 * @return the list date
 	 */
 	public String getListDate() {
-		return listDate;
+		return this.listDate;
 	}
-	
+
 	/**
 	 * Sets the list date.
 	 *
@@ -130,16 +129,16 @@ public class SaveListForm {
 	public void setListDate(String listDate) {
 		this.listDate = listDate;
 	}
-	
+
 	/**
 	 * Gets the list notes.
 	 *
 	 * @return the list notes
 	 */
 	public String getListNotes() {
-		return listNotes;
+		return this.listNotes;
 	}
-	
+
 	/**
 	 * Sets the list notes.
 	 *
@@ -150,7 +149,7 @@ public class SaveListForm {
 	}
 
 	public String getGermplasmListType() {
-		return germplasmListType;
+		return this.germplasmListType;
 	}
 
 	public void setGermplasmListType(String germplasmListType) {
@@ -158,7 +157,7 @@ public class SaveListForm {
 	}
 
 	public int getSourceListId() {
-		return sourceListId;
+		return this.sourceListId;
 	}
 
 	public void setSourceListId(int sourceListId) {

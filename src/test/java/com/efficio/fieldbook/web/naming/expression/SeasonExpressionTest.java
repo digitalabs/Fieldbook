@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
@@ -11,47 +12,39 @@ public class SeasonExpressionTest extends TestExpression {
 	@Test
 	public void testSeasonAsPrefix() throws Exception {
 		SeasonExpression expression = new SeasonExpression();
-		AdvancingSource source = createAdvancingSourceTestData(
-				"GERMPLASM_TEST", 
-				null, "[SEASON]", null, null, true);
-		List<StringBuilder> values = createInitialValues(source);
+		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", null, "[SEASON]", null, null, true);
+		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source);
-		printResult(values, source);
+		this.printResult(values, source);
 	}
 
 	@Test
 	public void testSeasonAsSuffix() throws Exception {
 		SeasonExpression expression = new SeasonExpression();
-		AdvancingSource source = createAdvancingSourceTestData(
-				"GERMPLASM_TEST", 
-				":", null, null, "[SEASON]", true);
-		List<StringBuilder> values = createInitialValues(source);
+		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", ":", null, null, "[SEASON]", true);
+		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source);
-		printResult(values, source);
+		this.printResult(values, source);
 	}
 
 	@Test
 	public void testNoSeason() throws Exception {
 		SeasonExpression expression = new SeasonExpression();
-		AdvancingSource source = createAdvancingSourceTestData(
-				"GERMPLASM_TEST", 
-				null, null, null, "[SEASON]", true);
+		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", null, null, null, "[SEASON]", true);
 		source.setSeason(null);
-		List<StringBuilder> values = createInitialValues(source);
+		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source);
-		printResult(values, source);
+		this.printResult(values, source);
 	}
 
 	@Test
 	public void testCaseSensitive() throws Exception {
 		SeasonExpression expression = new SeasonExpression();
-		AdvancingSource source = createAdvancingSourceTestData(
-				"GERMPLASM_TEST", 
-				null, "[seasOn]", null, null, true);
-		List<StringBuilder> values = createInitialValues(source);
+		AdvancingSource source = this.createAdvancingSourceTestData("GERMPLASM_TEST", null, "[seasOn]", null, null, true);
+		List<StringBuilder> values = this.createInitialValues(source);
 		expression.apply(values, source);
 		System.out.println("process code is in lower case");
-		printResult(values, source);
+		this.printResult(values, source);
 	}
 
 }

@@ -1,13 +1,13 @@
+
 package com.efficio.fieldbook.web.nursery.form;
 
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
-
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public class ImportInventoryForm {
+
 	private MultipartFile file;
 
 	private int targetListId;
@@ -18,7 +18,7 @@ public class ImportInventoryForm {
 	}
 
 	public MultipartFile getFile() {
-		return file;
+		return this.file;
 	}
 
 	public void setFile(MultipartFile file) {
@@ -26,7 +26,7 @@ public class ImportInventoryForm {
 	}
 
 	public int getTargetListId() {
-		return targetListId;
+		return this.targetListId;
 	}
 
 	public void setTargetListId(int targetListId) {
@@ -34,7 +34,7 @@ public class ImportInventoryForm {
 	}
 
 	public String getImportSource() {
-		return importSource;
+		return this.importSource;
 	}
 
 	public void setImportSource(String importSource) {

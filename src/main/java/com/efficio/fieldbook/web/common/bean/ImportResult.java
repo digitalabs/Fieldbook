@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.util.List;
@@ -9,21 +10,21 @@ public class ImportResult {
 	private List<GermplasmChangeDetail> changeDetails;
 	private String errorMessage;
 	private String conditionsAndConstantsErrorMessage;
-	
-	public ImportResult(Set<ChangeType> modes, List<GermplasmChangeDetail> changeDetails){
+
+	public ImportResult(Set<ChangeType> modes, List<GermplasmChangeDetail> changeDetails) {
 		this.modes = modes;
 		this.changeDetails = changeDetails;
 	}
-	
+
 	public ImportResult(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-	
+
 	/**
 	 * @return the modes
 	 */
 	public Set<ChangeType> getModes() {
-		return modes;
+		return this.modes;
 	}
 
 	/**
@@ -37,8 +38,9 @@ public class ImportResult {
 	 * @return the changeDetails
 	 */
 	public List<GermplasmChangeDetail> getChangeDetails() {
-		return changeDetails;
+		return this.changeDetails;
 	}
+
 	/**
 	 * @param changeDetails the changeDetails to set
 	 */
@@ -50,7 +52,7 @@ public class ImportResult {
 	 * @return the errorMessage
 	 */
 	public String getErrorMessage() {
-		return errorMessage;
+		return this.errorMessage;
 	}
 
 	/**
@@ -61,13 +63,11 @@ public class ImportResult {
 	}
 
 	public String getConditionsAndConstantsErrorMessage() {
-		return conditionsAndConstantsErrorMessage;
+		return this.conditionsAndConstantsErrorMessage;
 	}
 
-	public void setConditionsAndConstantsErrorMessage(
-			String conditionsAndConstantsErrorMessage) {
+	public void setConditionsAndConstantsErrorMessage(String conditionsAndConstantsErrorMessage) {
 		this.conditionsAndConstantsErrorMessage = conditionsAndConstantsErrorMessage;
 	}
-	
-	
+
 }

@@ -4,11 +4,11 @@
  * Generation Challenge Programme (GCP)
  *
  *
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
  *******************************************************************************/
+
 package com.efficio.fieldbook.utils.test;
 
 import java.util.ArrayList;
@@ -35,14 +35,14 @@ public class WorkbookTestUtil {
 		}
 		return false;
 	}
-	
+
 	public static List<SettingDetail> createCheckVariables() {
 		List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
-		
-		checkVariables.add(createSettingDetail(TermId.CHECK_START.getId(), "1"));
-		checkVariables.add(createSettingDetail(TermId.CHECK_INTERVAL.getId(), "4"));
-		checkVariables.add(createSettingDetail(TermId.CHECK_PLAN.getId(), "8414"));
-		
+
+		checkVariables.add(WorkbookTestUtil.createSettingDetail(TermId.CHECK_START.getId(), "1"));
+		checkVariables.add(WorkbookTestUtil.createSettingDetail(TermId.CHECK_INTERVAL.getId(), "4"));
+		checkVariables.add(WorkbookTestUtil.createSettingDetail(TermId.CHECK_PLAN.getId(), "8414"));
+
 		return checkVariables;
 	}
 

@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
@@ -20,34 +21,31 @@ import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
-
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
-public class ImportInventoryServiceImpl implements ImportInventoryService{
+public class ImportInventoryServiceImpl implements ImportInventoryService {
 
 	@Resource
 	private InventoryImportParser parser;
-	
+
 	@Resource
 	private MessageSource messageSource;
 
-	@Override public ImportedInventoryList parseFile(MultipartFile file, Map<String,Object> additionalParams) 
-			throws FileParsingException{
-		return parser.parseFile(file,additionalParams);
+	@Override
+	public ImportedInventoryList parseFile(MultipartFile file, Map<String, Object> additionalParams) throws FileParsingException {
+		return this.parser.parseFile(file, additionalParams);
 	}
 
-	@Override public boolean mergeImportedData(List<InventoryDetails> originalList,
-			ImportedInventoryList importedDataObject) {
+	@Override
+	public boolean mergeImportedData(List<InventoryDetails> originalList, ImportedInventoryList importedDataObject) {
 		List<InventoryDetails> importedList = importedDataObject.getImportedInventoryDetails();
 
-		Map<Integer, InventoryDetails> originalDetailMap = convertToMap(originalList);
-		Map<Integer, InventoryDetails> importedDetailMap = convertToMap(importedList);
+		Map<Integer, InventoryDetails> originalDetailMap = this.convertToMap(originalList);
+		Map<Integer, InventoryDetails> importedDetailMap = this.convertToMap(importedList);
 
 		boolean possibleOverwrite = false;
 
-		for (Map.Entry<Integer, InventoryDetails> detailsEntry : originalDetailMap
-				.entrySet()) {
+		for (Map.Entry<Integer, InventoryDetails> detailsEntry : originalDetailMap.entrySet()) {
 			InventoryDetails original = detailsEntry.getValue();
 			InventoryDetails imported = importedDetailMap.get(detailsEntry.getKey());
 
@@ -55,7 +53,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 				continue;
 			}
 
-			possibleOverwrite |= mergeIndividualDetailData(original, imported);
+			possibleOverwrite |= this.mergeIndividualDetailData(original, imported);
 		}
 
 		return possibleOverwrite;
@@ -63,12 +61,12 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 
 	protected boolean mergeIndividualDetailData(InventoryDetails original, InventoryDetails imported) {
 
-
 		boolean possibleOverwrite = false;
 
-		if (! (isEmpty(imported.getAmount()) || isEmpty(imported.getScaleName()) || isEmpty(imported.getLocationName())) ) {
-			possibleOverwrite = (! (isEmpty(original.getAmount()) || isEmpty(original.getComment())|| isEmpty(original.getLocationName())
-					|| isEmpty(original.getScaleName())));
+		if (!(this.isEmpty(imported.getAmount()) || this.isEmpty(imported.getScaleName()) || this.isEmpty(imported.getLocationName()))) {
+			possibleOverwrite =
+					!(this.isEmpty(original.getAmount()) || this.isEmpty(original.getComment()) || this.isEmpty(original.getLocationName()) || this
+							.isEmpty(original.getScaleName()));
 			original.setAmount(imported.getAmount());
 			original.setLocationAbbr(imported.getLocationAbbr());
 			original.setScaleName(imported.getScaleName());
@@ -82,13 +80,12 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 	}
 
 	protected boolean isEmpty(Number numberValue) {
-		return numberValue == null || (numberValue.intValue() == 0 && numberValue.doubleValue() == 0.0);
+		return numberValue == null || numberValue.intValue() == 0 && numberValue.doubleValue() == 0.0;
 	}
 
 	protected boolean isEmpty(String stringValue) {
 		return stringValue == null || stringValue.isEmpty();
 	}
-
 
 	protected Map<Integer, InventoryDetails> convertToMap(List<InventoryDetails> detailList) {
 		Map<Integer, InventoryDetails> detailMap = new HashMap<>();
@@ -111,52 +108,40 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 
 		return list;
 	}
-	
-	@Override 
-	public void mergeInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB,
-			ImportedInventoryList importedInventoryList, GermplasmListType germplasmListType) throws FieldbookException {
-		List<InventoryDetails> inventoryDetailListFromImport =
-				importedInventoryList.getImportedInventoryDetails();
-		checkNumberOfEntries(inventoryDetailListFromDB,inventoryDetailListFromImport);
-		checkEntriesIfTheyMatchThenUpdate(inventoryDetailListFromImport,
-				inventoryDetailListFromDB,germplasmListType);
+
+	@Override
+	public void mergeInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList,
+			GermplasmListType germplasmListType) throws FieldbookException {
+		List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
+		this.checkNumberOfEntries(inventoryDetailListFromDB, inventoryDetailListFromImport);
+		this.checkEntriesIfTheyMatchThenUpdate(inventoryDetailListFromImport, inventoryDetailListFromDB, germplasmListType);
 	}
 
-	private void checkEntriesIfTheyMatchThenUpdate(
-			List<InventoryDetails> inventoryDetailListFromImport,
-			List<InventoryDetails> inventoryDetailListFromDB,
-			GermplasmListType germplasmListType) throws FieldbookException {
-		Map<Integer,InventoryDetails> entryIdInventoryMap = new HashMap<Integer,InventoryDetails>();
+	private void checkEntriesIfTheyMatchThenUpdate(List<InventoryDetails> inventoryDetailListFromImport,
+			List<InventoryDetails> inventoryDetailListFromDB, GermplasmListType germplasmListType) throws FieldbookException {
+		Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<Integer, InventoryDetails>();
 		for (InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
 			entryIdInventoryMap.put(inventoryDetailsFromDB.getEntryId(), inventoryDetailsFromDB);
 		}
 		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
-			InventoryDetails inventoryDetailsFromDB = 
-					entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
-			if(inventoryDetailsFromDB==null) {
-				throw new FieldbookException(messageSource.getMessage(
-						"common.error.import.entry.id.does.not.exist", new Object[]{
-								inventoryDetailsFromImport.getEntryId().toString()},Locale.getDefault()));
-			} else if(!inventoryDetailsFromDB.getGid().equals(inventoryDetailsFromImport.getGid())){
-				throw new FieldbookException(messageSource.getMessage(
-						"common.error.import.gid.does.not.match", new Object[]{
-								inventoryDetailsFromDB.getEntryId().toString(),
-								inventoryDetailsFromDB.getGid().toString(),
-								inventoryDetailsFromImport.getGid().toString()},
-								Locale.getDefault()));
+			InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
+			if (inventoryDetailsFromDB == null) {
+				throw new FieldbookException(this.messageSource.getMessage("common.error.import.entry.id.does.not.exist",
+						new Object[] {inventoryDetailsFromImport.getEntryId().toString()}, Locale.getDefault()));
+			} else if (!inventoryDetailsFromDB.getGid().equals(inventoryDetailsFromImport.getGid())) {
+				throw new FieldbookException(this.messageSource.getMessage("common.error.import.gid.does.not.match", new Object[] {
+						inventoryDetailsFromDB.getEntryId().toString(), inventoryDetailsFromDB.getGid().toString(),
+						inventoryDetailsFromImport.getGid().toString()}, Locale.getDefault()));
 			} else {
-				updateInventoryDetailsFromImport(inventoryDetailsFromDB,inventoryDetailsFromImport,
-						germplasmListType);
+				this.updateInventoryDetailsFromImport(inventoryDetailsFromDB, inventoryDetailsFromImport, germplasmListType);
 			}
 		}
-		
+
 	}
 
-	protected void updateInventoryDetailsFromImport(
-			InventoryDetails inventoryDetailsFromDB,
-			InventoryDetails inventoryDetailsFromImport,
+	protected void updateInventoryDetailsFromImport(InventoryDetails inventoryDetailsFromDB, InventoryDetails inventoryDetailsFromImport,
 			GermplasmListType germplasmListType) {
-		if(germplasmListType == GermplasmListType.CROSSES) {
+		if (germplasmListType == GermplasmListType.CROSSES) {
 			inventoryDetailsFromDB.setBulkWith(inventoryDetailsFromImport.getBulkWith());
 			inventoryDetailsFromDB.setBulkCompl(inventoryDetailsFromImport.getBulkCompl());
 		}
@@ -166,14 +151,11 @@ public class ImportInventoryServiceImpl implements ImportInventoryService{
 		inventoryDetailsFromDB.setComment(inventoryDetailsFromImport.getComment());
 	}
 
-	private void checkNumberOfEntries(
-			List<InventoryDetails> inventoryDetailListFromDB,
-			List<InventoryDetails> inventoryDetailListFromImport) throws 
-			FieldbookException {
-		if(inventoryDetailListFromImport.size() > inventoryDetailListFromDB.size()) {
-			throw new FieldbookException(messageSource.getMessage(
-					"common.error.import.incorrect.number.of.entries", new Object[]{
-							inventoryDetailListFromDB.size()},Locale.getDefault()));
+	private void checkNumberOfEntries(List<InventoryDetails> inventoryDetailListFromDB, List<InventoryDetails> inventoryDetailListFromImport)
+			throws FieldbookException {
+		if (inventoryDetailListFromImport.size() > inventoryDetailListFromDB.size()) {
+			throw new FieldbookException(this.messageSource.getMessage("common.error.import.incorrect.number.of.entries",
+					new Object[] {inventoryDetailListFromDB.size()}, Locale.getDefault()));
 		}
 	}
 }

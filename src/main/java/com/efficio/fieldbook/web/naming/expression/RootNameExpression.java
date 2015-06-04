@@ -1,19 +1,18 @@
 /**
- * Snametype: is null or contains a name type id number from the UDFLDS table. See below for some example Snametypes.
- * If not null and if the germplasm being advanced has a name of the specified type, then this is used as the root name of the advanced strain
- * otherwise the preferred name of the source is used.
- * If the root name is a cross string (contains one or more /s not enclosed within the range of a pair of parentheses)
- * then enclose the root name in parentheses.
+ * Snametype: is null or contains a name type id number from the UDFLDS table. See below for some example Snametypes. If not null and if the
+ * germplasm being advanced has a name of the specified type, then this is used as the root name of the advanced strain otherwise the
+ * preferred name of the source is used. If the root name is a cross string (contains one or more /s not enclosed within the range of a pair
+ * of parentheses) then enclose the root name in parentheses.
  */
 
 package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.List;
 
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.pojos.Name;
 
-import java.util.List;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class RootNameExpression implements Expression {
 
@@ -24,36 +23,36 @@ public class RootNameExpression implements Expression {
 			Name name = null;
 			List<Name> names = source.getNames();
 
-			//this checks the matching sname type of the method to the names
+			// this checks the matching sname type of the method to the names
 			if (snametype != null) {
-				name = findNameUsingNameType(snametype, names);
+				name = this.findNameUsingNameType(snametype, names);
 			}
-			//this checks the type id equal to 5
+			// this checks the type id equal to 5
 			if (name == null) {
-				name = findNameUsingNameType(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), names);
+				name = this.findNameUsingNameType(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), names);
 			}
-			//this checks the names with nstat == 1
+			// this checks the names with nstat == 1
 			if (name == null) {
-				//if no sname type defined or if no name found that matched the snametype
-				name = findPreferredName(names);
+				// if no sname type defined or if no name found that matched the snametype
+				name = this.findPreferredName(names);
 			}
 			String nameString = "";
-			//the default is type id 5
+			// the default is type id 5
 			Integer typeId = GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID();
-			//if the snametype for the method is not null, we use the method sname type
-			if(snametype != null){
+			// if the snametype for the method is not null, we use the method sname type
+			if (snametype != null) {
 				typeId = snametype;
 			}
-			// if we found a matching name, we use the name type id instead	
+			// if we found a matching name, we use the name type id instead
 			if (name != null) {
 				nameString = name.getNval();
 				typeId = name.getTypeId();
 			}
-			
+
 			source.setRootNameType(typeId);
 			source.setRootName(nameString);
 
-			if (!checkNameIfEnclosed(nameString)) {
+			if (!this.checkNameIfEnclosed(nameString)) {
 				value.append("(").append(nameString).append(")");
 			} else {
 				value.append(nameString);
@@ -79,7 +78,7 @@ public class RootNameExpression implements Expression {
 		}
 
 		return null;
-	}	
+	}
 
 	@Override
 	public String getExpressionKey() {
@@ -89,7 +88,7 @@ public class RootNameExpression implements Expression {
 	private boolean checkNameIfEnclosed(String name) {
 		int index = name.indexOf("/", 0);
 		while (index > -1 && index < name.length()) {
-			if (!checkIfEnclosed(name, index)) {
+			if (!this.checkIfEnclosed(name, index)) {
 				return false;
 			}
 
@@ -100,12 +99,10 @@ public class RootNameExpression implements Expression {
 
 	private boolean checkIfEnclosed(String name, int index) {
 
-		return checkNeighbor(name, index, '(', -1, 0, ')')
-				&& checkNeighbor(name, index, ')', 1, name.length() - 1, '(');
+		return this.checkNeighbor(name, index, '(', -1, 0, ')') && this.checkNeighbor(name, index, ')', 1, name.length() - 1, '(');
 	}
 
-	private boolean checkNeighbor(String name, int index, char literal, int delta, int stopPoint,
-			char oppositeLiteral) {
+	private boolean checkNeighbor(String name, int index, char literal, int delta, int stopPoint, char oppositeLiteral) {
 		int oppositeCount = 0;
 		for (int i = index + delta; i != stopPoint + delta; i = i + delta) {
 			if (name.charAt(i) == literal) {

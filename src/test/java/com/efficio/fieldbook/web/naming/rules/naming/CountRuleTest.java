@@ -1,6 +1,8 @@
+
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -12,149 +14,142 @@ import org.generationcp.middleware.pojos.Method;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class CountRuleTest extends BaseNamingRuleTest {
-	
+
 	private Rule rule;
 	private Method breedingMethod;
 	private Integer breedingMethodSnameType;
 	private String name;
-	
-	@Before
-	public void setUp(){
-		breedingMethodSnameType = 5;
-		breedingMethod = new Method();
-		breedingMethod.setSnametype(breedingMethodSnameType);
-		breedingMethod.setSeparator("-");
-		breedingMethod.setCount("[NUMBER]");
-		row  = new AdvancingSource();
-		row.setBreedingMethod(breedingMethod);
-		rule = new CountRule();
 
-		name = "TestGP";
+	@Before
+	public void setUp() {
+		this.breedingMethodSnameType = 5;
+		this.breedingMethod = new Method();
+		this.breedingMethod.setSnametype(this.breedingMethodSnameType);
+		this.breedingMethod.setSeparator("-");
+		this.breedingMethod.setCount("[NUMBER]");
+		this.row = new AdvancingSource();
+		this.row.setBreedingMethod(this.breedingMethod);
+		this.rule = new CountRule();
+
+		this.name = "TestGP";
 	}
 
 	@Test
 	public void testNoCountMethodInRule() {
-		breedingMethod.setCount(null);
+		this.breedingMethod.setCount(null);
 
 		List<String> testCurrentInput = new ArrayList<>();
-		testCurrentInput.add(name);
+		testCurrentInput.add(this.name);
 
-		RuleExecutionContext context = createExecutionContext(testCurrentInput);
+		RuleExecutionContext context = this.createExecutionContext(testCurrentInput);
 
 		try {
 
-			rule.runRule(context);
+			this.rule.runRule(context);
 			List<String> output = (List<String>) context.getRuleExecutionOutput();
-			assertEquals(testCurrentInput.size(), output.size());
+			Assert.assertEquals(testCurrentInput.size(), output.size());
 
-			assertEquals("No changes should be made to current input if no count method is available", name, output.get(0));
+			Assert.assertEquals("No changes should be made to current input if no count method is available", this.name, output.get(0));
 
 		} catch (RuleException re) {
-			fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
+			Assert.fail("Rule failed to run for Count" + this.row.getBreedingMethod().getCount());
 		}
 	}
-	
+
 	@Test
-	public void testNumberCount(){		
-		row.setPlantsSelected(3);		
-		setBulking(breedingMethod, true);
+	public void testNumberCount() {
+		this.row.setPlantsSelected(3);
+		this.setBulking(this.breedingMethod, true);
 
 		List<String> input = new ArrayList<String>();
 
-		input.add(name);
-		RuleExecutionContext context = createExecutionContext(input);
+		input.add(this.name);
+		RuleExecutionContext context = this.createExecutionContext(input);
 
-		try{
-			rule.runRule(context);
+		try {
+			this.rule.runRule(context);
 			input = (List<String>) context.getRuleExecutionOutput();
-			assertEquals(1, input.size());
-			assertEquals("Should return the correct countr", "TestGP3", input.get(0));
+			Assert.assertEquals(1, input.size());
+			Assert.assertEquals("Should return the correct countr", "TestGP3", input.get(0));
 
-		} catch(RuleException re){
-			fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
+		} catch (RuleException re) {
+			Assert.fail("Rule failed to run for Count" + this.row.getBreedingMethod().getCount());
 		}
 	}
-	
+
 	@Test
-	public void testNumberCountNoPlantsSelected(){		
-		row.setPlantsSelected(0);
-		setBulking(breedingMethod, true);
+	public void testNumberCountNoPlantsSelected() {
+		this.row.setPlantsSelected(0);
+		this.setBulking(this.breedingMethod, true);
 
 		List<String> input = new ArrayList<String>();
-		input.add(name);
+		input.add(this.name);
 
-		RuleExecutionContext context = createExecutionContext(input);
+		RuleExecutionContext context = this.createExecutionContext(input);
 
-		try{
-			rule.runRule(context);
+		try {
+			this.rule.runRule(context);
 
 			input = (List<String>) context.getRuleExecutionOutput();
 
 			Assert.assertEquals(1, input.size());
 			Assert.assertEquals("Should return the correct countr", "TestGP", input.get(0));
-		}catch(RuleException re){
-			Assert.fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
+		} catch (RuleException re) {
+			Assert.fail("Rule failed to run for Count" + this.row.getBreedingMethod().getCount());
 		}
 
 	}
-	
-	@Test
-	public void testSequenceCountNoPlantsSelected(){
-		row.setPlantsSelected(0);
-		setBulking(breedingMethod, false);
-		List<String> input = new ArrayList<String>();
-		input.add(name);
 
-		RuleExecutionContext context = createExecutionContext(input);
-		try{
-			input = (List<String>) rule.runRule(context);
+	@Test
+	public void testSequenceCountNoPlantsSelected() {
+		this.row.setPlantsSelected(0);
+		this.setBulking(this.breedingMethod, false);
+		List<String> input = new ArrayList<String>();
+		input.add(this.name);
+
+		RuleExecutionContext context = this.createExecutionContext(input);
+		try {
+			input = (List<String>) this.rule.runRule(context);
 			Assert.assertEquals(1, input.size());
 			Assert.assertEquals("Should return the correct countr", "TestGP", input.get(0));
-		}catch(RuleException re){
-			Assert.fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
+		} catch (RuleException re) {
+			Assert.fail("Rule failed to run for Count" + this.row.getBreedingMethod().getCount());
 		}
 
-
-		
 	}
-	
-	@Test
-	public void testSequenceCount(){		
-		row.setPlantsSelected(3);
-		row.setBreedingMethod(setBulking(breedingMethod, false));
-		List<String> input = new ArrayList<String>();
-		input.add(name);
 
-		RuleExecutionContext context = createExecutionContext(input);
-		try{
-			input = (List<String>) rule.runRule(context);
+	@Test
+	public void testSequenceCount() {
+		this.row.setPlantsSelected(3);
+		this.row.setBreedingMethod(this.setBulking(this.breedingMethod, false));
+		List<String> input = new ArrayList<String>();
+		input.add(this.name);
+
+		RuleExecutionContext context = this.createExecutionContext(input);
+		try {
+			input = (List<String>) this.rule.runRule(context);
 
 			Assert.assertEquals(3, input.size());
-					Assert.assertEquals("Should return the correct countr", "TestGP1", input.get(0));
-					Assert.assertEquals("Should return the correct countr", "TestGP2", input.get(1));
-					Assert.assertEquals("Should return the correct countr", "TestGP3", input.get(2));
-		}catch(RuleException re){
-			Assert.fail("Rule failed to run for Count" + row.getBreedingMethod().getCount());
+			Assert.assertEquals("Should return the correct countr", "TestGP1", input.get(0));
+			Assert.assertEquals("Should return the correct countr", "TestGP2", input.get(1));
+			Assert.assertEquals("Should return the correct countr", "TestGP3", input.get(2));
+		} catch (RuleException re) {
+			Assert.fail("Rule failed to run for Count" + this.row.getBreedingMethod().getCount());
 		}
 
 	}
-	
-	
+
 	private Method setBulking(Method method, boolean isBulking) {
-		
+
 		if (isBulking) {
 			method.setGeneq(TermId.BULKING_BREEDING_METHOD_CLASS.getId());
-		}
-		else {
+		} else {
 			method.setGeneq(TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId());
 		}
 		return method;
-		
+
 	}
 }

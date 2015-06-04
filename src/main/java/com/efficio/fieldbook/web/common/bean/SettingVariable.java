@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
@@ -21,8 +21,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.efficio.fieldbook.web.nursery.bean.WidgetType;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-
-public class SettingVariable implements Serializable{
+public class SettingVariable implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -42,15 +41,12 @@ public class SettingVariable implements Serializable{
 	private WidgetType widgetType;
 	private Operation operation;
 	private Integer storedInId;
-	
-	public SettingVariable(){
+
+	public SettingVariable() {
 		super();
 	}
-	
-	
-	
-	public SettingVariable(String name, String description, String property,
-			String scale, String method, String role, String dataType) {
+
+	public SettingVariable(String name, String description, String property, String scale, String method, String role, String dataType) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -61,9 +57,8 @@ public class SettingVariable implements Serializable{
 		this.dataType = dataType;
 	}
 
-	public SettingVariable(String name, String description, String property,
-			String scale, String method, String role, String dataType, Integer dataTypeId, 
-			Double minRange, Double maxRange) {
+	public SettingVariable(String name, String description, String property, String scale, String method, String role, String dataType,
+			Integer dataTypeId, Double minRange, Double maxRange) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -78,107 +73,127 @@ public class SettingVariable implements Serializable{
 		this.setWidgetType();
 	}
 
-
 	public String getTraitClass() {
-		return traitClass;
+		return this.traitClass;
 	}
+
 	public void setTraitClass(String traitClass) {
 		this.traitClass = traitClass;
 	}
+
 	public String getCropOntologyId() {
-		return cropOntologyId;
+		return this.cropOntologyId;
 	}
+
 	public void setCropOntologyId(String cropOntologyId) {
 		this.cropOntologyId = cropOntologyId;
 	}
+
 	public String getName() {
-		return name;
+		return this.name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public String getProperty() {
-		return property;
+		return this.property;
 	}
+
 	public void setProperty(String property) {
 		this.property = property;
 	}
+
 	public String getScale() {
-		return scale;
+		return this.scale;
 	}
+
 	public void setScale(String scale) {
 		this.scale = scale;
 	}
+
 	public String getMethod() {
-		return method;
+		return this.method;
 	}
+
 	public void setMethod(String method) {
 		this.method = method;
 	}
+
 	public String getRole() {
-		return role;
+		return this.role;
 	}
+
 	public void setRole(String role) {
 		this.role = role;
 	}
+
 	public String getDataType() {
-		return dataType;
+		return this.dataType;
 	}
+
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
+
 	/**
 	 * @return the cvTermId
 	 */
 	public Integer getCvTermId() {
-		return cvTermId;
+		return this.cvTermId;
 	}
+
 	/**
 	 * @param cvTermId the cvTermId to set
 	 */
 	public void setCvTermId(Integer cvTermId) {
 		this.cvTermId = cvTermId;
 	}
-	
-	public void setPSMRFromStandardVariable(StandardVariable standardVariable){
-		if(standardVariable != null){
+
+	public void setPSMRFromStandardVariable(StandardVariable standardVariable) {
+		if (standardVariable != null) {
 			this.property = HtmlUtils.htmlEscape(standardVariable.getProperty().getName());
 			this.scale = HtmlUtils.htmlEscape(standardVariable.getScale().getName());
 			this.method = HtmlUtils.htmlEscape(standardVariable.getMethod().getName());
 			this.role = HtmlUtils.htmlEscape(standardVariable.getPhenotypicType().name());
 			this.description = HtmlUtils.htmlEscape(standardVariable.getDescription());
-			this.dataType = getDataType(standardVariable.getDataType().getId());
+			this.dataType = this.getDataType(standardVariable.getDataType().getId());
 			this.dataTypeId = standardVariable.getDataType().getId();
-			this.minRange = standardVariable.getConstraints() != null && standardVariable.getConstraints().getMinValue() != null
-					? standardVariable.getConstraints().getMinValue() : null;
-			this.maxRange = standardVariable.getConstraints() != null && standardVariable.getConstraints().getMaxValue() != null
-					? standardVariable.getConstraints().getMaxValue() : null;
-			setWidgetType();
-			
+			this.minRange =
+					standardVariable.getConstraints() != null && standardVariable.getConstraints().getMinValue() != null ? standardVariable
+							.getConstraints().getMinValue() : null;
+					this.maxRange =
+					standardVariable.getConstraints() != null && standardVariable.getConstraints().getMaxValue() != null ? standardVariable
+							.getConstraints().getMaxValue() : null;
+							this.setWidgetType();
+
 		}
 	}
 
 	private String getDataType(int dataTypeId) {
-	    //datatype ids: 1120, 1125, 1128, 1130
-	    if (dataTypeId == TermId.CHARACTER_VARIABLE.getId() || dataTypeId == TermId.TIMESTAMP_VARIABLE.getId() || 
-	            dataTypeId == TermId.CHARACTER_DBID_VARIABLE.getId() || dataTypeId == TermId.CATEGORICAL_VARIABLE.getId()) {
-	        return "C";
-	    } else {
-	        return "N";
-	    }
+		// datatype ids: 1120, 1125, 1128, 1130
+		if (dataTypeId == TermId.CHARACTER_VARIABLE.getId() || dataTypeId == TermId.TIMESTAMP_VARIABLE.getId()
+				|| dataTypeId == TermId.CHARACTER_DBID_VARIABLE.getId() || dataTypeId == TermId.CATEGORICAL_VARIABLE.getId()) {
+			return "C";
+		} else {
+			return "N";
+		}
 	}
 
 	/**
 	 * @return the minRange
 	 */
 	public Double getMinRange() {
-		return minRange;
+		return this.minRange;
 	}
 
 	/**
@@ -192,7 +207,7 @@ public class SettingVariable implements Serializable{
 	 * @return the maxRange
 	 */
 	public Double getMaxRange() {
-		return maxRange;
+		return this.maxRange;
 	}
 
 	/**
@@ -206,7 +221,7 @@ public class SettingVariable implements Serializable{
 	 * @return the dataTypeId
 	 */
 	public Integer getDataTypeId() {
-		return dataTypeId;
+		return this.dataTypeId;
 	}
 
 	/**
@@ -215,76 +230,67 @@ public class SettingVariable implements Serializable{
 	public void setDataTypeId(Integer dataTypeId) {
 		this.dataTypeId = dataTypeId;
 	}
-	
-	public void setWidgetType() {		
-		
+
+	public void setWidgetType() {
+
 	}
 
-
-    // TODO : shift computation of widget type elsewhere, to avoid having it continuously recomputed
+	// TODO : shift computation of widget type elsewhere, to avoid having it continuously recomputed
 	public WidgetType getWidgetType() {
-        if (dataTypeId != null) {
-            if (dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
-                this.widgetType = WidgetType.DATE;
-            } else if (dataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-                this.widgetType = WidgetType.DROPDOWN;
-            } else if (minRange != null && maxRange != null) {
-                this.widgetType = WidgetType.SLIDER;
-            } else if (dataTypeId.equals(TermId.NUMERIC_VARIABLE.getId())
-                    || dataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {
-                this.widgetType = WidgetType.NTEXT;
-            } else {
-                this.widgetType = WidgetType.CTEXT;
-                if (cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString())) {
-                    this.widgetType = WidgetType.TEXTAREA;
-                }
-            }
-        } else {
-            this.widgetType = WidgetType.CTEXT;
-            if (cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString())) {
-                this.widgetType = WidgetType.TEXTAREA;
-            }
-        }
+		if (this.dataTypeId != null) {
+			if (this.dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
+				this.widgetType = WidgetType.DATE;
+			} else if (this.dataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+				this.widgetType = WidgetType.DROPDOWN;
+			} else if (this.minRange != null && this.maxRange != null) {
+				this.widgetType = WidgetType.SLIDER;
+			} else if (this.dataTypeId.equals(TermId.NUMERIC_VARIABLE.getId())
+					|| this.dataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {
+				this.widgetType = WidgetType.NTEXT;
+			} else {
+				this.widgetType = WidgetType.CTEXT;
+				if (this.cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString())) {
+					this.widgetType = WidgetType.TEXTAREA;
+				}
+			}
+		} else {
+			this.widgetType = WidgetType.CTEXT;
+			if (this.cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString())) {
+				this.widgetType = WidgetType.TEXTAREA;
+			}
+		}
 
-        if (cvTermId != null) {
-            if (cvTermId.equals(TermId.LOCATION_ID.getId()) || cvTermId.equals(TermId.PI_ID.getId())
-                    || cvTermId.equals(TermId.BREEDING_METHOD_ID.getId())
-                    || cvTermId.equals(TermId.BREEDING_METHOD_CODE.getId())
-                    || cvTermId.equals(TermId.NURSERY_TYPE.getId())
-                    || cvTermId.toString().equalsIgnoreCase(AppConstants.COOPERATOR_ID.getString())) {
-                this.widgetType = WidgetType.DROPDOWN;
-            }
-        }
-        return this.widgetType;
-    }
+		if (this.cvTermId != null) {
+			if (this.cvTermId.equals(TermId.LOCATION_ID.getId()) || this.cvTermId.equals(TermId.PI_ID.getId())
+					|| this.cvTermId.equals(TermId.BREEDING_METHOD_ID.getId()) || this.cvTermId.equals(TermId.BREEDING_METHOD_CODE.getId())
+					|| this.cvTermId.equals(TermId.NURSERY_TYPE.getId())
+					|| this.cvTermId.toString().equalsIgnoreCase(AppConstants.COOPERATOR_ID.getString())) {
+				this.widgetType = WidgetType.DROPDOWN;
+			}
+		}
+		return this.widgetType;
+	}
 
+	/**
+	 * @return the operation
+	 */
+	public Operation getOperation() {
+		return this.operation;
+	}
 
-    /**
-     * @return the operation
-     */
-    public Operation getOperation() {
-        return operation;
-    }
-
-
-
-    /**
-     * @param operation the operation to set
-     */
-    public void setOperation(Operation operation) {
-        this.operation = operation;
-    }
-
-
+	/**
+	 * @param operation the operation to set
+	 */
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
 
 	/**
 	 * @return the storedInId
 	 */
 	public Integer getStoredInId() {
-		return storedInId;
+		return this.storedInId;
 	}
-
-
 
 	/**
 	 * @param storedInId the storedInId to set
@@ -293,12 +299,10 @@ public class SettingVariable implements Serializable{
 		this.storedInId = storedInId;
 	}
 
-
 	@Override
 	public String toString() {
-		return "SettingVariable [cvTermId=" + cvTermId + ", name=" + name + ", description="
-				+ description + ", property=" + property + ", scale=" + scale + ", method="
-				+ method + "]";
+		return "SettingVariable [cvTermId=" + this.cvTermId + ", name=" + this.name + ", description=" + this.description + ", property="
+				+ this.property + ", scale=" + this.scale + ", method=" + this.method + "]";
 	}
-	
+
 }

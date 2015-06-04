@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ public abstract class NumberSequenceExpression implements Expression {
 	protected void applyNumberSequence(List<StringBuilder> values, AdvancingSource source) {
 		if (source.isForceUniqueNameGeneration()) {
 			for (StringBuilder value : values) {
-				int startIndex = value.toString().toUpperCase().indexOf(getExpressionKey());
-				int endIndex = startIndex + getExpressionKey().length();
+				int startIndex = value.toString().toUpperCase().indexOf(this.getExpressionKey());
+				int endIndex = startIndex + this.getExpressionKey().length();
 
 				value.replace(startIndex, endIndex, "(" + Integer.toString(source.getCurrentMaxSequence() + 1) + ")");
 
@@ -23,22 +24,20 @@ public abstract class NumberSequenceExpression implements Expression {
 			return;
 		}
 
+		if (source.isBulk()) {
+			for (StringBuilder value : values) {
+				int startIndex = value.toString().toUpperCase().indexOf(this.getExpressionKey());
+				int endIndex = startIndex + this.getExpressionKey().length();
 
-    	if (source.isBulk()) {
-	        for (StringBuilder value : values) {
-	            int startIndex = value.toString().toUpperCase().indexOf(getExpressionKey());
-	            int endIndex = startIndex + getExpressionKey().length();
-	
-	            if (source.getPlantsSelected() != null &&
-	                    source.getPlantsSelected() > 1) {
-	
-	                Integer newValue = source.getPlantsSelected();
-                	value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
-	            } else {
-	                value.replace(startIndex, endIndex, "");
-	            }
-	        }
-    	} else {
+				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 1) {
+
+					Integer newValue = source.getPlantsSelected();
+					value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
+				} else {
+					value.replace(startIndex, endIndex, "");
+				}
+			}
+		} else {
 			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
 			int startCount = 1;
 
@@ -47,12 +46,11 @@ public abstract class NumberSequenceExpression implements Expression {
 			}
 
 			for (StringBuilder value : values) {
-				int startIndex = value.toString().toUpperCase().indexOf(getExpressionKey());
-				int endIndex = startIndex + getExpressionKey().length();
-				
-				if (source.getPlantsSelected() != null &&
-		                source.getPlantsSelected() > 0) {
-					
+				int startIndex = value.toString().toUpperCase().indexOf(this.getExpressionKey());
+				int endIndex = startIndex + this.getExpressionKey().length();
+
+				if (source.getPlantsSelected() != null && source.getPlantsSelected() > 0) {
+
 					for (int i = startCount; i < startCount + source.getPlantsSelected(); i++) {
 						StringBuilder newName = new StringBuilder(value);
 						newName.replace(startIndex, endIndex, String.valueOf(i));
@@ -62,9 +60,9 @@ public abstract class NumberSequenceExpression implements Expression {
 					newNames.add(value.replace(startIndex, endIndex, ""));
 				}
 			}
-	
+
 			values.clear();
 			values.addAll(newNames);
-    	}
+		}
 	}
 }

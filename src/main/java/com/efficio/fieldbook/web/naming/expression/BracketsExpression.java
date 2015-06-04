@@ -1,9 +1,11 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.List;
+
 import org.generationcp.middleware.manager.GermplasmNameType;
 
-import java.util.List;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class BracketsExpression implements Expression {
 
@@ -16,16 +18,15 @@ public class BracketsExpression implements Expression {
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
 		for (StringBuilder value : values) {
 
-			int startIndex = value.toString().toUpperCase().indexOf(KEY);
-			int endIndex = startIndex + KEY.length();
+			int startIndex = value.toString().toUpperCase().indexOf(BracketsExpression.KEY);
+			int endIndex = startIndex + BracketsExpression.KEY.length();
 
 			String newRootName = source.getRootName();
 
-			if (source.getRootNameType() != null && isCrossNameType(source.getRootNameType())) {
+			if (source.getRootNameType() != null && this.isCrossNameType(source.getRootNameType())) {
 
-				//if root name already has parentheses
-				if (newRootName.charAt(0) != '('
-						|| newRootName.charAt(newRootName.length() - 1) != ')') {
+				// if root name already has parentheses
+				if (newRootName.charAt(0) != '(' || newRootName.charAt(newRootName.length() - 1) != ')') {
 					value.replace(startIndex, endIndex, ")");
 					value.insert(0, "(");
 					continue;
@@ -43,6 +44,6 @@ public class BracketsExpression implements Expression {
 
 	@Override
 	public String getExpressionKey() {
-		return KEY;
+		return BracketsExpression.KEY;
 	}
 }

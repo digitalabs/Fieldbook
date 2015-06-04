@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
@@ -5,12 +6,11 @@ import java.util.List;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 /**
- * Used as a separator with a string literal immediately following it.
- * Otherwise, it will be disregarded.
+ * Used as a separator with a string literal immediately following it. Otherwise, it will be disregarded.
  */
 public class FirstExpression implements Expression {
 
-    public static final String KEY = "[FIRST]";
+	public static final String KEY = "[FIRST]";
 
 	public FirstExpression() {
 
@@ -21,14 +21,14 @@ public class FirstExpression implements Expression {
 		String separatorExpression = source.getBreedingMethod().getSeparator();
 
 		for (StringBuilder value : values) {
-			if (separatorExpression != null && separatorExpression.toString().toUpperCase().contains(KEY)) {
-				int start = separatorExpression.toString().toUpperCase().indexOf(KEY) + KEY.length();
+			if (separatorExpression != null && separatorExpression.toString().toUpperCase().contains(FirstExpression.KEY)) {
+				int start = separatorExpression.toString().toUpperCase().indexOf(FirstExpression.KEY) + FirstExpression.KEY.length();
 				int end = separatorExpression.indexOf("[", start);
 				if (end == -1) {
 					end = separatorExpression.length();
 				}
 				String literalSeparator = separatorExpression.substring(start, end);
-				
+
 				int index = source.getRootName().indexOf(literalSeparator);
 				if (index > -1) {
 					String newRootName = source.getRootName().substring(0, index);
@@ -38,15 +38,15 @@ public class FirstExpression implements Expression {
 				}
 			}
 
-			int startIndex = value.toString().toUpperCase().indexOf(KEY);
-			int endIndex = startIndex + KEY.length();
+			int startIndex = value.toString().toUpperCase().indexOf(FirstExpression.KEY);
+			int endIndex = startIndex + FirstExpression.KEY.length();
 
 			value.replace(startIndex, endIndex, "");
 		}
 	}
 
-    @Override
-    public String getExpressionKey() {
-        return KEY;
-    }
+	@Override
+	public String getExpressionKey() {
+		return FirstExpression.KEY;
+	}
 }

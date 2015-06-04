@@ -1,12 +1,14 @@
+
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.List;
+
 import org.generationcp.commons.ruleengine.OrderedRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class SuffixRule extends OrderedRule<NamingRuleExecutionContext> {
@@ -36,7 +38,8 @@ public class SuffixRule extends OrderedRule<NamingRuleExecutionContext> {
 		return input;
 	}
 
-	@Override public String getKey() {
-		return KEY;
+	@Override
+	public String getKey() {
+		return SuffixRule.KEY;
 	}
 }

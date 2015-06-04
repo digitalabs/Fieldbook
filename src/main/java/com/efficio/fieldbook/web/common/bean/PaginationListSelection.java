@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
@@ -25,29 +25,29 @@ import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 
 /**
  * The Class PaginationListSelection.
- * 
+ *
  * This is the session object that keeps track of list that needs to be paginated over multiple tabs
  */
-public class PaginationListSelection implements Serializable{
-	
+public class PaginationListSelection implements Serializable {
+
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2448596622077650635L;
-	
+
 	/** The final advanced list. */
-	private Map<String, List<InventoryDetails>> finalAdvancedList = new HashMap<String, List<InventoryDetails>>();
-	
+	private final Map<String, List<InventoryDetails>> finalAdvancedList = new HashMap<String, List<InventoryDetails>>();
+
 	/** The review details list. */
-	private Map<String, List<MeasurementRow>> reviewDetailsList = new HashMap<String, List<MeasurementRow>>();
-	
+	private final Map<String, List<MeasurementRow>> reviewDetailsList = new HashMap<String, List<MeasurementRow>>();
+
 	/** The review variable list. */
-	private Map<String, List<MeasurementVariable>> reviewVariableList = new HashMap<String, List<MeasurementVariable>>();
-	
+	private final Map<String, List<MeasurementVariable>> reviewVariableList = new HashMap<String, List<MeasurementVariable>>();
+
 	/** The advance map. */
-	private Map<String, AdvancingNurseryForm> advanceMap = new HashMap<String, AdvancingNurseryForm>();
-	
-	private Map<String, Workbook> reviewWorkbookList = new HashMap<String, Workbook>();
-	private Map<String, Workbook> reviewFullWorkbookList = new HashMap<String, Workbook>();
-	
+	private final Map<String, AdvancingNurseryForm> advanceMap = new HashMap<String, AdvancingNurseryForm>();
+
+	private final Map<String, Workbook> reviewWorkbookList = new HashMap<String, Workbook>();
+	private final Map<String, Workbook> reviewFullWorkbookList = new HashMap<String, Workbook>();
+
 	/**
 	 * Adds the final advanced list.
 	 *
@@ -57,17 +57,17 @@ public class PaginationListSelection implements Serializable{
 	public void addFinalAdvancedList(String id, List<InventoryDetails> inveList) {
 		this.finalAdvancedList.put(id, inveList);
 	}
-	
+
 	/**
 	 * Gets the final advanced list.
 	 *
 	 * @param id the id
 	 * @return the final advanced list
 	 */
-	public List<InventoryDetails> getFinalAdvancedList(String id){
-		return finalAdvancedList.get(id);
+	public List<InventoryDetails> getFinalAdvancedList(String id) {
+		return this.finalAdvancedList.get(id);
 	}
-	
+
 	/**
 	 * Adds the review details list.
 	 *
@@ -77,7 +77,7 @@ public class PaginationListSelection implements Serializable{
 	public void addReviewDetailsList(String datasetId, List<MeasurementRow> rows) {
 		this.reviewDetailsList.put(datasetId, rows);
 	}
-	
+
 	/**
 	 * Gets the review details list.
 	 *
@@ -87,7 +87,7 @@ public class PaginationListSelection implements Serializable{
 	public List<MeasurementRow> getReviewDetailsList(String datasetId) {
 		return this.reviewDetailsList.get(datasetId);
 	}
-	
+
 	/**
 	 * Adds the review variable list.
 	 *
@@ -97,7 +97,7 @@ public class PaginationListSelection implements Serializable{
 	public void addReviewVariableList(String datasetId, List<MeasurementVariable> variables) {
 		this.reviewVariableList.put(datasetId, variables);
 	}
-	
+
 	/**
 	 * Gets the review variable list.
 	 *
@@ -107,7 +107,7 @@ public class PaginationListSelection implements Serializable{
 	public List<MeasurementVariable> getReviewVariableList(String datasetId) {
 		return this.reviewVariableList.get(datasetId);
 	}
-	
+
 	/**
 	 * Adds the advance details.
 	 *
@@ -117,7 +117,7 @@ public class PaginationListSelection implements Serializable{
 	public void addAdvanceDetails(String id, AdvancingNurseryForm form) {
 		this.advanceMap.put(id, form);
 	}
-	
+
 	/**
 	 * Gets the advance details.
 	 *
@@ -127,7 +127,7 @@ public class PaginationListSelection implements Serializable{
 	public AdvancingNurseryForm getAdvanceDetails(String id) {
 		return this.advanceMap.get(id);
 	}
-	
+
 	/**
 	 * Adds the advance details.
 	 *
@@ -137,7 +137,7 @@ public class PaginationListSelection implements Serializable{
 	public void addReviewWorkbook(String id, Workbook workbook) {
 		this.reviewWorkbookList.put(id, workbook);
 	}
-	
+
 	/**
 	 * Gets the advance details.
 	 *
@@ -147,7 +147,7 @@ public class PaginationListSelection implements Serializable{
 	public Workbook getReviewWorkbook(String id) {
 		return this.reviewWorkbookList.get(id);
 	}
-	
+
 	/**
 	 * Adds the advance details.
 	 *
@@ -157,7 +157,7 @@ public class PaginationListSelection implements Serializable{
 	public void addReviewFullWorkbook(String id, Workbook workbook) {
 		this.reviewFullWorkbookList.put(id, workbook);
 	}
-	
+
 	/**
 	 * Gets the advance details.
 	 *

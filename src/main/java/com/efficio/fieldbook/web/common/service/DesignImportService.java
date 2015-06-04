@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.service;
 
 import java.util.List;
@@ -16,20 +17,21 @@ import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
-
 public interface DesignImportService {
 
-	List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData) throws DesignValidationException;
-	
+	List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData)
+			throws DesignValidationException;
+
 	Set<MeasurementVariable> getDesignMeasurementVariables(Workbook workbook, DesignImportData designImportData);
 
 	Set<StandardVariable> getDesignRequiredStandardVariables(Workbook workbook, DesignImportData designImportData);
-	
+
 	void validateDesignData(DesignImportData designImportData) throws DesignValidationException;
-	
+
 	boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData);
 
-	Map<PhenotypicType,List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders) throws MiddlewareQueryException;
+	Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders)
+			throws MiddlewareQueryException;
 
 	Set<MeasurementVariable> getDesignRequiredMeasurementVariable(Workbook workbook, DesignImportData designImportData);
 

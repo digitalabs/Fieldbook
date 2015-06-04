@@ -1,12 +1,14 @@
+
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.List;
+
 import org.generationcp.commons.ruleengine.OrderedRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class PrefixRule extends OrderedRule<NamingRuleExecutionContext> {
@@ -28,8 +30,7 @@ public class PrefixRule extends OrderedRule<NamingRuleExecutionContext> {
 		}
 
 		for (int i = 0; i < input.size(); i++) {
-			input.set(i, processCodeService.applyProcessCode(input.get(i) , prefix, advancingSource).get(
-					0));
+			input.set(i, processCodeService.applyProcessCode(input.get(i), prefix, advancingSource).get(0));
 		}
 
 		context.setCurrentData(input);
@@ -37,7 +38,8 @@ public class PrefixRule extends OrderedRule<NamingRuleExecutionContext> {
 		return input;
 	}
 
-	@Override public String getKey() {
-		return KEY;
+	@Override
+	public String getKey() {
+		return PrefixRule.KEY;
 	}
 }

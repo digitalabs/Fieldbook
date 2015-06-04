@@ -1,7 +1,9 @@
+
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.List;
+import java.util.Locale;
+
 import org.generationcp.commons.ruleengine.BranchingRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -9,14 +11,11 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Locale;
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 2/17/2015
- * Time: 1:50 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/17/2015 Time: 1:50 PM
  */
 
 @Component
@@ -28,8 +27,7 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 	public Object runRule(NamingRuleExecutionContext context) throws RuleException {
 
 		List<String> currentData = context.getCurrentData();
-		GermplasmDataManager germplasmDataManager = context
-				.getGermplasmDataManager();
+		GermplasmDataManager germplasmDataManager = context.getGermplasmDataManager();
 		AdvancingSource source = context.getAdvancingSource();
 
 		// as per agreement, unique name checking can be limited to only the first entry for the germplasm
@@ -39,10 +37,10 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 
 			if (!duplicateExists) {
 				// if necessary, update change detail object
-				updateChangeDetailForAdvancingSource(context);
+				this.updateChangeDetailForAdvancingSource(context);
 
 			} else {
-				processNonUniqueName(context, source);
+				this.processNonUniqueName(context, source);
 			}
 
 		} catch (MiddlewareQueryException e) {
@@ -54,16 +52,16 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 	}
 
 	protected void processNonUniqueName(NamingRuleExecutionContext context, AdvancingSource source) {
-		// if a duplicate is found, initialize an AdvanceGermplasmChangeDetail object containing the original duplicate, for confirmation later on with the user
-		initializeChangeDetailForAdvancingSource(context);
+		// if a duplicate is found, initialize an AdvanceGermplasmChangeDetail object containing the original duplicate, for confirmation
+		// later on with the user
+		this.initializeChangeDetailForAdvancingSource(context);
 
 		// restore rule execution state to a previous temp save point
 		context.setCurrentData(context.getTempData());
 
 		if (!source.isForceUniqueNameGeneration()) {
 			// if there is no current count expression, use the default to provide incrementing support
-			if (source.getBreedingMethod().getCount() == null || source.getBreedingMethod()
-					.getCount().isEmpty()) {
+			if (source.getBreedingMethod().getCount() == null || source.getBreedingMethod().getCount().isEmpty()) {
 				source.getBreedingMethod().setCount(CountRule.DEFAULT_COUNT);
 				source.setForceUniqueNameGeneration(true);
 			} else if (source.isBulk()) {
@@ -79,7 +77,7 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 	}
 
 	@Override
-	public String getNextRuleStepKey(NamingRuleExecutionContext context){
+	public String getNextRuleStepKey(NamingRuleExecutionContext context) {
 		AdvancingSource source = context.getAdvancingSource();
 
 		AdvanceGermplasmChangeDetail changeDetailObject = source.getChangeDetail();
@@ -87,7 +85,7 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 		if (changeDetailObject == null || changeDetailObject.getNewAdvanceName() != null) {
 			return super.getNextRuleStepKey(context);
 		} else {
-			prepareContextForBranchingToKey(context, CountRule.KEY);
+			this.prepareContextForBranchingToKey(context, CountRule.KEY);
 			return CountRule.KEY;
 		}
 	}
@@ -100,9 +98,8 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 			String offendingName = context.getCurrentData().get(0);
 			changeDetail = new AdvanceGermplasmChangeDetail();
 			changeDetail.setOldAdvanceName(offendingName);
-			changeDetail.setQuestionText(context.getMessageSource().getMessage(
-					"advance.nursery.duplicate.question.text", new String[] { offendingName },
-					LocaleContextHolder.getLocale()));
+			changeDetail.setQuestionText(context.getMessageSource().getMessage("advance.nursery.duplicate.question.text",
+					new String[] {offendingName}, LocaleContextHolder.getLocale()));
 
 			context.getAdvancingSource().setChangeDetail(changeDetail);
 		}
@@ -117,13 +114,13 @@ public class EnforceUniqueNameRule extends BranchingRule<NamingRuleExecutionCont
 			String passingName = context.getCurrentData().get(0);
 			changeDetail.setNewAdvanceName(passingName);
 			Locale locale = LocaleContextHolder.getLocale();
-			changeDetail.setAddSequenceText(context.getMessageSource()
-					.getMessage("advance.nursery.duplicate.add.sequence.text",
-							new String[] { passingName}, locale));
+			changeDetail.setAddSequenceText(context.getMessageSource().getMessage("advance.nursery.duplicate.add.sequence.text",
+					new String[] {passingName}, locale));
 		}
 	}
 
-	@Override public String getKey() {
-		return KEY;
+	@Override
+	public String getKey() {
+		return EnforceUniqueNameRule.KEY;
 	}
 }

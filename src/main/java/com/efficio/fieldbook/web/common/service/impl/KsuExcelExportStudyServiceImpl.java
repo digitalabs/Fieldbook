@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
@@ -25,71 +26,72 @@ import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
-public class KsuExcelExportStudyServiceImpl implements
-		KsuExcelExportStudyService {
+public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyService {
 
 	@Resource
-    private FieldbookProperties fieldbookProperties;
-	
+	private FieldbookProperties fieldbookProperties;
+
 	@Resource
-    private FieldbookService fieldbookMiddlewareService;
-    
-    @Resource
-    private OntologyService ontologyService;
+	private FieldbookService fieldbookMiddlewareService;
+
+	@Resource
+	private OntologyService ontologyService;
 
 	@Override
-	public String export(Workbook workbook, String filename,  List<Integer> instances) {
-		
+	public String export(Workbook workbook, String filename, List<Integer> instances) {
+
 		String outputFilename = null;
 		FileOutputStream fos = null;
 
 		int fileExtensionIndex = filename.lastIndexOf(".");
 		String studyName = filename.substring(0, fileExtensionIndex);
-		
-        try {
-        	List<String> filenameList = new ArrayList<String>();
-        	int fileCount = instances.size();
-    		for (Integer index : instances) {
-        		List<Integer> indexes = new ArrayList<Integer>();
-        		indexes.add(index);
-	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
-	            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
-	
+
+		try {
+			List<String> filenameList = new ArrayList<String>();
+			int fileCount = instances.size();
+			for (Integer index : instances) {
+				List<Integer> indexes = new ArrayList<Integer>();
+				indexes.add(index);
+				List<MeasurementRow> observations =
+						ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
+				List<List<String>> dataTable =
+						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
+
 				HSSFWorkbook xlsBook = new HSSFWorkbook();
-	
+
 				if (dataTable != null && !dataTable.isEmpty()) {
 					HSSFSheet xlsSheet = xlsBook.createSheet(filename.substring(0, filename.lastIndexOf(".")));
 					for (int rowIndex = 0; rowIndex < dataTable.size(); rowIndex++) {
-						HSSFRow xlsRow = xlsSheet.createRow(rowIndex); 
-						
+						HSSFRow xlsRow = xlsSheet.createRow(rowIndex);
+
 						for (int colIndex = 0; colIndex < dataTable.get(rowIndex).size(); colIndex++) {
 							HSSFCell cell = xlsRow.createCell(colIndex);
 							cell.setCellValue(dataTable.get(rowIndex).get(colIndex));
 						}
 					}
 				}
-				
-				String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
-						+ studyName 
-						+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
+
+				String filenamePath =
+						this.fieldbookProperties.getUploadDirectory() + File.separator + studyName
+								+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
 				filenameList.add(filenamePath);
-				
-        	}
-        	
-			String traitFilenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
-					+ studyName + "-Traits"
-					+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
-			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, fieldbookMiddlewareService, ontologyService);
+
+			}
+
+			String traitFilenamePath =
+					this.fieldbookProperties.getUploadDirectory() + File.separator + studyName + "-Traits"
+							+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
+			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, this.fieldbookMiddlewareService, this.ontologyService);
 			filenameList.add(traitFilenamePath);
 
-			outputFilename = fieldbookProperties.getUploadDirectory() 
-					+ File.separator 
-					+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 
-					+ AppConstants.ZIP_FILE_SUFFIX.getString();
+			outputFilename =
+					this.fieldbookProperties.getUploadDirectory() + File.separator
+							+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "")
+							+ AppConstants.ZIP_FILE_SUFFIX.getString();
 			ZipUtil.zipIt(outputFilename, filenameList);
-        	
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -101,7 +103,7 @@ public class KsuExcelExportStudyServiceImpl implements
 				}
 			}
 		}
-		
+
 		return outputFilename;
 	}
 

@@ -1,9 +1,15 @@
+
 package com.efficio.fieldbook.web.trial.bean;
 
 import java.io.Serializable;
 import java.util.Map;
 
 public class ExpDesignParameterUi implements Serializable, TabInfoBean {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3081300491744812262L;
 	private String noOfEnvironments;
 	private String noOfEnvironmentsToAdd;
 	private Integer designType;
@@ -21,126 +27,153 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private String nblatin;
 	private String replatinGroups;
 	private boolean hasMeasurementData;
-/*
-	1 - single col
-	2 - single row
-	3 - adjacent
- */
-	private Integer replicationsArrangement;	   
-		
+	/*
+	 * 1 - single col 2 - single row 3 - adjacent
+	 */
+	private Integer replicationsArrangement;
+
 	public String getNoOfEnvironments() {
-		return noOfEnvironments;
+		return this.noOfEnvironments;
 	}
+
 	public void setNoOfEnvironments(String noOfEnvironments) {
 		this.noOfEnvironments = noOfEnvironments;
 	}
-	
+
 	public Integer getDesignType() {
-		return designType;
+		return this.designType;
 	}
+
 	public void setDesignType(Integer designType) {
 		this.designType = designType;
 	}
+
 	public String getReplicationsCount() {
-		return replicationsCount;
+		return this.replicationsCount;
 	}
+
 	public void setReplicationsCount(String replicationsCount) {
 		this.replicationsCount = replicationsCount;
 	}
+
 	public Boolean getIsResolvable() {
-		return isResolvable;
+		return this.isResolvable;
 	}
+
 	public void setIsResolvable(Boolean isResolvable) {
 		this.isResolvable = isResolvable;
 	}
+
 	public Boolean getUseLatenized() {
-		return useLatenized;
+		return this.useLatenized;
 	}
+
 	public void setUseLatenized(Boolean useLatenized) {
 		this.useLatenized = useLatenized;
 	}
+
 	public String getBlockSize() {
-		return blockSize;
+		return this.blockSize;
 	}
+
 	public void setBlockSize(String blockSize) {
 		this.blockSize = blockSize;
 	}
-	
-	
+
 	public String getRowsPerReplications() {
-		return rowsPerReplications;
+		return this.rowsPerReplications;
 	}
+
 	public void setRowsPerReplications(String rowsPerReplications) {
 		this.rowsPerReplications = rowsPerReplications;
 	}
+
 	public String getColsPerReplications() {
-		return colsPerReplications;
+		return this.colsPerReplications;
 	}
+
 	public void setColsPerReplications(String colsPerReplications) {
 		this.colsPerReplications = colsPerReplications;
 	}
-	
+
 	public Map getTreatmentFactors() {
-		return treatmentFactors;
+		return this.treatmentFactors;
 	}
+
 	public void setTreatmentFactors(Map treatmentFactors) {
 		this.treatmentFactors = treatmentFactors;
 	}
+
 	public Map getTreatmentFactorsData() {
-		return treatmentFactorsData;
+		return this.treatmentFactorsData;
 	}
+
 	public void setTreatmentFactorsData(Map treatmentFactorsData) {
 		this.treatmentFactorsData = treatmentFactorsData;
 	}
+
 	public String getTotalGermplasmListCount() {
-		return totalGermplasmListCount;
+		return this.totalGermplasmListCount;
 	}
+
 	public void setTotalGermplasmListCount(String totalGermplasmListCount) {
 		this.totalGermplasmListCount = totalGermplasmListCount;
 	}
+
 	public String getNclatin() {
-		return nclatin;
+		return this.nclatin;
 	}
+
 	public void setNclatin(String nclatin) {
 		this.nclatin = nclatin;
 	}
+
 	public String getNrlatin() {
-		return nrlatin;
+		return this.nrlatin;
 	}
+
 	public void setNrlatin(String nrlatin) {
 		this.nrlatin = nrlatin;
 	}
+
 	public String getNblatin() {
-		return nblatin;
+		return this.nblatin;
 	}
+
 	public void setNblatin(String nblatin) {
 		this.nblatin = nblatin;
 	}
+
 	public String getReplatinGroups() {
-		return replatinGroups;
+		return this.replatinGroups;
 	}
+
 	public void setReplatinGroups(String replatinGroups) {
 		this.replatinGroups = replatinGroups;
 	}
+
 	public Integer getReplicationsArrangement() {
-		return replicationsArrangement;
+		return this.replicationsArrangement;
 	}
+
 	public void setReplicationsArrangement(Integer replicationsArrangement) {
 		this.replicationsArrangement = replicationsArrangement;
 	}
+
 	public String getNoOfEnvironmentsToAdd() {
-		return noOfEnvironmentsToAdd;
+		return this.noOfEnvironmentsToAdd;
 	}
+
 	public void setNoOfEnvironmentsToAdd(String noOfEnvironmentsToAdd) {
 		this.noOfEnvironmentsToAdd = noOfEnvironmentsToAdd;
 	}
+
 	public boolean isHasMeasurementData() {
-		return hasMeasurementData;
+		return this.hasMeasurementData;
 	}
+
 	public void setHasMeasurementData(boolean hasMeasurementData) {
 		this.hasMeasurementData = hasMeasurementData;
 	}
-	
-	
-	
+
 }

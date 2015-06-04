@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.pojos.cropontology;
 
 import java.io.Serializable;
@@ -26,13 +26,13 @@ public class CropTerm implements Serializable {
 
 	/** The id. */
 	private String id;
-	
+
 	/** The name. */
 	private Name name;
-	
+
 	/** The ontology name. */
 	private Name ontologyName;
-	
+
 	/**
 	 * Instantiates a new crop term.
 	 *
@@ -41,22 +41,21 @@ public class CropTerm implements Serializable {
 	 * @param ontologyName the ontology name
 	 */
 	@JsonCreator
-	public CropTerm(@JsonProperty("id") String id, @JsonProperty("name") Name name
-	        , @JsonProperty("ontology_name") Name ontologyName) {
+	public CropTerm(@JsonProperty("id") String id, @JsonProperty("name") Name name, @JsonProperty("ontology_name") Name ontologyName) {
 		this.id = id;
 		this.name = name;
 		this.ontologyName = ontologyName;
 	}
-	
+
 	/**
 	 * Gets the id.
 	 *
 	 * @return the id
 	 */
 	public String getId() {
-		return id;
+		return this.id;
 	}
-	
+
 	/**
 	 * Sets the id.
 	 *
@@ -72,7 +71,7 @@ public class CropTerm implements Serializable {
 	 * @return the name
 	 */
 	public Name getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
@@ -90,7 +89,7 @@ public class CropTerm implements Serializable {
 	 * @return the ontology name
 	 */
 	public Name getOntologyName() {
-		return ontologyName;
+		return this.ontologyName;
 	}
 
 	/**
@@ -102,13 +101,14 @@ public class CropTerm implements Serializable {
 		this.ontologyName = ontologyName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "CropTerm [id=" + id + ", name=" + name + ", ontologyName="
-				+ ontologyName + "]";
+		return "CropTerm [id=" + this.id + ", name=" + this.name + ", ontologyName=" + this.ontologyName + "]";
 	}
-	
+
 }

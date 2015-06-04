@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
@@ -24,19 +25,24 @@ public class SettingsUtilTest {
 	@Test
 	public void testConvertXmlDatasetToWorkbookAndBack() {
 		Dataset dataset = new Dataset();
-		
+
 		dataset.setConditions(new ArrayList<Condition>());
 		dataset.setFactors(new ArrayList<Factor>());
 		dataset.setVariates(new ArrayList<Variate>());
-		
-		dataset.getConditions().add(new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(), "C", "Meeh", null, null, null));
-		dataset.getFactors().add(new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N", 0));
-		dataset.getVariates().add(new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N", TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
-		
+
+		dataset.getConditions().add(
+				new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(), "C", "Meeh", null,
+						null, null));
+		dataset.getFactors().add(
+				new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N", 0));
+		dataset.getVariates().add(
+				new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
+						TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
+
 		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
 		Debug.println(0, workbook);
-		
-		Dataset newDataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
+
+		Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 		Assert.assertEquals(dataset.getConditions().get(0).getName(), newDataset.getConditions().get(0).getName());
 		Assert.assertEquals(dataset.getConditions().get(0).getDescription(), newDataset.getConditions().get(0).getDescription());
 		Assert.assertEquals(dataset.getConditions().get(0).getProperty(), newDataset.getConditions().get(0).getProperty());
@@ -62,104 +68,105 @@ public class SettingsUtilTest {
 		Assert.assertEquals(dataset.getVariates().get(0).getDatatype(), newDataset.getVariates().get(0).getDatatype());
 
 	}
-	
+
 	@Test
 	public void testIfCheckVariablesAreInFixedNurseryList() {
 		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_START.getId()));
 		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_INTERVAL.getId()));
 		Assert.assertTrue(SettingsUtil.inFixedNurseryList(TermId.CHECK_PLAN.getId()));
 	}
-	
-	@Test
-    public void testGetCodeValueValid() {
-    	List<SettingDetail> removedConditions = createCheckVariables(true);
-    	int code = SettingsUtil.getCodeValue("8414", removedConditions, TermId.CHECK_PLAN.getId());
-    	Assert.assertEquals("Expected 1 but got " + code + " instead.", 1, code);
-    }
-	
-	@Test
-    public void testGetCodeValueWhenConditionsIsNull() {
-    	List<SettingDetail> removedConditions = null;
-    	int code = SettingsUtil.getCodeValue("8414", removedConditions, TermId.CHECK_PLAN.getId());
-    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
-    }
-	
-	@Test
-    public void testGetCodeValueWhenPossibleValuesIsNull() {
-    	List<SettingDetail> removedConditions = createCheckVariables(true);
-    	int code = SettingsUtil.getCodeValue("8411", removedConditions, TermId.CHECK_START.getId());
-    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
-    }
-	
-	@Test
-    public void testGetCodeValueWhenPossibleValuesIsNotNullButEmpty() {
-    	List<SettingDetail> removedConditions = createCheckVariables(true);
-    	int code = SettingsUtil.getCodeValue("8412", removedConditions, TermId.CHECK_INTERVAL.getId());
-    	Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
-    }
-    
-    @Test
-    public void testGetCodeValueInvalid() {
-    	List<SettingDetail> removedConditions = createCheckVariables(true);
-    	int code = SettingsUtil.getCodeValue("8413", removedConditions, TermId.CHECK_PLAN.getId());
-    	Assert.assertNotSame("Expected 1 but got " + code + " instead.", 1, code);
-    }
-    
-    @Test
-    public void testIfCheckVariablesHaveValues() {
-    	List<SettingDetail> checkVariables = createCheckVariables(true);
-    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
-    	Assert.assertTrue(checksHaveValues);
-    }
-    
-    @Test
-    public void testIfCheckVariablesHaveNoValues() {
-    	List<SettingDetail> checkVariables = createCheckVariables(false);
-    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
-    	Assert.assertFalse(checksHaveValues);
-    }
-    
-    @Test
-    public void testIfCheckVariablesIsNull() {
-    	List<SettingDetail> checkVariables = null;
-    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
-    	Assert.assertFalse(checksHaveValues);
-    }
-    
-    @Test
-    public void testIfCheckVariablesIsEmpty() {
-    	List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
-    	boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
-    	Assert.assertFalse(checksHaveValues);
-    }
 
-    @Test
-	public void testParseVariableIds(){
-		List<Integer> variableIds = settingsUtilParseVariableIds("1|2|3");
+	@Test
+	public void testGetCodeValueValid() {
+		List<SettingDetail> removedConditions = this.createCheckVariables(true);
+		int code = SettingsUtil.getCodeValue("8414", removedConditions, TermId.CHECK_PLAN.getId());
+		Assert.assertEquals("Expected 1 but got " + code + " instead.", 1, code);
+	}
+
+	@Test
+	public void testGetCodeValueWhenConditionsIsNull() {
+		List<SettingDetail> removedConditions = null;
+		int code = SettingsUtil.getCodeValue("8414", removedConditions, TermId.CHECK_PLAN.getId());
+		Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+	}
+
+	@Test
+	public void testGetCodeValueWhenPossibleValuesIsNull() {
+		List<SettingDetail> removedConditions = this.createCheckVariables(true);
+		int code = SettingsUtil.getCodeValue("8411", removedConditions, TermId.CHECK_START.getId());
+		Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+	}
+
+	@Test
+	public void testGetCodeValueWhenPossibleValuesIsNotNullButEmpty() {
+		List<SettingDetail> removedConditions = this.createCheckVariables(true);
+		int code = SettingsUtil.getCodeValue("8412", removedConditions, TermId.CHECK_INTERVAL.getId());
+		Assert.assertEquals("Expected 0 but got " + code + " instead.", 0, code);
+	}
+
+	@Test
+	public void testGetCodeValueInvalid() {
+		List<SettingDetail> removedConditions = this.createCheckVariables(true);
+		int code = SettingsUtil.getCodeValue("8413", removedConditions, TermId.CHECK_PLAN.getId());
+		Assert.assertNotSame("Expected 1 but got " + code + " instead.", 1, code);
+	}
+
+	@Test
+	public void testIfCheckVariablesHaveValues() {
+		List<SettingDetail> checkVariables = this.createCheckVariables(true);
+		boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+		Assert.assertTrue(checksHaveValues);
+	}
+
+	@Test
+	public void testIfCheckVariablesHaveNoValues() {
+		List<SettingDetail> checkVariables = this.createCheckVariables(false);
+		boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+		Assert.assertFalse(checksHaveValues);
+	}
+
+	@Test
+	public void testIfCheckVariablesIsNull() {
+		List<SettingDetail> checkVariables = null;
+		boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+		Assert.assertFalse(checksHaveValues);
+	}
+
+	@Test
+	public void testIfCheckVariablesIsEmpty() {
+		List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
+		boolean checksHaveValues = SettingsUtil.checkVariablesHaveValues(checkVariables);
+		Assert.assertFalse(checksHaveValues);
+	}
+
+	@Test
+	public void testParseVariableIds() {
+		List<Integer> variableIds = this.settingsUtilParseVariableIds("1|2|3");
 		Assert.assertEquals("Should have 3 variable ids", 3, variableIds.size());
 		Assert.assertEquals("1st Id should be 1", new Integer(1), variableIds.get(0));
 		Assert.assertEquals("2nd Id should be 2", new Integer(2), variableIds.get(1));
 		Assert.assertEquals("3rd Id should be 3", new Integer(3), variableIds.get(2));
 	}
-	
-	private List<Integer> settingsUtilParseVariableIds(String variableIds){
+
+	private List<Integer> settingsUtilParseVariableIds(String variableIds) {
 		return SettingsUtil.parseVariableIds(variableIds);
 	}
-    private List<SettingDetail> createCheckVariables(boolean hasValue) {
+
+	private List<SettingDetail> createCheckVariables(boolean hasValue) {
 		List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
-		
-		checkVariables.add(createSettingDetail(TermId.CHECK_START.getId(), hasValue ? "1" : null));
-		checkVariables.add(createSettingDetail(TermId.CHECK_INTERVAL.getId(), hasValue ? "4" : null));
-		checkVariables.add(createSettingDetail(TermId.CHECK_PLAN.getId(), hasValue ? "8414" : null));
-		
+
+		checkVariables.add(this.createSettingDetail(TermId.CHECK_START.getId(), hasValue ? "1" : null));
+		checkVariables.add(this.createSettingDetail(TermId.CHECK_INTERVAL.getId(), hasValue ? "4" : null));
+		checkVariables.add(this.createSettingDetail(TermId.CHECK_PLAN.getId(), hasValue ? "8414" : null));
+
 		return checkVariables;
 	}
-    
-    private SettingDetail createSettingDetail(int cvTermId, String value) {
+
+	private SettingDetail createSettingDetail(int cvTermId, String value) {
 		SettingVariable variable = new SettingVariable();
 		variable.setCvTermId(cvTermId);
 		SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
-		
+
 		if (cvTermId == TermId.CHECK_PLAN.getId()) {
 			List<ValueReference> possibleValues = new ArrayList<ValueReference>();
 			possibleValues.add(new ValueReference(8414, "1", "Insert each check in turn"));
@@ -170,18 +177,21 @@ public class SettingsUtilTest {
 		}
 		return settingDetail;
 	}
-    @Test
-    public void testcleanSheetAndFileNameWithInvalid(){
-    	String cleanedName = SettingsUtil.cleanSheetAndFileName("Test[:\\\\/*?|<>]");
-    	Assert.assertEquals("String should be cleaned", "Test[_________]", cleanedName);
-    }
-    
-    @Test
-    public void testGetCodeInPossibleValues(){
-    	List<ValueReference> valueRefs = new ArrayList<ValueReference>();
-    	valueRefs.add(new ValueReference(8414, "1"));
-    	valueRefs.add(new ValueReference(8415, "2"));    	
-    	Assert.assertEquals("Should return 1 since the matching name for 8414 is 1", 1, SettingsUtil.getCodeInPossibleValues(valueRefs, "8414"));
-    	Assert.assertEquals("Should return 2 since the matching name for 8415 is 2", 2, SettingsUtil.getCodeInPossibleValues(valueRefs, "8415"));
-    }
+
+	@Test
+	public void testcleanSheetAndFileNameWithInvalid() {
+		String cleanedName = SettingsUtil.cleanSheetAndFileName("Test[:\\\\/*?|<>]");
+		Assert.assertEquals("String should be cleaned", "Test[_________]", cleanedName);
+	}
+
+	@Test
+	public void testGetCodeInPossibleValues() {
+		List<ValueReference> valueRefs = new ArrayList<ValueReference>();
+		valueRefs.add(new ValueReference(8414, "1"));
+		valueRefs.add(new ValueReference(8415, "2"));
+		Assert.assertEquals("Should return 1 since the matching name for 8414 is 1", 1,
+				SettingsUtil.getCodeInPossibleValues(valueRefs, "8414"));
+		Assert.assertEquals("Should return 2 since the matching name for 8415 is 2", 2,
+				SettingsUtil.getCodeInPossibleValues(valueRefs, "8415"));
+	}
 }

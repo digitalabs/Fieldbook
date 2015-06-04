@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.util.parsing;
 
 import java.util.ArrayList;
@@ -13,20 +14,19 @@ import com.efficio.fieldbook.web.common.bean.DesignImportData;
 public class DesignImportParser extends AbstractCsvFileParser<DesignImportData> {
 
 	@Override
-	public DesignImportData parseCsvMap(Map<Integer, List<String>> csvMap)
-			throws FileParsingException {
-		
+	public DesignImportData parseCsvMap(Map<Integer, List<String>> csvMap) throws FileParsingException {
+
 		DesignImportData data = new DesignImportData();
-		data.setUnmappedHeaders(createDesignHeaders(csvMap.get(0)));
+		data.setUnmappedHeaders(this.createDesignHeaders(csvMap.get(0)));
 		data.setCsvData(csvMap);
-		
+
 		return data;
 	}
-	
-	private List<DesignHeaderItem> createDesignHeaders(List<String> headers){
+
+	private List<DesignHeaderItem> createDesignHeaders(List<String> headers) {
 		List<DesignHeaderItem> list = new ArrayList<>();
 		int columnIndex = 0;
-		for (String headerName: headers){
+		for (String headerName : headers) {
 			DesignHeaderItem headerItem = new DesignHeaderItem();
 			headerItem.setName(headerName);
 			headerItem.setColumnIndex(columnIndex);

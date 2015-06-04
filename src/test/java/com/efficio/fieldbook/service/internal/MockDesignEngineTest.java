@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.service.internal;
 
 import java.io.IOException;
@@ -16,24 +17,23 @@ import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
-
 public class MockDesignEngineTest extends AbstractBaseIntegrationTest {
-	
+
 	@Resource
 	private DesignRunner designRunner;
-	
+
 	@Autowired
 	private WorkbenchService workbenchService;
-	
+
 	private static FieldbookProperties fieldbookProperties;
-	
+
 	private static MainDesign mainDesign;
-	
+
 	@BeforeClass
-	public static void setup(){
+	public static void setup() {
 		// properties
-		fieldbookProperties = new FieldbookProperties();
-		
+		MockDesignEngineTest.fieldbookProperties = new FieldbookProperties();
+
 		// experimental design parameters - taken from file we provide to BV
 		String nBlock = "2";
 		String blockFactor = "REP_NO";
@@ -41,19 +41,20 @@ public class MockDesignEngineTest extends AbstractBaseIntegrationTest {
 		List<String> treatmentFactor = Arrays.asList("ENTRY_NO");
 		List<String> levels = Arrays.asList("20");
 		String outputfile = "1416451506872-mock-bv.csv";
-		mainDesign = ExpDesignUtil.createRandomizedCompleteBlockDesign(nBlock, blockFactor, plotFactor, treatmentFactor, levels, outputfile);
+		MockDesignEngineTest.mainDesign =
+				ExpDesignUtil.createRandomizedCompleteBlockDesign(nBlock, blockFactor, plotFactor, treatmentFactor, levels, outputfile);
 	}
-	
+
 	@Test
-	public void testRunner(){
-		
+	public void testRunner() {
+
 		try {
-			designRunner.runBVDesign(workbenchService, fieldbookProperties, mainDesign);
+			this.designRunner.runBVDesign(this.workbenchService, MockDesignEngineTest.fieldbookProperties, MockDesignEngineTest.mainDesign);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }

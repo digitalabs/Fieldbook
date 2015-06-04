@@ -1,14 +1,16 @@
+
 package com.efficio.fieldbook.util;
 
 import java.io.IOException;
 
-public class JsonIoException extends IOException{
-	
+public class JsonIoException extends IOException {
+
 	private static final long serialVersionUID = 5410017966103003826L;
-	
+
 	public JsonIoException(String message) {
 		super(message);
 	}
+
 	/**
 	 * Instantiates a new fieldbook exception.
 	 *

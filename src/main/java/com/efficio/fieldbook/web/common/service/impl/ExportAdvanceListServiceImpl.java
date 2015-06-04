@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
@@ -45,101 +46,103 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	public MessageSource messageSource;
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	private static final String NO_FILE = "noFile";
-	
+
 	private static String ADVANCE_LIST_SHEET_NAME = "Advance List";
 
 	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Inventory List";
 
 	@Override
-	public File exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds,
-			String studyName, ExportService exportServiceImpl, String type) {
-		List<Integer> advanceGermplasmListIds = this
-				.parseDelimitedAdvanceGermplasmListIds(delimitedAdvanceGermplasmListIds);
+	public File exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds, String studyName, ExportService exportServiceImpl,
+			String type) {
+		List<Integer> advanceGermplasmListIds = this.parseDelimitedAdvanceGermplasmListIds(delimitedAdvanceGermplasmListIds);
 		List<String> filenameList = new ArrayList<String>();
-		String outputFilename = NO_FILE;
-		String suffix = AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type) ? AppConstants.EXPORT_XLS_SUFFIX.getString() : AppConstants.EXPORT_CSV_SUFFIX.getString();
-		
+		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
+		String suffix =
+				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type) ? AppConstants.EXPORT_XLS_SUFFIX.getString()
+						: AppConstants.EXPORT_CSV_SUFFIX.getString();
+
 		for (Integer advanceGermpasmListId : advanceGermplasmListIds) {
 			try {
-				List<InventoryDetails> inventoryDetailList = this.inventoryMiddlewareService
-						.getInventoryDetailsByGermplasmList(advanceGermpasmListId);
-				GermplasmList germplasmList = this.fieldbookMiddlewareService
-						.getGermplasmListById(advanceGermpasmListId);
+				List<InventoryDetails> inventoryDetailList =
+						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(advanceGermpasmListId);
+				GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(advanceGermpasmListId);
 				String advanceListName = germplasmList.getName();
-				String filenamePath = getFileNamePath(advanceListName) + suffix;
-				String sheetName =  WorkbookUtil.createSafeSheetName(ADVANCE_LIST_SHEET_NAME);
-				
-				exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, type, false);
-					
+				String filenamePath = this.getFileNamePath(advanceListName) + suffix;
+				String sheetName = WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.ADVANCE_LIST_SHEET_NAME);
+
+				this.exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, type, false);
+
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
 			} catch (IOException e) {
-				LOG.error(e.getMessage(), e);
+				ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 			} catch (MiddlewareQueryException e) {
-				LOG.error(e.getMessage(), e);
+				ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
 			}
 		}
 
 		if (filenameList.size() > 1) {
-			outputFilename = getFileNamePath(studyName+"-"+AppConstants.ADVANCE_ZIP_DEFAULT_FILENAME.getString()) + AppConstants.ZIP_FILE_SUFFIX.getString();
+			outputFilename =
+					this.getFileNamePath(studyName + "-" + AppConstants.ADVANCE_ZIP_DEFAULT_FILENAME.getString())
+							+ AppConstants.ZIP_FILE_SUFFIX.getString();
 			this.zipFileNameList(outputFilename, filenameList);
 		}
 
 		return new File(outputFilename);
 	}
-	
+
 	@Override
 	public File exportStockList(Integer stockListId, ExportService exportServiceImpl) {
 
 		List<String> filenameList = new ArrayList<String>();
-		String outputFilename = NO_FILE;
+		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
 		String suffix = AppConstants.EXPORT_XLS_SUFFIX.getString();
-		
-			try {
-				GermplasmList germplasmList = this.fieldbookMiddlewareService
-						.getGermplasmListById(stockListId);
-				GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-				List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService
-							.getInventoryListByListDataProjectListId(stockListId,germplasmListType);
-				
-				String advanceListName = germplasmList.getName();
-				String filenamePath = getFileNamePath(advanceListName) + suffix;
-				String sheetName =  org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(STOCK_LIST_EXPORT_SHEET_NAME);
-				
-				exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, 
-						AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), 
-						germplasmListType==GermplasmListType.CROSSES);
-					
-				outputFilename = filenamePath;
-				filenameList.add(filenamePath);
-			} catch (IOException e) {
-				LOG.error(e.getMessage(), e);
-			} catch (MiddlewareQueryException e) {
-				LOG.error(e.getMessage(), e);
-			}
 
+		try {
+			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(stockListId);
+			GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
+			List<InventoryDetails> inventoryDetailList =
+					this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId, germplasmListType);
+
+			String advanceListName = germplasmList.getName();
+			String filenamePath = this.getFileNamePath(advanceListName) + suffix;
+			String sheetName =
+					org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.STOCK_LIST_EXPORT_SHEET_NAME);
+
+			this.exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl,
+					AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), germplasmListType == GermplasmListType.CROSSES);
+
+			outputFilename = filenamePath;
+			filenameList.add(filenamePath);
+		} catch (IOException e) {
+			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
+		} catch (MiddlewareQueryException e) {
+			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
+		}
 
 		return new File(outputFilename);
 	}
 
 	protected String getFileNamePath(String name) {
-			String filenamePath = this.fieldbookProperties.getUploadDirectory() + File.separator
-					+ SettingsUtil.cleanSheetAndFileName(name);
-			return filenamePath;
+		String filenamePath = this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(name);
+		return filenamePath;
 	}
-	 
-	protected void exportList(List<InventoryDetails> inventoryDetailList, String filenamePath, 
-			String sheetName, ExportService exportServiceImpl, String type, boolean displayCrossRelatedColumns) throws IOException {
+
+	protected void exportList(List<InventoryDetails> inventoryDetailList, String filenamePath, String sheetName,
+			ExportService exportServiceImpl, String type, boolean displayCrossRelatedColumns) throws IOException {
 		List<ExportColumnHeader> exportColumnHeaders = this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns);
-		if(AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
-			exportServiceImpl.generateExcelFileForSingleSheet(this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath, sheetName);
+		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
+			exportServiceImpl.generateExcelFileForSingleSheet(
+					this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath,
+					sheetName);
 		} else {
-			exportServiceImpl.generateCSVFile(this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath);
-		}		
+			exportServiceImpl.generateCSVFile(this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders),
+					exportColumnHeaders, filenamePath);
+		}
 	}
-	
+
 	protected boolean zipFileNameList(String outputFilename, List<String> filenameList) {
 		ZipUtil.zipIt(outputFilename, filenameList);
 		return true;
@@ -154,107 +157,97 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return advancedGermplasmListIds;
 	}
 
-	
-
 	protected List<ExportColumnHeader> generateAdvanceListColumnHeaders(boolean displayCrossRelatedColumns) {
 		List<ExportColumnHeader> exportColumnHeaders = new ArrayList<ExportColumnHeader>();
 		Locale locale = LocaleContextHolder.getLocale();
 
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(), this.messageSource
-				.getMessage("seed.entry.number", null, locale), true, ExportColumnHeader.GREEN));
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.DESIG.getId(), this.messageSource
-				.getMessage("seed.entry.designation", null, locale), true, ExportColumnHeader.GREEN));
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.CROSS.getId(), this.messageSource
-				.getMessage("seed.entry.parentage", null, locale), true, ExportColumnHeader.GREEN));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(), this.messageSource.getMessage("seed.entry.number", null,
+				locale), true, ExportColumnHeader.GREEN));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.DESIG.getId(), this.messageSource.getMessage("seed.entry.designation", null,
+				locale), true, ExportColumnHeader.GREEN));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.CROSS.getId(), this.messageSource.getMessage("seed.entry.parentage", null,
+				locale), true, ExportColumnHeader.GREEN));
 		exportColumnHeaders.add(new ExportColumnHeader(TermId.GID.getId(), this.messageSource
 				.getMessage("seed.inventory.gid", null, locale), true, ExportColumnHeader.GREEN));
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.SOURCE.getId(), this.messageSource
-				.getMessage("seed.inventory.source", null, locale), true, ExportColumnHeader.GREEN));
-		
-		if(displayCrossRelatedColumns) {
-			exportColumnHeaders
-				.add(new ExportColumnHeader(TermId.DUPLICATE.getId(), this.messageSource
-						.getMessage("seed.inventory.duplicate", null, locale), true, ExportColumnHeader.BLUE));
-			exportColumnHeaders
-				.add(new ExportColumnHeader(TermId.BULK_WITH.getId(), this.messageSource
-					.getMessage("seed.inventory.bulk.with", null, locale), true, ExportColumnHeader.BLUE));
-			exportColumnHeaders
-				.add(new ExportColumnHeader(TermId.BULK_COMPL.getId(), this.messageSource
-					.getMessage("seed.inventory.bulk.compl", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.SOURCE.getId(), this.messageSource.getMessage("seed.inventory.source", null,
+				locale), true, ExportColumnHeader.GREEN));
+
+		if (displayCrossRelatedColumns) {
+			exportColumnHeaders.add(new ExportColumnHeader(TermId.DUPLICATE.getId(), this.messageSource.getMessage(
+					"seed.inventory.duplicate", null, locale), true, ExportColumnHeader.BLUE));
+			exportColumnHeaders.add(new ExportColumnHeader(TermId.BULK_WITH.getId(), this.messageSource.getMessage(
+					"seed.inventory.bulk.with", null, locale), true, ExportColumnHeader.BLUE));
+			exportColumnHeaders.add(new ExportColumnHeader(TermId.BULK_COMPL.getId(), this.messageSource.getMessage(
+					"seed.inventory.bulk.compl", null, locale), true, ExportColumnHeader.BLUE));
 		}
-		
-		exportColumnHeaders
-				.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(), this.messageSource
-						.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(
-				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(), this.messageSource.getMessage(
-						"seed.inventory.amount", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(
-				AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(), this.messageSource.getMessage(
-						"seed.inventory.table.scale", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(
-				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(), this.messageSource.getMessage(
-						"seed.inventory.comment", null, locale), true, ExportColumnHeader.BLUE));
+
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(), this.messageSource.getMessage(
+				"seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(), this.messageSource.getMessage(
+				"seed.inventory.amount", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(), this.messageSource.getMessage(
+				"seed.inventory.table.scale", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(), this.messageSource.getMessage(
+				"seed.inventory.comment", null, locale), true, ExportColumnHeader.BLUE));
 
 		return exportColumnHeaders;
 	}
 
-	protected List<Map<Integer, ExportColumnValue>> generateAdvanceListColumnValues(
-			List<InventoryDetails> inventoryDetailList, List<ExportColumnHeader> exportColumnHeaders) {
+	protected List<Map<Integer, ExportColumnValue>> generateAdvanceListColumnValues(List<InventoryDetails> inventoryDetailList,
+			List<ExportColumnHeader> exportColumnHeaders) {
 		List<Map<Integer, ExportColumnValue>> exportColumnValues = new ArrayList<Map<Integer, ExportColumnValue>>();
 		for (InventoryDetails inventoryDetails : inventoryDetailList) {
-			Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();						
-			for(ExportColumnHeader columnHeaders : exportColumnHeaders){				
-				dataMap.put(columnHeaders.getId(), new ExportColumnValue(columnHeaders.getId(),
-						getInventoryDetailValueInfo(inventoryDetails, columnHeaders.getId())));
+			Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();
+			for (ExportColumnHeader columnHeaders : exportColumnHeaders) {
+				dataMap.put(
+						columnHeaders.getId(),
+						new ExportColumnValue(columnHeaders.getId(), this.getInventoryDetailValueInfo(inventoryDetails,
+								columnHeaders.getId())));
 			}
 			exportColumnValues.add(dataMap);
 		}
 		return exportColumnValues;
 	}
-	
-	protected String getInventoryDetailValueInfo(InventoryDetails inventoryDetails, int columnHeaderId){
+
+	protected String getInventoryDetailValueInfo(InventoryDetails inventoryDetails, int columnHeaderId) {
 		String val = "";
-		if(columnHeaderId == TermId.ENTRY_NO.getId()) {
-				val = inventoryDetails.getEntryId().toString();
-		} else if(columnHeaderId == TermId.DESIG.getId()) {
-				val = inventoryDetails.getGermplasmName();
-		} else if(columnHeaderId == TermId.CROSS.getId() ){ 
-				val = inventoryDetails.getParentage();
-		} else if(columnHeaderId == TermId.GID.getId()) {
-				val = inventoryDetails.getGid()!=null?
-						inventoryDetails.getGid().toString():
-						"";
-		} else if(columnHeaderId == TermId.SOURCE.getId()) { 
-				val = inventoryDetails.getSource();
-		} else if(columnHeaderId == TermId.DUPLICATE.getId()) { 
-			val = getInventoryValue(inventoryDetails.getDuplicate());
-		} else if(columnHeaderId == TermId.BULK_WITH.getId()) { 
-			val = getInventoryValue(inventoryDetails.getBulkWith());
-		} else if(columnHeaderId == TermId.BULK_COMPL.getId()) { 
-			val = getInventoryValue(inventoryDetails.getBulkCompl());
-		} else if(columnHeaderId == TermId.LOCATION_ID.getId()) {
+		if (columnHeaderId == TermId.ENTRY_NO.getId()) {
+			val = inventoryDetails.getEntryId().toString();
+		} else if (columnHeaderId == TermId.DESIG.getId()) {
+			val = inventoryDetails.getGermplasmName();
+		} else if (columnHeaderId == TermId.CROSS.getId()) {
+			val = inventoryDetails.getParentage();
+		} else if (columnHeaderId == TermId.GID.getId()) {
+			val = inventoryDetails.getGid() != null ? inventoryDetails.getGid().toString() : "";
+		} else if (columnHeaderId == TermId.SOURCE.getId()) {
+			val = inventoryDetails.getSource();
+		} else if (columnHeaderId == TermId.DUPLICATE.getId()) {
+			val = this.getInventoryValue(inventoryDetails.getDuplicate());
+		} else if (columnHeaderId == TermId.BULK_WITH.getId()) {
+			val = this.getInventoryValue(inventoryDetails.getBulkWith());
+		} else if (columnHeaderId == TermId.BULK_COMPL.getId()) {
+			val = this.getInventoryValue(inventoryDetails.getBulkCompl());
+		} else if (columnHeaderId == TermId.LOCATION_ID.getId()) {
 			// in preparation for BMS-143. Export the abbreviation instead of the whole name
-				val = inventoryDetails.getLocationAbbr();
-		} else if(columnHeaderId == AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt()) { 
-				val = getInventoryAmount(inventoryDetails);
-		} else if(columnHeaderId == AppConstants.TEMPORARY_INVENTORY_SCALE.getInt()) { 
-				val = getInventoryValue(inventoryDetails.getScaleName());
-		} else if(columnHeaderId == AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()) { 
-				val = getInventoryValue(inventoryDetails.getComment());
+			val = inventoryDetails.getLocationAbbr();
+		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt()) {
+			val = this.getInventoryAmount(inventoryDetails);
+		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_SCALE.getInt()) {
+			val = this.getInventoryValue(inventoryDetails.getScaleName());
+		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()) {
+			val = this.getInventoryValue(inventoryDetails.getComment());
 		}
-		return val;		
+		return val;
 	}
 
-	protected String getInventoryValue(String inventoryValue){
+	protected String getInventoryValue(String inventoryValue) {
 		return inventoryValue != null ? inventoryValue : "";
 	}
-	
-	protected String getInventoryAmount(InventoryDetails inventoryDetails){
-		return inventoryDetails.getAmount() != null ? inventoryDetails.getAmount()
-				.toString() : "";
-	}	
-	
+
+	protected String getInventoryAmount(InventoryDetails inventoryDetails) {
+		return inventoryDetails.getAmount() != null ? inventoryDetails.getAmount().toString() : "";
+	}
+
 	public void setFieldbookProperties(FieldbookProperties fieldbookProperties) {
 		this.fieldbookProperties = fieldbookProperties;
 	}

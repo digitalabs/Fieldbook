@@ -1,6 +1,8 @@
+
 package com.efficio.fieldbook.web.label.printing.bean;
 
 public class LabelPrintingPresets {
+
 	public static final int STANDARD_PRESET = 0;
 	public static final int PROGRAM_PRESET = 1;
 	public static final String LABELPRINTING_CURRENT_PRESET_ID_ATTR = "LABELPRINTING_CURRENT_PRESET_ID";
@@ -9,36 +11,40 @@ public class LabelPrintingPresets {
 	private int id;
 	private String name;
 	private int type;
-	
-	public LabelPrintingPresets(){
+
+	public LabelPrintingPresets() {
 		super();
 	}
-	
+
 	public LabelPrintingPresets(int id, String name, int type) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.type = type;
 	}
-	
+
 	public int getId() {
-		return id;
+		return this.id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public String getName() {
-		return name;
+		return this.name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public int getType() {
-		return type;
+		return this.type;
 	}
+
 	public void setType(int type) {
 		this.type = type;
 	}
-	
-	
+
 }

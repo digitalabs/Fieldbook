@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.service.internal.impl;
 
 import java.io.IOException;
@@ -32,25 +33,25 @@ public class MockDesignRunnerImpl implements DesignRunner {
 	public BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design)
 			throws IOException {
 
-		String outputFilePath = System.currentTimeMillis() + BV_PREFIX + CSV_EXTENSION;
+		String outputFilePath = System.currentTimeMillis() + MockDesignRunnerImpl.BV_PREFIX + MockDesignRunnerImpl.CSV_EXTENSION;
 
-		design.getDesign().setParameterValue(OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
+		design.getDesign().setParameterValue(MockDesignRunnerImpl.OUTPUT_FILE_PARAMETER_NAME, outputFilePath);
 
 		@SuppressWarnings("unused")
 		String xml = "";
 		try {
 			xml = ExpDesignUtil.getXmlStringForSetting(design);
 		} catch (JAXBException e) {
-			LOG.error(e.getMessage(), e);
+			MockDesignRunnerImpl.LOG.error(e.getMessage(), e);
 		}
-		
+
 		// params should be in the MainDesign instance
-		
+
 		ExpDesign expDesign = design.getDesign();
-		LOG.info("Mocking Design for " + expDesign.getName());
-		
+		MockDesignRunnerImpl.LOG.info("Mocking Design for " + expDesign.getName());
+
 		List<String[]> csvLines = new ArrayList<>();
-		String[] csv = {"PLOT_NO","REP_NO","ENTRY_NO"};
+		String[] csv = {"PLOT_NO", "REP_NO", "ENTRY_NO"};
 		csvLines.add(csv);
 		List<ListItem> levelList = expDesign.getParameterList("levels");
 		Integer lines = Integer.parseInt(levelList.get(0).getValue());
@@ -60,16 +61,16 @@ public class MockDesignRunnerImpl implements DesignRunner {
 			int count = 0;
 			items.clear();
 			while (count < lines) {
-				Integer item = Math.round((float)Math.random()*lines) + 1;
-				if(!items.contains(item) && item <= lines){
+				Integer item = Math.round((float) Math.random() * lines) + 1;
+				if (!items.contains(item) && item <= lines) {
 					count++;
 					items.add(item);
-					csv = new String[]{String.valueOf(count),String.valueOf(i),item.toString()};
+					csv = new String[] {String.valueOf(count), String.valueOf(i), item.toString()};
 					csvLines.add(csv);
 				}
 			}
-		}		
-		
+		}
+
 		BVDesignOutput output = new BVDesignOutput(0);
 		output.setResults(csvLines);
 		return output;

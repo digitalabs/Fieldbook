@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
@@ -6,7 +7,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class LocationAbbreviationExpression implements Expression {
 
-    public static final String KEY = "[LABBR]";
+	public static final String KEY = "[LABBR]";
 
 	public LocationAbbreviationExpression() {
 	}
@@ -14,16 +15,16 @@ public class LocationAbbreviationExpression implements Expression {
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
 		for (StringBuilder value : values) {
-			int startIndex = value.toString().toUpperCase().indexOf(KEY);
-			int endIndex = startIndex + KEY.length();
-			
+			int startIndex = value.toString().toUpperCase().indexOf(LocationAbbreviationExpression.KEY);
+			int endIndex = startIndex + LocationAbbreviationExpression.KEY.length();
+
 			String newValue = source.getLocationAbbreviation();
 			value.replace(startIndex, endIndex, newValue != null ? newValue : "");
 		}
 	}
 
-    @Override
-    public String getExpressionKey() {
-        return KEY;
-    }
+	@Override
+	public String getExpressionKey() {
+		return LocationAbbreviationExpression.KEY;
+	}
 }

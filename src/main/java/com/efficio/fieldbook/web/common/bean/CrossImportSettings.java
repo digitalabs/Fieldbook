@@ -1,15 +1,13 @@
- package com.efficio.fieldbook.web.common.bean;
+
+package com.efficio.fieldbook.web.common.bean;
 
 import org.generationcp.commons.settings.CrossSetting;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 
-
 public class CrossImportSettings {
-
 
 	private String name;
 	private String crossPrefix;
@@ -26,11 +24,10 @@ public class CrossImportSettings {
 	public CrossImportSettings() {
 	}
 
-	public CrossImportSettings(String name, String crossPrefix, Integer breedingMethodID,
-			Boolean basedOnStatusOfParentalLines, String crossSuffix,
-			Integer sequenceNumberDigits, Boolean hasSuffixSpace, Boolean hasPrefixSpace,
-			Integer startingSequenceNumber, String parentageDesignationSeparator,
-			String harvestYear, String harvestMonth, Integer locationID) {
+	public CrossImportSettings(String name, String crossPrefix, Integer breedingMethodID, Boolean basedOnStatusOfParentalLines,
+			String crossSuffix, Integer sequenceNumberDigits, Boolean hasSuffixSpace, Boolean hasPrefixSpace,
+			Integer startingSequenceNumber, String parentageDesignationSeparator, String harvestYear, String harvestMonth,
+			Integer locationID) {
 		this.name = name;
 		this.crossPrefix = crossPrefix;
 		this.breedingMethodID = breedingMethodID;
@@ -45,7 +42,7 @@ public class CrossImportSettings {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void setName(String name) {
@@ -53,7 +50,7 @@ public class CrossImportSettings {
 	}
 
 	public String getCrossPrefix() {
-		return crossPrefix;
+		return this.crossPrefix;
 	}
 
 	public void setCrossPrefix(String crossPrefix) {
@@ -61,7 +58,7 @@ public class CrossImportSettings {
 	}
 
 	public Integer getBreedingMethodID() {
-		return breedingMethodID;
+		return this.breedingMethodID;
 	}
 
 	public void setBreedingMethodID(Integer breedingMethodID) {
@@ -69,7 +66,7 @@ public class CrossImportSettings {
 	}
 
 	public String getCrossSuffix() {
-		return crossSuffix;
+		return this.crossSuffix;
 	}
 
 	public void setCrossSuffix(String crossSuffix) {
@@ -77,7 +74,7 @@ public class CrossImportSettings {
 	}
 
 	public Integer getSequenceNumberDigits() {
-		return sequenceNumberDigits;
+		return this.sequenceNumberDigits;
 	}
 
 	public void setSequenceNumberDigits(Integer sequenceNumberDigits) {
@@ -85,7 +82,7 @@ public class CrossImportSettings {
 	}
 
 	public Boolean getHasSuffixSpace() {
-		return hasSuffixSpace;
+		return this.hasSuffixSpace;
 	}
 
 	public void setHasSuffixSpace(Boolean hasSuffixSpace) {
@@ -93,7 +90,7 @@ public class CrossImportSettings {
 	}
 
 	public Boolean getHasPrefixSpace() {
-		return hasPrefixSpace;
+		return this.hasPrefixSpace;
 	}
 
 	public void setHasPrefixSpace(Boolean hasPrefixSpace) {
@@ -101,7 +98,7 @@ public class CrossImportSettings {
 	}
 
 	public Integer getStartingSequenceNumber() {
-		return startingSequenceNumber;
+		return this.startingSequenceNumber;
 	}
 
 	public void setStartingSequenceNumber(Integer startingSequenceNumber) {
@@ -109,7 +106,7 @@ public class CrossImportSettings {
 	}
 
 	public String getParentageDesignationSeparator() {
-		return parentageDesignationSeparator;
+		return this.parentageDesignationSeparator;
 	}
 
 	public void setParentageDesignationSeparator(String parentageDesignationSeparator) {
@@ -123,8 +120,7 @@ public class CrossImportSettings {
 		this.crossSuffix = setting.getCrossNameSetting().getSuffix();
 		this.hasPrefixSpace = setting.getCrossNameSetting().isAddSpaceBetweenPrefixAndCode();
 		this.hasSuffixSpace = setting.getCrossNameSetting().isAddSpaceBetweenSuffixAndCode();
-		this.basedOnStatusOfParentalLines = setting.getBreedingMethodSetting()
-				.isBasedOnStatusOfParentalLines();
+		this.basedOnStatusOfParentalLines = setting.getBreedingMethodSetting().isBasedOnStatusOfParentalLines();
 		this.sequenceNumberDigits = setting.getCrossNameSetting().getNumOfDigits();
 		this.startingSequenceNumber = setting.getCrossNameSetting().getStartNumber();
 		this.parentageDesignationSeparator = setting.getCrossNameSetting().getSeparator();
@@ -133,7 +129,7 @@ public class CrossImportSettings {
 	}
 
 	public Boolean getBasedOnStatusOfParentalLines() {
-		return basedOnStatusOfParentalLines;
+		return this.basedOnStatusOfParentalLines;
 	}
 
 	public void setBasedOnStatusOfParentalLines(Boolean basedOnStatusOfParentalLines) {
@@ -141,7 +137,7 @@ public class CrossImportSettings {
 	}
 
 	public Integer getLocationID() {
-		return locationID;
+		return this.locationID;
 	}
 
 	public void setLocationID(Integer locationID) {

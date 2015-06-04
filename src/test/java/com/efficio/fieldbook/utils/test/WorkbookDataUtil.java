@@ -4,11 +4,11 @@
  * Generation Challenge Programme (GCP)
  *
  *
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
  *******************************************************************************/
+
 package com.efficio.fieldbook.utils.test;
 
 import java.text.DecimalFormat;
@@ -121,7 +121,7 @@ public class WorkbookDataUtil {
 
 	private static final String GERMPLASM_NAME = "TIANDOUGOU-9";
 	private static final String NUMERIC_VALUE = "1";
-	
+
 	public static final Integer LOCATION_ID_1 = 1;
 	public static final Integer LOCATION_ID_2 = 2;
 	private static final Integer LTYPE = 1;
@@ -142,7 +142,7 @@ public class WorkbookDataUtil {
 		}
 		return WorkbookDataUtil.workbook;
 	}
-	
+
 	public static Workbook getTestWorkbookForTrial(int noOfObservations, int noOfInstance) {
 		if (WorkbookDataUtil.workbook == null) {
 			WorkbookDataUtil.createTestWorkbook(noOfObservations, StudyType.T, noOfInstance);
@@ -155,11 +155,10 @@ public class WorkbookDataUtil {
 	}
 
 	private static void createTestWorkbook(int noOfObservations, StudyType studyType) {
-		createTestWorkbook(noOfObservations, studyType, 2);
+		WorkbookDataUtil.createTestWorkbook(noOfObservations, studyType, 2);
 	}
-	
-	private static void createTestWorkbook(int noOfObservations, StudyType studyType,
-			int noOfInstance) {
+
+	private static void createTestWorkbook(int noOfObservations, StudyType studyType, int noOfInstance) {
 		WorkbookDataUtil.workbook = new Workbook();
 
 		WorkbookDataUtil.createStudyDetails(studyType);
@@ -169,13 +168,14 @@ public class WorkbookDataUtil {
 		WorkbookDataUtil.createVariates();
 		WorkbookDataUtil.createObservations(noOfObservations, studyType.equals(StudyType.N) ? 1 : noOfInstance);
 		WorkbookDataUtil.createTrialObservations(studyType.equals(StudyType.N) ? 1 : noOfInstance);
-		workbook.setMeasurementDatesetId(-2);
-		workbook.setTrialDatasetId(-3);
+		WorkbookDataUtil.workbook.setMeasurementDatesetId(-2);
+		WorkbookDataUtil.workbook.setTrialDatasetId(-3);
 	}
 
 	private static void createStudyDetails(StudyType studyType) {
 		StudyDetails details = new StudyDetails();
-		details.setStudyName((studyType.equals(StudyType.N) ? NURSERY_NAME : TRIAL_NAME) + new Random().nextInt(10000));
+		details.setStudyName((studyType.equals(StudyType.N) ? WorkbookDataUtil.NURSERY_NAME : WorkbookDataUtil.TRIAL_NAME)
+				+ new Random().nextInt(10000));
 		details.setTitle(WorkbookDataUtil.TITLE);
 		details.setObjective(WorkbookDataUtil.OBJECTIVE);
 		details.setStartDate(WorkbookDataUtil.START_DATE);
@@ -188,138 +188,139 @@ public class WorkbookDataUtil {
 	}
 
 	private static void createConditions() {
-		//Create measurement variables and set its dataTypeId
+		// Create measurement variables and set its dataTypeId
 		List<MeasurementVariable> conditions = new ArrayList<MeasurementVariable>();
 
-		MeasurementVariable variable = new MeasurementVariable(
-				TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "TRIAL NUMBER",
-				WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED,
-				WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "",
-				WorkbookDataUtil.TRIAL);
+		MeasurementVariable variable =
+				new MeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TRIAL_INSTANCE", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
+						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		conditions.add(variable);
 
-		variable = new MeasurementVariable(TermId.PI_NAME.getId(), "PI Name",
-				"Name of Principal Investigator", WorkbookDataUtil.DBCV, WorkbookDataUtil.ASSIGNED,
-				WorkbookDataUtil.PERSON, WorkbookDataUtil.CHAR, "", WorkbookDataUtil.STUDY);
+		variable =
+				new MeasurementVariable(TermId.PI_NAME.getId(), "PI Name", "Name of Principal Investigator", WorkbookDataUtil.DBCV,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.PERSON, WorkbookDataUtil.CHAR, "", WorkbookDataUtil.STUDY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		conditions.add(variable);
 
-		variable = new MeasurementVariable(TermId.PI_ID.getId(), "PI ID",
-				"ID of Principal Investigator", WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED,
-				WorkbookDataUtil.PERSON, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
-				WorkbookDataUtil.STUDY);
+		variable =
+				new MeasurementVariable(TermId.PI_ID.getId(), "PI ID", "ID of Principal Investigator", WorkbookDataUtil.DBID,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.PERSON, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.STUDY);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		conditions.add(variable);
 
-		variable = new MeasurementVariable(AppConstants.COOPERATOR_NAME.getInt(), "COOPERATOR",
-				"COOPERATOR NAME", WorkbookDataUtil.DBCV, WorkbookDataUtil.CONDUCTED,
-				WorkbookDataUtil.PERSON, WorkbookDataUtil.CHAR, "John Smith",
-				WorkbookDataUtil.TRIAL);
+		variable =
+				new MeasurementVariable(AppConstants.COOPERATOR_NAME.getInt(), "COOPERATOR", "COOPERATOR NAME", WorkbookDataUtil.DBCV,
+						WorkbookDataUtil.CONDUCTED, WorkbookDataUtil.PERSON, WorkbookDataUtil.CHAR, "John Smith", WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		conditions.add(variable);
 
-		variable = new MeasurementVariable(AppConstants.COOPERATOR_ID.getInt(), "COOPERATOR ID",
-				"COOPERATOR ID", WorkbookDataUtil.DBID, WorkbookDataUtil.CONDUCTED,
-				WorkbookDataUtil.PERSON, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
-				WorkbookDataUtil.TRIAL);
+		variable =
+				new MeasurementVariable(AppConstants.COOPERATOR_ID.getInt(), "COOPERATOR ID", "COOPERATOR ID", WorkbookDataUtil.DBID,
+						WorkbookDataUtil.CONDUCTED, WorkbookDataUtil.PERSON, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		conditions.add(variable);
 
-		variable = new MeasurementVariable(TermId.TRIAL_LOCATION.getId(), "SITE", "TRIAL SITE NAME",
-				WorkbookDataUtil.DBCV, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
-				WorkbookDataUtil.CHAR, "", WorkbookDataUtil.TRIAL);
+		variable =
+				new MeasurementVariable(TermId.TRIAL_LOCATION.getId(), "SITE", "TRIAL SITE NAME", WorkbookDataUtil.DBCV,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION, WorkbookDataUtil.CHAR, "", WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		conditions.add(variable);
 
-		variable = new MeasurementVariable(TermId.LOCATION_ID.getId(), "SITE ID", "TRIAL SITE ID",
-				WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
-				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.TRIAL);
+		variable =
+				new MeasurementVariable(TermId.LOCATION_ID.getId(), "SITE ID", "TRIAL SITE ID", WorkbookDataUtil.DBID,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		conditions.add(variable);
 
 		WorkbookDataUtil.workbook.setConditions(conditions);
 	}
-	
+
 	public static void addCheckConditions() {
-		MeasurementVariable variable = new MeasurementVariable(TermId.CHECK_START.getId(), "CHECK_START", "CHECK_START",
-				WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
-				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.TRIAL);
+		MeasurementVariable variable =
+				new MeasurementVariable(TermId.CHECK_START.getId(), "CHECK_START", "CHECK_START", WorkbookDataUtil.DBID,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		WorkbookDataUtil.workbook.getConditions().add(variable);
-		
-		variable = new MeasurementVariable(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", "CHECK_INTERVAL",
-				WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
-				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.TRIAL);
+
+		variable =
+				new MeasurementVariable(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", "CHECK_INTERVAL", WorkbookDataUtil.DBID,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		WorkbookDataUtil.workbook.getConditions().add(variable);
-		
-		variable = new MeasurementVariable(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", "CHECK_PLAN",
-				WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION,
-				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.TRIAL);
+
+		variable =
+				new MeasurementVariable(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", "CHECK_PLAN", WorkbookDataUtil.DBID,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.LOCATION, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
 		WorkbookDataUtil.workbook.getConditions().add(variable);
 	}
 
 	private static void createFactors() {
-		//Create measurement variables and set its dataTypeId
+		// Create measurement variables and set its dataTypeId
 		List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
-		
+
 		// Entry Factors
-		MeasurementVariable variable = new MeasurementVariable(TermId.ENTRY_NO.getId(),
-				WorkbookDataUtil.ENTRY, "The germplasm entry number", WorkbookDataUtil.NUMBER,
-				WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.GERMPLASM_ENTRY,
-				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
+		MeasurementVariable variable =
+				new MeasurementVariable(TermId.ENTRY_NO.getId(), WorkbookDataUtil.ENTRY, "The germplasm entry number",
+						WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.GERMPLASM_ENTRY, WorkbookDataUtil.NUMERIC,
+						WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		factors.add(variable);
 
-		variable = new MeasurementVariable(TermId.GID.getId(), WorkbookDataUtil.GID,
-				"The GID of the germplasm", WorkbookDataUtil.DBID, WorkbookDataUtil.ASSIGNED,
-				WorkbookDataUtil.GERMPLASM_ID, WorkbookDataUtil.NUMERIC,
-				WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.ENTRY);
+		variable =
+				new MeasurementVariable(TermId.GID.getId(), WorkbookDataUtil.GID, "The GID of the germplasm", WorkbookDataUtil.DBID,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.GERMPLASM_ID, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		factors.add(variable);
 
-		variable = new MeasurementVariable(TermId.DESIG.getId(), WorkbookDataUtil.DESIG,
-				"The name of the germplasm", WorkbookDataUtil.DBCV, WorkbookDataUtil.ASSIGNED,
-				WorkbookDataUtil.GERMPLASM_ID, WorkbookDataUtil.CHAR, WorkbookDataUtil.STUDY,
-				WorkbookDataUtil.ENTRY);
+		variable =
+				new MeasurementVariable(TermId.DESIG.getId(), WorkbookDataUtil.DESIG, "The name of the germplasm", WorkbookDataUtil.DBCV,
+						WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.GERMPLASM_ID, WorkbookDataUtil.CHAR, WorkbookDataUtil.STUDY,
+						WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		factors.add(variable);
 
-		variable = new MeasurementVariable(TermId.CROSS.getId(), WorkbookDataUtil.CROSS,
-				"The pedigree string of the germplasm", WorkbookDataUtil.PEDIGREE_STRING,
-				WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.CROSS_HISTORY, WorkbookDataUtil.CHAR,
-				WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
+		variable =
+				new MeasurementVariable(TermId.CROSS.getId(), WorkbookDataUtil.CROSS, "The pedigree string of the germplasm",
+						WorkbookDataUtil.PEDIGREE_STRING, WorkbookDataUtil.ASSIGNED, WorkbookDataUtil.CROSS_HISTORY, WorkbookDataUtil.CHAR,
+						WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		factors.add(variable);
 
-		variable = new MeasurementVariable(TermId.SEED_SOURCE.getId(),
-				WorkbookDataUtil.SEED_SOURCE, "The seed source of the germplasm",
-				WorkbookDataUtil.NAME, WorkbookDataUtil.SELECTED, WorkbookDataUtil.SEED_SOURCE,
-				WorkbookDataUtil.CHAR, WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
+		variable =
+				new MeasurementVariable(TermId.SEED_SOURCE.getId(), WorkbookDataUtil.SEED_SOURCE, "The seed source of the germplasm",
+						WorkbookDataUtil.NAME, WorkbookDataUtil.SELECTED, WorkbookDataUtil.SEED_SOURCE, WorkbookDataUtil.CHAR,
+						WorkbookDataUtil.STUDY, WorkbookDataUtil.ENTRY);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
 		factors.add(variable);
 
-		variable = new MeasurementVariable(TermId.PLOT_NO.getId(), WorkbookDataUtil.PLOT,
-				"Plot number ", WorkbookDataUtil.NESTED_NUMBER, WorkbookDataUtil.ENUMERATED,
-				WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.NUMERIC,
-				WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.PLOT);
+		variable =
+				new MeasurementVariable(TermId.PLOT_NO.getId(), WorkbookDataUtil.PLOT, "Plot number ", WorkbookDataUtil.NESTED_NUMBER,
+						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.FIELD_PLOT, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.PLOT);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		factors.add(variable);
 
 		// Plot Factors
-		variable = new MeasurementVariable(TermId.BLOCK_NO.getId(), WorkbookDataUtil.BLOCK,
-				"INCOMPLETE BLOCK", WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED,
-				WorkbookDataUtil.BLOCKING_FACTOR, WorkbookDataUtil.NUMERIC,
-				WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.PLOT);
+		variable =
+				new MeasurementVariable(TermId.BLOCK_NO.getId(), WorkbookDataUtil.BLOCK, "INCOMPLETE BLOCK", WorkbookDataUtil.NUMBER,
+						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.BLOCKING_FACTOR, WorkbookDataUtil.NUMERIC,
+						WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.PLOT);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		factors.add(variable);
 
-		variable = new MeasurementVariable(TermId.REP_NO.getId(), WorkbookDataUtil.REP,
-				WorkbookDataUtil.REPLICATION, WorkbookDataUtil.NUMBER, WorkbookDataUtil.ENUMERATED,
-				WorkbookDataUtil.REPLICATION_FACTOR, WorkbookDataUtil.NUMERIC,
-				WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.PLOT);
+		variable =
+				new MeasurementVariable(TermId.REP_NO.getId(), WorkbookDataUtil.REP, WorkbookDataUtil.REPLICATION, WorkbookDataUtil.NUMBER,
+						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.REPLICATION_FACTOR, WorkbookDataUtil.NUMERIC,
+						WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.PLOT);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		factors.add(variable);
 
@@ -327,19 +328,19 @@ public class WorkbookDataUtil {
 	}
 
 	private static void createConstants() {
-		//Create measurement variables and set its dataTypeId
+		// Create measurement variables and set its dataTypeId
 		List<MeasurementVariable> constants = new ArrayList<MeasurementVariable>();
 
-		MeasurementVariable variable = new MeasurementVariable(WorkbookDataUtil.DATE_SEEDED_ID,
-				"DATE_SEEDED", "Date Seeded", WorkbookDataUtil.DATE, WorkbookDataUtil.APPLIED,
-				WorkbookDataUtil.PLANTING_DATE, WorkbookDataUtil.NUMERIC,
-				WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.STUDY);
+		MeasurementVariable variable =
+				new MeasurementVariable(WorkbookDataUtil.DATE_SEEDED_ID, "DATE_SEEDED", "Date Seeded", WorkbookDataUtil.DATE,
+						WorkbookDataUtil.APPLIED, WorkbookDataUtil.PLANTING_DATE, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE,
+						WorkbookDataUtil.STUDY);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		constants.add(variable);
 
-		variable = new MeasurementVariable(WorkbookDataUtil.SOILPH_ID, "SOILPH", "Soil pH",
-				WorkbookDataUtil.PH, WorkbookDataUtil.PH_METER, WorkbookDataUtil.SOIL_ACIDITY,
-				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.STUDY);
+		variable =
+				new MeasurementVariable(WorkbookDataUtil.SOILPH_ID, "SOILPH", "Soil pH", WorkbookDataUtil.PH, WorkbookDataUtil.PH_METER,
+						WorkbookDataUtil.SOIL_ACIDITY, WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.STUDY);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		constants.add(variable);
 
@@ -347,20 +348,20 @@ public class WorkbookDataUtil {
 	}
 
 	private static void createVariates() {
-		//Create measurement variables and set its dataTypeId
+		// Create measurement variables and set its dataTypeId
 		List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 
-		MeasurementVariable variable = new MeasurementVariable(WorkbookDataUtil.GYLD_ID,
-				WorkbookDataUtil.GYLD, "Grain yield -dry and weigh (kg/ha)",
-				WorkbookDataUtil.KG_HA, WorkbookDataUtil.DRY_AND_WEIGH, WorkbookDataUtil.YIELD,
-				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.STUDY);
+		MeasurementVariable variable =
+				new MeasurementVariable(WorkbookDataUtil.GYLD_ID, WorkbookDataUtil.GYLD, "Grain yield -dry and weigh (kg/ha)",
+						WorkbookDataUtil.KG_HA, WorkbookDataUtil.DRY_AND_WEIGH, WorkbookDataUtil.YIELD, WorkbookDataUtil.NUMERIC,
+						WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.STUDY);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		variates.add(variable);
 
-		variable = new MeasurementVariable(WorkbookDataUtil.CHALK_PCT_ID,
-				WorkbookDataUtil.CHALK_PCT, "NUMBER OF PLANTS SELECTED", WorkbookDataUtil.NUMBER,
-				WorkbookDataUtil.COUNTED, WorkbookDataUtil.PLANTS_SELECTED,
-				WorkbookDataUtil.NUMERIC, WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.STUDY);
+		variable =
+				new MeasurementVariable(WorkbookDataUtil.CHALK_PCT_ID, WorkbookDataUtil.CHALK_PCT, "NUMBER OF PLANTS SELECTED",
+						WorkbookDataUtil.NUMBER, WorkbookDataUtil.COUNTED, WorkbookDataUtil.PLANTS_SELECTED, WorkbookDataUtil.NUMERIC,
+						WorkbookDataUtil.NUMERIC_VALUE, WorkbookDataUtil.STUDY);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
 		variates.add(variable);
 		WorkbookDataUtil.workbook.setVariates(variates);
@@ -374,70 +375,67 @@ public class WorkbookDataUtil {
 		Random random = new Random();
 		DecimalFormat fmt = new DecimalFormat("#.##");
 
-		//Create n number of observation rows
+		// Create n number of observation rows
 		for (int j = 0; j < trialInstances; j++) {
 			for (int i = 0; i < noOfObservations; i++) {
 				row = new MeasurementRow();
 				dataList = new ArrayList<MeasurementData>();
-	
+
 				MeasurementData data = new MeasurementData(WorkbookDataUtil.ENTRY, String.valueOf(i));
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						TermId.ENTRY_NO.getId(), WorkbookDataUtil.workbook.getFactors()));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.ENTRY_NO.getId(),
+						WorkbookDataUtil.workbook.getFactors()));
 				dataList.add(data);
-	
+
 				data = new MeasurementData(WorkbookDataUtil.GID, WorkbookDataUtil.computeGID(i));
 				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.GID.getId(),
 						WorkbookDataUtil.workbook.getFactors()));
 				dataList.add(data);
-	
-				data = new MeasurementData(WorkbookDataUtil.DESIG, WorkbookDataUtil.GERMPLASM_NAME
-						+ new Random().nextInt(10000));
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						TermId.DESIG.getId(), WorkbookDataUtil.workbook.getFactors()));
+
+				data = new MeasurementData(WorkbookDataUtil.DESIG, WorkbookDataUtil.GERMPLASM_NAME + new Random().nextInt(10000));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.DESIG.getId(),
+						WorkbookDataUtil.workbook.getFactors()));
 				dataList.add(data);
-	
+
 				data = new MeasurementData(WorkbookDataUtil.CROSS, "-");
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						TermId.CROSS.getId(), WorkbookDataUtil.workbook.getFactors()));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.CROSS.getId(),
+						WorkbookDataUtil.workbook.getFactors()));
 				dataList.add(data);
-	
+
 				data = new MeasurementData(WorkbookDataUtil.SOURCE, "-");
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						TermId.SEED_SOURCE.getId(), WorkbookDataUtil.workbook.getFactors()));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.SEED_SOURCE.getId(),
+						WorkbookDataUtil.workbook.getFactors()));
 				dataList.add(data);
-	
+
 				data = new MeasurementData(WorkbookDataUtil.PLOT, String.valueOf(i));
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						TermId.PLOT_NO.getId(), WorkbookDataUtil.workbook.getFactors()));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.PLOT_NO.getId(),
+						WorkbookDataUtil.workbook.getFactors()));
 				dataList.add(data);
-	
+
 				data = new MeasurementData(WorkbookDataUtil.BLOCK, "");
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						TermId.BLOCK_NO.getId(), WorkbookDataUtil.workbook.getFactors()));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.BLOCK_NO.getId(),
+						WorkbookDataUtil.workbook.getFactors()));
 				dataList.add(data);
-	
+
 				data = new MeasurementData(WorkbookDataUtil.REP, "");
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						TermId.REP_NO.getId(), WorkbookDataUtil.workbook.getFactors()));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.REP_NO.getId(),
+						WorkbookDataUtil.workbook.getFactors()));
 				dataList.add(data);
-	
-				data = new MeasurementData(WorkbookDataUtil.GYLD, WorkbookDataUtil.randomizeValue(
-						random, fmt, 5000));
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						WorkbookDataUtil.GYLD_ID, WorkbookDataUtil.workbook.getVariates()));
+
+				data = new MeasurementData(WorkbookDataUtil.GYLD, WorkbookDataUtil.randomizeValue(random, fmt, 5000));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(WorkbookDataUtil.GYLD_ID,
+						WorkbookDataUtil.workbook.getVariates()));
 				dataList.add(data);
-	
+
 				data = new MeasurementData(WorkbookDataUtil.CHALK_PCT, String.valueOf(i));
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						WorkbookDataUtil.CHALK_PCT_ID, WorkbookDataUtil.workbook.getVariates()));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(WorkbookDataUtil.CHALK_PCT_ID,
+						WorkbookDataUtil.workbook.getVariates()));
 				dataList.add(data);
-				
-				data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE,
-						String.valueOf(j + 1));
-				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-						TermId.TRIAL_INSTANCE_FACTOR.getId(), WorkbookDataUtil.workbook.getConditions()));
+
+				data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE, String.valueOf(j + 1));
+				data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),
+						WorkbookDataUtil.workbook.getConditions()));
 				dataList.add(data);
-	
+
 				row.setDataList(dataList);
 				observations.add(row);
 			}
@@ -445,7 +443,7 @@ public class WorkbookDataUtil {
 
 		WorkbookDataUtil.workbook.setObservations(observations);
 	}
-	
+
 	public static List<MeasurementRow> createNewObservations(int noOfObservations) {
 		List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 
@@ -454,7 +452,7 @@ public class WorkbookDataUtil {
 		Random random = new Random();
 		DecimalFormat fmt = new DecimalFormat("#.##");
 
-		//Create n number of observation rows
+		// Create n number of observation rows
 		for (int i = 0; i < noOfObservations; i++) {
 			row = new MeasurementRow();
 			dataList = new ArrayList<MeasurementData>();
@@ -465,8 +463,7 @@ public class WorkbookDataUtil {
 			data = new MeasurementData(WorkbookDataUtil.GID, WorkbookDataUtil.computeGID(i));
 			dataList.add(data);
 
-			data = new MeasurementData(WorkbookDataUtil.DESIG, WorkbookDataUtil.GERMPLASM_NAME
-					+ new Random().nextInt(10000));
+			data = new MeasurementData(WorkbookDataUtil.DESIG, WorkbookDataUtil.GERMPLASM_NAME + new Random().nextInt(10000));
 			dataList.add(data);
 
 			data = new MeasurementData(WorkbookDataUtil.CROSS, "-");
@@ -484,8 +481,7 @@ public class WorkbookDataUtil {
 			data = new MeasurementData(WorkbookDataUtil.REP, "");
 			dataList.add(data);
 
-			data = new MeasurementData(WorkbookDataUtil.GYLD, WorkbookDataUtil.randomizeValue(
-					random, fmt, 5000));
+			data = new MeasurementData(WorkbookDataUtil.GYLD, WorkbookDataUtil.randomizeValue(random, fmt, 5000));
 			dataList.add(data);
 
 			data = new MeasurementData(WorkbookDataUtil.CHALK_PCT, String.valueOf(i));
@@ -494,7 +490,7 @@ public class WorkbookDataUtil {
 			row.setDataList(dataList);
 			observations.add(row);
 		}
-		
+
 		return observations;
 	}
 
@@ -508,49 +504,47 @@ public class WorkbookDataUtil {
 			row = new MeasurementRow();
 			dataList = new ArrayList<MeasurementData>();
 
-			MeasurementData data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE,
-					String.valueOf(i + 1));
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.TRIAL_INSTANCE_FACTOR.getId(), WorkbookDataUtil.workbook.getConditions()));
+			MeasurementData data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE, String.valueOf(i + 1));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
 			data = new MeasurementData(WorkbookDataUtil.PI_NAME, "");
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.PI_NAME.getId(), WorkbookDataUtil.workbook.getConditions()));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.PI_NAME.getId(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
 			data = new MeasurementData(WorkbookDataUtil.PI_ID, "");
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.PI_ID.getId(), WorkbookDataUtil.workbook.getConditions()));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.PI_ID.getId(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
 			data = new MeasurementData(WorkbookDataUtil.COOPERATOR, "");
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					AppConstants.COOPERATOR_NAME.getInt(),
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(AppConstants.COOPERATOR_NAME.getInt(),
 					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
 			data = new MeasurementData(WorkbookDataUtil.COOPERATOR_ID, "");
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					AppConstants.COOPERATOR_ID.getInt(), WorkbookDataUtil.workbook.getConditions()));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(AppConstants.COOPERATOR_ID.getInt(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
-			data = new MeasurementData(WorkbookDataUtil.SITE, LNAME + "_" + (i+1));
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.TRIAL_LOCATION.getId(), WorkbookDataUtil.workbook.getConditions()));
+			data = new MeasurementData(WorkbookDataUtil.SITE, WorkbookDataUtil.LNAME + "_" + (i + 1));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.TRIAL_LOCATION.getId(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
-			data = new MeasurementData(WorkbookDataUtil.SITE_ID, String.valueOf(i+1));
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.LOCATION_ID.getId(), WorkbookDataUtil.workbook.getConditions()));
+			data = new MeasurementData(WorkbookDataUtil.SITE_ID, String.valueOf(i + 1));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.LOCATION_ID.getId(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
-			
-			//Check variables
-			data = new MeasurementData("CHECK_START", String.valueOf(i+1));
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.CHECK_START.getId(), WorkbookDataUtil.workbook.getConditions()));
+
+			// Check variables
+			data = new MeasurementData("CHECK_START", String.valueOf(i + 1));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.CHECK_START.getId(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
-			data = new MeasurementData("CHECK_INTERVAL", String.valueOf(i+1));
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.CHECK_PLAN.getId(), WorkbookDataUtil.workbook.getConditions()));
+			data = new MeasurementData("CHECK_INTERVAL", String.valueOf(i + 1));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.CHECK_PLAN.getId(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
 			data = new MeasurementData("CHECK_PLAN", "1");
-			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-					TermId.CHECK_INTERVAL.getId(), WorkbookDataUtil.workbook.getConditions()));
+			data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.CHECK_INTERVAL.getId(),
+					WorkbookDataUtil.workbook.getConditions()));
 			dataList.add(data);
 
 			row.setDataList(dataList);
@@ -560,10 +554,9 @@ public class WorkbookDataUtil {
 		WorkbookDataUtil.workbook.setTrialObservations(trialObservations);
 	}
 
-	public static MeasurementVariable getMeasurementVariable(int termId,
-			List<MeasurementVariable> variables) {
+	public static MeasurementVariable getMeasurementVariable(int termId, List<MeasurementVariable> variables) {
 		if (variables != null) {
-			//get matching MeasurementVariable object given the term id
+			// get matching MeasurementVariable object given the term id
 			for (MeasurementVariable var : variables) {
 				if (var.getTermId() == termId) {
 					return var;
@@ -583,67 +576,66 @@ public class WorkbookDataUtil {
 		double value = random.nextDouble() * base;
 		return fmt.format(value);
 	}
-	
+
 	public static List<Location> createLocationData() {
 		List<Location> locations = new ArrayList<Location>();
-		locations.add(new Location(LOCATION_ID_1, LTYPE, NLLP, LNAME + " 1", LABBR, SNL3ID, SNL2ID,
-	            SNL1ID, CNTRYID, LRPLCE));
-		locations.add(new Location(LOCATION_ID_2, LTYPE, NLLP, LNAME + " 2", LABBR, SNL3ID, SNL2ID,
-	            SNL1ID, CNTRYID, LRPLCE));
+		locations.add(new Location(WorkbookDataUtil.LOCATION_ID_1, WorkbookDataUtil.LTYPE, WorkbookDataUtil.NLLP, WorkbookDataUtil.LNAME
+				+ " 1", WorkbookDataUtil.LABBR, WorkbookDataUtil.SNL3ID, WorkbookDataUtil.SNL2ID, WorkbookDataUtil.SNL1ID,
+				WorkbookDataUtil.CNTRYID, WorkbookDataUtil.LRPLCE));
+		locations.add(new Location(WorkbookDataUtil.LOCATION_ID_2, WorkbookDataUtil.LTYPE, WorkbookDataUtil.NLLP, WorkbookDataUtil.LNAME
+				+ " 2", WorkbookDataUtil.LABBR, WorkbookDataUtil.SNL3ID, WorkbookDataUtil.SNL2ID, WorkbookDataUtil.SNL1ID,
+				WorkbookDataUtil.CNTRYID, WorkbookDataUtil.LRPLCE));
 		return locations;
 	}
-	
+
 	public static MeasurementRow createTrialObservationWithoutSite() {
 		WorkbookDataUtil.workbook = new Workbook();
 
 		WorkbookDataUtil.createStudyDetails(StudyType.T);
 		WorkbookDataUtil.createConditions();
-		
+
 		MeasurementRow row = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
 
-		MeasurementData data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE,
-				NUMERIC_VALUE);
-		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-				TermId.TRIAL_INSTANCE_FACTOR.getId(), WorkbookDataUtil.workbook.getConditions()));
+		MeasurementData data = new MeasurementData(WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC_VALUE);
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(),
+				WorkbookDataUtil.workbook.getConditions()));
 		dataList.add(data);
 		data = new MeasurementData(WorkbookDataUtil.PI_NAME, "");
-		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-				TermId.PI_NAME.getId(), WorkbookDataUtil.workbook.getConditions()));
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.PI_NAME.getId(),
+				WorkbookDataUtil.workbook.getConditions()));
 		dataList.add(data);
 		data = new MeasurementData(WorkbookDataUtil.PI_ID, "");
-		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-				TermId.PI_ID.getId(), WorkbookDataUtil.workbook.getConditions()));
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(TermId.PI_ID.getId(), WorkbookDataUtil.workbook.getConditions()));
 		dataList.add(data);
 		data = new MeasurementData(WorkbookDataUtil.COOPERATOR, "");
-		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-				AppConstants.COOPERATOR_NAME.getInt(),
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(AppConstants.COOPERATOR_NAME.getInt(),
 				WorkbookDataUtil.workbook.getConditions()));
 		dataList.add(data);
 		data = new MeasurementData(WorkbookDataUtil.COOPERATOR_ID, "");
-		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(
-				AppConstants.COOPERATOR_ID.getInt(), WorkbookDataUtil.workbook.getConditions()));
+		data.setMeasurementVariable(WorkbookDataUtil.getMeasurementVariable(AppConstants.COOPERATOR_ID.getInt(),
+				WorkbookDataUtil.workbook.getConditions()));
 		dataList.add(data);
 
 		row.setDataList(dataList);
 		return row;
 	}
-	
-	public static List<Integer> getTrialInstances(){
+
+	public static List<Integer> getTrialInstances() {
 		List<Integer> instances = new ArrayList<Integer>();
-		for (MeasurementRow row : workbook.getTrialObservations()) {
+		for (MeasurementRow row : WorkbookDataUtil.workbook.getTrialObservations()) {
 			if (row.getDataList() != null) {
-				instances.add(getTrialInstanceNo(row.getDataList()));
+				instances.add(WorkbookDataUtil.getTrialInstanceNo(row.getDataList()));
 			}
 		}
 		return instances;
 	}
-	
+
 	private static int getTrialInstanceNo(List<MeasurementData> dataList) {
 		for (MeasurementData data : dataList) {
 			if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				return Integer.valueOf(data.getValue());
-			} 
+			}
 		}
 		return 0;
 	}

@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
-
 
 public class SettingDetail implements Serializable {
 
@@ -29,78 +28,91 @@ public class SettingDetail implements Serializable {
 	private String value;
 	private boolean isDeletable;
 	private boolean isFavorite;
-    private boolean isHidden;
+	private boolean isHidden;
 	private int order;
 	private Integer group;
 	private PairedVariable pairedVariable;
 
-	public SettingDetail(){
+	public SettingDetail() {
 		super();
 	}
 
-	public SettingDetail(SettingVariable variable,
-			List<ValueReference> possibleValues, String value, boolean isDeletable) {
+	public SettingDetail(SettingVariable variable, List<ValueReference> possibleValues, String value, boolean isDeletable) {
 		super();
 		this.variable = variable;
 		this.possibleValues = possibleValues;
 		this.value = value;
 		this.isDeletable = isDeletable;
 	}
+
 	public SettingVariable getVariable() {
-		return variable;
+		return this.variable;
 	}
+
 	public void setVariable(SettingVariable variable) {
 		this.variable = variable;
 	}
+
 	public List<ValueReference> getPossibleValues() {
-		return possibleValues;
+		return this.possibleValues;
 	}
+
 	public void setPossibleValues(List<ValueReference> possibleValues) {
 		this.possibleValues = possibleValues;
 	}
+
 	public List<ValueReference> getPossibleValuesFavorite() {
-	    return possibleValuesFavorite;
+		return this.possibleValuesFavorite;
 	}
+
 	public void setPossibleValuesFavorite(List<ValueReference> possibleValuesFavorite) {
-	    this.possibleValuesFavorite = possibleValuesFavorite;
+		this.possibleValuesFavorite = possibleValuesFavorite;
 	}
+
 	public String getPossibleValuesJson() {
-	    return possibleValuesJson;
+		return this.possibleValuesJson;
 	}
+
 	public void setPossibleValuesJson(String possibleValuesJson) {
-	    this.possibleValuesJson = possibleValuesJson;
+		this.possibleValuesJson = possibleValuesJson;
 	}
+
 	public void setPossibleValuesToJson(List<ValueReference> possibleValues) {
-	    try {
-            ObjectMapper om = new ObjectMapper();
-            setPossibleValuesJson(om.writeValueAsString(possibleValues));
-        } catch(Exception e) {
-            setPossibleValuesJson("err");
-        }
+		try {
+			ObjectMapper om = new ObjectMapper();
+			this.setPossibleValuesJson(om.writeValueAsString(possibleValues));
+		} catch (Exception e) {
+			this.setPossibleValuesJson("err");
+		}
 	}
+
 	public String getPossibleValuesFavoriteJson() {
-            return possibleValuesFavoriteJson;
-        }
-        public void setPossibleValuesFavoriteJson(String possibleValuesFavoriteJson) {
-            this.possibleValuesFavoriteJson = possibleValuesFavoriteJson;
-        }
-        public void setPossibleValuesFavoriteToJson(List<ValueReference> possibleValuesFavorite) {
-            try {
-                ObjectMapper om = new ObjectMapper();
-                setPossibleValuesFavoriteJson(om.writeValueAsString(possibleValuesFavorite));
-            } catch(Exception e) {
-                setPossibleValuesFavoriteJson("err");
-            }
-        }
-	public String getValue() {
-		return value;
+		return this.possibleValuesFavoriteJson;
 	}
+
+	public void setPossibleValuesFavoriteJson(String possibleValuesFavoriteJson) {
+		this.possibleValuesFavoriteJson = possibleValuesFavoriteJson;
+	}
+
+	public void setPossibleValuesFavoriteToJson(List<ValueReference> possibleValuesFavorite) {
+		try {
+			ObjectMapper om = new ObjectMapper();
+			this.setPossibleValuesFavoriteJson(om.writeValueAsString(possibleValuesFavorite));
+		} catch (Exception e) {
+			this.setPossibleValuesFavoriteJson("err");
+		}
+	}
+
+	public String getValue() {
+		return this.value;
+	}
+
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	public boolean isDeletable() {
-		return isDeletable;
+		return this.isDeletable;
 	}
 
 	public void setDeletable(boolean isDeletable) {
@@ -108,20 +120,23 @@ public class SettingDetail implements Serializable {
 	}
 
 	public boolean isFavorite() {
-	        return isFavorite;
+		return this.isFavorite;
 	}
+
 	public void setFavorite(boolean isFavorite) {
-	        this.isFavorite = isFavorite;
+		this.isFavorite = isFavorite;
 	}
+
 	public int getOrder() {
-	        return order;
+		return this.order;
 	}
+
 	public void setOrder(int order) {
-	        this.order = order;
+		this.order = order;
 	}
 
 	public Integer getGroup() {
-		return group;
+		return this.group;
 	}
 
 	public void setGroup(Integer group) {
@@ -132,7 +147,7 @@ public class SettingDetail implements Serializable {
 	 * @return the pairedVariable
 	 */
 	public PairedVariable getPairedVariable() {
-		return pairedVariable;
+		return this.pairedVariable;
 	}
 
 	/**
@@ -142,38 +157,34 @@ public class SettingDetail implements Serializable {
 		this.pairedVariable = pairedVariable;
 	}
 
-    public boolean isHidden() {
-        return isHidden;
-    }
+	public boolean isHidden() {
+		return this.isHidden;
+	}
 
-    public void setHidden(boolean isHidden) {
-        this.isHidden = isHidden;
-    }
-    
-    public String getDisplayValue() {
-		if (this.getPossibleValues() != null
-				&& !this.getPossibleValues().isEmpty() 
-				&& this.value != null) {
-			
+	public void setHidden(boolean isHidden) {
+		this.isHidden = isHidden;
+	}
+
+	public String getDisplayValue() {
+		if (this.getPossibleValues() != null && !this.getPossibleValues().isEmpty() && this.value != null) {
+
 			List<ValueReference> possibleValues = this.getPossibleValues();
 			for (ValueReference possibleValue : possibleValues) {
 				if (possibleValue.getName().equalsIgnoreCase(this.value)) {
 					return possibleValue.getDescription();
 				}
 			}
-			return this.value; //this would return the value from the db
+			return this.value; // this would return the value from the db
 		}
 		return this.value;
 	}
 
 	@Override
 	public String toString() {
-		return "SettingDetail [variable=" + variable + ", possibleValues=" + possibleValues
-				+ ", possibleValuesFavorite=" + possibleValuesFavorite + ", value=" + value
-				+ ", isDeletable=" + isDeletable + ", isFavorite=" + isFavorite + ", isHidden="
-				+ isHidden + ", order=" + order + ", group=" + group + ", pairedVariable="
-				+ pairedVariable + "]";
+		return "SettingDetail [variable=" + this.variable + ", possibleValues=" + this.possibleValues + ", possibleValuesFavorite="
+				+ this.possibleValuesFavorite + ", value=" + this.value + ", isDeletable=" + this.isDeletable + ", isFavorite="
+				+ this.isFavorite + ", isHidden=" + this.isHidden + ", order=" + this.order + ", group=" + this.group + ", pairedVariable="
+				+ this.pairedVariable + "]";
 	}
-    
-    
+
 }

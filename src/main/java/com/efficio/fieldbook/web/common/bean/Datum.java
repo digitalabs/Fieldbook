@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.util.ArrayList;
@@ -11,37 +12,35 @@ public class Datum {
 
 	private Integer termId;
 	private List<Value> values = new ArrayList<Value>();
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 	/**
-	 * 
+	 *
 	 * @return The termId
 	 */
 	public Integer getTermId() {
-		return termId;
+		return this.termId;
 	}
 
 	/**
-	 * 
-	 * @param termId
-	 *            The termId
+	 *
+	 * @param termId The termId
 	 */
 	public void setTermId(Integer termId) {
 		this.termId = termId;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The values
 	 */
 	public List<Value> getValues() {
-		return values;
+		return this.values;
 	}
 
 	/**
-	 * 
-	 * @param values
-	 *            The values
+	 *
+	 * @param values The values
 	 */
 	public void setValues(List<Value> values) {
 		this.values = values;

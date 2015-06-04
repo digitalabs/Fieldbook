@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.bean;
 
 import java.util.HashMap;
@@ -11,71 +12,67 @@ public class Value {
 	private boolean isSelected;
 	private String newValue;
 	private String action;
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 	/**
-	 * 
+	 *
 	 * @return The rowIndex
 	 */
 	public int getRowIndex() {
-		return rowIndex;
+		return this.rowIndex;
 	}
 
 	/**
-	 * 
-	 * @param rowIndex
-	 *            The rowIndex
+	 *
+	 * @param rowIndex The rowIndex
 	 */
 	public void setRowIndex(int rowIndex) {
 		this.rowIndex = rowIndex;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The isSelected
 	 */
 	public boolean isSelected() {
-		return isSelected;
+		return this.isSelected;
 	}
 
 	/**
-	 * 
-	 * @param isSelected
-	 *            The isSelected
+	 *
+	 * @param isSelected The isSelected
 	 */
 	public void setIsSelected(boolean isSelected) {
 		this.isSelected = isSelected;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The newValue
 	 */
 	public String getNewValue() {
-		return newValue;
+		return this.newValue;
 	}
 
 	/**
-	 * 
-	 * @param newValue
-	 *            The newValue
+	 *
+	 * @param newValue The newValue
 	 */
 	public void setNewValue(String newValue) {
 		this.newValue = newValue;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The action
 	 */
 	public String getAction() {
-		return action;
+		return this.action;
 	}
 
 	/**
-	 * 
-	 * @param action
-	 *            The action
+	 *
+	 * @param action The action
 	 */
 	public void setAction(String action) {
 		this.action = action;
@@ -88,10 +85,10 @@ public class Value {
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
 	}
-	
+
 	@Override
 	public String toString() {
-	return ToStringBuilder.reflectionToString(this);
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 }

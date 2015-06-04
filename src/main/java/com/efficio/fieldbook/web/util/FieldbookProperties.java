@@ -1,17 +1,19 @@
+
 package com.efficio.fieldbook.web.util;
 
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 
 public class FieldbookProperties {
+
 	private String programLocationsUrl;
 	private String programBreedingMethodsUrl;
 	private String germplasmImportUrl;
 	private String germplasmDetailsUrl;
-	
+
 	private String uploadDirectory;
 
 	public String getProgramLocationsUrl() {
-		return WorkbenchAppPathResolver.getFullWebAddress(programLocationsUrl);
+		return WorkbenchAppPathResolver.getFullWebAddress(this.programLocationsUrl);
 	}
 
 	public void setProgramLocationsUrl(String programLocationsUrl) {
@@ -19,7 +21,7 @@ public class FieldbookProperties {
 	}
 
 	public String getProgramBreedingMethodsUrl() {
-		return WorkbenchAppPathResolver.getFullWebAddress(programBreedingMethodsUrl);
+		return WorkbenchAppPathResolver.getFullWebAddress(this.programBreedingMethodsUrl);
 	}
 
 	public void setProgramBreedingMethodsUrl(String programBreedingMethodsUrl) {
@@ -27,7 +29,7 @@ public class FieldbookProperties {
 	}
 
 	public String getGermplasmImportUrl() {
-		return WorkbenchAppPathResolver.getFullWebAddress(germplasmImportUrl);
+		return WorkbenchAppPathResolver.getFullWebAddress(this.germplasmImportUrl);
 	}
 
 	public void setGermplasmImportUrl(String germplasmImportUrl) {
@@ -35,7 +37,7 @@ public class FieldbookProperties {
 	}
 
 	public String getGermplasmDetailsUrl() {
-		return WorkbenchAppPathResolver.getFullWebAddress(germplasmDetailsUrl);
+		return WorkbenchAppPathResolver.getFullWebAddress(this.germplasmDetailsUrl);
 	}
 
 	public void setGermplasmDetailsUrl(String germplasmDetailsUrl) {
@@ -43,7 +45,7 @@ public class FieldbookProperties {
 	}
 
 	public String getUploadDirectory() {
-		return uploadDirectory;
+		return this.uploadDirectory;
 	}
 
 	public void setUploadDirectory(String uploadDirectory) {

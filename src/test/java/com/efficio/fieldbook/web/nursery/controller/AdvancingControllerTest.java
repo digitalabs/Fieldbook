@@ -1,9 +1,12 @@
+
 package com.efficio.fieldbook.web.nursery.controller;
 
-import com.efficio.fieldbook.web.common.bean.*;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import junit.framework.Assert;
+
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -16,29 +19,27 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.AdvanceResult;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
-    
+
 	@Mock
-    private OntologyDataManager ontologyDataManager;
+	private OntologyDataManager ontologyDataManager;
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
@@ -56,60 +57,54 @@ public class AdvancingControllerTest {
 	private MessageSource messageSource;
 
 	@Spy
-	private AdvancingNursery advancingNursery = new AdvancingNursery();
+	private final AdvancingNursery advancingNursery = new AdvancingNursery();
 
 	@InjectMocks
-	private AdvancingController advancingController = spy(new AdvancingController());
+	private final AdvancingController advancingController = Mockito.spy(new AdvancingController());
 
 	@Test
-	public void testGetAdvancedNurseryTableHeader_returnsTheValueFromColumLabelDefaultName() throws MiddlewareQueryException{
+	public void testGetAdvancedNurseryTableHeader_returnsTheValueFromColumLabelDefaultName() throws MiddlewareQueryException {
 		Term fromOntology = new Term();
-		when(ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
-		when(ontologyDataManager.getTermById(TermId.DESIG.getId())).thenReturn(fromOntology);
-		when(ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
-		when(ontologyDataManager.getTermById(TermId.GID.getId())).thenReturn(fromOntology);
-		when(ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
-		
-		List<TableHeader> tableHeaderList = advancingController.getAdvancedNurseryTableHeader();
-		assertEquals("Expecting to return 5 columns but returned " + tableHeaderList.size(), 5,
-				tableHeaderList.size());
-		
-		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", hasColumnHeader(tableHeaderList,"ENTRY_ID"));
-		Assert.assertTrue("Expecting to have a column name DESIGNATION.", hasColumnHeader(tableHeaderList,"DESIGNATION"));
-		Assert.assertTrue("Expecting to have a column name PARENTAGE.",
-				hasColumnHeader(tableHeaderList, "PARENTAGE"));
-		Assert.assertTrue("Expecting to have a column name GID.", hasColumnHeader(tableHeaderList,"GID"));
-		Assert.assertTrue("Expecting to have a column name SEED SOURCE.",
-				hasColumnHeader(tableHeaderList, "SEED SOURCE"));
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.DESIG.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.GID.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
+
+		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedNurseryTableHeader();
+		Assert.assertEquals("Expecting to return 5 columns but returned " + tableHeaderList.size(), 5, tableHeaderList.size());
+
+		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", this.hasColumnHeader(tableHeaderList, "ENTRY_ID"));
+		Assert.assertTrue("Expecting to have a column name DESIGNATION.", this.hasColumnHeader(tableHeaderList, "DESIGNATION"));
+		Assert.assertTrue("Expecting to have a column name PARENTAGE.", this.hasColumnHeader(tableHeaderList, "PARENTAGE"));
+		Assert.assertTrue("Expecting to have a column name GID.", this.hasColumnHeader(tableHeaderList, "GID"));
+		Assert.assertTrue("Expecting to have a column name SEED SOURCE.", this.hasColumnHeader(tableHeaderList, "SEED SOURCE"));
 	}
-	
-	private boolean hasColumnHeader(List<TableHeader> tableHeaderList,
-			String columnName) {
-		for(TableHeader tableHeader: tableHeaderList){
-			if(tableHeader.getColumnName().equals(columnName)){
+
+	private boolean hasColumnHeader(List<TableHeader> tableHeaderList, String columnName) {
+		for (TableHeader tableHeader : tableHeaderList) {
+			if (tableHeader.getColumnName().equals(columnName)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	@Test
-	public void testGetAdvancedNurseryTableHeader_returnsTheValueFromOntology() throws MiddlewareQueryException{
+	public void testGetAdvancedNurseryTableHeader_returnsTheValueFromOntology() throws MiddlewareQueryException {
 		Term fromOntology = new Term();
 		fromOntology.setName("Ontology Name");
-		when(ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
-		when(ontologyDataManager.getTermById(TermId.DESIG.getId())).thenReturn(fromOntology);
-		when(ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
-		when(ontologyDataManager.getTermById(TermId.GID.getId())).thenReturn(fromOntology);
-		when(ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
-		
-		List<TableHeader> tableHeaderList = advancingController.getAdvancedNurseryTableHeader();
-		assertEquals("Expecting to return 5 columns but returned " + tableHeaderList.size(),
-				5, tableHeaderList.size());
-		
-		for(TableHeader tableHeader : tableHeaderList){		
-			assertEquals("Expecting name from ontology but didn't.", fromOntology.getName(),
-					tableHeader.getColumnName());
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.ENTRY_NO.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.DESIG.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.CROSS.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.GID.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
+
+		List<TableHeader> tableHeaderList = this.advancingController.getAdvancedNurseryTableHeader();
+		Assert.assertEquals("Expecting to return 5 columns but returned " + tableHeaderList.size(), 5, tableHeaderList.size());
+
+		for (TableHeader tableHeader : tableHeaderList) {
+			Assert.assertEquals("Expecting name from ontology but didn't.", fromOntology.getName(), tableHeader.getColumnName());
 		}
 	}
 
@@ -119,56 +114,51 @@ public class AdvancingControllerTest {
 
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
-		importedGermplasm.add(mock(ImportedGermplasm.class));
+		importedGermplasm.add(Mockito.mock(ImportedGermplasm.class));
 
 		Method method = new Method();
 		method.setMtype("DER");
 
-		preparePostAdvanceNursery(form,method, importedGermplasm);
+		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
 		// scenario 1, has a method choice and breeding method not a Generative
-		Map<String,Object> output = advancingController.postAdvanceNursery(form,null,null);
+		Map<String, Object> output = this.advancingController.postAdvanceNursery(form, null, null);
 
-		assertEquals("should be successful", "1", output.get("isSuccess"));
-		assertEquals("should have at least 1 imported germplasm list", importedGermplasm.size(),
-				output.get("listSize"));
-		assertNotNull("should have advance germplasm change details",
-				output.get("advanceGermplasmChangeDetails"));
-		assertNotNull("should have generated unique id", output.get("uniqueId"));
-		
+		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
+		Assert.assertEquals("should have at least 1 imported germplasm list", importedGermplasm.size(), output.get("listSize"));
+		Assert.assertNotNull("should have advance germplasm change details", output.get("advanceGermplasmChangeDetails"));
+		Assert.assertNotNull("should have generated unique id", output.get("uniqueId"));
+
 		form.setMethodChoice(null);
-		output = advancingController.postAdvanceNursery(form,null,null);
-		assertEquals("should be successful", "1", output.get("isSuccess"));
+		output = this.advancingController.postAdvanceNursery(form, null, null);
+		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
 
 	}
 
 	@Test
-	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareQueryException,
-			RuleException {
+	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareQueryException, RuleException {
 		// setup
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
 		Method method = new Method();
 		method.setMtype("DER");
 
-		preparePostAdvanceNursery(form,method, importedGermplasm);
+		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
-		when(fieldbookService.advanceNursery(eq(advancingNursery), any(Workbook.class))).thenThrow(
-				mock(RuleException.class));
+		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class))).thenThrow(
+				Mockito.mock(RuleException.class));
 
-		doNothing().when(paginationListSelection).addAdvanceDetails(anyString(), eq(form));
+		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(Matchers.anyString(), Matchers.eq(form));
 
 		// scenario 2, has a method throwing exception
-		Map<String,Object> output = advancingController.postAdvanceNursery(form, null, null);
+		Map<String, Object> output = this.advancingController.postAdvanceNursery(form, null, null);
 
-		assertEquals("should fail", "0", output.get("isSuccess"));
-		assertEquals("should have at least 0 imported germplasm list", Integer.valueOf(0),
-				output.get("listSize"));
+		Assert.assertEquals("should fail", "0", output.get("isSuccess"));
+		Assert.assertEquals("should have at least 0 imported germplasm list", Integer.valueOf(0), output.get("listSize"));
 	}
 
 	@Test
-	public void testPostAdvanceNurseryGenerativeMethodError() throws MiddlewareQueryException,
-			RuleException {
+	public void testPostAdvanceNurseryGenerativeMethodError() throws MiddlewareQueryException, RuleException {
 		// setup
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
@@ -176,74 +166,75 @@ public class AdvancingControllerTest {
 		Method method = new Method();
 		method.setMtype("GEN");
 
-		preparePostAdvanceNursery(form,method, importedGermplasm);
+		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
-		when(fieldbookService.advanceNursery(eq(advancingNursery), any(Workbook.class))).thenThrow(
-				mock(RuleException.class));
+		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class))).thenThrow(
+				Mockito.mock(RuleException.class));
 
 		// scenario 2, has a method throwing exception
-		Map<String,Object> output = advancingController.postAdvanceNursery(form, null, null);
+		Map<String, Object> output = this.advancingController.postAdvanceNursery(form, null, null);
 
-		assertEquals("should fail", "0", output.get("isSuccess"));
-		assertEquals("should have at least 0 imported germplasm list", 0,
-				output.get("listSize"));
-		assertEquals("should have error message","error.message",output.get("message"));
+		Assert.assertEquals("should fail", "0", output.get("isSuccess"));
+		Assert.assertEquals("should have at least 0 imported germplasm list", 0, output.get("listSize"));
+		Assert.assertEquals("should have error message", "error.message", output.get("message"));
 	}
 
-	private void preparePostAdvanceNursery(AdvancingNurseryForm form,Method method,ArrayList<ImportedGermplasm> importedGermplasm) throws MiddlewareQueryException, RuleException {
+	private void preparePostAdvanceNursery(AdvancingNurseryForm form, Method method, ArrayList<ImportedGermplasm> importedGermplasm)
+			throws MiddlewareQueryException, RuleException {
 		// setup
 		form.setMethodChoice("1");
 		form.setAdvanceBreedingMethodId("10");
 
-		AdvanceResult result = mock(AdvanceResult.class);
+		AdvanceResult result = Mockito.mock(AdvanceResult.class);
 
-		when(result.getAdvanceList()).thenReturn(importedGermplasm);
-		when(result.getChangeDetails()).thenReturn(new ArrayList<AdvanceGermplasmChangeDetail>());
-		when(fieldbookMiddlewareService.getMethodById(anyInt())).thenReturn(method);
-		when(fieldbookService.advanceNursery(eq(advancingNursery), any(Workbook.class))).thenReturn(
+		Mockito.when(result.getAdvanceList()).thenReturn(importedGermplasm);
+		Mockito.when(result.getChangeDetails()).thenReturn(new ArrayList<AdvanceGermplasmChangeDetail>());
+		Mockito.when(this.fieldbookMiddlewareService.getMethodById(Matchers.anyInt())).thenReturn(method);
+		Mockito.when(this.fieldbookService.advanceNursery(Matchers.eq(this.advancingNursery), Matchers.any(Workbook.class))).thenReturn(
 				result);
-		when(messageSource.getMessage(
-				eq("nursery.save.advance.error.row.list.empty.generative.method"),
-				any(String[].class), eq(
-				LocaleContextHolder.getLocale())))
-				.thenReturn("error.message");
+		Mockito.when(
+				this.messageSource.getMessage(Matchers.eq("nursery.save.advance.error.row.list.empty.generative.method"),
+						Matchers.any(String[].class), Matchers.eq(LocaleContextHolder.getLocale()))).thenReturn("error.message");
 
-		doNothing().when(paginationListSelection).addAdvanceDetails(anyString(), eq(form));
+		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(Matchers.anyString(), Matchers.eq(form));
 
 	}
+
 	@Test
-	public void testDeleteImportedGermplasmEntriesIfDeleted(){
+	public void testDeleteImportedGermplasmEntriesIfDeleted() {
 		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
-		for(int i = 0 ; i < 10 ; i++){
+		for (int i = 0; i < 10; i++) {
 			ImportedGermplasm germplasm = new ImportedGermplasm();
 			germplasm.setEntryId(i);
 			importedGermplasms.add(germplasm);
 		}
-		String entries[] = {"1","2","3"};
-		importedGermplasms = advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
+		String entries[] = {"1", "2", "3"};
+		importedGermplasms = this.advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
 		Assert.assertEquals("Should have a total of 7 germplasms remaining", 7, importedGermplasms.size());
 	}
-	
-	private List<ImportedGermplasm> generateGermplasm(){
+
+	private List<ImportedGermplasm> generateGermplasm() {
 		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
-		for(int i = 0 ; i < 10 ; i++){
+		for (int i = 0; i < 10; i++) {
 			ImportedGermplasm germplasm = new ImportedGermplasm();
 			germplasm.setEntryId(i);
 			importedGermplasms.add(germplasm);
 		}
 		return importedGermplasms;
 	}
+
 	@Test
-	public void testDeleteImportedGermplasmEntriesIfNoneDeleted(){
-		List<ImportedGermplasm> importedGermplasms = generateGermplasm();
+	public void testDeleteImportedGermplasmEntriesIfNoneDeleted() {
+		List<ImportedGermplasm> importedGermplasms = this.generateGermplasm();
 		String entries[] = {};
-		importedGermplasms = advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
+		importedGermplasms = this.advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
 		Assert.assertEquals("Should have a total of 10 germplasms, since nothing is deleted", 10, importedGermplasms.size());
 	}
+
 	@Test
-	public void testSetupAdvanceReviewDataList(){
-		List<ImportedGermplasm> importedGermplasms = generateGermplasm();
-		List<Map<String, Object>> mapInfos = advancingController.setupAdvanceReviewDataList(importedGermplasms);
+	public void testSetupAdvanceReviewDataList() {
+		List<ImportedGermplasm> importedGermplasms = this.generateGermplasm();
+		List<Map<String, Object>> mapInfos = this.advancingController.setupAdvanceReviewDataList(importedGermplasms);
 		Assert.assertEquals("Should have the same number of records", importedGermplasms.size(), mapInfos.size());
 	}
 }

@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
@@ -34,46 +34,48 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 public class RExportStudyServiceImpl implements RExportStudyService {
 
 	@Resource
-    private FieldbookProperties fieldbookProperties;
-	
+	private FieldbookProperties fieldbookProperties;
+
 	@Resource
 	private OntologyService ontologyService;
 
 	@Override
 	public String export(Workbook workbook, String outputFile, List<Integer> instances) {
-		return exportToR(workbook, outputFile, null, instances);
+		return this.exportToR(workbook, outputFile, null, instances);
 	}
-	
+
 	@Override
 	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, List<Integer> instances) {
-		String outFile = fieldbookProperties.getUploadDirectory() + File.separator + outputFile;
-        boolean alreadyExists = new File(outFile).exists();
-        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
-        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), instances);
-        CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
-        CsvWriter csvOutput = null;
-        try {
-            csvOutput = new CsvWriter(new FileWriter(outFile, false), ',');
-            csvOutput.write("LOC");
-            csvOutput.write("REP");
-            csvOutput.write("BLK");
-            csvOutput.write("ENTRY");
-            csvOutput.write("GY");
-            csv.defineTraitToEvaluate(getLabel(workbook.getVariates(), selectedTrait));
-            csv.setSelectedTrait(getMeasurementVariable(workbook.getVariates(), csv.getStringTraitToEvaluate()));
-            csv.writeTraitsR(csvOutput);
-            csvOutput.endRecord();
-            csv.writeDATAR(csvOutput, ontologyService);
-            
-        } catch (IOException e) {
-        	e.printStackTrace();
-        	
-        } finally {
-        	if (csvOutput != null) {
-        		csvOutput.close();
-        	}
-        }
-        return outFile;
+		String outFile = this.fieldbookProperties.getUploadDirectory() + File.separator + outputFile;
+		boolean alreadyExists = new File(outFile).exists();
+		List<MeasurementRow> observations =
+				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
+		List<MeasurementRow> trialObservations =
+				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), instances);
+		CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
+		CsvWriter csvOutput = null;
+		try {
+			csvOutput = new CsvWriter(new FileWriter(outFile, false), ',');
+			csvOutput.write("LOC");
+			csvOutput.write("REP");
+			csvOutput.write("BLK");
+			csvOutput.write("ENTRY");
+			csvOutput.write("GY");
+			csv.defineTraitToEvaluate(this.getLabel(workbook.getVariates(), selectedTrait));
+			csv.setSelectedTrait(this.getMeasurementVariable(workbook.getVariates(), csv.getStringTraitToEvaluate()));
+			csv.writeTraitsR(csvOutput);
+			csvOutput.endRecord();
+			csv.writeDATAR(csvOutput, this.ontologyService);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+
+		} finally {
+			if (csvOutput != null) {
+				csvOutput.close();
+			}
+		}
+		return outFile;
 	}
 
 	private String getLabel(List<MeasurementVariable> variables, Integer termId) {
@@ -86,7 +88,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 		}
 		return null;
 	}
-	
+
 	private MeasurementVariable getMeasurementVariable(List<MeasurementVariable> variables, String label) {
 		if (variables != null && label != null) {
 			for (MeasurementVariable variable : variables) {

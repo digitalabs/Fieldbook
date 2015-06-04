@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import com.efficio.pojos.treeview.TreeNode;
 @Controller
 @RequestMapping(StudyTreeController.URL)
 public class StudyTreeController {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(StudyTreeController.class);
 	public static final String URL = "/StudyTreeManager";
 	public static final String LOCAL = "LOCAL";
@@ -46,73 +47,74 @@ public class StudyTreeController {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	@Resource
 	private StudyDataManager studyDataManager;
 	@Autowired
-    public MessageSource messageSource;
-	
+	public MessageSource messageSource;
+
 	@Autowired
 	public ContextUtil contextUtil;
-	
+
 	@Autowired
 	HttpServletRequest request;
 
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
 	public String loadInitialTree(@PathVariable String isFolderOnly, @PathVariable String type) {
-		boolean isNursery = (type != null && "N".equalsIgnoreCase(type)) ? true : false;
+		boolean isNursery = type != null && "N".equalsIgnoreCase(type) ? true : false;
 		try {
 			List<TreeNode> rootNodes = new ArrayList<TreeNode>();
 			String localName = isNursery ? AppConstants.NURSERIES.getString() : AppConstants.TRIALS.getString();
-			TreeNode localTreeNode = new TreeNode(LOCAL, localName, true, "lead", 
-					AppConstants.FOLDER_ICON_PNG.getString(), getCurrentProgramUUID());			
+			TreeNode localTreeNode =
+					new TreeNode(StudyTreeController.LOCAL, localName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString(),
+							this.getCurrentProgramUUID());
 			rootNodes.add(localTreeNode);
 			return TreeViewUtil.convertTreeViewToJson(rootNodes);
 		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
+			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
 		return "[]";
 	}
 
-	private List<TreeNode> getChildNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException{
+	private List<TreeNode> getChildNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
-		if(parentKey != null && !"".equals(parentKey)){
+		if (parentKey != null && !"".equals(parentKey)) {
 			try {
-				if (LOCAL.equals(parentKey)) {
-					List<FolderReference> rootFolders = fieldbookMiddlewareService.
-							getRootFolders(getCurrentProgramUUID());
-						childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(
-								rootFolders, isNursery, false, true,
-								fieldbookMiddlewareService, isFolderOnly);
+				if (StudyTreeController.LOCAL.equals(parentKey)) {
+					List<FolderReference> rootFolders = this.fieldbookMiddlewareService.getRootFolders(this.getCurrentProgramUUID());
+					childNodes =
+							TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, isNursery, false, true,
+									this.fieldbookMiddlewareService, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
-					childNodes = getChildrenTreeNodes(parentKey, isNursery, isFolderOnly);
+					childNodes = this.getChildrenTreeNodes(parentKey, isNursery, isFolderOnly);
 				} else {
-					LOG.error("parentKey = " + parentKey + " is not a number");
+					StudyTreeController.LOG.error("parentKey = " + parentKey + " is not a number");
 				}
 			} catch (Exception e) {
-				LOG.error(e.getMessage(), e);
-			}			
+				StudyTreeController.LOG.error(e.getMessage(), e);
+			}
 		}
 
-		for(TreeNode newNode : childNodes){
-			List<TreeNode> childOfChildNode = getChildrenTreeNodes(newNode.getKey(), isNursery, isFolderOnly);
-			if(childOfChildNode.isEmpty()) {
+		for (TreeNode newNode : childNodes) {
+			List<TreeNode> childOfChildNode = this.getChildrenTreeNodes(newNode.getKey(), isNursery, isFolderOnly);
+			if (childOfChildNode.isEmpty()) {
 				newNode.setIsLazy(false);
 			}
 		}
 		return childNodes;
 	}
-	
-	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException{
+
+	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		int parentId = Integer.valueOf(parentKey);
-		List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId, getCurrentProgramUUID());
-		
+		List<Reference> folders = this.fieldbookMiddlewareService.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
+
 		// convert reference to folder reference
 		List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
-		childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folRefs, isNursery, false, true, fieldbookMiddlewareService,
-				isFolderOnly);
+		childNodes =
+				TreeViewUtil.convertStudyFolderReferencesToTreeView(folRefs, isNursery, false, true, this.fieldbookMiddlewareService,
+						isFolderOnly);
 		return childNodes;
 	}
 
@@ -120,12 +122,12 @@ public class StudyTreeController {
 	@RequestMapping(value = "/expandTree/{type}/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
 	public String expandTree(@PathVariable String parentKey, @PathVariable String isFolderOnly, @PathVariable String type) {
 		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
-		boolean isNursery = (type != null && "N".equalsIgnoreCase(type)) ? true : false;
+		boolean isNursery = type != null && "N".equalsIgnoreCase(type) ? true : false;
 		try {
-			List<TreeNode> childNodes = getChildNodes(parentKey, isNursery, isFolderOnlyBool);
+			List<TreeNode> childNodes = this.getChildNodes(parentKey, isNursery, isFolderOnlyBool);
 			return TreeViewUtil.convertTreeViewToJson(childNodes);
 		} catch (Exception e) {
-			LOG.error(e.getMessage(),e);
+			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
 		return "[]";
 	}
@@ -135,36 +137,35 @@ public class StudyTreeController {
 	public String retrieveChildren(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
 		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
 		try {
-			if (LOCAL.equals(parentKey)) {
-				return getRootFolders(isFolderOnlyBool);
+			if (StudyTreeController.LOCAL.equals(parentKey)) {
+				return this.getRootFolders(isFolderOnlyBool);
 			} else if (NumberUtils.isNumber(parentKey)) {
 
 				int parentId = Integer.valueOf(parentKey);
-				List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId, getCurrentProgramUUID());
+				List<Reference> folders = this.fieldbookMiddlewareService.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
 				// convert reference to folder refence
 				List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
-				return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, false, true, fieldbookMiddlewareService, isFolderOnlyBool);
+				return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, false, true, this.fieldbookMiddlewareService,
+						isFolderOnlyBool);
 
 			} else {
-				LOG.error("parentKey = " + parentKey + " is not a number");
+				StudyTreeController.LOG.error("parentKey = " + parentKey + " is not a number");
 			}
 
 		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
+			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
 
 		return "[]";
 	}
-	
+
 	private String getRootFolders(boolean isFolderOnly) {
 		try {
-			List<FolderReference> rootFolders = fieldbookMiddlewareService.
-					getRootFolders(getCurrentProgramUUID());
-			return TreeViewUtil.convertStudyFolderReferencesToJson(
-					rootFolders, true, false, true,
-					fieldbookMiddlewareService, isFolderOnly);
+			List<FolderReference> rootFolders = this.fieldbookMiddlewareService.getRootFolders(this.getCurrentProgramUUID());
+			return TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true, this.fieldbookMiddlewareService,
+					isFolderOnly);
 		} catch (Exception e) {
-			LOG.error(e.getMessage(),e);
+			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
 		return "[]";
 	}
@@ -173,22 +174,21 @@ public class StudyTreeController {
 	@RequestMapping(value = "/has/observations/{studyId}/{studyName}", method = RequestMethod.GET)
 	public Map<String, String> hasObservations(@PathVariable int studyId, @PathVariable String studyName) {
 		Map<String, String> dataResults = new HashMap<String, String>();
-		
+
 		int datasetId;
 		try {
-			datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
-			long observationCount = fieldbookMiddlewareService.countObservations(datasetId);
-			if(observationCount > 0){
-				dataResults.put(HAS_OBSERVATIONS, "1");
-			}else{
-				dataResults.put(HAS_OBSERVATIONS, "0");
+			datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
+			long observationCount = this.fieldbookMiddlewareService.countObservations(datasetId);
+			if (observationCount > 0) {
+				dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "1");
+			} else {
+				dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "0");
 			}
 		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(),e);
-			dataResults.put(HAS_OBSERVATIONS, "0");
+			StudyTreeController.LOG.error(e.getMessage(), e);
+			dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "0");
 		}
-		
-		
+
 		return dataResults;
 	}
 
@@ -199,27 +199,27 @@ public class StudyTreeController {
 		String studyName = req.getParameter("name");
 		Integer studyIdInt = Integer.valueOf(studyId);
 
-
-        Map<String, Object> resultsMap = new HashMap<String, Object>();
+		Map<String, Object> resultsMap = new HashMap<String, Object>();
 		try {
 
-            Integer studyIdDb = fieldbookMiddlewareService.getProjectIdByNameAndProgramUUID(
-            		HtmlUtils.htmlEscape(studyName),getCurrentProgramUUID());
+			Integer studyIdDb =
+					this.fieldbookMiddlewareService.getProjectIdByNameAndProgramUUID(HtmlUtils.htmlEscape(studyName),
+							this.getCurrentProgramUUID());
 
-			if(studyIdDb == null) {
+			if (studyIdDb == null) {
 				// meaning there is no study
-				resultsMap.put(IS_SUCCESS, "1");
+				resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 			} else if (studyIdInt.intValue() == 0 && studyIdDb != 0) {
 				// meaning new
-				resultsMap.put(IS_SUCCESS, "0");
+				resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
 			} else if (studyIdInt.intValue() == studyIdDb) {
-				resultsMap.put(IS_SUCCESS, "1");
+				resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 			}
 
 		} catch (Exception e) {
-			LOG.error(e.getMessage(),e);
-			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put(MESSAGE, e.getMessage());
+			StudyTreeController.LOG.error(e.getMessage(), e);
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
+			resultsMap.put(StudyTreeController.MESSAGE, e.getMessage());
 		}
 		return resultsMap;
 
@@ -231,27 +231,27 @@ public class StudyTreeController {
 		String parentKey = req.getParameter("parentFolderId");
 		String folderName = req.getParameter("folderName");
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
-		 Locale locale = LocaleContextHolder.getLocale();
+		Locale locale = LocaleContextHolder.getLocale();
 		try {
-			if(folderName.equalsIgnoreCase(AppConstants.NURSERIES.getString()) ||
-				folderName.equalsIgnoreCase(AppConstants.TRIALS.getString())){
-				 throw new MiddlewareQueryException(messageSource.getMessage("folder.name.not.unique", null, locale));
+			if (folderName.equalsIgnoreCase(AppConstants.NURSERIES.getString())
+					|| folderName.equalsIgnoreCase(AppConstants.TRIALS.getString())) {
+				throw new MiddlewareQueryException(this.messageSource.getMessage("folder.name.not.unique", null, locale));
 			}
 			Integer parentFolderId = Integer.parseInt(parentKey);
-			if (!TreeViewUtil.isFolder(parentFolderId, fieldbookMiddlewareService)) {
-				DmsProject project = studyDataManager.getParentFolder(parentFolderId);
+			if (!TreeViewUtil.isFolder(parentFolderId, this.fieldbookMiddlewareService)) {
+				DmsProject project = this.studyDataManager.getParentFolder(parentFolderId);
 				if (project == null) {
 					throw new MiddlewareQueryException("Parent folder cannot be null");
 				}
 				parentFolderId = project.getProjectId();
 			}
-			int newFolderId = studyDataManager.addSubFolder(parentFolderId, folderName, folderName, getCurrentProgramUUID());
-			resultsMap.put(IS_SUCCESS, "1");
+			int newFolderId = this.studyDataManager.addSubFolder(parentFolderId, folderName, folderName, this.getCurrentProgramUUID());
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 			resultsMap.put("newFolderId", Integer.toString(newFolderId));
 		} catch (Exception e) {
-			LOG.error(e.getMessage(),e);
-			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put(MESSAGE, e.getMessage());
+			StudyTreeController.LOG.error(e.getMessage(), e);
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
+			resultsMap.put(StudyTreeController.MESSAGE, e.getMessage());
 		}
 		return resultsMap;
 
@@ -261,21 +261,20 @@ public class StudyTreeController {
 	@RequestMapping(value = "/renameStudyFolder", method = RequestMethod.POST)
 	public Map<String, Object> renameStudyFolder(HttpServletRequest req) {
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
-		 Locale locale = LocaleContextHolder.getLocale();
+		Locale locale = LocaleContextHolder.getLocale();
 		try {
 			String newFolderName = req.getParameter("newFolderName");
 			String folderId = req.getParameter("folderId");
-			if(newFolderName.equalsIgnoreCase(AppConstants.NURSERIES.getString()) ||
-			   newFolderName.equalsIgnoreCase(AppConstants.TRIALS.getString())){
-				 throw new MiddlewareQueryException(messageSource.getMessage("folder.name.not.unique", null, locale));
+			if (newFolderName.equalsIgnoreCase(AppConstants.NURSERIES.getString())
+					|| newFolderName.equalsIgnoreCase(AppConstants.TRIALS.getString())) {
+				throw new MiddlewareQueryException(this.messageSource.getMessage("folder.name.not.unique", null, locale));
 			}
-			this.studyDataManager.renameSubFolder(
-					newFolderName, Integer.parseInt(folderId),getCurrentProgramUUID());
-			resultsMap.put(IS_SUCCESS, "1");
+			this.studyDataManager.renameSubFolder(newFolderName, Integer.parseInt(folderId), this.getCurrentProgramUUID());
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(),e);
-			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put(MESSAGE, e.getMessage());
+			StudyTreeController.LOG.error(e.getMessage(), e);
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
+			resultsMap.put(StudyTreeController.MESSAGE, e.getMessage());
 		}
 		return resultsMap;
 	}
@@ -287,13 +286,14 @@ public class StudyTreeController {
 		Locale locale = LocaleContextHolder.getLocale();
 		try {
 			String folderId = req.getParameter("folderId");
-			studyDataManager.deleteEmptyFolder(Integer.parseInt(folderId), getCurrentProgramUUID());
-			resultsMap.put(IS_SUCCESS, "1");
+			this.studyDataManager.deleteEmptyFolder(Integer.parseInt(folderId), this.getCurrentProgramUUID());
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "1");
 		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(),e);
-			resultsMap.put(IS_SUCCESS, "0");
-			resultsMap.put(MESSAGE, messageSource.getMessage("browse.nursery.delete.folder.has.children", null, locale));
-			
+			StudyTreeController.LOG.error(e.getMessage(), e);
+			resultsMap.put(StudyTreeController.IS_SUCCESS, "0");
+			resultsMap.put(StudyTreeController.MESSAGE,
+					this.messageSource.getMessage("browse.nursery.delete.folder.has.children", null, locale));
+
 		}
 		return resultsMap;
 	}
@@ -307,15 +307,15 @@ public class StudyTreeController {
 		boolean isAStudy = "1".equalsIgnoreCase(isStudy) ? true : false;
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
 		try {
-			studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
+			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
 		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(),e);
-			throw new MiddlewareQueryException(e.getMessage(),e);
+			StudyTreeController.LOG.error(e.getMessage(), e);
+			throw new MiddlewareQueryException(e.getMessage(), e);
 		}
 		return resultsMap;
 	}
-	
+
 	protected String getCurrentProgramUUID() throws MiddlewareQueryException {
-		return contextUtil.getCurrentProgramUUID();
+		return this.contextUtil.getCurrentProgramUUID();
 	}
 }

@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.common.form;
 
 import java.util.List;
@@ -24,73 +24,72 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
  * The Class AddOrRemoveTraitsForm.
  */
 public class AddOrRemoveTraitsForm {
-	
+
 	/** The measurement row list. */
 	private List<MeasurementRow> measurementRowList;
-	
+
 	/** The measurement variables. */
 	private List<MeasurementVariable> measurementVariables;
-	
+
 	/** The paginated imported germplasm. */
-	private List<MeasurementRow> paginatedMeasurementRowList;	
-	
+	private List<MeasurementRow> paginatedMeasurementRowList;
+
 	/** The current page. */
 	private int currentPage;
-		
+
 	/** The total pages. */
 	private int totalPages;
-	
+
 	/** The result per page. */
-	private int resultPerPage = 100;	
-	
+	private int resultPerPage = 100;
+
 	/** The file. */
 	private MultipartFile file;
-	
+
 	/** The has error. */
 	private String hasError;
-	
+
 	/** The import val. */
 	private int importVal;
-	
+
 	/** The study name. */
 	private String studyName;
-	
+
 	/** The export instance type. */
 	private String exportInstanceType;
-    
-	 /** The export trial instance start. */
-    private String exportTrialInstanceNumber;
-    /** The export trial instance start. */
-    private String exportTrialInstanceStart;
-    
-    /** The export trial instance end. */
-    private String exportTrialInstanceEnd;
-    
-    /** The number of instances. */
-    private int numberOfInstances;
-    
-    /** The trial environment values. */
-    private List<List<ValueReference>> trialEnvironmentValues;
-    
-    /** The trial level variables. */
-    private List<SettingDetail> trialLevelVariables;
-    
-    /** The location id. */
-    private String locationId;
-    /** The location url. */
-    private String locationUrl;
-	
-    private MeasurementRow updateObservation;
-    private Integer experimentIndex;
-    
-	
+
+	/** The export trial instance start. */
+	private String exportTrialInstanceNumber;
+	/** The export trial instance start. */
+	private String exportTrialInstanceStart;
+
+	/** The export trial instance end. */
+	private String exportTrialInstanceEnd;
+
+	/** The number of instances. */
+	private int numberOfInstances;
+
+	/** The trial environment values. */
+	private List<List<ValueReference>> trialEnvironmentValues;
+
+	/** The trial level variables. */
+	private List<SettingDetail> trialLevelVariables;
+
+	/** The location id. */
+	private String locationId;
+	/** The location url. */
+	private String locationUrl;
+
+	private MeasurementRow updateObservation;
+	private Integer experimentIndex;
+
 	/**
 	 * Gets the study name.
 	 *
 	 * @return the study name
 	 */
 	public String getStudyName() {
-		return studyName;
+		return this.studyName;
 	}
 
 	/**
@@ -108,7 +107,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the measurement row list
 	 */
 	public List<MeasurementRow> getMeasurementRowList() {
-		return measurementRowList;
+		return this.measurementRowList;
 	}
 
 	/**
@@ -126,7 +125,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the measurement variables
 	 */
 	public List<MeasurementVariable> getMeasurementVariables() {
-		return measurementVariables;
+		return this.measurementVariables;
 	}
 
 	/**
@@ -134,8 +133,7 @@ public class AddOrRemoveTraitsForm {
 	 *
 	 * @param measurementVariables the new measurement variables
 	 */
-	public void setMeasurementVariables(
-			List<MeasurementVariable> measurementVariables) {
+	public void setMeasurementVariables(List<MeasurementVariable> measurementVariables) {
 		this.measurementVariables = measurementVariables;
 	}
 
@@ -145,7 +143,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the paginated measurement row list
 	 */
 	public List<MeasurementRow> getPaginatedMeasurementRowList() {
-		return paginatedMeasurementRowList;
+		return this.paginatedMeasurementRowList;
 	}
 
 	/**
@@ -153,8 +151,7 @@ public class AddOrRemoveTraitsForm {
 	 *
 	 * @param paginatedMeasurementRowList the new paginated measurement row list
 	 */
-	public void setPaginatedMeasurementRowList(
-			List<MeasurementRow> paginatedMeasurementRowList) {
+	public void setPaginatedMeasurementRowList(List<MeasurementRow> paginatedMeasurementRowList) {
 		this.paginatedMeasurementRowList = paginatedMeasurementRowList;
 	}
 
@@ -164,7 +161,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the current page
 	 */
 	public int getCurrentPage() {
-		return currentPage;
+		return this.currentPage;
 	}
 
 	/**
@@ -173,28 +170,28 @@ public class AddOrRemoveTraitsForm {
 	 * @param currentPage the new current page
 	 */
 	public void setCurrentPage(int currentPage) {
-		 //assumption is there is an imported germplasm already
-		 this.currentPage = 0;
+		// assumption is there is an imported germplasm already
+		this.currentPage = 0;
 	}
-	
+
 	/**
 	 * Change page.
 	 *
 	 * @param currentPage the current page
 	 */
-	public void changePage(int currentPage){
-		if(measurementRowList != null && !measurementRowList.isEmpty()){
-            int totalItemsPerPage = getResultPerPage();
-            int start = (currentPage - 1) * totalItemsPerPage;
-            int end = start + totalItemsPerPage;
-            if(measurementRowList.size() < end){
-                end = measurementRowList.size();
-            }
-            paginatedMeasurementRowList = measurementRowList.subList(start, end);
-            this.currentPage = currentPage;
-        }else{
-            this.currentPage = 0;
-        }
+	public void changePage(int currentPage) {
+		if (this.measurementRowList != null && !this.measurementRowList.isEmpty()) {
+			int totalItemsPerPage = this.getResultPerPage();
+			int start = (currentPage - 1) * totalItemsPerPage;
+			int end = start + totalItemsPerPage;
+			if (this.measurementRowList.size() < end) {
+				end = this.measurementRowList.size();
+			}
+			this.paginatedMeasurementRowList = this.measurementRowList.subList(start, end);
+			this.currentPage = currentPage;
+		} else {
+			this.currentPage = 0;
+		}
 	}
 
 	/**
@@ -203,12 +200,12 @@ public class AddOrRemoveTraitsForm {
 	 * @return the total pages
 	 */
 	public int getTotalPages() {
-		 if(measurementRowList != null && !measurementRowList.isEmpty()){           
-	            totalPages = (int) Math.ceil((measurementRowList.size() * 1f) / getResultPerPage()); 
-	        }else{
-	            totalPages = 0;
-	        }
-		    return totalPages;
+		if (this.measurementRowList != null && !this.measurementRowList.isEmpty()) {
+			this.totalPages = (int) Math.ceil(this.measurementRowList.size() * 1f / this.getResultPerPage());
+		} else {
+			this.totalPages = 0;
+		}
+		return this.totalPages;
 	}
 
 	/**
@@ -226,7 +223,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the result per page
 	 */
 	public int getResultPerPage() {
-		return resultPerPage;
+		return this.resultPerPage;
 	}
 
 	/**
@@ -244,7 +241,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the file
 	 */
 	public MultipartFile getFile() {
-		return file;
+		return this.file;
 	}
 
 	/**
@@ -262,7 +259,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the checks for error
 	 */
 	public String getHasError() {
-		return hasError;
+		return this.hasError;
 	}
 
 	/**
@@ -280,7 +277,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the import val
 	 */
 	public int getImportVal() {
-		return importVal;
+		return this.importVal;
 	}
 
 	/**
@@ -298,7 +295,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the export instance type
 	 */
 	public String getExportInstanceType() {
-		return exportInstanceType;
+		return this.exportInstanceType;
 	}
 
 	/**
@@ -316,7 +313,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the export trial instance start
 	 */
 	public String getExportTrialInstanceStart() {
-		return exportTrialInstanceStart;
+		return this.exportTrialInstanceStart;
 	}
 
 	/**
@@ -334,7 +331,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the export trial instance end
 	 */
 	public String getExportTrialInstanceEnd() {
-		return exportTrialInstanceEnd;
+		return this.exportTrialInstanceEnd;
 	}
 
 	/**
@@ -352,7 +349,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the export trial instance number
 	 */
 	public String getExportTrialInstanceNumber() {
-		return exportTrialInstanceNumber;
+		return this.exportTrialInstanceNumber;
 	}
 
 	/**
@@ -370,7 +367,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the number of instances
 	 */
 	public int getNumberOfInstances() {
-		return numberOfInstances;
+		return this.numberOfInstances;
 	}
 
 	/**
@@ -388,7 +385,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the trial environment values
 	 */
 	public List<List<ValueReference>> getTrialEnvironmentValues() {
-		return trialEnvironmentValues;
+		return this.trialEnvironmentValues;
 	}
 
 	/**
@@ -396,8 +393,7 @@ public class AddOrRemoveTraitsForm {
 	 *
 	 * @param trialEnvironmentValues the new trial environment values
 	 */
-	public void setTrialEnvironmentValues(
-			List<List<ValueReference>> trialEnvironmentValues) {
+	public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
 		this.trialEnvironmentValues = trialEnvironmentValues;
 	}
 
@@ -407,7 +403,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the trial level variables
 	 */
 	public List<SettingDetail> getTrialLevelVariables() {
-		return trialLevelVariables;
+		return this.trialLevelVariables;
 	}
 
 	/**
@@ -425,7 +421,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the location id
 	 */
 	public String getLocationId() {
-		return locationId;
+		return this.locationId;
 	}
 
 	/**
@@ -443,7 +439,7 @@ public class AddOrRemoveTraitsForm {
 	 * @return the location url
 	 */
 	public String getLocationUrl() {
-		return locationUrl;
+		return this.locationUrl;
 	}
 
 	/**
@@ -456,7 +452,7 @@ public class AddOrRemoveTraitsForm {
 	}
 
 	public MeasurementRow getUpdateObservation() {
-		return updateObservation;
+		return this.updateObservation;
 	}
 
 	public void setUpdateObservation(MeasurementRow updateObservation) {
@@ -464,12 +460,11 @@ public class AddOrRemoveTraitsForm {
 	}
 
 	public Integer getExperimentIndex() {
-		return experimentIndex;
+		return this.experimentIndex;
 	}
 
 	public void setExperimentIndex(Integer experimentIndex) {
 		this.experimentIndex = experimentIndex;
-	} 	
-	
-	
+	}
+
 }

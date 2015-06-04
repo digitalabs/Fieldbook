@@ -4,11 +4,11 @@
  * Generation Challenge Programme (GCP)
  *
  *
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.trial.form;
 
 import java.util.List;
@@ -19,299 +19,295 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class CreateNurseryForm.
  */
 public class CreateTrialForm {
 
-    /**
-     * The nursery level variables.
-     */
-    private List<SettingDetail> studyLevelVariables;
+	/**
+	 * The nursery level variables.
+	 */
+	private List<SettingDetail> studyLevelVariables;
 
-    /**
-     * The plot level variables.
-     */
-    private List<SettingDetail> plotLevelVariables;
+	/**
+	 * The plot level variables.
+	 */
+	private List<SettingDetail> plotLevelVariables;
 
-    /**
-     * The baseline trait variables.
-     *
-     * Dan V - maps to items added in the measurements tab
-     */
-    private List<SettingDetail> baselineTraitVariables;
+	/**
+	 * The baseline trait variables.
+	 *
+	 * Dan V - maps to items added in the measurements tab
+	 */
+	private List<SettingDetail> baselineTraitVariables;
 
-    /**
-     * The trial level variables.
-     */
-    private List<SettingDetail> trialLevelVariables;
+	/**
+	 * The trial level variables.
+	 */
+	private List<SettingDetail> trialLevelVariables;
 
-    /**
-     * The treatment factors.
-     */
-    private List<TreatmentFactorDetail> treatmentFactors;
+	/**
+	 * The treatment factors.
+	 */
+	private List<TreatmentFactorDetail> treatmentFactors;
 
-    /**
-     * The folder id.
-     */
-    private Integer folderId;
+	/**
+	 * The folder id.
+	 */
+	private Integer folderId;
 
-    /**
-     * The folder name.
-     */
-    private String folderName;
+	/**
+	 * The folder name.
+	 */
+	private String folderName;
 
-    /**
-     * The folder name label.
-     */
-    private String folderNameLabel;
+	/**
+	 * The folder name label.
+	 */
+	private String folderNameLabel;
 
+	/**
+	 * The required fields.
+	 */
+	private String requiredFields;
 
-    /**
-     * The required fields.
-     */
-    private String requiredFields;
+	/**
+	 * The trial instances.
+	 */
+	private int trialInstances;
 
+	/**
+	 * The trial environment values.
+	 */
+	private List<List<ValueReference>> trialEnvironmentValues;
 
-    /**
-     * The trial instances.
-     */
-    private int trialInstances;
+	/** The measurement variables. */
+	private List<MeasurementVariable> measurementVariables;
 
-    /**
-     * The trial environment values.
-     */
-    private List<List<ValueReference>> trialEnvironmentValues;
-    
-    /** The measurement variables. */
-    private List<MeasurementVariable> measurementVariables;
-    
-    /** The is measurement data existing. */
-    private boolean isMeasurementDataExisting;
-    
-    /** The study id. */
-    private Integer studyId;
-    /** The name type. */
-    private int nameType;
-    
-    /** The import date. */
-    private String importDate;
-    
-    /** The import method id. */
-    private int importMethodId;
-    
-    /** The import location id. */
-    private int importLocationId;
-    
-    /** The file. */
-    private MultipartFile file;
+	/** The is measurement data existing. */
+	private boolean isMeasurementDataExisting;
 
-    /** The has error. */
-    private boolean hasError;
-    
-    /** The error message. */
-    private String errorMessage;
+	/** The study id. */
+	private Integer studyId;
+	/** The name type. */
+	private int nameType;
 
+	/** The import date. */
+	private String importDate;
 
-    /**
-     * Gets the study level variables.
-     *
-     * @return the study level variables
-     */
-    public List<SettingDetail> getStudyLevelVariables() {
-        return studyLevelVariables;
-    }
+	/** The import method id. */
+	private int importMethodId;
 
-    /**
-     * Sets the study level variables.
-     *
-     * @param studyLevelVariables the new study level variables
-     */
-    public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
-        this.studyLevelVariables = studyLevelVariables;
-    }
+	/** The import location id. */
+	private int importLocationId;
 
-    /**
-     * Gets the plot level variables.
-     *
-     * @return the plotLevelVariables
-     */
-    public List<SettingDetail> getPlotLevelVariables() {
-        return plotLevelVariables;
-    }
+	/** The file. */
+	private MultipartFile file;
 
-    /**
-     * Sets the plot level variables.
-     *
-     * @param plotLevelVariables the plotLevelVariables to set
-     */
-    public void setPlotLevelVariables(List<SettingDetail> plotLevelVariables) {
-        this.plotLevelVariables = plotLevelVariables;
-    }
+	/** The has error. */
+	private boolean hasError;
 
-    /**
-     * Gets the baseline trait variables.
-     *
-     * @return the baselineTraitVariables
-     */
-    public List<SettingDetail> getBaselineTraitVariables() {
-        return baselineTraitVariables;
-    }
+	/** The error message. */
+	private String errorMessage;
 
-    /**
-     * Sets the baseline trait variables.
-     *
-     * @param baselineTraitVariables the baselineTraitVariables to set
-     */
-    public void setBaselineTraitVariables(List<SettingDetail> baselineTraitVariables) {
-        this.baselineTraitVariables = baselineTraitVariables;
-    }
+	/**
+	 * Gets the study level variables.
+	 *
+	 * @return the study level variables
+	 */
+	public List<SettingDetail> getStudyLevelVariables() {
+		return this.studyLevelVariables;
+	}
 
-    /**
-     * Gets the folder id.
-     *
-     * @return the folderId
-     */
-    public Integer getFolderId() {
-        return folderId;
-    }
+	/**
+	 * Sets the study level variables.
+	 *
+	 * @param studyLevelVariables the new study level variables
+	 */
+	public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
+		this.studyLevelVariables = studyLevelVariables;
+	}
 
-    /**
-     * Sets the folder id.
-     *
-     * @param folderId the folderId to set
-     */
-    public void setFolderId(Integer folderId) {
-        this.folderId = folderId;
-    }
+	/**
+	 * Gets the plot level variables.
+	 *
+	 * @return the plotLevelVariables
+	 */
+	public List<SettingDetail> getPlotLevelVariables() {
+		return this.plotLevelVariables;
+	}
 
-    /**
-     * Gets the folder name.
-     *
-     * @return the folderName
-     */
-    public String getFolderName() {
-        return folderName;
-    }
+	/**
+	 * Sets the plot level variables.
+	 *
+	 * @param plotLevelVariables the plotLevelVariables to set
+	 */
+	public void setPlotLevelVariables(List<SettingDetail> plotLevelVariables) {
+		this.plotLevelVariables = plotLevelVariables;
+	}
 
-    /**
-     * Sets the folder name.
-     *
-     * @param folderName the folderName to set
-     */
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
-    }
+	/**
+	 * Gets the baseline trait variables.
+	 *
+	 * @return the baselineTraitVariables
+	 */
+	public List<SettingDetail> getBaselineTraitVariables() {
+		return this.baselineTraitVariables;
+	}
 
-    /**
-     * Gets the required fields.
-     *
-     * @return the required fields
-     */
-    public String getRequiredFields() {
-        return requiredFields;
-    }
+	/**
+	 * Sets the baseline trait variables.
+	 *
+	 * @param baselineTraitVariables the baselineTraitVariables to set
+	 */
+	public void setBaselineTraitVariables(List<SettingDetail> baselineTraitVariables) {
+		this.baselineTraitVariables = baselineTraitVariables;
+	}
 
-    /**
-     * Sets the required fields.
-     *
-     * @param requiredFields the new required fields
-     */
-    public void setRequiredFields(String requiredFields) {
-        this.requiredFields = requiredFields;
-    }
+	/**
+	 * Gets the folder id.
+	 *
+	 * @return the folderId
+	 */
+	public Integer getFolderId() {
+		return this.folderId;
+	}
 
-    /**
-     * Gets the trial instances.
-     *
-     * @return the trial instances
-     */
-    public int getTrialInstances() {
-        return this.trialInstances;
-    }
+	/**
+	 * Sets the folder id.
+	 *
+	 * @param folderId the folderId to set
+	 */
+	public void setFolderId(Integer folderId) {
+		this.folderId = folderId;
+	}
 
-    /**
-     * Sets the trial instances.
-     *
-     * @param trialInstances the new trial instances
-     */
-    public void setTrialInstances(int trialInstances) {
-        this.trialInstances = trialInstances;
-    }
+	/**
+	 * Gets the folder name.
+	 *
+	 * @return the folderName
+	 */
+	public String getFolderName() {
+		return this.folderName;
+	}
 
-    /**
-     * Gets the trial level variables.
-     *
-     * @return the trial level variables
-     */
-    public List<SettingDetail> getTrialLevelVariables() {
-        return trialLevelVariables;
-    }
+	/**
+	 * Sets the folder name.
+	 *
+	 * @param folderName the folderName to set
+	 */
+	public void setFolderName(String folderName) {
+		this.folderName = folderName;
+	}
 
-    /**
-     * Sets the trial level variables.
-     *
-     * @param trialLevelVariables the new trial level variables
-     */
-    public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
-        this.trialLevelVariables = trialLevelVariables;
-    }
+	/**
+	 * Gets the required fields.
+	 *
+	 * @return the required fields
+	 */
+	public String getRequiredFields() {
+		return this.requiredFields;
+	}
 
-    /**
-     * Gets the trial environment values.
-     *
-     * @return the trial environment values
-     */
-    public List<List<ValueReference>> getTrialEnvironmentValues() {
-        return this.trialEnvironmentValues;
-    }
+	/**
+	 * Sets the required fields.
+	 *
+	 * @param requiredFields the new required fields
+	 */
+	public void setRequiredFields(String requiredFields) {
+		this.requiredFields = requiredFields;
+	}
 
-    /**
-     * Sets the trial environment values.
-     *
-     * @param trialEnvironmentValues the new trial environment values
-     */
-    public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
-        this.trialEnvironmentValues = trialEnvironmentValues;
-    }
+	/**
+	 * Gets the trial instances.
+	 *
+	 * @return the trial instances
+	 */
+	public int getTrialInstances() {
+		return this.trialInstances;
+	}
 
-    /**
-     * Gets the treatment factors.
-     *
-     * @return the treatmentFactors
-     */
-    public List<TreatmentFactorDetail> getTreatmentFactors() {
-        return treatmentFactors;
-    }
+	/**
+	 * Sets the trial instances.
+	 *
+	 * @param trialInstances the new trial instances
+	 */
+	public void setTrialInstances(int trialInstances) {
+		this.trialInstances = trialInstances;
+	}
 
-    /**
-     * Sets the treatment factors.
-     *
-     * @param treatmentFactors the treatmentFactors to set
-     */
-    public void setTreatmentFactors(List<TreatmentFactorDetail> treatmentFactors) {
-        this.treatmentFactors = treatmentFactors;
-    }
+	/**
+	 * Gets the trial level variables.
+	 *
+	 * @return the trial level variables
+	 */
+	public List<SettingDetail> getTrialLevelVariables() {
+		return this.trialLevelVariables;
+	}
 
-    /**
-     * Gets the folder name label.
-     *
-     * @return the folder name label
-     */
-    public String getFolderNameLabel() {
-        return folderNameLabel;
-    }
+	/**
+	 * Sets the trial level variables.
+	 *
+	 * @param trialLevelVariables the new trial level variables
+	 */
+	public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
+		this.trialLevelVariables = trialLevelVariables;
+	}
 
-    /**
-     * Sets the folder name label.
-     *
-     * @param folderNameLabel the new folder name label
-     */
-    public void setFolderNameLabel(String folderNameLabel) {
-        this.folderNameLabel = folderNameLabel;
-    }
+	/**
+	 * Gets the trial environment values.
+	 *
+	 * @return the trial environment values
+	 */
+	public List<List<ValueReference>> getTrialEnvironmentValues() {
+		return this.trialEnvironmentValues;
+	}
+
+	/**
+	 * Sets the trial environment values.
+	 *
+	 * @param trialEnvironmentValues the new trial environment values
+	 */
+	public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
+		this.trialEnvironmentValues = trialEnvironmentValues;
+	}
+
+	/**
+	 * Gets the treatment factors.
+	 *
+	 * @return the treatmentFactors
+	 */
+	public List<TreatmentFactorDetail> getTreatmentFactors() {
+		return this.treatmentFactors;
+	}
+
+	/**
+	 * Sets the treatment factors.
+	 *
+	 * @param treatmentFactors the treatmentFactors to set
+	 */
+	public void setTreatmentFactors(List<TreatmentFactorDetail> treatmentFactors) {
+		this.treatmentFactors = treatmentFactors;
+	}
+
+	/**
+	 * Gets the folder name label.
+	 *
+	 * @return the folder name label
+	 */
+	public String getFolderNameLabel() {
+		return this.folderNameLabel;
+	}
+
+	/**
+	 * Sets the folder name label.
+	 *
+	 * @param folderNameLabel the new folder name label
+	 */
+	public void setFolderNameLabel(String folderNameLabel) {
+		this.folderNameLabel = folderNameLabel;
+	}
 
 	/**
 	 * Gets the measurement variables.
@@ -319,7 +315,7 @@ public class CreateTrialForm {
 	 * @return the measurement variables
 	 */
 	public List<MeasurementVariable> getMeasurementVariables() {
-		return measurementVariables;
+		return this.measurementVariables;
 	}
 
 	/**
@@ -327,8 +323,7 @@ public class CreateTrialForm {
 	 *
 	 * @param measurementVariables the new measurement variables
 	 */
-	public void setMeasurementVariables(
-			List<MeasurementVariable> measurementVariables) {
+	public void setMeasurementVariables(List<MeasurementVariable> measurementVariables) {
 		this.measurementVariables = measurementVariables;
 	}
 
@@ -338,7 +333,7 @@ public class CreateTrialForm {
 	 * @return true, if is measurement data existing
 	 */
 	public boolean isMeasurementDataExisting() {
-		return isMeasurementDataExisting;
+		return this.isMeasurementDataExisting;
 	}
 
 	/**
@@ -355,8 +350,8 @@ public class CreateTrialForm {
 	 *
 	 * @return the arrange measurement variables
 	 */
-	public List<MeasurementVariable> getArrangeMeasurementVariables(){
-		return getMeasurementVariables();
+	public List<MeasurementVariable> getArrangeMeasurementVariables() {
+		return this.getMeasurementVariables();
 	}
 
 	/**
@@ -365,7 +360,7 @@ public class CreateTrialForm {
 	 * @return the study id
 	 */
 	public Integer getStudyId() {
-		return studyId;
+		return this.studyId;
 	}
 
 	/**
@@ -383,7 +378,7 @@ public class CreateTrialForm {
 	 * @return the name type
 	 */
 	public int getNameType() {
-		return nameType;
+		return this.nameType;
 	}
 
 	/**
@@ -401,7 +396,7 @@ public class CreateTrialForm {
 	 * @return the import date
 	 */
 	public String getImportDate() {
-		return importDate;
+		return this.importDate;
 	}
 
 	/**
@@ -419,7 +414,7 @@ public class CreateTrialForm {
 	 * @return the import method id
 	 */
 	public int getImportMethodId() {
-		return importMethodId;
+		return this.importMethodId;
 	}
 
 	/**
@@ -437,7 +432,7 @@ public class CreateTrialForm {
 	 * @return the import location id
 	 */
 	public int getImportLocationId() {
-		return importLocationId;
+		return this.importLocationId;
 	}
 
 	/**
@@ -455,7 +450,7 @@ public class CreateTrialForm {
 	 * @return the file
 	 */
 	public MultipartFile getFile() {
-		return file;
+		return this.file;
 	}
 
 	/**
@@ -473,7 +468,7 @@ public class CreateTrialForm {
 	 * @return true, if is checks for error
 	 */
 	public boolean isHasError() {
-		return hasError;
+		return this.hasError;
 	}
 
 	/**
@@ -491,7 +486,7 @@ public class CreateTrialForm {
 	 * @return the error message
 	 */
 	public String getErrorMessage() {
-		return errorMessage;
+		return this.errorMessage;
 	}
 
 	/**

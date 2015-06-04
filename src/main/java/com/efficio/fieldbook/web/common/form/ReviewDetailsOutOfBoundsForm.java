@@ -1,33 +1,32 @@
+
 package com.efficio.fieldbook.web.common.form;
 
 import java.util.List;
 
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 
-import com.efficio.fieldbook.web.util.SettingsUtil;
-
 public class ReviewDetailsOutOfBoundsForm {
-	
+
 	private List<MeasurementVariable> measurementVariables;
-	
+
 	private MeasurementVariable measurementVariable;
-	
+
 	private int traitIndex;
-	
+
 	private int traitSize;
-	
+
 	private int traitTermId;
 
 	public int getTraitIndex() {
-		return traitIndex;
+		return this.traitIndex;
 	}
 
 	public void setTraitIndex(int traitIndex) {
 		this.traitIndex = traitIndex;
 	}
-	
+
 	public MeasurementVariable getMeasurementVariable() {
-		return measurementVariable;
+		return this.measurementVariable;
 	}
 
 	public void setMeasurementVariable(MeasurementVariable measurementVariable) {
@@ -36,19 +35,19 @@ public class ReviewDetailsOutOfBoundsForm {
 	}
 
 	public int getTraitTermId() {
-		return traitTermId;
+		return this.traitTermId;
 	}
 
 	public void setTraitTermId(int traitTermId) {
 		this.traitTermId = traitTermId;
 	}
-	
-	public List<MeasurementVariable> getArrangeMeasurementVariables(){
-		return getMeasurementVariables();
+
+	public List<MeasurementVariable> getArrangeMeasurementVariables() {
+		return this.getMeasurementVariables();
 	}
 
 	public List<MeasurementVariable> getMeasurementVariables() {
-		return measurementVariables;
+		return this.measurementVariables;
 	}
 
 	public void setMeasurementVariables(List<MeasurementVariable> measurementVariables) {
@@ -56,13 +55,11 @@ public class ReviewDetailsOutOfBoundsForm {
 	}
 
 	public int getTraitSize() {
-		return traitSize;
+		return this.traitSize;
 	}
 
 	public void setTraitSize(int traitSize) {
 		this.traitSize = traitSize;
 	}
-
-	
 
 }

@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.ArrayList;
@@ -15,16 +16,18 @@ public class RootNameExpressionTest extends TestExpression {
 
 	@Test
 	public void test() throws Exception {
-		List<String> input = Arrays.asList("a(b/c)d", "a/bc", "/abc", "(ab)/(de)", "(abc)a/e", "((a/b))", "b/e(a/b)",
-				"(b/e)/(a/b)", "(CML146/CLQ-6203)/CML147", "(CLQ-6203/CML150)/CML144", "(L-133/LSA-297)/PA-1", "((P 47/MPSWCB 4) 11//(MPSWCB",
-				"(a//b)", "(a/b/c/d)");
+		List<String> input =
+				Arrays.asList("a(b/c)d", "a/bc", "/abc", "(ab)/(de)", "(abc)a/e", "((a/b))", "b/e(a/b)", "(b/e)/(a/b)",
+						"(CML146/CLQ-6203)/CML147", "(CLQ-6203/CML150)/CML144", "(L-133/LSA-297)/PA-1", "((P 47/MPSWCB 4) 11//(MPSWCB",
+						"(a//b)", "(a/b/c/d)");
 
-		List<String> expectedOutput = Arrays.asList("a(b/c)d", "(a/bc)", "(/abc)", "((ab)/(de))", "((abc)a/e)", "((a/b))", "(b/e(a/b))",
-				"((b/e)/(a/b))", "((CML146/CLQ-6203)/CML147)", "((CLQ-6203/CML150)/CML144)", "((L-133/LSA-297)/PA-1)", "(((P 47/MPSWCB 4) 11//(MPSWCB)",
-				"(a//b)", "(a/b/c/d)");
-		
+		List<String> expectedOutput =
+				Arrays.asList("a(b/c)d", "(a/bc)", "(/abc)", "((ab)/(de))", "((abc)a/e)", "((a/b))", "(b/e(a/b))", "((b/e)/(a/b))",
+						"((CML146/CLQ-6203)/CML147)", "((CLQ-6203/CML150)/CML144)", "((L-133/LSA-297)/PA-1)",
+						"(((P 47/MPSWCB 4) 11//(MPSWCB)", "(a//b)", "(a/b/c/d)");
+
 		RootNameExpression rne = new RootNameExpression();
-		AdvancingSource source = createAdvancingSourceTestData("Germplasm", null, null, null, null, true);
+		AdvancingSource source = this.createAdvancingSourceTestData("Germplasm", null, null, null, null, true);
 		int i = 0;
 		Name name = new Name();
 		name.setTypeId(10);
@@ -36,22 +39,23 @@ public class RootNameExpressionTest extends TestExpression {
 			builders.add(new StringBuilder());
 			name.setNval(nameString);
 			rne.apply(builders, source);
-			String output =  builders.get(0).toString();
+			String output = builders.get(0).toString();
 			System.out.println("OUTPUT = " + output);
 			System.out.println("CORRECT? " + expectedOutput.get(i).equals(output) + "\n\n");
 			Assert.assertEquals(expectedOutput.get(i), output);
 			i++;
 		}
 	}
-	
+
 	@Test
 	public void testIfThereIsNoMatchingName() throws Exception {
-		List<String> input = Arrays.asList("a(b/c)d", "a/bc", "/abc", "(ab)/(de)", "(abc)a/e", "((a/b))", "b/e(a/b)",
-				"(b/e)/(a/b)", "(CML146/CLQ-6203)/CML147", "(CLQ-6203/CML150)/CML144", "(L-133/LSA-297)/PA-1", "((P 47/MPSWCB 4) 11//(MPSWCB",
-				"(a//b)", "(a/b/c/d)");
+		List<String> input =
+				Arrays.asList("a(b/c)d", "a/bc", "/abc", "(ab)/(de)", "(abc)a/e", "((a/b))", "b/e(a/b)", "(b/e)/(a/b)",
+						"(CML146/CLQ-6203)/CML147", "(CLQ-6203/CML150)/CML144", "(L-133/LSA-297)/PA-1", "((P 47/MPSWCB 4) 11//(MPSWCB",
+						"(a//b)", "(a/b/c/d)");
 
 		RootNameExpression rne = new RootNameExpression();
-		AdvancingSource source = createAdvancingSourceTestData("Germplasm", null, null, null, null, true);
+		AdvancingSource source = this.createAdvancingSourceTestData("Germplasm", null, null, null, null, true);
 		Name name = new Name();
 		name.setTypeId(11);
 		name.setNstat(2);
@@ -65,7 +69,7 @@ public class RootNameExpressionTest extends TestExpression {
 			builders.add(new StringBuilder());
 			name.setNval(nameString);
 			rne.apply(builders, source);
-			String output =  builders.get(0).toString();
+			String output = builders.get(0).toString();
 			System.out.println("OUTPUT = " + output);
 			Assert.assertEquals("", output);
 		}

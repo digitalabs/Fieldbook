@@ -112,8 +112,8 @@ public class BarcodeLabelPrintingSetting implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BarcodeLabelPrintingSetting [isBarcodeNeeded=" + this.isBarcodeNeeded + ", barcodeFormat=" + this.barcodeFormat + ", barcodeFieldsString="
-				+ this.barcodeFieldsString + "]";
+		return "BarcodeLabelPrintingSetting [isBarcodeNeeded=" + this.isBarcodeNeeded + ", barcodeFormat=" + this.barcodeFormat
+				+ ", barcodeFieldsString=" + this.barcodeFieldsString + "]";
 	}
 
 }

@@ -1,24 +1,23 @@
+
 package com.efficio.fieldbook.util.parsing.validation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.generationcp.commons.parsing.validation.ValueRangeValidator;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ValueRangeValidatorTest {
+
 	private ValueRangeValidator dut;
 
 	@Before
@@ -28,23 +27,22 @@ public class ValueRangeValidatorTest {
 		validValues.add("B");
 		validValues.add("C");
 
-		dut = new ValueRangeValidator(validValues);
+		this.dut = new ValueRangeValidator(validValues);
 	}
-
 
 	@Test
 	public void testValueInRange() {
-		assertTrue(dut.isParsedValueValid("B",null));
+		Assert.assertTrue(this.dut.isParsedValueValid("B", null));
 	}
 
 	@Test
 	public void testValueNotInRange() {
-		assertFalse(dut.isParsedValueValid("Z",null));
+		Assert.assertFalse(this.dut.isParsedValueValid("Z", null));
 	}
 
 	@Test
 	public void testBlankValueAndSkipIfEmptyTrue() {
-		assertTrue(dut.isParsedValueValid(null,null));
+		Assert.assertTrue(this.dut.isParsedValueValid(null, null));
 	}
 
 	@Test
@@ -53,15 +51,15 @@ public class ValueRangeValidatorTest {
 		validValues.add("A");
 		validValues.add("B");
 		validValues.add("C");
-		dut = new ValueRangeValidator(validValues, false);
+		this.dut = new ValueRangeValidator(validValues, false);
 
-		assertFalse(dut.isParsedValueValid(null,null));
+		Assert.assertFalse(this.dut.isParsedValueValid(null, null));
 	}
 
 	@Test
 	public void testValueCheckAgainstBlankValid() {
-		dut = new ValueRangeValidator(null);
+		this.dut = new ValueRangeValidator(null);
 
-		assertTrue(dut.isParsedValueValid("ZZ",null));
+		Assert.assertTrue(this.dut.isParsedValueValid("ZZ", null));
 	}
 }

@@ -1,10 +1,11 @@
+
 package com.efficio.fieldbook.web.naming.impl;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
-import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
@@ -17,19 +18,18 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
-import javax.annotation.Resource;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.naming.rules.naming.EnforceUniqueNameRule;
+import com.efficio.fieldbook.web.naming.rules.naming.NamingRuleExecutionContext;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+public class RuleServiceImplTest extends AbstractBaseIntegrationTest {
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-public class RuleServiceImplTest extends AbstractBaseIntegrationTest{
-	
 	@Resource
 	RulesService rulesService;
 
@@ -43,63 +43,62 @@ public class RuleServiceImplTest extends AbstractBaseIntegrationTest{
 	private MessageSource messageSource;
 
 	private GermplasmDataManager germplasmDataManager;
-	
+
 	private Method breedingMethod;
 	private AdvancingSource row;
-	private String testGermplasmName; 
+	private String testGermplasmName;
 	private Integer breedingMethodSnameType;
 
 	@Before
-	public void setUp(){
-		breedingMethodSnameType = 5;
-		//namingConventionService.setMessageSource(Mockito.mock(ResourceBundleMessageSource.class));
-		breedingMethod = new Method();
-		breedingMethod.setSnametype(breedingMethodSnameType);
-		breedingMethod.setPrefix("pre");
-		breedingMethod.setSeparator("-");
-		breedingMethod.setCount("[NUMBER]");
-		breedingMethod.setSuffix("suff");
-		row  = new AdvancingSource();
-		row.setBreedingMethod(breedingMethod);
-		row.setPlantsSelected(2);
-		testGermplasmName = "test-germplasm-name"; 
+	public void setUp() {
+		this.breedingMethodSnameType = 5;
+		// namingConventionService.setMessageSource(Mockito.mock(ResourceBundleMessageSource.class));
+		this.breedingMethod = new Method();
+		this.breedingMethod.setSnametype(this.breedingMethodSnameType);
+		this.breedingMethod.setPrefix("pre");
+		this.breedingMethod.setSeparator("-");
+		this.breedingMethod.setCount("[NUMBER]");
+		this.breedingMethod.setSuffix("suff");
+		this.row = new AdvancingSource();
+		this.row.setBreedingMethod(this.breedingMethod);
+		this.row.setPlantsSelected(2);
+		this.testGermplasmName = "test-germplasm-name";
 	}
-	
-	private Name generateNewName(Integer typeId, Integer nStat){
+
+	private Name generateNewName(Integer typeId, Integer nStat) {
 		Name name = new Name();
 		name.setTypeId(typeId);
 		name.setNstat(nStat);
-		name.setNval(testGermplasmName);
+		name.setNval(this.testGermplasmName);
 		return name;
 	}
-	
+
 	@Test
 	public void testRulesEngineUniqueCheckPass() {
-		
+
 		List<Name> names = new ArrayList<Name>();
-		names.add(generateNewName(breedingMethodSnameType, 1));
-		row.setNames(names);
+		names.add(this.generateNewName(this.breedingMethodSnameType, 1));
+		this.row.setNames(names);
 
-		germplasmDataManager = mock(GermplasmDataManager.class);
+		this.germplasmDataManager = Mockito.mock(GermplasmDataManager.class);
 
-		
 		try {
-			when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(false);
-			List<String> sequenceList = Arrays.asList(ruleFactory.getRuleSequenceForNamespace("naming"));
+			Mockito.when(this.germplasmDataManager.checkIfMatches(Matchers.anyString())).thenReturn(false);
+			List<String> sequenceList = Arrays.asList(this.ruleFactory.getRuleSequenceForNamespace("naming"));
 			sequenceList = new ArrayList<>(sequenceList);
 			sequenceList.add(EnforceUniqueNameRule.KEY);
 			NamingRuleExecutionContext ruleExecutionContext =
-					new NamingRuleExecutionContext(sequenceList,
-							processCodeService, row, germplasmDataManager, new ArrayList<String>());
-			ruleExecutionContext.setMessageSource(messageSource);
-			List<String> results = (List<String>) rulesService.runRules(ruleExecutionContext);
+					new NamingRuleExecutionContext(sequenceList, this.processCodeService, this.row, this.germplasmDataManager,
+							new ArrayList<String>());
+			ruleExecutionContext.setMessageSource(this.messageSource);
+			List<String> results = (List<String>) this.rulesService.runRules(ruleExecutionContext);
 
-			assertFalse(results.isEmpty());
+			Assert.assertFalse(results.isEmpty());
 			System.out.println(results);
 
-			assertEquals("test-germplasm-name-pre1suff", results.get(0));
+			Assert.assertEquals("test-germplasm-name-pre1suff", results.get(0));
 
-			assertNull(row.getChangeDetail());
+			Assert.assertNull(this.row.getChangeDetail());
 		} catch (RuleException | MiddlewareQueryException e) {
 
 			Assert.fail(e.getMessage());
@@ -110,34 +109,34 @@ public class RuleServiceImplTest extends AbstractBaseIntegrationTest{
 	public void testRulesEngineUniqueCheckFail() {
 
 		List<Name> names = new ArrayList<Name>();
-		names.add(generateNewName(breedingMethodSnameType, 1));
-		row.setNames(names);
+		names.add(this.generateNewName(this.breedingMethodSnameType, 1));
+		this.row.setNames(names);
 
-		germplasmDataManager = mock(GermplasmDataManager.class);
+		this.germplasmDataManager = Mockito.mock(GermplasmDataManager.class);
 
 		try {
 			// set the test up so that the unique check fails twice before passing
-			when(germplasmDataManager.checkIfMatches(anyString())).thenReturn(true).thenReturn(true).thenReturn(false);
+			Mockito.when(this.germplasmDataManager.checkIfMatches(Matchers.anyString())).thenReturn(true).thenReturn(true)
+					.thenReturn(false);
 
-			List<String> sequenceList = Arrays
-					.asList(ruleFactory.getRuleSequenceForNamespace("naming"));
+			List<String> sequenceList = Arrays.asList(this.ruleFactory.getRuleSequenceForNamespace("naming"));
 			sequenceList = new ArrayList<>(sequenceList);
 			sequenceList.add(EnforceUniqueNameRule.KEY);
 
 			NamingRuleExecutionContext ruleExecutionContext =
-					new NamingRuleExecutionContext(sequenceList,
-							processCodeService, row, germplasmDataManager, new ArrayList<String>());
-			ruleExecutionContext.setMessageSource(messageSource);
+					new NamingRuleExecutionContext(sequenceList, this.processCodeService, this.row, this.germplasmDataManager,
+							new ArrayList<String>());
+			ruleExecutionContext.setMessageSource(this.messageSource);
 
-			List<String> results = (List<String>) rulesService.runRules(ruleExecutionContext);
-			assertFalse(results.isEmpty());
+			List<String> results = (List<String>) this.rulesService.runRules(ruleExecutionContext);
+			Assert.assertFalse(results.isEmpty());
 
 			System.out.println(results);
 
-			assertEquals("test-germplasm-name-pre3suff", results.get(0));
-			assertNotNull(row.getChangeDetail());
-			assertNotNull("Sequence text not properly set for change detail object", row.getChangeDetail().getAddSequenceText());
-			assertNotNull("Question text not properly set for change detail object", row.getChangeDetail().getQuestionText());
+			Assert.assertEquals("test-germplasm-name-pre3suff", results.get(0));
+			Assert.assertNotNull(this.row.getChangeDetail());
+			Assert.assertNotNull("Sequence text not properly set for change detail object", this.row.getChangeDetail().getAddSequenceText());
+			Assert.assertNotNull("Question text not properly set for change detail object", this.row.getChangeDetail().getQuestionText());
 		} catch (RuleException | MiddlewareQueryException e) {
 
 			Assert.fail(e.getMessage());

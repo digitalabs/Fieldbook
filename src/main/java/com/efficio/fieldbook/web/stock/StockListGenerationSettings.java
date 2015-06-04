@@ -1,15 +1,14 @@
+
 package com.efficio.fieldbook.web.stock;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 4/24/2015
- * Time: 4:44 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:44 PM
  */
 public class StockListGenerationSettings {
+
 	public static final int VALID_SETTINGS = 1;
 	public static final int NUMBERS_FOUND = -1;
 	public static final int SPACE_FOUND = -2;
@@ -20,6 +19,7 @@ public class StockListGenerationSettings {
 	private boolean addPedigreeDuplicate;
 	private boolean addPlotReciprocal;
 	private boolean addPedigreeReciprocal;
+
 	public StockListGenerationSettings() {
 	}
 
@@ -29,11 +29,11 @@ public class StockListGenerationSettings {
 	}
 
 	public String getBreederIdentifier() {
-		return breederIdentifier;
+		return this.breederIdentifier;
 	}
 
 	public String getSeparator() {
-		return separator;
+		return this.separator;
 	}
 
 	public void setBreederIdentifier(String breederIdentifier) {
@@ -51,30 +51,30 @@ public class StockListGenerationSettings {
 
 	public int validateSettings() {
 
-		if (hasNumber()) {
-			return NUMBERS_FOUND;
+		if (this.hasNumber()) {
+			return StockListGenerationSettings.NUMBERS_FOUND;
 		}
 
-		if (hasSpace()) {
-			return SPACE_FOUND;
+		if (this.hasSpace()) {
+			return StockListGenerationSettings.SPACE_FOUND;
 		}
 
-		return VALID_SETTINGS;
+		return StockListGenerationSettings.VALID_SETTINGS;
 	}
 
 	protected boolean hasNumber() {
 		Pattern pattern = Pattern.compile("[0-9]+");
-		Matcher matcher = pattern.matcher(getBreederIdentifier());
+		Matcher matcher = pattern.matcher(this.getBreederIdentifier());
 
 		return matcher.find();
 	}
 
 	protected boolean hasSpace() {
-		return getBreederIdentifier().contains(" ");
+		return this.getBreederIdentifier().contains(" ");
 	}
 
 	public boolean isAddPedigreeDuplicate() {
-		return addPedigreeDuplicate;
+		return this.addPedigreeDuplicate;
 	}
 
 	public void setAddPedigreeDuplicate(boolean addPedigreeDuplicate) {
@@ -82,7 +82,7 @@ public class StockListGenerationSettings {
 	}
 
 	public boolean isAddPlotReciprocal() {
-		return addPlotReciprocal;
+		return this.addPlotReciprocal;
 	}
 
 	public void setAddPlotReciprocal(boolean addPlotReciprocal) {
@@ -90,7 +90,7 @@ public class StockListGenerationSettings {
 	}
 
 	public boolean isAddPedigreeReciprocal() {
-		return addPedigreeReciprocal;
+		return this.addPedigreeReciprocal;
 	}
 
 	public void setAddPedigreeReciprocal(boolean addPedigreeReciprocal) {
@@ -98,7 +98,7 @@ public class StockListGenerationSettings {
 	}
 
 	public boolean hasBulkInstructions() {
-		return isAddPedigreeReciprocal() || isAddPlotReciprocal() || isAddPedigreeDuplicate();
+		return this.isAddPedigreeReciprocal() || this.isAddPlotReciprocal() || this.isAddPedigreeDuplicate();
 	}
 
 }

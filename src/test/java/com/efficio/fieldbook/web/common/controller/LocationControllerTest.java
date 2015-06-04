@@ -1,11 +1,5 @@
-package com.efficio.fieldbook.web.common.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.spy;
+package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -27,14 +23,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 2/4/2015
- * Time: 3:07 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/4/2015 Time: 3:07 PM
  */
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationControllerTest {
+
 	@Mock
 	private FieldbookProperties fieldbookProperties;
 
@@ -43,7 +37,7 @@ public class LocationControllerTest {
 
 	@Mock
 	private HttpServletRequest request;
-	
+
 	@Mock
 	private ContextUtil contextUtil;
 
@@ -60,50 +54,49 @@ public class LocationControllerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		doReturn(DUMMY_URL).when(fieldbookProperties).getProgramLocationsUrl();
-		mole = spy(controller);
-		doReturn(DUMMY_PROJECT_ID).when(mole).getCurrentProgramID(request);
+		Mockito.doReturn(LocationControllerTest.DUMMY_URL).when(this.fieldbookProperties).getProgramLocationsUrl();
+		this.mole = Mockito.spy(this.controller);
+		Mockito.doReturn(LocationControllerTest.DUMMY_PROJECT_ID).when(this.mole).getCurrentProgramID(this.request);
 	}
 
 	@Test
 	public void testGetProgramLocationsURL() {
-		assertEquals(DUMMY_URL, mole.getProgramLocationsURL());
+		Assert.assertEquals(LocationControllerTest.DUMMY_URL, this.mole.getProgramLocationsURL());
 	}
 
 	@Test
-		public void testGetLocations() {
-			List<Long> locationIDs = new ArrayList<>();
-			List<Location> breedingLocationsList = new ArrayList<>();
-			List<Location> favoriteLocationsList = new ArrayList<>();
+	public void testGetLocations() {
+		List<Long> locationIDs = new ArrayList<>();
+		List<Location> breedingLocationsList = new ArrayList<>();
+		List<Location> favoriteLocationsList = new ArrayList<>();
 
-			try {
-				doReturn(locationIDs).when(fieldbookMiddlewareService).getFavoriteProjectLocationIds(
-						Mockito.anyString());
-				doReturn(breedingLocationsList).when(fieldbookMiddlewareService).getAllBreedingLocations();
-				doReturn(favoriteLocationsList).when(fieldbookMiddlewareService).getFavoriteLocationByProjectId(locationIDs);
-				Map<String, Object> locations = mole.getLocations();
+		try {
+			Mockito.doReturn(locationIDs).when(this.fieldbookMiddlewareService).getFavoriteProjectLocationIds(Matchers.anyString());
+			Mockito.doReturn(breedingLocationsList).when(this.fieldbookMiddlewareService).getAllBreedingLocations();
+			Mockito.doReturn(favoriteLocationsList).when(this.fieldbookMiddlewareService).getFavoriteLocationByProjectId(locationIDs);
+			Map<String, Object> locations = this.mole.getLocations();
 
-				assertNotNull(locations);
-				assertEquals(SUCCESS_STRING, locations.get(SUCCESS_KEY));
-				assertEquals(breedingLocationsList, locations.get("allBreedingLocations"));
-				assertEquals(favoriteLocationsList, locations.get("favoriteLocations"));
-			} catch (MiddlewareQueryException e) {
-				fail(e.getMessage());
-			}
+			Assert.assertNotNull(locations);
+			Assert.assertEquals(LocationControllerTest.SUCCESS_STRING, locations.get(LocationControllerTest.SUCCESS_KEY));
+			Assert.assertEquals(breedingLocationsList, locations.get("allBreedingLocations"));
+			Assert.assertEquals(favoriteLocationsList, locations.get("favoriteLocations"));
+		} catch (MiddlewareQueryException e) {
+			Assert.fail(e.getMessage());
 		}
+	}
 
-		@Test
-		public void testGetLocationsException() {
-			try {
-				doThrow(MiddlewareQueryException.class).when(fieldbookMiddlewareService).getAllBreedingLocations();
+	@Test
+	public void testGetLocationsException() {
+		try {
+			Mockito.doThrow(MiddlewareQueryException.class).when(this.fieldbookMiddlewareService).getAllBreedingLocations();
 
-				Map<String, Object> locations = mole.getLocations();
+			Map<String, Object> locations = this.mole.getLocations();
 
-				assertNotNull(locations);
-				assertEquals(FAILURE_STRING, locations.get(SUCCESS_KEY));
+			Assert.assertNotNull(locations);
+			Assert.assertEquals(LocationControllerTest.FAILURE_STRING, locations.get(LocationControllerTest.SUCCESS_KEY));
 
-			} catch (MiddlewareQueryException e) {
-				fail(e.getMessage());
-			}
+		} catch (MiddlewareQueryException e) {
+			Assert.fail(e.getMessage());
 		}
+	}
 }

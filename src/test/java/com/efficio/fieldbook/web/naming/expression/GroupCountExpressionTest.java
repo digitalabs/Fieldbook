@@ -1,16 +1,16 @@
-package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import org.junit.Test;
+package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert;
+import org.junit.Test;
+
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public class GroupCountExpressionTest extends TestExpression {
 
@@ -18,53 +18,49 @@ public class GroupCountExpressionTest extends TestExpression {
 
 	@Test
 	public void testNoBulkingInName() {
-		AdvancingSource source = createAdvancingSourceTestData("CML451 / ABC1234", "-", null, null,
-				null, false);
+		AdvancingSource source = this.createAdvancingSourceTestData("CML451 / ABC1234", "-", null, null, null, false);
 		List<StringBuilder> values = new ArrayList<>();
 		values.add(new StringBuilder(source.getRootName() + "B*[COUNT]"));
 
-		dut.apply(values, source);
+		this.dut.apply(values, source);
 		String value = values.get(0).toString();
 
-		assertEquals("CML451 / ABC1234-B", value);
+		Assert.assertEquals("CML451 / ABC1234-B", value);
 	}
 
 	@Test
 	public void testBulkingInName() {
-		AdvancingSource source = createAdvancingSourceTestData("CML451 / ABC1234-B-B-B-B", "-", null, null,
-				null, false);
+		AdvancingSource source = this.createAdvancingSourceTestData("CML451 / ABC1234-B-B-B-B", "-", null, null, null, false);
 		List<StringBuilder> values = new ArrayList<>();
 		values.add(new StringBuilder(source.getRootName() + "B*[COUNT]"));
 
-		dut.apply(values, source);
+		this.dut.apply(values, source);
 		String value = values.get(0).toString();
 
-		assertEquals("CML451 / ABC1234-B*4", value);
+		Assert.assertEquals("CML451 / ABC1234-B*4", value);
 	}
 
 	@Test
 	public void testPoundCountNothingToCount() {
-		AdvancingSource source = createAdvancingSourceTestData("CML451 / ABC1234", "-", null, null,
-				null, false);
+		AdvancingSource source = this.createAdvancingSourceTestData("CML451 / ABC1234", "-", null, null, null, false);
 		List<StringBuilder> values = new ArrayList<>();
 		values.add(new StringBuilder(source.getRootName() + "#*[COUNT]"));
 
-		dut.apply(values, source);
+		this.dut.apply(values, source);
 		String value = values.get(0).toString();
 
-		assertEquals("CML451 / ABC1234-#", value);
+		Assert.assertEquals("CML451 / ABC1234-#", value);
 	}
 
 	@Test
 	public void testPoundCountWithItems() {
-		AdvancingSource source = createAdvancingSourceTestData("CML451 / ABC1234-#-#-#", "-", null, null,
-				null, false);
+		AdvancingSource source = this.createAdvancingSourceTestData("CML451 / ABC1234-#-#-#", "-", null, null, null, false);
 		List<StringBuilder> values = new ArrayList<>();
 		values.add(new StringBuilder(source.getRootName() + "#*[COUNT]"));
 
-		dut.apply(values, source);
+		this.dut.apply(values, source);
 		String value = values.get(0).toString();
 
-		assertEquals("CML451 / ABC1234-#*3", value);
+		Assert.assertEquals("CML451 / ABC1234-#*3", value);
 	}
 }

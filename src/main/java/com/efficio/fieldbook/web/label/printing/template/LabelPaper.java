@@ -1,34 +1,34 @@
+
 package com.efficio.fieldbook.web.label.printing.template;
 
-
 /**
- * The Class LabelPaper.  
- * 
+ * The Class LabelPaper.
+ *
  * Super class for the label printing paper template to be used
  */
 public class LabelPaper {
-	
+
 	/** The cell height. */
 	private float cellHeight;
-	
+
 	/** The margin left. */
 	private float marginLeft;
-	
+
 	/** The margin right. */
 	private float marginRight;
-	
+
 	/** The margin top. */
 	private float marginTop;
-	
+
 	/** The margin bottom. */
 	private float marginBottom;
-	
+
 	/** The font size. */
 	private float fontSize;
-	
+
 	/** The spacing after. */
 	private float spacingAfter;
-	
+
 	/**
 	 * Instantiates a new label paper.
 	 *
@@ -40,7 +40,8 @@ public class LabelPaper {
 	 * @param fontSize the font size
 	 * @param spacingAfter the spacing after
 	 */
-	public LabelPaper(float cellHeight, float marginLeft, float marginRight, float marginTop, float marginBottom, float fontSize, float spacingAfter){
+	public LabelPaper(float cellHeight, float marginLeft, float marginRight, float marginTop, float marginBottom, float fontSize,
+			float spacingAfter) {
 		this.cellHeight = cellHeight;
 		this.marginLeft = marginLeft;
 		this.marginRight = marginRight;
@@ -56,7 +57,7 @@ public class LabelPaper {
 	 * @return the cell height
 	 */
 	public float getCellHeight() {
-		return cellHeight;
+		return this.cellHeight;
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class LabelPaper {
 	 * @return the margin left
 	 */
 	public float getMarginLeft() {
-		return marginLeft;
+		return this.marginLeft;
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class LabelPaper {
 	 * @return the margin right
 	 */
 	public float getMarginRight() {
-		return marginRight;
+		return this.marginRight;
 	}
 
 	/**
@@ -110,7 +111,7 @@ public class LabelPaper {
 	 * @return the margin top
 	 */
 	public float getMarginTop() {
-		return marginTop;
+		return this.marginTop;
 	}
 
 	/**
@@ -128,7 +129,7 @@ public class LabelPaper {
 	 * @return the margin bottom
 	 */
 	public float getMarginBottom() {
-		return marginBottom;
+		return this.marginBottom;
 	}
 
 	/**
@@ -146,7 +147,7 @@ public class LabelPaper {
 	 * @return the font size
 	 */
 	public float getFontSize() {
-		return fontSize;
+		return this.fontSize;
 	}
 
 	/**
@@ -164,7 +165,7 @@ public class LabelPaper {
 	 * @return the spacing after
 	 */
 	public float getSpacingAfter() {
-		return spacingAfter;
+		return this.spacingAfter;
 	}
 
 	/**
@@ -175,8 +176,5 @@ public class LabelPaper {
 	public void setSpacingAfter(float spacingAfter) {
 		this.spacingAfter = spacingAfter;
 	}
-	
-	
-	
-	
+
 }

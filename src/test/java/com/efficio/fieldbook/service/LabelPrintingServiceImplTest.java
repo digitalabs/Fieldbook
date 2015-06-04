@@ -1,10 +1,5 @@
-package com.efficio.fieldbook.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.*;
+package com.efficio.fieldbook.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -61,21 +57,21 @@ public class LabelPrintingServiceImplTest {
 	public static final String PROGRAM_PRESET_CONFIG = "program_preset_config";
 	public static final String STANDARD_PRESET_CONFIG = "standard_preset_config";
 	public static final String DUMMY_PROGRAM_UUID = "1234567890";
-	
+
 	@Mock
 	WorkbenchService workbenchService;
 
 	@Mock
 	PresetDataManager presetDataManager;
-	
-    @Mock
-    private ContextUtil contextUtil;
-    
+
+	@Mock
+	private ContextUtil contextUtil;
+
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	
-    @Mock
-    private InventoryService inventoryMiddlewareService;
+
+	@Mock
+	private InventoryService inventoryMiddlewareService;
 
 	@InjectMocks
 	LabelPrintingServiceImpl serviceDUT = Mockito.spy(new LabelPrintingServiceImpl());
@@ -83,284 +79,293 @@ public class LabelPrintingServiceImplTest {
 	@Before
 	public void beforeTest() throws Exception {
 
-		final Project project = mock(Project.class);
-		when(project.getCropType()).thenReturn(new CropType(MAIZE_CROP_STR));
+		final Project project = Mockito.mock(Project.class);
+		Mockito.when(project.getCropType()).thenReturn(new CropType(LabelPrintingServiceImplTest.MAIZE_CROP_STR));
 
 		final Tool fieldbookWeb = new Tool();
 		fieldbookWeb.setToolId(23L);
 		fieldbookWeb.setToolName("fieldbook_web");
 
-		when(workbenchService.getFieldbookWebTool()).thenReturn(fieldbookWeb);
+		Mockito.when(this.workbenchService.getFieldbookWebTool()).thenReturn(fieldbookWeb);
 
 		// init mocks
-		when(workbenchService.getProjectById(TEST_PROJECT_ID)).thenReturn(project);
+		Mockito.when(this.workbenchService.getProjectById(LabelPrintingServiceImplTest.TEST_PROJECT_ID)).thenReturn(project);
 
 		final ArrayList<ProgramPreset> notEmptySearchResult = new ArrayList<>();
 		final ProgramPreset searchResultPreset = new ProgramPreset();
-		searchResultPreset.setProgramUuid(DUMMY_PROGRAM_UUID);
+		searchResultPreset.setProgramUuid(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID);
 		searchResultPreset.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
 		searchResultPreset.setToolId(23);
-		searchResultPreset.setName(TEST_EXISTING_PRESET_NAME);
-		searchResultPreset.setConfiguration(PROGRAM_PRESET_CONFIG);
+		searchResultPreset.setName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME);
+		searchResultPreset.setConfiguration(LabelPrintingServiceImplTest.PROGRAM_PRESET_CONFIG);
 		notEmptySearchResult.add(searchResultPreset);
 
-		when(presetDataManager.getProgramPresetFromProgramAndToolByName(TEST_EXISTING_PRESET_NAME,
-				DUMMY_PROGRAM_UUID, 23,
-				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(notEmptySearchResult);
-
-		when(presetDataManager.getProgramPresetFromProgramAndToolByName(
-				TEST_NON_EXISTING_PRESET_NAME,
-				DUMMY_PROGRAM_UUID, 23,
-				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(new ArrayList<ProgramPreset>());
-
-		when(presetDataManager.getProgramPresetFromProgramAndTool(DUMMY_PROGRAM_UUID, 23,
-				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
+		Mockito.when(
+				this.presetDataManager.getProgramPresetFromProgramAndToolByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
+						LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
 				notEmptySearchResult);
+
+		Mockito.when(
+				this.presetDataManager.getProgramPresetFromProgramAndToolByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
+						LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23, ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
+				new ArrayList<ProgramPreset>());
+
+		Mockito.when(
+				this.presetDataManager.getProgramPresetFromProgramAndTool(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID, 23,
+						ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(notEmptySearchResult);
 
 		final ArrayList<StandardPreset> standardPresetSearchResults = new ArrayList<>();
 		final StandardPreset sp = new StandardPreset();
-		sp.setName(TEST_EXISTING_PRESET_NAME);
-		sp.setCropName(MAIZE_CROP_STR);
+		sp.setName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME);
+		sp.setCropName(LabelPrintingServiceImplTest.MAIZE_CROP_STR);
 		sp.setToolId(23);
 		sp.setToolSection(ToolSection.FBK_LABEL_PRINTING.name());
-		sp.setConfiguration(STANDARD_PRESET_CONFIG);
+		sp.setConfiguration(LabelPrintingServiceImplTest.STANDARD_PRESET_CONFIG);
 		standardPresetSearchResults.add(sp);
 
-		when(workbenchService
-				.getStandardPresetByCropAndPresetName(TEST_EXISTING_PRESET_NAME, 23, MAIZE_CROP_STR,
-						ToolSection.FBK_LABEL_PRINTING.name()))
-				.thenReturn(standardPresetSearchResults);
-		when(workbenchService
-				.getStandardPresetByCropAndPresetName(TEST_NON_EXISTING_PRESET_NAME, 23,
-						MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name()))
-				.thenReturn(new ArrayList<StandardPreset>());
+		Mockito.when(
+				this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, 23,
+						LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
+				standardPresetSearchResults);
+		Mockito.when(
+				this.workbenchService.getStandardPresetByCropAndPresetName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME, 23,
+						LabelPrintingServiceImplTest.MAIZE_CROP_STR, ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(
+				new ArrayList<StandardPreset>());
 
-		when(workbenchService.getStandardPresetByCrop(23, MAIZE_CROP_STR,
-				ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(standardPresetSearchResults);
+		Mockito.when(
+				this.workbenchService.getStandardPresetByCrop(23, LabelPrintingServiceImplTest.MAIZE_CROP_STR,
+						ToolSection.FBK_LABEL_PRINTING.name())).thenReturn(standardPresetSearchResults);
 
-		when(workbenchService.getStandardPresetById(TEST_PRESET_ID)).thenReturn(sp);
-		when(presetDataManager.getProgramPresetById(TEST_PRESET_ID)).thenReturn(searchResultPreset);
-		
-		when(contextUtil.getCurrentProgramUUID()).thenReturn(DUMMY_PROGRAM_UUID);
+		Mockito.when(this.workbenchService.getStandardPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(sp);
+		Mockito.when(this.presetDataManager.getProgramPresetById(LabelPrintingServiceImplTest.TEST_PRESET_ID)).thenReturn(
+				searchResultPreset);
+
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID);
 	}
 
 	@Test
 	public void testGetAllLabelPrintingPresets() throws Exception {
-		List<LabelPrintingPresets> presetList = serviceDUT.getAllLabelPrintingPresets(
-				TEST_PROJECT_ID.intValue());
+		List<LabelPrintingPresets> presetList =
+				this.serviceDUT.getAllLabelPrintingPresets(LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue());
 
-		assertTrue("should have more than 1 item", presetList.size() > 1);
+		Assert.assertTrue("should have more than 1 item", presetList.size() > 1);
 	}
 
 	@Test
 	public void testGetLabelPrintingPresetConfig() throws Exception {
-		String config = serviceDUT.getLabelPrintingPresetConfig(
-				TEST_PRESET_ID, LabelPrintingPresets.STANDARD_PRESET);
+		String config =
+				this.serviceDUT.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
+						LabelPrintingPresets.STANDARD_PRESET);
 
-		assertEquals("should retrieve a standard preset config", STANDARD_PRESET_CONFIG, config);
+		Assert.assertEquals("should retrieve a standard preset config", LabelPrintingServiceImplTest.STANDARD_PRESET_CONFIG, config);
 
-		config = serviceDUT.getLabelPrintingPresetConfig(
-				TEST_PRESET_ID, LabelPrintingPresets.PROGRAM_PRESET);
+		config =
+				this.serviceDUT.getLabelPrintingPresetConfig(LabelPrintingServiceImplTest.TEST_PRESET_ID,
+						LabelPrintingPresets.PROGRAM_PRESET);
 
-		assertEquals("should retrieve a program preset config", PROGRAM_PRESET_CONFIG, config);
+		Assert.assertEquals("should retrieve a program preset config", LabelPrintingServiceImplTest.PROGRAM_PRESET_CONFIG, config);
 	}
 
 	@Test
 	public void testGetLabelPrintingProgramPreset() throws Exception {
-		LabelPrintingPresets preset = serviceDUT.getLabelPrintingPreset(
-				TEST_PRESET_ID, LabelPrintingPresets.STANDARD_PRESET);
+		LabelPrintingPresets preset =
+				this.serviceDUT.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID, LabelPrintingPresets.STANDARD_PRESET);
 
-		assertEquals("should retrieve a standard preset", TEST_EXISTING_PRESET_NAME,
-				preset.getName());
+		Assert.assertEquals("should retrieve a standard preset", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, preset.getName());
 
-		preset = serviceDUT.getLabelPrintingPreset(
-				TEST_PRESET_ID, LabelPrintingPresets.PROGRAM_PRESET);
+		preset = this.serviceDUT.getLabelPrintingPreset(LabelPrintingServiceImplTest.TEST_PRESET_ID, LabelPrintingPresets.PROGRAM_PRESET);
 
-		assertEquals("should retrieve a program preset", TEST_EXISTING_PRESET_NAME,
-				preset.getName());
+		Assert.assertEquals("should retrieve a program preset", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME, preset.getName());
 
 	}
 
 	@Test
 	public void testGetAllLabelPrintingPresetsByName() throws Exception {
-		List<LabelPrintingPresets> programPresetList = serviceDUT
-				.getAllLabelPrintingPresetsByName(TEST_EXISTING_PRESET_NAME,
-						TEST_PROJECT_ID.intValue(),
-						LabelPrintingPresets.PROGRAM_PRESET);
+		List<LabelPrintingPresets> programPresetList =
+				this.serviceDUT.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
+						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.PROGRAM_PRESET);
 
-		List<LabelPrintingPresets> emptyProgramPresetList = serviceDUT
-				.getAllLabelPrintingPresetsByName(TEST_NON_EXISTING_PRESET_NAME,
-						TEST_PROJECT_ID.intValue(),
-						LabelPrintingPresets.PROGRAM_PRESET);
+		List<LabelPrintingPresets> emptyProgramPresetList =
+				this.serviceDUT.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
+						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.PROGRAM_PRESET);
 
-		List<LabelPrintingPresets> standardPresetList = serviceDUT
-				.getAllLabelPrintingPresetsByName(TEST_EXISTING_PRESET_NAME,
-						TEST_PROJECT_ID.intValue(),
-						LabelPrintingPresets.STANDARD_PRESET);
+		List<LabelPrintingPresets> standardPresetList =
+				this.serviceDUT.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
+						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.STANDARD_PRESET);
 
-		List<LabelPrintingPresets> emptyStandardPresetList = serviceDUT
-				.getAllLabelPrintingPresetsByName(TEST_NON_EXISTING_PRESET_NAME,
-						TEST_PROJECT_ID.intValue(),
-						LabelPrintingPresets.STANDARD_PRESET);
+		List<LabelPrintingPresets> emptyStandardPresetList =
+				this.serviceDUT.getAllLabelPrintingPresetsByName(LabelPrintingServiceImplTest.TEST_NON_EXISTING_PRESET_NAME,
+						LabelPrintingServiceImplTest.TEST_PROJECT_ID.intValue(), LabelPrintingPresets.STANDARD_PRESET);
 
-		assertTrue("should have an item", standardPresetList.size() > 0);
-		assertTrue("should have an item", programPresetList.size() > 0);
+		Assert.assertTrue("should have an item", standardPresetList.size() > 0);
+		Assert.assertTrue("should have an item", programPresetList.size() > 0);
 
-		assertTrue("should be empty", emptyProgramPresetList.isEmpty());
-		assertTrue("should be empty", emptyStandardPresetList.isEmpty());
+		Assert.assertTrue("should be empty", emptyProgramPresetList.isEmpty());
+		Assert.assertTrue("should be empty", emptyStandardPresetList.isEmpty());
 
-		assertEquals("should be the same item as we searched on", TEST_EXISTING_PRESET_NAME,
+		Assert.assertEquals("should be the same item as we searched on", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
 				programPresetList.get(0).getName());
-		assertEquals("should be the same item as we searched on", TEST_EXISTING_PRESET_NAME,
+		Assert.assertEquals("should be the same item as we searched on", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
 				standardPresetList.get(0).getName());
 	}
-	
-	
+
 	@Test
-	public void testHasInventoryValues_ReturnsTrueForEntriesWithInventory() throws MiddlewareQueryException{
+	public void testHasInventoryValues_ReturnsTrueForEntriesWithInventory() throws MiddlewareQueryException {
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		Integer studyId = workbook.getStudyDetails().getId();
-		List<GermplasmList> germplasmLists = createGermplasmLists(1);
+		List<GermplasmList> germplasmLists = this.createGermplasmLists(1);
 		GermplasmList germplasmList = germplasmLists.get(0);
 		Integer numOfEntries = germplasmList.getListData().size();
-		when(fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(germplasmLists);
-		when(inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId(),null)).thenReturn(createInventoryDetailList(numOfEntries));
-		
-		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(
+				germplasmLists);
+		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId(), null)).thenReturn(
+				this.createInventoryDetailList(numOfEntries));
+
+		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",
+				this.serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
 	}
-	
+
 	@Test
-	public void testHasInventoryValues_ReturnsFalseForEntriesWithoutInventory() throws MiddlewareQueryException{
+	public void testHasInventoryValues_ReturnsFalseForEntriesWithoutInventory() throws MiddlewareQueryException {
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		Integer studyId = workbook.getStudyDetails().getId();
-		List<GermplasmList> germplasmLists = createGermplasmLists(1);
+		List<GermplasmList> germplasmLists = this.createGermplasmLists(1);
 		GermplasmList germplasmList = germplasmLists.get(0);
-		when(fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(germplasmLists);
-		when(inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId())).thenReturn(new ArrayList<InventoryDetails>());
-		
-		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY)).thenReturn(
+				germplasmLists);
+		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId())).thenReturn(
+				new ArrayList<InventoryDetails>());
+
+		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",
+				this.serviceDUT.hasInventoryValues(studyId, workbook.isNursery()));
 	}
-	
+
 	@Test
-	public void testEncodeBardcodeInEnglishCharacters(){
-		BitMatrix bitMatrix = serviceDUT.encodeBarcode("Test", 100, 200);
-		Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII" , bitMatrix);
+	public void testEncodeBardcodeInEnglishCharacters() {
+		BitMatrix bitMatrix = this.serviceDUT.encodeBarcode("Test", 100, 200);
+		Assert.assertNotNull("Bit Matrix Barcode should be not null since characters are in English ASCII", bitMatrix);
 	}
-	
+
 	@Test
-	public void testEncodeBardcodeInNonEnglishCharacters(){
-		BitMatrix bitMatrix = serviceDUT.encodeBarcode("乙七九", 100, 200);
-		Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii" , bitMatrix);
+	public void testEncodeBardcodeInNonEnglishCharacters() {
+		BitMatrix bitMatrix = this.serviceDUT.encodeBarcode("乙七九", 100, 200);
+		Assert.assertNull("Bit Matrix Barcode should be null since parameter is non-english ascii", bitMatrix);
 	}
-	
+
 	@Test
-	public void testPopulateValuesFromMeasurementNoData(){
-		
+	public void testPopulateValuesFromMeasurementNoData() {
+
 		Map<Integer, String> values = new HashMap<>();
-		LabelPrintingProcessingParams params = createLabelPrintingProcessingParams();
-		MeasurementRow measurementRow = createMeasurementRow();
-		
-		Boolean hasData = serviceDUT.populateValuesFromMeasurement(params, measurementRow, 1, values, true);
-		
+		LabelPrintingProcessingParams params = this.createLabelPrintingProcessingParams();
+		MeasurementRow measurementRow = this.createMeasurementRow();
+
+		Boolean hasData = this.serviceDUT.populateValuesFromMeasurement(params, measurementRow, 1, values, true);
+
 		Assert.assertFalse("should be false", hasData);
 	}
-	
+
 	@Test
-	public void testPopulateValuesFromMeasurementWithData(){
-		
+	public void testPopulateValuesFromMeasurementWithData() {
+
 		Map<Integer, String> values = new HashMap<>();
-		LabelPrintingProcessingParams params = createLabelPrintingProcessingParams();
-		MeasurementRow measurementRow = createMeasurementRow();
-		
-		Boolean hasData = serviceDUT.populateValuesFromMeasurement(params, measurementRow, TermId.TRIAL_LOCATION.getId(), values, true);
-		
+		LabelPrintingProcessingParams params = this.createLabelPrintingProcessingParams();
+		MeasurementRow measurementRow = this.createMeasurementRow();
+
+		Boolean hasData =
+				this.serviceDUT.populateValuesFromMeasurement(params, measurementRow, TermId.TRIAL_LOCATION.getId(), values, true);
+
 		Assert.assertTrue("Should be true", hasData);
-		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila" ,values.get(TermId.TRIAL_LOCATION.getId()));
-		
+		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila", values.get(TermId.TRIAL_LOCATION.getId()));
+
 	}
-	
+
 	@Test
-	public void testPopulateValuesForTrial(){
-		
-		Integer testTermId =  TermId.TRIAL_LOCATION.getId();
-		
-		Mockito.doReturn(testTermId).when(serviceDUT).getCounterpartTermId(Mockito.anyInt());
-		
+	public void testPopulateValuesForTrial() {
+
+		Integer testTermId = TermId.TRIAL_LOCATION.getId();
+
+		Mockito.doReturn(testTermId).when(this.serviceDUT).getCounterpartTermId(Matchers.anyInt());
+
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		Map<Integer, String> values = new HashMap<>();
-		LabelPrintingProcessingParams params = createLabelPrintingProcessingParams();
-		
+		LabelPrintingProcessingParams params = this.createLabelPrintingProcessingParams();
+
 		params.setVariableMap(new HashMap<Integer, MeasurementVariable>());
-		for (MeasurementVariable mv : workbook.getAllVariables()){
+		for (MeasurementVariable mv : workbook.getAllVariables()) {
 			params.getVariableMap().put(mv.getTermId(), mv);
 		}
-		
-		params.setEnvironmentData(createMeasurementRow());
-		
-		serviceDUT.populateValuesForTrial(params, workbook, testTermId, values, true);
-		
-		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila" ,values.get(TermId.TRIAL_LOCATION.getId()));
+
+		params.setEnvironmentData(this.createMeasurementRow());
+
+		this.serviceDUT.populateValuesForTrial(params, workbook, testTermId, values, true);
+
+		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "Manila", values.get(TermId.TRIAL_LOCATION.getId()));
 	}
-	
+
 	@Test
-	public void testPopulateValuesForNursery(){
-		
-		Integer testTermId =  TermId.TRIAL_LOCATION.getId();
-		
-		Mockito.doReturn(testTermId).when(serviceDUT).getCounterpartTermId(Mockito.anyInt());
-		
+	public void testPopulateValuesForNursery() {
+
+		Integer testTermId = TermId.TRIAL_LOCATION.getId();
+
+		Mockito.doReturn(testTermId).when(this.serviceDUT).getCounterpartTermId(Matchers.anyInt());
+
 		Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 		Map<Integer, String> values = new HashMap<>();
-		LabelPrintingProcessingParams params = createLabelPrintingProcessingParams();
-		
-		serviceDUT.populateValuesForNursery(params, workbook, testTermId, values, true);
-		
-		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "" ,values.get(TermId.TRIAL_LOCATION.getId()));
+		LabelPrintingProcessingParams params = this.createLabelPrintingProcessingParams();
+
+		this.serviceDUT.populateValuesForNursery(params, workbook, testTermId, values, true);
+
+		Assert.assertEquals("The value of LOCATION_NAME should be added to values map", "", values.get(TermId.TRIAL_LOCATION.getId()));
 	}
-	
+
 	@Test
-	public void testProcessUserSpecificLabelsForInstanceForStockList(){
+	public void testProcessUserSpecificLabelsForInstanceForStockList() {
 		LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
-		params.setInstanceInfo(createFieldMapTrialInstanceInfo());
+		params.setInstanceInfo(this.createFieldMapTrialInstanceInfo());
 		params.setIsStockList(true);
-		params.setInventoryDetailsMap(createInventoryDetailsMap());
-		
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(NO_OF_GERMPLASM_LIST_OBSERVATION, StudyType.N);
-		
+		params.setInventoryDetailsMap(this.createInventoryDetailsMap());
+
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION, StudyType.N);
+
 		Map<Integer, String> userSpecifiedLabels = new HashMap<Integer, String>();
-		for(InventoryDetails inventoryDetail : params.getInventoryDetailsMap().values()){
-			doReturn(userSpecifiedLabels).when(serviceDUT).extractDataForUserSpecifiedLabels(params, null, inventoryDetail, true, workbook);
-			doReturn(userSpecifiedLabels).when(serviceDUT).extractDataForUserSpecifiedLabels(params, null, inventoryDetail, false, workbook);
+		for (InventoryDetails inventoryDetail : params.getInventoryDetailsMap().values()) {
+			Mockito.doReturn(userSpecifiedLabels).when(this.serviceDUT)
+					.extractDataForUserSpecifiedLabels(params, null, inventoryDetail, true, workbook);
+			Mockito.doReturn(userSpecifiedLabels).when(this.serviceDUT)
+					.extractDataForUserSpecifiedLabels(params, null, inventoryDetail, false, workbook);
 		}
-		
-		serviceDUT.processUserSpecificLabelsForInstance(params,workbook);
-		
-		Assert.assertEquals(NO_OF_STOCK_LIST_ENTRIES, params.getInstanceInfo().getFieldMapLabels().size());
+
+		this.serviceDUT.processUserSpecificLabelsForInstance(params, workbook);
+
+		Assert.assertEquals(LabelPrintingServiceImplTest.NO_OF_STOCK_LIST_ENTRIES, params.getInstanceInfo().getFieldMapLabels().size());
 	}
-	
+
 	@Test
-	public void testProcessUserSpecificLabelsForInstanceForStudy(){
-		Workbook workbook = WorkbookDataUtil.getTestWorkbook(NO_OF_GERMPLASM_LIST_OBSERVATION, StudyType.N);
-		setExperimentId(workbook);
+	public void testProcessUserSpecificLabelsForInstanceForStudy() {
+		Workbook workbook = WorkbookDataUtil.getTestWorkbook(LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION, StudyType.N);
+		this.setExperimentId(workbook);
 		LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
-		params.setInstanceInfo(createFieldMapTrialInstanceInfo());
+		params.setInstanceInfo(this.createFieldMapTrialInstanceInfo());
 		params.setIsStockList(false);
 		params.setInstanceMeasurements(workbook.getObservations());
-		
+
 		Map<Integer, String> userSpecifiedLabels = new HashMap<Integer, String>();
-		for(MeasurementRow measurement : params.getInstanceMeasurements()){
-			doReturn(userSpecifiedLabels).when(serviceDUT).extractDataForUserSpecifiedLabels(params, measurement, null, true, workbook);
-			doReturn(userSpecifiedLabels).when(serviceDUT).extractDataForUserSpecifiedLabels(params, measurement, null, false, workbook);
+		for (MeasurementRow measurement : params.getInstanceMeasurements()) {
+			Mockito.doReturn(userSpecifiedLabels).when(this.serviceDUT)
+					.extractDataForUserSpecifiedLabels(params, measurement, null, true, workbook);
+			Mockito.doReturn(userSpecifiedLabels).when(this.serviceDUT)
+					.extractDataForUserSpecifiedLabels(params, measurement, null, false, workbook);
 		}
-		
-		serviceDUT.processUserSpecificLabelsForInstance(params,workbook);
-		
-		Assert.assertEquals(NO_OF_GERMPLASM_LIST_OBSERVATION, params.getInstanceInfo().getFieldMapLabels().size());
+
+		this.serviceDUT.processUserSpecificLabelsForInstance(params, workbook);
+
+		Assert.assertEquals(LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION, params.getInstanceInfo().getFieldMapLabels()
+				.size());
 	}
 
 	private void setExperimentId(Workbook workbook) {
-		int i = 1; 
-		for(MeasurementRow measurement : workbook.getObservations()){
+		int i = 1;
+		for (MeasurementRow measurement : workbook.getObservations()) {
 			measurement.setExperimentId(i);
 			i++;
 		}
@@ -368,14 +373,14 @@ public class LabelPrintingServiceImplTest {
 
 	private FieldMapTrialInstanceInfo createFieldMapTrialInstanceInfo() {
 		FieldMapTrialInstanceInfo instanceInfo = new FieldMapTrialInstanceInfo();
-		instanceInfo.setFieldMapLabels(createFieldMapLabelList());
+		instanceInfo.setFieldMapLabels(this.createFieldMapLabelList());
 		return instanceInfo;
 	}
 
 	private List<FieldMapLabel> createFieldMapLabelList() {
 		List<FieldMapLabel> labelFields = new ArrayList<FieldMapLabel>();
-		
-		for(int i = 1; i <= NO_OF_GERMPLASM_LIST_OBSERVATION; i++){
+
+		for (int i = 1; i <= LabelPrintingServiceImplTest.NO_OF_GERMPLASM_LIST_OBSERVATION; i++) {
 			FieldMapLabel fieldMapLabel = new FieldMapLabel();
 			fieldMapLabel.setExperimentId(i);
 			labelFields.add(fieldMapLabel);
@@ -384,91 +389,90 @@ public class LabelPrintingServiceImplTest {
 	}
 
 	private Map<String, InventoryDetails> createInventoryDetailsMap() {
-		Map<String, InventoryDetails> inventoryDetails = new HashMap<String,InventoryDetails>();
-		
-		for(int i = 1; i <= NO_OF_STOCK_LIST_ENTRIES; i++){
+		Map<String, InventoryDetails> inventoryDetails = new HashMap<String, InventoryDetails>();
+
+		for (int i = 1; i <= LabelPrintingServiceImplTest.NO_OF_STOCK_LIST_ENTRIES; i++) {
 			inventoryDetails.put(String.valueOf(i), new InventoryDetails());
 		}
-		
+
 		return inventoryDetails;
 	}
 
 	private List<GermplasmList> createGermplasmLists(int numOfEntries) {
 		List<GermplasmList> germplasmLists = new ArrayList<GermplasmList>();
-		
-		for(int i = 0; i < numOfEntries; i++ ){
-			Integer id = i+1;
+
+		for (int i = 0; i < numOfEntries; i++) {
+			Integer id = i + 1;
 			GermplasmList germplasmList = new GermplasmList();
 			germplasmList.setId(id);
 			germplasmList.setName("List " + id);
 			germplasmList.setDescription("Description " + id);
-			germplasmList.setListData(getGermplasmListData(numOfEntries));
-			
+			germplasmList.setListData(this.getGermplasmListData(numOfEntries));
+
 			germplasmLists.add(germplasmList);
 		}
-		
+
 		return germplasmLists;
 	}
-	
-	private List<GermplasmListData> getGermplasmListData(int numOfEntries){
+
+	private List<GermplasmListData> getGermplasmListData(int numOfEntries) {
 		List<GermplasmListData> germplasmListData = new ArrayList<GermplasmListData>();
-		
-		for(int i = 0; i < numOfEntries; i++){
-			Integer id = i+1;
+
+		for (int i = 0; i < numOfEntries; i++) {
+			Integer id = i + 1;
 			GermplasmListData listData = new GermplasmListData();
 			listData.setId(id);
-			listData.setDesignation("Designation"+id);
-			listData.setEntryCode("EntryCode"+id);
-			listData.setGroupName("GroupName"+id);
-			
+			listData.setDesignation("Designation" + id);
+			listData.setEntryCode("EntryCode" + id);
+			listData.setGroupName("GroupName" + id);
+
 			germplasmListData.add(listData);
 		}
-		
+
 		return germplasmListData;
 	}
-	
-	private List<InventoryDetails> createInventoryDetailList(Integer numOfEntries){
+
+	private List<InventoryDetails> createInventoryDetailList(Integer numOfEntries) {
 		List<InventoryDetails> inventoryDetails = new ArrayList<InventoryDetails>();
-		
-		for(int i = 0; i < numOfEntries; i++){
-			int id = i+1;
+
+		for (int i = 0; i < numOfEntries; i++) {
+			int id = i + 1;
 			InventoryDetails invDetails = new InventoryDetails();
 			invDetails.setLotId(id);
 			invDetails.setGid(id);
 			inventoryDetails.add(invDetails);
 		}
-		
+
 		return inventoryDetails;
 	}
-	
-	private LabelPrintingProcessingParams createLabelPrintingProcessingParams(){
+
+	private LabelPrintingProcessingParams createLabelPrintingProcessingParams() {
 		LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
 		params.setLabelHeaders(new HashMap<Integer, String>());
 		return params;
 	}
-	
-	private MeasurementRow createMeasurementRow(){
-		
+
+	private MeasurementRow createMeasurementRow() {
+
 		MeasurementRow measurementRow = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<>();
-		dataList.add(createMeasurementData(TermId.LOCATION_ID.getId(), "LOCATION_ID", "123"));
-		dataList.add(createMeasurementData(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Manila"));
-		dataList.add(createMeasurementData(111, "Some Variable", "Test Data"));
+		dataList.add(this.createMeasurementData(TermId.LOCATION_ID.getId(), "LOCATION_ID", "123"));
+		dataList.add(this.createMeasurementData(TermId.TRIAL_LOCATION.getId(), "LOCATION_NAME", "Manila"));
+		dataList.add(this.createMeasurementData(111, "Some Variable", "Test Data"));
 		measurementRow.setDataList(dataList);
-		
+
 		return measurementRow;
 	}
-	
-	private MeasurementData createMeasurementData(Integer termId, String label, String value){
+
+	private MeasurementData createMeasurementData(Integer termId, String label, String value) {
 		MeasurementData measurementData = new MeasurementData(label, value);
 		measurementData.setDataType("C");
 		MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setTermId(termId);
 		measurementVariable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
-		
+
 		measurementData.setMeasurementVariable(measurementVariable);
 		return measurementData;
 	}
-	
-	
+
 }

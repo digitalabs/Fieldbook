@@ -1,32 +1,41 @@
+
 package com.efficio.fieldbook.web.trial.bean;
 
 import java.io.Serializable;
 
 public class ExpDesignValidationOutput implements Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -2261802820353959484L;
 	private boolean isValid;
 	private String message;
-	
+
 	public ExpDesignValidationOutput() {
-		super();		
+		super();
 	}
+
 	public ExpDesignValidationOutput(boolean isValid, String message) {
 		super();
 		this.isValid = isValid;
 		this.message = message;
 	}
+
 	public boolean isValid() {
-		return isValid;
+		return this.isValid;
 	}
+
 	public void setValid(boolean isValid) {
 		this.isValid = isValid;
 	}
+
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
+
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	
 
 }

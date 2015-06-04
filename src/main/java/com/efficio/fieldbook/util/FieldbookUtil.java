@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.util;
 
 import java.io.IOException;
@@ -23,20 +24,17 @@ import org.slf4j.LoggerFactory;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
-
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public class FieldbookUtil {
 
 	private static FieldbookUtil instance;
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
-	private static final char[] HEX_CHARS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-        'C', 'D', 'E', 'F' };
-	
+	private static final char[] HEX_CHARS = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
 	static {
-		instance = new FieldbookUtil();
+		FieldbookUtil.instance = new FieldbookUtil();
 	}
 
 	private FieldbookUtil() {
@@ -44,7 +42,7 @@ public class FieldbookUtil {
 	}
 
 	public static FieldbookUtil getInstance() {
-		return instance;
+		return FieldbookUtil.instance;
 	}
 
 	public List<Integer> buildVariableIDList(String idList) {
@@ -55,105 +53,107 @@ public class FieldbookUtil {
 		}
 		return requiredVariables;
 	}
-	
+
 	public static List<Integer> getColumnOrderList(String columnOrders) {
-		if(columnOrders != null && !"".equalsIgnoreCase(columnOrders)){			 
+		if (columnOrders != null && !"".equalsIgnoreCase(columnOrders)) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
-			 	Integer[] columnsOrderList;
+				Integer[] columnsOrderList;
 				columnsOrderList = mapper.readValue(columnOrders, Integer[].class);
 				return Arrays.asList(columnsOrderList);
 			} catch (JsonParseException e) {
-				LOG.error(e.getMessage(), e);
+				FieldbookUtil.LOG.error(e.getMessage(), e);
 			} catch (JsonMappingException e) {
-				LOG.error(e.getMessage(), e);
+				FieldbookUtil.LOG.error(e.getMessage(), e);
 			} catch (IOException e) {
-				LOG.error(e.getMessage(), e);
+				FieldbookUtil.LOG.error(e.getMessage(), e);
 			}
-		 	 
+
 		}
 		return new ArrayList<Integer>();
 	}
-	public static void setColumnOrderingOnWorkbook(Workbook workbook, String columnOrderDelimited){
-	    	List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
-	    	if(!columnOrdersList.isEmpty()){
-	    		workbook.setColumnOrderedLists(columnOrdersList);
-	    	}
-   }
-	
-    /**
-    return encoded file name
-     */
-  public static String getDownloadFileName(String filename, HttpServletRequest request) {
-	  String newFilename = filename;
-      try{
-          if (request.getHeader("User-Agent").indexOf("MSIE") != -1 || request.getHeader("User-Agent").indexOf("Trident") != -1) {
-            URI uri = new URI(null, null, filename, null);
-      	  	newFilename = uri.toASCIIString();
-            return newFilename;
-          }
-          byte[] bytes = filename.getBytes("UTF-8");
-          StringBuilder buff = new StringBuilder(bytes.length << 2);
-          buff.append("=?UTF-8?Q?");
-          for (byte b : bytes) {
-              int unsignedByte = b & 0xFF;
-              buff.append('=').append(HEX_CHARS[unsignedByte >> 4]).append(HEX_CHARS[unsignedByte & 0xF]);
-          }
-          return buff.append("?=").toString();
-          
-          
-          
-      }catch (URISyntaxException e) {
-		LOG.error(e.getMessage(), e);
-	} catch (UnsupportedEncodingException e) {
-		LOG.error(e.getMessage(), e);
-	}
-      return newFilename;
-  }
 
-  public static String generateEntryCode(int index) {
-      return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
-  }
-  
-  public static boolean isPlotDuplicateNonFirstInstance(ImportedCrosses crosses){
-	  if(crosses.isPlotDupe() && crosses.getDuplicateEntries() != null &&  crosses.getEntryId() > crosses.getDuplicateEntries().iterator().next()){
-		  return true;
-	  }
-	  return false;
-  }
-  public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses, List<ImportedCrosses> importedGermplasmList){
-	  if(isPlotDuplicateNonFirstInstance(crosses)){
-		  //get the 1st instance of duplicate from the list
-		  Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
-		  // needed to minus 1 since a list is 0 based
-		  ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate-1);
-		  crosses.setGid(firstInstanceCrossGermplasm.getGid());
-		  crosses.setCross(firstInstanceCrossGermplasm.getCross());
-		  crosses.setDesig(firstInstanceCrossGermplasm.getDesig());		  
-	  }
-  }
-  public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate, boolean isPreservePlotDuplicate, ImportedCrosses cross){
-	  if(hasPlotDuplicate && !isPreservePlotDuplicate && FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)){
-		  return true;
-	  }
-	  return false;
-  }
-  
-  public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList, List<ImportedCrosses> importedCrosses){
-	  if(dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()){
-		  for(int i = 0 ; i < dataProjectList.size() ; i++){
-			  dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate()); 
-		  }
-	  }
-  }
-  
-  public static List<Integer> getFilterForMeansAndStatisticalVars(){
-	  
-	  List<Integer> isAIds = new ArrayList<Integer>();
-	  StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
-	  while (token.hasMoreTokens()) {
-		  isAIds.add(Integer.valueOf(token.nextToken()));
-	  }
-	  return isAIds;
-  }
+	public static void setColumnOrderingOnWorkbook(Workbook workbook, String columnOrderDelimited) {
+		List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
+		if (!columnOrdersList.isEmpty()) {
+			workbook.setColumnOrderedLists(columnOrdersList);
+		}
+	}
+
+	/**
+	 * return encoded file name
+	 */
+	public static String getDownloadFileName(String filename, HttpServletRequest request) {
+		String newFilename = filename;
+		try {
+			if (request.getHeader("User-Agent").indexOf("MSIE") != -1 || request.getHeader("User-Agent").indexOf("Trident") != -1) {
+				URI uri = new URI(null, null, filename, null);
+				newFilename = uri.toASCIIString();
+				return newFilename;
+			}
+			byte[] bytes = filename.getBytes("UTF-8");
+			StringBuilder buff = new StringBuilder(bytes.length << 2);
+			buff.append("=?UTF-8?Q?");
+			for (byte b : bytes) {
+				int unsignedByte = b & 0xFF;
+				buff.append('=').append(FieldbookUtil.HEX_CHARS[unsignedByte >> 4]).append(FieldbookUtil.HEX_CHARS[unsignedByte & 0xF]);
+			}
+			return buff.append("?=").toString();
+
+		} catch (URISyntaxException e) {
+			FieldbookUtil.LOG.error(e.getMessage(), e);
+		} catch (UnsupportedEncodingException e) {
+			FieldbookUtil.LOG.error(e.getMessage(), e);
+		}
+		return newFilename;
+	}
+
+	public static String generateEntryCode(int index) {
+		return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
+	}
+
+	public static boolean isPlotDuplicateNonFirstInstance(ImportedCrosses crosses) {
+		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null
+				&& crosses.getEntryId() > crosses.getDuplicateEntries().iterator().next()) {
+			return true;
+		}
+		return false;
+	}
+
+	public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses, List<ImportedCrosses> importedGermplasmList) {
+		if (FieldbookUtil.isPlotDuplicateNonFirstInstance(crosses)) {
+			// get the 1st instance of duplicate from the list
+			Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
+			// needed to minus 1 since a list is 0 based
+			ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate - 1);
+			crosses.setGid(firstInstanceCrossGermplasm.getGid());
+			crosses.setCross(firstInstanceCrossGermplasm.getCross());
+			crosses.setDesig(firstInstanceCrossGermplasm.getDesig());
+		}
+	}
+
+	public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate, boolean isPreservePlotDuplicate, ImportedCrosses cross) {
+		if (hasPlotDuplicate && !isPreservePlotDuplicate && FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList, List<ImportedCrosses> importedCrosses) {
+		if (dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()) {
+			for (int i = 0; i < dataProjectList.size(); i++) {
+				dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate());
+			}
+		}
+	}
+
+	public static List<Integer> getFilterForMeansAndStatisticalVars() {
+
+		List<Integer> isAIds = new ArrayList<Integer>();
+		StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
+		while (token.hasMoreTokens()) {
+			isAIds.add(Integer.valueOf(token.nextToken()));
+		}
+		return isAIds;
+	}
 }

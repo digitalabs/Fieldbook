@@ -1,13 +1,15 @@
+
 package com.efficio.fieldbook.web.naming.rules.naming;
 
-import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.generationcp.commons.ruleengine.OrderedRule;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
@@ -27,10 +29,8 @@ public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 		List<String> counts = new ArrayList<>();
 
 		for (String currentInput : input) {
-			counts.addAll(service.applyProcessCode(
-					currentInput, source.getBreedingMethod().getCount(), source));
+			counts.addAll(service.applyProcessCode(currentInput, source.getBreedingMethod().getCount(), source));
 		}
-
 
 		// store current data in temp before overwriting it with count data, so that it can be restored for another try later on
 		context.setTempData(context.getCurrentData());
@@ -45,7 +45,8 @@ public class CountRule extends OrderedRule<NamingRuleExecutionContext> {
 
 	}
 
-	@Override public String getKey() {
-		return KEY;
+	@Override
+	public String getKey() {
+		return CountRule.KEY;
 	}
 }

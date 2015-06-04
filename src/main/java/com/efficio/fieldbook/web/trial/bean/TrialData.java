@@ -1,69 +1,67 @@
+
 package com.efficio.fieldbook.web.trial.bean;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- * Date: 7/9/2014
- * Time: 5:04 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 7/9/2014 Time: 5:04 PM
  */
 public class TrialData {
-    private BasicDetails basicDetails;
-    private TrialSettingsBean trialSettings;
-    private EnvironmentData environments;
-    private TreatmentFactorTabBean treatmentFactors;
-    private ExpDesignParameterUi experimentalDesign;
-    private String columnOrders;
 
-    public TrialData() {
-    }
+	private BasicDetails basicDetails;
+	private TrialSettingsBean trialSettings;
+	private EnvironmentData environments;
+	private TreatmentFactorTabBean treatmentFactors;
+	private ExpDesignParameterUi experimentalDesign;
+	private String columnOrders;
 
-    public BasicDetails getBasicDetails() {
-        return basicDetails;
-    }
+	public TrialData() {
+	}
 
-    public void setBasicDetails(BasicDetails basicDetails) {
-        this.basicDetails = basicDetails;
-    }
+	public BasicDetails getBasicDetails() {
+		return this.basicDetails;
+	}
 
-    public TrialSettingsBean getTrialSettings() {
-        return trialSettings;
-    }
+	public void setBasicDetails(BasicDetails basicDetails) {
+		this.basicDetails = basicDetails;
+	}
 
-    public void setTrialSettings(TrialSettingsBean trialSettings) {
-        this.trialSettings = trialSettings;
-    }
+	public TrialSettingsBean getTrialSettings() {
+		return this.trialSettings;
+	}
 
-    public EnvironmentData getEnvironments() {
-        return environments;
-    }
+	public void setTrialSettings(TrialSettingsBean trialSettings) {
+		this.trialSettings = trialSettings;
+	}
 
-    public void setEnvironments(EnvironmentData environments) {
-        this.environments = environments;
-    }
+	public EnvironmentData getEnvironments() {
+		return this.environments;
+	}
 
-    public TreatmentFactorTabBean getTreatmentFactors() {
-        return treatmentFactors;
-    }
+	public void setEnvironments(EnvironmentData environments) {
+		this.environments = environments;
+	}
 
-    public void setTreatmentFactors(TreatmentFactorTabBean treatmentFactors) {
-        this.treatmentFactors = treatmentFactors;
-    }
+	public TreatmentFactorTabBean getTreatmentFactors() {
+		return this.treatmentFactors;
+	}
 
-    public ExpDesignParameterUi getExperimentalDesign() {
-        return experimentalDesign;
-    }
+	public void setTreatmentFactors(TreatmentFactorTabBean treatmentFactors) {
+		this.treatmentFactors = treatmentFactors;
+	}
 
-    public void setExperimentalDesign(ExpDesignParameterUi experimentalDesign) {
-        this.experimentalDesign = experimentalDesign;
-    }
+	public ExpDesignParameterUi getExperimentalDesign() {
+		return this.experimentalDesign;
+	}
+
+	public void setExperimentalDesign(ExpDesignParameterUi experimentalDesign) {
+		this.experimentalDesign = experimentalDesign;
+	}
 
 	public String getColumnOrders() {
-		return columnOrders;
+		return this.columnOrders;
 	}
 
 	public void setColumnOrders(String columnOrders) {
 		this.columnOrders = columnOrders;
 	}
-    
-    
+
 }

@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.trial.bean.xml;
 
 import java.io.Serializable;
@@ -5,9 +6,14 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 
 public class ListItem implements Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -927084614613247587L;
 	private String value;
-	
-	public ListItem(){
+
+	public ListItem() {
 		super();
 	}
 
@@ -18,12 +24,11 @@ public class ListItem implements Serializable {
 
 	@XmlAttribute
 	public String getValue() {
-		return value;
+		return this.value;
 	}
 
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
-	
+
 }

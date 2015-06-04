@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
- * This software is licensed for use under the terms of the GNU General Public
- * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
- * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
+ *
+ * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
+ * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ *
  *******************************************************************************/
+
 package com.efficio.fieldbook.web.nursery.controller;
 
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -25,13 +25,11 @@ public class ManageNurseriesControllerTest extends AbstractBaseControllerIntegra
 	@Test
 	public void testGetReturnsCorrectModelAndView() throws Exception {
 
-		ModelAndView mav = request(ManageNurseriesController.URL, HttpMethod.GET.name());
+		ModelAndView mav = this.request(ManageNurseriesController.URL, HttpMethod.GET.name());
 
-		ModelAndViewAssert.assertViewName(mav, ManageNurseriesController.BASE_TEMPLATE_NAME);
-		ModelAndViewAssert.assertModelAttributeValue(mav, 
-				AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy");
-		ModelAndViewAssert.assertModelAttributeValue(mav, 
-				"type", StudyType.N.getName());
+		ModelAndViewAssert.assertViewName(mav, AbstractBaseFieldbookController.BASE_TEMPLATE_NAME);
+		ModelAndViewAssert.assertModelAttributeValue(mav, AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy");
+		ModelAndViewAssert.assertModelAttributeValue(mav, "type", StudyType.N.getName());
 
 	}
 

@@ -93,8 +93,8 @@ public class CSVExcelLabelPrintingSetting implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CSVExcelLabelPrintingSetting [isIncludeColumnHeadingsInOutput=" + this.isIncludeColumnHeadingsInOutput + ", selectedFieldsString=" + this.selectedFieldsString
-				+ "]";
+		return "CSVExcelLabelPrintingSetting [isIncludeColumnHeadingsInOutput=" + this.isIncludeColumnHeadingsInOutput
+				+ ", selectedFieldsString=" + this.selectedFieldsString + "]";
 	}
 
 }

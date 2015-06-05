@@ -633,6 +633,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	 * Loads the selected property.
 	 *
 	 * @param {string} propertyId the id of the property to load.
+	 */
 	VariableSelection.prototype._loadProperty = function(propertyId) {
 
 		var property,

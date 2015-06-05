@@ -182,7 +182,6 @@ var ImportDesign = {
 					trialService = ImportDesign.getTrialManagerDataService();
 
 				$.each(environmentSettings,function(key,value) {
-					trialService.settings.environments.managementDetails.remove(value.variable.cvTermId);
 					trialService.settings.environments.managementDetails.push(value.variable.cvTermId, trialService.transformViewSettingsVariable(value));
 				});
 

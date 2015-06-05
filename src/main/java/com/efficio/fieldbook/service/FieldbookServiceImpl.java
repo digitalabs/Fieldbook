@@ -867,7 +867,7 @@ public class FieldbookServiceImpl implements FieldbookService {
   	}
     
 
-    private void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
+    public void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
         if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty()
                 && workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
 

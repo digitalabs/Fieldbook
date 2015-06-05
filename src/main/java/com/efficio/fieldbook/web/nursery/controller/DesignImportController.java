@@ -8,7 +8,6 @@ package com.efficio.fieldbook.web.nursery.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,7 +48,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.common.service.DesignImportService;
@@ -222,7 +220,7 @@ public class DesignImportController extends SettingsController {
 
 			boolean hasConflict = userSelection.getWorkbook() != null && hasConflict(
 					designImportService.getDesignMeasurementVariables(userSelection.getTemporaryWorkbook(),
-									userSelection.getDesignImportData()),
+							userSelection.getDesignImportData(),true),
 					new HashSet<>(userSelection.getWorkbook().getMeasurementDatasetVariables()));
 
 
@@ -350,7 +348,7 @@ public class DesignImportController extends SettingsController {
 				}
 			}
 
-			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(new ArrayList<MeasurementVariable>(trialLevelFactors), fieldbookMiddlewareService);
+			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(new ArrayList<>(trialLevelFactors), fieldbookMiddlewareService);
 			populateThePossibleValues(newDetails);
 			SettingsUtil.addNewSettingDetails(AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt(), newDetails, userSelection);
 
@@ -406,7 +404,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
-    	Map<String, Object> dataMap = new HashMap<String, Object>();
+    	Map<String, Object> dataMap = new HashMap<>();
 		// the 4 attributes are needed always
 		for (MeasurementData data : row.getDataList()) {
 			String displayVal = data.getDisplayValue();
@@ -430,7 +428,7 @@ public class DesignImportController extends SettingsController {
 		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 	         // transfer over data from user input into the list of setting details stored in the session
-	    	 List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+	    	 List<SettingDetail> combinedList = new ArrayList<>();
 	         combinedList.addAll(basicDetails);
 
 	         if (studyLevelConditions != null) {             
@@ -439,7 +437,7 @@ public class DesignImportController extends SettingsController {
 
 	         String name = "";
 
-	        Workbook workbook = null;
+	        Workbook workbook;
 	        StudyDetails details = new StudyDetails();
 	        
 		if ("T".equalsIgnoreCase(studyType)) {
@@ -522,7 +520,7 @@ public class DesignImportController extends SettingsController {
 				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()){
 					String termId = NameIdMap.get(managementDetail.getKey());
 					if (termId != null){
-						
+
 						Location location = fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
 						copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
 						

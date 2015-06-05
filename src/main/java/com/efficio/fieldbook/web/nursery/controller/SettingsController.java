@@ -112,7 +112,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getNurseryTool(), null, null);
         	templateSettingFilter.setIsDefaultToNull();
 			List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
-			templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(this.getCurrentProjectId()), "", null, "",
+			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "",
 					false));
             return templateSettingsList;
 
@@ -120,7 +120,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
         }
 		
-        return new ArrayList<TemplateSetting>();
+        return new ArrayList<>();
     }
     
     /**
@@ -135,7 +135,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getTrialTool(), null, null);
         	templateSettingFilter.setIsDefaultToNull();
 			List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
-			templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(this.getCurrentProjectId()), "", null, "",
+			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "",
 					false));
             return templateSettingsList;
 
@@ -143,7 +143,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
         }
 		
-        return new ArrayList<TemplateSetting>();
+        return new ArrayList<>();
     }
     
     /**
@@ -159,7 +159,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
         }
                 
-        return new ArrayList<StudyDetails>();
+        return new ArrayList<>();
     }
     
     /**
@@ -175,7 +175,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
         }
                 
-        return new ArrayList<StudyDetails>();
+        return new ArrayList<>();
     }
     
     /**
@@ -197,7 +197,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      */
     protected List<String> buildRequiredVariablesLabel(String requiredFields, boolean hasLabels) {
     	
-        List<String> requiredVariables = new ArrayList<String>();
+        List<String> requiredVariables = new ArrayList<>();
         StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		while (token.hasMoreTokens()) {
             if (hasLabels) {
@@ -252,7 +252,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			throws MiddlewareQueryException {
         
 		// create a map of id and its id-code-name combination
-        Map<String, String> idCodeNameMap = new HashMap<String, String>();
+        Map<String, String> idCodeNameMap = new HashMap<>();
         if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
             StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
 			if (tokenizer.hasMoreTokens()) {
@@ -265,7 +265,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         }
         
 		// save hidden conditions in a map
-        Map<String, SettingDetail> variablesMap = new HashMap<String, SettingDetail>();
+        Map<String, SettingDetail> variablesMap = new HashMap<>();
         if (variables != null) {
 			for (SettingDetail variable : this.userSelection.getRemovedConditions()) {
                 variablesMap.put(variable.getVariable().getCvTermId().toString(), variable);
@@ -273,7 +273,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         }
         
         for (SettingDetail variable : variables) {
-            Integer  stdVar = null;
+            Integer  stdVar;
             if (variable.getVariable().getCvTermId() != null) {
             	stdVar = variable.getVariable().getCvTermId();
             } else {
@@ -363,7 +363,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @throws MiddlewareQueryException the middleware query exception
      */
     protected SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
-            String variableName = "";
+            String variableName;
 		StandardVariable stdVar = this.getStandardVariable(id);
             if (name != null && !name.isEmpty()) {
                 variableName = name;
@@ -601,7 +601,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         
 		// reorder variates based on measurementrow order
         int index = 0;
-        List<MeasurementVariable> newVariatesList = new ArrayList<MeasurementVariable>();
+        List<MeasurementVariable> newVariatesList = new ArrayList<>();
 		if (this.userSelection.getMeasurementRowList() != null) {
 			for (MeasurementRow row : this.userSelection.getMeasurementRowList()) {
                 if (index == 0) {
@@ -760,8 +760,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     
 	private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs)
 			throws MiddlewareQueryException {
-        Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
-        Map<String, SettingDetail> removedConditionsMap = new HashMap<String, SettingDetail>();
+        Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+        Map<String, SettingDetail> removedConditionsMap = new HashMap<>();
 		if (workbook != null && idCodeNamePairs != null && !"".equalsIgnoreCase(idCodeNamePairs)) {
 			// we get a map so we can check easily instead of traversing it again
 			for (MeasurementVariable var : workbook.getConditions()) {
@@ -832,7 +832,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     }
     
     private void removeCodeVariablesIfNeeded(List<SettingDetail> variableList, String idCodeNamePairs) {
-        Map<String, SettingDetail> variableListMap = new HashMap<String, SettingDetail>();
+        Map<String, SettingDetail> variableListMap = new HashMap<>();
         if (variableList != null) {
 			for (SettingDetail setting : variableList) {
 				if (setting != null) {
@@ -883,7 +883,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      */
 	protected List<SettingDetail> getSettingDetailsOfSection(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form,
 			String variableList) {
-        List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
+        List<SettingDetail> settingDetails = new ArrayList<>();
         
         StringTokenizer token = new StringTokenizer(variableList, ",");
 		while (token.hasMoreTokens()) {

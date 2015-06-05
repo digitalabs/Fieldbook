@@ -153,12 +153,7 @@ public class ManageSettingsController extends SettingsController {
 	 * @throws Exception the exception
 	 */
 	private void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception {
-			if (this.userSelection.getStudyLevelConditions() == null) {
-				this.userSelection.setStudyLevelConditions(newDetails);
-				this.userSelection.getStudyLevelConditions().addAll(newDetails);
-		
 		SettingsUtil.addNewSettingDetails(mode, newDetails, userSelection);
-		
 	}
 
 	private Operation removeVarFromDeletedList(SettingVariable var, int mode) {

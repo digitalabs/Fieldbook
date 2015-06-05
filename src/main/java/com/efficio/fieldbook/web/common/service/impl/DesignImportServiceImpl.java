@@ -417,7 +417,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	
 	protected MeasurementRow createMeasurementRow(Workbook workbook, Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders,
 			List<String> rowValues, List<ImportedGermplasm> importedGermplasm, Map<Integer, StandardVariable> germplasmStandardVariables,
-			Set<String> trialInstancesFromUI, isPreview) {
+			Set<String> trialInstancesFromUI,boolean isPreview) {
 		
 		MeasurementRow measurement = new MeasurementRow();
 

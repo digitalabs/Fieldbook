@@ -1,6 +1,8 @@
 /*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList,saveGermplasmReviewError*/
 /*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName,ImportCrosses,listShouldNotBeEmptyError,getJquerySafeId,validateAllDates */
-/*globals listParentFolderRequired, listNameRequired, listDescriptionRequired, listDateRequired, listTypeRequired, listNameDuplicateError, moveToTopScreen */
+/*globals listParentFolderRequired, listNameRequired, listDescriptionRequired */
+/*globals listDateRequired, listTypeRequired, moveToTopScreen */
+/*globals TreePersist, showSuccessfulMessage, console, germplasmEntrySelectError */
 /*exported saveGermplasmList, openSaveListModal*/
 
 var SaveAdvanceList = {};
@@ -201,7 +203,7 @@ var SaveAdvanceList = {};
 						$('#reviewAdvanceNurseryModal').off('shown.bs.modal');
 						$('#reviewAdvanceNurseryModal').on('shown.bs.modal', function (e) {
 							SaveAdvanceList.setupAdvanceListForReview();
-						})
+						});
 						$('#reviewAdvanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
 						}, 300);
 					
@@ -314,7 +316,7 @@ var SaveAdvanceList = {};
 		$('#reviewAdvanceNurseryModal .select-all-entries').on('click', SaveAdvanceList.selectAllReviewEntries);
 		
 		$('#' + sectionContainerDiv +' .advance-germplasm-items').contextmenu({
-		    delegate: "tr",
+		    delegate: 'tr',
 		    menu: [
 		      {title: 'Delete Selected Entries', cmd: 'deleteSelected'},
 		      {title: 'Select All', cmd: 'selectAll'}

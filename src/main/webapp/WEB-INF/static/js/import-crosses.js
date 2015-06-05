@@ -1,9 +1,17 @@
+/*globals isNursery, showErrorMessage, crossingImportErrorHeader, crossingSaveNurseryBeforeImport*/
+
 var ImportCrosses = {
 	CROSSES_URL: '/Fieldbook/crosses',
 	showFavoriteMethodsOnly: true,
 	showFavoriteLocationsOnly: true,
 	preservePlotDuplicates: false,
 	showPopup: function() {
+		'use strict';
+		if ($('#studyId').val() === undefined && isNursery()) {
+			showErrorMessage(crossingImportErrorHeader,
+						crossingSaveNurseryBeforeImport);
+			return;
+		}
 		$('#fileupload-import-crosses').val('');
 		$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
 		$('.import-crosses-section .modal .fileupload-exists').click();

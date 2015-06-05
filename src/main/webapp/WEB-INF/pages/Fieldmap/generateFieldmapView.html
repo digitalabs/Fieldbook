@@ -243,15 +243,15 @@
 				</div>
 				<div class="modal fade" id="create-label-confirmation">
 					<div class="modal-dialog">
-						<div class="modal-content">							
+						<div class="modal-content">
 							<div class="modal-body">
 								<div class="row form-group">
-									<div class="col-xs-11 col-md-11">					
+									<div class="col-xs-11 col-md-11">
 										<label class="modal-title fbk-modal-title" id="modal-title" th:text="#{common.form.confirmation.text}"></label>
 									</div>
 									<div class="col-xs-1 col-md-1">
 										<button type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-									</div>										
+									</div>
 								</div>
 								<div class="row form-group">
 									<div class="col-xs-12 col-md-12">
@@ -272,49 +272,49 @@
 </div>
 
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
 
-	function finishLoading(){
-		var url =  $('#landing-page-url').attr('href');
-		location.href = url;
+function finishLoading() {
+	var url =  $('#landing-page-url').attr('href');
+	location.href = url;
+}
+
+var isGenerated = false;
+$(document).ready(function() {
+	$('#create-label-confirmation').modal('hide');
+	if ($('#' + getJquerySafeId("userFieldmap.generated")).val() == 'true') {
+		isGenerated = true;
 	}
-
-	var isGenerated = false;
-	$( document ).ready(function() {
-		$('#create-label-confirmation').modal('hide');
-		if($('#'+getJquerySafeId("userFieldmap.generated")).val() == 'true'){
-			isGenerated = true;
+	$('#saveAndRedirectToCreateLabel').val("0");
+	$('#step3-create-labels').on('click', function() {
+		if (isGenerated) {
+			//we show the prompt
+			$('#create-label-confirmation').modal('show');
+		} else {
+			redirectToCreateLabel();
 		}
-		$('#saveAndRedirectToCreateLabel').val("0");
-		$('#step3-create-labels').on('click', function(){
-			if(isGenerated){
-			 //we show the prompt
-			 $('#create-label-confirmation').modal('show');
-			}else{
-				redirectToCreateLabel();
-			}
-		})
-	 //for the workaround
-	 $('#finishExport').on("click", function(){
-	 	var url = $('#exportToExcel').attr('href');
-	 	$('<iframe src="'+url+'" onload="finishLoading();" frameborder="0">').appendTo('body');
-
-	 });
-	 var ordering = 1;
-	 $('.ordering').each(function(){
-	 	$(this).html(ordering++);
-	 })
 	});
+ //for the workaround
+	$('#finishExport').on("click", function() {
+		var url = $('#exportToExcel').attr('href');
+		$('<iframe src="' + url + '" onload="finishLoading();" frameborder="0">').appendTo('body');
 
-	function redirectToCreateLabel(){
-		var url =  $('#step3-create-labels-url').attr('href');
-		location.href = url;
-	}
-	function saveAndRedirectToCreateLabels(){
-		$('#saveAndRedirectToCreateLabel').val("1");
-		$('#fieldmapForm').submit();
-	}
-	  //]]>
-	</script>
+	});
+	var ordering = 1;
+	$('.ordering').each(function() {
+		$(this).html(ordering++);
+	});
+});
+
+function redirectToCreateLabel() {
+	var url =  $('#step3-create-labels-url').attr('href');
+	location.href = url;
+}
+function saveAndRedirectToCreateLabels() {
+	$('#saveAndRedirectToCreateLabel').val("1");
+	$('#fieldmapForm').submit();
+}
+  //]]>
+</script>
 </div>

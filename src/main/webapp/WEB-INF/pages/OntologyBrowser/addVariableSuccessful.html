@@ -1,196 +1,194 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
 	<input type="button" id="showSuccessfulModal" data-toggle="modal" href="#addVariableSuccessfulModal" value="test" style="visibility:hidden" />
 	<!-- Modal -->
-   	<div class="modal fade variableModal" id="addVariableSuccessfulModal" role="dialog" aria-labelledby="addVariableSuccessfulLabel" aria-hidden="true">
+	<div class="modal fade variableModal" id="addVariableSuccessfulModal" role="dialog" aria-labelledby="addVariableSuccessfulLabel" aria-hidden="true">
 		<div class="modal-dialog modal-small">
-	    	<div class="modal-content">
-	         	<div class="modal-body" id="addVariableSuccessfulBody">
-		         	<div class="row form-group">
-						<div class="col-xs-11 col-md-11">					
+			<div class="modal-content">
+				<div class="modal-body" id="addVariableSuccessfulBody">
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">
 							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.notification.text}"></label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button onclick="javascript: doNotify();" id="closeAddVariableSuccessfulModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-						</div>										
+						</div>
 					</div>
-	         		
-	         		<br/><br/>
-	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 0" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</div>
-	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 2" th:text="#{ontology.browser.header.edit.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully updated.</div>
-	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 1" th:text="#{ontology.browser.header.delete.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully deleted.</div>
-	         		<input type="hidden" id="operation" name="operation" th:value="${ontologyBrowserForm.isDelete}"/>
-	         	</div>																							
-	       		<div class="modal-footer">    
-	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="javascript: doNotify();">OK</button>	
-       			</div>
-	     	</div><!-- /.modal-content -->
-   		</div><!-- /.modal-dialog -->
+
+					<br/><br/>
+					<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 0" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</div>
+					<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 2" th:text="#{ontology.browser.header.edit.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully updated.</div>
+					<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 1" th:text="#{ontology.browser.header.delete.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully deleted.</div>
+					<input type="hidden" id="operation" name="operation" th:value="${ontologyBrowserForm.isDelete}"/>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="javascript: doNotify();">OK</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	<input type="button" id="showFailedSaveModal" data-toggle="modal" href="#addFailedSaveModal" value="test" style="visibility:hidden" />
 	<!-- Modal -->
-   	<div class="modal fade variableModal" id="addFailedSaveModal" role="dialog" aria-labelledby="addVariableFailedLabel" aria-hidden="true">
+	<div class="modal fade variableModal" id="addFailedSaveModal" role="dialog" aria-labelledby="addVariableFailedLabel" aria-hidden="true">
 		<div class="modal-dialog modal-small">
-	    	<div class="modal-content">
-	         	<div class="modal-body" id="addVariableFailedBody">
-	         		
-	         		<div class="row form-group">
-						<div class="col-xs-11 col-md-11">					
+			<div class="modal-content">
+				<div class="modal-body" id="addVariableFailedBody">
+
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">
 							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.notification.text}"></label>
-						</div>						
+						</div>
 						<div class="col-xs-1 col-md-1">
 							<button id="closeAddVariableFailedModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-						</div>										
+						</div>
 					</div>
-	         		<div class="alert alert-danger" id="add-var-err-msg" th:text="${ontologyBrowserForm.errorMessage}"></div>
-	         	</div>																							
-	       		<div class="modal-footer">    
-	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">OK</button>	
-       			</div>
-	     	</div><!-- /.modal-content -->
-   		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->		
+					<div class="alert alert-danger" id="add-var-err-msg" th:text="${ontologyBrowserForm.errorMessage}"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">OK</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 </div>
 
-<div layout:fragment="page-script">		
-	<script type="text/javascript" th:inline="javascript">
-	//<![CDATA[
-	    var addSuccessful = /*[[${ontologyBrowserForm.addSuccessful}]]*/;
-    $( document ).ready(function() {  	
-    	
-    	$('.variableModal').on('show.bs.modal', function (e) {
-    		  // do something...
-    		  $('#ontology-add-variable').css('display', 'block');
-    		})
+<div layout:fragment="page-script">
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+var addSuccessful = /*[[${ontologyBrowserForm.addSuccessful}]]*/;
+$(document).ready(function() {
 
-    		
-    		$('.variableModal').on('hidden.bs.modal', function (e) {
-			  // do something...
-    			$('#ontology-add-variable').css('display', 'none');
-			})
-			
+	$('.variableModal').on('show.bs.modal', function (e) {
+		  // do something...
+		  $('#ontology-add-variable').css('display', 'block');
+	});
 
-	    if (addSuccessful == '1') {
-	    	$('#role').select2('data',{'id': $('#role option:first').val(), 'text': $('#role option:first').text()});
-			$('#dataType').select2('data',{'id': $('#dataType option:first').val(), 'text': $('#dataType option:first').text()});		
-			createSuccessNotification( successMsgHeader, $('#addVariableSuccessfulBody .alert').html());
-			triggerExternalNotification = true;
-			setTimeout(doNotify,500);
-	    } else if (addSuccessful == '2') {    	
-	    	createErrorNotification( errorMsgHeader, $('#add-var-err-msg').html());
-	    }
-    });
-    
-		function doNotify(){	
-		    if(triggerExternalNotification)
-				notifyIntegratingApps(varId);	
+
+	$('.variableModal').on('hidden.bs.modal', function (e) {
+		// do something...
+		$('#ontology-add-variable').css('display', 'none');
+	});
+
+	if (addSuccessful == '1') {
+		$('#role').select2('data',{'id': $('#role option:first').val(), 'text': $('#role option:first').text()});
+		$('#dataType').select2('data',{'id': $('#dataType option:first').val(), 'text': $('#dataType option:first').text()});
+		createSuccessNotification( successMsgHeader, $('#addVariableSuccessfulBody .alert').html());
+		triggerExternalNotification = true;
+		setTimeout(doNotify,500);
+	} else if (addSuccessful == '2') {
+		createErrorNotification( errorMsgHeader, $('#add-var-err-msg').html());
+	}
+});
+
+function doNotify() {
+	if(triggerExternalNotification)
+		notifyIntegratingApps(varId);
+}
+function notifyIntegratingApps(varIdDeleted) {
+	if(typeof window.parent.applyOntologyManageVariableUpdate == 'function') {
+		 var status = '';
+		 var operation = $('#operation').val();
+		 if(operation == 0)
+			 status = 'ADD';
+		 else if(operation == 1)
+			 status = 'DELETE';
+		 else if(operation == 2)
+			 status = 'UPDATE';
+		 var variableId = '',
+			variableDescription = '',
+			variableName = '',
+			dataTypeId = '';
+		 if($('#comboVariableName').select2('data') != null) {
+			 variableId = $('#comboVariableName').select2('data').id;
+			 variableName = $('#comboVariableName').select2('data').text;
+			 variableName = variableName.replace(' (Shared)', '');
+		 }
+		 if($('#dataType').select2('data') != null) {
+			 dataTypeId = $('#dataType').select2('data').id;
+		 }
+
+		 if(operation == 1) {
+			 variableId = varIdDeleted;
+		 }
+
+
+		 var propertyName = '',
+			propertyDescription = '',
+			scaleName = '',
+			scaleDescription = '',
+			methodName = '',
+			methodDescription = '',
+			traiClassName = '',
+			propertyId = '',
+			scaleId = '',
+			methodId = '';
+		 if($('#comboProperty').select2('data') != null) {
+			 propertyName =  $('#comboProperty').select2('data').text;
+			 propertyDescription =  $('#comboProperty').select2('data').description;
+			 propertyName = propertyName.replace(' (Shared)', '');
+			 propertyId = $('#comboProperty').select2('data').id;
+		 }
+		 if($('#comboScale').select2('data') != null) {
+			 scaleName =  $('#comboScale').select2('data').text;
+			 scaleDescription =  $('#comboScale').select2('data').description;
+			 scaleName = scaleName.replace(' (Shared)', '');
+			 scaleId = $('#comboScale').select2('data').id;
+		 }
+		 if($('#comboMethod').select2('data') != null) {
+			 methodName =  $('#comboMethod').select2('data').text;
+			 methodDescription =  $('#comboMethod').select2('data').description;
+			 methodName = methodName.replace(' (Shared)', '');
+			 methodId = $('#comboMethod').select2('data').id;
+		 }
+		 if($('#comboTraitClass').select2('data') != null) {
+			 traiClassName =  $('#comboTraitClass').select2('data').text;
+			 traiClassName = traiClassName.replace(' (Shared)', '');
+		 }
+
+		 variableDescription = $('#variableDescription').val();
+		 var storedInId = '';
+		 if($('#role').select2('data') != null) {
+			 storedInId = $('#role').select2('data').id;
+		 }
+		 var standardVariableObj = {};
+		 standardVariableObj['id'] = variableId;
+		 standardVariableObj['status'] = status;
+
+		 if(operation != 1) {
+			 standardVariableObj['phenotype'] = null;
+			 standardVariableObj['valid'] = null;
+			 standardVariableObj['confirmed'] =  null;
+			 standardVariableObj['headerName'] = null;
+			 standardVariableObj['hasError'] = null;
+
+			 standardVariableObj['variable'] = variableName;
+			 standardVariableObj['description'] = variableDescription;
+
+			 standardVariableObj['property'] = propertyName;
+			 standardVariableObj['propertyDescription'] = propertyDescription;
+			 standardVariableObj['propertyId'] = propertyId;
+
+			 standardVariableObj['scale'] =scaleName;
+			 standardVariableObj['scaleDescription'] = scaleDescription;
+			 standardVariableObj['scaleId'] = scaleId;
+
+			 standardVariableObj['method'] = methodName;
+			 standardVariableObj['methodDescription'] = methodDescription;
+			 standardVariableObj['methodId'] = methodId;
+
+			 standardVariableObj['propertyClass'] = traiClassName;
+			 standardVariableObj['storedInId'] = storedInId;
+			 standardVariableObj['dataType'] = dataTypeId;
 		}
-	    function notifyIntegratingApps(varIdDeleted){
-	    	if(typeof window.parent.applyOntologyManageVariableUpdate == 'function') {
-				 var status = '';
-				 var operation = $('#operation').val()
-				 if(operation == 0)
-					 status = 'ADD';
-				 else if(operation == 1)
-					 status = 'DELETE';
-				 else if(operation == 2)
-					 status = 'UPDATE';
-				 var variableId = '',
-				 	variableDescription = '',
-				 	variableName = '',
-				 	dataTypeId = '';
-				 if($('#comboVariableName').select2('data') != null){
-					 variableId = $('#comboVariableName').select2('data').id;
-					 variableName = $('#comboVariableName').select2('data').text;
-					 variableName = variableName.replace(' (Shared)', '');
-				 }
-				 if($('#dataType').select2('data') != null){
-					 dataTypeId = $('#dataType').select2('data').id;
-				 }
-				 
-				 if(operation == 1){
-					 variableId = varIdDeleted;
-				 }
-				 
-				 
-				 var propertyName = '',
-					propertyDescription = '',
-				 	scaleName = '',
-				 	scaleDescription = '',
-				 	methodName = '',
-				 	methodDescription = '',
-				 	traiClassName = '',
-				 	propertyId = '',
-				 	scaleId = '',
-				 	methodId = '';
-				 if($('#comboProperty').select2('data') != null){
-					 propertyName =  $('#comboProperty').select2('data').text;
-					 propertyDescription =  $('#comboProperty').select2('data').description;
-					 propertyName = propertyName.replace(' (Shared)', '');
-					 propertyId = $('#comboProperty').select2('data').id;
-				 }
-				 if($('#comboScale').select2('data') != null){
-					 scaleName =  $('#comboScale').select2('data').text;
-					 scaleDescription =  $('#comboScale').select2('data').description;
-					 scaleName = scaleName.replace(' (Shared)', '');
-					 scaleId = $('#comboScale').select2('data').id;
-				 }
-				 if($('#comboMethod').select2('data') != null){
-					 methodName =  $('#comboMethod').select2('data').text;
-					 methodDescription =  $('#comboMethod').select2('data').description;
-					 methodName = methodName.replace(' (Shared)', '');
-					 methodId = $('#comboMethod').select2('data').id;
-				 }
-				 if($('#comboTraitClass').select2('data') != null){
-					 traiClassName =  $('#comboTraitClass').select2('data').text;
-					 traiClassName = traiClassName.replace(' (Shared)', '');
-				 }
-				 
-				 variableDescription = $('#variableDescription').val();	 
-				 var storedInId = '';
-				 if($('#role').select2('data') != null){
-					 storedInId = $('#role').select2('data').id;
-				 }
-				 var standardVariableObj = {};
-				 standardVariableObj['id'] = variableId;
-				 standardVariableObj['status'] = status;
-				 
-				 if(operation != 1){
-					 standardVariableObj['phenotype'] = null;
-					 standardVariableObj['valid'] = null;
-					 standardVariableObj['confirmed'] =  null;
-					 standardVariableObj['headerName'] = null;
-					 standardVariableObj['hasError'] = null;
-					 
-					 standardVariableObj['variable'] = variableName;
-					 standardVariableObj['description'] = variableDescription;
-					 
-					 standardVariableObj['property'] = propertyName;
-					 standardVariableObj['propertyDescription'] = propertyDescription;
-					 standardVariableObj['propertyId'] = propertyId;
-					 
-					 standardVariableObj['scale'] =scaleName;
-					 standardVariableObj['scaleDescription'] = scaleDescription;
-					 standardVariableObj['scaleId'] = scaleId;
-					 
-					 standardVariableObj['method'] = methodName;
-					 standardVariableObj['methodDescription'] = methodDescription;
-					 standardVariableObj['methodId'] = methodId;
-					 
-					 standardVariableObj['propertyClass'] = traiClassName;
-					 standardVariableObj['storedInId'] = storedInId;
-					 standardVariableObj['dataType'] = dataTypeId;	 
-				 }
-				 
-				 
-				 var data = {};
-				 data['STANDARD_VARIABLE_ID'] = standardVariableObj;
-	
-				 var returnData = $.parseJSON(JSON.stringify(standardVariableObj));
-				 			 
-				// function exists, so we can now call it
-				 window.parent.applyOntologyManageVariableUpdate(returnData,{});
-			  }
-	    }
-    //]]>
-    </script>
+
+		var data = {};
+		data['STANDARD_VARIABLE_ID'] = standardVariableObj;
+
+		var returnData = $.parseJSON(JSON.stringify(standardVariableObj));
+
+		// function exists, so we can now call it
+		window.parent.applyOntologyManageVariableUpdate(returnData,{});
+	}
+}
+//]]>
+</script>
 </div>

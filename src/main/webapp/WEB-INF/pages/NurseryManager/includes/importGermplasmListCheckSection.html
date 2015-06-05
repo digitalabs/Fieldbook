@@ -36,34 +36,33 @@
 	</div>
 </form>
 <script type="text/javascript" th:inline="javascript">
-	//<![CDATA[
-	/*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
-	/* exported prevStartIndex,checkTypesObj */
-	
-	var checkTypes = /*[[${checkTypes}]]*/ null,
-		checkTypesObj = [],
-		prevStartIndex = 0;
+//<![CDATA[
+/*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
+/* exported prevStartIndex,checkTypesObj */
 
-	function setSpinnerMaxValue(){
-		'use strict';
-		if ($('#' + getJquerySafeId('checkVariables0.value')).val() === null || $('#' + getJquerySafeId('checkVariables0.value')).val() === '') {
-			$('#' + getJquerySafeId('checkVariables0.value')).val(1);
-		}
+var checkTypes = /*[[${checkTypes}]]*/ null,
+	checkTypesObj = [],
+	prevStartIndex = 0;
+
+function setSpinnerMaxValue() {
+	'use strict';
+	if ($('#' + getJquerySafeId('checkVariables0.value')).val() === null || $('#' + getJquerySafeId('checkVariables0.value')).val() === '') {
+		$('#' + getJquerySafeId('checkVariables0.value')).val(1);
 	}
-	$( document ).ready(function() {
-		'use strict';
-		$('#manageCheckTypesModal').on('hidden.bs.modal', function () {
-			reloadCheckTypeDropDown(false, 'checklist-select');
-		});
-
-		initializeCheckTypeSelect2(checkTypes, [], false, 0, 'comboCheckCode');
-		$('#updateCheckTypes').hide();
-		$('#deleteCheckTypes').hide();
-		$('#' + getJquerySafeId('checkVariables2.value')).select2({minimumResultsForSearch: 20});
-
-		setSpinnerMaxValue();
+}
+$(document).ready(function() {
+	'use strict';
+	$('#manageCheckTypesModal').on('hidden.bs.modal', function() {
+		reloadCheckTypeDropDown(false, 'checklist-select');
 	});
 
-	
-	//]]>
+	initializeCheckTypeSelect2(checkTypes, [], false, 0, 'comboCheckCode');
+	$('#updateCheckTypes').hide();
+	$('#deleteCheckTypes').hide();
+	$('#' + getJquerySafeId('checkVariables2.value')).select2({minimumResultsForSearch: 20});
+
+	setSpinnerMaxValue();
+});
+
+//]]>
 </script>

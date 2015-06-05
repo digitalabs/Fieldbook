@@ -1,237 +1,237 @@
 <div class="" xmlns:th="http://www.thymeleaf.org">
 <div class="" th:if="${isPopup == '0'}">
-    <div class="row col-xs-12 col-sm-12 reduce-padding">
-        <div class="page-header">
-            <h1 th:text="#{ontology.browser.button.manage.variable}">
-                Manage Variable
-            </h1>
-        </div>
-    </div>
+	<div class="row col-xs-12 col-sm-12 reduce-padding">
+		<div class="page-header">
+			<h1 th:text="#{ontology.browser.button.manage.variable}">
+				Manage Variable
+			</h1>
+		</div>
+	</div>
 
 </div>
 <div class="" th:if="${isPopup == '1'}" style="padding-top: 23px">
 
 </div>
 <div class="row fbk-hide">
-    <div id="page-message">
-        <form  th:object="${ontologyBrowserForm}" th:remove="tag">
-            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
-        </form>
-    </div>
+	<div id="page-message">
+		<form  th:object="${ontologyBrowserForm}" th:remove="tag">
+			<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+		</form>
+	</div>
 </div>
 
 <form id="manageVariable" role="form-horizontal" onsubmit="return doValidation()"  class="form-horizontal" action="#"
-      th:action="@{/OntologyManager/manage/variable}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
+	  th:action="@{/OntologyManager/manage/variable}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
 <div class="row">
 <div class="panel panel-default">
 <div style="padding-top: 5px"  class="panel-body manage-settings-panel-body">
 
 <div class="form-group">
-    <label class="col-xs-12 label-bold"><em th:utext="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+	<label class="col-xs-12 label-bold"><em th:utext="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 </div>
 <div class="row">
-    <div class="col-sm-12 reduce-padding">
-        <h3 class="sub-heading" th:text="#{ontology.browser.manager.header.variable.details}">Variable Details:</h3>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6 reduce-padding">
-        <div class="form-group">
-            <label class="col-xs-4 label-bold" for="variableName" th:utext="#{ontology.browser.modal.variable.name}">Name:</label>
-            <div class="col-xs-8">
-                <input id="comboVariableName" type="hidden" th:field="*{variableName}" class="form-control select2" placeholder=""/>
-                <input type="hidden" th:field="*{variableId}" />
-                <input type="hidden" th:field="*{isDelete}" />
-                <input type="hidden" th:field="*{newVariableName}" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label  class="col-xs-4 label-bold"  for="variableDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-            <div class="col-xs-8">
-                <textarea rows="2" th:field="*{variableDescription}" class="form-control" size="10"> </textarea>
-            </div>
-        </div>
-
-    </div>
-    <div class="col-md-6 reduce-padding-left">
-        <div class="form-group">
-            <label for="role" class="col-xs-4   label-bold" ><span th:utext="#{ontology.browser.modal.role}"></span></label>
-            <div class="col-xs-8">
-                <select class="form-control" th:field="*{role}">
-                    <option value="">Select</option>
-                    <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"/>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="dataType" class="col-xs-4   label-bold" ><span th:utext="#{ontology.browser.modal.data.type}"></span></label>
-            <div class="col-xs-8">
-                <select class="form-control" th:field="*{dataType}" onchange="showValidValues()">
-                    <option value="">Select</option>
-                    <option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
-                </select>
-                <input type="hidden" th:field="*{dataTypeId}" />
-            </div>
-        </div>
-        <div class="form-group" id="validValueNone">
-            <label for="role" class="col-sm-4   label-bold" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
-
-        </div>
-        <div class="form-group" id="validValueMin">
-            <label for="role" class="col-xs-4 label-bold"  th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" th:field="*{minValue}" />
-            </div>
-            <label class="col-xs-2 ">Minimum</label>
-        </div>
-        <div class="form-group" id="validValueMax">
-            <div class="col-sm-offset-4 col-xs-6">
-                <input type="text" class="form-control" th:field="*{maxValue}" />
-            </div>
-            <label class="col-xs-2 ">Maximum</label>
-        </div>
-        <div class="form-group" id="validValueAddCatVar">
-            <label for="role" class="col-xs-4 label-bold" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
-            <div class="col-xs-2" style="padding-right: 3px">
-                <input type="text" class="form-control" id="newValidValueLabel" />
-            </div>
-            <div class="col-xs-3" style="padding: 0 3px">
-                <input type="text" class="form-control" id="newValidValueDesc" />
-            </div>
-            <div class="col-xs-3" style="padding-left: 3px">
-                <input type="button" class="btn btn-info" value="Add Value" onClick="addCatVar($('#newValidValueLabel').val(), $('#newValidValueDesc').val(), null)" />
-            </div>
-        </div>
-        <div class="form-group" id="validValueDelCatVar">
-            <div class="col-xs-4">
-            </div>
-            <div class="col-xs-8">
-                <input type="hidden" th:field="*{enumerations}" />
-                <table class="table table-curved" id="catVarList">
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="row">
-    <div class="col-sm-12 reduce-padding">
-        <h3  class="sub-heading" th:text="#{ontology.browser.manager.header.properties.trait}">Properties and Trait Classes:</h3>
-    </div>
+	<div class="col-sm-12 reduce-padding">
+		<h3 class="sub-heading" th:text="#{ontology.browser.manager.header.variable.details}">Variable Details:</h3>
+	</div>
 </div>
 
 <div class="row">
-    <div class="col-md-6 reduce-padding">
-        <div class="form-group">
-            <label for="traitClass" class="col-xs-4 label-bold">Filter for Trait Class:<span class="required">*</span></label>
-            <div class="col-xs-6">
-                <input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control input-medium  select2" placeholder=""/>
-            </div>
-            <div class="col-xs-2">
-                <input type="button" class="pull-right btn btn-info" onClick="loadOntologyModal('traitClass')" value="Manage"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-xs-4 label-bold" for="traitClassDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-            <div class="col-xs-8">
-                <textarea rows="2" disabled="true"  type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="traitClass" class="col-xs-4 label-bold">Trait Class Tree View:</label>
-            <div class="col-xs-8" id="traitClassBrowserTree" style="height:200px; overflow:auto;">
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 reduce-padding-left">
-        <div class="form-group">
-            <label for="traitClass" class="col-xs-4 label-bold" ><span th:utext="#{ontology.browser.modal.property}"></span></label>
-            <div class="col-xs-6">
-                <input id="comboProperty" type="hidden" th:field="*{property}" class="form-control select2" placeholder=""/>
+	<div class="col-md-6 reduce-padding">
+		<div class="form-group">
+			<label class="col-xs-4 label-bold" for="variableName" th:utext="#{ontology.browser.modal.variable.name}">Name:</label>
+			<div class="col-xs-8">
+				<input id="comboVariableName" type="hidden" th:field="*{variableName}" class="form-control select2" placeholder=""/>
+				<input type="hidden" th:field="*{variableId}" />
+				<input type="hidden" th:field="*{isDelete}" />
+				<input type="hidden" th:field="*{newVariableName}" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label  class="col-xs-4 label-bold"  for="variableDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+			<div class="col-xs-8">
+				<textarea rows="2" th:field="*{variableDescription}" class="form-control" size="10"> </textarea>
+			</div>
+		</div>
 
-            </div>
-            <div class="col-xs-2">
-                <input type="button" class="pull-right btn btn-info" onClick="loadOntologyModal('property')" value="Manage"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="propertyDescription" class="col-xs-4   label-bold" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-            <div class="col-xs-8">
-                <textarea rows="2" disabled="true"  type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-xs-4 label-bold" for="cropOntologyDisplay" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
-            <div class="col-xs-8">
-                <span id="cropOntologyDisplay" name="cropOntologyDisplay"></span>
-            </div>
-        </div>
-    </div>
+	</div>
+	<div class="col-md-6 reduce-padding-left">
+		<div class="form-group">
+			<label for="role" class="col-xs-4   label-bold" ><span th:utext="#{ontology.browser.modal.role}"></span></label>
+			<div class="col-xs-8">
+				<select class="form-control" th:field="*{role}">
+					<option value="">Select</option>
+					<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"/>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="dataType" class="col-xs-4   label-bold" ><span th:utext="#{ontology.browser.modal.data.type}"></span></label>
+			<div class="col-xs-8">
+				<select class="form-control" th:field="*{dataType}" onchange="showValidValues()">
+					<option value="">Select</option>
+					<option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
+				</select>
+				<input type="hidden" th:field="*{dataTypeId}" />
+			</div>
+		</div>
+		<div class="form-group" id="validValueNone">
+			<label for="role" class="col-sm-4   label-bold" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
+
+		</div>
+		<div class="form-group" id="validValueMin">
+			<label for="role" class="col-xs-4 label-bold"  th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
+			<div class="col-xs-6">
+				<input type="text" class="form-control" th:field="*{minValue}" />
+			</div>
+			<label class="col-xs-2 ">Minimum</label>
+		</div>
+		<div class="form-group" id="validValueMax">
+			<div class="col-sm-offset-4 col-xs-6">
+				<input type="text" class="form-control" th:field="*{maxValue}" />
+			</div>
+			<label class="col-xs-2 ">Maximum</label>
+		</div>
+		<div class="form-group" id="validValueAddCatVar">
+			<label for="role" class="col-xs-4 label-bold" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
+			<div class="col-xs-2" style="padding-right: 3px">
+				<input type="text" class="form-control" id="newValidValueLabel" />
+			</div>
+			<div class="col-xs-3" style="padding: 0 3px">
+				<input type="text" class="form-control" id="newValidValueDesc" />
+			</div>
+			<div class="col-xs-3" style="padding-left: 3px">
+				<input type="button" class="btn btn-info" value="Add Value" onClick="addCatVar($('#newValidValueLabel').val(), $('#newValidValueDesc').val(), null)" />
+			</div>
+		</div>
+		<div class="form-group" id="validValueDelCatVar">
+			<div class="col-xs-4">
+			</div>
+			<div class="col-xs-8">
+				<input type="hidden" th:field="*{enumerations}" />
+				<table class="table table-curved" id="catVarList">
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-sm-12 reduce-padding">
+		<h3  class="sub-heading" th:text="#{ontology.browser.manager.header.properties.trait}">Properties and Trait Classes:</h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6 reduce-padding">
+		<div class="form-group">
+			<label for="traitClass" class="col-xs-4 label-bold">Filter for Trait Class:<span class="required">*</span></label>
+			<div class="col-xs-6">
+				<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control input-medium  select2" placeholder=""/>
+			</div>
+			<div class="col-xs-2">
+				<input type="button" class="pull-right btn btn-info" onClick="loadOntologyModal('traitClass')" value="Manage"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 label-bold" for="traitClassDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+			<div class="col-xs-8">
+				<textarea rows="2" disabled="true"  type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="traitClass" class="col-xs-4 label-bold">Trait Class Tree View:</label>
+			<div class="col-xs-8" id="traitClassBrowserTree" style="height:200px; overflow:auto;">
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6 reduce-padding-left">
+		<div class="form-group">
+			<label for="traitClass" class="col-xs-4 label-bold" ><span th:utext="#{ontology.browser.modal.property}"></span></label>
+			<div class="col-xs-6">
+				<input id="comboProperty" type="hidden" th:field="*{property}" class="form-control select2" placeholder=""/>
+
+			</div>
+			<div class="col-xs-2">
+				<input type="button" class="pull-right btn btn-info" onClick="loadOntologyModal('property')" value="Manage"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="propertyDescription" class="col-xs-4   label-bold" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+			<div class="col-xs-8">
+				<textarea rows="2" disabled="true"  type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 label-bold" for="cropOntologyDisplay" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
+			<div class="col-xs-8">
+				<span id="cropOntologyDisplay" name="cropOntologyDisplay"></span>
+			</div>
+		</div>
+	</div>
 
 </div>
 
 <div class="row">
-    <div class="col-sm-12 reduce-padding">
-        <h3  class="sub-heading" th:text="#{ontology.browser.manager.header.method.scales}">Methods and Scales:</h3>
-    </div>
+	<div class="col-sm-12 reduce-padding">
+		<h3  class="sub-heading" th:text="#{ontology.browser.manager.header.method.scales}">Methods and Scales:</h3>
+	</div>
 </div>
 
 <div class="row">
-    <div class="col-md-6 reduce-padding">
-        <div class="form-group">
-            <label class="col-xs-4 label-bold" for="method" th:utext="#{ontology.browser.modal.method}">Method:</label>
-            <div class="col-xs-6">
-                <input id="comboMethod" type="hidden" th:field="*{method}" class="form-control select2" placeholder=""  />
-            </div>
-            <div class="col-xs-2">
-                <input type="button" class="pull-right btn btn-info" onClick="loadOntologyModal('method')" value="Manage"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-xs-4 label-bold" for="methodDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-            <div class="col-xs-8">
-                <textarea rows="2" disabled="true"  type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 reduce-padding">
-        <div class="form-group">
-            <label   for="traitClass" class="col-xs-4  label-bold" ><span th:utext="#{ontology.browser.modal.scale}"></span></label>
-            <div class="col-xs-6">
-                <input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>
-            </div>
-            <div class="col-xs-2">
-                <input type="button" class="pull-right btn btn-info" onClick="loadOntologyModal('scale')" value="Manage"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="propertyDescription" class="col-xs-4 label-bold" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-            <div class="col-xs-8">
-                <textarea rows="2" disabled="true"  type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
-            </div>
-        </div>
-    </div>
+	<div class="col-md-6 reduce-padding">
+		<div class="form-group">
+			<label class="col-xs-4 label-bold" for="method" th:utext="#{ontology.browser.modal.method}">Method:</label>
+			<div class="col-xs-6">
+				<input id="comboMethod" type="hidden" th:field="*{method}" class="form-control select2" placeholder=""  />
+			</div>
+			<div class="col-xs-2">
+				<input type="button" class="pull-right btn btn-info" onClick="loadOntologyModal('method')" value="Manage"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 label-bold" for="methodDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+			<div class="col-xs-8">
+				<textarea rows="2" disabled="true"  type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6 reduce-padding">
+		<div class="form-group">
+			<label   for="traitClass" class="col-xs-4  label-bold" ><span th:utext="#{ontology.browser.modal.scale}"></span></label>
+			<div class="col-xs-6">
+				<input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>
+			</div>
+			<div class="col-xs-2">
+				<input type="button" class="pull-right btn btn-info" onClick="loadOntologyModal('scale')" value="Manage"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="propertyDescription" class="col-xs-4 label-bold" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+			<div class="col-xs-8">
+				<textarea rows="2" disabled="true"  type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
+			</div>
+		</div>
+	</div>
 </div>
 <div th:if="${isPopup == '1'}" style="padding-top: 10px">
 </div>
 <div th:if="${isPopup == '0'}" style="padding-top: 25px">
 </div>
 <div class="row">
-    <div style="text-align: center">
-        <a th:if="${isPopup == '0'}" href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" class="btn btn-default btn-md" th:text="#{common.form.back.text}">.Back</a>
+	<div style="text-align: center">
+		<a th:if="${isPopup == '0'}" href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" class="btn btn-default btn-md" th:text="#{common.form.back.text}">.Back</a>
 
-        <button type="submit" id="addVariable" th:value="#{common.form.add.text}" class="btn btn-primary"
-                th:text="#{common.form.add.text}" onClick="setDeleteOperation(0); ">.Add</button>
-        <button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary"
-                th:text="#{common.form.update.text}" onClick="setDeleteOperation(2); ">.Update</button>
-        <button type="submit" id="deleteVariable" th:value="#{common.form.delete.text}" class="btn btn-primary"
-                th:text="#{common.form.delete.text}" onClick="setDeleteOperation(1); ">.Delete</button>
+		<button type="submit" id="addVariable" th:value="#{common.form.add.text}" class="btn btn-primary"
+				th:text="#{common.form.add.text}" onClick="setDeleteOperation(0); ">.Add</button>
+		<button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary"
+				th:text="#{common.form.update.text}" onClick="setDeleteOperation(2); ">.Update</button>
+		<button type="submit" id="deleteVariable" th:value="#{common.form.delete.text}" class="btn btn-primary"
+				th:text="#{common.form.delete.text}" onClick="setDeleteOperation(1); ">.Delete</button>
 
-    </div>
+	</div>
 </div>
 </div>
 </div>
@@ -241,16 +241,16 @@
 </form>
 <!-- Placeholder for modal, do not remove -->
 <div class="row">
-    <div class="col-sm-12 reduce-padding">
-        <div class="modal fade" id="manageOntologyModal"  role="dialog" aria-labelledby="manageOntologyModal" aria-hidden="true">
-            <div class="modal-dialog modal-large" style="width:900px">
-                <div class="modal-content" >
+	<div class="col-sm-12 reduce-padding">
+		<div class="modal fade" id="manageOntologyModal"  role="dialog" aria-labelledby="manageOntologyModal" aria-hidden="true">
+			<div class="modal-dialog modal-large" style="width:900px">
+				<div class="modal-content" >
 
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 
-    </div>
+	</div>
 </div>
 <a style="display: none" id="ontologyBaseUrl" href="/OntologyManager/manage" th:href="@{/OntologyManager/manage/}">test</a>
 </div>
@@ -298,288 +298,288 @@ var variateValidValueDeleteError = /*[[#{ontology.browser.categorical.variate.de
 
 var psmrError = /*[[#{error.pcm.combination.exists}]]*/;
 function validateCombo(combo) {
-    var message = null;
-    //check if field is blank
-    if ($('#combo'+combo).val() == '') {
-        if (combo == 'TraitClass') {
-            message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.trait.class})}]]*/;
-        } else if (combo == 'Property') {
-            message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.property})}]]*/;
-        } else if (combo == 'Method') {
-            message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.method})}]]*/;
-        } else {
-            message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.scale})}]]*/;
-        }
-        showInvalidInputMessage(message);
-        return false;
-    }
-    //check if items to be added exists
-    if (itemExists(combo)) {
-        if (combo == 'TraitClass') {
-            message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.trait.class})}]]*/;
-        } else if (combo == 'Property') {
-            message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.property})}]]*/;
-        } else if (combo == 'Method') {
-            message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.method})}]]*/;
-        } else {
-            message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.scale})}]]*/;
-        }
-        showInvalidInputMessage(message);
-        return false;
-    }
+	var message = null;
+	//check if field is blank
+	if ($('#combo'+combo).val() == '') {
+		if (combo == 'TraitClass') {
+			message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.trait.class})}]]*/;
+		} else if (combo == 'Property') {
+			message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.property})}]]*/;
+		} else if (combo == 'Method') {
+			message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.method})}]]*/;
+		} else {
+			message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.scale})}]]*/;
+		}
+		showInvalidInputMessage(message);
+		return false;
+	}
+	//check if items to be added exists
+	if (itemExists(combo)) {
+		if (combo == 'TraitClass') {
+			message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.trait.class})}]]*/;
+		} else if (combo == 'Property') {
+			message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.property})}]]*/;
+		} else if (combo == 'Method') {
+			message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.method})}]]*/;
+		} else {
+			message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.scale})}]]*/;
+		}
+		showInvalidInputMessage(message);
+		return false;
+	}
 
-    if(combo == 'Property'){
-        //we need to check if the trait class has a value
-        var dataVal = $('#comboTraitClass').select2('data');
-        if(dataVal == null || dataVal.id == ''){
-            message = /*[[#{ontology.browser.modal.trait.class.required}]]*/;
-            showInvalidInputMessage(message);
-            return false;
-        }
+	if (combo == 'Property') {
+		//we need to check if the trait class has a value
+		var dataVal = $('#comboTraitClass').select2('data');
+		if (dataVal == null || dataVal.id == '') {
+			message = /*[[#{ontology.browser.modal.trait.class.required}]]*/;
+			showInvalidInputMessage(message);
+			return false;
+		}
 
-    }
+	}
 
-    return true;
+	return true;
 }
 
-function validateStandardVariableName(){
+function validateStandardVariableName() {
 	var variableId = $('#variableId').val();
-	if(variableId !== '' && parseInt(variableId) > 0) {
+	if (variableId !== '' && parseInt(variableId) > 0) {
 		return true;
 	}
 	var variableName = $('#comboVariableName').val();
 	var pattern = /^[^0-9][\w\d%]*$/;
-	if(variableName.length <= standardVariableMaxLength && pattern.test(variableName)){
+	if (variableName.length <= standardVariableMaxLength && pattern.test(variableName)) {
 		return true;
 	}
 	return false;
 }
 
 function doValidation() {
-    var message = null;
-    if ($('#isDelete').val() != 1) {
-        //check required fields
-        if (requiredFieldsEmpty()) {
-            message = /*[[#{ontology.browser.modal.error}]]*/;
-            showInvalidInputMessage(message);
-            moveToTopScreen()
-            return false;
-        }
-        
-        //check the standardVariableName
-        if(!validateStandardVariableName()){
-        	message = /*[[#{ontology.browser.modal.error.standard.variable}]]*/;
-            showInvalidInputMessage(message);
-            moveToTopScreen();
-        	return false;
-        }
-        
-        //check combo values
-        if (comboValuesInvalid()) {
-            message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
-            showInvalidInputMessage(message);
-            moveToTopScreen();
-            return false;
-        }
-        //check min max values
-        var bothMinMaxRequired = /*[[#{ontology.manager.min.max.both.required}]]*/;
-        var notANumber = /*[[#{ontology.manager.min.max.not.a.number}]]*/;
-        var invalidValue = /*[[#{ontology.manager.min.max.invalid.value}]]*/;
-        message = minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue);
-        if (message != '') {
-        	showInvalidInputMessage(message);
-            moveToTopScreen();
-            return false;
-        }
+	var message = null;
+	if ($('#isDelete').val() != 1) {
+		//check required fields
+		if (requiredFieldsEmpty()) {
+			message = /*[[#{ontology.browser.modal.error}]]*/;
+			showInvalidInputMessage(message);
+			moveToTopScreen()
+			return false;
+		}
 
-        $('#enumerations').val(JSON.stringify(enumerations));
+		//check the standardVariableName
+		if (!validateStandardVariableName()) {
+			message = /*[[#{ontology.browser.modal.error.standard.variable}]]*/;
+			showInvalidInputMessage(message);
+			moveToTopScreen();
+			return false;
+		}
 
-        if ($('#isDelete').val() == 0) {
-            $('#dataTypeId').val($('#dataType').val());
-        }
-        //add validation and make sure variate name does not have - in the string
-        var varName = $('#comboVariableName').select2('data').text;
-        if($('#isDelete').val() == 0 && varName.indexOf('-') != -1){
-            message = /*[[#{ontology.browser.modal.name.invalid.value}]]*/;
-            showInvalidInputMessage(message);
-            moveToTopScreen();
-            return false;
-        }
+		//check combo values
+		if (comboValuesInvalid()) {
+			message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
+			showInvalidInputMessage(message);
+			moveToTopScreen();
+			return false;
+		}
+		//check min max values
+		var bothMinMaxRequired = /*[[#{ontology.manager.min.max.both.required}]]*/;
+		var notANumber = /*[[#{ontology.manager.min.max.not.a.number}]]*/;
+		var invalidValue = /*[[#{ontology.manager.min.max.invalid.value}]]*/;
+		message = minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue);
+		if (message != '') {
+			showInvalidInputMessage(message);
+			moveToTopScreen();
+			return false;
+		}
 
-        var roleId = $('#role').select2('data').id;
-        var dataTypeId = $('#dataType').select2('data').id;
+		$('#enumerations').val(JSON.stringify(enumerations));
+
+		if ($('#isDelete').val() == 0) {
+			$('#dataTypeId').val($('#dataType').val());
+		}
+		//add validation and make sure variate name does not have - in the string
+		var varName = $('#comboVariableName').select2('data').text;
+		if ($('#isDelete').val() == 0 && varName.indexOf('-') != -1) {
+			message = /*[[#{ontology.browser.modal.name.invalid.value}]]*/;
+			showInvalidInputMessage(message);
+			moveToTopScreen();
+			return false;
+		}
+
+		var roleId = $('#role').select2('data').id;
+		var dataTypeId = $('#dataType').select2('data').id;
 
 
-        if(roleId == roleCategoricalVariate && dataTypeId == dataTypeCategoricalVariable){
-            if(!hasCategoricalValues()){
-                message = /*[[#{ontology.browser.categorical.value.required}]]*/;
-                showInvalidInputMessage(message);
-                moveToTopScreen();
-                return false;
-            }
-        }
+		if (roleId == roleCategoricalVariate && dataTypeId == dataTypeCategoricalVariable) {
+			if (!hasCategoricalValues()) {
+				message = /*[[#{ontology.browser.categorical.value.required}]]*/;
+				showInvalidInputMessage(message);
+				moveToTopScreen();
+				return false;
+			}
+		}
 
-    }
+	}
 
-    if($('#preselectVariableId').val() == 0 && $('#fromPopup').val() == 1){
-        var varName = $('#comboVariableName').select2('data').text;
-        for(var i = 0 ; i < varNameChecking.length ; i++)
-        {
-            if(varNameChecking[i].name.toLowerCase() == varName.toLowerCase()){
-                message = /*[[#{error.name.exists}]]*/;
-                showInvalidInputMessage(message);
-                moveToTopScreen();
-                return false;
-            }
-        }
+	if ($('#preselectVariableId').val() == 0 && $('#fromPopup').val() == 1) {
+		var varName = $('#comboVariableName').select2('data').text;
+		for(var i = 0 ; i < varNameChecking.length ; i++)
+		{
+			if (varNameChecking[i].name.toLowerCase() == varName.toLowerCase()) {
+				message = /*[[#{error.name.exists}]]*/;
+				showInvalidInputMessage(message);
+				moveToTopScreen();
+				return false;
+			}
+		}
 
-    }
+	}
 
-    var serializedData = $('#manageVariable').serialize();
-    var isValid = true;
-    
-    $.ajax({
-    	url: $('#manageVariable').attr('action') + '/validateName',
-    	type: 'POST',
-        data: serializedData,
-        cache: false,
-        async: false,
-        success: function (data) {
-            if(data === 'error'){
-                isValid = false;
-                message = /*[[#{error.name.exists}]]*/;
-                showErrorMessage('page-message', message);
-                moveToTopScreen();
-            }
-        }
-    });
-    
-    if (!isValid) {
-    	return isValid;
-    }
-    
-    $.ajax({
-        url: $('#manageVariable').attr('action') + '/verify',
-        type: 'POST',
-        data: serializedData,
-        cache: false,
-        async: false,
-        success: function (data) {
-            if(data == 'error'){
-                isValid = false;
-                showErrorMessage('page-message',psmrError );
-                moveToTopScreen();
-            }
-        }
-    });
+	var serializedData = $('#manageVariable').serialize();
+	var isValid = true;
 
-    return isValid;
+	$.ajax({
+		url: $('#manageVariable').attr('action') + '/validateName',
+		type: 'POST',
+		data: serializedData,
+		cache: false,
+		async: false,
+		success: function (data) {
+			if (data === 'error') {
+				isValid = false;
+				message = /*[[#{error.name.exists}]]*/;
+				showErrorMessage('page-message', message);
+				moveToTopScreen();
+			}
+		}
+	});
+
+	if (!isValid) {
+		return isValid;
+	}
+
+	$.ajax({
+		url: $('#manageVariable').attr('action') + '/verify',
+		type: 'POST',
+		data: serializedData,
+		cache: false,
+		async: false,
+		success: function (data) {
+			if (data == 'error') {
+				isValid = false;
+				showErrorMessage('page-message',psmrError );
+				moveToTopScreen();
+			}
+		}
+	});
+
+	return isValid;
 }
 
 $( document ).ready(function() {
 
-    loadOntologyCombos();
-    loadTraitClassTree(treeDivId, 'comboTraitClass', 'traitClassDescription', treeClassData, 'comboTraitClass');
-    setVisibleButtons(true, false, false);
-    clearFields();
+	loadOntologyCombos();
+	loadTraitClassTree(treeDivId, 'comboTraitClass', 'traitClassDescription', treeClassData, 'comboTraitClass');
+	setVisibleButtons(true, false, false);
+	clearFields();
 	var varName = name;
-	
-    if (saveSuccessful == '1' ) {
-        triggerExternalNotification = true;
-        if (isDelete == 0) {
-            recreateVariableNameCombo('VariableName', varId, varName);
-        } else if (isDelete == 1) {
-            recreateComboAfterDelete('VariableName', varId);
-        } else {
-            preSelectAfterUpdate('VariableName', varId, varName);
-        }
 
-    }
+	if (saveSuccessful == '1' ) {
+		triggerExternalNotification = true;
+		if (isDelete == 0) {
+			recreateVariableNameCombo('VariableName', varId, varName);
+		} else if (isDelete == 1) {
+			recreateComboAfterDelete('VariableName', varId);
+		} else {
+			preSelectAfterUpdate('VariableName', varId, varName);
+		}
 
-    showSelectedValidValues(['None']);
-    hideValidValues(['AddCatVar','DelCatVar', 'Min', 'Max']);
-    if($('#preselectVariableId').val() != 0){
-        var preselectVariableId = $('#preselectVariableId').val();
-        var dataVal = null;
-        for(count = 0 ; count < variableNameSuggestions_obj.length ; count++){
-            if(variableNameSuggestions_obj[count].id == preselectVariableId){
-                dataVal = variableNameSuggestions_obj[count];
-                if(dataVal != null) {
-                    $('#comboVariableName').select2('data', dataVal).trigger('change');
-                }
-                break;
-            }
-        }
-    }
+	}
+
+	showSelectedValidValues(['None']);
+	hideValidValues(['AddCatVar','DelCatVar', 'Min', 'Max']);
+	if ($('#preselectVariableId').val() != 0) {
+		var preselectVariableId = $('#preselectVariableId').val();
+		var dataVal = null;
+		for(count = 0 ; count < variableNameSuggestions_obj.length ; count++) {
+			if (variableNameSuggestions_obj[count].id == preselectVariableId) {
+				dataVal = variableNameSuggestions_obj[count];
+				if (dataVal != null) {
+					$('#comboVariableName').select2('data', dataVal).trigger('change');
+				}
+				break;
+			}
+		}
+	}
 
 
-    $('#dataType option').each(function() {
-        dataTypeOptionList.push({'id': $(this).val(), 'text':$(this).text()});
-    });
-    $('#role option').each(function() {
-        roleOptionList.push({'id': $(this).val(), 'text':$(this).text()});
-    });
+	$('#dataType option').each(function() {
+		dataTypeOptionList.push({'id': $(this).val(), 'text':$(this).text()});
+	});
+	$('#role option').each(function() {
+		roleOptionList.push({'id': $(this).val(), 'text':$(this).text()});
+	});
 
-    $('#role').on('change', function(){
-        if($(this).val() == roleCategoricalVariate){
-            rebuildDataTypeOptions(true);
-        }else{
-            rebuildDataTypeOptions(false);
-        }
-    })
-    if($('#page-message .alert-danger').length !== 0){
-        showErrorMessage('', $('#page-message .alert-danger').html());
-    }
+	$('#role').on('change', function() {
+		if ($(this).val() == roleCategoricalVariate) {
+			rebuildDataTypeOptions(true);
+		}else{
+			rebuildDataTypeOptions(false);
+		}
+	})
+	if ($('#page-message .alert-danger').length !== 0) {
+		showErrorMessage('', $('#page-message .alert-danger').html());
+	}
 });
 
-function hasCategoricalValues(){
-    if($('#catVarList tr').length == 0)
-        return false;
-    return true;
+function hasCategoricalValues() {
+	if ($('#catVarList tr').length == 0)
+		return false;
+	return true;
 }
 
-function rebuildDataTypeOptions(isCategoricalVariate){
-    $('#dataType').empty();
-    $('#dataType').select2('destroy');
-    if(isCategoricalVariate){
-        for(var i = 0 ; i < dataTypeOptionList.length ; i++){
-            var val = dataTypeOptionList[i].text;
-            var id = dataTypeOptionList[i].id;
-            if(id == dataTypeCategoricalVariable)
-                $('#dataType').append($('<option></option>').attr('value', id).text(val));
-        }
-    }else{
-        for(var i = 0 ; i < dataTypeOptionList.length ; i++){
-            var val = dataTypeOptionList[i].text;
-            var id = dataTypeOptionList[i].id;
-            $('#dataType').append($('<option></option>').attr('value', id).text(val));
-        }
-    }
-    $('#dataType').select2({minimumResultsForSearch: 20});
-    $('#dataType').trigger('change');
+function rebuildDataTypeOptions(isCategoricalVariate) {
+	$('#dataType').empty();
+	$('#dataType').select2('destroy');
+	if (isCategoricalVariate) {
+		for(var i = 0 ; i < dataTypeOptionList.length ; i++) {
+			var val = dataTypeOptionList[i].text;
+			var id = dataTypeOptionList[i].id;
+			if (id == dataTypeCategoricalVariable)
+				$('#dataType').append($('<option></option>').attr('value', id).text(val));
+		}
+	}else{
+		for(var i = 0 ; i < dataTypeOptionList.length ; i++) {
+			var val = dataTypeOptionList[i].text;
+			var id = dataTypeOptionList[i].id;
+			$('#dataType').append($('<option></option>').attr('value', id).text(val));
+		}
+	}
+	$('#dataType').select2({minimumResultsForSearch: 20});
+	$('#dataType').trigger('change');
 }
 
 function addCatVar(label, description, id) {
-    label = $.trim(label);
-    var errorColumn = validateNewValidValue(label, description, id);
-    var message = '';
-    if (errorColumn == '') {
-        addCategoricalValidValue(id, label, description)
-    } else {
-        if (errorColumn == 'name') {
-            message = /*[[#{ontology.manager.valid.value.not.unique(#{ontology.manager.valid.value.name})}]]*/;
-        } else if (errorColumn == 'description'){
-            message = /*[[#{ontology.manager.valid.value.not.unique(#{ontology.browser.modal.description})}]]*/;
-        } else {
-            message = /*[[#{ontology.manager.valid.value.required}]]*/;
-        }
-        showInvalidInputMessage(message);
-    }
+	label = $.trim(label);
+	var errorColumn = validateNewValidValue(label, description, id);
+	var message = '';
+	if (errorColumn == '') {
+		addCategoricalValidValue(id, label, description)
+	} else {
+		if (errorColumn == 'name') {
+			message = /*[[#{ontology.manager.valid.value.not.unique(#{ontology.manager.valid.value.name})}]]*/;
+		} else if (errorColumn == 'description') {
+			message = /*[[#{ontology.manager.valid.value.not.unique(#{ontology.browser.modal.description})}]]*/;
+		} else {
+			message = /*[[#{ontology.manager.valid.value.required}]]*/;
+		}
+		showInvalidInputMessage(message);
+	}
 }
 
 //]]>
 </script>
 <div class="row">
-    <div  style="display:none"  id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
+	<div  style="display:none"  id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
 </div>
 </div>

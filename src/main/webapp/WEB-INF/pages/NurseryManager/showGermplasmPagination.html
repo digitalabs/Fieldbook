@@ -13,18 +13,18 @@
 	<!-- case 2: advanced view of the importedGermplasm -->
 	<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
 		<div class="germplasm-list-table-old fbk-hide-opacity germplasm-list-data-table" th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
-			<table th:if="*{not #lists.isEmpty(importedGermplasm)}" 
-			class="table-curved table-condensed germplasm-list-items check-table-popover">		
+			<table th:if="*{not #lists.isEmpty(importedGermplasm)}"
+			class="table-curved table-condensed germplasm-list-items check-table-popover">
 				<thead>
 					<tr>
-					<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>					
+					<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
 					</tr>
-				</thead>				
+				</thead>
 			</table>
-			
+
 			<div class="btn-group mdt-columns pull-right fbk-hide">
 				<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column" data-toggle="dropdown"></i>
-			
+
 				<ul class="dropdown-menu germplasm-dropdown-menu fbk-right-button-drop-down" role="menu">
 					<li th:each="tableHeader, rowIndex : ${tableHeaderList}" >
 						<a href="javascript: void(0)"
@@ -36,12 +36,12 @@
 			</div>
 		</div>
 	</div>
-	
+
 
 	<div class="row col-xs-12 col-md-12">
 		<div id="imported-germplasm-list-reset-button" class="pull-left" th:style="${hasMeasurement} ? 'display:none;' : 'opacity: 1;'">
-	         <a style="margin-top: 5px;" href="javascript: resetGermplasmList()" class="btn btn-default">Clear List</a>
-	     </div>		
+			 <a style="margin-top: 5px;" href="javascript: resetGermplasmList()" class="btn btn-default">Clear List</a>
+		 </div>
 	</div>
 
 	<br/>
@@ -51,24 +51,24 @@
 </div>
 
 <script type="text/javascript" th:inline="javascript">
-	//<![CDATA[
-	var dataGermplasmList = /*[[${listDataTable}]]*/ [];	
-	$( document ).ready(function() {
-		
-		'use strict';
-		if(isNursery()){
-			germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
-			setSpinnerMaxValue();
-			if($('.noGermplasmListIndicator').length !== 0){
-				$('.noGermplasmListIndicator').html(noNurseryGermplasmList);	
-			}
-		}else{
-			germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
-			if($('.noGermplasmListIndicator').length !== 0 && $('body').data('service.trialMeasurement.count') !== 0){
-				$('.noGermplasmListIndicator').html(noTrialGermplasmList);
-			}
-		}
+//<![CDATA[
+var dataGermplasmList = /*[[${listDataTable}]]*/ [];
+$(document).ready(function() {
 
-	});
-	//]]>
+	'use strict';
+	if (isNursery()) {
+		germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
+		setSpinnerMaxValue();
+		if ($('.noGermplasmListIndicator').length !== 0) {
+			$('.noGermplasmListIndicator').html(noNurseryGermplasmList);
+		}
+	} else {
+		germplasmDataTable = new BMS.Fieldbook.TrialGermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
+		if ($('.noGermplasmListIndicator').length !== 0 && $('body').data('service.trialMeasurement.count') !== 0) {
+			$('.noGermplasmListIndicator').html(noTrialGermplasmList);
+		}
+	}
+
+});
+//]]>
 </script>

@@ -4,37 +4,37 @@
 
 	<div class="modal fade" id="addBlocksModal" role="dialog" aria-labelledby="addVariablesSettingModal" aria-hidden="true">
 		<div class="modal-dialog modal-medium">
-			<div class="modal-content">				
+			<div class="modal-content">
 				<div class="modal-body" id="addVariablesSettingBody">
 					<div class="row form-group">
-						<div class="col-xs-11 col-md-11">					
+						<div class="col-xs-11 col-md-11">
 							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{fieldmap.add.blocks.header}"></label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button  id="closeAddVariablesSettingModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-						</div>										
+						</div>
 					</div>
-					
+
 					<div class="row">
 						<div id="page-block-message-modal" class="col-xs-12 col-md-12">
 						</div>
 					</div>
 
-					<div class="row form-group">						
+					<div class="row form-group">
 						<div class="col-xs-3  col-md-3 add-top-padding-small">
 							<label class="control-label label-bold" th:text="#{fieldmap.add.blocks.parent.field}">Parent Field:</label><span class="required">*</span>
 						</div>
 						<div class="col-xs-6 col-md-6">
 							<input type="hidden" th:field="*{parentFieldId}" class="form-control select2" placeholder=""/>
-						</div>						
+						</div>
 					</div>
-					<div class="row form-group">						
+					<div class="row form-group">
 						<div class="col-xs-3  col-md-3 add-top-padding-small">
 							<label class="control-label label-bold" th:text="#{fieldmap.trial.enter.block.name}">Block Name:</label><span class="required">*</span>
 						</div>
 						<div class="col-xs-6 col-md-6">
 							<input type="text" class="form-control"  th:field="*{newBlockName}"  placeholder="Block Name"/>
-						</div>					
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer addVariable-footer">
@@ -47,53 +47,51 @@
 </form>
 </div>
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	function showAddBlockPopup(){
-		'use strict';
-		$('#page-block-message-modal').html('');
-		$('#newBlockName').val('');
-		recreatePopupFieldCombo();
-		$('#addBlocksModal').modal({ backdrop: 'static', keyboard: true });
-	}
-	function validateAddBlocks(){
-		'use strict';
-		if($('#parentFieldId').val() == ''){
-			showInvalidInputMessage(parentFieldRequired);
-			return false;
-		}
-
-		if($('#newBlockName').val() == ''){
-			showInvalidInputMessage(blockNameRequired);
-			return false;
-		}
-
-		//add
-		addNewBlockLocation($('#newBlockName').val(), $('#parentFieldId').val());
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+function showAddBlockPopup() {
+	'use strict';
+	$('#page-block-message-modal').html('');
+	$('#newBlockName').val('');
+	recreatePopupFieldCombo();
+	$('#addBlocksModal').modal({ backdrop: 'static', keyboard: true });
+}
+function validateAddBlocks() {
+	'use strict';
+	if ($('#parentFieldId').val() == '') {
+		showInvalidInputMessage(parentFieldRequired);
+		return false;
 	}
 
-	function addNewBlockLocation(fieldName, locationId){
-		'use strict';
+	if ($('#newBlockName').val() == '') {
+		showInvalidInputMessage(blockNameRequired);
+		return false;
+	}
 
-		var dataForm = $('#add-block-form').serialize()
-		$.ajax(
-			{ url: '/Fieldbook/Fieldmap/enterFieldDetails/addNewBlock',
-			type: 'POST',
-			data: dataForm,
-			success: function(data) {
-				if(data == 'success'){
-					showSuccessfulMessage("page-block-message-modal", blockAddedSuccessfully);
-						$('#addBlocksModal').modal('toggle');
-					}else{
-						showInvalidInputMessage(blockNameDuplicateError);
-					}
+	//add
+	addNewBlockLocation($('#newBlockName').val(), $('#parentFieldId').val());
+}
 
+function addNewBlockLocation(fieldName, locationId) {
+	'use strict';
 
-				}
+	var dataForm = $('#add-block-form').serialize()
+	$.ajax({
+		url: '/Fieldbook/Fieldmap/enterFieldDetails/addNewBlock',
+		type: 'POST',
+		data: dataForm,
+		success: function(data) {
+			if (data == 'success') {
+				showSuccessfulMessage("page-block-message-modal", blockAddedSuccessfully);
+				$('#addBlocksModal').modal('toggle');
+			} else {
+				showInvalidInputMessage(blockNameDuplicateError);
 			}
-		);
-	}
 
-	//]]>
+		}
+	});
+}
+
+//]]>
 </script>
 </div>

@@ -1,23 +1,23 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
 	<div class="modal fade" id="selectTrialInstanceModal" role="dialog" aria-labelledby="selectTrialInstanceLabel" aria-hidden="true">
 		<div class="modal-dialog modal-large">
-			<div class="modal-content">			
+			<div class="modal-content">
 				<div class="modal-body" id="selectTrialInstanceBody">
 					<div class="row form-group">
-						<div class="col-xs-11 col-md-11">					
+						<div class="col-xs-11 col-md-11">
 							<label class="modal-title fbk-modal-title" th:text="#{fieldmap.label.select.instance.for.fieldmap}"></label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button  id="closeSelectTrialInstanceModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-						</div>										
+						</div>
 					</div>
-					
+
 					<div id="page-message">
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 						<label class="control-label" th:text="#{fieldmap.select.trial.instance}+':'">Select Trial Instance:</label>
-						
+
 						</div>
 					</div>
 					<div class="row form-group">
@@ -40,14 +40,14 @@
 			<div class="modal-content">
 				<div class="modal-body" id="selectTrialInstanceBody">
 					<div class="row form-group">
-						<div class="col-xs-11 col-md-11">					
+						<div class="col-xs-11 col-md-11">
 							<label class="modal-title fbk-modal-title" th:text="#{common.form.confirmation.text}"></label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button  id="closeConfirmSubModalModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-						</div>										
+						</div>
 					</div>
-					
+
 					<br/><br/>
 					<div id="page-message">
 						<div class="alert alert-danger">
@@ -71,13 +71,13 @@
 
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/ '',	
+	var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/ '',
 	fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/ '',
 	fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/ '',
-	noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/ '',	
+	noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/ '',
 	fieldMapStudyRequiredTrial = /*[[#{common.error.select.study(#{fieldmap.trial})}]]*/ '',
 	fieldMapOneStudyErrorMsgTrial = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.trial})}]]*/ '',
-	noFieldMapExistsTrial = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.trial})}]]*/ '',	
+	noFieldMapExistsTrial = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.trial})}]]*/ '',
 	noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/ '',
 	multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/ '',
 	trialName = /*[[#{label.printing.trial.name}]]*/ '',

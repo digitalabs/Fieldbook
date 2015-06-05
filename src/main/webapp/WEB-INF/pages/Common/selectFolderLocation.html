@@ -20,57 +20,57 @@
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
 
-	var treeData = /*[[${folderBrowserTree}]]*/;
-	var selectedFolderNodeId = null;
-	var selectedFolderNodeName = null;
+var treeData = /*[[${folderBrowserTree}]]*/;
+var selectedFolderNodeId = null;
+var selectedFolderNodeName = null;
 
-	function closeChooseFolderModal() {
-		$('#folderBrowserModal').modal('hide');
+function closeChooseFolderModal() {
+	$('#folderBrowserModal').modal('hide');
+}
+
+function cancelChooseFolderModal() {
+	selectedFolderNodeId = null;
+	closeChooseFolderModal();
+}
+
+function selectFolder() {
+	if (selectedFolderNodeId == null) {
+		$("#folderBrowserModalMessage").html("please select a folder");
+		$("#folderBrowserModalMessage").show();
 	}
-
-	function cancelChooseFolderModal() {
-		selectedFolderNodeId = null;
+	else {
 		closeChooseFolderModal();
 	}
+}
 
-	function selectFolder() {
-		if (selectedFolderNodeId == null) {
-			$("#folderBrowserModalMessage").html("please select a folder");
-			$("#folderBrowserModalMessage").show();
+function loadFolderTree(treeName, comboName, descriptionName, treeData, dropDownId){
+	var json = $.parseJSON(treeData);
+
+	$("#" + treeName).dynatree({
+		checkbox: false,
+		classNames: {
+				container: "fbtree-container",
+				expander: "fbtree-expander",
+				nodeIcon: "fbtree-icon",
+				combinedIconPrefix: "fbtree-ico-",
+				focused: "fbtree-focused",
+				active: "fbtree-active"
+			},
+		selectMode: 1,
+		children: json,
+		onActivate: function(node) {
+				selectedFolderNodeId = node.data.key;
+				selectedFolderNodeName = node.data.title;
+				$("#folderId").val(node.data.key);
+				$("#folderName").val(node.data.title);
+				$("#chooseLocation").html(node.data.title);
 		}
-		else {
-			closeChooseFolderModal();
-		}
-	}
-
-	function loadFolderTree(treeName, comboName, descriptionName, treeData, dropDownId){
-		var json = $.parseJSON(treeData);
-
-		$("#" + treeName).dynatree({
-			checkbox: false,
-			classNames: {
-					container: "fbtree-container",
-					expander: "fbtree-expander",
-					nodeIcon: "fbtree-icon",
-					combinedIconPrefix: "fbtree-ico-",
-					focused: "fbtree-focused",
-					active: "fbtree-active"
-				},
-			selectMode: 1,
-			children: json,
-			onActivate: function(node) {
-					selectedFolderNodeId = node.data.key;
-					selectedFolderNodeName = node.data.title;
-					$("#folderId").val(node.data.key);
-					$("#folderName").val(node.data.title);
-					$("#chooseLocation").html(node.data.title);
-			}
-		});
-	}
-
-	$(document).ready(function() {
-		loadFolderTree('folderBrowserTree', null, null, treeData, null);
 	});
+}
+
+$(document).ready(function() {
+	loadFolderTree('folderBrowserTree', null, null, treeData, null);
+});
 
 //]]>
 </script>

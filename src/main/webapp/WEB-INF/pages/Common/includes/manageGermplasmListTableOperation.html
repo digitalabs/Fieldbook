@@ -2,18 +2,18 @@
 <div class="modal fade" id="addGermplasmFolder" role="dialog" aria-labelledby="addGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
-			
+
 			<form onsubmit="return createGermplasmFolderInTreeTable();">
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.add.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button id="closeAddGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove" onclick="javascript: closeModal('addGermplasmFolder')"/>
-					</div>										
+					</div>
 				</div>
-				
+
 				<div class="row">
 					<div id="page-add-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
@@ -38,15 +38,15 @@
 
 <div class="modal fade" id="renameGermplasmFolder" role="dialog" aria-labelledby="renameGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">			
+		<div class="modal-content">
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeRenameGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('renameGermplasmFolder')"/>
-					</div>										
+					</div>
 				</div>
 				<div class="row">
 					<div id="page-rename-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
@@ -72,17 +72,17 @@
 
 <div class="modal fade" id="deleteGermplasmFolder" role="dialog" aria-labelledby="deleteGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">			
+		<div class="modal-content">
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeDeleteGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteGermplasmFolder')"/>
-					</div>										
+					</div>
 				</div>
-				
+
 				<div class="row">
 					<div id="page-delete-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
@@ -104,17 +104,17 @@
 
 <div class="modal fade" id="moveGermplasmFolder" role="dialog" aria-labelledby="moveGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">			
+		<div class="modal-content">
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.notification.text}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeMoveGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('moveGermplasmFolder')"/>
-					</div>										
+					</div>
 				</div>
-				
+
 				<div class="row">
 					<div id="page-move-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
@@ -129,173 +129,170 @@
 </div>
 
 <div layout:fragment="page-script">
-	<script type="text/javascript" th:inline="javascript">
-		//<![CDATA[
-		
-		function viewGermplasmLitDetails() {
-			'use strict';
-			openGermplasmListDetailsPopop(listId);
-		}
-		function displayListDetails(listIdTemp) {
-			'use strict';
-			var suffix = '/N';
-			if(!isNursery()){
-				suffix = '/T';
-			}
-			listId = listIdTemp;
-			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
-			
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/' + listId + suffix,
-				type: 'GET',
-				cache: false,
-				success: function(html) {
-					$('#imported-germplasm-list').css('display', 'block');					 
-					$('#imported-germplasm-list').html(html).trigger("germplasmListIsUpdated");
-					
-					$('#entries-details').css('display', 'block');
-					$('#numberOfEntries').html($('#totalGermplasms').val());
-					$('#imported-germplasm-list-reset-button').css('opacity', '1');
-					if(isNursery()){
-						makeDraggable(makeDraggableBool);					
-						checksFromPrimary = 0;
-						setSpinnerMaxValue();
-	
-						itemsIndexAdded = [];
-	
-						if (lastDraggedChecksList == 0) {
-							// We clear the list in the check
-							resetCheckList();
-						}
-						addFakeCheckTable();
-						
-						// show Import Crosses in Actions menu
-						if($('#createNurseryMainForm #studyId').length == 1){
-							$('#import-crosses').css('display', 'block');
-						} else {
-							$('#main-actions-btn').removeClass('fbk-hide');
-						}
-						
-					} else {
-                        $(document).trigger('germplasmListUpdated');
-                    }
-					$('.view-header').show();
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+
+function viewGermplasmLitDetails() {
+	'use strict';
+	openGermplasmListDetailsPopop(listId);
+}
+function displayListDetails(listIdTemp) {
+	'use strict';
+	var suffix = '/N';
+	if (!isNursery()) {
+		suffix = '/T';
+	}
+	listId = listIdTemp;
+	$('#' + getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
+
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/' + listId + suffix,
+		type: 'GET',
+		cache: false,
+		success: function(html) {
+			$('#imported-germplasm-list').css('display', 'block');
+			$('#imported-germplasm-list').html(html).trigger("germplasmListIsUpdated");
+
+			$('#entries-details').css('display', 'block');
+			$('#numberOfEntries').html($('#totalGermplasms').val());
+			$('#imported-germplasm-list-reset-button').css('opacity', '1');
+			if (isNursery()) {
+				makeDraggable(makeDraggableBool);
+				checksFromPrimary = 0;
+				setSpinnerMaxValue();
+
+				itemsIndexAdded = [];
+
+				if (lastDraggedChecksList == 0) {
+					// We clear the list in the check
+					resetCheckList();
 				}
-			});
-		}
-		
-		
-		function displayGermplasmDetails(listIdTemp){
-			'use strict';
-			if (lastDraggedChecksList === 0 && $('.check-germplasm-list-items tbody tr').length > 0){
-				$('#confirmReplaceListModal #replaceListId').val(listIdTemp);
-				$('#confirmReplaceListModal').modal({ backdrop: 'static', keyboard: true });	
-			}else {
-				displayListDetails(listIdTemp);
-			}
-			
-		}
-		
-        
+				addFakeCheckTable();
 
-        function hideAddGermplasmFolderDiv() {
-            'use strict';
-            $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideUp('fast');
-        }
-
-        function hideRenameGermplasmFolderDiv() {
-            'use strict';
-            $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideUp('fast');
-        }
-        
-        function openListTree(type, selectListFunctionParam) {
-			'use strict';
-			openTreeType = type;
-
-            if (selectListFunctionParam) {
-                selectListFunction = selectListFunctionParam;
-            }
-
-			$('#listTreeModal').modal({ backdrop: 'static', keyboard: true });
-			$('#page-import-message-modal').html('');
-			additionalLazyLoadUrl = '/0';
-			$('.popover').hide();
-		}
-		function folderChangeKeypress(event, type){
-			'use strict';
-			if(event.keyCode === 13){
-				if(type === '1'){
-					createGermplasmFolderInTreeTable();
-				}else if(type === '2'){
-					submitRenameGermplasmFolderInTreeTable();
-				}
-			}
-		}
-		
-		var ListTable = {
-			chooseList: function(){
-				'use strict';
-				var node = getSelectedGermplasmList();
-				ListTable.chooseListNode(node, false);
-			},
-	
-			chooseListNode : function (node, fromEnterKey) {
-				'use strict';		
-	
-				if (node === null || isSelectedGermplasmListAFolder()) {
-					if(fromEnterKey === false){
-						showErrorMessage('page-import-message-modal', pleaseChooseFolder);
-					}
+				// show Import Crosses in Actions menu
+				if ($('#createNurseryMainForm #studyId').length == 1) {
+					$('#import-crosses').css('display', 'block');
 				} else {
-					var id = getSelectedGermplasmListId();
-					if (openTreeType === 1) {
-						// Load in main list
-						if (lastDraggedChecksList != id) {
-							// Loads the primary germplasm list
-							lastDraggedPrimaryList = id;
-							displayGermplasmDetails(id);
-	
-	                        if (selectListFunction) {
-	                            selectListFunction(id);
-	                        }
-	
-						} else {
-							if(fromEnterKey === false){
-								showErrorMessage('page-import-message-modal', sameListErr);
-								return;	
-							}
-							
-						}
-					} else if(openTreeType === 2) {
-						// Load in check list
-						if (lastDraggedPrimaryList != id) {
-							// Loads the check list
-							$('#lastCheckSourcePrimary').val(0);
-							lastDraggedChecksList = id;
-	
-							// Set primary germplasm list rows' opacity to 1
-							$('.germplasm-list-items tbody tr').css('opacity', '1');
-	
-							// If there is an existing list already, ask user if data should be overwritten
-							if ($('.check-germplasm-list-items tbody tr').length > 0) {
-								$('#keyForOverwrite').val(id);
-								$('#confirmationModal').modal('show');
-							} else {
-								displayGermplasmCheckDetails(id);
-							}
-							makeCheckDraggable(false);
-						} else {
-							if(fromEnterKey === false){
-								showErrorMessage('page-import-message-modal', sameListErr);
-								return;
-							}
-						}
+					$('#main-actions-btn').removeClass('fbk-hide');
+				}
+
+			} else {
+				$(document).trigger('germplasmListUpdated');
+			}
+			$('.view-header').show();
+		}
+	});
+}
+
+function displayGermplasmDetails(listIdTemp) {
+	'use strict';
+	if (lastDraggedChecksList === 0 && $('.check-germplasm-list-items tbody tr').length > 0) {
+		$('#confirmReplaceListModal #replaceListId').val(listIdTemp);
+		$('#confirmReplaceListModal').modal({ backdrop: 'static', keyboard: true });
+	}else {
+		displayListDetails(listIdTemp);
+	}
+
+}
+
+function hideAddGermplasmFolderDiv() {
+	'use strict';
+	$(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideUp('fast');
+}
+
+function hideRenameGermplasmFolderDiv() {
+	'use strict';
+	$(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideUp('fast');
+}
+
+function openListTree(type, selectListFunctionParam) {
+	'use strict';
+	openTreeType = type;
+
+	if (selectListFunctionParam) {
+		selectListFunction = selectListFunctionParam;
+	}
+
+	$('#listTreeModal').modal({ backdrop: 'static', keyboard: true });
+	$('#page-import-message-modal').html('');
+	additionalLazyLoadUrl = '/0';
+	$('.popover').hide();
+}
+function folderChangeKeypress(event, type) {
+	'use strict';
+	if (event.keyCode === 13) {
+		if (type === '1') {
+			createGermplasmFolderInTreeTable();
+		}else if (type === '2') {
+			submitRenameGermplasmFolderInTreeTable();
+		}
+	}
+}
+
+var ListTable = {
+	chooseList: function() {
+		'use strict';
+		var node = getSelectedGermplasmList();
+		ListTable.chooseListNode(node, false);
+	},
+
+	chooseListNode: function(node, fromEnterKey) {
+		'use strict';
+
+		if (node === null || isSelectedGermplasmListAFolder()) {
+			if (fromEnterKey === false) {
+				showErrorMessage('page-import-message-modal', pleaseChooseFolder);
+			}
+		} else {
+			var id = getSelectedGermplasmListId();
+			if (openTreeType === 1) {
+				// Load in main list
+				if (lastDraggedChecksList != id) {
+					// Loads the primary germplasm list
+					lastDraggedPrimaryList = id;
+					displayGermplasmDetails(id);
+
+					if (selectListFunction) {
+						selectListFunction(id);
 					}
-					$('#listTreeModal').modal('hide');
+
+				} else {
+					if (fromEnterKey === false) {
+						showErrorMessage('page-import-message-modal', sameListErr);
+						return;
+					}
+
+				}
+			} else if (openTreeType === 2) {
+				// Load in check list
+				if (lastDraggedPrimaryList != id) {
+					// Loads the check list
+					$('#lastCheckSourcePrimary').val(0);
+					lastDraggedChecksList = id;
+
+					// Set primary germplasm list rows' opacity to 1
+					$('.germplasm-list-items tbody tr').css('opacity', '1');
+
+					// If there is an existing list already, ask user if data should be overwritten
+					if ($('.check-germplasm-list-items tbody tr').length > 0) {
+						$('#keyForOverwrite').val(id);
+						$('#confirmationModal').modal('show');
+					} else {
+						displayGermplasmCheckDetails(id);
+					}
+					makeCheckDraggable(false);
+				} else {
+					if (fromEnterKey === false) {
+						showErrorMessage('page-import-message-modal', sameListErr);
+						return;
+					}
 				}
 			}
+			$('#listTreeModal').modal('hide');
 		}
+	}
+};
 
-		//]]>
-	</script>
+//]]>
+</script>
 </div>

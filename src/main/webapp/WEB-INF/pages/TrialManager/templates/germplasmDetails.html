@@ -1,24 +1,24 @@
 <div ng-cloak="">
 <div class="row" >
-    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
+	<div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
-        <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
-                           collapsible="true">
+		<section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
+						   collapsible="true">
 
-            <span name="action-buttons">
-                <span class="btn btn-primary" ng-show="displayUpdateButton()" ng-click="updateDataTable()">
-                    <span class="glyphicon glyphicon-refresh"></span> Update
-                </span>
+			<span name="action-buttons">
+				<span class="btn btn-primary" ng-show="displayUpdateButton()" ng-click="updateDataTable()">
+					<span class="glyphicon glyphicon-refresh"></span> Update
+				</span>
 
-                <span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="8" class="btn btn-info" >Add</span>
-            </span>
+				<span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="8" class="btn btn-info" >Add</span>
+			</span>
 
-            <section-container icon="bms-factors" name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
-                <display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="8" name="content"></display-settings>
-            </section-container>
+			<section-container icon="bms-factors" name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
+				<display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="8" name="content"></display-settings>
+			</section-container>
 
-        </section-container>
-    </div>
+		</section-container>
+	</div>
 </div>
 
 
@@ -43,45 +43,45 @@
 
 <div class="collapse in germplasmListDetails germplasmAndCheckSection" id="chooseGermplasmAndChecks" data-replace="0">
 	<!-- Germplasm List Table View -->
-    <div id="primary-section">
-        <div>
-            <img th:src="@{/static/img/review-list-details.png}" />
-            <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Trial List</strong></label>
+	<div id="primary-section">
+		<div>
+			<img th:src="@{/static/img/review-list-details.png}" />
+			<label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Trial List</strong></label>
 
 
-            <div  class="pull-right">
-	             <div class="btn-group">
-	                <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-	                    <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-	                </button>
-	                <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-	                    <li>
-	                        <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
-	                    </li>
-	                </ul>
-                </div>
-            </div>
+			<div  class="pull-right">
+				 <div class="btn-group">
+					<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+						<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+					</button>
+					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+						<li>
+							<a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
+						</li>
+					</ul>
+				</div>
+			</div>
 
-        </div>
-        <div class="browse-import-link">
-            <label class="control-label"><a href="javascript: void(0)" ng-click="openGermplasmTree()">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
-        </div>
-    </div>
+		</div>
+		<div class="browse-import-link">
+			<label class="control-label"><a href="javascript: void(0)" ng-click="openGermplasmTree()">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
+		</div>
+	</div>
 
-    <div id="entries-details" style="display: none">
-        Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="javascript: void(0)" class="view-header" onclick="javascript: viewGermplasmLitDetails();">View Header</a>
-        <div class="col-show-hide pull-right">
-        </div>
-    </div>
+	<div id="entries-details" style="display: none">
+		Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<a href="javascript: void(0)" class="view-header" onclick="javascript: viewGermplasmLitDetails();">View Header</a>
+		<div class="col-show-hide pull-right">
+		</div>
+	</div>
 
 </div>
 
 
 
 <div class="collapse in germplasmListDetails">
-    <!-- Germplasm List Table View -->
-    <div id="imported-germplasm-list" class="primary"></div>
+	<!-- Germplasm List Table View -->
+	<div id="imported-germplasm-list" class="primary"></div>
 </div>
 
 <input type="hidden" id="keyForOverwrite" value=""/>
@@ -106,18 +106,17 @@
 
 <!-- Cyrus: moved the script to germplasm.js for organization. Only globals initialized from thymeleaf:spring should go here -->
 <script type="text/javascript" th:inline="javascript">
-    //<![CDATA[
+//<![CDATA[
 
-        /*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
-        /* exported prevStartIndex,checkTypesObj */
-        var checkTypes = /*[[${checkTypes}]]*/ null,
-            checkTypesObj = [];
+/*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
+/* exported prevStartIndex,checkTypesObj */
+var checkTypes = /*[[${checkTypes}]]*/ null,
+	checkTypesObj = [];
 
-        $(document).ready(function () {
-            'use strict';
-            document.onLoadGermplasmDetails();
-        });
+$(document).ready(function() {
+	'use strict';
+	document.onLoadGermplasmDetails();
+});
 
-
-    //]]>
+//]]>
 </script>

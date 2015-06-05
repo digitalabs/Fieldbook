@@ -83,160 +83,160 @@
 
 	<script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	/*global Handlebars, doOntologyTreeHighlight, sortByKey*/
-	var isSearchTab = false;
+//<![CDATA[
+/*global Handlebars, doOntologyTreeHighlight, sortByKey*/
+var isSearchTab = false;
 
-   	$(document).ready(function() {
-		'use strict';
+$(document).ready(function() {
+	'use strict';
 
-		Handlebars.registerHelper('searchTermHighlight', function(name, searchTerm) {
-			var regex = new RegExp(searchTerm, 'gi');
+	Handlebars.registerHelper('searchTermHighlight', function(name, searchTerm) {
+		var regex = new RegExp(searchTerm, 'gi');
 
-			if (searchTerm && name) {
-				return name.replace(regex, '<span class="ps-item-property-search-term">$&</span>');
-			}
-			return name;
-		});
-
-  		var displayOntologyTree = (function() {
-
-			var generateFormattedResult = Handlebars.compile($('#ob-select-result-template').html()),
-				generateFormattedOption = Handlebars.compile($('#ob-select-option-template').html()),
-
-				formatResult = function(item) {
-					var type = item.type;
-
-					return generateFormattedResult({
-						image: type === 'Property' ? 'property.svg' : 'variable.png',
-						type: type,
-						name: item.text
-					});
-				},
-
-				format = function(item, container, query) {
-					var type = item.type;
-
-					return generateFormattedOption({
-						image: type === 'Property' ? 'property.svg' : 'variable.png',
-						type: type,
-						name: item.text,
-						searchTerm: query.term,
-						className: item.parentTitle
-					});
-				};
-
-			return function(treeName, treeData, searchTreeData, searchDivId) {
-
-				// For triggering the start of search type ahead
-				if (treeData == null) {
-					return;
-				}
-
-				var termSuggestions = $.parseJSON(searchTreeData),
-					termSuggestionsObj = [],
-					termSuggestionsMap = {},
-					$searchInput = $('#' + searchDivId),
-					cachedSuggestions,
-					cachedSearchTerm;
-
-				// Initialize the arrays that would contain json data for the combos
-				$.each(termSuggestions, function(index, value) {
-					var obj = {
-						text: value.value,
-						parentTitle: value.parentTitle,
-						type: value.type,
-						key: value.key,
-						id: value.key
-					};
-					termSuggestionsObj.push(obj);
-					termSuggestionsMap[obj.key] = obj;
-				});
-
-				// Sort the search terms
-				sortByKey(termSuggestionsObj, 'text');
-
-				$searchInput.select2('destroy');
-
-				$searchInput.select2({
-
-					minimumResultsForSearch: 20,
-
-					query: function(options) {
-
-						var searchTerm = options.term.toLocaleLowerCase().trim(),
-							result = {},
-							suggestions;
-
-						// If we have no cachedSuggestions, set them to be equal to the full list of suggestions
-						cachedSuggestions = cachedSuggestions || termSuggestionsObj;
-
-						// If our new search term is a progression on the last one (e.g. pla -> plant) we can further filter the
-						// cachedSuggestions rather than filtering the whole list from scratch
-						suggestions = searchTerm.lastIndexOf(cachedSearchTerm) === 0 ? cachedSuggestions : termSuggestionsObj;
-
-						cachedSearchTerm = searchTerm;
-
-						result.results = cachedSuggestions = $.grep(suggestions, function(prop) {
-
-							// Include the object in the results if either the property name or class name contains the search term
-							return prop.text.toLocaleLowerCase().indexOf(searchTerm) > -1 ||
-								prop.parentTitle.toLocaleLowerCase().indexOf(searchTerm) > -1;
-						});
-
-						options.callback(result);
-					},
-
-					escapeMarkup: function(m) {
-						// Do not escape HTML in the select options text
-						return m;
-					},
-					formatResult: format,
-					formatSelection: formatResult,
-					dropdownCssClass: 'ps-results'
-				});
-
-				$('#' + treeName).dynatree({
-					checkbox: false,
-					// Override class name for checkbox icon:
-					classNames: {
-						container: 'fbtree-container',
-						expander: 'fbtree-expander',
-						nodeIcon: 'fbtree-icon',
-						combinedIconPrefix: 'fbtree-ico-',
-						focused: 'fbtree-focused',
-						active: 'fbtree-active'
-					},
-					selectMode: 1,
-					children: $.parseJSON(treeData),
-					onActivate: function(node) {
-
-						// Display list of selected nodes
-						var selNodes = node.tree.getSelectedNodes(),
-							// Convert to title/key array
-							selKeys = $.map(selNodes, function(node) {
-								return '[' + node.data.key + ']: \'' + node.data.title + '\'';
-							});
-
-						doOntologyTreeHighlight(treeName, node.data.key);
-					},
-					onSelect: function(select, node) {
-						// Display list of selected nodes
-						doOntologyTreeHighlight(treeName, node.data.key);
-					},
-					onKeydown: function(node, event) {
-						if (event.which === 32) {
-							return false;
-						}
-					}
-				});
-			};
-
-		}());
-		displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
-		$.fn.modal.Constructor.prototype.enforceFocus = function () {};
+		if (searchTerm && name) {
+			return name.replace(regex, '<span class="ps-item-property-search-term">$&</span>');
+		}
+		return name;
 	});
 
-      //]]>
-    </script>
+	var displayOntologyTree = (function() {
+
+	var generateFormattedResult = Handlebars.compile($('#ob-select-result-template').html()),
+		generateFormattedOption = Handlebars.compile($('#ob-select-option-template').html()),
+
+		formatResult = function(item) {
+			var type = item.type;
+
+			return generateFormattedResult({
+				image: type === 'Property' ? 'property.svg' : 'variable.png',
+				type: type,
+				name: item.text
+			});
+		},
+
+		format = function(item, container, query) {
+			var type = item.type;
+
+			return generateFormattedOption({
+				image: type === 'Property' ? 'property.svg' : 'variable.png',
+				type: type,
+				name: item.text,
+				searchTerm: query.term,
+				className: item.parentTitle
+			});
+		};
+
+	return function(treeName, treeData, searchTreeData, searchDivId) {
+
+		// For triggering the start of search type ahead
+		if (treeData == null) {
+			return;
+		}
+
+		var termSuggestions = $.parseJSON(searchTreeData),
+			termSuggestionsObj = [],
+			termSuggestionsMap = {},
+			$searchInput = $('#' + searchDivId),
+			cachedSuggestions,
+			cachedSearchTerm;
+
+		// Initialize the arrays that would contain json data for the combos
+		$.each(termSuggestions, function(index, value) {
+			var obj = {
+				text: value.value,
+				parentTitle: value.parentTitle,
+				type: value.type,
+				key: value.key,
+				id: value.key
+			};
+			termSuggestionsObj.push(obj);
+			termSuggestionsMap[obj.key] = obj;
+		});
+
+		// Sort the search terms
+		sortByKey(termSuggestionsObj, 'text');
+
+		$searchInput.select2('destroy');
+
+		$searchInput.select2({
+
+			minimumResultsForSearch: 20,
+
+			query: function(options) {
+
+				var searchTerm = options.term.toLocaleLowerCase().trim(),
+					result = {},
+					suggestions;
+
+				// If we have no cachedSuggestions, set them to be equal to the full list of suggestions
+				cachedSuggestions = cachedSuggestions || termSuggestionsObj;
+
+				// If our new search term is a progression on the last one (e.g. pla -> plant) we can further filter the
+				// cachedSuggestions rather than filtering the whole list from scratch
+				suggestions = searchTerm.lastIndexOf(cachedSearchTerm) === 0 ? cachedSuggestions : termSuggestionsObj;
+
+				cachedSearchTerm = searchTerm;
+
+				result.results = cachedSuggestions = $.grep(suggestions, function(prop) {
+
+					// Include the object in the results if either the property name or class name contains the search term
+					return prop.text.toLocaleLowerCase().indexOf(searchTerm) > -1 ||
+						prop.parentTitle.toLocaleLowerCase().indexOf(searchTerm) > -1;
+				});
+
+				options.callback(result);
+			},
+
+			escapeMarkup: function(m) {
+				// Do not escape HTML in the select options text
+				return m;
+			},
+			formatResult: format,
+			formatSelection: formatResult,
+			dropdownCssClass: 'ps-results'
+		});
+
+		$('#' + treeName).dynatree({
+			checkbox: false,
+			// Override class name for checkbox icon:
+			classNames: {
+				container: 'fbtree-container',
+				expander: 'fbtree-expander',
+				nodeIcon: 'fbtree-icon',
+				combinedIconPrefix: 'fbtree-ico-',
+				focused: 'fbtree-focused',
+				active: 'fbtree-active'
+			},
+			selectMode: 1,
+			children: $.parseJSON(treeData),
+			onActivate: function(node) {
+
+				// Display list of selected nodes
+				var selNodes = node.tree.getSelectedNodes(),
+					// Convert to title/key array
+					selKeys = $.map(selNodes, function(node) {
+						return '[' + node.data.key + ']: \'' + node.data.title + '\'';
+					});
+
+				doOntologyTreeHighlight(treeName, node.data.key);
+			},
+			onSelect: function(select, node) {
+				// Display list of selected nodes
+				doOntologyTreeHighlight(treeName, node.data.key);
+			},
+			onKeydown: function(node, event) {
+				if (event.which === 32) {
+					return false;
+				}
+			}
+		});
+	};
+
+}());
+	displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
+	$.fn.modal.Constructor.prototype.enforceFocus = function() {};
+});
+
+//]]>
+</script>
 </div>

@@ -87,28 +87,27 @@
 </div>
 
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	$(document).ready(function() {
-		$('.deleted-p').each(function(){
-			$(this).parent().parent().addClass('deleted')
-		})
-		if ($('#stepValue').val() == '2') {
-			$('.machineDirectionRow').hide();
-			$('.new-plot').hide();
-			$('.new-plot').each(function(){
-
-				if($(this).parent().parent().hasClass('planted')){
-					$(this).parent().parent().removeClass('planted');
-				}
-			})
-		}
-		else {
-			$('.machineDirectionRow').show();
-			$('.plotLabel').show();
-		}
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+$(document).ready(function() {
+	$('.deleted-p').each(function() {
+		$(this).parent().parent().addClass('deleted');
 	});
-	
-    //]]>
+	if ($('#stepValue').val() == '2') {
+		$('.machineDirectionRow').hide();
+		$('.new-plot').hide();
+		$('.new-plot').each(function() {
+
+			if ($(this).parent().parent().hasClass('planted')) {
+				$(this).parent().parent().removeClass('planted');
+			}
+		});
+	} else {
+		$('.machineDirectionRow').show();
+		$('.plotLabel').show();
+	}
+});
+
+//]]>
 </script>
 </div>

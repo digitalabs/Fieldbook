@@ -16,7 +16,7 @@
 		<div class="row">
 			<div class="col-xs-7 col-md-7">
 				<img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
-				<label  th:if="${type == 'N'}" class="h2_no_transform" th:text="#{browse.nurseries.header}"></label>				
+				<label  th:if="${type == 'N'}" class="h2_no_transform" th:text="#{browse.nurseries.header}"></label>
 				<label th:if="${type == 'N'}" class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a nursery to work with.</label>
 				<label  th:if="${type == 'T'}" class="h2_no_transform" th:text="#{browse.trial.header}"></label>
 				<label th:if="${type == 'T'}" class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a trial to work with.</label>
@@ -26,7 +26,7 @@
 					<a th:if="${type == 'N'}" th:href="@{/NurseryManager/createNursery}" class="btn btn-info"
 					th:utext="#{browse.nursery.start.new.nursery}">Start a New Nursery</a>
 					<a th:if="${type == 'T'}" th:href="@{/TrialManager/createTrial}" class="btn btn-info"
-					th:utext="#{browse.trial.start.new.trial}">Start a New Nursery</a>					
+					th:utext="#{browse.trial.start.new.trial}">Start a New Nursery</a>
 				</div>
 			</div>
 		</div>
@@ -48,24 +48,24 @@
 
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
-	var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/ '',
-		advanceStudyError = /*[[#{common.error.advance.study(#{fieldmap.nursery})}]]*/ '',
-		paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/ '',
-		showText = /*[[#{nursery.nurserydetails.additional.show}]]*/ '',
-		hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/ '',
-		currentStudyId = getCurrentStudyIdInTab(),
-		selectedTableIds = [];
+var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/ '',
+	advanceStudyError = /*[[#{common.error.advance.study(#{fieldmap.nursery})}]]*/ '',
+	paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/ '',
+	showText = /*[[#{nursery.nurserydetails.additional.show}]]*/ '',
+	hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/ '',
+	currentStudyId = getCurrentStudyIdInTab(),
+	selectedTableIds = [];
 
-	(function() {
-		$('document').ready(function() {
-			if (redirectErrorMessage !== null && redirectErrorMessage !== '') {
-				createErrorNotification(errorMsgHeader,redirectErrorMessage);
-			}
-			if($('#preloadSummaryId').val() !== ''){
-				addDetailsTab($('#preloadSummaryId').val(), $('#preloadSummaryName').val());
-			}
-		});
-	})();
+(function() {
+	$('document').ready(function() {
+		if (redirectErrorMessage !== null && redirectErrorMessage !== '') {
+			createErrorNotification(errorMsgHeader, redirectErrorMessage);
+		}
+		if ($('#preloadSummaryId').val() !== '') {
+			addDetailsTab($('#preloadSummaryId').val(), $('#preloadSummaryName').val());
+		}
+	});
+})();
 
 //]]>
 </script>

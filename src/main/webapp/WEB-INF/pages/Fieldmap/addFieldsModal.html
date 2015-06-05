@@ -3,16 +3,16 @@
 	<form id="add-field-form" role="form-horizontal" class="form-horizontal" action="#" th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 		<div class="modal fade" id="addFieldsModal" role="dialog" aria-labelledby="addVariablesSettingModal" aria-hidden="true">
 			<div class="modal-dialog modal-medium">
-				<div class="modal-content">					
+				<div class="modal-content">
 					<div class="modal-body" id="addVariablesSettingBody">
-					
+
 						<div class="row form-group">
-							<div class="col-xs-11 col-md-11">					
+							<div class="col-xs-11 col-md-11">
 								<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{fieldmap.add.fields.header}"></label>
 							</div>
 							<div class="col-xs-1 col-md-1">
 								<button  id="closeAddVariablesSettingModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-							</div>										
+							</div>
 						</div>
 						<div class="row">
 							<div id="page-message-modal" class="col-xs-12 col-md-12">
@@ -46,51 +46,50 @@
 	</form>
 </div>
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	function showAddFieldPopup(){
-		'use strict';
-		$('#page-message-modal').html('');
-		$('#newFieldName').val('');
-		recreatePopupLocationCombo();
-		$('#addFieldsModal').modal({ backdrop: 'static', keyboard: true });
-	}
-	function validateAddFields(){
-		'use strict';
-		if($('#parentLocationId').val() === ''){
-			showInvalidInputMessage(parentLocationRequired);
-			return false;
-		}
-
-		if($('#newFieldName').val() === ''){
-			showInvalidInputMessage(fieldNameRequired);
-			return false;
-		}
-
-		//add
-		addNewFieldLocation($('#newFieldName').val(), $('#parentLocationId').val());
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+function showAddFieldPopup() {
+	'use strict';
+	$('#page-message-modal').html('');
+	$('#newFieldName').val('');
+	recreatePopupLocationCombo();
+	$('#addFieldsModal').modal({ backdrop: 'static', keyboard: true });
+}
+function validateAddFields() {
+	'use strict';
+	if ($('#parentLocationId').val() === '') {
+		showInvalidInputMessage(parentLocationRequired);
+		return false;
 	}
 
-	function addNewFieldLocation(fieldName, locationId){
+	if ($('#newFieldName').val() === '') {
+		showInvalidInputMessage(fieldNameRequired);
+		return false;
+	}
 
-		var dataForm = $('#add-field-form').serialize()
-		$.ajax(
-			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/addNewField",
-			type: "POST",
-			data: dataForm,
-			success: function(data) {
-				if(data == 'success'){
-					showSuccessfulMessage('page-message-modal', fieldAddedSuccessfully);
-					   //$('#newFieldName').val('');
-					   $('#addFieldsModal').modal('toggle');
-					}else{
-						showInvalidInputMessage(fieldNameDuplicateError);
-					}
+	//add
+	addNewFieldLocation($('#newFieldName').val(), $('#parentLocationId').val());
+}
 
-				}
+function addNewFieldLocation(fieldName, locationId) {
+
+	var dataForm = $('#add-field-form').serialize();
+	$.ajax({
+		url: "/Fieldbook/Fieldmap/enterFieldDetails/addNewField",
+		type: "POST",
+		data: dataForm,
+		success: function(data) {
+			if (data == 'success') {
+				showSuccessfulMessage('page-message-modal', fieldAddedSuccessfully);
+				//$('#newFieldName').val('');
+				$('#addFieldsModal').modal('toggle');
+			} else {
+				showInvalidInputMessage(fieldNameDuplicateError);
 			}
-		);
-	}
-	//]]>
+
+		}
+	});
+}
+//]]>
 </script>
 </div>

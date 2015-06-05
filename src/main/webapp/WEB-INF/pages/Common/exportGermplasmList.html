@@ -43,54 +43,55 @@
 	<input type="hidden" name="filename" id="filename" value=""/>
 	<input type="hidden" name="contentType" id="contentType" value=""/>
 </form>
-<div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	           
-	    function doExportGermplasmList(){
-	    	'use strict';
-	    	
-	    	var visibleColumnTermIds = [];
-	    	
-	    	$("#imported-germplasm-list th[aria-label!='']").each(
-	    		function(){
-	    			var termId = $(this).attr('data-col-name').split('-')[0];
-	    			if ($.inArray(termId, visibleColumnTermIds) === -1){
-	    				visibleColumnTermIds.push(termId);
-	    			}
-	    		}	
-	    	);
-	    	
-	    	if ($("#imported-germplasm-list").size() == 0){
-	    		$('#germplasmListVisibleColumns').val(0);
-	    	}else{
-	    		$('#germplasmListVisibleColumns').val(visibleColumnTermIds.join(','));
-	    	}
-	    	
-	    	exportGermplasmList(visibleColumnTermIds);
-	    	
-	    }
-	           
-	    function showGermplasmExportResponse(responseText, statusText, xhr, $form) {
-			'use strict';
-			var resp = $.parseJSON(responseText);
 
-			if (resp.filename !== ''){
-				
-				$('#exportGermplasmListDownloadForm #outputFilename').val(resp.outputFilename);
-				$('#exportGermplasmListDownloadForm #filename').val(resp.filename);
-				$('#exportGermplasmListDownloadForm #contentType').val(resp.contentType);
-				$('#exportGermplasmListDownloadForm').submit();
-				$('#exportGermplasmListModal').modal('hide');
-				
-			}else{
-				var errorMessage = /*[[#{error.no.import.germplasm.list}]]*/ '';
-				showMessage(errorMessage);
-				
+<div layout:fragment="page-script">
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+
+function doExportGermplasmList() {
+	'use strict';
+
+	var visibleColumnTermIds = [];
+
+	$("#imported-germplasm-list th[aria-label!='']").each(
+		function() {
+			var termId = $(this).attr('data-col-name').split('-')[0];
+			if ($.inArray(termId, visibleColumnTermIds) === -1) {
+				visibleColumnTermIds.push(termId);
 			}
-			
 		}
-	           
-		//]]>
-	</script>
+	);
+
+	if ($("#imported-germplasm-list").size() == 0) {
+		$('#germplasmListVisibleColumns').val(0);
+	} else {
+		$('#germplasmListVisibleColumns').val(visibleColumnTermIds.join(','));
+	}
+
+	exportGermplasmList(visibleColumnTermIds);
+
+}
+
+function showGermplasmExportResponse(responseText, statusText, xhr, $form) {
+	'use strict';
+	var resp = $.parseJSON(responseText);
+
+	if (resp.filename !== '') {
+
+		$('#exportGermplasmListDownloadForm #outputFilename').val(resp.outputFilename);
+		$('#exportGermplasmListDownloadForm #filename').val(resp.filename);
+		$('#exportGermplasmListDownloadForm #contentType').val(resp.contentType);
+		$('#exportGermplasmListDownloadForm').submit();
+		$('#exportGermplasmListModal').modal('hide');
+
+	} else {
+		var errorMessage = /*[[#{error.no.import.germplasm.list}]]*/ '';
+		showMessage(errorMessage);
+
+	}
+
+}
+
+//]]>
+</script>
 </div>

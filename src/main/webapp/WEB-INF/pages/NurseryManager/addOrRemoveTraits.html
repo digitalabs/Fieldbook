@@ -10,15 +10,15 @@
 <div th:include="/Common/showAddOrRemoveTraitsPagination"></div>
 
 <div layout:fragment="page-script">
-	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
-	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		/*globals newTraits, newSelectionVariates*/
-		/*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+/*globals newTraits, newSelectionVariates*/
+/*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
 
-		var newTraits = /*[[${newTraits}]]*/ [],
-			newSelectionVariates = /*[[${newSelectionVariates}]]*/ [];
-			
-		//]]>
-		</script>
-	</div>
+var newTraits = /*[[${newTraits}]]*/ [],
+	newSelectionVariates = /*[[${newSelectionVariates}]]*/ [];
+
+//]]>
+</script>
+</div>

@@ -54,7 +54,7 @@
 									   th:text="#{nursery.nurserydetails.action.import.crosses}">Import Crosses</a>
 								</li>
 								<li>
-									<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" 
+									<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());"
 									   th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
 								</li>
 							</ul>
@@ -265,83 +265,82 @@
 <script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	/* jshint ignore:start */
-	var measurementRowCount = 0;
-	/* jshint ignore:end */
+//<![CDATA[
+/* jshint ignore:start */
+var measurementRowCount = 0;
+/* jshint ignore:end */
 
-	/*globals Spinner, submitGermplasmAndCheck, loadNurserySettingsForCreate, validateCreateNursery*/
-	/*globals validateStartEndDate, changeBuildOption, getJquerySafeId*/
-	/*exported submitCreateWorkbook, submitCreateForm*/
-	function submitCreateWorkbook(){
-		'use strict';
-		var $form = $('#createNurseryForm, #createNurseryMainForm'),
-				serializedData = $form.serialize();
-		$.ajax({
-			url: '/Fieldbook/NurseryManager/createNursery',
-			type: 'POST',
-			data: serializedData,
-			cache: false,
-			success: function() {
-				submitGermplasmAndCheck();
-				$('.import-study-data').data('data-import', '0');
-				$('.fbk-discard-imported-data').addClass('fbk-hide');
-			}
-		});
-	}
-	// FIXME This should not be global
-	function submitCreateForm() {
-		'use strict';
-
-		if ($('#folderId').val() === '') {
-			openStudyTree(2, null, true);
-		}else if (validateCreateNursery()) {
-			if (!validateStartEndDate('nurseryLevelSettings')) {
-				return false;
-			}
-			if($('.import-study-data').data('data-import') === '1'){
-				doSaveImportedData();
-			}
-			else{
-				submitCreateWorkbook();
-			}
-			if (document.enableActions !== undefined) {
-				document.enableActions();
-			}
-		}
-	}
-	$(document).ready(function() {
-		'use strict';
-		$('#selectedSettingId').on('change', function(){
-			loadNurserySettingsForCreate($(this).val());
-		});
-		$('#studyBuildOption').on('change', changeBuildOption);
-		$('#choosePreviousStudy').addClass('fbk-hide');
-		setTimeout(function() {
-			$('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());
-		}, 600);
-		$('.chs-add-variable').show();
-		displayStudyGermplasmSection(false, 0);
-		$('.nav-tabs').tabdrop({position: 'left'});
-		$('.nav-tabs').tabdrop('layout');
-		$('li#nursery-settings-li a').tab('show');
-
-		$('body').on('DO_AUTO_SAVE', function(){
-			submitCreateForm();
-		});
-		// we check greater than 1 since theres a 'please choose' option
-		if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
-			$('.study-level-method-checkbox').click();
-		}
-		$('body').data('doAutoSave', '0');
-		
-		if ($('#experimentTypeId').val() !== ''){
-			$('#nursery-experimental-design-li').show();
-		}else{
-			$('#nursery-experimental-design-li').hide();
+/*globals Spinner, submitGermplasmAndCheck, loadNurserySettingsForCreate, validateCreateNursery*/
+/*globals validateStartEndDate, changeBuildOption, getJquerySafeId*/
+/*exported submitCreateWorkbook, submitCreateForm*/
+function submitCreateWorkbook() {
+	'use strict';
+	var $form = $('#createNurseryForm, #createNurseryMainForm'),
+			serializedData = $form.serialize();
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/createNursery',
+		type: 'POST',
+		data: serializedData,
+		cache: false,
+		success: function() {
+			submitGermplasmAndCheck();
+			$('.import-study-data').data('data-import', '0');
+			$('.fbk-discard-imported-data').addClass('fbk-hide');
 		}
 	});
-	//]]>
+}
+// FIXME This should not be global
+function submitCreateForm() {
+	'use strict';
+
+	if ($('#folderId').val() === '') {
+		openStudyTree(2, null, true);
+	}else if (validateCreateNursery()) {
+		if (!validateStartEndDate('nurseryLevelSettings')) {
+			return false;
+		}
+		if ($('.import-study-data').data('data-import') === '1') {
+			doSaveImportedData();
+		} else {
+			submitCreateWorkbook();
+		}
+		if (document.enableActions !== undefined) {
+			document.enableActions();
+		}
+	}
+}
+$(document).ready(function() {
+	'use strict';
+	$('#selectedSettingId').on('change', function() {
+		loadNurserySettingsForCreate($(this).val());
+	});
+	$('#studyBuildOption').on('change', changeBuildOption);
+	$('#choosePreviousStudy').addClass('fbk-hide');
+	setTimeout(function() {
+		$('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());
+	}, 600);
+	$('.chs-add-variable').show();
+	displayStudyGermplasmSection(false, 0);
+	$('.nav-tabs').tabdrop({position: 'left'});
+	$('.nav-tabs').tabdrop('layout');
+	$('li#nursery-settings-li a').tab('show');
+
+	$('body').on('DO_AUTO_SAVE', function() {
+		submitCreateForm();
+	});
+	// we check greater than 1 since theres a 'please choose' option
+	if ($.parseJSON($('#possibleValuesFavoriteJson0').text()).length > 1) {
+		$('.study-level-method-checkbox').click();
+	}
+	$('body').data('doAutoSave', '0');
+
+	if ($('#experimentTypeId').val() !== '') {
+		$('#nursery-experimental-design-li').show();
+	} else {
+		$('#nursery-experimental-design-li').hide();
+	}
+});
+//]]>
 </script>
 
 </section>

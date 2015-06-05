@@ -62,37 +62,36 @@
 </form>
 
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	/*globals treeReloading, initializeDateAndSliderInputs*/
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+/*globals treeReloading, initializeDateAndSliderInputs*/
 
-		 $(document).ready(function() {
-		 	'use strict';
-			$('#saveListForm select').select2({minimumResultsForSearch: 20});
-			
+ $(document).ready(function() {
+	'use strict';
+	$('#saveListForm select').select2({minimumResultsForSearch: 20});
 
-				if($('#saveListForm .date-input').length > 0){
-					$('#saveListForm .date-input').each(function(){
-						$(this).datepicker({'format': 'yyyy-mm-dd'}).on('change', function () {
-					    var curDate = $(this).val();
-					    try {
-					        var r = $.datepicker.parseDate('yy-mm-dd', curDate);
-					        $(this).datepicker('setDate', r);
-					    } catch(e) {			        
-					        $(this).datepicker('setDate', new Date());
-					    }
-					}).on('changeDate', function() {
-						$(this).datepicker('hide');
-
-					}).on('show', function(){
-						treeReloading = 1;
-					}).on('hide', function(){
-						setTimeout(function(){treeReloading = 0;}, 1000);
-					});
-					});
+	if ($('#saveListForm .date-input').length > 0) {
+		$('#saveListForm .date-input').each(function() {
+			$(this).datepicker({'format': 'yyyy-mm-dd'}).on('change', function() {
+				var curDate = $(this).val();
+				try {
+					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
+					$(this).datepicker('setDate', r);
+				} catch (e) {
+					$(this).datepicker('setDate', new Date());
 				}
-				initializeDateAndSliderInputs();
+			}).on('changeDate', function() {
+				$(this).datepicker('hide');
+
+			}).on('show', function() {
+				treeReloading = 1;
+			}).on('hide', function() {
+				setTimeout(function() {treeReloading = 0;}, 1000);
+			});
 		});
-	//]]>
-	</script>
+	}
+	initializeDateAndSliderInputs();
+});
+//]]>
+</script>
 </div>

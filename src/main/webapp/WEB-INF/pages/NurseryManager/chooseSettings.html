@@ -353,169 +353,169 @@
 </form>
 
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	// FIXME Should not be using global variables or functions
-	/*global getIEVersion, getJquerySafeId, initializePossibleValuesCombo, setTimeout*/
-	/*global addCreateNurseryRequiredAsterisk, doOntologyTreeHighlight */
-	/*global checkTraitsAndSelectionVariateTable*/
-	/* jshint ignore:start */
-	var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
-			nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/ '',
-			checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/ '',
-	// Labels for method and location
-			showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '',
-			showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '',
-			manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '',
-			manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '',
-			varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '',
-			idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '',
-			valueNotNumeric = /*[[#{nursery.create.nursery.value.not.numeric}]]*/ '',
-			valueNotWIMinMax = /*[[#{nursery.create.nursery.value.not.within.min.max}]]*/ '',
-			locationIframeOpened = false,
-			methodIframeOpened = false,
-			selectionVariatesSegment = 6,
-			baselineTraitsSegment = 3;
-	inputChange = false;
-	/* jshint ignore:end */
-	var locationId = '',
-			breedingMethodId = '',
-			importLocationUrl = '',
-			requiredFields = [],
-			startDateId = '',
-			endDateId = '',
-			disabledActionTooltipMessage = /*[[#{nursery.create.actions.is.disabled}]]*/ '',
-			treeDivId = 'ontologyBrowserTree',
-			ChooseSettings = window.ChooseSettings,
-			chooseSettings;
-	$(document).ready(function() {
-		'use strict';
-		chooseSettings = new ChooseSettings({
-			generalAjaxError: /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
-			uniqueVariableError: /*[[#{variable.selection.unique.variable.error}]]*/ '',
-			mdLabel: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-			mdPlaceholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
-			fdLabel: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
-			fdPlaceholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
-			svLabel: /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
-			svPlaceholder: /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
-			tdLabel: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
-			tdPlaceholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
-			ncLabel: /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-			ncPlaceholder: /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '',
-			variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
-			invalidAliasError: /*[[#{variable.selection.alias.error}]]*/ ''
-		});
-		chooseSettings.initialiseVariableSelection();
-		// FIXME Shouldn't be user agent checking
-		if (getIEVersion() === 8) {
-			$('.table-with-scroll-create').parent().addClass('variable-details');
-			$('.table-with-scroll-create').removeClass('table-with-scroll-create');
+//<![CDATA[
+// FIXME Should not be using global variables or functions
+/*global getIEVersion, getJquerySafeId, initializePossibleValuesCombo, setTimeout*/
+/*global addCreateNurseryRequiredAsterisk, doOntologyTreeHighlight */
+/*global checkTraitsAndSelectionVariateTable*/
+/* jshint ignore:start */
+var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
+		nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/ '',
+		checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/ '',
+// Labels for method and location
+		showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '',
+		showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '',
+		manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '',
+		manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '',
+		varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '',
+		idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '',
+		valueNotNumeric = /*[[#{nursery.create.nursery.value.not.numeric}]]*/ '',
+		valueNotWIMinMax = /*[[#{nursery.create.nursery.value.not.within.min.max}]]*/ '',
+		locationIframeOpened = false,
+		methodIframeOpened = false,
+		selectionVariatesSegment = 6,
+		baselineTraitsSegment = 3;
+inputChange = false;
+/* jshint ignore:end */
+var locationId = '',
+		breedingMethodId = '',
+		importLocationUrl = '',
+		requiredFields = [],
+		startDateId = '',
+		endDateId = '',
+		disabledActionTooltipMessage = /*[[#{nursery.create.actions.is.disabled}]]*/ '',
+		treeDivId = 'ontologyBrowserTree',
+		ChooseSettings = window.ChooseSettings,
+		chooseSettings;
+$(document).ready(function() {
+	'use strict';
+	chooseSettings = new ChooseSettings({
+		generalAjaxError: /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
+		uniqueVariableError: /*[[#{variable.selection.unique.variable.error}]]*/ '',
+		mdLabel: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+		mdPlaceholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
+		fdLabel: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
+		fdPlaceholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
+		svLabel: /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
+		svPlaceholder: /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
+		tdLabel: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
+		tdPlaceholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
+		ncLabel: /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
+		ncPlaceholder: /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '',
+		variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
+		invalidAliasError: /*[[#{variable.selection.alias.error}]]*/ ''
+	});
+	chooseSettings.initialiseVariableSelection();
+	// FIXME Shouldn't be user agent checking
+	if (getIEVersion() === 8) {
+		$('.table-with-scroll-create').parent().addClass('variable-details');
+		$('.table-with-scroll-create').removeClass('table-with-scroll-create');
+	}
+	if ($('#requiredFields').val() !== '') {
+		requiredFields = $('#requiredFields').val().split(',');
+	}
+	startDateId = $('#startDateId').val();
+	endDateId = $('#endDateId').val();
+	locationId = $('#locationId').val();
+	breedingMethodId = $('#breedingMethodId').val();
+	importLocationUrl = $('#importLocationUrl').val();
+	$('#folderNameSpan').html($('#folderName').val());
+	var possibleValuesJsonElm = $('.possibleValuesJson');
+	$.each(possibleValuesJsonElm, function(index, divElem) {
+		var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
+		if (parseInt($('#' + getJquerySafeId('studyLevelVariables' + select2Index +
+				'.variable.cvTermId')).val(), 10) === parseInt(locationId, 10)) {
+			initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
+					'#' + getJquerySafeId('studyLevelVariables' + select2Index +
+					'.value'), true, $(divElem).siblings('.div-select-val').html());
+		} else {
+			initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
+					'#' + getJquerySafeId('studyLevelVariables' + select2Index +
+					'.value'), false, $(divElem).siblings('.div-select-val').html());
 		}
-		if ($('#requiredFields').val() !== '') {
-			requiredFields = $('#requiredFields').val().split(',');
+	});
+	$.each($('.possibleValuesJsonCons'), function(index, divElem) {
+		var select2Index = $(divElem).attr('id').split('possibleValuesJsonCons')[1];
+		initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
+				'#' + getJquerySafeId('nurseryConditions' + select2Index +
+				'.value'), false, $(divElem).siblings('.div-select-val').html());
+	});
+	// FIXME - Shouldn't pass a string here
+	setTimeout('initializeDateAndSliderInputs()', 500);
+	addCreateNurseryRequiredAsterisk();
+	$('#srch-term').on('change', function() {
+		var data = $('#srch-term').select2('data');
+		doOntologyTreeHighlight(treeDivId, data.key);
+	});
+	$('.vs-modal').on('variable-select', function(event) {
+		if (document.disableActions !== undefined) {
+			document.disableActions();
 		}
-		startDateId = $('#startDateId').val();
-		endDateId = $('#endDateId').val();
-		locationId = $('#locationId').val();
-		breedingMethodId = $('#breedingMethodId').val();
-		importLocationUrl = $('#importLocationUrl').val();
-		$('#folderNameSpan').html($('#folderName').val());
-		var possibleValuesJsonElm = $('.possibleValuesJson');
+	});
+	// remove any other listeners for the location update
+	$(document).off('location-update');
+	$(document).on('location-update', recreateLocationCombo);
+	$('#variateDeleteConfirmationModal').on('click', '#cancelDelete', function() {
+		if (document.initialEnabledStat && document.enableActions !== undefined) {
+			document.enableActions();
+		}
+	});
+	$('#variateDeleteConfirmationModal').on('click', '#continueDelete', function() {
+		if (document.disableActions !== undefined) {
+			document.disableActions();
+		}
+	});
+	document.disableActions = function() {
+		var actionBtn = $('.fbk-action-btn');
+		actionBtn.removeAttr('data-toggle').addClass('disabled enable-pointer-events');
+		actionBtn.tooltip({container: 'body', title: disabledActionTooltipMessage, placement: 'top'});
+	};
+	document.enableActions = function() {
+		var actionBtn = $('.fbk-action-btn');
+		actionBtn.attr('data-toggle', 'dropdown');
+		actionBtn.tooltip('hide');
+		actionBtn.tooltip('destroy');
+		actionBtn.removeClass('disabled');
+	};
+	if ($('#baselineTraitSettings tbody tr').length > 1) {
+		hideDummyRow('baselineTraitSettings');
+	}
+	if ($('#selectionVariatesSettings tbody tr').length > 1) {
+		hideDummyRow('selectionVariatesSettings');
+	}
+	checkShowSettingsFormReminder();
+	// toggle favorites by default on edit if value is a favorite
+	if ($('.edit-nursery-page-identifier').length) {
 		$.each(possibleValuesJsonElm, function(index, divElem) {
 			var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
-			if (parseInt($('#' + getJquerySafeId('studyLevelVariables' + select2Index +
-					'.variable.cvTermId')).val(), 10) === parseInt(locationId, 10)) {
-				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
-						'#' + getJquerySafeId('studyLevelVariables' + select2Index +
-						'.value'), true, $(divElem).siblings('.div-select-val').html());
-			} else {
-				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
-						'#' + getJquerySafeId('studyLevelVariables' + select2Index +
-						'.value'), false, $(divElem).siblings('.div-select-val').html());
-			}
+			checkFavoritesIfValIsAFavorite(select2Index);
 		});
-		$.each($('.possibleValuesJsonCons'), function(index, divElem) {
-			var select2Index = $(divElem).attr('id').split('possibleValuesJsonCons')[1];
-			initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
-					'#' + getJquerySafeId('nurseryConditions' + select2Index +
-					'.value'), false, $(divElem).siblings('.div-select-val').html());
-		});
-		// FIXME - Shouldn't pass a string here
-		setTimeout('initializeDateAndSliderInputs()', 500);
-		addCreateNurseryRequiredAsterisk();
-		$('#srch-term').on('change', function() {
-			var data = $('#srch-term').select2('data');
-			doOntologyTreeHighlight(treeDivId, data.key);
-		});
-		$('.vs-modal').on('variable-select',function(event){
-			if (document.disableActions !== undefined) {
-				document.disableActions();
-			}
-		});
-		// remove any other listeners for the location update
-		$(document).off('location-update');
-		$(document).on('location-update', recreateLocationCombo);
-		$('#variateDeleteConfirmationModal').on('click', '#cancelDelete', function() {
-			if (document.initialEnabledStat && document.enableActions !== undefined) {
-				document.enableActions();
-			}
-		});
-		$('#variateDeleteConfirmationModal').on('click', '#continueDelete', function() {
-			if (document.disableActions !== undefined) {
-				document.disableActions();
-			}
-		});
-		document.disableActions = function() {
-			var actionBtn = $('.fbk-action-btn');
-			actionBtn.removeAttr('data-toggle').addClass('disabled enable-pointer-events');
-			actionBtn.tooltip({container: 'body', title: disabledActionTooltipMessage, placement: 'top'});
-		};
-		document.enableActions = function() {
-			var actionBtn = $('.fbk-action-btn');
-			actionBtn.attr('data-toggle', 'dropdown');
-			actionBtn.tooltip('hide');
-			actionBtn.tooltip('destroy');
-			actionBtn.removeClass('disabled');
-		};
-		if ($('#baselineTraitSettings tbody tr').length > 1) {
-			hideDummyRow('baselineTraitSettings');
-		}
-		if ($('#selectionVariatesSettings tbody tr').length > 1) {
-			hideDummyRow('selectionVariatesSettings');
-		}
-		checkShowSettingsFormReminder();
-		// toggle favorites by default on edit if value is a favorite
-		if ($('.edit-nursery-page-identifier').length) {
-			$.each(possibleValuesJsonElm, function(index, divElem) {
-				var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
-				checkFavoritesIfValIsAFavorite(select2Index);
-			});
-		}
-		checkNurseryIfShowRemoveVariableLinks();
-		$('.remove-btn').on('click', function(){
-			var sectionDiv = $(this).data('section');
-			var isChecked = $(this).prop('checked');
-			$('.'+sectionDiv+' .remove-indv-btn').prop('checked', isChecked);
-		});
-		$('.remove-all-vars').on('click', function(){
-			var sectionDiv = $(this).data('section');
-			var variableType = $(this).data('variable-type');
-			var checkedInput = $('.'+sectionDiv+' .remove-indv-btn:checked');
-			var deleteVarIds = '';
-			if(checkedInput.length === 0) {
-				showAlertMessage('', 'Please choose variables to be deleted');
-				return false;
-			} else {
-				checkedInput.each(function(){
-					if(deleteVarIds !== '') {
-						deleteVarIds += '|';
-					}
-					deleteVarIds += $(this).data('cv-term-id');
-				});
-
-				deleteMultiVariable(variableType, deleteVarIds, sectionDiv);
-			}
-		});
+	}
+	checkNurseryIfShowRemoveVariableLinks();
+	$('.remove-btn').on('click', function() {
+		var sectionDiv = $(this).data('section');
+		var isChecked = $(this).prop('checked');
+		$('.' + sectionDiv + ' .remove-indv-btn').prop('checked', isChecked);
 	});
-	//]]>
+	$('.remove-all-vars').on('click', function() {
+		var sectionDiv = $(this).data('section');
+		var variableType = $(this).data('variable-type');
+		var checkedInput = $('.' + sectionDiv + ' .remove-indv-btn:checked');
+		var deleteVarIds = '';
+		if (checkedInput.length === 0) {
+			showAlertMessage('', 'Please choose variables to be deleted');
+			return false;
+		} else {
+			checkedInput.each(function() {
+				if (deleteVarIds !== '') {
+					deleteVarIds += '|';
+				}
+				deleteVarIds += $(this).data('cv-term-id');
+			});
+
+			deleteMultiVariable(variableType, deleteVarIds, sectionDiv);
+		}
+	});
+});
+//]]>
 </script>

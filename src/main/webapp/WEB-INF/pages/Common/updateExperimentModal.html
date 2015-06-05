@@ -3,37 +3,37 @@
  <input type="hidden" th:field="*{experimentIndex}"/>
 <div class="modal fade updateExperimentModal" role="dialog" aria-labelledby="updateExperimentModal" aria-hidden="true">
 	<div class="modal-dialog modal-medium">
-		<div class="modal-content">			
+		<div class="modal-content">
 			<div class="modal-body">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">
 						<label class="modal-title heading-modal fbk-modal-title" th:text="#{obervation.edit.entry}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button type="button" class="close closeUpdateExperimentModal pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
-					</div>										
+					</div>
 				</div>
 				<div class="row">
 					<div class="col-xs-12 col-md-12" id="page-update-experiment-message-modal"></div>
 				</div>
 				<div class="row form-group" th:each="measurementData, rowIndex : *{updateObservation.dataList}">
 					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold study-experiment-variable-name" th:text="${measurementData.measurementVariable.name}" ></label>:			
+						<label class="control-label label-bold study-experiment-variable-name" th:text="${measurementData.measurementVariable.name}" ></label>:
 					</div>
 					<div class="col-xs-8 col-md-8" th:if="${measurementData.editable == false}">
-						<label th:text="${measurementData.displayValue}" ></label>		
-						<input type="hidden" th:attr="data-type=${measurementData.dataType}" 
-						th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
-						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>	
-						
-						<input type="hidden" th:attr="data-type=${measurementData.dataType}" 
-						th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+						<label th:text="${measurementData.displayValue}" ></label>
+						<input type="hidden" th:attr="data-type=${measurementData.dataType}"
+						th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}"
+						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>
+
+						<input type="hidden" th:attr="data-type=${measurementData.dataType}"
+						th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}"
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].cValueId}"/>
-								
+
 					</div>
 					<div class="col-xs-8 col-md-8" th:if="${measurementData.editable == true}">
-						
-						<input  maxlength="250"  th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != dateVarId and measurementData.measurementVariable.dataTypeId != categoricalVarId}" 
+
+						<input  maxlength="250"  th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != dateVarId and measurementData.measurementVariable.dataTypeId != categoricalVarId}"
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>
 
 						<input th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == dateVarId}"
@@ -41,19 +41,19 @@
 						<label  th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == dateVarId}"  class="btn datepicker">
 							<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 						</label>
-								
-						<select th:attrappend="data-cvalueid=${measurementData.cValueId},data-value=${measurementData.value}" class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1" 
-						th:if="${measurementData.measurementVariable.dataTypeId == categoricalVarId or not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+
+						<select th:attrappend="data-cvalueid=${measurementData.cValueId},data-value=${measurementData.value}" class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1"
+						th:if="${measurementData.measurementVariable.dataTypeId == categoricalVarId or not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}"
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].cValueId}">
-						    <option th:if="${measurementData.measurementVariable.termId != T(com.efficio.fieldbook.web.util.AppConstants).ENTRY_TYPE_ID.getInt() or isNursery == true}" value="" th:text="#{categorical.please.choose}">Please Choose</option> 
-							<option th:each="refval : ${measurementData.measurementVariable.possibleValues}" 
+							<option th:if="${measurementData.measurementVariable.termId != T(com.efficio.fieldbook.web.util.AppConstants).ENTRY_TYPE_ID.getInt() or isNursery == true}" value="" th:text="#{categorical.please.choose}">Please Choose</option>
+							<option th:each="refval : ${measurementData.measurementVariable.possibleValues}"
 							th:value="${refval.key}" th:text="${refval.description}"></option>
-							<option th:if="${measurementData.isCustomCategoricalValue}" 
+							<option th:if="${measurementData.isCustomCategoricalValue}"
 							th:value="${measurementData.value}" th:text="${measurementData.value}"></option>
 						</select>
 					</div>
-				</div>				
-				
+				</div>
+
 			</div>
 			<div class="modal-footer addVariable-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
@@ -65,58 +65,58 @@
 </form>
 
 <div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		/*global truncateStudyVariableNames, Spinner, showErrorMessage*/
-		/*exported saveExperimentMeasurements*/
-		$( document ).ready(function() {
-			'use strict';
-					$('.updateExperimentModal select').each(function(){
-						$(this).select2({minimumResultsForSearch: 20});					
-					});
-					truncateStudyVariableNames('.study-experiment-variable-name', 19);
-					if ($('.updateExperimentModal .date-input').length > 0) {
-						$('.updateExperimentModal .date-input').each(function() {
-							$(this).datepicker({
-								'format' : 'yyyy-mm-dd'
-							}).on('changeDate', function() {
-								$(this).datepicker('hide');
-							}).on('change', function () {
-						    var curDate = $(this).val();
-						    try {
-						        var r = $.datepicker.parseDate('yy-mm-dd', curDate);
-						        $(this).datepicker('setDate', r);
-						    } catch(e) {			        
-						        $(this).datepicker('setDate', new Date());
-						    }
-						});
-						});
-					}
-					if ($('.updateExperimentModal .datepicker img').length > 0) {
-						$('.updateExperimentModal  .datepicker img').on('click', function() {
-							$(this).parent().parent().find('.date-input').datepicker('show');
-						});
-					}
-			});
-		function saveExperimentMeasurements(){
-			'use strict';
-			var rowIndex = $('.updateExperimentForm #experimentIndex').val();
-			$.ajax({
-				url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
-				type: 'POST',
-				data: $('.updateExperimentForm').serialize(),
-				success: function(data) {
-					if(data.success === '1'){
-						var oTable = $('#measurement-table').dataTable();												
-						 oTable.fnUpdate( data.data, rowIndex, null, false); // Row				
-						 oTable.fnAdjustColumnSizing();	
-						 $('.updateExperimentModal').modal('hide');
-					}else{
-						showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
-					}
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+/*global truncateStudyVariableNames, Spinner, showErrorMessage*/
+/*exported saveExperimentMeasurements*/
+$( document ).ready(function() {
+	'use strict';
+	$('.updateExperimentModal select').each(function() {
+		$(this).select2({minimumResultsForSearch: 20});
+	});
+	truncateStudyVariableNames('.study-experiment-variable-name', 19);
+	if ($('.updateExperimentModal .date-input').length > 0) {
+		$('.updateExperimentModal .date-input').each(function() {
+			$(this).datepicker({
+				'format': 'yyyy-mm-dd'
+			}).on('changeDate', function() {
+				$(this).datepicker('hide');
+			}).on('change', function() {
+				var curDate = $(this).val();
+				try {
+					var r = $.datepicker.parseDate('yy-mm-dd', curDate);
+					$(this).datepicker('setDate', r);
+				} catch (e) {
+					$(this).datepicker('setDate', new Date());
 				}
 			});
+		});
+	}
+	if ($('.updateExperimentModal .datepicker img').length > 0) {
+		$('.updateExperimentModal  .datepicker img').on('click', function() {
+			$(this).parent().parent().find('.date-input').datepicker('show');
+		});
+	}
+});
+function saveExperimentMeasurements() {
+	'use strict';
+	var rowIndex = $('.updateExperimentForm #experimentIndex').val();
+	$.ajax({
+		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
+		type: 'POST',
+		data: $('.updateExperimentForm').serialize(),
+		success: function(data) {
+			if (data.success === '1') {
+				var oTable = $('#measurement-table').dataTable();
+				oTable.fnUpdate(data.data, rowIndex, null, false); // Row
+				oTable.fnAdjustColumnSizing();
+				$('.updateExperimentModal').modal('hide');
+			} else {
+				showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+			}
 		}
-		//]]>
-	</script>
+	});
+}
+//]]>
+</script>
 </div>

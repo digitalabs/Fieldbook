@@ -1,236 +1,236 @@
 <div ng-cloak="" ng-app="manageTrialApp" id="mainApp" ng-controller="manageTrialCtrl" style="margin-bottom: 15px">
 <!-- header -->
 <div class="row col-xs-12">
-    <h1 class="page-header col-xs-12 edit-trial-page-identifier">
-        MANAGE TRIALS
-    </h1>
+	<h1 class="page-header col-xs-12 edit-trial-page-identifier">
+		MANAGE TRIALS
+	</h1>
 </div>
 
 <!-- BASIC DETAILS FORM -->
 <div class="row">
-    <form action="#" th:object="${createTrialForm}" enctype="multipart/form-data" id="createTrialMainForm" role="form-horizontal">
-        <input type="hidden" id="studyId" ng-value="data.studyID"/>
-        <div class="row add-top-bottom-padding">
-            <div class="col-md-12">
-                <div class="pull-left">
-                    <img height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
+	<form action="#" th:object="${createTrialForm}" enctype="multipart/form-data" id="createTrialMainForm" role="form-horizontal">
+		<input type="hidden" id="studyId" ng-value="data.studyID"/>
+		<div class="row add-top-bottom-padding">
+			<div class="col-md-12">
+				<div class="pull-left">
+					<img height="30" width="30" src="/Fieldbook/static/img/new-nursery.png"/>
 
-                    <span class="fbk-nursery-heading">
-                        <span class="heading" ng-hide="isOpenTrial()">Create Trial</span>
-                        <span class="heading" ng-show="isOpenTrial()">Trial : <span truncate-and-tooltip="data.basicDetails[8005]"></span></span>
-                    </span>
+					<span class="fbk-nursery-heading">
+						<span class="heading" ng-hide="isOpenTrial()">Create Trial</span>
+						<span class="heading" ng-show="isOpenTrial()">Trial : <span truncate-and-tooltip="data.basicDetails[8005]"></span></span>
+					</span>
 
-                    <div class="fbk-nursery-heading-btns">
-                        <input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
-                        <input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
-                    </div>
-                </div>
+					<div class="fbk-nursery-heading-btns">
+						<input ng-click="saveCurrentTrialData()" class="btn btn-info fbk-save-button-left-margin" onclick="" type="button" value="Save"/>
+						<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
+					</div>
+				</div>
 
-                <div class="pull-right fbk-nursery-heading-right">
-                    <div style="padding-right: 24px">
-                        <a href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
-                    </div>
-                </div>
+				<div class="pull-right fbk-nursery-heading-right">
+					<div style="padding-right: 24px">
+						<a href="/Fieldbook/TrialManager/manageTrial">Return to Manage Trials</a>
+					</div>
+				</div>
 
-            </div>
-        </div>
+			</div>
+		</div>
 
-        <div class="col-md-12 nopadding-right">
-            <section-container heading="BASIC DETAILS" collapsible="isOpenTrial()" start-collapsed="true">
-                <span name="action-buttons" ng-show="isOpenTrial()">
-                    <div class="btn-group" style="padding-right: 36px">
-                        <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-                            <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-                        </button>
-                        <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-                            <li ng-show="displayMeasurementOnlyActions()">
+		<div class="col-md-12 nopadding-right">
+			<section-container heading="BASIC DETAILS" collapsible="isOpenTrial()" start-collapsed="true">
+				<span name="action-buttons" ng-show="isOpenTrial()">
+					<div class="btn-group" style="padding-right: 36px">
+						<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+							<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+						</button>
+						<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+							<li ng-show="displayMeasurementOnlyActions()">
 
-                                <a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
+								<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
 
-                            </li>
-                            <li ng-show="displayMeasurementOnlyActions()">
+							</li>
+							<li ng-show="displayMeasurementOnlyActions()">
 
-                                <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-                                <a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Maoke Field Map</a>
+								<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+								<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Maoke Field Map</a>
 
-                            </li>
-                            <li ng-show="displayMeasurementOnlyActions()">
+							</li>
+							<li ng-show="displayMeasurementOnlyActions()">
 
-                                <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
+								<a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
 
-                            </li>
-                            <li ng-show="displayMeasurementOnlyActions()">
+							</li>
+							<li ng-show="displayMeasurementOnlyActions()">
 
-                                <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
-                                <a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+								<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
+								<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
 
-                            </li>
-                            <li ng-show="displayMeasurementOnlyActions()">
+							</li>
+							<li ng-show="displayMeasurementOnlyActions()">
 
-                                <a href="" style="display: none" id="open-study-url"></a>
-                                <a href="javascript: showImportOptions();" id="open-study-url-link"
-                                   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
+								<a href="" style="display: none" id="open-study-url"></a>
+								<a href="javascript: showImportOptions();" id="open-study-url-link"
+								   th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
 
-                            </li>
-                            
-                            <li id="review-out-of-bounds-data-list" style="display:none;">
-                            	<a href="javascript: reviewOutOfBoundsData();" id="review-out-of-bounds-data-link"
-                                   th:text="#{nursery.nurserydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
-                            </li>
+							</li>
 
-                            <li>
-                                <!--// TODO : replace this with actual saving of nursery-->
-                                <a href="javascript: void(0);" ng-click="saveCurrentTrialData()" th:text="#{trial.option.save}">Save Trial</a>
-                            </li>
-                            <li>
-                                <a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
-                                <a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
-                            </li>
-                            <li>
-                                <!--TODO : replace with URL for manage trial-->
-                                <a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
-                            </li>
-                            
-                            <li ng-show="hasMeasurementData()">
+							<li id="review-out-of-bounds-data-list" style="display:none;">
+								<a href="javascript: reviewOutOfBoundsData();" id="review-out-of-bounds-data-link"
+								   th:text="#{nursery.nurserydetails.action.review.out.of.bounds.data}">Review out of bounds data</a>
+							</li>
 
-                                <a href="javascript: showAddEnvironmentsDialog();" id="add-environments-url-link"
-                                   th:text="#{trial.add.environments}">Add Environments</a>
+							<li>
+								<!--// TODO : replace this with actual saving of nursery-->
+								<a href="javascript: void(0);" ng-click="saveCurrentTrialData()" th:text="#{trial.option.save}">Save Trial</a>
+							</li>
+							<li>
+								<a id="delete-success-return-url" style="display:none;" th:href="@{/TrialManager}"></a>
+								<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
+							</li>
+							<li>
+								<!--TODO : replace with URL for manage trial-->
+								<a th:href="@{/TrialManager}" th:text="#{trial.trialdetails.action.close.trial}">Close Trial</a>
+							</li>
 
-                            </li>
-                            
-                            <li ng-show="displayGermplasmOnlyActions()">
+							<li ng-show="hasMeasurementData()">
 
-                                <a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
+								<a href="javascript: showAddEnvironmentsDialog();" id="add-environments-url-link"
+								   th:text="#{trial.add.environments}">Add Environments</a>
 
-                            </li>
-                            <li ng-show="displayGermplasmOnlyActions()">
+							</li>
 
-                                <a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" id="import-design-url-link" th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
+							<li ng-show="displayGermplasmOnlyActions()">
 
-                            </li>
-                        </ul>
-                    </div>
-                </span>
+								<a href="javascript: showExportGermplasmListPopup();" id="export-germplasm-link" th:text="#{nursery.nurserydetails.action.export.germplasm.list}">Export Germplasm List</a>
 
-                <div name="content">
-                    <div ng-class="isOpenTrial() ? 'fbk-basic-details-section-content' : ''" style="padding-right: 12px">
-                        <div class="row fbk-mandatory">
-                            <div class="col-md-12 ">
-                                <label class=""><em><span class="required">*</span> indicates a mandatory field</em></label>
-                            </div>
-                        </div>
+							</li>
+							<li ng-show="displayGermplasmOnlyActions()">
 
-                        <!-- basic details -->
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="row form-group">
-                                    <label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
+								<a href="javascript: ImportDesign.showPopup(ImportDesign.hasGermplasmListSelected());" id="import-design-url-link" th:text="#{trial.trialdetails.action.import.design}">Import Design</a>
 
-                                    <div class="col-sm-8" ng-hide="isOpenTrial()">
-                                        <input class="form-control character-input" type="text" ng-model="data.basicDetails[8005]"/>
-                                    </div>
+							</li>
+						</ul>
+					</div>
+				</span>
 
-                                    <div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()">
-                                        <span truncate-and-tooltip="data.basicDetails[8005]"></span>
-                                        <span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
-                                    </div>
-                                </div>
+				<div name="content">
+					<div ng-class="isOpenTrial() ? 'fbk-basic-details-section-content' : ''" style="padding-right: 12px">
+						<div class="row fbk-mandatory">
+							<div class="col-md-12 ">
+								<label class=""><em><span class="required">*</span> indicates a mandatory field</em></label>
+							</div>
+						</div>
 
-                                <div class="row form-group">
-                                    <label class="control-label col-sm-4"><b>Description</b>: <span class="required">*</span></label>
+						<!-- basic details -->
+						<div class="row">
+							<div class="col-xs-6">
+								<div class="row form-group">
+									<label class="control-label col-sm-4"><b>Trial name</b>: <span class="required">*</span></label>
 
-                                    <div class="col-sm-8">
-                                        <input class="form-control character-input" type="text" ng-model="data.basicDetails[8007]"/>
-                                    </div>
+									<div class="col-sm-8" ng-hide="isOpenTrial()">
+										<input class="form-control character-input" type="text" ng-model="data.basicDetails[8005]"/>
+									</div>
+
+									<div class="col-sm-8 nursery-name-display" ng-show="isOpenTrial()">
+										<span truncate-and-tooltip="data.basicDetails[8005]"></span>
+										<span class="fieldmap-study-name fbk-hide" th:text="${studyName}"></span>
+									</div>
+								</div>
+
+								<div class="row form-group">
+									<label class="control-label col-sm-4"><b>Description</b>: <span class="required">*</span></label>
+
+									<div class="col-sm-8">
+										<input class="form-control character-input" type="text" ng-model="data.basicDetails[8007]"/>
+									</div>
 
 
-                                </div>
+								</div>
 
-                                <div class="row form-group">
-                                    <label class="control-label col-sm-4"><b>Objective</b>:</label>
+								<div class="row form-group">
+									<label class="control-label col-sm-4"><b>Objective</b>:</label>
 
-                                    <div class="col-sm-8">
-                                        <textarea class="form-control character-input" rows="3" ng-model="data.basicDetails[8030]"></textarea>
-                                    </div>
-                                </div>
+									<div class="col-sm-8">
+										<textarea class="form-control character-input" rows="3" ng-model="data.basicDetails[8030]"></textarea>
+									</div>
+								</div>
 
-                            </div>
+							</div>
 
-                            <!-- second col -->
-                            <div class="col-xs-6">
-                                <div class="row form-group">
-                                    <label class="control-label col-sm-4" id="folderLabel"><b>Save in</b>: <span class="required">*</span></label>
+							<!-- second col -->
+							<div class="col-xs-6">
+								<div class="row form-group">
+									<label class="control-label col-sm-4" id="folderLabel"><b>Save in</b>: <span class="required">*</span></label>
 
-                                    <div class="col-sm-8">
-                                        <input type="hidden" id="folderId" ng-model="data.folderId"/>
-                                        <input type="hidden" id="folderName" ng-model="data.folderName"/>
+									<div class="col-sm-8">
+										<input type="hidden" id="folderId" ng-model="data.folderId"/>
+										<input type="hidden" id="folderName" ng-model="data.folderName"/>
 
-                                        <div class="pull-left">
-                                            <label class="control-label" id="folderNameLabel" ng-bind="data.folderNameLabel"></label>
-                                        </div>
+										<div class="pull-left">
+											<label class="control-label" id="folderNameLabel" ng-bind="data.folderNameLabel"></label>
+										</div>
 
-                                        <a class="pull-right" href="javascript: void(0)" id="chooseLocation" ng-click="changeFolderLocation()">Change Folder</a>
-                                    </div>
-                                </div>
+										<a class="pull-right" href="javascript: void(0)" id="chooseLocation" ng-click="changeFolderLocation()">Change Folder</a>
+									</div>
+								</div>
 
-                                <div class="row form-group">
-                                    <label class="control-label col-sm-4"><b>Created by</b>: <span class="required">*</span></label>
+								<div class="row form-group">
+									<label class="control-label col-sm-4"><b>Created by</b>: <span class="required">*</span></label>
 
-                                    <div class="col-sm-8">
+									<div class="col-sm-8">
 
-                                        <label ng-bind="data.userName"></label>
-                                    </div>
+										<label ng-bind="data.userName"></label>
+									</div>
 
-                                </div>
+								</div>
 
-                                <div class="row form-group">
-                                    <label class="control-label col-sm-4"><b>Creation date</b>: <span class="required">*</span></label>
+								<div class="row form-group">
+									<label class="control-label col-sm-4"><b>Creation date</b>: <span class="required">*</span></label>
 
-                                    <div class="col-sm-8">
-                                        <input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker=""
-                                               set-current-date-as-default="true" data-date-format="yyyy-mm-dd"
-                                               with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
+									<div class="col-sm-8">
+										<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker=""
+											   set-current-date-as-default="true" data-date-format="yyyy-mm-dd"
+											   with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
 
-                                    </div>
-                                </div>
+									</div>
+								</div>
 
-                                <div class="row form-group">
-                                    <label class="control-label col-sm-4"><b>Completion date</b>:</label>
+								<div class="row form-group">
+									<label class="control-label col-sm-4"><b>Completion date</b>:</label>
 
-                                    <div class="col-sm-8">
-                                        <input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px"
-                                               type="text" ng-model="data.basicDetails[8060]" data-date-format="yyyy-mm-dd" jq-datepicker=""
-                                               with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+									<div class="col-sm-8">
+										<input class="form-control" placeholder="yyyy-mm-dd" style="width: 100px"
+											   type="text" ng-model="data.basicDetails[8060]" data-date-format="yyyy-mm-dd" jq-datepicker=""
+											   with-image="true" image-src="/Fieldbook/static/img/calendar.png"/>
+									</div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="row form-group add_top_padding" ng-hide="isOpenTrial()" >
-                            <div class="col-xs-12 col-md-12">
-                                <input type="checkbox" name="studyBuildOption" ng-click="toggleChoosePreviousTrial()"/>
-                                <label class="fbk-use-previous-study" th:text="#{trial.managesettings.create.trial.label}">Use a previously created trial as a template</label>
-                                &nbsp;&nbsp;
-                                <input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
-                                       th:value="#{common.form.choose.text}"
-                                       class="btn btn-info" id="choosePreviousStudy"/>
-                            </div>
-                        </div>
+						<div class="row form-group add_top_padding" ng-hide="isOpenTrial()" >
+							<div class="col-xs-12 col-md-12">
+								<input type="checkbox" name="studyBuildOption" ng-click="toggleChoosePreviousTrial()"/>
+								<label class="fbk-use-previous-study" th:text="#{trial.managesettings.create.trial.label}">Use a previously created trial as a template</label>
+								&nbsp;&nbsp;
+								<input type="button" ng-click="selectPreviousTrial()" ng-show="isChoosePreviousTrial"
+									   th:value="#{common.form.choose.text}"
+									   class="btn btn-info" id="choosePreviousStudy"/>
+							</div>
+						</div>
 
-                        <div class="row">
-                            <div class="col-xs-12 col-md-12">
-                                &nbsp;
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section-container>
-        </div>
+						<div class="row">
+							<div class="col-xs-12 col-md-12">
+								&nbsp;
+							</div>
+						</div>
+					</div>
+				</div>
+			</section-container>
+		</div>
 
-    </form>
+	</form>
 </div>
 <div class="form-group" id="create-trial">
-    <div th:include="/Common/includes/studyTree"></div>
+	<div th:include="/Common/includes/studyTree"></div>
 </div>
 
 <div class="row">
@@ -240,69 +240,69 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+	</div>
 </div>
 
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div class="chs-vs-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div class="chs-vs-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
+	</div>
 </div>
 
 
 <!-- tab + content -->
 <ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
-    <li ng-repeat="tab in trialTabs"  ng-class="{active: $state.includes(tab.state)}"
-        ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
-        <a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
-    </li>
+	<li ng-repeat="tab in trialTabs"  ng-class="{active: $state.includes(tab.state)}"
+		ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenTrial()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenTrial())">
+		<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
+	</li>
 </ul>
 
 
 <!-- CURRENT TAB CONTENT -->
 <div class="row fb-tabs" id="manage-trial-tabs" style="padding-top: 15px;">
-    <div class="info">
-        <div class="col-xs-12" ui-view=""></div>
-        <div class="col-xs-12" ui-view="germplasm" ng-show="$state.includes('germplasm')"></div>
-        <div class="col-xs-12" ui-view="environment" ng-show="$state.includes('environment')"></div>
-        <div class="col-xs-12" ui-view="createMeasurements" ng-show="$state.includes('createMeasurements')"></div>
-        <div class="col-xs-12" ui-view="editMeasurements" ng-show="$state.includes('editMeasurements')"></div>
-    </div>
+	<div class="info">
+		<div class="col-xs-12" ui-view=""></div>
+		<div class="col-xs-12" ui-view="germplasm" ng-show="$state.includes('germplasm')"></div>
+		<div class="col-xs-12" ui-view="environment" ng-show="$state.includes('environment')"></div>
+		<div class="col-xs-12" ui-view="createMeasurements" ng-show="$state.includes('createMeasurements')"></div>
+		<div class="col-xs-12" ui-view="editMeasurements" ng-show="$state.includes('editMeasurements')"></div>
+	</div>
 </div>
 
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div th:include="/DesignImport/importFile"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div th:include="/DesignImport/importFile"></div>
+	</div>
 </div>
 
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div th:include="/DesignImport/reviewDetails"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div th:include="/DesignImport/reviewDetails"></div>
+	</div>
 </div>
 
 <div class="row">
-    <div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
+	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
 
 
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div th:include="/Common/includes/exportStudy"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div th:include="/Common/includes/exportStudy"></div>
+	</div>
 </div>
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
+	</div>
 </div>
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div id="manage-location" th:include="/Common/includes/importStudy"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div id="manage-location" th:include="/Common/includes/importStudy"></div>
+	</div>
 </div>
 
 <div class="row">
@@ -312,14 +312,14 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div th:include="/Common/includes/manageLocationsModal"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div th:include="/Common/includes/manageLocationsModal"></div>
+	</div>
 </div>
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div th:include="/Common/includes/manageMethodsModal"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div th:include="/Common/includes/manageMethodsModal"></div>
+	</div>
 </div>
 
 <div class="row">
@@ -330,9 +330,9 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-12 col-md-12">
-        <div id="add-environments" th:include="/Common/includes/addEnvironments"></div>
-    </div>
+	<div class="col-xs-12 col-md-12">
+		<div id="add-environments" th:include="/Common/includes/addEnvironments"></div>
+	</div>
 </div>
 
 <div class="row">
@@ -340,7 +340,7 @@
 </div>
 
 <form role="form-horizontal" action="#" method="post" th:object="${createTrialForm}">
-    <input type="hidden" th:field="*{measurementDataExisting}"/>
+	<input type="hidden" th:field="*{measurementDataExisting}"/>
 </form>
 
 <!-- Design import map headers -->
@@ -360,123 +360,122 @@
 
 <!-- constants here -->
 <script type="text/javascript" th:inline="javascript">
-    //<![CDATA[
-    // TODO: move the ff later as constant in the angular app module
-    var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '';
-    var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '';
-    var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/ '';
-    var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '';
-    var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '';
-    var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '';
-    var addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '';
-    var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/ '';
-    var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/ '';
-    var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/ '';
-    var templateSettingNameError = /*[[#{manage.settings.setting.name.error}]]*/ '';
-    var templateSettingNameErrorUnique = /*[[#{manage.settings.setting.name.unique.error}]]*/ '';
-    var programMethodUrl = '';
-    var locationIframeOpened = false;
-    var methodIframeOpened = false;
-    var nurseryLevelValueEmpty = /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/ '';
-    var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/ '';
-    var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/ '';
-    var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '';
-    var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '';
-    var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/ '';
-    var breedingMethodId = '';
-    var locationId = '';
+//<![CDATA[
+// TODO: move the ff later as constant in the angular app module
+var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '';
+var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '';
+var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/ '';
+var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '';
+var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '';
+var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '';
+var addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '';
+var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/ '';
+var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/ '';
+var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/ '';
+var templateSettingNameError = /*[[#{manage.settings.setting.name.error}]]*/ '';
+var templateSettingNameErrorUnique = /*[[#{manage.settings.setting.name.unique.error}]]*/ '';
+var programMethodUrl = '';
+var locationIframeOpened = false;
+var methodIframeOpened = false;
+var nurseryLevelValueEmpty = /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/ '';
+var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/ '';
+var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/ '';
+var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '';
+var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '';
+var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/ '';
+var breedingMethodId = '';
+var locationId = '';
 
-    var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '';
-    var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '';
+var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '';
+var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '';
 
-    var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '';
+var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '';
 
-    var inputChange = false;
-    var reminderNursery = /*[[#{trial.reminder.add.trial.settings}]]*/ '';
-    var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '';
-    var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '';
-    var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/ '';
-    var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/ '';
+var inputChange = false;
+var reminderNursery = /*[[#{trial.reminder.add.trial.settings}]]*/ '';
+var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '';
+var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '';
+var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/ '';
+var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/ '';
 
-    var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/ '';
-    var noTreatmentFactorPairError = /*[[#{manage.settings.no.treatment.factor.pair.missing}]]*/ '';
-    var noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/ '';
+var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/ '';
+var noTreatmentFactorPairError = /*[[#{manage.settings.no.treatment.factor.pair.missing}]]*/ '';
+var noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/ '';
 
-    var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '';
-    var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '';
-    var startDateId = '';
-    var endDateId = '';
-    var ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '';
-    var modalConfirmationTitle = /*[[#{common.form.confirmation.text}]]*/ '',
-        environmentModalConfirmationText = /*[[#{trial.change.environment.confirmation}]]*/ '',
-        environmentConfirmLabel = /*[[#{common.form.ok.text}]]*/ '',
-        operationMode = /*[[${operationMode}]]*/ '';
+var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '';
+var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '';
+var startDateId = '';
+var endDateId = '';
+var ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '';
+var modalConfirmationTitle = /*[[#{common.form.confirmation.text}]]*/ '',
+	environmentModalConfirmationText = /*[[#{trial.change.environment.confirmation}]]*/ '',
+	environmentConfirmLabel = /*[[#{common.form.ok.text}]]*/ '',
+	operationMode = /*[[${operationMode}]]*/ '';
 
-    var translations = {
-        /*TRIAL SETTINGS*/
-        1: {
-            label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-            placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
-        },
-        /*GERMPLASM FACTORS*/
-        8: {
-            label: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
-            placeholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ ''
-        },
-        /*MEASUREMENT TRAITS*/
-        3: {
-            label: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
-            placeholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ ''
-        },
-        /*TRIAL ENVIRONMENT MANAGEMENT DETAILS*/
-        4: {
-            label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-            placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
-        },
-        /*TREATMENT FACTORS*/
-        5: {
-            label: /*[[#{trial.managesettings.add.treatmentfactor}]]*/ '',
-            placeholder: /*[[#{trial.reminder.add.treatmentfactor}]]*/ ''
-        },
-        /*TRIAL CONDITIONS*/
-        7: {
-            label: /*[[#{trial.managesettings.add.trialcondition}]]*/ '',
-            placeholder: /*[[#{trial.reminder.add.trialcondition}]]*/ ''
-        },
-        generalAjaxError : /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
-        variableSelectedMessage : /*[[#{common.warning.variable.in.use}]]*/ '',
-        invalidAliasError : /*[[#{variable.selection.alias.error}]]*/ ''
-    };
+var translations = {
+	/*TRIAL SETTINGS*/
+	1: {
+		label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+		placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+	},
+	/*GERMPLASM FACTORS*/
+	8: {
+		label: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
+		placeholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ ''
+	},
+	/*MEASUREMENT TRAITS*/
+	3: {
+		label: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
+		placeholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ ''
+	},
+	/*TRIAL ENVIRONMENT MANAGEMENT DETAILS*/
+	4: {
+		label: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+		placeholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ ''
+	},
+	/*TREATMENT FACTORS*/
+	5: {
+		label: /*[[#{trial.managesettings.add.treatmentfactor}]]*/ '',
+		placeholder: /*[[#{trial.reminder.add.treatmentfactor}]]*/ ''
+	},
+	/*TRIAL CONDITIONS*/
+	7: {
+		label: /*[[#{trial.managesettings.add.trialcondition}]]*/ '',
+		placeholder: /*[[#{trial.reminder.add.trialcondition}]]*/ ''
+	},
+	generalAjaxError: /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
+	variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
+	invalidAliasError: /*[[#{variable.selection.alias.error}]]*/ ''
+};
 
-    (function () {
+(function() {
 
-        angular.module('manageTrialApp')
-                .constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
-        ).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
-        ).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
-        ).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
-        ).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
-        ).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
-        ).constant('GERMPLASM_LIST_SIZE',/*[[${germplasmListSize}]]*/ ''
-        ).constant('TREATMENT_FACTORS_INITIAL_DATA', /*[[${treatmentFactorsData}]]*/ ''
-        ).constant('EXPERIMENTAL_DESIGN_INITIAL_DATA', /*[[${experimentalDesignData}]]*/ ''
-        ).constant('MEASUREMENTS_INITIAL_DATA', /*[[${measurementsData}]]*/ ''
-        ).constant('BASIC_DETAILS_DATA', /*[[${basicDetailsData}]]*/ ''
-        ).constant('TRIAL_VARIABLE_SELECTION_LABELS', translations
-        ).constant('TRIAL_MANAGEMENT_MODE', /*[[${operationMode}]]*/ ''
-        ).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
-        ).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
-        ).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
-        );
+	angular.module('manageTrialApp')
+			.constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
+	).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
+	).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
+	).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
+	).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
+	).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
+	).constant('GERMPLASM_LIST_SIZE',/*[[${germplasmListSize}]]*/ ''
+	).constant('TREATMENT_FACTORS_INITIAL_DATA', /*[[${treatmentFactorsData}]]*/ ''
+	).constant('EXPERIMENTAL_DESIGN_INITIAL_DATA', /*[[${experimentalDesignData}]]*/ ''
+	).constant('MEASUREMENTS_INITIAL_DATA', /*[[${measurementsData}]]*/ ''
+	).constant('BASIC_DETAILS_DATA', /*[[${basicDetailsData}]]*/ ''
+	).constant('TRIAL_VARIABLE_SELECTION_LABELS', translations
+	).constant('TRIAL_MANAGEMENT_MODE', /*[[${operationMode}]]*/ ''
+	).constant('TRIAL_HAS_MEASUREMENT', /*[[${measurementDataExisting}]]*/ ''
+	).constant('TRIAL_MEASUREMENT_COUNT', /*[[${measurementRowCount}]]*/ ''
+	).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
+	);
 
-        $(document).ready(function () {
-            document.onInitManageTrial();
-        });
+	$(document).ready(function() {
+		document.onInitManageTrial();
+	});
 
-    })();
+})();
 
-
-    //]]>
+//]]>
 </script>
 
 <!-- Controller js files for each tabs -->

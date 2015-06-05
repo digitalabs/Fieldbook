@@ -10,7 +10,7 @@
 </div>
 <div class="row">
 	<div class="form-group">
-		<div  id="page-message"></div>
+		<div id="page-message"></div>
 	</div>
 </div>
 
@@ -250,19 +250,19 @@
 				}
 			}
 			);
-			
+
 			$('#field-map td.sub-header-row').on('click',function() {
 				var rowElements = getColumnOrRowElements($(this).closest('tr').find('td.plot')),
 					allUnusable = checkColumnOrRange(rowElements);
 				setArrayToUnusable(rowElements, allUnusable);
 			});
-			
+
 			$('#field-map td.sub-header-col').on('click',function() {
 				var	colElements = getColumnOrRowElements($(this).closest('table').find('tr.plotRow td:nth-child(' + ($(this).index()+1) + ')')),
 			      	allUnusable = checkColumnOrRange(colElements);
 				setArrayToUnusable(colElements, allUnusable);
 			});
-			
+
 
 			if ($("#stepValue").val() == '2') {
 
@@ -276,12 +276,12 @@
 				})
 			}
 		});
-			
+
 		/**
 			getColumnOrRowElements() function to grab a single column
-			
-			@param <Array> colOrRowArray JQuery object 
-			@return <Array> JavaScript Array 
+
+			@param <Array> colOrRowArray JQuery object
+			@return <Array> JavaScript Array
 		*/
 		function getColumnOrRowElements(colOrRowArray) {
 			var plotArray = [];
@@ -289,11 +289,11 @@
 				plotArray.push($(colOrRowArray[i]));
 			}
 			return plotArray;
-		}		
-		  	
+		}
+
 		/**
 			checkColumnOrRange() returns true if all plots are unavailable
-			
+
 			@param <Array> arrayOfPlots
 			@return <boolean> true means all plots are unavailable, false means at least one is available
 		*/
@@ -305,10 +305,10 @@
 			}
 			return true;
 		}
-		
+
 		/**
 			setArrayToUnusable() function to set each plot to unusable or usable
-			
+
 			@param <Array> plotArray Array of Plots
 			@param <boolean> allUnusable if true, mark all plots to useable, if false mark them to unusable
 		*/
@@ -322,10 +322,10 @@
 				}
 			}
 		}
-			
+
 		/**
 			setToUsable() function to set a plot usable
-			
+
 			@param <Element> plot the plot to be set
 		*/
 		function setToUsable(plot) {
@@ -334,10 +334,10 @@
 				plot.html('');
 			}
 		}
-			
+
 		/**
 			setToUnusable() function to set a plot to be unusable
-			
+
 			@param <Element> plot the plot to be set to Unusable
 		*/
 		function setToUnusable(plot) {
@@ -346,7 +346,7 @@
 				plot.html('<label class="alert alert-danger">X</label>');
 			}
 		}
-		
+
 	//]]>
 </script>
 </div>

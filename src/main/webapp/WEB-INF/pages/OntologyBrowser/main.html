@@ -13,33 +13,32 @@
 </div>
 <div class="row">
 <div class="panel panel-default">
-   	<div class="panel-body manage-settings-panel-body">
+	<div class="panel-body manage-settings-panel-body">
 		<div th:include="/OntologyBrowser/browserInfo"></div>
-     </div>
+	 </div>
   </div>
 </div>
 <div layout:fragment="page-script">
 
-	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	/*globals doOntologyTreeHighlight*/
+<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+/*globals doOntologyTreeHighlight*/
 
-    var treeData = /*[[${ontologyBrowserForm.treeData}]]*/ '';
-    var searchTreeData = /*[[${ontologyBrowserForm.searchTreeData}]]*/ '';
-    var treeDivId = 'ontologyBrowserTree';
-   	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
+var treeData = /*[[${ontologyBrowserForm.treeData}]]*/ '';
+var searchTreeData = /*[[${ontologyBrowserForm.searchTreeData}]]*/ '';
+var treeDivId = 'ontologyBrowserTree';
+var ontologyUrl = $('#ontologyBaseUrl').attr('href');
 
+$(document).ready(function() {
+	'use strict';
+	$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
+	$('#srch-term').on('change', function(event) {
+		var data = $('#srch-term').select2('data');
+		doOntologyTreeHighlight(treeDivId, data.key);
+	});
+});
 
-   	$( document ).ready(function() {
-   		'use strict';
-   		$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
-   		$('#srch-term').on('change', function(event) {
-	    	var data = $('#srch-term').select2('data');
-	    	doOntologyTreeHighlight(treeDivId, data.key);
-	    });
-   	});
-
-      //]]>
-    </script>
+//]]>
+</script>
 </div>

@@ -4,7 +4,7 @@
 			<span th:text="#{fieldmap.header.field.plan}">
 				FIELD PLAN
 			</span>
-            <span class="bms-fa-question-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{fieldmap.header.field.plan.help}"></span>
+			<span class="bms-fa-question-circle help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{fieldmap.header.field.plan.help}"></span>
 
 		</h1>
 	</div>
@@ -20,18 +20,18 @@
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<div class="row col-xs-12" style="padding-bottom: 30px">
-                <div class="col-xs-3">
-                    <h2 class="fieldmap-header" th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
-                </div>
-                <div class="col-xs-3">
-                    <h2 class="fieldmap-header" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
-                </div>
-                <div class="col-xs-3">
-                    <h2 class="fieldmap-header light" th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
-                </div>
-                <div class="col-xs-3">
-                    <h2 class="fieldmap-header light" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
-                </div>
+				<div class="col-xs-3">
+					<h2 class="fieldmap-header" th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
+				</div>
+				<div class="col-xs-3">
+					<h2 class="fieldmap-header" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
+				</div>
+				<div class="col-xs-3">
+					<h2 class="fieldmap-header light" th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
+				</div>
+				<div class="col-xs-3">
+					<h2 class="fieldmap-header light" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
+				</div>
 			</div>
 
 			<form id="enterFieldDetailsForm" role="form-horizontal" class="form-horizontal" action="#"
@@ -97,69 +97,69 @@
 				<div class=" col-xs-12 col-md-12"><strong class="sub-heading" th:text="#{fieldmap.trial.field.and.block.details} + ':'">FIELD AND BLOCK DETAILS:</strong></div>
 			</div>
 			<div class="form-group col-xs-12 col-md-12" >
-			    <div class=" col-xs-12 col-md-12"><strong class="sub-content-heading" th:text="#{fieldmap.trial.add.new.details}">Add new field and block details:</strong>
-                </div>
+				<div class=" col-xs-12 col-md-12"><strong class="sub-content-heading" th:text="#{fieldmap.trial.add.new.details}">Add new field and block details:</strong>
+				</div>
 			</div>
 
 
 			<div class="form-group  col-xs-12 col-md-12">
 				<div class="form-group">
-                    <div class="col-md-6">
-                        <label class="control-label col-xs-4" style="text-align: left;"><b th:text="#{fieldmap.trial.field.location}">Field Location:</b><span class="required">*</span></label>
+					<div class="col-md-6">
+						<label class="control-label col-xs-4" style="text-align: left;"><b th:text="#{fieldmap.trial.field.location}">Field Location:</b><span class="required">*</span></label>
 
-                        <div class="col-xs-8">
+						<div class="col-xs-8">
 
-                            <input type="hidden" th:field="*{fieldLocationIdAll}" class="form-control select2" placeholder=""/>
-                            <input type="hidden" th:field="*{fieldLocationIdFavorite}" class="form-control select2" placeholder=""/>
-                            <input type="hidden" th:field="*{userFieldmap.fieldLocationId}"/>
-                            <input type="hidden" th:field="*{userFieldmap.locationName}" />
-                        </div>
-                    </div>
+							<input type="hidden" th:field="*{fieldLocationIdAll}" class="form-control select2" placeholder=""/>
+							<input type="hidden" th:field="*{fieldLocationIdFavorite}" class="form-control select2" placeholder=""/>
+							<input type="hidden" th:field="*{userFieldmap.fieldLocationId}"/>
+							<input type="hidden" th:field="*{userFieldmap.locationName}" />
+						</div>
+					</div>
 
-                    <div class="col-md-6">
-                            <div class="col-xs-4 visible-xs"></div>
-                            <div class="col-sm-4 visible-sm"></div>
-                            <div class="col-xs-4 col-sm-4 col-md-6">
-                                <label class="checkbox">
-                                    <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
-                                </label>
-                            </div>
-                            <label class="col-xs-4 col-sm-4 col-md-6" style="padding-top:6px">
-                                <a href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>
-                            </label>
-                    </div>
+					<div class="col-md-6">
+							<div class="col-xs-4 visible-xs"></div>
+							<div class="col-sm-4 visible-sm"></div>
+							<div class="col-xs-4 col-sm-4 col-md-6">
+								<label class="checkbox">
+									<input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+								</label>
+							</div>
+							<label class="col-xs-4 col-sm-4 col-md-6" style="padding-top:6px">
+								<a href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>
+							</label>
+					</div>
 				</div>
 				<div class="form-group col-md-12">
-                    <label class="col-xs-4 col-md-2 control-label" style="text-align: left;"><b th:text="#{fieldmap.trial.enter.field.name}"></b><span class="required">*</span></label>
+					<label class="col-xs-4 col-md-2 control-label" style="text-align: left;"><b th:text="#{fieldmap.trial.enter.field.name}"></b><span class="required">*</span></label>
 					<div class="col-xs-8 col-md-4">
 						<input type="hidden" th:field="*{userFieldmap.fieldId}" class="form-control select2" placeholder=""/>
 					</div>
 
-                    <div class="col-xs-4 visible-xs"></div>
-                    <div class="col-sm-4 visible-sm"></div>
+					<div class="col-xs-4 visible-xs"></div>
+					<div class="col-sm-4 visible-sm"></div>
 
-                    <div class="col-xs-8 col-md-6" style="padding-top:6px">
+					<div class="col-xs-8 col-md-6" style="padding-top:6px">
 						<a href="javascript: showAddFieldPopup()">Add Fields</a>
 					</div>
 				</div>
-                <div class="form-group col-md-12">
-                    <label class="col-xs-4 col-md-2 control-label" style="text-align: left;"><b  th:text="#{fieldmap.trial.enter.block.name}">Enter Block Name:</b><span class="required">*</span></label>
-                    <div class="col-xs-8 col-md-4">
-                        <input type="hidden" th:field="*{userFieldmap.blockId}" class="form-control select2" placeholder=""/>
+				<div class="form-group col-md-12">
+					<label class="col-xs-4 col-md-2 control-label" style="text-align: left;"><b  th:text="#{fieldmap.trial.enter.block.name}">Enter Block Name:</b><span class="required">*</span></label>
+					<div class="col-xs-8 col-md-4">
+						<input type="hidden" th:field="*{userFieldmap.blockId}" class="form-control select2" placeholder=""/>
 					</div>
 
-                    <div class="col-xs-4 visible-xs"></div>
-                    <div class="col-sm-4 visible-sm"></div>
+					<div class="col-xs-4 visible-xs"></div>
+					<div class="col-sm-4 visible-sm"></div>
 
-                    <div class="col-xs-8 col-md-6" style="padding-top:6px">
+					<div class="col-xs-8 col-md-6" style="padding-top:6px">
 						<a href="javascript: showAddBlockPopup()">Add Blocks</a>
 					</div>
 				</div>
 			</div>
 
-            <!-- block details -->
+			<!-- block details -->
 			<div class="form-group col-xs-12 block-details" style="display:none">
-                <strong class="sub-heading col-xs-12 col-md-12" th:text="#{fieldmap.trial.row.and.range.and.plot.details} + ':'">ROW, RANGE AND PLOT DETAILS:</strong>
+				<strong class="sub-heading col-xs-12 col-md-12" th:text="#{fieldmap.trial.row.and.range.and.plot.details} + ':'">ROW, RANGE AND PLOT DETAILS:</strong>
 			</div>
 			<div class="form-group col-xs-12 block-details" style="display:none">
 				<div class="form-group col-xs-6">
@@ -227,69 +227,70 @@
 <div class="row">
 	<div id="add-blocks" th:include="/Fieldmap/addBlocksModal"></div>
 </div>
+
 <div layout:fragment="page-script">
-	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.treegrid.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.treegrid.bootstrap3.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	var msgLocation = /*[[#{fieldmap.location.error}]]*/;
-	var msgFieldName = /*[[#{fieldmap.field.name.error}]]*/;
-	var msgBlockName = /*[[#{fieldmap.block.name.error}]]*/;
-	var msgRowsInBlock = /*[[#{fieldmap.row.in.block.error}]]*/;
-	var msgRangesInBlock = /*[[#{fieldmap.ranges.in.block.error}]]*/;
-	var defaultRowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
-	var msgColError = /*[[#{fieldmap.column.plot.error}]]*/;
-	var msgNoSelectedTrial = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
-	var locationSuggestions = /*[[${locationList}]]*/ null;
-	var locationSuggestions_obj = [];
+<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.treegrid.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.treegrid.bootstrap3.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+var msgLocation = /*[[#{fieldmap.location.error}]]*/;
+var msgFieldName = /*[[#{fieldmap.field.name.error}]]*/;
+var msgBlockName = /*[[#{fieldmap.block.name.error}]]*/;
+var msgRowsInBlock = /*[[#{fieldmap.row.in.block.error}]]*/;
+var msgRangesInBlock = /*[[#{fieldmap.ranges.in.block.error}]]*/;
+var defaultRowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
+var msgColError = /*[[#{fieldmap.column.plot.error}]]*/;
+var msgNoSelectedTrial = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
+var locationSuggestions = /*[[${locationList}]]*/ null;
+var locationSuggestions_obj = [];
 
-	var locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null;
-	var locationSuggestionsFav_obj = [];
+var locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null;
+var locationSuggestionsFav_obj = [];
 
-	var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
-	var msgBlockSizeError;
-	var isViewFieldmap = false;
-	var entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/;
-	var repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/;
-	var plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/;
-	var fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/;
-	var entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/;
-	var totalNumberOfSelectedPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
+var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
+var msgBlockSizeError;
+var isViewFieldmap = false;
+var entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/;
+var repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/;
+var plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/;
+var fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/;
+var entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/;
+var totalNumberOfSelectedPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
 
-	var noOfRowsLimitError = /*[[#{fieldmap.no.of.blocks.exceeds.limit}]]*/;
-
-
-	var parentLocationRequired = /*[[#{fieldmap.add.field.parent.location.required}]]*/;
-	var fieldNameRequired = /*[[#{fieldmap.add.field.name.required}]]*/;
-
-	var parentFieldRequired = /*[[#{fieldmap.add.block.parent.field.required}]]*/;
-	var blockNameRequired = /*[[#{fieldmap.add.block.name.required}]]*/;
-
-	var fieldAddedSuccessfully = /*[[#{fieldmap.field.added.successfully}]]*/;
-	var blockAddedSuccessfully = /*[[#{fieldmap.block.added.successfully}]]*/;
-
-	var fieldNameDuplicateError = /*[[#{fieldmap.field.name.duplicate.error}]]*/;
-	var blockNameDuplicateError = /*[[#{fieldmap.block.name.duplicate.error}]]*/;
+var noOfRowsLimitError = /*[[#{fieldmap.no.of.blocks.exceeds.limit}]]*/;
 
 
-	var programLocationUrl = '';
-	var locationIframeOpened = false;
+var parentLocationRequired = /*[[#{fieldmap.add.field.parent.location.required}]]*/;
+var fieldNameRequired = /*[[#{fieldmap.add.field.name.required}]]*/;
 
-	var isNewBlock = false;
+var parentFieldRequired = /*[[#{fieldmap.add.block.parent.field.required}]]*/;
+var blockNameRequired = /*[[#{fieldmap.add.block.name.required}]]*/;
 
-	if (trial) {
-		msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
-	} else {
-		msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.nursery}]]*/;
-	}
+var fieldAddedSuccessfully = /*[[#{fieldmap.field.added.successfully}]]*/;
+var blockAddedSuccessfully = /*[[#{fieldmap.block.added.successfully}]]*/;
 
-	$( document ).ready(function() {
-        'use strict';
-        doEnterFieldDetailsPageLoad();
-    });
+var fieldNameDuplicateError = /*[[#{fieldmap.field.name.duplicate.error}]]*/;
+var blockNameDuplicateError = /*[[#{fieldmap.block.name.duplicate.error}]]*/;
 
-	  //]]>
-	</script>
+
+var programLocationUrl = '';
+var locationIframeOpened = false;
+
+var isNewBlock = false;
+
+if (trial) {
+	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
+} else {
+	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.nursery}]]*/;
+}
+
+$( document ).ready(function() {
+	'use strict';
+	doEnterFieldDetailsPageLoad();
+});
+
+  //]]>
+</script>
 </div>

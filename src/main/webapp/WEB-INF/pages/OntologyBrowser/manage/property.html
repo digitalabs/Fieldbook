@@ -1,37 +1,37 @@
-<form id="managePropertyForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+<form id="managePropertyForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#"
 	enctype="multipart/form-data" th:object="${ontologyPropertyForm}">
 
 	<div class="modal-body">
 		<div class="row form-group">
-			<div class="col-xs-11 col-md-11">					
+			<div class="col-xs-11 col-md-11">
 				<label class="modal-title fbk-modal-title" th:text="#{ontology.browser.modal.property.header}"></label>
 			</div>
 			<div class="col-xs-1 col-md-1">
 				<button  type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-			</div>										
+			</div>
 		</div>
-				
+
 		<div class="row form-group  col-md-12" id="page-message-modal"></div>
 		<div th:class="${#fields.hasErrors('*')} ? 'form-group has-error' : 'form-group'">
 			<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
 			<div class="row fluid">
-	      		<div class="col-xs-6 col-md-6">
-	      			<div class="form-group">
-	      				<label for="comboManagePropTraitClass" class="col-xs-5 col-md-5 control-label label-bold" ><span th:text="#{ontology.browser.modal.trait.class} + ': '"></span><span class="required">*</span></label>
+				<div class="col-xs-6 col-md-6">
+					<div class="form-group">
+						<label for="comboManagePropTraitClass" class="col-xs-5 col-md-5 control-label label-bold" ><span th:text="#{ontology.browser.modal.trait.class} + ': '"></span><span class="required">*</span></label>
 						<div class="col-xs-7 col-md-7">
 							<input type="hidden" th:field="*{comboManagePropTraitClass}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{managePropTraitClassId}" />
 							<input type="hidden" th:field="*{managePropTraitClassName}" />
 						</div>
-	      			</div>
-	      			<div class="form-group">
-	      				<div class="col-xs-5 col-md-5"></div>
-	      				<div class="col-xs-7 col-md-7" id="managePropTraitClassBrowserTree" style="height:200px; overflow:auto;">
-						</div> 
-	      			</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-5 col-md-5"></div>
+						<div class="col-xs-7 col-md-7" id="managePropTraitClassBrowserTree" style="height:200px; overflow:auto;">
+						</div>
+					</div>
 				</div>
 				<div class="col-xs-6 col-md-6">
-					<div class="form-group">                        
+					<div class="form-group">
 						<label for="comboManageProperty" class="col-xs-5 col-md-5 control-label  label-bold" ><span th:utext="#{ontology.browser.modal.property}"></span></label>
 						<div class="col-xs-7 col-md-7">
 							<input type="hidden" th:field="*{comboManageProperty}" class="form-control select2" placeholder=""/>
@@ -47,90 +47,90 @@
 					</div>
 					<div class="form-group">
 						<div class="col-xs-5 col-md-5 control-label">
-		          			<label class=" label-bold" for="cropOntologyId" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
-		       			</div>
-		                <div class="col-xs-7 col-md-7">
-		                    <input type="text" th:field="*{cropOntologyId}" class="form-control"/>
-		                </div>
-		            </div>
+							<label class=" label-bold" for="cropOntologyId" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
+						</div>
+						<div class="col-xs-7 col-md-7">
+							<input type="text" th:field="*{cropOntologyId}" class="form-control"/>
+						</div>
+					</div>
 					<div class="">
 						<div>
 							<span class=" label-bold" th:text="#{ontology.browser.modal.variable.list('Property')}">Variables Linked to Property:</span>
 							<span id="managePropertyNameText"></span>
 						</div>
 						<div class="input-group col-xs-12 col-md-12" id="manageLinkedVariableList">
-							
+
 						</div>
 					</div>
 				</div>
 			</div>
-	    </div>
-	</div>																							
+		</div>
+	</div>
 	<div class="modal-footer">
 	<button id="btnCloseManageProperty" type="button" th:value="#{common.form.cancel.text}" class="btn btn-default"
 		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
-		<button id="btnAddManageProperty" type="button" th:value="#{common.form.add.text}" class="btn btn-primary" 
-		th:text="#{common.form.add.text}" onclick="saveProperty();">Add</button>      	
-		<button id="btnUpdateManageProperty" type="button" th:value="#{common.form.update.text}" class="btn btn-primary" 
-		th:text="#{common.form.update.text}" style="display:none;" onclick="saveProperty();">Update</button>      	
-		<button id="btnDeleteManageProperty" type="button" th:value="#{common.form.delete.text}" class="btn btn-primary" 
-		th:text="#{common.form.delete.text}" style="display:none;" onclick="deleteOntology('ManageProperty');">Delete</button>      	
-		
+		<button id="btnAddManageProperty" type="button" th:value="#{common.form.add.text}" class="btn btn-primary"
+		th:text="#{common.form.add.text}" onclick="saveProperty();">Add</button>
+		<button id="btnUpdateManageProperty" type="button" th:value="#{common.form.update.text}" class="btn btn-primary"
+		th:text="#{common.form.update.text}" style="display:none;" onclick="saveProperty();">Update</button>
+		<button id="btnDeleteManageProperty" type="button" th:value="#{common.form.delete.text}" class="btn btn-primary"
+		th:text="#{common.form.delete.text}" style="display:none;" onclick="deleteOntology('ManageProperty');">Delete</button>
+
 	</div>
 
 </form>
 
-<div layout:fragment="page-script">		
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	  	$(document).ready(function() {
-	  		initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "ManageProperty", true);
-	  		initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "definition", "ManagePropTraitClass", false);
-	  		loadTraitClassTree("managePropTraitClassBrowserTree", "comboManagePropTraitClass", "managePropTraitClassDescription", treeClassData, "comboManagePropTraitClass");
-	  		$("#comboManagePropTraitClass").on("change", function() {
-	  			filterPropertyCombo("managePropTraitClassBrowserTree", "comboManagePropTraitClass", "managePropTraitClassDescription", 
-	  					$("#comboManagePropTraitClass").val(), true);
-	  		});
-	  	});
-	  	
-	  	function saveProperty() {
-	  		if (!validateProperty()) {
-	  			message = /*[[#{ontology.browser.modal.error}]]*/;
-	  			showInvalidInputMessage(message);
-	  			return;
-	  		}
-			serializedData = $("#managePropertyForm").serialize();
-	  		
-	  		$.ajax({
-	  			url : ontologyUrl + "property",
-				type: "POST",
-				dataType: "json",
-				data: serializedData,
-			    success: function(data) {
-			    	if (data.status == '1') {
-			    		recreateComboAfterUpdate("ManageProperty", data.savedObject);
-			    		showSuccessMessageInModal(data.successMessage);
-			    		var cropOntologyId = $('#cropOntologyId').val();
-			    		//we need to set the data in the front
-			    		for(count = 0 ; count < propertySuggestions_obj.length ; count++){
-							if($('#managePropertyId').val() == propertySuggestions_obj[count].id){
-								propertySuggestions_obj[count].cropOntologyId = cropOntologyId;
-							}
-						}
-			    		var chosendRecord = $("#comboProperty").select2("data");
-			    		if(chosendRecord != null && chosendRecord.id == $('#managePropertyId').val()){
-			    			$('#propertyDescription').val($('#managePropertyDescription').val());
-			    			$("#cropOntologyDisplay").html(cropOntologyId);
-			    		}
-			    		$("#btnAddManageProperty").hide();
-			    		$("#btnUpdateManageProperty").show();
-			    		$("#btnDeleteManageProperty").show();
-			    	} else {
-			    		showErrorMessageInModal('page-message-modal', data.errorMessage);
-			    	}
+<div layout:fragment="page-script">
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+$(document).ready(function() {
+	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "ManageProperty", true);
+	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "definition", "ManagePropTraitClass", false);
+	loadTraitClassTree("managePropTraitClassBrowserTree", "comboManagePropTraitClass", "managePropTraitClassDescription", treeClassData, "comboManagePropTraitClass");
+	$("#comboManagePropTraitClass").on("change", function() {
+		filterPropertyCombo("managePropTraitClassBrowserTree", "comboManagePropTraitClass", "managePropTraitClassDescription",
+				$("#comboManagePropTraitClass").val(), true);
+	});
+});
+
+function saveProperty() {
+	if (!validateProperty()) {
+		message = /*[[#{ontology.browser.modal.error}]]*/;
+		showInvalidInputMessage(message);
+		return;
+	}
+	serializedData = $("#managePropertyForm").serialize();
+
+	$.ajax({
+		url : ontologyUrl + "property",
+		type: "POST",
+		dataType: "json",
+		data: serializedData,
+		success: function(data) {
+			if (data.status == '1') {
+				recreateComboAfterUpdate("ManageProperty", data.savedObject);
+				showSuccessMessageInModal(data.successMessage);
+				var cropOntologyId = $('#cropOntologyId').val();
+				//we need to set the data in the front
+				for(count = 0 ; count < propertySuggestions_obj.length ; count++){
+					if($('#managePropertyId').val() == propertySuggestions_obj[count].id){
+						propertySuggestions_obj[count].cropOntologyId = cropOntologyId;
+					}
 				}
-	  		});
-	  	}
-    //]]>
-	</script>
+				var chosendRecord = $("#comboProperty").select2("data");
+				if(chosendRecord != null && chosendRecord.id == $('#managePropertyId').val()){
+					$('#propertyDescription').val($('#managePropertyDescription').val());
+					$("#cropOntologyDisplay").html(cropOntologyId);
+				}
+				$("#btnAddManageProperty").hide();
+				$("#btnUpdateManageProperty").show();
+				$("#btnDeleteManageProperty").show();
+			} else {
+				showErrorMessageInModal('page-message-modal', data.errorMessage);
+			}
+		}
+	});
+}
+//]]>
+</script>
 </div>

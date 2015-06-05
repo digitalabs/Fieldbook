@@ -32,10 +32,10 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 
 <div class="row">
 <div class="panel panel-default">
-   	<div class="panel-body">
+	<div class="panel-body">
 
-   	<div class="row">
-   		<div class="col-xs-12 col-md-12">
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
 			<div class="col-xs-3 col-md-3">
 				<h2>Create Labels</h2>
 			</div>
@@ -190,8 +190,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			</div>
 		</div>
 	</div>
-	
-	<div class="row">	
+
+	<div class="row">
 		<div class="col-xs-6 col-md-6" >
 			<div class="col-xs-12 col-md-12">
 			<br />
@@ -203,30 +203,30 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 				<div class="fbk-hide saved-settings pull-left fbk-left-padding" style="width: 40%">
 					<select name="savedSettings" id="savedSettings">
-										
+
 					</select>
 				</div>
 				<div class="add_top_padding fbk-hide saved-settings pull-left fbk-left-padding">
 					<a href="javascript: void(0);" class="fb-delete-settings"><span class="glyphicon glyphicon-trash delete-saved-settings"></span></a>
 				</div>
 			</div>
-			
+
 		</div>
 		<div class="col-xs-6 col-md-6" >
 			<div class="col-xs-12 col-md-12">
 			<br />
 				<label class="control-label" ><strong class="sub-content-heading"  th:text="#{label.printing.choose.label.output}">CHOOSE LABEL OUTPUT</strong></label>
-			</div>	
+			</div>
 			<div class="col-xs-12 col-md-12">
 				<label class="control-label " th:text="#{label.printing.choose.label.use.formats}">Choose the format you would like to use for your labels:</label>
-			</div>	
+			</div>
 			<div class="col-xs-8 col-md-8">
 				<select name="label-format" id="label-format">
 					<option value="">Please Choose</option>
-					<option value="2">Excel Data</option>					
+					<option value="2">Excel Data</option>
 					<option value="3">CSV Data</option>
-					<option value="1">Formatted PDF Label Sheets</option>						
-				</select>				
+					<option value="1">Formatted PDF Label Sheets</option>
+				</select>
 			</div>
 		</div>
 	</div>
@@ -259,7 +259,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						</select>
 					</div>
 				</div>
-	
+
 				<div class="row form-group">
 					<div class="col-xs-7 col-md-7">
 						&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label label-bold" th:text="#{label.printing.number.of.rows.per.page}+':'"></label>
@@ -269,7 +269,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						  <option value="7">7</option>
 						  <option value="8">8</option>
 						  <option value="10">10</option>
-	
+
 						</select>
 					</div>
 				</div>
@@ -301,7 +301,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					<div class="col-xs-6 col-md-6">
 						<label class="control-label" th:utext="(*{isTrial})? #{label.printing.choose.option.fields.trial}: #{label.printing.choose.option.fields.nursery}">Choose up to six fields you would like printed on your labels.</label>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
@@ -311,21 +311,21 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					<div class="col-xs-6 col-md-6">
 						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group"  >
-						      <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study Details</label></li>
+							  <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study Details</label></li>
 							</ul>
 							<ul id="pdf-study-details-fields" class="list-group droptrue">
 							</ul>
 						</div>
-						<div class="col-xs-6 col-md-6">	
+						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group"  >
-						      <li class="list-group-item">
-						      	<label class="control-label label-bold" 
-						      		th:text="(*{isTrial})? #{label.printing.trial.list.details} : 
-						      					(*{isStockList}? #{label.printing.stock.list.details} : 
-						      						#{label.printing.nursery.list.details})">
-						      		Study List Details
-						      	</label>
-						      </li>
+							  <li class="list-group-item">
+								<label class="control-label label-bold"
+									th:text="(*{isTrial})? #{label.printing.trial.list.details} :
+												(*{isStockList}? #{label.printing.stock.list.details} :
+													#{label.printing.nursery.list.details})">
+									Study List Details
+								</label>
+							  </li>
 							</ul>
 							<ul id="pdf-study-list-details-fields" class="list-group droptrue">
 							</ul>
@@ -334,25 +334,25 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					<div class="col-xs-6 col-md-6">
 						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group">
-						      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.left.selected.fields}">Selected Fields</label></li>
+							  <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.left.selected.fields}">Selected Fields</label></li>
 							</ul>
-							<ul id="leftSelectedFields" class="list-group droptrue pdf-selected-fields" >				
+							<ul id="leftSelectedFields" class="list-group droptrue pdf-selected-fields" >
 							</ul>
-	
-						</div>		
+
+						</div>
 						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group"  >
-						      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.right.selected.fields}">Selected Fields</label></li>
-							</ul>		
-							<ul id="rightSelectedFields" class="list-group droptrue pdf-selected-fields" >				
-							</ul>		
+							  <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.right.selected.fields}">Selected Fields</label></li>
+							</ul>
+							<ul id="rightSelectedFields" class="list-group droptrue pdf-selected-fields" >
+							</ul>
 						</div>
 					</div>
 				</div>
-				
+
 			</div>
 		</div>
-		
+
 		<div class="row non-pdf-fields">
 		<br />
 			<div class="col-xs-12 col-md-12" >
@@ -389,7 +389,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
 						<label class="control-label" th:utext="(*{isTrial})? #{label.printing.choose.option.fields.csv.xls.trial}: #{label.printing.choose.option.fields.csv.xls.nursery}">.</label>
-					</div>					
+					</div>
 				</div>
 			</div>
 		</div>
@@ -399,43 +399,43 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					<div class="col-xs-6 col-md-6">
 						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group"  >
-						      <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study Details</label></li>
+							  <li class="list-group-item"><label class="control-label label-bold" th:text="(*{isTrial})? #{label.printing.trial.details}: #{label.printing.nursery.details}">Study Details</label></li>
 							</ul>
 							<ul id="non-pdf-study-details-fields" class="list-group droptrue" >
 							</ul>
 						</div>
-						<div class="col-xs-6 col-md-6">	
+						<div class="col-xs-6 col-md-6">
 							<ul class="list-group field-group"  >
-						      <li class="list-group-item">
-						      	<label class="control-label label-bold" 
-						      		th:text="(*{isTrial})? #{label.printing.trial.list.details} : 
-						      					(*{isStockList}? #{label.printing.stock.list.details} : 
-						      						#{label.printing.nursery.list.details})">
-						      		Study List Details
-						      	</label>
-						      </li>
+							  <li class="list-group-item">
+								<label class="control-label label-bold"
+									th:text="(*{isTrial})? #{label.printing.trial.list.details} :
+												(*{isStockList}? #{label.printing.stock.list.details} :
+													#{label.printing.nursery.list.details})">
+									Study List Details
+								</label>
+							  </li>
 							</ul>
 							<ul id="non-pdf-study-list-details-fields" class="list-group droptrue" >
 							</ul>
-						</div>								
+						</div>
 					</div>
 					<div class="col-xs-1 col-md-1">&nbsp;</div>
 					<div class="col-xs-3 col-md-3">
 							<div class="">
 								<ul class="list-group field-group">
-							      <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.main.selected.fields}">Selected Fields</label></li>
+								  <li class="list-group-item"><label class="control-label label-bold" th:text="#{label.printing.main.selected.fields}">Selected Fields</label></li>
 								</ul>
-								<ul id="mainSelectedFields" class="list-group droptrue non-pdf-selected-fields" >				
+								<ul id="mainSelectedFields" class="list-group droptrue non-pdf-selected-fields" >
 								</ul>
-		
-							</div>									
+
+							</div>
 					</div>
 					<div class="col-xs-2 col-md-2">&nbsp;</div>
 				</div>
-				
+
 			</div>
 		</div>
-	
+
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
 				&nbsp;
@@ -445,10 +445,10 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="col-xs-12 col-md-12">
 				<div class="form-group">
 					<div class="col-xs-6 col-md-6">
-						<label class="control-label" ><strong class="sub-content-heading" th:text="#{label.printing.barcode.options}"></strong></label>						
+						<label class="control-label" ><strong class="sub-content-heading" th:text="#{label.printing.barcode.options}"></strong></label>
 					</div>
 					<div class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
-					
+
 					<div class="col-xs-6 col-md-6">
 						<label class="control-label label-bold" th:text="#{label.printing.do.you.need.bar.codes}">Do you need barcodes on your labels?</label>
 						&nbsp;&nbsp;&nbsp;
@@ -461,7 +461,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						  <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
 						</label>
 					</div>
-					
+
 					<div class="col-xs-6 col-md-6 barcode-fields">
 						<div class="form-group">
 							<div class="col-xs-12 col-md-12">
@@ -500,9 +500,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 								</select>
 							</div>
 							</div>
-							
+
 						</div>
-					</div>					
+					</div>
 				</div>
 			</div>
 		</div>
@@ -548,22 +548,22 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 		</div>
-	
-	
-	
+
+
+
 		<div class="row">
-	
+
 		</div>
-	
+
 		<div class="form-group">&nbsp;</div>
 		<div class="form-group">
-		    <div class="col-xs-12 col-md-12 fbk-center">
+			<div class="col-xs-12 col-md-12 fbk-center">
 				<input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>
 				<input type="button" id="fbk-lbl-printing-save-preset"  value="Save Preset" class="btn btn-info"/>
 				<input type="button" id="export-label-data" value="Export Label" th:value="#{common.form.export.label.text}" class="btn btn-primary"/>
-		    </div>
-	    </div>
-    </div>
+			</div>
+		</div>
+	</div>
 	<div class="form-group">&nbsp;</div>
 </div>
 </div></div>
@@ -648,16 +648,15 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 	/*globals setSelectedTrialsAsDraggable*/
 	/*exported setTotalLabels*/
 $(function() {
-		'use strict';
+	'use strict';
 
-		 var isTrial = /*[[${labelPrintingForm.isTrial}]]*/ false;
-		 var excelOption = /*[[#{label.printing.export.excel}]]*/ false;
-		 var availableFields = /*[[${availableFields}]]*/ [];
-		 var unavailableFields = /*[[${unavailableFields}]]*/ [];
+	var isTrial = /*[[${labelPrintingForm.isTrial}]]*/ false;
+	var excelOption = /*[[#{label.printing.export.excel}]]*/ false;
+	var availableFields = /*[[${availableFields}]]*/ [];
+	var unavailableFields = /*[[${unavailableFields}]]*/ [];
 
-		 LabelPrinting.onPageLoad(isTrial,excelOption,availableFields,unavailableFields);
-	});
-
+	LabelPrinting.onPageLoad(isTrial, excelOption, availableFields, unavailableFields);
+});
 
 //]]>
 </script>

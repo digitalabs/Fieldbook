@@ -20,12 +20,12 @@
 					<div class="pull-left">
 						<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="" />
 
-            <span class="fbk-nursery-heading nursery-name-display">
-                <span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
-                <span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
-                <span class="heading fieldmap-study-name fbk-hide" th:text="*{basicDetails[0].value}"></span>
-                <span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
-            </span>
+			<span class="fbk-nursery-heading nursery-name-display">
+				<span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
+				<span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
+				<span class="heading fieldmap-study-name fbk-hide" th:text="*{basicDetails[0].value}"></span>
+				<span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
+			</span>
 
 						<div class="fbk-nursery-heading-btns">
 							<input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
@@ -430,208 +430,201 @@
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 
-	<script type="text/javascript" th:inline="javascript">
-		//<![CDATA[
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
 
-		// FIXME Should not be using global variables or functions
-		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery*/
-		/*globals validateStartEndDate, moveToTopScreen, programNurseriesText, measurementRowCount*/
-		/*globals submitGermplasmAndCheck, truncateStudyVariableNames, displayCorrespondingGermplasmSections*/
-		/*exported lastDraggedChecksList, locationSuggestions, scaleSuggestions,saveSuccessMessage, submitEditForm*/
+// FIXME Should not be using global variables or functions
+/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery*/
+/*globals validateStartEndDate, moveToTopScreen, programNurseriesText, measurementRowCount*/
+/*globals submitGermplasmAndCheck, truncateStudyVariableNames, displayCorrespondingGermplasmSections*/
+/*exported lastDraggedChecksList, locationSuggestions, scaleSuggestions,saveSuccessMessage, submitEditForm*/
 
-		var locationSuggestions = /*[[${locationList}]]*/ '',
-				scaleSuggestions = /*[[${scaleList}]]*/  '';
+var locationSuggestions = /*[[${locationList}]]*/ '',
+		scaleSuggestions = /*[[${scaleList}]]*/  '';
 
+/* jshint ignore:start */
+var measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0,
+		buttonToDelete = null;
+/* jshint ignore:end */
 
-		/* jshint ignore:start */
-		var measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0,
-				buttonToDelete = null;
-		/* jshint ignore:end */
+var selectedTableIds = new Array();
 
-		var selectedTableIds = new Array();
+function submitEditWorkbook() {
+	'use strict';
 
-		function submitEditWorkbook(){
-			'use strict';
+	var $form = $('#createNurseryForm, #createNurseryMainForm'),
+			serializedData = $form.serialize();
+	var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
+	serializedData += '&columnOrders=' + encodeURIComponent(JSON.stringify(columnsOrder));
 
-
-
-			var $form = $('#createNurseryForm, #createNurseryMainForm'),
-					serializedData = $form.serialize();
-			var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-			serializedData += '&columnOrders='+ encodeURIComponent(JSON.stringify(columnsOrder));
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/editNursery',
-				type: 'POST',
-				data: serializedData,
-				cache: false,
-				success: function(data) {
-					if (data.status === '-1') {
-						showErrorMessage('page-message', data.errorMessage);
-					} else if ($('#chooseGermplasmAndChecks').data('replace') !== undefined
-							&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 || measurementRowCount === 0) {
-						submitGermplasmAndCheck();
-					} else if (data.status === '1') {
-						recreateSessionVariables();
-					}
-					$('.import-study-data').data('data-import', '0');
-					$('.fbk-discard-imported-data').addClass('fbk-hide');
-				}
-			});
-		}
-
-		function deleteMeasurementRows() {
-			'use strict';
-
-
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/editNursery/deleteMeasurementRows',
-				type: 'POST',
-				data: '',
-				cache: false,
-				success: function(data) {
-					if (data.status === '-1') {
-						showErrorMessage('page-message', data.errorMessage);
-
-					} else {
-
-						submitEditWorkbook();
-					}
-				}
-			});
-		}
-
-		function submitEditForm() {
-			'use strict';
-
-			if(!processInlineEditInput()){
-				return false;
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/editNursery',
+		type: 'POST',
+		data: serializedData,
+		cache: false,
+		success: function(data) {
+			if (data.status === '-1') {
+				showErrorMessage('page-message', data.errorMessage);
+			} else if ($('#chooseGermplasmAndChecks').data('replace') !== undefined
+					&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 || measurementRowCount === 0) {
+				submitGermplasmAndCheck();
+			} else if (data.status === '1') {
+				recreateSessionVariables();
 			}
+			$('.import-study-data').data('data-import', '0');
+			$('.fbk-discard-imported-data').addClass('fbk-hide');
+		}
+	});
+}
 
-			if(hasMeasurementsInvalidValue()){
-				//we check if there is invalid value in the measurements
-				showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
-				return false;
-			}
-			if (validateCreateNursery()) {
-				if(!validateStartEndDate('nurseryLevelSettings')) {
-					moveToTopScreen();
-					return false;
-				}
-				if ($('#chooseGermplasmAndChecks').data('replace') !== undefined
-						&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 && measurementRowCount > 0) {
-					deleteMeasurementRows();
-				} else {
-					if($('.import-study-data').data('data-import') === '1'){
-						doSaveImportedData();
-					}
-					else{
-						submitEditWorkbook();
-					}
+function deleteMeasurementRows() {
+	'use strict';
 
-				}
-
-				if (document.enableActions !== undefined) {
-					document.enableActions();
-				}
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/editNursery/deleteMeasurementRows',
+		type: 'POST',
+		data: '',
+		cache: false,
+		success: function(data) {
+			if (data.status === '-1') {
+				showErrorMessage('page-message', data.errorMessage);
 
 			} else {
-				moveToTopScreen();
+
+				submitEditWorkbook();
 			}
 		}
+	});
+}
 
-		$(document).ready(function() {
-			'use strict';
+function submitEditForm() {
+	'use strict';
 
-			if (measurementRowCount > 0){
-				$('#import-crosses').css('display', 'block');
+	if (!processInlineEditInput()) {
+		return false;
+	}
+
+	if (hasMeasurementsInvalidValue()) {
+		//we check if there is invalid value in the measurements
+		showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
+		return false;
+	}
+	if (validateCreateNursery()) {
+		if (!validateStartEndDate('nurseryLevelSettings')) {
+			moveToTopScreen();
+			return false;
+		}
+		if ($('#chooseGermplasmAndChecks').data('replace') !== undefined
+				&& parseInt($('#chooseGermplasmAndChecks').data('replace')) === 1 && measurementRowCount > 0) {
+			deleteMeasurementRows();
+		} else {
+			if ($('.import-study-data').data('data-import') === '1') {
+				doSaveImportedData();
+			} else {
+				submitEditWorkbook();
 			}
 
-			$('#basicDetails.toggle-icon').click(function(){
-				var expandedImg = $(this).find('.section-expanded'),
-						collapsedImg = $(this).find('.section-collapsed'),
-						className = $(this).data('target');
+		}
 
-				expandedImg.toggle();
-				collapsedImg.toggle();
-				$(className).slideToggle();
+		if (document.enableActions !== undefined) {
+			document.enableActions();
+		}
+
+	} else {
+		moveToTopScreen();
+	}
+}
+
+$(document).ready(function() {
+	'use strict';
+
+	if (measurementRowCount > 0) {
+		$('#import-crosses').css('display', 'block');
+	}
+
+	$('#basicDetails.toggle-icon').click(function() {
+		var expandedImg = $(this).find('.section-expanded'),
+				collapsedImg = $(this).find('.section-collapsed'),
+				className = $(this).data('target');
+
+		expandedImg.toggle();
+		collapsedImg.toggle();
+		$(className).slideToggle();
+	});
+
+	if ($('#folderId').val() === '1') {
+		$('#folderNameLabel').html(programNurseriesText);
+	}
+
+	displayEditFactorsAndGermplasmSection();
+
+	if ($('.nursery-name').length > 0) {
+		$('.nursery-name').tooltip();
+	}
+	truncateStudyVariableNames('.fbk-variable', 30);
+	$('.nav-tabs').tabdrop({position: 'left'});
+	$('.nav-tabs').tabdrop('layout');
+	$('li#nursery-settings-li a').tab('show');
+	$('a[data-toggle="tab"]').each(function() {
+		if ($(this).hasClass('crossesList') || $(this).hasClass('advanceList') ) {
+			StockIDFunctions.generateStockListTabIfNecessary($(this).data('list-id')).done(function() {
+				// re compute the tab drop whenever a new tab is generated
+				$('.nav-tabs').tabdrop({position: 'left'});
+				$('.nav-tabs').tabdrop('layout');
 			});
-
-			if ($('#folderId').val() === '1') {
-				$('#folderNameLabel').html(programNurseriesText);
+		}
+	});
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+		if ($('.import-study-data').data('data-import') === '1') {
+			if ($('.import-study-data').data('measurement-show-already') !== '1') {
+				showAlertMessage('', importSaveDataWarningMessage);
+				$('.import-study-data').data('measurement-show-already', '1');
+				$('li#nursery-measurements-li a').tab('show');
+			}else {
+				$('.import-study-data').data('measurement-show-already', '0');
 			}
-
-			displayEditFactorsAndGermplasmSection();
-
-			if ($('.nursery-name').length > 0) {
-				$('.nursery-name').tooltip();
+		}else if ($(this).hasClass('germplasm')) {
+			if (germplasmDataTable != null) {
+				germplasmDataTable.getDataTable().fnAdjustColumnSizing();
 			}
-			truncateStudyVariableNames('.fbk-variable', 30);
-			$('.nav-tabs').tabdrop({position: 'left'});
-			$('.nav-tabs').tabdrop('layout');
-			$('li#nursery-settings-li a').tab('show');
-			$('a[data-toggle="tab"]').each(function() {
-				if($(this).hasClass('crossesList') || $(this).hasClass('advanceList') ) {
-					StockIDFunctions.generateStockListTabIfNecessary($(this).data('list-id')).done(function() {
-						// re compute the tab drop whenever a new tab is generated
-						$('.nav-tabs').tabdrop({position: 'left'});
-						$('.nav-tabs').tabdrop('layout');
-					});
-				}
-			});
-			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-				if($('.import-study-data').data('data-import') === '1'){
-					if($('.import-study-data').data('measurement-show-already') !== '1'){
-						showAlertMessage('', importSaveDataWarningMessage);
-						$('.import-study-data').data('measurement-show-already', '1');
-						$('li#nursery-measurements-li a').tab('show');
-					}else{
-						$('.import-study-data').data('measurement-show-already', '0');
-					}
-				}else if($(this).hasClass('germplasm')){
-					if(germplasmDataTable != null){
-						germplasmDataTable.getDataTable().fnAdjustColumnSizing();
-					}
-					if(selectedCheckListDataTable != null){
-						selectedCheckListDataTable.getDataTable().fnAdjustColumnSizing();
-					}
-				}else if($(this).hasClass('measurements')){
-					if($('#measurement-table').length !== 0 && $('#measurement-table').dataTable()){
-						$('#measurement-table').dataTable().fnAdjustColumnSizing()
-					}
-				}else if($(this).hasClass('stockList') && $(this).data('has-loaded') !== '1'){
-					$(this).data('has-loaded', '1');
-					StockIDFunctions.displayStockList($(this).data('list-id'));
-
-				}else if($(this).hasClass('crossesList') && $(this).data('has-loaded') !== '1'){
-					$(this).data('has-loaded', '1');
-					ImportCrosses.displayCrossesList($(this).data('list-id'), $(this).data('list-id'), '', true);
-
-				}else if($(this).hasClass('advanceList') && $(this).data('has-loaded') !== '1'){
-					$(this).data('has-loaded', '1');
-					displayAdvanceList($(this).data('list-id'), $(this).data('list-id'), '', true);
-
-				}
-			});
-			$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-				if ($('.import-inventory').data('data-import') === '1') {
-					showAlertMessage('', importSaveDataWarningMessage);
-					e.preventDefault();
-				}
-			});
-
-			if ($('#experimentTypeId').val() !== ''){
-				$('#nursery-experimental-design-li').show();
-			}else{
-				$('#nursery-experimental-design-li').hide();
+			if (selectedCheckListDataTable != null) {
+				selectedCheckListDataTable.getDataTable().fnAdjustColumnSizing();
 			}
+		}else if ($(this).hasClass('measurements')) {
+			if ($('#measurement-table').length !== 0 && $('#measurement-table').dataTable()) {
+				$('#measurement-table').dataTable().fnAdjustColumnSizing();
+			}
+		}else if ($(this).hasClass('stockList') && $(this).data('has-loaded') !== '1') {
+			$(this).data('has-loaded', '1');
+			StockIDFunctions.displayStockList($(this).data('list-id'));
 
+		}else if ($(this).hasClass('crossesList') && $(this).data('has-loaded') !== '1') {
+			$(this).data('has-loaded', '1');
+			ImportCrosses.displayCrossesList($(this).data('list-id'), $(this).data('list-id'), '', true);
 
-		});
+		}else if ($(this).hasClass('advanceList') && $(this).data('has-loaded') !== '1') {
+			$(this).data('has-loaded', '1');
+			displayAdvanceList($(this).data('list-id'), $(this).data('list-id'), '', true);
 
-		//]]>
-	</script>
+		}
+	});
+	$('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+		if ($('.import-inventory').data('data-import') === '1') {
+			showAlertMessage('', importSaveDataWarningMessage);
+			e.preventDefault();
+		}
+	});
+
+	if ($('#experimentTypeId').val() !== '') {
+		$('#nursery-experimental-design-li').show();
+	}else {
+		$('#nursery-experimental-design-li').hide();
+	}
+
+});
+
+//]]>
+</script>
 
 
 </section>

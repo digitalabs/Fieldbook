@@ -20,10 +20,10 @@
 					<thead>
 						<tr>
 							<th nowrap="nowrap" data-col-name="action"></th>
-							<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>							
+							<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"  th:attr="data-col-name=${tableHeader.dataCol}" ></th>
 						</tr>
 					</thead>
-					 
+
 					<tbody th:remove="all-but-first">
 						<tr th:each="gid, row : *{importedCheckGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid},data-index=${gid.index}" class="checkRow">
 
@@ -42,29 +42,29 @@
 							<td>.2</td>
 						</tr>
 					</tbody>
-					  
+
 				</table>
 			</div>
 		</div>
 		<div class="row col-xs-12 col-md-12">
 			<div id="check-germplasm-list-reset-button" class="pull-left">
 	            <a style="margin-top: 5px;" href="javascript: resetCheckList()" class="btn btn-default">Clear Checks</a>
-	        </div>			
+	        </div>
 		</div>
 	</form>
 </div>
 </div>
 
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	/*globals showPostPage*/
-	var dataSelectedCheckGermplasmList = /*[[${checkListDataTable}]]*/ [];
-	$( document ).ready(function() {
-		'use strict';		
-		if(dataSelectedCheckGermplasmList !== null && dataSelectedCheckGermplasmList.length !== 0){
-			selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);
-		}
-	});	
-	
-	//]]>
+//<![CDATA[
+/*globals showPostPage*/
+var dataSelectedCheckGermplasmList = /*[[${checkListDataTable}]]*/ [];
+$(document).ready(function() {
+	'use strict';
+	if (dataSelectedCheckGermplasmList !== null && dataSelectedCheckGermplasmList.length !== 0) {
+		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);
+	}
+});
+
+//]]>
 </script>

@@ -1,247 +1,247 @@
 <div class="col-md-7" xmlns:th="http://www.thymeleaf.org">
 	<!-- Modal -->
-  	<form id="addVariableForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
-	    th:action="@{/OntologyBrowser/}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
-	   	<div class="modal fade" id="addVariableModal" role="dialog" aria-labelledby="addVariableLabel" aria-hidden="true">
+	<form id="addVariableForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#"
+		th:action="@{/OntologyBrowser/}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
+		<div class="modal fade" id="addVariableModal" role="dialog" aria-labelledby="addVariableLabel" aria-hidden="true">
 			<div class="modal-dialog modal-large" style="width:900px">
-		    	<div class="modal-content">
-		        	<div class="modal-header">
-		           		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		           		<h4 class="modal-title" th:text="#{ontology.browser.header.add.new.variable}">Add a New Standard Variable</h4>
-		         	</div>
-		         	<div class="modal-body" id="addVariableBody">
-		         		<div class="form-group" id="page-message-modal"></div>
-            			<div id="errorHandler" th:class="${#fields.hasErrors('*')} ? 'form-group has-error' : 'form-group'">
-            				<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
-			         		<div class="row fluid">
-				         		<div class="col-md-5">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" th:text="#{ontology.browser.header.add.new.variable}">Add a New Standard Variable</h4>
+					</div>
+					<div class="modal-body" id="addVariableBody">
+						<div class="form-group" id="page-message-modal"></div>
+						<div id="errorHandler" th:class="${#fields.hasErrors('*')} ? 'form-group has-error' : 'form-group'">
+							<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+							<div class="row fluid">
+								<div class="col-md-5">
 									<div class="form-group">
-					           			<label for="variableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
-				                        <div class="col-md-7">
-				                        	<input type="text" th:field="*{variableName}" class="form-control"/>
+										<label for="variableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
+										<div class="col-md-7">
+											<input type="text" th:field="*{variableName}" class="form-control"/>
 											<input type="hidden" th:field="*{variableId}" />
-				                        </div>
-			                        </div>
-			                        
-			                        <div class="form-group">
-					           			<label for="variableDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-					           			<div class="col-md-7">
-				                            <textarea th:field="*{variableDescription}" class="form-control" size="10"> </textarea>
-				                        </div>
+										</div>
 									</div>
-									
+
+									<div class="form-group">
+										<label for="variableDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+										<div class="col-md-7">
+											<textarea th:field="*{variableDescription}" class="form-control" size="10"> </textarea>
+										</div>
+									</div>
+
 									<br/>
-									
+
 									<div class="form-group">
 										<label for="dataType" class="col-md-5 control-label" th:text="#{ontology.browser.modal.data.type} + ': *'">Data Type:</label>
 										<div class="col-md-7">
 											<select class="form-control" th:field="*{dataType}">
-				                        		<option value="">Select</option>
-				                        		<option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
-				                        	</select>
+												<option value="">Select</option>
+												<option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
+											</select>
 										</div>
 									</div>
-									
+
 									<div class="form-group">
 										<label for="role" class="col-md-5 control-label" th:text="#{ontology.browser.modal.role} + ': *'">Role:</label>
 										<div class="col-md-7">
 											<select class="form-control" th:field="*{role}">
-				                        		<option value="">Select</option>
-				                        		<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"/>
-				                        	</select>
+												<option value="">Select</option>
+												<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"/>
+											</select>
 										</div>
 									</div>
-									
+
 									<div class="form-group">
-					           			<label for="cropOntologyId" class="col-md-5 control-label" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
-				                        <div class="col-md-7">
-				                            <input type="text" th:field="*{cropOntologyId}" class="form-control"/>
-				                        </div>
-			                        </div>
+										<label for="cropOntologyId" class="col-md-5 control-label" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
+										<div class="col-md-7">
+											<input type="text" th:field="*{cropOntologyId}" class="form-control"/>
+										</div>
+									</div>
 								</div>
-				         		<div class="col-md-6">
-				         			<div class="form-group">                        
-				                        <label for="comboTraitClass" class="col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ': *'">Class:</label>
-				                        <div class="col-md-7">
-				                        	<div class="input-group">
-				                        		<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control  input-medium  select2" placeholder=""/>
-				                        		<span class="input-group-btn">
-					                        		<button class="btn btn-primary" type="button" id="btnAddTraitClass" onClick="doSave('TraitClass')">
-					                        			<span class="glyphicon glyphicon-plus"></span>
-					                        		</button>
-			                        			</span>
-				                        	</div>
-				                        </div>
-			                        </div>
-			                        
-			                        <div class="form-group">
-					                	<label for="traitClassDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-					                    <div class="col-md-7">
-					                    	<textarea type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
-					                    </div>
-				                    </div>
-				                    
-				                    <div class="form-group">                        
-				                        <label for="comboProperty" class="col-md-5 control-label" th:text="#{ontology.browser.modal.property} + ': *'">Property:</label>
-				                        <div class="col-md-7">
-				                        	<div class="input-group">
-					                        	<input id="comboProperty" type="hidden" th:field="*{property}" class="form-control select2" placeholder=""/>
-					                        	<span class="input-group-btn">
-					                        		<button class="btn btn-primary" type="button" id="btnAddProperty" onClick="doSave('Property')">
-					                        			<span class="glyphicon glyphicon-plus"></span>
-					                        		</button>
-			                        			</span>
-		                        			</div>
-				                        </div>
-			                        </div>
-			                        
-			                        <div class="form-group">
-					                	<label for="propertyDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-					                    <div class="col-md-7">
-					                    	<textarea type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
-					                    </div>
-				                    </div>
-				                    
-				                    <div class="form-group">                        
-				                        <label for="comboMethod" class="col-md-5 control-label" th:text="#{ontology.browser.modal.method} + ': *'">Method:</label>
-				                        <div class="col-md-7">
-				                        	<div class="input-group">
-					                        	<input id="comboMethod" type="hidden" th:field="*{method}" class="form-control select2" placeholder=""  />
-					                        	<span class="input-group-btn">
-					                        		<button class="btn btn-primary" type="button" id="btnAddMethod" onClick="doSave('Method')">
-					                        			<span class="glyphicon glyphicon-plus"></span>
-					                        		</button>
-			                        			</span>
-		                        			</div>
-				                        </div>
-			                        </div>
-			                        
-			                        <div class="form-group">
-					                	<label for="methodDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-					                    <div class="col-md-7">
-					                    	<textarea type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
-					                    </div>
-				                    </div>
-				                    
-				                    <div class="form-group">                        
-				                        <label for="comboScale" class="col-md-5 control-label" th:text="#{ontology.browser.modal.scale} + ': *'">Scale:</label>
-				                        <div class="col-md-7">
-				                        	<div class="input-group">
-					                        	<input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>
-				                        		<span class="input-group-btn">
-					                        		<button class="btn btn-primary" type="button" id="btnAddScale" onClick="doSave('Scale')">
-					                        			<span class="glyphicon glyphicon-plus"></span>
-					                        		</button>
-					                        		<!--  
-					                        		<button class="btn btn-danger" type="button" id="btnDeleteScale" onClick="deleteOntology('Scale')">
-					                        			<span class="glyphicon glyphicon-minus"></span>
-					                        		</button>
-					                        		-->
-			                        			</span>
-		                        			</div>
-				                        </div>
-			                        </div>
-			                        
-			                        <div class="form-group">
-					                	<label for="scaleDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
-					                    <div class="col-md-7">
-					                    	<textarea type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
-					                    </div>
-				                    </div>
-				         		</div>
-				         		<div class="col-md-1"></div>
-			           		</div>
-		           		</div>
-		         	</div>																							
-		       		<div class="modal-footer">
-		         		<button type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
-		         		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
-		         		<button type="submit" th:value="#{common.form.save.text}" class="btn btn-primary" 
-		         		th:text="#{common.form.save.text}">Save</button>      	
-	       			</div>
-		     	</div><!-- /.modal-content -->
-	   		</div><!-- /.modal-dialog -->
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="comboTraitClass" class="col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ': *'">Class:</label>
+										<div class="col-md-7">
+											<div class="input-group">
+												<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control  input-medium  select2" placeholder=""/>
+												<span class="input-group-btn">
+													<button class="btn btn-primary" type="button" id="btnAddTraitClass" onClick="doSave('TraitClass')">
+														<span class="glyphicon glyphicon-plus"></span>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="traitClassDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+										<div class="col-md-7">
+											<textarea type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="comboProperty" class="col-md-5 control-label" th:text="#{ontology.browser.modal.property} + ': *'">Property:</label>
+										<div class="col-md-7">
+											<div class="input-group">
+												<input id="comboProperty" type="hidden" th:field="*{property}" class="form-control select2" placeholder=""/>
+												<span class="input-group-btn">
+													<button class="btn btn-primary" type="button" id="btnAddProperty" onClick="doSave('Property')">
+														<span class="glyphicon glyphicon-plus"></span>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="propertyDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+										<div class="col-md-7">
+											<textarea type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="comboMethod" class="col-md-5 control-label" th:text="#{ontology.browser.modal.method} + ': *'">Method:</label>
+										<div class="col-md-7">
+											<div class="input-group">
+												<input id="comboMethod" type="hidden" th:field="*{method}" class="form-control select2" placeholder=""  />
+												<span class="input-group-btn">
+													<button class="btn btn-primary" type="button" id="btnAddMethod" onClick="doSave('Method')">
+														<span class="glyphicon glyphicon-plus"></span>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="methodDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+										<div class="col-md-7">
+											<textarea type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="comboScale" class="col-md-5 control-label" th:text="#{ontology.browser.modal.scale} + ': *'">Scale:</label>
+										<div class="col-md-7">
+											<div class="input-group">
+												<input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>
+												<span class="input-group-btn">
+													<button class="btn btn-primary" type="button" id="btnAddScale" onClick="doSave('Scale')">
+														<span class="glyphicon glyphicon-plus"></span>
+													</button>
+													<!--
+													<button class="btn btn-danger" type="button" id="btnDeleteScale" onClick="deleteOntology('Scale')">
+														<span class="glyphicon glyphicon-minus"></span>
+													</button>
+													-->
+												</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="scaleDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+										<div class="col-md-7">
+											<textarea type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-1"></div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
+						 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
+						<button type="submit" th:value="#{common.form.save.text}" class="btn btn-primary"
+						th:text="#{common.form.save.text}">Save</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
-	</form>		
+	</form>
 </div>
 
-<div layout:fragment="page-script">		
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-        var variableNameSuggestions = /*[[${variableNameSuggestionList}]]*/ null;
-        var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/ null;
-		var propertySuggestions = /*[[${propertiesSuggestionList}]]*/ null;
-		var methodSuggestions = /*[[${methodsSuggestionList}]]*/ null;
-		var scaleSuggestions = /*[[${scalesSuggestionList}]]*/ null;
-		
-		var variableNameSuggestions_obj = [];
-	  	var traitClassesSuggestions_obj = [];
-	  	var propertySuggestions_obj = [];
-	  	var methodSuggestions_obj = [];
-	  	var scaleSuggestions_obj = [];
-	  		  	
-		function validateCombo(combo) {
-			var message = null;
-			//check if field is blank	
-			if ($("#combo"+combo).val() == "") {
-				if (combo == "TraitClass") {
-					message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.trait.class})}]]*/;
-				} else if (combo == "Property") {
-					message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.property})}]]*/;
-				} else if (combo == "Method") {
-					message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.method})}]]*/;
-				} else {
-					message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.scale})}]]*/;	
-				}
-				showMessage(message);		  
-				return false;
+<div layout:fragment="page-script">
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+	var variableNameSuggestions = /*[[${variableNameSuggestionList}]]*/ null;
+	var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/ null;
+	var propertySuggestions = /*[[${propertiesSuggestionList}]]*/ null;
+	var methodSuggestions = /*[[${methodsSuggestionList}]]*/ null;
+	var scaleSuggestions = /*[[${scalesSuggestionList}]]*/ null;
+
+	var variableNameSuggestions_obj = [];
+	var traitClassesSuggestions_obj = [];
+	var propertySuggestions_obj = [];
+	var methodSuggestions_obj = [];
+	var scaleSuggestions_obj = [];
+
+	function validateCombo(combo) {
+		var message = null;
+		//check if field is blank
+		if ($("#combo"+combo).val() == "") {
+			if (combo == "TraitClass") {
+				message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.trait.class})}]]*/;
+			} else if (combo == "Property") {
+				message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.property})}]]*/;
+			} else if (combo == "Method") {
+				message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.method})}]]*/;
+			} else {
+				message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.scale})}]]*/;
 			}
-			//check if items to be added exists
-			if (itemExists(combo)) {
-				if (combo == "TraitClass") {
-					message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.trait.class})}]]*/;
-				} else if (combo == "Property") {
-					message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.property})}]]*/;
-				} else if (combo == "Method") {
-					message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.method})}]]*/;
-				} else {
-					message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.scale})}]]*/;	
-				}
-				showMessage(message); 
-				return false;
-			}
-			
-			if(combo == 'Property'){
-				//we need to check if the trait class has a value
-				var dataVal = $("#comboTraitClass").select2("data");
-				if(dataVal == null || dataVal.id == ''){
-					message = /*[[#{ontology.browser.modal.trait.class.required}]]*/;
-					showMessage(message);
-					return false;
-				}
-				
-			}
-			
-			return true;
+			showMessage(message);
+			return false;
 		}
-		
-		 
-	    function do_validation() {
-	    	var message = null;
-	    	//check required fields
-		    if (requiredFieldsEmpty()) {	
-		    	message = /*[[#{ontology.browser.modal.error}]]*/;
-		    	showMessage(message);
+		//check if items to be added exists
+		if (itemExists(combo)) {
+			if (combo == "TraitClass") {
+				message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.trait.class})}]]*/;
+			} else if (combo == "Property") {
+				message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.property})}]]*/;
+			} else if (combo == "Method") {
+				message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.method})}]]*/;
+			} else {
+				message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.scale})}]]*/;
+			}
+			showMessage(message);
+			return false;
+		}
+
+		if(combo == 'Property'){
+			//we need to check if the trait class has a value
+			var dataVal = $("#comboTraitClass").select2("data");
+			if(dataVal == null || dataVal.id == ''){
+				message = /*[[#{ontology.browser.modal.trait.class.required}]]*/;
+				showMessage(message);
 				return false;
-		    }
-		    //check combo values
-		    if (comboValuesInvalid()) {
-		    	message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
-		    	showMessage(message);
-		    	return false;
-		    }
-	    }
-	    
-    //]]>
-    </script>
+			}
+
+		}
+
+		return true;
+	}
+
+
+	function do_validation() {
+		var message = null;
+		//check required fields
+		if (requiredFieldsEmpty()) {
+			message = /*[[#{ontology.browser.modal.error}]]*/;
+			showMessage(message);
+			return false;
+		}
+		//check combo values
+		if (comboValuesInvalid()) {
+			message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
+			showMessage(message);
+			return false;
+		}
+	}
+
+//]]>
+</script>
 </div>

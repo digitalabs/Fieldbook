@@ -1,20 +1,20 @@
 /*globals angular,displayStudyGermplasmSection,isStudyNameUnique,showSuccessfulMessage,
  showInvalidInputMessage, nurseryFieldsIsRequired,saveSuccessMessage,validateStartEndDateBasic, showAlertMessage, doSaveImportedData,
  invalidTreatmentFactorPair,unpairedTreatmentFactor,createErrorNotification,openStudyTree,validateAllDates*/
-(function() {
+(function () {
     'use strict';
-	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
+    angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
         'ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
         'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
         'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_HAS_MEASUREMENT', 'TRIAL_MEASUREMENT_COUNT', 'TRIAL_MANAGEMENT_MODE', '$q',
-		'TrialSettingsManager', '_', '$localStorage',
-		function(GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
-				EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
+        'TrialSettingsManager', '_', '$localStorage',
+        function (GERMPLASM_LIST_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+                  EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, MEASUREMENTS_INITIAL_DATA,
                   TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-				TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage) {
+                  TRIAL_HAS_MEASUREMENT, TRIAL_MEASUREMENT_COUNT, TRIAL_MANAGEMENT_MODE, $q, TrialSettingsManager, _, $localStorage) {
 
-			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
-			var extractData = function(initialData, initializeProperty) {
+            // TODO: clean up data service, at the very least arrange the functions in alphabetical order
+            var extractData = function (initialData, initializeProperty) {
                 if (!initialData) {
                     var data = {};
                     if (initializeProperty) {
@@ -32,19 +32,19 @@
             var settingsArray = [];
             var saveEventListeners = {};
 
-			var propagateChange = function(targetRegistry, dataKey, newValue) {
+            var propagateChange = function (targetRegistry, dataKey, newValue) {
                 if (targetRegistry[dataKey]) {
-					angular.forEach(targetRegistry[dataKey], function(updateFunction) {
+                    angular.forEach(targetRegistry[dataKey], function (updateFunction) {
                         updateFunction(newValue);
                     });
                 }
             };
 
-            var extractBasicDetailsData = function(initialData, initializeProperty) {
+            var extractBasicDetailsData = function (initialData, initializeProperty) {
                 var data = extractData(initialData, initializeProperty);
 
                 // data saved from the database is htmlEscaped so we need to un-escape the retrieved data first.
-				_.each(data.basicDetails, function(val, key) {
+                _.each(data.basicDetails, function (val, key) {
                     data.basicDetails[key] = _.unescape(val);
                 });
 
@@ -55,8 +55,8 @@
                 return data;
             };
 
-			var updateFrontEndTrialData = function(trialID, updateFunction) {
-				$http.get('/Fieldbook/TrialManager/openTrial/updateSavedTrial?trialID=' + trialID).success(function(data) {
+            var updateFrontEndTrialData = function (trialID, updateFunction) {
+                $http.get('/Fieldbook/TrialManager/openTrial/updateSavedTrial?trialID=' + trialID).success(function (data) {
                     if (updateFunction) {
                         updateFunction(data);
                     } else {
@@ -69,7 +69,7 @@
                         service.trialMeasurement.hasMeasurement = data.measurementDataExisting;
                         service.updateTrialMeasurementRowCount(data.measurementRowCount);
 
-						// TODO: change from global function call
+                        // TODO: change from global function call
                         displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
                             service.trialMeasurement.count);
                     }
@@ -77,12 +77,12 @@
                 });
             };
 
-			var extractSettings = function(initialData) {
+            var extractSettings = function (initialData) {
 
                 if (initialData) {
                     if (!initialData.settingMap) {
                         var data = new angular.OrderedHash();
-						data.addList(initialData.settings, function(item) {
+                        data.addList(initialData.settings, function (item) {
                             item.extracted = true;
                             return item.variable.cvTermId;
                         });
@@ -91,9 +91,9 @@
                     } else {
                         var dataMap = {};
 
-						$.each(initialData.settingMap, function(key, value) {
+                        $.each(initialData.settingMap, function (key, value) {
                             dataMap[key] = new angular.OrderedHash();
-							dataMap[key].addList(value, function(item) {
+                            dataMap[key].addList(value, function (item) {
                                 item.extracted = true;
                                 return item.variable.cvTermId;
                             });
@@ -107,12 +107,12 @@
                 return new angular.OrderedHash();
             };
 
-            var extractTreatmentFactorSettings = function(initialData) {
+            var extractTreatmentFactorSettings = function (initialData) {
                 var settingMap = {};
                 if (initialData) {
                     if (initialData.settingMap && initialData.settingMap.details) {
                         var data = new angular.OrderedHash();
-						data.addList(initialData.settingMap.details, function(item) {
+                        data.addList(initialData.settingMap.details, function (item) {
                             item.extracted = true;
                             return item.variable.cvTermId;
                         });
@@ -122,9 +122,9 @@
 
                     if (initialData.settingMap && initialData.settingMap.treatmentLevelPairs) {
                         settingMap.treatmentLevelPairs = initialData.settingMap.treatmentLevelPairs;
-                        angular.forEach(settingMap.treatmentLevelPairs, function(value, key) {
+                        angular.forEach(settingMap.treatmentLevelPairs, function (value, key) {
                             var data = new angular.OrderedHash();
-							data.addList(value, function(item) {
+                            data.addList(value, function (item) {
                                 item.extracted = true;
                                 return item.variable.cvTermId;
                             });
@@ -140,8 +140,8 @@
                 return settingMap;
             };
 
-			// TODO: change function such that it does not require jQuery style element / id based access for value retrieval
-			var submitGermplasmList = function() {
+            // TODO: change function such that it does not require jQuery style element / id based access for value retrieval
+            var submitGermplasmList = function () {
                 var $form = $('#germplasm-list-form');
                 $('#startIndex').val($('#startIndex2').val());
                 $('#interval').val($('#interval2').val());
@@ -149,53 +149,53 @@
                 var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
 
                 var serializedData = $form.serializeArray();
-                serializedData[serializedData.length] = {'name':'columnOrders', 'value':(JSON.stringify(columnsOrder))};
+                serializedData[serializedData.length] = {'name': 'columnOrders', 'value': (JSON.stringify(columnsOrder))};
 
                 var d = $q.defer();
 
-				$http.post('/Fieldbook/TrialManager/GermplasmList/next', $.param(serializedData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'} }).success(function(data) {
+                $http.post('/Fieldbook/TrialManager/GermplasmList/next', $.param(serializedData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).success(function (data) {
                     d.resolve(data);
                 });
 
                 return d.promise;
             };
 
-			var recreateSessionVariablesTrial = function() {
+            var recreateSessionVariablesTrial = function () {
                 $.ajax({
                     url: '/Fieldbook/TrialManager/openTrial/recreate/session/variables',
                     type: 'GET',
                     data: '',
                     cache: false,
-					success: function(html) {
-                    	$('body').data('columnReordered', '0');
+                    success: function (html) {
+                        $('body').data('columnReordered', '0');
                         $('#measurementsDiv').html(html);
                         showSuccessfulMessage('', saveSuccessMessage);
                     }
                 });
             };
 
-			var notifySaveEventListeners = function() {
+            var notifySaveEventListeners = function () {
                 $('body').data('expDesignShowPreview', '0');
-				angular.forEach(saveEventListeners, function(saveListenerFunction) {
+                angular.forEach(saveEventListeners, function (saveListenerFunction) {
                     saveListenerFunction();
                 });
             };
 
-			var performDataCleanup = function() {
-				// TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
+            var performDataCleanup = function () {
+                // TODO: delegate the task of cleaning up data to each tab that produces it, probably via listener
 
                 // perform cleanup of data for trial settings
                 // right now, just make sure that no objects are sent as user input for user-defined settings
                 cleanupData(service.currentData.trialSettings.userInput);
-				angular.forEach(service.currentData.environments.environments, function(environment) {
+                angular.forEach(service.currentData.environments.environments, function (environment) {
                     cleanupData(environment.managementDetailValues);
                     cleanupData(environment.trialDetailValues);
                 });
             };
 
-            var cleanupData = function(values) {
+            var cleanupData = function (values) {
                 if (values) {
-					angular.forEach(values, function(value, key) {
+                    angular.forEach(values, function (value, key) {
                         if (value && value.id) {
                             values[key] = value.id;
                         }
@@ -204,7 +204,7 @@
             };
 
             var VariablePairService = $resource('/Fieldbook/TrialManager/createTrial/retrieveVariablePairs/:id',
-                {id: '@id'}, { 'get': {method: 'get', isArray: true} });
+                {id: '@id'}, {'get': {method: 'get', isArray: true}});
             var GenerateExpDesignService = $resource('/Fieldbook/TrialManager/experimental/design/generate', {}, {});
 
             var service = {
@@ -213,8 +213,8 @@
                     trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
                     environments: extractData(ENVIRONMENTS_INITIAL_DATA),
                     basicDetails: extractBasicDetailsData(BASIC_DETAILS_DATA),
-					treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA, 'currentData'),
-					experimentalDesign: extractData(EXPERIMENTAL_DESIGN_INITIAL_DATA)
+                    treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA, 'currentData'),
+                    experimentalDesign: extractData(EXPERIMENTAL_DESIGN_INITIAL_DATA)
                 },
                 // standard variable [meta-data] information or a particular tab settings information
                 // what I get is an instance of OrderedHash containing an array of keys with the map
@@ -228,20 +228,20 @@
                 },
                 applicationData: {
                     unappliedChangesAvailable: false,
-					unsavedGeneratedDesign: false,
-					unsavedTraitsAvailable: false,
+                    unsavedGeneratedDesign: false,
+                    unsavedTraitsAvailable: false,
                     germplasmListCleared: false,
-					isGeneratedOwnDesign: false,
-					germplasmListSelected: GERMPLASM_LIST_SIZE > 0
+                    isGeneratedOwnDesign: false,
+                    germplasmListSelected: GERMPLASM_LIST_SIZE > 0
                 },
 
                 specialSettings: {
                     // settings that has special data structure
                     experimentalDesign: {
-						factors: (function() {
+                        factors: (function () {
                             var hardFactors = new angular.OrderedHash();
                             if (EXPERIMENTAL_DESIGN_SPECIAL_DATA && EXPERIMENTAL_DESIGN_SPECIAL_DATA.data) {
-								hardFactors.addList(EXPERIMENTAL_DESIGN_SPECIAL_DATA.data.expDesignDetailList, function(item) {
+                                hardFactors.addList(EXPERIMENTAL_DESIGN_SPECIAL_DATA.data.expDesignDetailList, function (item) {
                                     return item.variable.cvTermId;
                                 });
                             }
@@ -251,7 +251,7 @@
                         })(),
                         germplasmTotalListCount: GERMPLASM_LIST_SIZE,
 
-						showAdvancedOptions: [false, false, false]
+                        showAdvancedOptions: [false, false, false]
                     },
                     treatmentLevelPairs: {}
                 },
@@ -262,26 +262,26 @@
                 },
 
                 // returns a promise object to be resolved later
-				retrieveVariablePairs: function(cvTermId) {
+                retrieveVariablePairs: function (cvTermId) {
                     return VariablePairService.get({id: cvTermId}).$promise;
                 },
 
-				updateSelectedFolder: function(folderID) {
+                updateSelectedFolder: function (folderID) {
                     service.currentData.basicDetails.folderId = folderID;
                 },
                 // the data param structures
-				generateExpDesign: function(data) {
+                generateExpDesign: function (data) {
                     return GenerateExpDesignService.save(data).$promise;
                 },
 
-				refreshMeasurementTableAfterDeletingEnvironment: function() {
+                refreshMeasurementTableAfterDeletingEnvironment: function () {
                     var noOfEnvironments = service.currentData.environments.noOfEnvironments;
                     var data = service.currentData.experimentalDesign;
                     //update the no of environments in experimental design tab
-                	data.noOfEnvironments = noOfEnvironments;
+                    data.noOfEnvironments = noOfEnvironments;
 
-					service.generateExpDesign(data).then(
-						function(response) {
+                    service.generateExpDesign(data).then(
+                        function (response) {
                             if (response.valid === true) {
                                 service.clearUnappliedChangesFlag();
                                 service.applicationData.unsavedGeneratedDesign = true;
@@ -294,13 +294,13 @@
                     );
                 },
 
-				isOpenTrial: function() {
+                isOpenTrial: function () {
                     return service.currentData.basicDetails.studyID !== null &&
                         service.currentData.basicDetails.studyID !== 0;
                 },
 
-				deletedEnvironment: 0,
-				indicateUnappliedChangesAvailable: function() {
+                deletedEnvironment: 0,
+                indicateUnappliedChangesAvailable: function () {
                     if (!service.applicationData.unappliedChangesAvailable && service.trialMeasurement.count != 0) {
                         service.applicationData.unappliedChangesAvailable = true;
                         showAlertMessage('', 'These changes have not yet been applied to the Measurements table. ' +
@@ -308,40 +308,40 @@
                             'the Experimental Design on the next tab', 10000);
                         $('body').data('needGenerateExperimentalDesign', '1');
 
-						if (service.currentData.experimentalDesign.designType === 3) {
+                        if (service.currentData.experimentalDesign.designType === 3) {
                             service.currentData.experimentalDesign.designType = null;
                         }
                     }
                 },
 
-				clearUnappliedChangesFlag: function() {
+                clearUnappliedChangesFlag: function () {
                     service.applicationData.unappliedChangesAvailable = false;
                     $('body').data('needGenerateExperimentalDesign', '0');
                 },
                 extractData: extractData,
                 extractSettings: extractSettings,
-				extractTreatmentFactorSettings: extractTreatmentFactorSettings,
-				saveCurrentData: function() {
-					if (!processInlineEditInput()) {
-        				return false;
-        			}
-					if (hasMeasurementsInvalidValue()) {
-        				//we check if there is invalid value in the measurements
-        				showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
-        				return false;
-        			}
+                extractTreatmentFactorSettings: extractTreatmentFactorSettings,
+                saveCurrentData: function () {
+                    if (!processInlineEditInput()) {
+                        return false;
+                    }
+                    if (hasMeasurementsInvalidValue()) {
+                        //we check if there is invalid value in the measurements
+                        showErrorMessage('', 'There are some measurements that have invalid value, please correct them before proceeding');
+                        return false;
+                    }
                     if (service.applicationData.unappliedChangesAvailable) {
                         showAlertMessage('', 'Changes have been made that may affect the experimental design of this trial. Please ' +
                             'regenerate the design on the Experimental Design tab', 10000);
                     } else if (service.isCurrentTrialDataValid(service.isOpenTrial())) {
                         performDataCleanup();
                         var columnsOrder = BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table');
-                		var serializedData = (JSON.stringify(columnsOrder));
+                        var serializedData = (JSON.stringify(columnsOrder));
                         if (!service.isOpenTrial()) {
-                        	service.currentData.columnOrders = serializedData;
+                            service.currentData.columnOrders = serializedData;
                             $http.post('/Fieldbook/TrialManager/createTrial', service.currentData).
-								success(function() {
-									submitGermplasmList().then(function(generatedID) {
+                                success(function () {
+                                    submitGermplasmList().then(function (generatedID) {
                                         showSuccessfulMessage('', saveSuccessMessage);
                                         notifySaveEventListeners();
                                         window.location = '/Fieldbook/TrialManager/openTrial/' + generatedID;
@@ -355,10 +355,10 @@
                                 });
                         } else {
 
-							if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
-								doSaveImportedData().then(function() {
+                            if (service.trialMeasurement.count > 0 && $('.import-study-data').data('data-import') === '1') {
+                                doSaveImportedData().then(function () {
                                     notifySaveEventListeners();
-									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(data) {
+                                    updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (data) {
                                         service.trialMeasurement.hasMeasurement = (data.measurementDataExisting);
                                         service.updateTrialMeasurementRowCount(data.measurementRowCount);
                                         service.updateSettings('measurements', extractSettings(data.measurementsData));
@@ -370,17 +370,17 @@
                                     });
                                 });
 
-							} else if (service.trialMeasurement.count > 0 &&
+                            } else if (service.trialMeasurement.count > 0 &&
                                 (($('#chooseGermplasmAndChecks').length !== 0 &&
-                                    $('#chooseGermplasmAndChecks').data('replace') !== undefined &&
-                                    parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
-                                    service.applicationData.unsavedGeneratedDesign === false)
-                                ) {
-                            	service.currentData.columnOrders = serializedData;
-								$http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function() {
+                                $('#chooseGermplasmAndChecks').data('replace') !== undefined &&
+                                parseInt($('#chooseGermplasmAndChecks').data('replace')) !== 1) ||
+                                service.applicationData.unsavedGeneratedDesign === false)
+                            ) {
+                                service.currentData.columnOrders = serializedData;
+                                $http.post('/Fieldbook/TrialManager/openTrial?replace=0', service.currentData).success(function () {
                                     recreateSessionVariablesTrial();
                                     notifySaveEventListeners();
-                                    updateFrontEndTrialData(service.currentData.basicDetails.studyID, function(updatedData) {
+                                    updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
                                         service.trialMeasurement.hasMeasurement = (updatedData.measurementDataExisting);
                                         service.updateTrialMeasurementRowCount(updatedData.measurementRowCount);
 
@@ -395,17 +395,17 @@
                                     });
 
                                 });
-							} else {
-                            	service.currentData.columnOrders = serializedData;
+                            } else {
+                                service.currentData.columnOrders = serializedData;
                                 $http.post('/Fieldbook/TrialManager/openTrial?replace=1', service.currentData).
-									success(function() {
-										submitGermplasmList().then(function(trialID) {
+                                    success(function () {
+                                        submitGermplasmList().then(function (trialID) {
                                             showSuccessfulMessage('', saveSuccessMessage);
                                             notifySaveEventListeners();
                                             window.location = '/Fieldbook/TrialManager/openTrial/' + trialID;
 
                                             displayStudyGermplasmSection(service.trialMeasurement.hasMeasurement,
-                                                                    service.trialMeasurement.count);
+                                                service.trialMeasurement.count);
                                             service.applicationData.unsavedGeneratedDesign = false;
                                             service.applicationData.unsavedTraitsAvailable = false;
                                             $('body').data('needToSave', '0');
@@ -416,7 +416,7 @@
                         }
                     }
                 },
-				onUpdateData: function(dataKey, updateFunction) {
+                onUpdateData: function (dataKey, updateFunction) {
                     if (!dataRegistry[dataKey]) {
                         dataRegistry[dataKey] = [];
                         dataRegistry[dataKey].push(updateFunction);
@@ -425,30 +425,30 @@
                     }
                 },
 
-				updateCurrentData: function(dataKey, newValue) {
-					_.each(_.keys(newValue), function(nvkey) {
+                updateCurrentData: function (dataKey, newValue) {
+                    _.each(_.keys(newValue), function (nvkey) {
                         service.currentData[dataKey][nvkey] = newValue[nvkey];
                     });
                     propagateChange(dataRegistry, dataKey, newValue);
                 },
 
-				updateSettings: function(key, newValue) {
+                updateSettings: function (key, newValue) {
 
                     if (service.settings[key] instanceof angular.OrderedHash) {
                         service.settings[key].removeAll();
 
-						_.each(newValue.keys(), function(nvkey) {
-							service.settings[key].push(nvkey, newValue.val(nvkey));
+                        _.each(newValue.keys(), function (nvkey) {
+                            service.settings[key].push(nvkey, newValue.val(nvkey));
                         });
                     } else {
-						_.each(_.keys(newValue), function(nvkey) {
+                        _.each(_.keys(newValue), function (nvkey) {
 
                             if (newValue[nvkey] instanceof angular.OrderedHash) {
 
                                 service.settings[key][nvkey].removeAll();
 
-								_.each(newValue[nvkey].keys(), function(ohkey) {
-									service.settings[key][nvkey].push(ohkey, newValue[nvkey].val(ohkey));
+                                _.each(newValue[nvkey].keys(), function (ohkey) {
+                                    service.settings[key][nvkey].push(ohkey, newValue[nvkey].val(ohkey));
                                 });
                             } else {
                                 service.settings[key][nvkey] = newValue[nvkey];
@@ -461,12 +461,12 @@
                     settingsArray = [];
                 },
 
-				updateTrialMeasurementRowCount: function(newCountValue) {
+                updateTrialMeasurementRowCount: function (newCountValue) {
                     service.trialMeasurement.count = newCountValue;
                     $('body').data('service.trialMeasurement.count', newCountValue);
                 },
 
-				onUpdateSettings: function(key, updateFunction) {
+                onUpdateSettings: function (key, updateFunction) {
                     if (!settingRegistry[key]) {
                         settingRegistry[key] = [];
                         settingRegistry[key].push(updateFunction);
@@ -475,14 +475,14 @@
                     }
                 },
 
-				registerSaveListener: function(name, saveListenerFunction) {
+                registerSaveListener: function (name, saveListenerFunction) {
                     saveEventListeners[name] = saveListenerFunction;
                 },
 
-				treatmentFactorDataInvalid: function() {
+                treatmentFactorDataInvalid: function () {
                     var errorCode = 0;
 
-                    angular.forEach(service.currentData.treatmentFactors.currentData, function(value) {
+                    angular.forEach(service.currentData.treatmentFactors.currentData, function (value) {
                         // check if a factor selected as a pair is also used as
                         if (!value.variableId || value.variableId === 0) {
                             errorCode = 2;
@@ -498,38 +498,42 @@
                     return errorCode;
                 },
 
-				constructDataStructureFromDetails: function(details) {
+                constructDataStructureFromDetails: function (details) {
                     var returnVal = {};
-					$.each(details.vals(), function(key, value) {
+                    $.each(details.vals(), function (key, value) {
                         returnVal[value.variable.cvTermId] = null;
                     });
 
                     return returnVal;
                 },
 
-                transformViewSettingsVariable: function(settingVar) {
+                transformViewSettingsVariable: function (settingVar) {
                     settingVar.isChecked = false;
                     settingVar.existingData = false;
                     return settingVar;
                 },
 
                 /* this function returns a promise with the checkedCvtermIds map as the result */
-				removeSettings: function(mode, _settings) {
+                removeSettings: function (mode, _settings) {
                     var deferred = $q.defer();
                     // This will retrieve only the .isChecked of the variable-settings by filtering out the settings collection.
-                    var checkedCvtermIds = _.pairs(_settings.vals()).filter(function(val) { return _.last(val).isChecked; }).map(function(val) {
-                        return parseInt(_.first(val));
-                    });
+                    var checkedCvtermIds = _.pairs(_settings.vals())
+                        .filter(function (val) {
+                            return _.last(val).isChecked;
+                        })
+                        .map(function (val) {
+                            return parseInt(_.first(val));
+                        });
 
                     if (checkedCvtermIds.length > 0) {
-						$http.post('/Fieldbook/manageSettings/deleteVariable/' + mode, checkedCvtermIds)
-                            .success(function(data, status, headers, config) {
-                                _(checkedCvtermIds).each(function(varIds) {
+                        $http.post('/Fieldbook/manageSettings/deleteVariable/' + mode, checkedCvtermIds)
+                            .success(function () {
+                                _(checkedCvtermIds).each(function (varIds) {
                                     _settings.remove(varIds);
                                 });
 
                                 deferred.resolve(checkedCvtermIds);
-                        });
+                            });
                     } else {
                         deferred.resolve([]);
                     }
@@ -537,9 +541,9 @@
                     return deferred.promise;
                 },
 
-				getSettingsArray: function() {
+                getSettingsArray: function () {
                     if (settingsArray.length === 0) {
-						angular.forEach(service.settings, function(value, key) {
+                        angular.forEach(service.settings, function (value, key) {
                             if (key === 'environments') {
                                 settingsArray.push(value.managementDetails);
                                 settingsArray.push(value.trialConditionDetails);
@@ -559,7 +563,7 @@
                     return settingsArray;
                 },
 
-				isCurrentTrialDataValid: function(isEdit) {
+                isCurrentTrialDataValid: function (isEdit) {
                     if (isEdit === undefined) {
                         isEdit = false;
                     }
@@ -620,7 +624,7 @@
                         return false;
                     }
 
-					var valid = validateStartEndDateBasic(creationDate, completionDate);
+                    var valid = validateStartEndDateBasic(creationDate, completionDate);
 
                     if (valid !== true) {
                         showInvalidInputMessage(valid);
@@ -632,7 +636,7 @@
 
                     if (isValidVariables && isValidVariables.hasError) {
                         valid = valid && !isValidVariables.hasError;
-						createErrorNotification(isValidVariables.customHeader, isValidVariables.customMessage);
+                        createErrorNotification(isValidVariables.customHeader, isValidVariables.customMessage);
                     }
 
                     //valid = false    // remove later
@@ -641,18 +645,18 @@
 
                 },
 
-				validateAllVariablesInput: function() {
+                validateAllVariablesInput: function () {
                     var results = {
-						hasError: false,
-						customMessage: '',
-						customHeader: 'Invalid Input '
+                        hasError: false,
+                        customMessage: '',
+                        customHeader: 'Invalid Input '
                     };
 
                     // perform validation on all settings.currentData, (min / max) if any
                     // Validate all Trial Settings
-					_.each(service.settings.trialSettings.vals(), function(item, key) {
-						if (!(!item.variable.maxRange && !item.variable.minRange)) {
-							_.find(service.currentData.trialSettings, function(val) {
+                    _.each(service.settings.trialSettings.vals(), function (item, key) {
+                        if (!(!item.variable.maxRange && !item.variable.minRange)) {
+                            _.find(service.currentData.trialSettings, function (val) {
                                 if (!!val[key]) {
                                     if (item.variable.maxRange < Number(val[key])) {
                                         results.customMessage = 'Invalid maximum range on variable ' + item.variable.name;
@@ -669,14 +673,17 @@
                     });
 
                     if (results.hasError) {
-                        return function(tab) { results.customHeader += tab; return results;  }('on Trial Settings');
+                        return function (tab) {
+                            results.customHeader += tab;
+                            return results;
+                        }('on Trial Settings');
                     }
 
                     // validate environments
-					_.each(service.settings.environments.managementDetails.vals(), function(item, key) {
-						if (!(!item.variable.maxRange && !item.variable.minRange)) {
+                    _.each(service.settings.environments.managementDetails.vals(), function (item, key) {
+                        if (!(!item.variable.maxRange && !item.variable.minRange)) {
                             // let's validate each environment
-							_.find(service.currentData.environments.environments, function(val, index) {
+                            _.find(service.currentData.environments.environments, function (val, index) {
                                 if (!!val.managementDetailValues[key]) {
                                     if (item.variable.maxRange < Number(val.managementDetailValues[key])) {
                                         results.customMessage = 'Invalid maximum range on management detail variable ' +
@@ -695,13 +702,16 @@
                     });
 
                     if (results.hasError) {
-                        return function(tab) { results.customHeader += tab; return results;  }('on Environments');
+                        return function (tab) {
+                            results.customHeader += tab;
+                            return results;
+                        }('on Environments');
                     }
 
-					_.each(service.settings.environments.trialConditionDetails.vals(), function(item, key) {
-						if (!(!item.variable.maxRange && !item.variable.minRange)) {
+                    _.each(service.settings.environments.trialConditionDetails.vals(), function (item, key) {
+                        if (!(!item.variable.maxRange && !item.variable.minRange)) {
                             // letz validate each environment
-							_.find(service.currentData.environments.environments, function(val, index) {
+                            _.find(service.currentData.environments.environments, function (val, index) {
                                 if (!!val.trialDetailValues[key]) {
                                     if (item.variable.maxRange < Number(val.trialDetailValues[key])) {
                                         results.customMessage = 'Invalid maximum range on trial details variable ' +
@@ -720,30 +730,33 @@
                     });
 
                     if (results.hasError) {
-                        return function(tab) { results.customHeader += tab; return results;  }('on Environments');
+                        return function (tab) {
+                            results.customHeader += tab;
+                            return results;
+                        }('on Environments');
                     }
 
                     //  validate all treatments variable inputs
                     return service.validateAllTreatmentFactorLabels(results);
                 },
 
-				validateAllTreatmentFactorLabels: function(results) {
+                validateAllTreatmentFactorLabels: function (results) {
                     //  validate all treatments variable inputs
-					_.find(service.currentData.treatmentFactors.currentData, function(item, key) {
+                    _.find(service.currentData.treatmentFactors.currentData, function (item, key) {
                         var settingsVar = service.settings.treatmentFactors.treatmentLevelPairs[key].
                             val(service.currentData.treatmentFactors.currentData[key].variableId).variable;
                         if (!(!settingsVar.maxRange && !settingsVar.minRange)) {
-							_.find(item.labels, function(val, index) {
+                            _.find(item.labels, function (val, index) {
 
                                 if (!!val) {
                                     if (settingsVar.maxRange < Number(val)) {
                                         results.customMessage = 'Invalid maximum range on variable ' +
-                                        settingsVar.name + ' at level ' + (Number(index) + Number(1));
+                                            settingsVar.name + ' at level ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     } else if (settingsVar.minRange > Number(val)) {
                                         results.customMessage = 'Invalid minimum range on variable ' +
-                                        settingsVar.name + ' at level ' + (Number(index) + Number(1));
+                                            settingsVar.name + ' at level ' + (Number(index) + Number(1));
                                         results.hasError = true;
                                         return results.hasError;
                                     }
@@ -754,37 +767,40 @@
                     });
 
                     if (results.hasError) {
-                        return function(tab) { results.customHeader += tab; return results;  }('on Treatment Factors');
+                        return function (tab) {
+                            results.customHeader += tab;
+                            return results;
+                        }('on Treatment Factors');
                     }
                 }
             };
 
             // store the initial values on some service properties so that we can revert to it later
             $localStorage.serviceBackup = {
-				settings: angular.copy(service.settings),
-				currentData: angular.copy(service.currentData),
-				specialSettings: angular.copy(service.specialSettings),
-				applicationData: angular.copy(service.applicationData),
-				trialMeasurement: angular.copy(service.trialMeasurement)
+                settings: angular.copy(service.settings),
+                currentData: angular.copy(service.currentData),
+                specialSettings: angular.copy(service.specialSettings),
+                applicationData: angular.copy(service.applicationData),
+                trialMeasurement: angular.copy(service.trialMeasurement)
             };
 
             // 5 is the group no of treatment factors
-			TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors, 5);
+            TrialSettingsManager.addDynamicFilterObj(service.currentData.treatmentFactors, 5);
 
             // setup view-data specific properties to setting variables
-			var setupSettingsVariables = function() {
-				_.each(service.settings, function(val) {
+            var setupSettingsVariables = function () {
+                _.each(service.settings, function (val) {
                     if (val instanceof angular.OrderedHash) {
-						_.find(val.vals(), function(_val) {
+                        _.find(val.vals(), function (_val) {
                             _val.existingData = true;
                             _val.isChecked = false;
                         });
 
                     } else {
-						_.each(val, function(_val) {
+                        _.each(val, function (_val) {
 
                             if (_val instanceof angular.OrderedHash) {
-								_.find(_val.vals(), function(__val) {
+                                _.find(_val.vals(), function (__val) {
                                     __val.existingData = true;
                                     __val.isChecked = false;
                                 });
@@ -801,20 +817,20 @@
         }
     ])
 
-    .service('TrialSettingsManager', ['TRIAL_VARIABLE_SELECTION_LABELS', function(TRIAL_VARIABLE_SELECTION_LABELS) {
-        var TrialSettingsManager = window.TrialSettingsManager;
-        var settingsManager = new TrialSettingsManager(TRIAL_VARIABLE_SELECTION_LABELS);
+        .service('TrialSettingsManager', ['TRIAL_VARIABLE_SELECTION_LABELS', function (TRIAL_VARIABLE_SELECTION_LABELS) {
+            var TrialSettingsManager = window.TrialSettingsManager;
+            var settingsManager = new TrialSettingsManager(TRIAL_VARIABLE_SELECTION_LABELS);
 
-        return {
-			openVariableSelectionDialog: function(params) {
-                settingsManager._openVariableSelectionDialog(params);
-            },
+            return {
+                openVariableSelectionDialog: function (params) {
+                    settingsManager._openVariableSelectionDialog(params);
+                },
 
-            // @param = this map contains variables of the pair that will be filtered
-			addDynamicFilterObj: function(_map, group) {
-                settingsManager._addDynamicFilter(_map, group);
-            }
+                // @param = this map contains variables of the pair that will be filtered
+                addDynamicFilterObj: function (_map, group) {
+                    settingsManager._addDynamicFilter(_map, group);
+                }
 
-        };
-    }]);
+            };
+        }]);
 })();

@@ -1,4 +1,5 @@
 <section xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+
     <div ng-cloak="" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="designMapModal" id="designMapModal" aria-hidden="true">
         <div class="modal-dialog modal-lg" style="min-width: 98%">
             <div class="modal-content" ng-controller="designImportCtrl">
@@ -15,7 +16,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="design-type-select" class="col-md-6 col-sm-8 control-label" th:text="#{design.import.experimental.type.select}"></label>
+                                    <label for="design-type-select" class="col-md-6 col-sm-8 control-label"
+                                           th:text="#{design.import.experimental.type.select}"></label>
 
                                     <div class="col-md-6 col-sm-4">
                                         <select id="design-type-select" ng-model="designType" ng-change="onDesignTypeSelect()">
@@ -39,7 +41,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="design-type-select" class="col-md-7 col-sm-8 control-label" th:text="#{design.import.nursery.design.type.select}"></label>
+                                    <label for="design-type-select" class="col-md-7 col-sm-8 control-label"
+                                           th:text="#{design.import.nursery.design.type.select}"></label>
 
                                     <div class="col-md-5 col-sm-4">
                                         <select id="nursery-type-select" ng-model="selectedNurseryType" ng-change="onNurseryTypeSelect()">
@@ -60,7 +63,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <strong class="sub-content-heading pull-left" th:text="#{design.import.map.column.header}"></strong>
-                            <span class="btn btn-link pull-right" th:text="#{ontology.browser.modal.scale.variable}" ng-click="launchOntologyBrowser()"></span>
+                        <span class="btn btn-link pull-right" th:text="#{ontology.browser.modal.scale.variable}"
+                              ng-click="launchOntologyBrowser()"></span>
                         </div>
                     </div>
                     <div class="row">
@@ -68,11 +72,14 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-4" >
+                        <div class="col-sm-4">
                             <div class="panel panel-danger">
-                                <div class="panel-heading"><b class="panel-title"><span th:text="#{design.import.unmapped.header.group.text}"></span> <span class="badge-danger counter" style="float:right">{{unmappedHeaders.length}}</span></b>
+                                <div class="panel-heading"><b class="panel-title"><span
+                                        th:text="#{design.import.unmapped.header.group.text}"></span> <span class="badge-danger counter"
+                                                                                                            style="float:right">{{unmappedHeaders.length}}</span></b>
                                 </div>
-                                <div class="unmapped list-group" ui-sortable="{ 'connectWith': '.list-group' }" ng-model="data.unmappedHeaders">
+                                <div class="unmapped list-group" ui-sortable="{ 'connectWith': '.list-group' }"
+                                     ng-model="data.unmappedHeaders">
                                     <div class="list-group-item" ng-repeat="header in data.unmappedHeaders">
                                         <h4>{{header.name}}</h4>
                                     </div>
@@ -81,18 +88,26 @@
 
                         </div>
                         <div class="col-sm-8">
-                            <mapping-group th:attr="name=#{design.import.environmental.factors}" data="data.mappedEnvironmentalFactors" variable-type="1020"></mapping-group>
-                            <mapping-group th:attr="name=#{design.import.design.factors}" data="data.mappedDesignFactors" variable-type="1030"></mapping-group>
-                            <mapping-group th:attr="name=#{design.import.germplasm.factors}" data="data.mappedGermplasmFactors" variable-type="1040"></mapping-group>
-                            <mapping-group th:attr="name=#{design.import.traits}" data="data.mappedTraits" variable-type="1043"></mapping-group>
+                            <mapping-group th:attr="name=#{design.import.environmental.factors}" data="data.mappedEnvironmentalFactors"
+                                           variable-type="1020"></mapping-group>
+                            <mapping-group th:attr="name=#{design.import.design.factors}" data="data.mappedDesignFactors"
+                                           variable-type="1030"></mapping-group>
+                            <mapping-group th:attr="name=#{design.import.germplasm.factors}" data="data.mappedGermplasmFactors"
+                                           variable-type="1040"></mapping-group>
+                            <mapping-group th:attr="name=#{design.import.traits}" data="data.mappedTraits"
+                                           variable-type="1043"></mapping-group>
                         </div>
 
                     </div>
 
                 </section>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default closeTrigger" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-                    <button type="button" class="btn btn-primary closeTrigger" th:text="#{common.form.next.text}" ng-click="validateAndSend()">Next</button>
+                    <button type="button" class="btn btn-default closeTrigger" data-dismiss="modal" aria-hidden="true"
+                            th:text="#{common.form.cancel.text}">Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary closeTrigger" th:text="#{common.form.next.text}"
+                            ng-click="validateAndSend()">Next
+                    </button>
                 </div>
             </div>
         </div>
@@ -104,10 +119,10 @@
     <script th:inline="javascript">
         //<![CDATA[
 
-        (function() {
+        (function () {
             angular.module('designImportApp')
                     .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
-                    .constant('VARIABLE_SELECTION_LABELS',{
+                    .constant('VARIABLE_SELECTION_LABELS', {
                         /*ENVIRONMENTAL FACTORS*/
                         1020: {
                             label: /*[[#{design.import.environmental.factors}]]*/ '',
@@ -128,20 +143,20 @@
                             label: /*[[#{design.import.traits}]]*/ '',
                             placeholder: /*[[#{design.import.traits.placeholder}]]*/ ''
                         },
-                        generalAjaxError : /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
-                        variableSelectedMessage : /*[[#{common.warning.variable.in.use}]]*/ '',
-                        invalidAliasError : /*[[#{variable.selection.alias.error}]]*/ ''
+                        generalAjaxError: /*[[#{nursery.managesettings.variable.selection.error}]]*/ '',
+                        variableSelectedMessage: /*[[#{common.warning.variable.in.use}]]*/ '',
+                        invalidAliasError: /*[[#{variable.selection.alias.error}]]*/ ''
                     })
-                    /* INTERNATIONALIZED MESSAGES HERE */
-                    .constant('Messages',{
-                        YES:  /*[[#{common.form.yes.text}]]*/ 'Yes',
+                /* INTERNATIONALIZED MESSAGES HERE */
+                    .constant('Messages', {
+                        YES: /*[[#{common.form.yes.text}]]*/ 'Yes',
                         NO: /*[[#{common.form.no.text}]]*/ 'No',
-                        REQUIRED : /*[[#{common.form.required.text}]]*/ 'Required',
+                        REQUIRED: /*[[#{common.form.required.text}]]*/ 'Required',
                         SELECT_TEXT: /*[[#{common.form.select.text}]]*/ 'Select',
-                        OWN_DESIGN : /*[[#{design.import.own.design}]]*/ 'Own Design',
-                        DESIGN_MAPPING_ERROR_HEADER : /*[[#{design.import.mapping.error.header}]]*/ 'DESIGN_MAPPING_ERROR_HEADER',
-                        OWN_DESIGN_SELECT_WARNING : /*[[#{design.import.own.design.select.warning}]]*/ 'OWN_DESIGN_SELECT_WARNING',
-                        DESIGN_IMPORT_MISSING_MAPPING : /*[[#{design.import.missing.mapping}]]*/ '',
+                        OWN_DESIGN: /*[[#{design.import.own.design}]]*/ 'Own Design',
+                        DESIGN_MAPPING_ERROR_HEADER: /*[[#{design.import.mapping.error.header}]]*/ 'DESIGN_MAPPING_ERROR_HEADER',
+                        OWN_DESIGN_SELECT_WARNING: /*[[#{design.import.own.design.select.warning}]]*/ 'OWN_DESIGN_SELECT_WARNING',
+                        DESIGN_IMPORT_MISSING_MAPPING: /*[[#{design.import.missing.mapping}]]*/ '',
                         DESIGN_IMPORT_CONFLICT_ALERT_HEADER: /*[[#{design.import.conflict.header}]]*/ 'Overwrite Measurements?',
                         DESIGN_IMPORT_CONFLICT_ALERT_MESSAGE: /*[[#{design.import.conflict.message}]]*/ 'Existing measurements will not be preserved, do you want to continue?'
                     });

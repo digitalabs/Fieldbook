@@ -346,7 +346,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		}
 
 		if (this._variableSelectBtnIco) {
-			propertyVariableList.find('.vs-variable-select-icon').switchClass('glyphicon-plus',this._variableSelectBtnIco);
+			propertyVariableList.find('.vs-variable-select-icon').switchClass('glyphicon-plus', this._variableSelectBtnIco);
 		}
 
 		if (this._noAlias) {
@@ -453,7 +453,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			selectedVariable.cvTermId = variableId;
 
 			callback({
-				responseData : [{variable : selectedVariable}]
+				responseData: [{variable: selectedVariable}]
 			});
 		} else {
 			$.ajax({

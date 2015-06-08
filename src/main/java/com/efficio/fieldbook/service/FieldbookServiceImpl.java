@@ -896,6 +896,7 @@ public class FieldbookServiceImpl implements FieldbookService {
   		}
   	}
     
+    @Override
     public void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
 		if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
 				&& !workbook.getTrialConditions().isEmpty()) {
@@ -918,24 +919,32 @@ public class FieldbookServiceImpl implements FieldbookService {
                         String pairId = idNameMap.get(String.valueOf(variable.getTermId()));
                         if (pairId == null) {
                             pairId = nameIdMap.get(String.valueOf(variable.getTermId()));
-                            idTerm = Integer.valueOf(pairId);
-                        }
-                        MeasurementData pairData = row.getMeasurementData(Integer.valueOf(pairId));
 
-                        MeasurementData idData = row.getMeasurementData(idTerm);
-                        if (idData != null) {
-							List<ValueReference> possibleValues = this.getVariablePossibleValues(idData.getMeasurementVariable());
-                            for (ValueReference ref : possibleValues) {
-                                if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(pairData.getValue())) {
-                                    actualNameVal = ref.getName();
-                                    break;
-                                }
+                            if (pairId != null){
+ 
+                            	idTerm = Integer.valueOf(pairId);
+                            	
+                            	 MeasurementData pairData = row.getMeasurementData(Integer.valueOf(pairId));
+
+                                 MeasurementData idData = row.getMeasurementData(idTerm);
+                                 
+                                 if (idData != null) {
+                                 	List<ValueReference> possibleValues = getVariablePossibleValues(idData.getMeasurementVariable());
+                                     for (ValueReference ref : possibleValues) {
+                                         if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(pairData.getValue())) {
+                                             actualNameVal = ref.getName();
+                                             break;
+                                         }
+                                     }
+                                 }
                             }
+                            
                         }
-
+                       
                         MeasurementData newData = new MeasurementData(variable.getName(), actualNameVal);
                         newData.setMeasurementVariable(variable);
                         row.getDataList().add(index, newData);
+                        
                     } else if (nameIdMap.get(String.valueOf(variable.getTermId())) != null) {
                         Integer idTerm = Integer.valueOf(nameIdMap.get(String.valueOf(variable.getTermId())));
                         MeasurementData idData = row.getMeasurementData(idTerm);

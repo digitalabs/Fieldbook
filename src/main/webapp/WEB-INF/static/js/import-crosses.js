@@ -1,4 +1,7 @@
-/*globals isNursery, showErrorMessage, crossingImportErrorHeader, crossingSaveNurseryBeforeImport*/
+/*globals isNursery, showErrorMessage, crossingImportErrorHeader, crossingSaveNurseryBeforeImport */
+/*globals createErrorNotification, BMS, invalidImportedFile, getCurrentAdvanceTabTempIdentifier */
+/*globals BreedingMethodsFunctions, LocationsFunctions, getJquerySafeId */
+/*globals ajaxGenericErrorMsg, crossingExportErrorHeader */
 
 var ImportCrosses = {
 	CROSSES_URL: '/Fieldbook/crosses',
@@ -7,6 +10,7 @@ var ImportCrosses = {
 	preservePlotDuplicates: false,
 	showPopup: function() {
 		'use strict';
+
 		if ($('#studyId').val() === undefined && isNursery()) {
 			showErrorMessage(crossingImportErrorHeader,
 						crossingSaveNurseryBeforeImport);
@@ -26,7 +30,6 @@ var ImportCrosses = {
 			showErrorMessage('', 'Please choose a file to import');
 			return false;
 		}
-
 		ImportCrosses.submitImport($('.import-crosses-section')).done(function(resp) {
 
 			if (!resp.isSuccess) {
@@ -73,6 +76,7 @@ var ImportCrosses = {
 	},
 
 	goBackToPage: function(hiddenModalSelector, shownModalSelector) {
+		'use strict';
 		$(hiddenModalSelector).modal('hide');
 		$(shownModalSelector).modal({ backdrop: 'static', keyboard: true });
 	},
@@ -120,7 +124,7 @@ var ImportCrosses = {
 		'use strict';
 		if (ImportCrosses.hasPlotDuplicate()) {
 			//show the confirmation now
-			$('#duplicate-crosses-modal input[type=checkbox]').prop('checked',ImportCrosses.preservePlotDuplicates);
+			$('#duplicate-crosses-modal input[type=checkbox]').prop('checked', ImportCrosses.preservePlotDuplicates);
 
 			$('#duplicate-crosses-modal').modal({ backdrop: 'static', keyboard: true });
 
@@ -136,11 +140,14 @@ var ImportCrosses = {
 		}
 	},
 	showImportSettingsPopup: function() {
+		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
 
-		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
-		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox', ImportCrosses.showFavoriteLoationsOnly);
+		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown',
+			'showFavoritesOnlyCheckbox', ImportCrosses.showFavoriteMethodsOnly);
+		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown',
+			'locationFavoritesOnlyCheckbox', ImportCrosses.showFavoriteLoationsOnly);
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 		ImportCrosses.updateSampleParentageDesignation();
 
@@ -159,17 +166,18 @@ var ImportCrosses = {
 		$('#goBackToOpenCrossesButton').on('click', function() {
 			ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(':checked');
 			ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(':checked');
-			ImportCrosses.goBackToPage('#crossSettingsModal','#openCrossesListModal');
+			ImportCrosses.goBackToPage('#crossSettingsModal', '#openCrossesListModal');
 		});
 	},
 
 	updateSampleParentageDesignation: function() {
+		'use strict';
 		var value = $('#parentageDesignationSeparator').val();
 		$('#sampleParentageDesignation').text('ABC-123' + value + 'DEF-456');
 	},
 
 	processImportSettingsDropdown: function(dropdownID, useSettingsCheckboxID) {
-
+		'use strict';
 		ImportCrosses.retrieveAvailableImportSettings().done(function(settingList) {
 			ImportCrosses.createAvailableImportSettingsDropdown(dropdownID, settingList);
 
@@ -187,11 +195,12 @@ var ImportCrosses = {
 				ImportCrosses.updateDisplayedSequenceNameValue();
 				ImportCrosses.updateSampleParentageDesignation();
 			});
-		}).fail(function(data) {
+		}).fail(function() {
 		});
 	},
 
 	triggerImportSettingUpdate: function(settingList, dropdownID, useSettingsCheckboxID) {
+		'use strict';
 		if ($('#' + getJquerySafeId(useSettingsCheckboxID)).is(':checked')) {
 			var currentSelectedItem = $('#' + dropdownID).select2('val');
 
@@ -204,7 +213,7 @@ var ImportCrosses = {
 	},
 
 	updateImportSettingsFromSavedSetting: function(setting) {
-
+		'use strict';
 		$('#presetName').val(setting.name);
 		$('#breedingMethodDropdown').select2('val', setting.breedingMethodID);
 		$('#useSelectedMethodCheckbox').prop('checked', !setting.basedOnStatusOfParentalLines);
@@ -220,6 +229,7 @@ var ImportCrosses = {
 	},
 
 	openBreedingMethodsModal: function() {
+		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal('hide');
 		crossSettingsPopupModal.data('open', '1');
@@ -228,6 +238,7 @@ var ImportCrosses = {
 	},
 
 	openLocationsModal: function() {
+		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal('hide');
 		crossSettingsPopupModal.data('open', '1');
@@ -236,6 +247,7 @@ var ImportCrosses = {
 	},
 
 	createAvailableImportSettingsDropdown: function(dropdownID, settingList) {
+		'use strict';
 		var possibleValues = [];
 		$.each(settingList, function(index, setting) {
 			possibleValues.push(ImportCrosses.convertSettingToSelect2Item(setting));
@@ -245,7 +257,7 @@ var ImportCrosses = {
 			{
 				initSelection: function(element, callback) {
 					$.each(possibleValues, function(index, value) {
-						if (value.id == element.val()) {
+						if (value.id === element.val()) {
 							callback(value);
 						}
 					});
@@ -266,14 +278,16 @@ var ImportCrosses = {
 	},
 
 	convertSettingToSelect2Item: function(setting) {
+		'use strict';
 		return {
-			'id': setting.name,
-			'text': setting.name,
-			'description': setting.name
+			id: setting.name,
+			text: setting.name,
+			description: setting.name
 		};
 	},
 
 	retrieveAvailableImportSettings: function() {
+		'use strict';
 		return $.ajax({
 			url: ImportCrosses.CROSSES_URL + '/retrieveSettings',
 			type: 'GET',
@@ -282,6 +296,7 @@ var ImportCrosses = {
 	},
 
 	submitCrossImportSettings: function() {
+		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
 		if (ImportCrosses.isCrossImportSettingsValid(settingData)) {
@@ -294,7 +309,7 @@ var ImportCrosses = {
 
 			$.ajax({
 				headers: {
-					'Accept': 'application/json',
+					Accept: 'application/json',
 					'Content-Type': 'application/json'
 				},
 				url: targetURL,
@@ -302,7 +317,7 @@ var ImportCrosses = {
 				cache: false,
 				data: JSON.stringify(settingData),
 				success: function(data) {
-					if (data.success == '0') {
+					if (data.success === '0') {
 						showErrorMessage('', 'Import failed');
 					} else {
 						$('#crossSettingsModal').modal('hide');
@@ -315,6 +330,7 @@ var ImportCrosses = {
 	},
 
 	isCrossImportSettingsValid: function(importSettings) {
+		'use strict';
 		var valid = true;
 		if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
 			valid = false;
@@ -326,7 +342,8 @@ var ImportCrosses = {
 			showErrorMessage('', 'Separator for parentage designation is required');
 		}
 
-		if (!importSettings.additionalDetailsSetting.harvestLocationId || importSettings.additionalDetailsSetting.harvestLocationId === '') {
+		if (!importSettings.additionalDetailsSetting.harvestLocationId ||
+			importSettings.additionalDetailsSetting.harvestLocationId === '') {
 			valid = false;
 			showErrorMessage('', 'Harvest location is required');
 		}
@@ -340,6 +357,7 @@ var ImportCrosses = {
 	},
 
 	updateDisplayedSequenceNameValue: function() {
+		'use strict';
 		ImportCrosses.retrieveNextNameInSequence().done(function(data) {
 			if (data.success === '1') {
 				$('#importNextSequenceName').text(data.sequenceValue);
@@ -352,28 +370,30 @@ var ImportCrosses = {
 	},
 
 	retrieveNextNameInSequence: function() {
+		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
 		return $.ajax({
 			headers: {
-				'Accept': 'application/json',
+				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
-			'url': ImportCrosses.CROSSES_URL + '/generateSequenceValue',
-			'type': 'POST',
-			'data': JSON.stringify(settingData),
-			'cache': false
+			url: ImportCrosses.CROSSES_URL + '/generateSequenceValue',
+			type: 'POST',
+			data: JSON.stringify(settingData),
+			cache: false
 		});
 	},
 
 	constructSettingsObjectFromForm: function() {
+		'use strict';
 		var settingObject = {};
 		settingObject.name = $('#presetName').val();
 
 		settingObject.breedingMethodSetting = {};
 		settingObject.breedingMethodSetting.methodId = $('#breedingMethodDropdown').select2('val');
 
-		if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId == '') {
+		if (!settingObject.breedingMethodSetting.methodId || settingObject.breedingMethodSetting.methodId === '') {
 			settingObject.breedingMethodSetting.methodId = null;
 		}
 
@@ -382,8 +402,8 @@ var ImportCrosses = {
 		settingObject.crossNameSetting = {};
 		settingObject.crossNameSetting.prefix = $('#crossPrefix').val();
 		settingObject.crossNameSetting.suffix = $('#crossSuffix').val();
-		settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = $('input:radio[name=hasPrefixSpace]:checked').val() == 'true';
-		settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode= $('input:radio[name=hasSuffixSpace]:checked').val() == 'true';
+		settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = $('input:radio[name=hasPrefixSpace]:checked').val() === 'true';
+		settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode = $('input:radio[name=hasSuffixSpace]:checked').val() === 'true';
 		settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
 		settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
 		settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
@@ -399,6 +419,7 @@ var ImportCrosses = {
 	},
 
 	populateHarvestMonthDropdown: function(dropdownID) {
+		'use strict';
 		ImportCrosses.retrieveHarvestMonths().done(function(monthData) {
 			var dropdownSelect = $('#' + dropdownID);
 			dropdownSelect.empty();
@@ -412,6 +433,7 @@ var ImportCrosses = {
 	},
 
 	populateHarvestYearDropdown: function(dropdownID) {
+		'use strict';
 		ImportCrosses.retrieveHarvestYears().done(function(yearData) {
 			var dropdownData = [];
 			var dropdownSelect = $('#' + dropdownID);
@@ -433,6 +455,7 @@ var ImportCrosses = {
 	},
 
 	retrieveHarvestMonths: function() {
+		'use strict';
 		return $.ajax({
 			url: ImportCrosses.CROSSES_URL + '/getHarvestMonths',
 			type: 'GET',
@@ -441,6 +464,7 @@ var ImportCrosses = {
 	},
 
 	retrieveHarvestYears: function() {
+		'use strict';
 		return $.ajax({
 			url: ImportCrosses.CROSSES_URL + '/getHarvestYears',
 			type: 'GET',
@@ -449,6 +473,7 @@ var ImportCrosses = {
 	},
 
 	exportCrosses: function() {
+		'use strict';
 		return $.ajax({
 			url: ImportCrosses.CROSSES_URL + '/export',
 			type: 'GET',
@@ -457,6 +482,7 @@ var ImportCrosses = {
 	},
 
 	downloadCrosses: function() {
+		'use strict';
 		ImportCrosses.exportCrosses().done(function(result) {
 			if (result.isSuccess) {
 				var downloadUrl = ImportCrosses.CROSSES_URL + '/download/file';
@@ -508,12 +534,18 @@ var ImportCrosses = {
 				close,
 				aHtml;
 				uniqueId = crossesListId;
-				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="' + uniqueId + '" onclick="javascript: closeAdvanceListTab(' + uniqueId + ')"></i>';
-				aHtml = '<a id="advance-list' + uniqueId + '" role="tab" class="advanceList crossesList crossesList' + uniqueId + '" data-toggle="tab" href="#advance-list' + uniqueId + '" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
+				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="' + uniqueId +
+					'" onclick="javascript: closeAdvanceListTab(' + uniqueId + ')"></i>';
+				aHtml = '<a id="advance-list' + uniqueId + '" role="tab" class="advanceList crossesList crossesList' +
+					uniqueId + '" data-toggle="tab" href="#advance-list' + uniqueId +
+					'" data-list-id="' + uniqueId + '">Crosses: [' + listName + ']' + close + '</a>';
 				var stockHtml = '<div id="stock-content-pane' + uniqueId + '" class="stock-list' + uniqueId + '"></div>';
-				$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId + '-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
-				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list' + uniqueId + '" id="advance-list' + uniqueId + '">' + html + '</div>');
-				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list' + uniqueId + '" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
+				$('#create-nursery-tab-headers').append('<li id="advance-list' + uniqueId +
+					'-li" class="advance-germplasm-items crosses-list">' + aHtml + '</li>');
+				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list' +
+					uniqueId + '" id="advance-list' + uniqueId + '">' + html + '</div>');
+				$('#create-nursery-tabs').append('<div class="tab-pane info crosses-list' +
+					uniqueId + '" id="stock-tab-pane' + uniqueId + '">' + stockHtml + '</div>');
 				$('a#advance-list' + uniqueId).tab('show');
 				$('#advance-list' + uniqueId + '.tab-pane.info').addClass('active');
 				$('.nav-tabs').tabdrop('layout');
@@ -550,6 +582,7 @@ var ImportCrosses = {
 };
 
 $(document).ready(function() {
+	'use strict';
 	$('.import-crosses').off('click');
 	$('.btn-import-crosses').off('click');
 	$('.import-crosses').on('click', ImportCrosses.showPopup);

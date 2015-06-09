@@ -51,6 +51,8 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -341,9 +343,12 @@ public class OpenTrialController extends BaseTrialController {
 						this.userSelection.getExperimentalDesignVariables());
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
+			
 			this.userSelection.setMeasurementRowList(null);
 			this.userSelection.getWorkbook().setOriginalObservations(null);
 			this.userSelection.getWorkbook().setObservations(null);
+			
+			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments() , workbook, userSelection.getTemporaryWorkbook().getTrialObservations());
 		}
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
@@ -748,4 +753,5 @@ public class OpenTrialController extends BaseTrialController {
 
 		return filteredObservations;
 	}
+	
 }

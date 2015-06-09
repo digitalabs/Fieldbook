@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -21,7 +21,6 @@ import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -45,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -78,6 +78,9 @@ public class DesignImportController extends SettingsController {
 
 	@Resource
 	private DesignImportService designImportService;
+	
+	@Resource 
+	private SettingsService settingsService;
 	
 	@Resource
     private MessageSource messageSource;
@@ -322,13 +325,17 @@ public class DesignImportController extends SettingsController {
 			
 			userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 			
-			addFactors(workbook, designImportData);
+			addFactorsIfNecessary(workbook, designImportData);
+			
+			addConditionsIfNecessary(workbook, designImportData);
 
 			addVariates(workbook, designImportData);
 
 			addExperimentDesign(workbook);
 			
-			populateTrialLevelVariableList(workbook);
+			populateTrialLevelVariableListIfNecessary(workbook);
+			
+			populateStudyLevelVariableListIfNecessary(workbook);
 
 			createTrialObservations(environmentData, workbook, designImportData);
 
@@ -362,13 +369,37 @@ public class DesignImportController extends SettingsController {
 		SettingsUtil.addTrialCondition(termId, designParam, workbook, fieldbookMiddlewareService);
 	}
 
-	protected void addFactors(Workbook workbook, DesignImportData designImportData) {
-		Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
-		uniqueFactors.addAll(designImportService
-				.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,
-						designImportData.getMappedHeaders()));
-		workbook.getFactors().clear();
-		workbook.getFactors().addAll((new ArrayList<>(uniqueFactors)));
+	protected void addFactorsIfNecessary(Workbook workbook, DesignImportData designImportData) {
+		
+		if (workbook.getStudyDetails().getStudyType() == StudyType.T){
+			
+			Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
+			uniqueFactors.addAll(designImportService
+					.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,
+							designImportData.getMappedHeaders()));
+			
+			workbook.getFactors().clear();
+			workbook.getFactors().addAll((new ArrayList<>(uniqueFactors)));
+			
+		}
+		
+		
+	}
+	
+	private void addConditionsIfNecessary(Workbook workbook, DesignImportData designImportData) {
+		
+		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
+			
+			Set<MeasurementVariable> uniqueConditions = new HashSet<>(workbook.getConditions());
+			uniqueConditions.addAll(designImportService
+					.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,
+							designImportData.getMappedHeaders()));
+			
+			workbook.getConditions().clear();
+			workbook.getConditions().addAll((new ArrayList<>(uniqueConditions)));
+		
+		}
+		
 	}
 
 	protected void addVariates(Workbook workbook, DesignImportData designImportData) {
@@ -380,7 +411,7 @@ public class DesignImportController extends SettingsController {
 		workbook.getVariates().addAll((new ArrayList<>(uniqueVariates)));
 	}
 
-	protected void populateTrialLevelVariableList(Workbook workbook) throws MiddlewareQueryException,
+	protected void populateTrialLevelVariableListIfNecessary(Workbook workbook) throws MiddlewareQueryException,
 			Exception {
 		// retrieve all trial level factors and convert them to setting details
 		Set<MeasurementVariable> trialLevelFactors = new HashSet<>();
@@ -390,12 +421,29 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 		
-		List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(new ArrayList<MeasurementVariable>(trialLevelFactors), fieldbookMiddlewareService);
-		populateThePossibleValues(newDetails);
+		List<SettingDetail> newDetails = new ArrayList<>();
+		
+		for (MeasurementVariable mvar : trialLevelFactors){
+			SettingDetail newDetail = settingsService.createSettingDetail(mvar.getTermId(), mvar.getName(), userSelection, this.getCurrentIbdbUserId() , this.getCurrentProject().getUniqueID());
+			newDetail.setDeletable(true);
+			newDetails.add(newDetail);
+		}
+		
 		addNewSettingDetailsIfNecessary(newDetails);
+
+	}
+	
+	private void populateStudyLevelVariableListIfNecessary(Workbook workbook) throws MiddlewareQueryException {
+		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
+			
+			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(new ArrayList<MeasurementVariable>(workbook.getConditions()), fieldbookMiddlewareService);
+			for (SettingDetail set : newDetails){
+				set.getVariable().setOperation(Operation.ADD);
+			}
+			userSelection.getStudyLevelConditions().clear();
+			userSelection.getStudyLevelConditions().addAll(newDetails);
+		}
 		
-		
-		//SettingsUtil.addNewSettingDetails(AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt(), newDetails, userSelection);
 	}
 
 	private void addNewSettingDetailsIfNecessary(List<SettingDetail> newDetails) {
@@ -404,13 +452,22 @@ public class DesignImportController extends SettingsController {
 			userSelection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
 		}
 		
+		
 		for (SettingDetail settingDetail : newDetails){
+			
+			boolean isExisting = false;
+			
 			for (SettingDetail settingDetailFromUserSelection : userSelection.getTrialLevelVariableList()){
 				if (settingDetail.getVariable().getCvTermId().intValue() == settingDetailFromUserSelection.getVariable().getCvTermId().intValue()){
-					return;
+					isExisting = true;
+					break;
 				}
 			}
-			userSelection.getTrialLevelVariableList().add(settingDetail);
+			
+			if (!isExisting){
+				userSelection.getTrialLevelVariableList().add(settingDetail);
+			}
+			
 		}
 		
 		
@@ -421,7 +478,10 @@ public class DesignImportController extends SettingsController {
 		
 		//get the Experiment Design MeasurementVariable
 		Set<MeasurementVariable> trialVariables = new HashSet<>(workbook.getTrialFactors());
-		for (MeasurementVariable trialCondition :workbook.getTrialConditions()){
+		
+		trialVariables.addAll(workbook.getConstants());
+		
+		for (MeasurementVariable trialCondition : workbook.getTrialConditions()){
 			if (trialCondition.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()){
 				trialVariables.add(trialCondition);
 			}
@@ -441,18 +501,7 @@ public class DesignImportController extends SettingsController {
 		}
 		
 	}
-	
-	private void populateThePossibleValues(List<SettingDetail> newDetails) throws MiddlewareQueryException {
-		for (SettingDetail settingDetail : newDetails){
-			
-			List<ValueReference> possibleValues =
-					fieldbookService.getAllPossibleValues(settingDetail.getVariable().getCvTermId());
-			settingDetail.setPossibleValues(possibleValues);
-			settingDetail.setDeletable(true);
-			
-		}
-		
-	}
+
 
 	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
     	Map<String, Object> dataMap = new HashMap<>();
@@ -575,13 +624,16 @@ public class DesignImportController extends SettingsController {
 						Location location = fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
 						copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
 						
-						SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT)));
+						String headerName = getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+						String standardVariableName = getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+						
+						SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName);
 						addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 						
 						MeasurementVariable measurementVariable = null;
 						StandardVariable var = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(termId));
 						measurementVariable = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
-						measurementVariable.setName("LOCATION_NAME_ID");
+						measurementVariable.setName(standardVariableName + AppConstants.ID_SUFFIX.getString());
 						trialVariables.add(measurementVariable);
 
 						copyOfManagementDetailValues.remove(managementDetail.getKey());
@@ -596,13 +648,16 @@ public class DesignImportController extends SettingsController {
 						
 						copyOfManagementDetailValues.put(termId, String.valueOf(super.getCurrentIbdbUserId()));
 						
-						SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT)));
+						String headerName = getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+						String standardVariableName = getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+						
+						SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName);
 						addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 						
 						MeasurementVariable measurementVariable = null;
 						StandardVariable var = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(termId));
 						measurementVariable = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
-						measurementVariable.setName("COOPERATOR_ID");
+						measurementVariable.setName(standardVariableName + AppConstants.ID_SUFFIX.getString());
 						trialVariables.add(measurementVariable);
 						
 						copyOfManagementDetailValues.remove(managementDetail.getKey());
@@ -630,6 +685,7 @@ public class DesignImportController extends SettingsController {
 		
 	}
 
+
 	private Enumeration findInEnumeration(String value, List<Enumeration> enumerations) {
 		for (Enumeration enumeration : enumerations){
 			if (enumeration.getName().equalsIgnoreCase(value)){
@@ -656,6 +712,15 @@ public class DesignImportController extends SettingsController {
 		for (DesignHeaderItem item : items){
 			if (item.getId() == termId){
 				return item.getName();
+			}
+		}
+		return "";
+	}
+	
+	private String getStandardVariableName(Integer termId, List<DesignHeaderItem> items) {
+		for (DesignHeaderItem item : items){
+			if (item.getId() == termId){
+				return item.getVariable().getName();
 			}
 		}
 		return "";

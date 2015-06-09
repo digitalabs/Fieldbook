@@ -167,7 +167,7 @@ public class DesignImportServiceImplTest {
 
 		this.service.addVariatesToMeasurementRows(this.workbook, measurements);
 
-		Assert.assertEquals("The size of the data list should be 12 since 2 variates are added", 12, measurements.get(0).getDataList()
+		Assert.assertEquals("The size of the data list should be 13 since 2 variates are added", 13, measurements.get(0).getDataList()
 				.size());
 
 	}

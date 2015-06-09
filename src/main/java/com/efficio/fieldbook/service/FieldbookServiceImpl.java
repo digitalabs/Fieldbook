@@ -509,8 +509,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return null;
 	}
 
-	private String getBreedingMethodByCode(String code) throws MiddlewareQueryException {
-		Method method = this.fieldbookMiddlewareService.getMethodByCode(code);
+	protected String getBreedingMethodByCode(String code) throws MiddlewareQueryException {
+		Method method = this.fieldbookMiddlewareService.getMethodByCode(code,
+				contextUtil.getCurrentProgramUUID());
 		if (method != null) {
 			return method.getMname() + " - " + method.getMcode();
 		}

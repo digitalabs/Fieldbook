@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -92,6 +93,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
 	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public ImportResult importWorkbook(Workbook workbook, String filename, OntologyService ontologyService,
@@ -320,7 +324,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				MeasurementVariable tempVarCode = tempObjCode != null ? (MeasurementVariable) tempObjCode : null;
 				MeasurementVariable tempVarName = tempObjName != null ? (MeasurementVariable) tempObjName : null;
 				if (tempVarCode != null && !"".equalsIgnoreCase(tempVarCode.getValue())) {
-					Method method = this.fieldbookMiddlewareService.getMethodByCode(tempVarCode.getValue());
+					Method method = this.fieldbookMiddlewareService.getMethodByCode(tempVarCode.getValue(),
+							contextUtil.getCurrentProgramUUID());
 					if (tempVarName != null) {
 						tempVarName.setValue(method != null ? method.getMname() : "");
 					}

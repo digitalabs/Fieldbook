@@ -653,7 +653,7 @@ public class SettingsUtil {
 							} else if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId()))
 									&& condition.getValue() != null && !condition.getValue().isEmpty()) {
 								// set the value of code to ID for it to be selected in the popup
-								Method method = fieldbookMiddlewareService.getMethodByCode(condition.getValue());
+								Method method = fieldbookMiddlewareService.getMethodByCode(condition.getValue(),programUUID);
 								if (method != null) {
 									settingDetail.setValue(String.valueOf(method.getMid()));
 								} else {

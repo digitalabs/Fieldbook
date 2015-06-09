@@ -775,7 +775,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					}
 				}
 			}
-
+			String programUUID = contextUtil.getCurrentProgramUUID();
 			StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
 			if (tokenizer.hasMoreTokens()) {
 				// we iterate it
@@ -786,16 +786,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					String codeTermId = tokenizerPair.nextToken();
 					String nameTermId = tokenizerPair.nextToken();
 
-					Method method = null;
-					if (studyConditionMap.get(idTermId) != null) {
-						method =
-								studyConditionMap.get(idTermId).getValue().isEmpty() ? null : this.fieldbookMiddlewareService
-										.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
-					} else if (studyConditionMap.get(codeTermId) != null) {
-						method =
-								studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : this.fieldbookMiddlewareService
-										.getMethodByCode(studyConditionMap.get(codeTermId).getValue());
-					}
+					Method method = getMethod(studyConditionMap,idTermId,codeTermId,programUUID);
+					
 
 					// add code to the removed conditions if code is not yet in the list
 					if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null
@@ -812,6 +804,22 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				}
 			}
 		}
+	}
+
+	protected Method getMethod(Map<String, MeasurementVariable> studyConditionMap, 
+			String idTermId, String codeTermId, String programUUID) throws MiddlewareQueryException {
+		Method method = null;
+		if (studyConditionMap.get(idTermId) != null) {
+			method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : 
+						this.fieldbookMiddlewareService.getMethodById(
+								Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
+		} else if (studyConditionMap.get(codeTermId) != null) {
+			method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : 
+						this.fieldbookMiddlewareService.getMethodByCode(
+								studyConditionMap.get(codeTermId).getValue(),
+									programUUID);
+		}
+		return method;
 	}
 
 	private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap,
@@ -936,5 +944,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected void setUserSelection(UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+	
+	
 
 }

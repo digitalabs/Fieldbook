@@ -22,6 +22,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.UserDataManager;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -576,5 +577,52 @@ public class FieldbookServiceTest {
 
 		String expected = person.getDisplayName();
 		Assert.assertEquals("Expecting to return " + expected + " but returned " + actualValue, expected, actualValue);
+	}
+	
+	@Test
+	public void testGetBreedingMethodByCode() throws MiddlewareQueryException {
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
+		fieldbookService.setContextUtil(contextUtil);
+		String name = "Accession into genebank";
+		String code = "AGB1";
+		String programUUID = null;
+		Method method = createMethod(name,code,programUUID);
+		Mockito.doReturn(method).when(fieldbookMiddlewareService).
+			getMethodByCode(code,programUUID);
+		Mockito.doReturn(programUUID).when(contextUtil).getCurrentProgramUUID();
+		String actualValue = fieldbookService.getBreedingMethodByCode(code);
+		String expected = method.getMname() + " - " + method.getMcode();
+		Assert.assertEquals("Expecting to return " + expected + " but returned " + actualValue, expected, actualValue);
+		
+	}
+	
+	@Test
+	public void testGetBreedingMethodByCode_NullMethod() throws MiddlewareQueryException {
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		fieldbookService.setContextUtil(Mockito.mock(ContextUtil.class));
+		ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
+		fieldbookService.setContextUtil(contextUtil);
+		String code = "TESTCODE";
+		String programUUID = "6c87aaae-9e0f-428b-a364-44fab9fa7fd1";
+		Mockito.doReturn(null).when(fieldbookMiddlewareService).
+			getMethodByCode(code,programUUID);
+		Mockito.doReturn(programUUID).when(contextUtil).getCurrentProgramUUID();
+		String actualValue = fieldbookService.getBreedingMethodByCode(code);
+		String expected = "";
+		Assert.assertEquals("Expecting to return " + expected + " but returned " + actualValue, expected, actualValue);
+		
+	}
+
+	private Method createMethod(String name,String code,String uniqueID) {
+		Method method = new Method();
+		method.setMname(name);
+		method.setMcode(code);
+		method.setUniqueID(uniqueID);
+		return method;
 	}
 }

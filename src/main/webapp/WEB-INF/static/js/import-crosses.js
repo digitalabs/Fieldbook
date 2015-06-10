@@ -58,7 +58,11 @@ var ImportCrosses = {
 
 		ImportCrosses.getImportedCrossesTable().done(function(response) {
 			setTimeout(function() {
-				new  BMS.Fieldbook.PreviewCrossesDataTable('#preview-crosses-table', response);
+				var tableName = '#preview-crosses-table';
+				$('.cross-preview-section').html('');
+				var $clone = $('#preview-crosses-table-template').clone().removeClass('fbk-hide').attr('id', 'preview-crosses-table');
+				$('.cross-preview-section').append($clone);
+				new  BMS.Fieldbook.PreviewCrossesDataTable(tableName, response);
 			}, 240);
 		});
 

@@ -93,7 +93,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	public static final String GERMPLASM_LIST_TYPE_ADVANCE = "advance";
 	public static final String GERMPLASM_LIST_TYPE_CROSS = "cross";
-
+	public static final String NODE_NONE = "None";
 	/**
 	 * The Constant BATCH_SIZE.
 	 */
@@ -937,8 +937,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		List<String> states = new ArrayList<String>();
 		String status = "OK";
 		try {
-			for (int index = 0; index < expandedNodes.length; index++) {
-				states.add(expandedNodes[index]);
+			if(!NODE_NONE.equalsIgnoreCase(expandedNodes[0])){				
+				for (int index = 0; index < expandedNodes.length; index++) {
+					states.add(expandedNodes[index]);
+				}
 			}
 			this.userProgramStateDataManager.saveOrUpdateUserProgramTreeState(
 					this.contextUtil.getCurrentWorkbenchUserId(),

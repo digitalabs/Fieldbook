@@ -42,8 +42,9 @@ var TreePersist = {
 		'use strict';
 		var expandedNodesState = TreePersist.retrieveExpandedNodes(isTreeTable,
 				containerSection);
+		
 		if (expandedNodesState.length === 0) {
-			return;
+			expandedNodesState = ['None'];
 		}
 		$.ajax({
 			url : '/Fieldbook/ListTreeManager/save/state/' + listType,
@@ -70,6 +71,7 @@ var TreePersist = {
 	},
 	preLoadTreeState : function(isTreeTable, containerSection, listType) {
 		'use strict';
+		
 		var expandedNodes = [];
 		var index, key;
 		$.ajax({
@@ -82,7 +84,9 @@ var TreePersist = {
 				expandedNodes = $.parseJSON(data);
 			}
 		});
-
+		if(expandedNodes.length == 1 && expandedNodes[0] === ''){
+			return;
+		}
 		if (isTreeTable) {
 			// we simulate the opening of the folder
 			for (index = 0; index < expandedNodes.length; index++) {

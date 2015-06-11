@@ -26,6 +26,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -539,6 +540,10 @@ public class EditNurseryController extends SettingsController {
 				for (MeasurementData data : workbook.getTrialObservations().get(0).getDataList()) {
 					if (data.getMeasurementVariable().getTermId() == condition.getTermId()) {
 						data.setValue(condition.getValue());
+						if (condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && condition.getValue() != null
+								&& NumberUtils.isNumber(condition.getValue())) {
+							data.setcValueId(condition.getValue());
+						}
 					}
 				}
 			}

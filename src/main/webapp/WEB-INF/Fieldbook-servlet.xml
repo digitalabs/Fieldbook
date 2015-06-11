@@ -392,7 +392,7 @@
         <property name="ruleFactory" ref="ruleFactory"/>
     </bean>
 
-    <bean id="ruleFactory" class="org.generationcp.commons.ruleengine.RuleFactory"
+    <bean id="ruleFactory" class="org.generationcp.commons.ruleengine.ProcessCodeRuleFactory"
           init-method="init"/>
 
     <bean id="ruleConfigProvider"
@@ -412,6 +412,7 @@
          -->
     <context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
     <context:component-scan base-package="org.generationcp.commons.ruleengine.stockid"/>
+    <context:component-scan base-package="org.generationcp.commons.ruleengine.cross"/>
 
     <bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
 
@@ -459,6 +460,12 @@
 
 	<bean id="pedigreeService" factory-bean="managerFactory"
           factory-method="getPedigreeService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="pedigreeDataManager" factory-bean="managerFactory"
+          factory-method="getPedigreeDataManager"
           scope="request">
         <aop:scoped-proxy/>
     </bean>

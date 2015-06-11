@@ -1,12 +1,9 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -14,7 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.ruleengine.ProcessCodeOrderedRule;
+import org.generationcp.commons.ruleengine.ProcessCodeRuleFactory;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.cross.CrossingRuleExecutionContext;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
+import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -22,16 +24,20 @@ import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.efficio.fieldbook.util.ExpressionHelper;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.service.CrossingService;
 
@@ -47,6 +53,8 @@ public class CrossingServiceImpl implements CrossingService {
 	public static final Integer GERMPLASM_REFID = 0;
 	public static final Integer NAME_REFID = 0;
 	public static final String[] USER_DEF_FIELD_CROSS_NAME = {"CROSS NAME", "CROSSING NAME"};
+
+	private static final Logger LOG = LoggerFactory.getLogger(CrossingServiceImpl.class);
 
 	@Autowired
 	private GermplasmDataManager germplasmDataManager;
@@ -67,6 +75,12 @@ public class CrossingServiceImpl implements CrossingService {
 	@Resource
 	private ContextUtil contextUtil;
 
+	@Resource
+	private ProcessCodeRuleFactory processCodeRuleFactory;
+
+	@Resource
+	private PedigreeDataManager pedigreeDataManager;
+
 	@Override
 	public ImportedCrossesList parseFile(MultipartFile file) throws FileParsingException {
 		return this.crossingTemplateParser.parseFile(file, null);
@@ -76,9 +90,7 @@ public class CrossingServiceImpl implements CrossingService {
 	public void applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId)
 			throws MiddlewareQueryException {
 
-		CrossNameSetting crossNameSetting = crossSetting.getCrossNameSetting();
-
-		this.applyCrossNameSettingToImportedCrosses(crossNameSetting, importedCrossesList.getImportedCrosses());
+		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 		Map<Germplasm, Name> germplasmToBeSaved =
 				this.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), userId,
 						importedCrossesList.hasPlotDuplicate());
@@ -116,17 +128,19 @@ public class CrossingServiceImpl implements CrossingService {
 		return true;
 	}
 
-	protected void applyCrossNameSettingToImportedCrosses(CrossNameSetting setting, List<ImportedCrosses> importedCrosses)
+	protected void applyCrossNameSettingToImportedCrosses(CrossSetting setting, List<ImportedCrosses> importedCrosses)
 			throws MiddlewareQueryException {
 
-		Integer nextNumberInSequence = this.getNextNumberInSequence(setting);
+		processBreedingMethodProcessCodes(setting);
+
+		Integer nextNumberInSequence = this.getNextNumberInSequence(setting.getCrossNameSetting());
 		Integer entryIdCounter = 0;
 
 		for (ImportedCrosses cross : importedCrosses) {
 			entryIdCounter++;
 			cross.setEntryId(entryIdCounter);
 			cross.setEntryCode(String.valueOf(entryIdCounter));
-			cross.setDesig(this.buildDesignationNameInSequence(nextNumberInSequence++, setting));
+			cross.setDesig(this.buildDesignationNameInSequence(cross, nextNumberInSequence++, setting));
 
 			// this would set the correct cross string depending if the use is cimmyt wheat
 			Germplasm germplasm = new Germplasm();
@@ -134,9 +148,26 @@ public class CrossingServiceImpl implements CrossingService {
 			germplasm.setGid(Integer.MAX_VALUE);
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
-			String crossString = this.getCross(germplasm, cross, setting.getSeparator());
+			String crossString = this.getCross(germplasm, cross, setting.getCrossNameSetting().getSeparator());
 
 			cross.setCross(crossString);
+		}
+	}
+
+	protected void processBreedingMethodProcessCodes(CrossSetting setting) {
+		CrossNameSetting nameSetting = setting.getCrossNameSetting();
+		BreedingMethodSetting breedingMethodSetting = setting.getBreedingMethodSetting();
+
+		try {
+			Method method = germplasmDataManager.getMethodByID(breedingMethodSetting.getMethodId());
+
+			// overwrite other name setting items using method values here
+
+			if (method.getSuffix() !=null) {
+				nameSetting.setSuffix(method.getSuffix());
+			}
+		} catch (MiddlewareQueryException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -250,14 +281,42 @@ public class CrossingServiceImpl implements CrossingService {
 
 	}
 
-	protected String buildDesignationNameInSequence(Integer number, CrossNameSetting setting) {
+	protected String buildDesignationNameInSequence(ImportedCrosses importedCrosses, Integer number, CrossSetting setting) {
+		CrossNameSetting nameSetting = setting.getCrossNameSetting();
+
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.buildPrefixString(setting));
-		sb.append(this.getNumberWithLeadingZeroesAsString(number, setting));
-		if (!StringUtils.isEmpty(setting.getSuffix())) {
-			sb.append(this.buildSuffixString(setting));
+		sb.append(this.buildPrefixString(nameSetting));
+		sb.append(this.getNumberWithLeadingZeroesAsString(number, nameSetting));
+
+
+		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
+			String suffix = nameSetting.getSuffix().trim();
+			Pattern pattern = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN);
+			Matcher matcher = pattern.matcher(suffix);
+
+			if (matcher.find()) {
+				suffix = evaluateSuffixProcessCode(importedCrosses, setting,matcher.group());
+			}
+
+			sb.append(this.buildSuffixString(nameSetting, suffix));
 		}
 		return sb.toString();
+	}
+
+	protected String evaluateSuffixProcessCode(ImportedCrosses crosses, CrossSetting setting, String processCode) {
+		ProcessCodeOrderedRule rule = processCodeRuleFactory.getRuleByProcessCode(processCode);
+
+		CrossingRuleExecutionContext crossingRuleExecutionContext = new CrossingRuleExecutionContext(new ArrayList<String>(), setting,
+				crosses.getMaleGid() != null ? Integer.valueOf(crosses.getMaleGid()) : 0,
+				crosses.getFemaleGid() != null ? Integer.valueOf(crosses.getFemaleGid()) : 0,
+				germplasmDataManager, pedigreeDataManager);
+
+		try {
+			return (String) rule.runRule(crossingRuleExecutionContext);
+		} catch (RuleException e) {
+			LOG.error(e.getMessage(), e);
+			return "";
+		}
 	}
 
 	protected String buildCrossName(ImportedCrosses crosses, String separator) {
@@ -272,8 +331,8 @@ public class CrossingServiceImpl implements CrossingService {
 		return prefix;
 	}
 
-	protected String buildSuffixString(CrossNameSetting setting) {
-		String suffix = setting.getSuffix().trim();
+	protected String buildSuffixString(CrossNameSetting setting, String suffix) {
+
 		if (setting.isAddSpaceBetweenSuffixAndCode()) {
 			return " " + suffix;
 		}
@@ -320,5 +379,4 @@ public class CrossingServiceImpl implements CrossingService {
 		this.germplasmDataManager = germplasmDataManager;
 
 	}
-
 }

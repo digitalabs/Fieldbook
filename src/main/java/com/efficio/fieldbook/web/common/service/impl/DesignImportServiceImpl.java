@@ -104,7 +104,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		addFactorsToMeasurementRows(workbook, measurements);
 		
 		// add trait data to the list of measurement row
-		this.addVariatesToMeasurementRows(workbook, measurements);
+		addVariatesToMeasurementRows(workbook, measurements);
 		
 		return measurements;
 	}
@@ -563,8 +563,10 @@ public class DesignImportServiceImpl implements DesignImportService {
 					temporaryList.add(copy);
 				}
 			}
-			WorkbookUtil.addMeasurementDataToRows(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
+			
+			WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
 					this.userSelection, this.ontologyService, this.fieldbookService);
+			
 		} catch (MiddlewareQueryException e) {
 			DesignImportServiceImpl.LOG.error(e.getMessage(), e);
 		}
@@ -590,8 +592,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	protected void populateEnvironmentDataWithValuesFromCsvFile(EnvironmentData environmentData,
 			Workbook workbook, DesignImportData designImportData) {
 		
-		if (workbook.getStudyDetails().getStudyType() == StudyType.T){
-			
+	
 			List<DesignHeaderItem> trialEnvironmentsDesignHeaderItems = designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT);
 			DesignHeaderItem trialInstanceHeaderItem = filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, trialEnvironmentsDesignHeaderItems);
 			Map<String, Map<Integer, List<String>>> groupedCsvRows = groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getCsvData());
@@ -604,7 +605,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 				}
 			}
 	
-		}
 		
 	}
 	

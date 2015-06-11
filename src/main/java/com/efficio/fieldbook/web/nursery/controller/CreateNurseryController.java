@@ -312,6 +312,8 @@ public class CreateNurseryController extends SettingsController {
     	
     	studyLevelVariables.addAll(form.getBasicDetails());
     	
+    	addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, userSelection);
+    	
 		this.addNurseryTypeFromDesignImport(studyLevelVariables);
 		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
     	 
@@ -340,7 +342,30 @@ public class CreateNurseryController extends SettingsController {
     	return "success";
     }
             
-    private void addNurseryTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
+    private void addStudyLevelVariablesFromUserSelectionIfNecessary(List<SettingDetail> studyLevelVariables,
+			UserSelection userSelection) {
+		
+    	for (SettingDetail settingDetailFromUserSelection : userSelection.getStudyLevelConditions()){
+    		
+    		boolean settingDetailExists = false;
+    		
+    		for (SettingDetail settingDetail : studyLevelVariables){
+    			if (settingDetail.getVariable().getCvTermId().intValue() == settingDetailFromUserSelection.getVariable().getCvTermId().intValue()){
+    				settingDetailExists = true;
+    				break;
+    			}
+    		}
+    		
+    		if (!settingDetailExists){
+    			studyLevelVariables.add(settingDetailFromUserSelection);
+    		}
+    		
+    	}
+    	
+		
+	}
+
+	private void addNurseryTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
 		
     	SettingDetail nurseryTypeSettingDetail = new SettingDetail();
     	SettingVariable nurseryTypeSettingVariable = new SettingVariable();

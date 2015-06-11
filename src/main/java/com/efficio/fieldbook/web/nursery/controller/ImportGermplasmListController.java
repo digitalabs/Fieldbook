@@ -250,7 +250,10 @@ public class ImportGermplasmListController extends SettingsController {
 
             if (this.userSelection.getExperimentalDesignVariables() != null){
             	Set<MeasurementVariable> unique = new HashSet<>(this.userSelection.getWorkbook().getFactors());
+            	unique.addAll(this.userSelection.getTemporaryWorkbook().getFactors());
                 unique.addAll(this.userSelection.getExperimentalDesignVariables());
+                this.userSelection.getWorkbook().getFactors().clear();
+				this.userSelection.getWorkbook().getFactors().addAll(unique);
 
 
                 Set<MeasurementVariable> makeUniqueVariates = new HashSet<>(this.userSelection.getTemporaryWorkbook().getVariates());

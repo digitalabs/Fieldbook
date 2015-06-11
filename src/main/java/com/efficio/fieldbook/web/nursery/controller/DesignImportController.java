@@ -8,6 +8,7 @@ package com.efficio.fieldbook.web.nursery.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -71,6 +72,7 @@ public class DesignImportController extends SettingsController {
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportController.class);
 	
 	public static final String URL = "/DesignImport";
+	
 	public static final String REVIEW_DETAILS_PAGINATION_TEMPLATE = "/DesignImport/reviewDetailsPagination";
 
 	@Resource
@@ -325,17 +327,21 @@ public class DesignImportController extends SettingsController {
 			
 			userSelection.setExperimentalDesignVariables(new ArrayList<>(experimentalDesignMeasurementVariables));
 			
+			//Only for Trial
 			addFactorsIfNecessary(workbook, designImportData);
 			
+			//Only for Nursery
 			addConditionsIfNecessary(workbook, designImportData);
 
 			addVariates(workbook, designImportData);
 
 			addExperimentDesign(workbook);
 			
+			//Only for Trial
 			populateTrialLevelVariableListIfNecessary(workbook);
 			
-			populateStudyLevelVariableListIfNecessary(workbook);
+			//Only for Nursery
+			populateStudyLevelVariableListIfNecessary(workbook, environmentData, designImportData);
 
 			createTrialObservations(environmentData, workbook, designImportData);
 
@@ -353,6 +359,69 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return resultsMap;
+	}
+
+	public void initializeTemporaryWorkbook(String studyType) {
+		
+		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
+		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
+	         // transfer over data from user input into the list of setting details stored in the session
+	    	 List<SettingDetail> combinedList = new ArrayList<>();
+	    	 
+	    	 if (basicDetails != null){
+	    		 combinedList.addAll(basicDetails);
+	    	 }
+	         
+
+	         if (studyLevelConditions != null) {             
+	             combinedList.addAll(studyLevelConditions);
+	         }
+
+	         String name = "";
+
+	        Workbook workbook;
+	        StudyDetails details = new StudyDetails();
+	        
+		if ("T".equalsIgnoreCase(studyType)) {
+	        	
+			Dataset dataset =
+					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
+							this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
+							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
+							this.userSelection.getNurseryConditions(), false);
+
+	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+	        	
+	        	details.setStudyType(StudyType.T);
+	        	
+		} else {
+	        	
+	        	List<SettingDetail> variatesList = new ArrayList<>();
+	        	
+			if (this.userSelection.getBaselineTraitsList() != null) {
+				variatesList.addAll(this.userSelection.getBaselineTraitsList());
+	        	}
+	        
+			if (this.userSelection.getSelectionVariates() != null) {
+				variatesList.addAll(this.userSelection.getSelectionVariates());
+	        	}
+	
+			Dataset dataset =
+					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
+							this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
+							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
+							this.userSelection.getNurseryConditions(), true);
+
+	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+	        	
+	        	details.setStudyType(StudyType.N);
+	        	
+	        }
+	        
+	        workbook.setStudyDetails(details);
+	        
+		this.userSelection.setTemporaryWorkbook(workbook);
+	        
 	}
 
 	protected void addExperimentDesign(Workbook workbook) throws MiddlewareQueryException {
@@ -386,7 +455,7 @@ public class DesignImportController extends SettingsController {
 		
 	}
 	
-	private void addConditionsIfNecessary(Workbook workbook, DesignImportData designImportData) {
+	protected void addConditionsIfNecessary(Workbook workbook, DesignImportData designImportData) {
 		
 		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
 			
@@ -433,20 +502,38 @@ public class DesignImportController extends SettingsController {
 
 	}
 	
-	private void populateStudyLevelVariableListIfNecessary(Workbook workbook) throws MiddlewareQueryException {
+	protected void populateStudyLevelVariableListIfNecessary(Workbook workbook, EnvironmentData environmentData, DesignImportData designImportData) throws MiddlewareQueryException {
 		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
 			
-			List<SettingDetail> newDetails = SettingsUtil.convertWorkbookFactorsToSettingDetails(new ArrayList<MeasurementVariable>(workbook.getConditions()), fieldbookMiddlewareService);
-			for (SettingDetail set : newDetails){
-				set.getVariable().setOperation(Operation.ADD);
+			Map<String,String> managementDetailValues = environmentData.getEnvironments().get(0).getManagementDetailValues();
+			
+			List<SettingDetail> newDetails = new ArrayList<>();
+			
+			for (MeasurementVariable mvar : workbook.getConditions()){
+				
+				SettingDetail newDetail = settingsService.createSettingDetail(mvar.getTermId(), mvar.getName(), userSelection, this.getCurrentIbdbUserId() , this.getCurrentProject().getUniqueID());
+				
+				String value = managementDetailValues.get(String.valueOf(newDetail.getVariable().getCvTermId()));
+				if (value != null){
+					newDetail.setValue(value);
+				}else{
+					newDetail.setValue("");
+				}
+	
+				newDetail.getVariable().setOperation(mvar.getOperation());
+				newDetails.add(newDetail);
+				
 			}
+			
+			resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, newDetails);
+			
 			userSelection.getStudyLevelConditions().clear();
 			userSelection.getStudyLevelConditions().addAll(newDetails);
 		}
 		
 	}
 
-	private void addNewSettingDetailsIfNecessary(List<SettingDetail> newDetails) {
+	protected void addNewSettingDetailsIfNecessary(List<SettingDetail> newDetails) {
 		
 		if (userSelection.getTrialLevelVariableList() == null){
 			userSelection.setTrialLevelVariableList(new ArrayList<SettingDetail>());
@@ -502,8 +589,7 @@ public class DesignImportController extends SettingsController {
 		
 	}
 
-
-	private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
+	protected Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {
     	Map<String, Object> dataMap = new HashMap<>();
 		// the 4 attributes are needed always
 		for (MeasurementData data : row.getDataList()) {
@@ -522,66 +608,7 @@ public class DesignImportController extends SettingsController {
 		}
 		return dataMap;
     }
-	
-	public void initializeTemporaryWorkbook(String studyType) {
-		
-		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
-		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
-	         // transfer over data from user input into the list of setting details stored in the session
-	    	 List<SettingDetail> combinedList = new ArrayList<>();
-	         combinedList.addAll(basicDetails);
 
-	         if (studyLevelConditions != null) {             
-	             combinedList.addAll(studyLevelConditions);
-	         }
-
-	         String name = "";
-
-	        Workbook workbook;
-	        StudyDetails details = new StudyDetails();
-	        
-		if ("T".equalsIgnoreCase(studyType)) {
-	        	
-			Dataset dataset =
-					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
-							this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
-							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-							this.userSelection.getNurseryConditions(), false);
-
-	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
-	        	
-	        	details.setStudyType(StudyType.T);
-	        	
-		} else {
-	        	
-	        	List<SettingDetail> variatesList = new ArrayList<>();
-	        	
-			if (this.userSelection.getBaselineTraitsList() != null) {
-				variatesList.addAll(this.userSelection.getBaselineTraitsList());
-	        	}
-	        
-			if (this.userSelection.getSelectionVariates() != null) {
-				variatesList.addAll(this.userSelection.getSelectionVariates());
-	        	}
-	
-			Dataset dataset =
-					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
-							this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
-							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-							this.userSelection.getNurseryConditions(), true);
-
-	        	workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
-	        	
-	        	details.setStudyType(StudyType.N);
-	        	
-	        }
-	        
-	        workbook.setStudyDetails(details);
-	        
-		this.userSelection.setTemporaryWorkbook(workbook);
-	        
-	}
-	
 	protected void performAutomap(DesignImportData designImportData) throws MiddlewareQueryException {
 		Map<PhenotypicType, List<DesignHeaderItem>> result =
 				this.designImportService.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders());
@@ -684,9 +711,84 @@ public class DesignImportController extends SettingsController {
 		}
 		
 	}
+	
+	protected void resolveTheEnvironmentFactorsWithIDNamePairing(EnvironmentData environmentData,
+			DesignImportData designImportData, List<SettingDetail> newDetails) throws MiddlewareQueryException {
+	
+		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
+		Map<String, String> NameIdMap = switchKey(idNameMap);
+		
+		Environment environment = environmentData.getEnvironments().get(0);
+		
+		Map<String, String> copyOfManagementDetailValues = new HashMap<>();
+		copyOfManagementDetailValues.putAll(environment.getManagementDetailValues());
+		
+		for (Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()){
+			
+			//For TRIAL_LOCATION (Location Name)
+			if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()){
+				String termId = NameIdMap.get(managementDetail.getKey());
+				if (termId != null){
 
+					Location location = fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
+					copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
+					
+					String headerName = getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+					
+					SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName);
+					settingDetail.getVariable().setOperation(Operation.ADD);
+					settingDetail.setValue("");
+					if (location != null){
+						settingDetail.setValue(String.valueOf(location.getLocid()));
+					}
+					
+					addSettingOrUpdateDetailToTargetListIfNecessary(settingDetail, newDetails);
 
-	private Enumeration findInEnumeration(String value, List<Enumeration> enumerations) {
+					copyOfManagementDetailValues.remove(managementDetail.getKey());
+
+				}
+			}
+			
+			//For COOPERATOR and PI_NAME
+			if (Integer.valueOf(managementDetail.getKey()) == 8373 || Integer.valueOf(managementDetail.getKey()) == 8100){
+				String termId = NameIdMap.get(managementDetail.getKey());
+				if (termId != null){
+					
+					copyOfManagementDetailValues.put(termId, String.valueOf(super.getCurrentIbdbUserId()));
+					
+					String headerName = getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+					
+					SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName);
+					settingDetail.getVariable().setOperation(Operation.ADD);
+					settingDetail.setValue(String.valueOf(super.getCurrentIbdbUserId()));
+					
+					addSettingOrUpdateDetailToTargetListIfNecessary(settingDetail, newDetails);
+				
+					copyOfManagementDetailValues.remove(managementDetail.getKey());
+					
+				}
+				
+			}
+			
+			//For Categorical Variables
+			StandardVariable tempStandardVarable = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(managementDetail.getKey()));
+			if (tempStandardVarable != null && tempStandardVarable.hasEnumerations()){
+				
+				Enumeration enumeration = findInEnumeration(managementDetail.getValue(), tempStandardVarable.getEnumerations());
+				if (enumeration != null){
+					copyOfManagementDetailValues.put(managementDetail.getKey(), String.valueOf(enumeration.getId()));
+				}
+			}
+			
+		}	
+		
+		environment.getManagementDetailValues().clear();
+		environment.getManagementDetailValues().putAll(copyOfManagementDetailValues);
+		
+		
+	}
+
+	protected Enumeration findInEnumeration(String value, List<Enumeration> enumerations) {
 		for (Enumeration enumeration : enumerations){
 			if (enumeration.getName().equalsIgnoreCase(value)){
 				return enumeration;
@@ -707,8 +809,22 @@ public class DesignImportController extends SettingsController {
 		userSelection.getTrialLevelVariableList().add(settingDetail);
 	}
 	
+	protected void addSettingOrUpdateDetailToTargetListIfNecessary(SettingDetail settingDetail, List<SettingDetail> targetList) {
 	
-	private String getHeaderName(int termId, List<DesignHeaderItem> items){
+		Iterator<SettingDetail> iterator = targetList.iterator();
+		while(iterator.hasNext()){
+			SettingDetail sd = iterator.next();
+			if (sd.getVariable().getCvTermId().intValue() == settingDetail.getVariable().getCvTermId().intValue()){
+				settingDetail.getVariable().setOperation(Operation.UPDATE);
+				iterator.remove();
+			}
+		}
+		
+		targetList.add(settingDetail);
+		
+	}
+	
+	protected String getHeaderName(int termId, List<DesignHeaderItem> items){
 		for (DesignHeaderItem item : items){
 			if (item.getId() == termId){
 				return item.getName();
@@ -717,7 +833,7 @@ public class DesignImportController extends SettingsController {
 		return "";
 	}
 	
-	private String getStandardVariableName(Integer termId, List<DesignHeaderItem> items) {
+	protected String getStandardVariableName(Integer termId, List<DesignHeaderItem> items) {
 		for (DesignHeaderItem item : items){
 			if (item.getId() == termId){
 				return item.getVariable().getName();
@@ -726,7 +842,7 @@ public class DesignImportController extends SettingsController {
 		return "";
 	}
 	
-	private Map<String, String> switchKey(Map<String, String> map){
+	protected Map<String, String> switchKey(Map<String, String> map){
 		Map<String, String> newMap = new HashMap<>();
 		for (Entry<String, String> entry : map.entrySet()){
 			newMap.put(entry.getValue(), entry.getKey());
@@ -734,9 +850,5 @@ public class DesignImportController extends SettingsController {
 		return newMap;
 	}
 	
-
-   
-    
-    
 	
 }

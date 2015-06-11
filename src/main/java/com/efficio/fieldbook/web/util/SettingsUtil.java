@@ -58,6 +58,7 @@ import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.hazelcast.util.StringUtil;
 
 /**
  * The Class SettingsUtil.
@@ -274,7 +275,7 @@ public class SettingsUtil {
         return constants;
     }
 
-    protected static void setNameAndOperationFromSession(List<SettingDetail> listWithValue, List<SettingDetail> listFromSession) {
+    protected static void setNameAndOperationFromSession(List<SettingDetail> listWithValue, List<SettingDetail> listFromSession, boolean isDesignGenerated) {
         if (listWithValue == null || listFromSession == null) {
             return;
         }
@@ -282,10 +283,15 @@ public class SettingsUtil {
         for (SettingDetail detailWithValue : listWithValue) {
             for (SettingDetail detailFromSession : listFromSession) {
 				if (detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
+					
                     SettingVariable variable = detailWithValue.getVariable();
                     detailWithValue.setPossibleValues(detailFromSession.getPossibleValues());
                     variable.setName(detailFromSession.getVariable().getName());
                     variable.setOperation(detailFromSession.getVariable().getOperation());
+                    
+                    if (isDesignGenerated && !StringUtil.isNullOrEmpty(detailFromSession.getValue()) && !detailFromSession.getValue().equalsIgnoreCase("Please Choose") ){
+                    	detailWithValue.setValue(detailFromSession.getValue());
+                    }
                 }
             }
         }
@@ -356,10 +362,11 @@ public class SettingsUtil {
 		// for properties
         // also stored in the HTML form; e.g., value
         if (fromNursery) {
-			SettingsUtil.setNameAndOperationFromSession(studyLevelConditions, userSelection.getStudyLevelConditions());
-			SettingsUtil.setNameAndOperationFromSession(plotsLevelList, userSelection.getPlotsLevelList());
-			SettingsUtil.setNameAndOperationFromSession(baselineTraitsList, userSelection.getBaselineTraitsList());
-			SettingsUtil.setNameAndOperationFromSession(nurseryConditions, userSelection.getNurseryConditions());
+        	
+			SettingsUtil.setNameAndOperationFromSession(studyLevelConditions, userSelection.getStudyLevelConditions(), userSelection.isDesignGenerated());
+			SettingsUtil.setNameAndOperationFromSession(plotsLevelList, userSelection.getPlotsLevelList(), false);
+			SettingsUtil.setNameAndOperationFromSession(baselineTraitsList, userSelection.getBaselineTraitsList(), false);
+			SettingsUtil.setNameAndOperationFromSession(nurseryConditions, userSelection.getNurseryConditions(), false);
 
             // name and operation setting are no longer performed on the other setting lists provided as params in this method
             // because those are only defined for trials

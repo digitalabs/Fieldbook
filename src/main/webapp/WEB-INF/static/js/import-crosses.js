@@ -532,10 +532,12 @@ var ImportCrosses = {
 							backdrop: 'static'
 						});
 						$('#saveListTreeModal').data('is-save-crosses', '1');
+						
+						TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree');
+						
 						//we preselect the program lists
 						if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {
-							germplasmTreeNode.getNodeByKey('LOCAL').activate();
-							germplasmTreeNode.getNodeByKey('LOCAL').expand();
+							germplasmTreeNode.getNodeByKey('LOCAL').activate();							
 						}
 					}
 				}

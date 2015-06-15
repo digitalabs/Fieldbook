@@ -102,20 +102,20 @@
 			}
 			function getMessageErrorDiv(){
 				'use strict';
-				 var msgDiv = 'page-import-message-modal';
-				 if(getDisplayedTreeName() === 'germplasmFolderTree'){
-				 	msgDiv = 'page-save-list-message-modal';
-				 }					
-				 return msgDiv;
+				var msgDiv = 'page-import-message-modal';
+				if(getDisplayedTreeName() === 'germplasmFolderTree'){
+					msgDiv = 'page-save-list-message-modal';
+				}
+				return msgDiv;
 			}
 			function displayGermplasmListTreeTable(divId) {
-				'use strict';
-				TreePersist.saveGermplasmTreeState(true, '#'+divId);
+				'use strict';				
+
 				$.ajax({
-					url : '/Fieldbook/ListTreeManager/loadInitGermplasmTreeTable',
-					type : 'GET',
-					cache : false,
-					success : function(html) {
+					url: '/Fieldbook/ListTreeManager/loadInitGermplasmTreeTable',
+					type: 'GET',
+					cache: false,
+					success: function(html) {
 						$('#'+divId).html(html);
 					}
 				});

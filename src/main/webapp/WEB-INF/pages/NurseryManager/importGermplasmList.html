@@ -668,8 +668,10 @@
 
             activateDroppable();
             changeBrowseGermplasmButtonBehavior(false);
+
             $('#listTreeModal').off('hide.bs.modal');
-            $('#listTreeModal').on('hide.bs.modal', function () {            	
+            $('#listTreeModal').on('hide.bs.modal', function () {
+            	TreePersist.saveGermplasmTreeState(true, '#germplasmTree');
             	displayGermplasmListTreeTable('germplasmTree');
                 changeBrowseGermplasmButtonBehavior(false);
                 $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').hide();

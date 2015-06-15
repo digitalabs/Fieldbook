@@ -48,7 +48,6 @@ var SaveAdvanceList = {};
 					//we preselect the program lists
 					if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LISTS') !== null){
 						germplasmTreeNode.getNodeByKey('LISTS').activate();
-						germplasmTreeNode.getNodeByKey('LISTS').expand();
 					}
 				}
 			}

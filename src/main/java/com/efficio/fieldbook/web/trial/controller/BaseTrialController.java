@@ -634,6 +634,8 @@ public abstract class BaseTrialController extends SettingsController {
 	protected void addMeasurementVariablesToTrialObservationIfNecessary(EnvironmentData environmentData, Workbook workbook,
 			List<MeasurementRow> trialObservations) {
 		
+		if (trialObservations == null) return;
+		
 		int x = 0;
 		for (MeasurementRow row : trialObservations){
 			

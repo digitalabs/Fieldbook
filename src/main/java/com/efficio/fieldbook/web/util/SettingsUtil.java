@@ -34,6 +34,7 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
@@ -151,8 +152,8 @@ public class SettingsUtil {
 				continue;
 			}
 
-			variable.setPSMRFromStandardVariable(standardVariable);
-
+			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
+			
 			if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) || variable.getCvTermId().equals(
 					Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
 					&& "0".equals(settingDetail.getValue())) {
@@ -185,7 +186,7 @@ public class SettingsUtil {
 
 			StandardVariable standardVariable =
 					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-			variable.setPSMRFromStandardVariable(standardVariable);
+			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
 
 			Variate variate =
 					new Variate(variable.getName(), variable.getDescription(), variable.getProperty(), variable.getScale(),
@@ -214,7 +215,7 @@ public class SettingsUtil {
 
 			StandardVariable standardVariable =
 					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-			variable.setPSMRFromStandardVariable(standardVariable);
+			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
 
 			Factor factor = SettingsUtil.convertStandardVariableToFactor(standardVariable);
 			factor.setOperation(variable.getOperation());
@@ -256,7 +257,7 @@ public class SettingsUtil {
 			StandardVariable standardVariable =
 					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 
-			variable.setPSMRFromStandardVariable(standardVariable);
+			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
 			// need to get the name from the session
 
 			Constant constant =
@@ -308,7 +309,7 @@ public class SettingsUtil {
 			Factor valueFactor;
 			levelFactor.setOperation(detail.getVariable().getOperation());
 			levelFactor.setTreatmentLabel(detail.getVariable().getName());
-
+			
 			TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
 
 			if (data != null) {
@@ -325,8 +326,10 @@ public class SettingsUtil {
 					treatmentFactors.add(treatmentFactor);
 					index++;
 				}
+				valueFactor.setRole(detail.getRole().name());
 				factorList.add(valueFactor);
 			}
+			levelFactor.setRole(detail.getRole().name());
 			factorList.add(levelFactor);
 		}
 
@@ -630,7 +633,7 @@ public class SettingsUtil {
 					if (userSelection != null) {
 						StandardVariable standardVariable =
 								SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-						variable.setPSMRFromStandardVariable(standardVariable);
+						variable.setPSMRFromStandardVariable(standardVariable, condition.getRole());
 						Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
 
 						if (!SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())
@@ -788,7 +791,7 @@ public class SettingsUtil {
 					if (userSelection != null) {
 						StandardVariable standardVariable =
 								SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-						variable.setPSMRFromStandardVariable(standardVariable);
+						variable.setPSMRFromStandardVariable(standardVariable, constant.getRole());
 						Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(constant.getValue());
 						if (enumerationByDescription != null) {
 							settingDetail.setValue(enumerationByDescription.getName());
@@ -886,7 +889,7 @@ public class SettingsUtil {
 						if (userSelection != null) {
 							StandardVariable standardVariable =
 									SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-							variable.setPSMRFromStandardVariable(standardVariable);
+							variable.setPSMRFromStandardVariable(standardVariable, condition.getRole());
 						}
 					}
 				}
@@ -969,7 +972,7 @@ public class SettingsUtil {
 						if (userSelection != null) {
 							StandardVariable standardVariable =
 									SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-							variable.setPSMRFromStandardVariable(standardVariable);
+							variable.setPSMRFromStandardVariable(standardVariable, factor.getRole());
 						}
 					}
 				}
@@ -1270,12 +1273,12 @@ public class SettingsUtil {
 		MeasurementVariable mvar =
 				new MeasurementVariable(condition.getName(), condition.getDescription(), condition.getScale(), condition.getMethod(),
 						condition.getProperty(), condition.getDatatype(), condition.getValue(), label, condition.getMinRange(),
-						condition.getMaxRange());
+						condition.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(condition.getRole()));
 		mvar.setOperation(condition.getOperation());
 		mvar.setTermId(condition.getId());
 		mvar.setStoredIn(condition.getStoredIn());
 		mvar.setFactor(true);
-		mvar.setDataTypeId(condition.getDataTypeId());
+		mvar.setDataTypeId(condition.getDataTypeId());		
 		return mvar;
 	}
 
@@ -1292,7 +1295,7 @@ public class SettingsUtil {
 		MeasurementVariable mvar =
 				new MeasurementVariable(constant.getName(), constant.getDescription(), constant.getScale(), constant.getMethod(),
 						constant.getProperty(), constant.getDatatype(), constant.getValue(), label, constant.getMinRange(),
-						constant.getMaxRange());
+						constant.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(constant.getRole()));
 
 		mvar.setOperation(constant.getOperation());
 		mvar.setTermId(constant.getId());
@@ -1328,7 +1331,7 @@ public class SettingsUtil {
 	private static MeasurementVariable convertFactorToMeasurementVariable(Factor factor) {
 		MeasurementVariable mvar =
 				new MeasurementVariable(factor.getName(), factor.getDescription(), factor.getScale(), factor.getMethod(),
-						factor.getProperty(), factor.getDatatype(), null, PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0));
+						factor.getProperty(), factor.getDatatype(), null, PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0), PhenotypicType.getPhenotypicTypeByName(factor.getName()));
 		mvar.setFactor(true);
 		mvar.setOperation(factor.getOperation());
 		mvar.setStoredIn(factor.getStoredIn());
@@ -1391,7 +1394,7 @@ public class SettingsUtil {
 		MeasurementVariable mvar =
 				new MeasurementVariable(variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(),
 						variate.getProperty(), variate.getDatatype(), null, PhenotypicType.TRIAL_DESIGN.getLabelList().get(0),
-						variate.getMinRange(), variate.getMaxRange());
+						variate.getMinRange(), variate.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(variate.getRole()));
 		mvar.setOperation(variate.getOperation());
 		mvar.setTermId(variate.getId());
 		mvar.setStoredIn(variate.getStoredIn());
@@ -1409,7 +1412,7 @@ public class SettingsUtil {
 				new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(), factor.getScale(), factor.getMethod(),
 						factor.getRole(), factor.getDatatype());
 		StandardVariable standardVariable = SettingsUtil.getStandardVariable(factor.getTermId(), userSelection, fieldbookMiddlewareService);
-		variable.setPSMRFromStandardVariable(standardVariable);
+		variable.setPSMRFromStandardVariable(standardVariable, factor.getRole());
 		variable.setCvTermId(standardVariable.getId());
 		List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, standardVariable.getId());
 		SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, true);
@@ -1532,13 +1535,12 @@ public class SettingsUtil {
 
 		for (MeasurementVariable condition : conditions) {
 			String id = String.valueOf(condition.getTermId());
-			String role =
-					isVariate ? PhenotypicType.VARIATE.toString() : PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel())
-							.toString();
+			String role = condition.getRole().name();
 			if (!SettingsUtil.isIdInFieldListForHiding(userSelection, id)
 			// do not show breeding method id if code exists
 					&& !SettingsUtil.breedingCodeExists(condition.getTermId(), variableMap)) {
 				// do not name if code or id exists
+				
 				SettingVariable variable =
 						SettingsUtil.getSettingVariable(
 								SettingsUtil.getDisplayName(conditions, condition.getTermId(), condition.getName()),
@@ -1624,7 +1626,7 @@ public class SettingsUtil {
 						SettingVariable variable =
 								SettingsUtil.getSettingVariable(label, condition.getDescription(), condition.getProperty(),
 										condition.getScale(), condition.getMethod(),
-										PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString(), condition.getDataType(),
+										condition.getRole().name(), condition.getDataType(),
 										condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection,
 										fieldbookMiddlewareService);
 						variable.setCvTermId(Integer.valueOf(strFieldId));
@@ -1783,7 +1785,7 @@ public class SettingsUtil {
 		if (userSelection != null) {
 			StandardVariable standardVariable =
 					SettingsUtil.getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-			variable.setPSMRFromStandardVariable(standardVariable);
+			variable.setPSMRFromStandardVariable(standardVariable, role);
 			stdVar = standardVariable.getId();
 		}
 
@@ -2056,7 +2058,7 @@ public class SettingsUtil {
 								stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), value,
 								PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), stdvar.getConstraints() != null ? stdvar
 										.getConstraints().getMinValue() : null, stdvar.getConstraints() != null ? stdvar.getConstraints()
-										.getMaxValue() : null);
+										.getMaxValue() : null, PhenotypicType.TRIAL_ENVIRONMENT);
 				mvar.setOperation(Operation.ADD);
 				mvar.setStoredIn(stdvar.getStoredIn().getId());
 				mvar.setDataTypeId(stdvar.getDataType().getId());
@@ -2305,5 +2307,13 @@ public class SettingsUtil {
 	    		variableIdList.add(Integer.valueOf(tokenizer.nextToken()));
 	    	}
 	    	return variableIdList;
+	}
+	
+	public static void setSettingDetailRole(List<SettingDetail> newDetails, VariableType variableType){
+		if(variableType != null){
+			for(SettingDetail settingDetails : newDetails){
+				settingDetails.setRole(variableType.getRole());
+			}
+		}		
 	}
 }

@@ -10,6 +10,7 @@ import junit.framework.Assert;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,10 +50,10 @@ public class ManageSettingsControllerTest {
 
 		Assert.assertTrue(
 				"this should always return true regardless of input",
-				spyController.deleteVariable(AppConstants.SEGMENT_TRAITS.getInt(),
+				spyController.deleteVariable(VariableType.TRAIT.getId(),
 						Arrays.asList(ManageSettingsControllerTest.TEST_VARIABLE_ID_0)));
 
-		Mockito.verify(spyController).deleteVariable(AppConstants.SEGMENT_TRAITS.getInt(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
+		Mockito.verify(spyController).deleteVariable(VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}
 
 	@Test
@@ -61,7 +62,7 @@ public class ManageSettingsControllerTest {
 
 		Assert.assertTrue("were sure this returns true", spyController.hasMeasurementData(Arrays.asList(
 				ManageSettingsControllerTest.TEST_VARIABLE_ID_0, ManageSettingsControllerTest.TEST_VARIABLE_ID_1,
-				ManageSettingsControllerTest.TEST_VARIABLE_ID_2), AppConstants.SEGMENT_TRAITS.getInt()));
+				ManageSettingsControllerTest.TEST_VARIABLE_ID_2), VariableType.TRAIT.getId()));
 
 		Mockito.verify(spyController).hasMeasurementDataEntered(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}
@@ -71,7 +72,7 @@ public class ManageSettingsControllerTest {
 		ManageSettingsController spyController = this.initializeMockMeasurementRows();
 
 		Assert.assertFalse("we're sure this returns false",
-				spyController.hasMeasurementData(new ArrayList<Integer>(), AppConstants.SEGMENT_TRAITS.getInt()));
+				spyController.hasMeasurementData(new ArrayList<Integer>(), VariableType.TRAIT.getId()));
 
 	}
 
@@ -81,7 +82,7 @@ public class ManageSettingsControllerTest {
 		ManageSettingsController spyController = this.initializeMockMeasurementRows();
 
 		Assert.assertTrue("we're sure this returns true", spyController.checkModeAndHasMeasurementData(
-				AppConstants.SEGMENT_TRAITS.getInt(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0));
+				VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0));
 
 		Mockito.verify(spyController).hasMeasurementDataEntered(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}
@@ -105,7 +106,7 @@ public class ManageSettingsControllerTest {
 		Mockito.when(this.userSelection.getMeasurementRowList()).thenReturn(rows);
 
 		Assert.assertFalse("we're sure this returns false", spyController.checkModeAndHasMeasurementData(
-				AppConstants.SEGMENT_TRAITS.getInt(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0));
+				VariableType.TRAIT.getId(), ManageSettingsControllerTest.TEST_VARIABLE_ID_0));
 
 		Mockito.verify(spyController).hasMeasurementDataEntered(ManageSettingsControllerTest.TEST_VARIABLE_ID_0);
 	}

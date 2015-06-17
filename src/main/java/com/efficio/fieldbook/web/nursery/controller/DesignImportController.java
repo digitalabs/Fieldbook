@@ -157,7 +157,7 @@ public class DesignImportController extends SettingsController {
 		Workbook workbook = this.userSelection.getTemporaryWorkbook();
 		DesignImportData designImportData = this.userSelection.getDesignImportData();
 			
-		Set<MeasurementVariable> measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData, true);
+		Set<MeasurementVariable> measurementVariables = this.designImportService.getDesignMeasurementVariables(workbook, designImportData, false);
 	    	
 			model.addAttribute("measurementVariables", measurementVariables);
 			
@@ -178,7 +178,7 @@ public class DesignImportController extends SettingsController {
 			List<MeasurementRow> measurementRows = new ArrayList<>();
 			
 			try {
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, true);
+			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false);
 			} catch (DesignValidationException e) {
 			DesignImportController.LOG.error(e.getMessage(), e);
 			}
@@ -224,11 +224,16 @@ public class DesignImportController extends SettingsController {
 						this.messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH));
 			}
 
-			boolean hasConflict = userSelection.getWorkbook() != null && hasConflict(
-					designImportService.getDesignMeasurementVariables(userSelection.getTemporaryWorkbook(),
-					userSelection.getDesignImportData(),true),
-					new HashSet<>(userSelection.getWorkbook().getMeasurementDatasetVariables()));
 
+			boolean hasConflict = false;
+			
+			if (userSelection.getWorkbook() != null && userSelection.getWorkbook().getMeasurementDatasetVariables() != null){
+				 hasConflict = hasConflict(
+						designImportService.getMeasurementVariablesFromDataFile(userSelection.getTemporaryWorkbook(),
+						userSelection.getDesignImportData()),
+						new HashSet<>(userSelection.getWorkbook().getMeasurementDatasetVariables()));
+			}
+			
 
 			resultsMap.put("success", Boolean.TRUE);
 			resultsMap.put("hasConflict",hasConflict);

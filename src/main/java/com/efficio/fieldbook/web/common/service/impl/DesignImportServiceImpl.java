@@ -109,7 +109,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurements;
 	}
 	
-
 	@Override
 	public void validateDesignData(DesignImportData designImportData) throws DesignValidationException {
 		
@@ -205,6 +204,28 @@ public class DesignImportServiceImpl implements DesignImportService {
 		
 		return measurementVariables;
 		
+	}
+	
+	@Override
+	public Set<MeasurementVariable> getMeasurementVariablesFromDataFile(Workbook workbook,
+			DesignImportData designImportData) {
+		
+		Set<MeasurementVariable> measurementVariables = new LinkedHashSet<>();
+		Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
+		
+		//Add the trial environments first
+		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT, mappedHeaders));
+		
+		//Add the germplasm factors that exist from csv file header
+		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.GERMPLASM, mappedHeaders));
+		
+		//Add the design factors that exists from csv file header
+		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.TRIAL_DESIGN, mappedHeaders));
+		
+		//Add the variates that exist from csv file header
+		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.VARIATE, mappedHeaders));
+		
+		return measurementVariables;
 	}
 	
 	@Override
@@ -611,5 +632,5 @@ public class DesignImportServiceImpl implements DesignImportService {
 	protected String getTheFirstValueFromCsv(DesignHeaderItem item, Map<Integer, List<String>> map) {
 		return map.entrySet().iterator().next().getValue().get(item.getColumnIndex());
 	}
-
+	
 }

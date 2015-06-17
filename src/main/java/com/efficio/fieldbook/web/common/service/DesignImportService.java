@@ -26,6 +26,8 @@ public interface DesignImportService {
 
 	Set<StandardVariable> getDesignRequiredStandardVariables(Workbook workbook, DesignImportData designImportData);
 	
+	Set<MeasurementVariable> getMeasurementVariablesFromDataFile(Workbook workbook, DesignImportData designImportData);
+	
 	void validateDesignData(DesignImportData designImportData) throws DesignValidationException;
 	
 	boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData);

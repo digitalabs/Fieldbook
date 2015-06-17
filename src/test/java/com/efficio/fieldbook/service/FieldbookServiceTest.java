@@ -18,6 +18,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -345,11 +346,11 @@ public class FieldbookServiceTest {
 
 	private void addCheckVariables(List<MeasurementVariable> conditions) throws MiddlewareQueryException {
 		conditions.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()), "2",
-				Operation.UPDATE));
+				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
 		conditions.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()), "3",
-				Operation.UPDATE));
+				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
 		conditions.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_PLAN.getId()), "8415",
-				Operation.UPDATE));
+				Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
 	}
 
 	@Test

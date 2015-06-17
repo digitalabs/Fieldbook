@@ -37,6 +37,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Location;
@@ -414,8 +415,8 @@ public class CreateNurseryController extends SettingsController {
 		form.setStartDateId(AppConstants.START_DATE_ID.getString());
 		form.setEndDateId(AppConstants.END_DATE_ID.getString());
 		form.setOpenGermplasmUrl(this.fieldbookProperties.getGermplasmDetailsUrl());
-		form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
-		form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
+		form.setBaselineTraitsSegment(VariableType.TRAIT.getId().toString());
+		form.setSelectionVariatesSegment(VariableType.SELECTION_METHOD.getId().toString());
 		form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
 		form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + ","
 				+ AppConstants.FIXED_NURSERY_VARIABLES.getString());
@@ -434,11 +435,11 @@ public class CreateNurseryController extends SettingsController {
 	 * @return the setting detail list
 	 */
 	private List<SettingDetail> getSettingDetailList(int mode) {
-		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			return this.userSelection.getStudyLevelConditions();
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
 			return this.userSelection.getPlotsLevelList();
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId()) {
 			List<SettingDetail> newList = new ArrayList<SettingDetail>();
 
 			for (SettingDetail setting : this.userSelection.getBaselineTraitsList()) {
@@ -450,7 +451,7 @@ public class CreateNurseryController extends SettingsController {
 			}
 
 			return newList;
-		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 			return this.userSelection.getSelectionVariates();
 		}
 		return new ArrayList<SettingDetail>();
@@ -569,13 +570,13 @@ public class CreateNurseryController extends SettingsController {
 
 	private Operation removeVarFromDeletedList(SettingVariable var, int mode) {
 		List<SettingDetail> settingsList = new ArrayList<SettingDetail>();
-		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			settingsList = this.userSelection.getDeletedStudyLevelConditions();
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
 			settingsList = this.userSelection.getDeletedPlotLevelList();
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()) {
 			settingsList = this.userSelection.getDeletedBaselineTraitsList();
-		} else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
 			settingsList = this.userSelection.getDeletedNurseryConditions();
 		}
 
@@ -636,7 +637,7 @@ public class CreateNurseryController extends SettingsController {
 	 */
 	private String addNewSettingDetails(CreateNurseryForm form, int mode, List<SettingDetail> newDetails) throws JsonGenerationException,
 			JsonMappingException, JsonIoException {
-		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			if (form.getStudyLevelVariables() == null) {
 				form.setStudyLevelVariables(newDetails);
 			} else {
@@ -648,7 +649,7 @@ public class CreateNurseryController extends SettingsController {
 				this.userSelection.getStudyLevelConditions().addAll(newDetails);
 			}
 
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
 			if (form.getPlotLevelVariables() == null) {
 				form.setPlotLevelVariables(newDetails);
 			} else {
@@ -659,7 +660,7 @@ public class CreateNurseryController extends SettingsController {
 			} else {
 				this.userSelection.getPlotsLevelList().addAll(newDetails);
 			}
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+		} else if (mode == VariableType.TRAIT.getId()) {
 			if (form.getBaselineTraitVariables() == null) {
 				form.setBaselineTraitVariables(newDetails);
 			} else {
@@ -670,7 +671,7 @@ public class CreateNurseryController extends SettingsController {
 			} else {
 				this.userSelection.getBaselineTraitsList().addAll(newDetails);
 			}
-		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 			if (form.getSelectionVariatesVariables() == null) {
 				form.setSelectionVariatesVariables(newDetails);
 			} else {
@@ -710,7 +711,7 @@ public class CreateNurseryController extends SettingsController {
 		List<Integer> varIdList = SettingsUtil.parseVariableIds(variableIds);
 		Map<String, String> idNameRetrieveSaveMap = this.fieldbookService.getIdNamePairForRetrieveAndSave();
 		for (Integer variableId : varIdList) {
-			if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+			if (mode == VariableType.STUDY_DETAIL.getId()) {
 
 				this.addVariableInDeletedList(this.userSelection.getStudyLevelConditions(), mode, variableId);
 				this.deleteVariableInSession(this.userSelection.getStudyLevelConditions(), variableId);
@@ -721,13 +722,13 @@ public class CreateNurseryController extends SettingsController {
 					this.deleteVariableInSession(this.userSelection.getStudyLevelConditions(),
 							Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
 				}
-			} else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+			} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId);
 				this.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);
-			} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+			} else if (mode == VariableType.TRAIT.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getBaselineTraitsList(), mode, variableId);
 				this.deleteVariableInSession(this.userSelection.getBaselineTraitsList(), variableId);
-			} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+			} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId);
 				this.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
 			} else {
@@ -746,27 +747,27 @@ public class CreateNurseryController extends SettingsController {
 			}
 		}
 
-		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			if (this.userSelection.getDeletedStudyLevelConditions() == null) {
 				this.userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedStudyLevelConditions().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
 			if (this.userSelection.getDeletedPlotLevelList() == null) {
 				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+		} else if (mode == VariableType.TRAIT.getId()) {
 			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
 				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
 				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
 			if (this.userSelection.getDeletedNurseryConditions() == null) {
 				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
 			}

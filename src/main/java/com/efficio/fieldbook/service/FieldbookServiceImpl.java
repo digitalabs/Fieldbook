@@ -41,6 +41,7 @@ import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -164,14 +165,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 		List<StandardVariableReference> dbList =
 				this.fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, propertyIds,
-						mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt());
+						mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId());
 
 		if (dbList != null && !dbList.isEmpty()) {
 
 			for (StandardVariableReference ref : dbList) {
 				if (!selectedIds.contains(ref.getId())) {
 
-					if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+					if (mode == VariableType.STUDY_DETAIL.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.FILTER_NURSERY_FIELDS.getString())
 								|| ref.getId() == TermId.DATASET_NAME.getId() || ref.getId() == TermId.DATASET_TITLE.getId()
 								|| ref.getId() == TermId.DATASET_TYPE.getId()
@@ -179,19 +180,19 @@ public class FieldbookServiceImpl implements FieldbookService {
 							continue;
 						}
 
-					} else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
-							continue;
-						}
-					} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+					} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString())) {
 							continue;
 						}
-					} else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+					} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_VARIABLES.getString())) {
 							continue;
 						}
-					}
+					} else  {
+						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
+							continue;
+						}
+					} 
 
 					result.add(ref);
 				}
@@ -219,7 +220,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 
 		List<StandardVariableReference> dbList;
-		if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+		if (mode == VariableType.TREATMENT_FACTOR.getId()) {
 			dbList =
 					this.fieldbookMiddlewareService.getAllTreatmentLevels(AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS
 							.getIntegerList());
@@ -228,7 +229,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			List<Integer> propertyIds = this.getPropertyIdsByMode(mode);
 			dbList =
 					this.fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, propertyIds,
-							mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt());
+							mode == VariableType.TRAIT.getId() || mode == VariableType.NURSERY_CONDITION.getId());
 		}
 
 		if (dbList != null && !dbList.isEmpty()) {
@@ -236,7 +237,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			for (StandardVariableReference ref : dbList) {
 				if (!selectedIds.contains(ref.getId())) {
 
-					if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+					if (mode == VariableType.STUDY_DETAIL.getId()) {
 						if (ref.getId() == TermId.STUDY_TYPE.getId() || ref.getId() == TermId.PM_KEY.getId()
 								|| ref.getId() == TermId.TRIAL_INSTANCE_FACTOR.getId() || ref.getId() == TermId.STUDY_STATUS.getId()
 								|| ref.getId() == TermId.DATASET_NAME.getId() || ref.getId() == TermId.DATASET_TITLE.getId()
@@ -247,20 +248,20 @@ public class FieldbookServiceImpl implements FieldbookService {
 							continue;
 						}
 
-					} else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
-							continue;
-						}
-					} else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+					} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())
 								|| FieldbookServiceImpl.inHideVariableFields(ref.getId(),
 										AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getString())
 								|| FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_VARIABLES.getString())) {
 							continue;
 						}
-					} else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+					} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(),
 								AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getString())) {
+							continue;
+						}
+					} else {
+						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
 							continue;
 						}
 					}
@@ -280,22 +281,22 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	private List<Integer> getStoredInIdsByMode(int mode, boolean isNursery) {
 		List<Integer> list = new ArrayList<Integer>();
-		if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			list.addAll(PhenotypicType.STUDY.getTypeStorages());
 			if (isNursery) {
 				list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
 			}
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+		} else if (isNursery && (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId())) {
 			list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
 			list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()
-				|| mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()
+				|| mode == VariableType.NURSERY_CONDITION.getId()) {
 			list.addAll(PhenotypicType.VARIATE.getTypeStorages());
-		} else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 			list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
-		} else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
 			list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
-		} else if (mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
+		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 			list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
 		}
 		return list;
@@ -304,8 +305,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 	private List<Integer> getPropertyIdsByMode(int mode) {
 		List<Integer> list = new ArrayList<Integer>();
 
-		if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt() || mode == AppConstants.SEGMENT_TRAITS.getInt()
-				|| mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+		if (mode == VariableType.SELECTION_METHOD.getId() || mode == VariableType.TRAIT.getId()
+				|| mode == VariableType.NURSERY_CONDITION.getId()) {
 
 			StringTokenizer token = new StringTokenizer(AppConstants.SELECTION_VARIATES_PROPERTIES.getString(), ",");
 
@@ -606,14 +607,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return idNameMap;
 	}
 
-	protected MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation)
+	protected MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation, PhenotypicType role)
 			throws MiddlewareQueryException {
 		StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate));
 		MeasurementVariable var =
 				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
 						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
 								.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
-		var.setStoredIn(stdvar.getStoredIn().getId());
+		var.setRole(role);
 		var.setDataTypeId(stdvar.getDataType().getId());
 		var.setFactor(false);
 		var.setOperation(operation);
@@ -645,18 +646,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 					if (studyConditionMap.get(codeTermId) == null) {
 						// case when nursery comes from old fieldbook and has id variable saved
 						if (studyConditionMap.get(idTermId) != null) {
+							MeasurementVariable measurementVar = studyConditionMap.get(idTermId);
 							Method method =
 									studyConditionMap.get(idTermId).getValue().isEmpty() ? null : this.fieldbookMiddlewareService
 											.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
-
+							
 							// add code if it is not yet in the list
-							workbook.getConditions().add(
-									this.createMeasurementVariable(codeTermId, method == null ? "" : method.getMcode(), Operation.ADD));
+							workbook.getConditions().add(this.createMeasurementVariable(codeTermId, method == null ? "" : method.getMcode(), Operation.ADD, measurementVar.getRole()));
 
 							// add name if it is not yet in the list
 							if (studyConditionMap.get(nameTermId) == null) {
-								workbook.getConditions().add(
-										this.createMeasurementVariable(nameTermId, method == null ? "" : method.getMname(), Operation.ADD));
+								workbook.getConditions().add(this.createMeasurementVariable(nameTermId, method == null ? "" : method.getMname(), Operation.ADD, measurementVar.getRole()));
 							}
 
 							// set the correct value of the name and id for update operation
@@ -681,8 +681,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 						// add name variable if it is not yet in the list
 						if (studyConditionMap.get(nameTermId) == null
 								&& studyConditionMap.get(codeTermId).getOperation().equals(Operation.ADD)) {
+							MeasurementVariable codeTermVar = studyConditionMap.get(codeTermId);
 							workbook.getConditions().add(
-									this.createMeasurementVariable(nameTermId, method == null ? "" : method.getMname(), Operation.ADD));
+									this.createMeasurementVariable(nameTermId, method == null ? "" : method.getMname(), Operation.ADD, codeTermVar.getRole()));
 						}
 
 						// set correct values of id, code and name before saving
@@ -785,7 +786,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 								new MeasurementVariable(Integer.valueOf(nameTermId), tempVarId.getName(), stdvar.getDescription(), stdvar
 										.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar
 										.getDataType().getName(), actualNameVal, stdvar.getPhenotypicType().getLabelList().get(0));
-						tempVarName.setStoredIn(stdvar.getStoredIn().getId());
+						tempVarName.setRole(tempVarId.getRole());
 						tempVarName.setDataTypeId(stdvar.getDataType().getId());
 						tempVarName.setFactor(false);
 						tempVarId.setName(tempVarId.getName() + AppConstants.ID_SUFFIX.getString());
@@ -806,6 +807,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 							svar.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
 							svar.setOperation(Operation.UPDATE);
 							SettingDetail settingDetail = new SettingDetail(svar, null, actualNameVal, true);
+							settingDetail.setRole(tempVarName.getRole());
 							settingDetails.add(settingDetail);
 						}
 
@@ -847,7 +849,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 											+ AppConstants.ID_SUFFIX.getString(), stdvar.getDescription(), stdvar.getScale().getName(),
 											stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(),
 											actualIdVal, stdvar.getPhenotypicType().getLabelList().get(0));
-							tempVarId.setStoredIn(stdvar.getStoredIn().getId());
+							tempVarId.setRole(tempVarName.getRole());
 							tempVarId.setDataTypeId(stdvar.getDataType().getId());
 							tempVarId.setFactor(false);
 							tempVarId.setOperation(Operation.ADD);
@@ -1050,11 +1052,11 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	private void addCheckVariables(List<MeasurementVariable> conditions, ImportGermplasmListForm form) throws MiddlewareQueryException {
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()),
-				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId()), Operation.ADD));
+				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId()), Operation.ADD, VariableType.ENVIRONMENT_DETAIL.getRole()));
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()),
-				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_INTERVAL.getId()), Operation.ADD));
+				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_INTERVAL.getId()), Operation.ADD, VariableType.ENVIRONMENT_DETAIL.getRole()));
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_PLAN.getId()),
-				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()), Operation.ADD));
+				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()), Operation.ADD,  VariableType.ENVIRONMENT_DETAIL.getRole()));
 	}
 
 	private void updateCheckVariables(List<MeasurementVariable> conditions, ImportGermplasmListForm form) {

@@ -53,6 +53,7 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
@@ -1588,7 +1589,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 		try {
 			List<StandardVariableReference> stdVars =
-					this.fieldbookService.filterStandardVariablesForSetting(AppConstants.SEGMENT_GERMPLASM.getInt(),
+					this.fieldbookService.filterStandardVariablesForSetting(VariableType.GERMPLASM_DESCRIPTOR.getId(),
 							new ArrayList<SettingDetail>());
 
 			for (StandardVariableReference stdVar : stdVars) {

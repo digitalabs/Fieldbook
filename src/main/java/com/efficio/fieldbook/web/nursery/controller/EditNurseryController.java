@@ -33,6 +33,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -587,8 +588,8 @@ public class EditNurseryController extends SettingsController {
 		form.setStartDateId(AppConstants.START_DATE_ID.getString());
 		form.setEndDateId(AppConstants.END_DATE_ID.getString());
 		form.setOpenGermplasmUrl(this.fieldbookProperties.getGermplasmDetailsUrl());
-		form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
-		form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
+		form.setBaselineTraitsSegment(VariableType.TRAIT.getId().toString());
+		form.setSelectionVariatesSegment(VariableType.SELECTION_METHOD.getId().toString());
 		form.setCharLimit(Integer.parseInt(AppConstants.CHAR_LIMIT.getString()));
 		form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + ","
 				+ AppConstants.FIXED_NURSERY_VARIABLES.getString());

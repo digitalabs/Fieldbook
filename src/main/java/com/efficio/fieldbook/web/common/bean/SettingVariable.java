@@ -159,12 +159,12 @@ public class SettingVariable implements Serializable {
 		this.cvTermId = cvTermId;
 	}
 
-	public void setPSMRFromStandardVariable(StandardVariable standardVariable) {
+	public void setPSMRFromStandardVariable(StandardVariable standardVariable, String role) {
 		if (standardVariable != null) {
 			this.property = HtmlUtils.htmlEscape(standardVariable.getProperty().getName());
 			this.scale = HtmlUtils.htmlEscape(standardVariable.getScale().getName());
 			this.method = HtmlUtils.htmlEscape(standardVariable.getMethod().getName());
-			this.role = HtmlUtils.htmlEscape(standardVariable.getPhenotypicType().name());
+			this.role = role;
 			this.description = HtmlUtils.htmlEscape(standardVariable.getDescription());
 			this.dataType = this.getDataType(standardVariable.getDataType().getId());
 			this.dataTypeId = standardVariable.getDataType().getId();

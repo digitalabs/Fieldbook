@@ -42,13 +42,13 @@ BMS.NurseryManager.PropertySelect = (function($) {
 		return generateFormattedResult({
 			propertyName: item.name,
 			searchTerm: query.term,
-			className: item.traitClass.traitClassName,
+			className: item.classesStr,
 			variables: variables
 		});
 	}
 
 	function formatSelection(item) {
-		return '<strong>' + item.name + '</strong> (' + item.traitClass.traitClassName + ')';
+		return '<strong>' + item.name + '</strong> (' + item.classesStr + ')';
 	}
 
 	/**
@@ -119,7 +119,7 @@ BMS.NurseryManager.PropertySelect = (function($) {
 
 					// Include the object in the results if either the property name or class name contains the search term
 					propContainsTerm = prop.name.toLocaleLowerCase().indexOf(searchTerm) > -1 ||
-						prop.traitClass.traitClassName.toLocaleLowerCase().indexOf(searchTerm) > -1;
+						prop.classesStr.toLocaleLowerCase().indexOf(searchTerm) > -1;
 
 					if (propContainsTerm) {
 						return true;

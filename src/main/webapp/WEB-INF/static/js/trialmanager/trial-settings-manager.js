@@ -335,7 +335,7 @@ window.TrialSettingsManager = (function() {
 			},
 			thisInstance = this,
 			modal = this._variableSelection,
-			apiUrl = (params.apiUrl) ? params.apiUrl : '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&useTrialFiltering=true';
+			apiUrl = (params.apiUrl) ? params.apiUrl : '/Fieldbook/manageSettings/settings/properties?type=' + groupId + '&useTrialFiltering=true';
 
 		// Initialise a variable selection modal if we haven't done so before
 		if (!modal) {

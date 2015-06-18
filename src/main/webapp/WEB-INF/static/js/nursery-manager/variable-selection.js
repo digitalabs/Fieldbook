@@ -81,7 +81,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			splitColumns = {
 				column1: filteredProperties,
 				column2: [],
-				className: selectedProperty.traitClass.traitClassName
+				className: selectedProperty.classesStr
 			};
 
 		// Split the list of filtered properties in two if there are more than 4
@@ -291,7 +291,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			toExclude = this._excludedProperties,
 			propertyVariableList = $(propertyContainerSelector),
 			relatedPropertyList = $(relatedPropertyListSelector),
-			classId = selectedProperty.traitClass.traitClassId,
+			classStr = selectedProperty.classesStr,
 			selectedVariables = this._currentlySelectedVariables,
 			generalAjaxErrorMessage = this._translations.generalAjaxError,
 
@@ -330,7 +330,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		propertyVariableList.empty();
 		propertyVariableList.append(generatePropertyVariableList({
 			propertyName: this._selectedProperty.name,
-			className: this._selectedProperty.traitClass.traitClassName,
+			className: this._selectedProperty.classesStr,
 			variables: variables
 		}));
 
@@ -338,12 +338,17 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		relatedPropertyList.empty();
 
 		// Key identifies whether we have retrieved the related properties for this group / class before (so we don't retrieve them again)
-		relatedPropertiesKey = this._group + ':' + classId;
+		relatedPropertiesKey = this._group + ':' + classStr;
+
+		var classReqStr = '';
+		$.each(selectedProperty.classes, function (key, val) {
+			classReqStr += '&classId=' + val;
+		});
 
 		if (!this._relatedProperties[relatedPropertiesKey]) {
 
 			var groupId = this._group,
-				url = '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&classId=' + classId;
+				url = '/Fieldbook/manageSettings/settings/properties?type=' + groupId + classReqStr;
 			if (!isNursery()) {
 				url += '&useTrialFiltering=true';
 			}
@@ -434,7 +439,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			selectedVariable.cvTermId = variableId;
 
 			callback({
-				responseData : [{variable : selectedVariable}]
+				responseData: [{variable: selectedVariable}]
 			});
 		} else {
 			$.ajax({

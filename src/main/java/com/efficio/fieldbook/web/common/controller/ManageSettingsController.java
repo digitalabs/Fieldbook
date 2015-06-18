@@ -1,41 +1,33 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.domain.oms.OntologyVariableSummary;
 import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.domain.ontology.Property;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -55,54 +47,46 @@ public class ManageSettingsController extends SettingsController {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(ManageSettingsController.class);
 
-	@Resource
-	private OntologyService ontologyService;
+	@Resource private OntologyVariableDataManager ontologyVariableDataManager;
 
-	/**
-	 * Displays the Add Setting popup.
-	 *
-	 * @param mode the mode
-	 * @return the string
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/displayAddSetting/{mode}", method = RequestMethod.GET)
-	public Map<String, Object> showAddSettingPopup(@PathVariable int mode) {
-		Map<String, Object> result = new HashMap<String, Object>();
+	@Resource private OntologyPropertyDataManager ontologyPropertyDataManager;
+
+	@Resource private ContextUtil contextUtil;
+
+	@ResponseBody @RequestMapping(value = "/settings/properties") public List<PropertyTreeSummary> getOntologyPropertiesByVariableType(
+			@RequestParam(value = "type", required = true) Integer variableTypeId,
+			@RequestParam(value = "classes", required = false) String[] classes, @RequestParam(required = false) boolean isTrial) {
+		List<PropertyTreeSummary> propertyTreeList = new ArrayList<>();
+		List<Property> properties = new ArrayList<>();
+
 		try {
 
-			List<StandardVariableReference> standardVariableList =
-					this.fieldbookService.filterStandardVariablesForSetting(mode, this.getSettingDetailList(mode));
-
-			try {
-				// TODO : question when the trait ref list is set to null
-				if (this.userSelection.getTraitRefList() == null) {
-					List<TraitClassReference> traitRefList = this.ontologyService.getAllTraitGroupsHierarchy(true);
-					this.userSelection.setTraitRefList(traitRefList);
+			if (Objects.equals(classes, null) || classes.length == 0) {
+				// lets retrieve all properties given the classes
+				properties = ontologyPropertyDataManager.getAllProperties();
+			} else {
+				for (String className : classes) {
+					properties.addAll(ontologyPropertyDataManager.getAllPropertiesWithClass(className));
 				}
-
-				List<TraitClassReference> traitRefList = this.userSelection.getTraitRefList();
-
-				// we convert it to map so that it would be easier to chekc if there is a record or not
-				Map<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
-				if (standardVariableList != null && !standardVariableList.isEmpty()) {
-					for (StandardVariableReference varRef : standardVariableList) {
-						mapVariableRef.put(varRef.getId().toString(), varRef);
-					}
-				}
-
-				// TODO : question purpose of mapVariableRef, as well as traitRefList
-				String treeData = TreeViewUtil.convertOntologyTraitsToJson(traitRefList, mapVariableRef);
-				String searchTreeData = TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, mapVariableRef);
-				result.put("treeData", treeData);
-				result.put("searchTreeData", searchTreeData);
-			} catch (Exception e) {
-				ManageSettingsController.LOG.error(e.getMessage(), e);
 			}
-		} catch (Exception e) {
-			ManageSettingsController.LOG.error(e.getMessage(), e);
+
+			// fetch all standard variables given property
+			for (Property property : properties) {
+				List<OntologyVariableSummary> ontologyList = ontologyVariableDataManager
+						.getWithFilter(contextUtil.getCurrentProgramUUID(), null, null, property.getId(), null,
+								VariableType.getById(variableTypeId));
+
+				if (!ontologyList.isEmpty()) {
+					PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
+					propertyTreeList.add(propertyTree);
+				}
+			}
+
+		} catch (MiddlewareException e) {
+			LOG.error(e.getMessage(), e);
 		}
 
-		return result;
+		return propertyTreeList;
 	}
 
 	/**

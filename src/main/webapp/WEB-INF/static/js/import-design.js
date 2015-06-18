@@ -50,6 +50,8 @@ var ImportDesign = (function() {
 
 				angularElem.scope().$apply(function() {
 					ImportDesign.getTrialManagerDataService().applicationData.isGeneratedOwnDesign = true;
+					ImportDesign.getTrialManagerDataService().applicationData.unsavedGeneratedDesign = true;
+					ImportDesign.getTrialManagerDataService().isGeneratedOwnDesign = true;
 				});
 			}
 		},

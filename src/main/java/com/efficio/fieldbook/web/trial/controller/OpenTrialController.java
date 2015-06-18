@@ -342,13 +342,26 @@ public class OpenTrialController extends BaseTrialController {
 						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
 						this.userSelection.getExperimentalDesignVariables());
 
-		if (this.userSelection.getTemporaryWorkbook() != null) {
+		if (userSelection.isDesignGenerated()) {
 			
 			this.userSelection.setMeasurementRowList(null);
 			this.userSelection.getWorkbook().setOriginalObservations(null);
 			this.userSelection.getWorkbook().setObservations(null);
 			
 			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments() , workbook, userSelection.getTemporaryWorkbook().getTrialObservations());
+		
+			if (replace == 1){
+				for (MeasurementVariable mvar : userSelection.getWorkbook().getConditions()){
+					
+					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()){
+						mvar.setOperation(Operation.UPDATE);
+						break;
+					}else{
+						mvar.setOperation(Operation.ADD);
+						break;
+					}
+				}
+			}
 		}
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());

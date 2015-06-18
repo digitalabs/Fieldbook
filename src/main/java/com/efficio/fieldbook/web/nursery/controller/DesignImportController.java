@@ -22,6 +22,7 @@ import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -49,6 +50,7 @@ import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.common.service.DesignImportService;
@@ -304,6 +306,11 @@ public class DesignImportController extends SettingsController {
 		
 		try {
 			
+			
+			checkTheDeletedSettingDetails(userSelection, userSelection.getDesignImportData());
+			
+			this.initializeTemporaryWorkbook(userSelection.getTemporaryWorkbook().getStudyDetails().getStudyType().name());
+			
 			Workbook workbook = this.userSelection.getTemporaryWorkbook();
 			DesignImportData designImportData = this.userSelection.getDesignImportData();
 			
@@ -364,6 +371,68 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return resultsMap;
+	}
+
+	private void checkTheDeletedSettingDetails(UserSelection userSelection,
+			DesignImportData designImportData) {
+		
+		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
+		Map<String, String> NameIdMap = switchKey(idNameMap);
+		
+		for (MeasurementVariable mvar : designImportService.getMeasurementVariablesFromDataFile(null, designImportData)){
+			
+			if (userSelection.getDeletedTrialLevelVariables() != null){
+				Iterator<SettingDetail> deletedTrialLevelVariables = userSelection.getDeletedTrialLevelVariables().iterator();
+				while(deletedTrialLevelVariables.hasNext()){
+					SettingDetail deletedSettingDetail = deletedTrialLevelVariables.next();
+					
+					if (deletedSettingDetail.getVariable().getCvTermId().intValue() == mvar.getTermId()){
+						
+						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
+						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
+						
+						deletedTrialLevelVariables.remove();
+						
+					}
+					
+					String termIdOfName = idNameMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
+					if (termIdOfName != null){
+						
+						updateOperation(Integer.valueOf(termIdOfName),userSelection.getTrialLevelVariableList() , Operation.UPDATE);
+						
+						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
+						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
+						
+						deletedTrialLevelVariables.remove();
+					}
+					
+					String termIdOfId = NameIdMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
+					if (termIdOfId != null){
+						updateOperation(Integer.valueOf(termIdOfId),userSelection.getTrialLevelVariableList() , Operation.UPDATE);
+						
+						deletedSettingDetail.getVariable().setOperation(Operation.UPDATE);
+						userSelection.getTrialLevelVariableList().add(deletedSettingDetail);
+						
+						deletedTrialLevelVariables.remove();
+					}
+				}
+				
+				
+			}
+			
+		}
+		
+	}
+	
+	protected void updateOperation(int termId, List<SettingDetail> settingDetails, Operation operation){
+		
+		for (SettingDetail sd : settingDetails){
+			if (sd.getVariable().getCvTermId().intValue() == termId){
+				sd.getVariable().setOperation(operation);
+				break;
+			}
+		}
+		
 	}
 
 	public void initializeTemporaryWorkbook(String studyType) {
@@ -430,27 +499,36 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void addExperimentDesign(Workbook workbook) throws MiddlewareQueryException {
+		
 		ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 		designParam.setDesignType(3);
-		userSelection.setExpDesignParams(designParam);
 		
 		List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+		
+		userSelection.setExpDesignParams(designParam);
 		userSelection.setExpDesignVariables(expDesignTermIds);
-
-		//add experiment design factor
+			
 		TermId termId = TermId.getById(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 		SettingsUtil.addTrialCondition(termId, designParam, workbook, fieldbookMiddlewareService);
+		
 	}
 
 	protected void addFactorsIfNecessary(Workbook workbook, DesignImportData designImportData) {
 		
 		if (workbook.getStudyDetails().getStudyType() == StudyType.T){
 			
+
 			Set<MeasurementVariable> uniqueFactors = new HashSet<>(workbook.getFactors());
 			uniqueFactors.addAll(designImportService
 					.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT,
 							designImportData.getMappedHeaders()));
+			
+			for (MeasurementVariable mvar : uniqueFactors){
+				if (checkIfSpecifiedTermIdExistsInList(mvar.getTermId(), workbook.getConditions())){
+					mvar.setOperation(Operation.UPDATE);
+				}
+			}
 			
 			workbook.getFactors().clear();
 			workbook.getFactors().addAll((new ArrayList<>(uniqueFactors)));
@@ -669,7 +747,8 @@ public class DesignImportController extends SettingsController {
 						trialVariables.add(measurementVariable);
 
 						copyOfManagementDetailValues.remove(managementDetail.getKey());
-						SettingsUtil.deleteVariableInSession(userSelection.getTrialLevelVariableList(), Integer.valueOf(managementDetail.getKey()));
+						
+						SettingsUtil.hideVariableInSession(userSelection.getTrialLevelVariableList(), Integer.valueOf(managementDetail.getKey()));
 					}
 				}
 				
@@ -693,7 +772,8 @@ public class DesignImportController extends SettingsController {
 						trialVariables.add(measurementVariable);
 						
 						copyOfManagementDetailValues.remove(managementDetail.getKey());
-						SettingsUtil.deleteVariableInSession(userSelection.getTrialLevelVariableList(), Integer.valueOf(managementDetail.getKey()));
+						
+						SettingsUtil.hideVariableInSession(userSelection.getTrialLevelVariableList(), Integer.valueOf(managementDetail.getKey()));
 					}
 					
 				}
@@ -853,6 +933,16 @@ public class DesignImportController extends SettingsController {
 			newMap.put(entry.getValue(), entry.getKey());
 		}
 		return newMap;
+	}
+	
+	protected boolean checkIfSpecifiedTermIdExistsInList(int termid, List<MeasurementVariable> list){
+		for (MeasurementVariable mvar : list){
+			if (termid == mvar.getTermId()){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	

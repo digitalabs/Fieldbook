@@ -908,7 +908,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                 String entry = idNameMap.get(key);
                 nameIdMap.put(entry, key);
             }
-            int index = 0;
+           
             for (MeasurementVariable variable : workbook.getTrialConditions()) {
                 for (MeasurementRow row : workbook.getTrialObservations()) {
                     MeasurementData data = row.getMeasurementData(variable.getTermId());
@@ -943,7 +943,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                        
                         MeasurementData newData = new MeasurementData(variable.getName(), actualNameVal);
                         newData.setMeasurementVariable(variable);
-                        row.getDataList().add(index, newData);
+                        row.getDataList().add(row.getDataList().size()-1, newData);
                         
                     } else if (nameIdMap.get(String.valueOf(variable.getTermId())) != null) {
                         Integer idTerm = Integer.valueOf(nameIdMap.get(String.valueOf(variable.getTermId())));
@@ -961,7 +961,7 @@ public class FieldbookServiceImpl implements FieldbookService {
                         }
                     }
                 }
-                index++;
+               
             }
         }
     }

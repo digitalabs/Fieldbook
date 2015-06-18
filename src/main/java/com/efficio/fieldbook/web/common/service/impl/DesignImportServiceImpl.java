@@ -620,9 +620,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 			
 			for (Environment environment : environmentData.getEnvironments()){
 				String trialInstanceNo = environment.getManagementDetailValues().get(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId()));
-				for (DesignHeaderItem item : trialEnvironmentsDesignHeaderItems){
-					String value = getTheFirstValueFromCsv(item, groupedCsvRows.get(trialInstanceNo));
-					environment.getManagementDetailValues().put(String.valueOf(item.getId()), value);
+				Map<Integer, List<String>> csvData =  groupedCsvRows.get(trialInstanceNo);
+				if (csvData != null){
+					for (DesignHeaderItem item : trialEnvironmentsDesignHeaderItems){
+						String value = getTheFirstValueFromCsv(item, csvData);
+						environment.getManagementDetailValues().put(String.valueOf(item.getId()), value);
+					}
 				}
 			}
 	

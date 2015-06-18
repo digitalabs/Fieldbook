@@ -2373,4 +2373,15 @@ public class SettingsUtil {
             }
         }
     }
+
+	public static void hideVariableInSession(List<SettingDetail> variableList, int variableId) {
+		 Iterator<SettingDetail> iter = variableList.iterator();
+	        while (iter.hasNext()) {
+	        	SettingDetail next = iter.next();
+	            if (next.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+	            	next.setHidden(true);
+	            }
+	        }
+		
+	}
 }

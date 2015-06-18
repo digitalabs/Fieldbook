@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-@Service
 public abstract class NumberSequenceExpression implements Expression {
 
 	protected void applyNumberSequence(List<StringBuilder> values, AdvancingSource source) {

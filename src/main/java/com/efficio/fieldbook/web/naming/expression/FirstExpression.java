@@ -4,10 +4,13 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.springframework.stereotype.Component;
 
 /**
  * Used as a separator with a string literal immediately following it. Otherwise, it will be disregarded.
  */
+
+@Component
 public class FirstExpression implements Expression {
 
 	public static final String KEY = "[FIRST]";

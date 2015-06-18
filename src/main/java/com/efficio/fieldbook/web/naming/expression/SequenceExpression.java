@@ -4,7 +4,9 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SequenceExpression extends NumberSequenceExpression implements Expression {
 
 	public static final String KEY = "[SEQUENCE]";

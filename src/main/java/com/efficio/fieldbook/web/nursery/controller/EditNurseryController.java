@@ -556,7 +556,7 @@ public class EditNurseryController extends SettingsController {
 					if (data.getMeasurementVariable().getTermId() == constant.getTermId()) {
 						data.setValue(constant.getValue());
 
-						if (constant.getStoredIn() == TermId.CATEGORICAL_VARIATE.getId() && constant.getValue() != null
+						if (constant.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId() && constant.getValue() != null
 								&& NumberUtils.isNumber(constant.getValue())) {
 							data.setcValueId(constant.getValue());
 						}

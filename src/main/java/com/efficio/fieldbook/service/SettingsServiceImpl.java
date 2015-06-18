@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -162,7 +163,7 @@ public class SettingsServiceImpl implements SettingsService {
 			}
 
 			// set all variables with trial design role to hidden
-			if (var.getStoredIn() != TermId.TRIAL_DESIGN_INFO_STORAGE.getId()) {
+			if (var.getRole() != PhenotypicType.TRIAL_DESIGN) {
 
 				LabelFields field =
 						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId(), workbook.isNursery()));

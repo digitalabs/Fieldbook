@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
@@ -225,7 +226,7 @@ public abstract class BaseTrialController extends SettingsController {
 			}
 
 			// set all variables with trial design role to hidden
-			if (var.getStoredIn() == TermId.TRIAL_DESIGN_INFO_STORAGE.getId()) {
+			if (var.getRole() == PhenotypicType.TRIAL_DESIGN) {
 				detail.setHidden(true);
 			} else {
 				detail.setHidden(false);

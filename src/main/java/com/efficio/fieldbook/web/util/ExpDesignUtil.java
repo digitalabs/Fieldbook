@@ -16,6 +16,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -211,7 +212,7 @@ public class ExpDesignUtil {
 						.getProperty().getName(), var.getDataType().getName(), null, var.getPhenotypicType().getLabelList().get(0));
 		mvar.setFactor(true);
 		mvar.setOperation(operation);
-		mvar.setStoredIn(var.getStoredIn().getId());
+		mvar.setRole(PhenotypicType.TRIAL_DESIGN);
 		mvar.setTermId(var.getId());
 		mvar.setDataTypeId(var.getDataType().getId());
 

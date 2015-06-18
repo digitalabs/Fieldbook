@@ -1276,7 +1276,6 @@ public class SettingsUtil {
 						condition.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(condition.getRole()));
 		mvar.setOperation(condition.getOperation());
 		mvar.setTermId(condition.getId());
-		mvar.setStoredIn(condition.getStoredIn());
 		mvar.setFactor(true);
 		mvar.setDataTypeId(condition.getDataTypeId());		
 		return mvar;
@@ -1299,7 +1298,6 @@ public class SettingsUtil {
 
 		mvar.setOperation(constant.getOperation());
 		mvar.setTermId(constant.getId());
-		mvar.setStoredIn(constant.getStoredIn());
 		mvar.setFactor(false);
 		mvar.setDataTypeId(constant.getDataTypeId());
 		mvar.setPossibleValues(constant.getPossibleValues());
@@ -1334,7 +1332,6 @@ public class SettingsUtil {
 						factor.getProperty(), factor.getDatatype(), null, PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0), PhenotypicType.getPhenotypicTypeByName(factor.getName()));
 		mvar.setFactor(true);
 		mvar.setOperation(factor.getOperation());
-		mvar.setStoredIn(factor.getStoredIn());
 		mvar.setTermId(factor.getId());
 		mvar.setTreatmentLabel(factor.getTreatmentLabel());
 		mvar.setDataTypeId(factor.getDataTypeId());
@@ -1397,7 +1394,6 @@ public class SettingsUtil {
 						variate.getMinRange(), variate.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(variate.getRole()));
 		mvar.setOperation(variate.getOperation());
 		mvar.setTermId(variate.getId());
-		mvar.setStoredIn(variate.getStoredIn());
 		mvar.setFactor(false);
 		mvar.setDataTypeId(variate.getDataTypeId());
 		mvar.setPossibleValues(variate.getPossibleValues());
@@ -1548,7 +1544,6 @@ public class SettingsUtil {
 								condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(),
 								userSelection, fieldbookMiddlewareService);
 				variable.setCvTermId(condition.getTermId());
-				variable.setStoredInId(condition.getStoredIn());
 				String value =
 						fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()),
 								condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
@@ -1718,10 +1713,11 @@ public class SettingsUtil {
 					&& (factor.getTreatmentLabel() == null || "".equals(factor.getTreatmentLabel()))) {
 
 				variable.setCvTermId(stdVar);
-				variable.setStoredInId(factor.getStoredIn());
+				variable.setRole(factor.getRole().name());
 				SettingDetail settingDetail =
 						new SettingDetail(variable, null, null, SettingsUtil.isSettingVariableDeletable(stdVar,
 								AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
+				settingDetail.setRole(factor.getRole());
 				plotsLevelList.add(settingDetail);
 			}
 		}
@@ -2060,7 +2056,6 @@ public class SettingsUtil {
 										.getConstraints().getMinValue() : null, stdvar.getConstraints() != null ? stdvar.getConstraints()
 										.getMaxValue() : null, PhenotypicType.TRIAL_ENVIRONMENT);
 				mvar.setOperation(Operation.ADD);
-				mvar.setStoredIn(stdvar.getStoredIn().getId());
 				mvar.setDataTypeId(stdvar.getDataType().getId());
 				workbook.getConditions().add(mvar);
 				workbook.resetTrialConditions();

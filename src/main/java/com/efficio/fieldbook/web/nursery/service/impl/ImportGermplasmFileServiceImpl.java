@@ -570,9 +570,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 					new MeasurementVariable(checkVariableTermId, "CHECK", stdvar.getDescription(), stdvar.getScale().getName(), stdvar
 							.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), "",
 							AppConstants.ENTRY.getString());
-
-			checkVariable.setStoredIn(stdvar.getStoredIn().getId());
-
+			checkVariable.setRole(PhenotypicType.GERMPLASM);
 			boolean checkFactorExisting = false;
 			for (MeasurementVariable var : measurementVariables) {
 				Integer termId =

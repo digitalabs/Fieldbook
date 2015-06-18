@@ -755,7 +755,6 @@ public class DesignImportServiceImplTest {
 		stdVar.setMethod(new Term(0, measurementVar.getMethod(), ""));
 		stdVar.setDataType(new Term(measurementVar.getDataTypeId(), measurementVar.getDataType(), ""));
 		stdVar.setPhenotypicType(PhenotypicType.getPhenotypicTypeForLabel(measurementVar.getLabel()));
-		stdVar.setStoredIn(new Term(measurementVar.getStoredIn(), "", ""));
 		return stdVar;
 	}
 

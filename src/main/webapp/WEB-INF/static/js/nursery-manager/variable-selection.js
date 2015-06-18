@@ -291,7 +291,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			toExclude = this._excludedProperties,
 			propertyVariableList = $(propertyContainerSelector),
 			relatedPropertyList = $(relatedPropertyListSelector),
-			classStr = selectedProperty.classesStr,
+            classesStr = selectedProperty.classesStr,
 			selectedVariables = this._currentlySelectedVariables,
 			generalAjaxErrorMessage = this._translations.generalAjaxError,
 
@@ -338,14 +338,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		relatedPropertyList.empty();
 
 		// Key identifies whether we have retrieved the related properties for this group / class before (so we don't retrieve them again)
-		relatedPropertiesKey = this._group + ':' + classStr;
-
-		var classReqStr = '';
-		$.each(selectedProperty.classes, function (key, val) {
-			classReqStr += '&classId=' + val;
-		});
+        relatedPropertiesKey = this._group + ':' + classesStr;
 
 		if (!this._relatedProperties[relatedPropertiesKey]) {
+            var classReqStr = '';
+            $.each(selectedProperty.classes, function (key, val) {
+                classReqStr += '&classes=' + val;
+            });
 
 			var groupId = this._group,
 				url = '/Fieldbook/manageSettings/settings/properties?type=' + groupId + classReqStr;

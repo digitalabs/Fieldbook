@@ -57,17 +57,15 @@ public class ManageSettingsController extends SettingsController {
 			@RequestParam(value = "type", required = true) Integer variableTypeId,
 			@RequestParam(value = "classes", required = false) String[] classes, @RequestParam(required = false) boolean isTrial) {
 		List<PropertyTreeSummary> propertyTreeList = new ArrayList<>();
-		List<Property> properties = new ArrayList<>();
 
 		try {
+			List<Property> properties;
 
 			if (Objects.equals(classes, null) || classes.length == 0) {
 				// lets retrieve all properties given the classes
 				properties = ontologyPropertyDataManager.getAllProperties();
 			} else {
-				for (String className : classes) {
-					properties.addAll(ontologyPropertyDataManager.getAllPropertiesWithClass(className));
-				}
+				properties = ontologyPropertyDataManager.getAllPropertiesWithClass(classes);
 			}
 
 			// fetch all standard variables given property

@@ -525,8 +525,10 @@ public class DesignImportController extends SettingsController {
 							designImportData.getMappedHeaders()));
 			
 			for (MeasurementVariable mvar : uniqueFactors){
-				if (checkIfSpecifiedTermIdExistsInList(mvar.getTermId(), workbook.getConditions())){
-					mvar.setOperation(Operation.UPDATE);
+				MeasurementVariable tempMvar = getMeasurementVariableInListByTermId(mvar.getTermId(), workbook.getConditions());
+				if (tempMvar != null){
+					mvar.setOperation(tempMvar.getOperation());
+					mvar.setName(tempMvar.getName());
 				}
 			}
 			
@@ -559,6 +561,7 @@ public class DesignImportController extends SettingsController {
 		uniqueVariates.addAll(designImportService
 				.extractMeasurementVariable(PhenotypicType.VARIATE,
 						designImportData.getMappedHeaders()));
+		
 		workbook.getVariates().clear();
 		workbook.getVariates().addAll((new ArrayList<>(uniqueVariates)));
 	}
@@ -935,14 +938,14 @@ public class DesignImportController extends SettingsController {
 		return newMap;
 	}
 	
-	protected boolean checkIfSpecifiedTermIdExistsInList(int termid, List<MeasurementVariable> list){
+	protected MeasurementVariable getMeasurementVariableInListByTermId(int termid, List<MeasurementVariable> list){
 		for (MeasurementVariable mvar : list){
 			if (termid == mvar.getTermId()){
-				return true;
+				return mvar;
 			}
 		}
 		
-		return false;
+		return null;
 	}
 	
 	

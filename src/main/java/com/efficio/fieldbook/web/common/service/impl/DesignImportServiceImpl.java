@@ -52,10 +52,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	
 	@Resource
     private FieldbookService fieldbookService;
-	
-	@Resource
-    private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	
+
 	@Resource
     private OntologyService ontologyService;
 

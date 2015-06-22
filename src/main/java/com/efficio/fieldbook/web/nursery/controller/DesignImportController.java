@@ -22,7 +22,6 @@ import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -377,7 +376,7 @@ public class DesignImportController extends SettingsController {
 			DesignImportData designImportData) {
 		
 		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
-		Map<String, String> NameIdMap = switchKey(idNameMap);
+		Map<String, String> nameIdMap = switchKey(idNameMap);
 		
 		for (MeasurementVariable mvar : designImportService.getMeasurementVariablesFromDataFile(null, designImportData)){
 			
@@ -406,7 +405,7 @@ public class DesignImportController extends SettingsController {
 						deletedTrialLevelVariables.remove();
 					}
 					
-					String termIdOfId = NameIdMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
+					String termIdOfId = nameIdMap.get(String.valueOf(deletedSettingDetail.getVariable().getCvTermId()));
 					if (termIdOfId != null){
 						updateOperation(Integer.valueOf(termIdOfId),userSelection.getTrialLevelVariableList() , Operation.UPDATE);
 						
@@ -533,7 +532,7 @@ public class DesignImportController extends SettingsController {
 			}
 			
 			workbook.getFactors().clear();
-			workbook.getFactors().addAll((new ArrayList<>(uniqueFactors)));
+			workbook.getFactors().addAll(new ArrayList<>(uniqueFactors));
 			
 		}
 		
@@ -550,7 +549,7 @@ public class DesignImportController extends SettingsController {
 							designImportData.getMappedHeaders()));
 			
 			workbook.getConditions().clear();
-			workbook.getConditions().addAll((new ArrayList<>(uniqueConditions)));
+			workbook.getConditions().addAll(new ArrayList<>(uniqueConditions));
 		
 		}
 		
@@ -563,11 +562,10 @@ public class DesignImportController extends SettingsController {
 						designImportData.getMappedHeaders()));
 		
 		workbook.getVariates().clear();
-		workbook.getVariates().addAll((new ArrayList<>(uniqueVariates)));
+		workbook.getVariates().addAll(new ArrayList<>(uniqueVariates));
 	}
 
-	protected void populateTrialLevelVariableListIfNecessary(Workbook workbook) throws MiddlewareQueryException,
-			Exception {
+	protected void populateTrialLevelVariableListIfNecessary(Workbook workbook) throws MiddlewareQueryException {
 		// retrieve all trial level factors and convert them to setting details
 		Set<MeasurementVariable> trialLevelFactors = new HashSet<>();
 		for (MeasurementVariable factor : workbook.getFactors()) {
@@ -720,7 +718,7 @@ public class DesignImportController extends SettingsController {
 			Workbook workbook, DesignImportData designImportData, Set<MeasurementVariable> trialVariables) throws MiddlewareQueryException {
 		
 		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
-		Map<String, String> NameIdMap = switchKey(idNameMap);
+		Map<String, String> nameIdMap = switchKey(idNameMap);
 		
 		for (Environment environment : environmentData.getEnvironments()){
 			
@@ -731,7 +729,7 @@ public class DesignImportController extends SettingsController {
 				
 				//For TRIAL_LOCATION (Location Name)
 				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()){
-					String termId = NameIdMap.get(managementDetail.getKey());
+					String termId = nameIdMap.get(managementDetail.getKey());
 					if (termId != null){
 
 						Location location = fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
@@ -757,7 +755,7 @@ public class DesignImportController extends SettingsController {
 				
 				//For COOPERATOR
 				if (Integer.valueOf(managementDetail.getKey()) == 8373){
-					String termId = NameIdMap.get(managementDetail.getKey());
+					String termId = nameIdMap.get(managementDetail.getKey());
 					if (termId != null){
 						
 						copyOfManagementDetailValues.put(termId, String.valueOf(super.getCurrentIbdbUserId()));
@@ -804,7 +802,7 @@ public class DesignImportController extends SettingsController {
 			DesignImportData designImportData, List<SettingDetail> newDetails) throws MiddlewareQueryException {
 	
 		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
-		Map<String, String> NameIdMap = switchKey(idNameMap);
+		Map<String, String> nameIdMap = switchKey(idNameMap);
 		
 		Environment environment = environmentData.getEnvironments().get(0);
 		
@@ -815,7 +813,7 @@ public class DesignImportController extends SettingsController {
 			
 			//For TRIAL_LOCATION (Location Name)
 			if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()){
-				String termId = NameIdMap.get(managementDetail.getKey());
+				String termId = nameIdMap.get(managementDetail.getKey());
 				if (termId != null){
 
 					Location location = fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
@@ -839,7 +837,7 @@ public class DesignImportController extends SettingsController {
 			
 			//For COOPERATOR and PI_NAME
 			if (Integer.valueOf(managementDetail.getKey()) == 8373 || Integer.valueOf(managementDetail.getKey()) == 8100){
-				String termId = NameIdMap.get(managementDetail.getKey());
+				String termId = nameIdMap.get(managementDetail.getKey());
 				if (termId != null){
 					
 					copyOfManagementDetailValues.put(termId, String.valueOf(super.getCurrentIbdbUserId()));

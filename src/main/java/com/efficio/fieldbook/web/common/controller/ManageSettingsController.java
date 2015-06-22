@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
@@ -6,6 +5,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -13,6 +13,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.OntologyVariableInfo;
 import org.generationcp.middleware.domain.oms.OntologyVariableSummary;
 import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.domain.ontology.Property;
@@ -47,18 +48,29 @@ public class ManageSettingsController extends SettingsController {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(ManageSettingsController.class);
 
-	@Resource private OntologyVariableDataManager ontologyVariableDataManager;
+	@Resource
+	private OntologyVariableDataManager ontologyVariableDataManager;
 
-	@Resource private OntologyPropertyDataManager ontologyPropertyDataManager;
+	@Resource
+	private OntologyPropertyDataManager ontologyPropertyDataManager;
 
-	@Resource private ContextUtil contextUtil;
+	@Resource
+	private ContextUtil contextUtil;
 
-	@ResponseBody @RequestMapping(value = "/settings/properties") public List<PropertyTreeSummary> getOntologyPropertiesByVariableType(
-			@RequestParam(value = "type", required = true) Integer variableTypeId,
+	@ResponseBody
+	@RequestMapping(value = "/settings/properties")
+	public List<PropertyTreeSummary> getOntologyPropertiesByVariableType(
+			@RequestParam(value = "type", required = true) Integer[] variableTypes,
 			@RequestParam(value = "classes", required = false) String[] classes, @RequestParam(required = false) boolean isTrial) {
 		List<PropertyTreeSummary> propertyTreeList = new ArrayList<>();
 
 		try {
+			Set<VariableType> selectedVariableTypes = new HashSet<>();
+
+			for (Integer varType : variableTypes) {
+				selectedVariableTypes.add(VariableType.getById(varType));
+			}
+
 			List<Property> properties;
 
 			if (Objects.equals(classes, null) || classes.length == 0) {
@@ -68,11 +80,18 @@ public class ManageSettingsController extends SettingsController {
 				properties = ontologyPropertyDataManager.getAllPropertiesWithClass(classes);
 			}
 
+			// Todo: add special case for treatment factor with pairs BMS-1077
+
 			// fetch all standard variables given property
 			for (Property property : properties) {
-				List<OntologyVariableSummary> ontologyList = ontologyVariableDataManager
-						.getWithFilter(contextUtil.getCurrentProgramUUID(), null, null, property.getId(), null,
-								VariableType.getById(variableTypeId));
+				OntologyVariableInfo variableFilterOptions = new OntologyVariableInfo();
+				variableFilterOptions.setProgramUuid(contextUtil.getCurrentProgramUUID());
+				variableFilterOptions.setPropertyId(property.getId());
+
+				variableFilterOptions.getVariableTypes().addAll(selectedVariableTypes);
+
+				List<OntologyVariableSummary> ontologyList = ontologyVariableDataManager.getWithFilter(variableFilterOptions,
+						new HashSet<>(filterOutVariablesByVariableType(selectedVariableTypes, isTrial)));
 
 				if (!ontologyList.isEmpty()) {
 					PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
@@ -80,11 +99,41 @@ public class ManageSettingsController extends SettingsController {
 				}
 			}
 
+			// Todo: what to make of this.fieldbookMiddlewareService.filterStandardVariablesByIsAIds(...)
+
 		} catch (MiddlewareException e) {
 			LOG.error(e.getMessage(), e);
 		}
 
 		return propertyTreeList;
+	}
+
+	private List<Integer> filterOutVariablesByVariableType(Set<VariableType> selectedVariableTypes, boolean isTrial) {
+		List<Integer> cvTermIDs = new ArrayList<>();
+
+		for (VariableType varType : selectedVariableTypes) {
+			switch (varType) {
+				case STUDY_DETAIL:
+					cvTermIDs.addAll(AppConstants.HIDE_STUDY_DETAIL_VARIABLES.getIntegerList());
+
+				case SELECTION_METHOD:
+					cvTermIDs.addAll(AppConstants.HIDE_ID_VARIABLES.getIntegerList());
+				case ENVIRONMENT_DETAIL:
+					cvTermIDs.addAll(AppConstants.HIDE_TRIAL_VARIABLES.getIntegerList());
+
+					if (isTrial) {
+						cvTermIDs.addAll(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getIntegerList());
+						cvTermIDs.addAll(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getIntegerList());
+					}
+
+				case TREATMENT_FACTOR:
+					cvTermIDs.addAll(AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
+				default:
+					cvTermIDs.addAll(AppConstants.HIDE_PLOT_FIELDS.getIntegerList());
+			}
+		}
+
+		return cvTermIDs;
 	}
 
 	/**
@@ -130,14 +179,14 @@ public class ManageSettingsController extends SettingsController {
 	/**
 	 * Adds the new setting details.
 	 *
-	 * @param mode the mode
+	 * @param mode       the mode
 	 * @param newDetails the new details
 	 * @return the string
 	 * @throws Exception the exception
 	 */
 	private void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception {
 		SettingsUtil.setSettingDetailRole(newDetails, VariableType.getById(Integer.valueOf(mode)));
-		
+
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			if (this.userSelection.getStudyLevelConditions() == null) {
 				this.userSelection.setStudyLevelConditions(newDetails);
@@ -424,9 +473,8 @@ public class ManageSettingsController extends SettingsController {
 	private boolean isEnvironmentNotDeleted(MeasurementData data, int environmentNo) {
 		if (data.getMeasurementVariable() != null) {
 			MeasurementVariable var = data.getMeasurementVariable();
-			if (var != null && var.getName() != null
-					&& ("TRIAL_INSTANCE".equalsIgnoreCase(var.getName()) || "TRIAL".equalsIgnoreCase(var.getName()))
-					&& data.getValue().equals(String.valueOf(environmentNo))) {
+			if (var != null && var.getName() != null && ("TRIAL_INSTANCE".equalsIgnoreCase(var.getName()) || "TRIAL"
+					.equalsIgnoreCase(var.getName())) && data.getValue().equals(String.valueOf(environmentNo))) {
 				return true;
 			}
 		}
@@ -434,8 +482,8 @@ public class ManageSettingsController extends SettingsController {
 	}
 
 	protected boolean checkModeAndHasMeasurementData(int mode, int variableId) {
-		return mode == VariableType.TRAIT.getId() && this.userSelection.getMeasurementRowList() != null
-				&& !this.userSelection.getMeasurementRowList().isEmpty() && this.hasMeasurementDataEntered(variableId);
+		return mode == VariableType.TRAIT.getId() && this.userSelection.getMeasurementRowList() != null && !this.userSelection
+				.getMeasurementRowList().isEmpty() && this.hasMeasurementDataEntered(variableId);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 	var VARIABLE_SELECT_EVENT = 'variable-select',
 		MODAL_SELECTOR = '.vs-modal',
-		TREATMENT_FACTOR_GROUP = 5,
+		TREATMENT_FACTOR_GROUP = 9,
 
 		modalHeaderSelector = '.modal-header',
 		variableNameContainerSelector = '.vs-variable-name-container',
@@ -338,13 +338,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		relatedPropertyList.empty();
 
 		// Key identifies whether we have retrieved the related properties for this group / class before (so we don't retrieve them again)
-        relatedPropertiesKey = this._group + ':' + classesStr;
+		relatedPropertiesKey = this._group + ':' + classesStr;
 
 		if (!this._relatedProperties[relatedPropertiesKey]) {
-            var classReqStr = '';
-            $.each(selectedProperty.classes, function (key, val) {
-                classReqStr += '&classes=' + val;
-            });
+			var classReqStr = '';
+			$.each(selectedProperty.classes, function(key, val) {
+				classReqStr += '&classes=' + val;
+			});
 
 			var groupId = this._group,
 				url = '/Fieldbook/manageSettings/settings/properties?type=' + groupId + classReqStr;

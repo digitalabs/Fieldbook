@@ -42,13 +42,6 @@ public class GenerateLabelController extends AbstractBaseFieldbookController {
 	@Resource
 	private UserLabelPrinting userLabelPrinting;
 
-	/** The fieldbook middleware service. */
-	@Resource
-	private FieldbookService fieldbookMiddlewareService;
-
-	/** The Constant BUFFER_SIZE. */
-	private static final int BUFFER_SIZE = 4096 * 4;
-
 	/**
 	 * Show trial label details.
 	 *

@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -41,6 +42,7 @@ import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.generationcp.commons.spring.util.ContextUtil;
 import com.mysql.jdbc.StringUtils;
 
 public class DesignImportServiceImpl implements DesignImportService {
@@ -61,6 +63,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Resource
 	private MessageSource messageSource;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData)
@@ -201,7 +206,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders)
-					throws MiddlewareQueryException {
+					throws MiddlewareException {
 		List<String> headers = new ArrayList<>();
 		// get headers as string list
 		for (DesignHeaderItem item : designHeaders) {
@@ -218,7 +223,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 		mappedDesignHeaders.put(PhenotypicType.GERMPLASM, new ArrayList<DesignHeaderItem>());
 		mappedDesignHeaders.put(PhenotypicType.VARIATE, new ArrayList<DesignHeaderItem>());
 
-		Map<String, List<StandardVariable>> variables = this.ontologyDataManager.getStandardVariablesInProjects(headers);
+		Map<String, List<StandardVariable>> variables = this.ontologyDataManager.getStandardVariablesInProjects(headers,
+				contextUtil.getCurrentProgramUUID());
 
 		for (DesignHeaderItem item : designHeaders) {
 			List<StandardVariable> match = variables.get(item.getName());
@@ -479,8 +485,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		for (MeasurementVariable measurementVariable : list) {
 			try {
-				map.put(measurementVariable.getTermId(), this.ontologyService.getStandardVariable(measurementVariable.getTermId()));
-			} catch (MiddlewareQueryException e) {
+				map.put(measurementVariable.getTermId(), this.ontologyService.getStandardVariable(
+						measurementVariable.getTermId(),contextUtil.getCurrentProgramUUID()));
+			} catch (MiddlewareException e) {
 				DesignImportServiceImpl.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -533,8 +540,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 				}
 			}
 			WorkbookUtil.addMeasurementDataToRows(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
-					this.userSelection, this.ontologyService, this.fieldbookService);
-		} catch (MiddlewareQueryException e) {
+					this.userSelection, this.ontologyService, this.fieldbookService, contextUtil.getCurrentProgramUUID());
+		} catch (MiddlewareException e) {
 			DesignImportServiceImpl.LOG.error(e.getMessage(), e);
 		}
 	}

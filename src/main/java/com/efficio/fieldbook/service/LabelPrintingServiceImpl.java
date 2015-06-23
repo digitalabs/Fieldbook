@@ -54,6 +54,7 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetDataManager;
@@ -1489,7 +1490,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(workbook));
 				labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
-			} catch (MiddlewareQueryException e) {
+			} catch (MiddlewareException e) {
 				LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 			}
 
@@ -1504,7 +1505,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				labelFieldsList.addAll(this.settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
 				labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
-			} catch (MiddlewareQueryException e) {
+			} catch (MiddlewareException e) {
 				LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -1538,7 +1539,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 			labelFieldsList.addAll(this.settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
 

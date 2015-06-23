@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.VariableConstraints;
@@ -107,6 +108,9 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 	private ErrorHandlerService errorHandlerService;
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -312,7 +316,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 					// if it's from central, get the standard variable object only for update of valid value
 					standardVariable = this.createStandardVariableObject(form, operation);
 					this.ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
-					standardVariable = this.ontologyService.getStandardVariable(standardVariable.getId());
+					standardVariable = this.ontologyService.getStandardVariable(standardVariable.getId(),contextUtil.getCurrentProgramUUID());
 
 					this.saveConstraintsAndValidValues(form, standardVariable);
 					form.setVariableId(standardVariable.getId());
@@ -792,7 +796,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 		Map<String, String> resultMap = new HashMap<String, String>();
 
 		try {
-			StandardVariable stdVariable = this.ontologyService.getStandardVariable(Integer.parseInt(variableId));
+			StandardVariable stdVariable = this.ontologyService.getStandardVariable(
+					Integer.parseInt(variableId),contextUtil.getCurrentProgramUUID());
 			resultMap.put("status", "1");
 			resultMap.put("name", stdVariable.getName() == null ? "" : stdVariable.getName());
 			resultMap.put("description", stdVariable.getDescription() == null ? "" : stdVariable.getDescription());
@@ -813,7 +818,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 
 			resultMap.put("validValues", this.convertEnumerationsToJSON(stdVariable.getEnumerations()));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			OntologyManagerController.LOG.error(e.getMessage(), e);
 			resultMap.put("status", "-1");
 			resultMap.put("errorMessage", e.getMessage());
@@ -855,13 +860,17 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 			List<StandardVariable> standardVariableList = new ArrayList<StandardVariable>();
 
 			if ("ManageProperty".equalsIgnoreCase(ontologyType)) {
-				standardVariableList = this.ontologyService.getStandardVariablesByProperty(Integer.valueOf(id));
+				standardVariableList = this.ontologyService.getStandardVariablesByProperty(Integer.valueOf(id),
+						contextUtil.getCurrentProgramUUID());
 			} else if ("ManageTraitClass".equalsIgnoreCase(ontologyType)) {
-				standardVariableList = this.ontologyService.getStandardVariablesByTraitClass(Integer.valueOf(id));
+				standardVariableList = this.ontologyService.getStandardVariablesByTraitClass(Integer.valueOf(id),
+						contextUtil.getCurrentProgramUUID());
 			} else if ("ManageMethod".equalsIgnoreCase(ontologyType)) {
-				standardVariableList = this.ontologyService.getStandardVariablesByMethod(Integer.valueOf(id));
+				standardVariableList = this.ontologyService.getStandardVariablesByMethod(Integer.valueOf(id),
+						contextUtil.getCurrentProgramUUID());
 			} else if ("ManageScale".equalsIgnoreCase(ontologyType)) {
-				standardVariableList = this.ontologyService.getStandardVariablesByScale(Integer.valueOf(id));
+				standardVariableList = this.ontologyService.getStandardVariablesByScale(Integer.valueOf(id),
+						contextUtil.getCurrentProgramUUID());
 			}
 
 			if (standardVariableList != null && !standardVariableList.isEmpty()) {
@@ -902,10 +911,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 		OntologyBrowserForm form = (OntologyBrowserForm) o;
 		try {
 			if (this.ontologyService.countProjectsByVariable(form.getVariableId()) > 0) {
-				errors.rejectValue("variableName", "ontology.browser.cannot.delete.linked.variable", new String[] {this.ontologyService
-						.getStandardVariable(form.getVariableId()).getName()}, "ontology.browser.cannot.delete.linked.variable");
+				errors.rejectValue("variableName", "ontology.browser.cannot.delete.linked.variable", new String[] {
+						this.ontologyService.getStandardVariable(form.getVariableId(),
+								contextUtil.getCurrentProgramUUID()).getName()}, 
+						"ontology.browser.cannot.delete.linked.variable");
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			OntologyManagerController.LOG.error(e.getMessage(), e);
 		}
 	}

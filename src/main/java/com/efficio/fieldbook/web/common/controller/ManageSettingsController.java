@@ -374,7 +374,7 @@ public class ManageSettingsController extends SettingsController {
 			try {
 				newSetting = this.createSettingDetail(variableId, "");
 				newSetting.getVariable().setOperation(Operation.UPDATE);
-			} catch (MiddlewareQueryException e) {
+			} catch (MiddlewareException e) {
 				ManageSettingsController.LOG.error(e.getMessage(), e);
 			}
 		}

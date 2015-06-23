@@ -24,6 +24,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -216,6 +217,13 @@ public class OpenTrialController extends BaseTrialController {
 					this.errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[] {AppConstants.TRIAL.getString(),
 							StringUtils.capitalize(AppConstants.TRIAL.getString()), AppConstants.TRIAL.getString()}, "\n"));
 			return "redirect:" + ManageTrialController.URL;
+		} catch (MiddlewareException e) {
+			OpenTrialController.LOG.debug(e.getMessage(), e);
+
+			redirectAttributes.addFlashAttribute(
+					"redirectErrorMessage",
+					e.getMessage());
+			return "redirect:" + ManageTrialController.URL;
 		}
 	}
 
@@ -241,7 +249,7 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	protected void setModelAttributes(CreateTrialForm form, Integer trialId, Model model, Workbook trialWorkbook)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
@@ -276,7 +284,8 @@ public class OpenTrialController extends BaseTrialController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, Object> submit(@RequestParam("replace") int replace, @RequestBody TrialData data) throws MiddlewareQueryException {
+	public Map<String, Object> submit(@RequestParam("replace") int replace, @RequestBody TrialData data) 
+			throws MiddlewareException {
 
 		this.processEnvironmentData(data.getEnvironments());
 		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
@@ -331,14 +340,16 @@ public class OpenTrialController extends BaseTrialController {
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection
 						.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection
 						.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
-						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false);
+						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), 
+						false,contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 
 		Workbook workbook =
 				SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
 						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
-						this.userSelection.getExperimentalDesignVariables());
+						this.userSelection.getExperimentalDesignVariables(),
+						contextUtil.getCurrentProgramUUID());
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 			this.userSelection.setMeasurementRowList(null);
@@ -373,10 +384,10 @@ public class OpenTrialController extends BaseTrialController {
 		// saving of measurement rows
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty() && replace == 0) {
 			try {
-				WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, this.userSelection, this.ontologyService,
-						this.fieldbookService);
-				WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, this.userSelection, this.ontologyService,
-						this.fieldbookService);
+				WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, this.userSelection, 
+						this.ontologyService,this.fieldbookService,contextUtil.getCurrentProgramUUID());
+				WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, this.userSelection, 
+						this.ontologyService,this.fieldbookService,contextUtil.getCurrentProgramUUID());
 
 				workbook.setMeasurementDatasetVariables(null);
 				workbook.setObservations(this.userSelection.getMeasurementRowList());
@@ -386,7 +397,8 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 						AppConstants.ID_NAME_COMBINATION.getString(), true);
 
-				this.fieldbookMiddlewareService.saveMeasurementRows(workbook);
+				this.fieldbookMiddlewareService.saveMeasurementRows(workbook,
+						contextUtil.getCurrentProgramUUID());
 
 				returnVal.put(
 						OpenTrialController.MEASUREMENT_DATA_EXISTING,
@@ -409,7 +421,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/updateSavedTrial", method = RequestMethod.GET)
-	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") int id) throws MiddlewareQueryException {
+	public Map<String, Object> updateSavedTrial(@RequestParam(value = "trialID") int id) throws MiddlewareException {
 		Map<String, Object> returnVal = new HashMap<String, Object>();
 		Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(id);
 		this.userSelection.setWorkbook(trialWorkbook);
@@ -457,7 +469,7 @@ public class OpenTrialController extends BaseTrialController {
 	 */
 	@RequestMapping(value = "/recreate/session/variables", method = RequestMethod.GET)
 	public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		Workbook workbook = this.userSelection.getWorkbook();
 		form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(),
 				SettingsUtil.buildVariates(workbook.getVariates())));
@@ -503,7 +515,7 @@ public class OpenTrialController extends BaseTrialController {
 
 	@RequestMapping(value = "/load/dynamic/change/measurement", method = RequestMethod.POST)
 	public String loadDynamicChangeMeasurement(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model,
-			HttpServletRequest request) throws MiddlewareQueryException {
+			HttpServletRequest request) throws MiddlewareException {
 		boolean isInPreviewMode = false;
 		Workbook workbook = this.userSelection.getWorkbook();
 		if (this.userSelection.getTemporaryWorkbook() != null) {
@@ -532,7 +544,8 @@ public class OpenTrialController extends BaseTrialController {
 					int id = Integer.valueOf(token.nextToken());
 					MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
 					if (currentVar == null) {
-						StandardVariable var = this.fieldbookMiddlewareService.getStandardVariable(id);
+						StandardVariable var = this.fieldbookMiddlewareService.getStandardVariable(id,
+								contextUtil.getCurrentProgramUUID());
 						MeasurementVariable newVar =
 								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 						newVar.setFactor(false);
@@ -650,9 +663,11 @@ public class OpenTrialController extends BaseTrialController {
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
 						this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
 						this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-						this.userSelection.getNurseryConditions(), false);
+						this.userSelection.getNurseryConditions(), false,
+						contextUtil.getCurrentProgramUUID());
 
-		Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+		Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false,
+				contextUtil.getCurrentProgramUUID());
 		StudyDetails details = new StudyDetails();
 		details.setStudyType(StudyType.T);
 		tempWorkbook.setStudyDetails(details);

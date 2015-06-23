@@ -42,6 +42,7 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -140,9 +141,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 * Advance Nursery
 	 * 
 	 * @throws RuleException
+	 * @throws MiddlewareException 
 	 */
 	@Override
-	public AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException, RuleException {
+	public AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException, MiddlewareException {
 
 		return this.namingConventionService.advanceNursery(advanceInfo, workbook);
 	}
@@ -330,7 +332,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException {
+	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareException {
 		List<ValueReference> possibleValues = this.possibleValuesCache.getPossibleValues(id);
 		if (possibleValues == null) {
 
@@ -346,7 +348,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			} else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
 				possibleValues = this.convertPersonsToValueReferences(this.fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral());
 			} else if (TermId.NURSERY_TYPE.getId() == id) {
-				possibleValues = this.fieldbookMiddlewareService.getAllNurseryTypes();
+				possibleValues = this.fieldbookMiddlewareService.getAllNurseryTypes(contextUtil.getCurrentProgramUUID());
 			} else {
 				possibleValues = this.fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
 			}
@@ -438,7 +440,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		List<ValueReference> list = new ArrayList<ValueReference>();
 		Integer standardVariableId =
 				this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(property, scale, method, phenotypeType);
@@ -585,8 +587,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<Enumeration> getCheckList() throws MiddlewareQueryException {
-		return this.ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+	public List<Enumeration> getCheckList() throws MiddlewareException {
+		return this.ontologyService.getStandardVariable(TermId.CHECK.getId(),
+				contextUtil.getCurrentProgramUUID()).getEnumerations();
 	}
 
 	@Override
@@ -608,8 +611,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	protected MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation, PhenotypicType role)
-			throws MiddlewareQueryException {
-		StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate));
+			throws MiddlewareException {
+		StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate),
+				contextUtil.getCurrentProgramUUID());
 		MeasurementVariable var =
 				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
 						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
@@ -623,7 +627,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException {
+	public void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs) throws MiddlewareException {
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
 		if (workbook != null && idCodeNamePairs != null && !"".equalsIgnoreCase(idCodeNamePairs)) {
 			// we get a map so we can check easily instead of traversing it again
@@ -710,7 +714,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs,
-			boolean deleteNameWhenIdNotExist) throws MiddlewareQueryException {
+			boolean deleteNameWhenIdNotExist) throws MiddlewareException {
 
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
 		Map<String, List<MeasurementVariable>> studyConditionMapList = new HashMap<String, List<MeasurementVariable>>();
@@ -781,7 +785,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 							}
 						}
 
-						StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(nameTermId));
+						StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(
+								Integer.valueOf(nameTermId),contextUtil.getCurrentProgramUUID());
 						MeasurementVariable tempVarName =
 								new MeasurementVariable(Integer.valueOf(nameTermId), tempVarId.getName(), stdvar.getDescription(), stdvar
 										.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar
@@ -843,7 +848,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 								}
 							}
 						} else {
-							StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idTermId));
+							StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(
+									Integer.valueOf(idTermId),contextUtil.getCurrentProgramUUID());
 							MeasurementVariable tempVarId =
 									new MeasurementVariable(Integer.valueOf(idTermId), tempVarName.getName()
 											+ AppConstants.ID_SUFFIX.getString(), stdvar.getDescription(), stdvar.getScale().getName(),
@@ -994,7 +1000,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareQueryException {
+	public List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareException {
 		List<ValueReference> possibleValues = null;
 		if (possibleValues == null) {
 
@@ -1009,7 +1015,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) throws MiddlewareQueryException {
+	public void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) throws MiddlewareException {
 		if (userSelection.getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null) {
 			if (!form.getImportedCheckGermplasm().isEmpty() && !this.hasCheckVariables(userSelection.getWorkbook().getConditions())) {
 				// add check variables
@@ -1050,7 +1056,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 	}
 
-	private void addCheckVariables(List<MeasurementVariable> conditions, ImportGermplasmListForm form) throws MiddlewareQueryException {
+	private void addCheckVariables(List<MeasurementVariable> conditions, ImportGermplasmListForm form) throws MiddlewareException {
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()),
 				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId()), Operation.ADD, VariableType.ENVIRONMENT_DETAIL.getRole()));
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()),
@@ -1146,7 +1152,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
 		if (studyId != null && !columnOrdersList.isEmpty()) {
 			this.fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);

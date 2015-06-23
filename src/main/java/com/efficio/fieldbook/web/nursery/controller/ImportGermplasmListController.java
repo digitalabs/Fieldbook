@@ -28,6 +28,7 @@ import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -171,6 +172,9 @@ public class ImportGermplasmListController extends SettingsController {
 
 	private static String DEFAULT_CHECK_VALUE = "C";
 	private static String DEFAULT_TEST_VALUE = "T";
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -233,7 +237,7 @@ public class ImportGermplasmListController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model,
-			HttpServletRequest req) throws MiddlewareQueryException {
+			HttpServletRequest req) throws MiddlewareException {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 		String[] selectedCheck = form.getSelectedCheck();
@@ -243,9 +247,11 @@ public class ImportGermplasmListController extends SettingsController {
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
 			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook()
-					.getObservations(), false, this.userSelection, this.ontologyService, this.fieldbookService);
+					.getObservations(), false, this.userSelection, this.ontologyService, this.fieldbookService,
+					contextUtil.getCurrentProgramUUID());
 			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(), this.userSelection.getWorkbook()
-					.getObservations(), true, this.userSelection, this.ontologyService, this.fieldbookService);
+					.getObservations(), true, this.userSelection, this.ontologyService, this.fieldbookService,
+					contextUtil.getCurrentProgramUUID());
 
 			if (this.userSelection.getExperimentalDesignVariables() != null) {
 				Set<MeasurementVariable> unique = new HashSet<MeasurementVariable>(this.userSelection.getWorkbook().getFactors());
@@ -1186,7 +1192,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
 		try {
 			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
 		return super.showAjaxPage(model, ImportGermplasmListController.PAGINATION_TEMPLATE);
@@ -1220,7 +1226,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
 		try {
 			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
 		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
@@ -1270,7 +1276,7 @@ public class ImportGermplasmListController extends SettingsController {
 			result.put(ImportGermplasmListController.SUCCESS, "1");
 			result.put("allCheckTypes", this.convertObjectToJson(allEnumerations));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 			result.put(ImportGermplasmListController.SUCCESS, "-1");
 		}
@@ -1293,7 +1299,8 @@ public class ImportGermplasmListController extends SettingsController {
 		Map<String, String> result = new HashMap<String, String>();
 
 		try {
-			StandardVariable stdVar = this.ontologyService.getStandardVariable(TermId.CHECK.getId());
+			StandardVariable stdVar = this.ontologyService.getStandardVariable(TermId.CHECK.getId(),
+					contextUtil.getCurrentProgramUUID());
 			Enumeration enumeration;
 			String message = null;
 			if (operation == 1) {
@@ -1314,7 +1321,8 @@ public class ImportGermplasmListController extends SettingsController {
 						this.messageSource.getMessage("error.add.check.duplicate.description", null, local));
 			} else {
 				this.ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
-				List<Enumeration> allEnumerations = this.ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+				List<Enumeration> allEnumerations = this.ontologyService.getStandardVariable(TermId.CHECK.getId(),
+						contextUtil.getCurrentProgramUUID()).getEnumerations();
 				result.put("checkTypes", this.convertObjectToJson(allEnumerations));
 
 				result.put(ImportGermplasmListController.SUCCESS, "1");
@@ -1347,7 +1355,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 		try {
 			String name =
-					this.ontologyService.getStandardVariable(TermId.CHECK.getId())
+					this.ontologyService.getStandardVariable(TermId.CHECK.getId(),
+							contextUtil.getCurrentProgramUUID())
 							.getEnumeration(Integer.parseInt(form.getManageCheckCode())).getName();
 
 			if (!this.ontologyService.validateDeleteStandardVariableEnumeration(TermId.CHECK.getId(),
@@ -1360,11 +1369,12 @@ public class ImportGermplasmListController extends SettingsController {
 				result.put(ImportGermplasmListController.SUCCESS, "1");
 				result.put("successMessage",
 						this.messageSource.getMessage("nursery.manage.check.types.delete.success", new Object[] {name}, local));
-				List<Enumeration> allEnumerations = this.ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+				List<Enumeration> allEnumerations = this.ontologyService.getStandardVariable(TermId.CHECK.getId()
+						,contextUtil.getCurrentProgramUUID()).getEnumerations();
 				result.put("checkTypes", this.convertObjectToJson(allEnumerations));
 			}
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.debug(e.getMessage(), e);
 			result.put(ImportGermplasmListController.SUCCESS, "-1");
 			result.put(ImportGermplasmListController.ERROR, e.getMessage());
@@ -1382,7 +1392,7 @@ public class ImportGermplasmListController extends SettingsController {
 	public List<Enumeration> getCheckTypes() {
 		try {
 			return this.fieldbookService.getCheckList();
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
 		return new ArrayList<>();

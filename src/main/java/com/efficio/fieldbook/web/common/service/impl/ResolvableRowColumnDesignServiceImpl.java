@@ -11,11 +11,13 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,8 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 	private ResourceBundleMessageSource messageSource;
 	@Resource
 	public FieldbookService fieldbookService;
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
@@ -64,7 +68,9 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 
 		try {
 
-			StandardVariable stdvarTreatment = this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
+			StandardVariable stdvarTreatment = this.fieldbookMiddlewareService.
+					getStandardVariable(TermId.ENTRY_NO.getId(),
+							contextUtil.getCurrentProgramUUID());
 			StandardVariable stdvarRep = null;
 			StandardVariable stdvarPlot = null;
 			StandardVariable stdvarRows = null;
@@ -126,16 +132,20 @@ public class ResolvableRowColumnDesignServiceImpl implements ResolvableRowColumn
 	public List<StandardVariable> getRequiredVariable() {
 		List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {
-			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());
-			StandardVariable stdvarPlot = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
-			StandardVariable stdvarRows = this.fieldbookMiddlewareService.getStandardVariable(TermId.ROW.getId());
-			StandardVariable stdvarCols = this.fieldbookMiddlewareService.getStandardVariable(TermId.COL.getId());
+			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(),
+					contextUtil.getCurrentProgramUUID());
+			StandardVariable stdvarPlot = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(),
+					contextUtil.getCurrentProgramUUID());
+			StandardVariable stdvarRows = this.fieldbookMiddlewareService.getStandardVariable(TermId.ROW.getId(),
+					contextUtil.getCurrentProgramUUID());
+			StandardVariable stdvarCols = this.fieldbookMiddlewareService.getStandardVariable(TermId.COL.getId(),
+					contextUtil.getCurrentProgramUUID());
 
 			varList.add(stdvarRep);
 			varList.add(stdvarPlot);
 			varList.add(stdvarRows);
 			varList.add(stdvarCols);
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ResolvableRowColumnDesignServiceImpl.LOG.error(e.getMessage(), e);
 		}
 		return varList;

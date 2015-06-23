@@ -17,7 +17,7 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -56,5 +56,5 @@ public interface ImportGermplasmFileService {
 	void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) throws Exception;
 
 	void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
-			UserSelection userSelection) throws MiddlewareQueryException;
+			UserSelection userSelection) throws MiddlewareException;
 }

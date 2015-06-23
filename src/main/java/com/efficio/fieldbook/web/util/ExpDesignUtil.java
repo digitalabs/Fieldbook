@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.slf4j.Logger;
@@ -218,7 +219,7 @@ public class ExpDesignUtil {
 
 		try {
 			mvar.setPossibleValues(fieldbookService.getAllPossibleValues(var.getId()));
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ExpDesignUtil.LOG.error(e.getMessage(), e);
 		}
 		return mvar;

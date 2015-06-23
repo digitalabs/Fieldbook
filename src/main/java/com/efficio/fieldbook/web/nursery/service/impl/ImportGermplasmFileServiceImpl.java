@@ -33,11 +33,13 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.service.FileService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -114,6 +116,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -544,7 +549,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	 */
 	@Override
 	public void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
-			UserSelection userSelection) throws MiddlewareQueryException {
+			UserSelection userSelection) throws MiddlewareException {
 		long start = System.currentTimeMillis();
 		boolean hasCheck = false;
 		List<ImportedGermplasm> sessionImportedGermplasmList = importedGermplasms;
@@ -565,7 +570,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			List<MeasurementVariable> measurementVariables = userSelection.getWorkbook().getFactors();
 
 			Integer checkVariableTermId = TermId.CHECK.getId();
-			StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(checkVariableTermId);
+			StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(checkVariableTermId,
+					contextUtil.getCurrentProgramUUID());
 			MeasurementVariable checkVariable =
 					new MeasurementVariable(checkVariableTermId, "CHECK", stdvar.getDescription(), stdvar.getScale().getName(), stdvar
 							.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(), "",

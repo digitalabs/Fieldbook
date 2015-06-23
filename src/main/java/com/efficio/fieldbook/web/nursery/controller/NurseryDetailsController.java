@@ -20,9 +20,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -60,6 +62,9 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController {
 	/** The user selection. */
 	@Resource
 	private UserSelection userSelection;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -124,10 +129,12 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController {
 		try {
 			if (NurseryDetailsController.isNumeric(id)) {
 				result.put("stdVar", NurseryDetailsController.convertStandardVariableToJson(this.ontologyService
-						.getStandardVariable(Integer.parseInt(id))));
+						.getStandardVariable(Integer.parseInt(id),
+								contextUtil.getCurrentProgramUUID())));
 			} else {
 				// this part should be commented out when id is already used
-				List<StandardVariable> stdVariables = this.ontologyService.getStandardVariables(id);
+				List<StandardVariable> stdVariables = this.ontologyService.getStandardVariables(id,
+						contextUtil.getCurrentProgramUUID());
 
 				if (stdVariables != null && stdVariables.size() > 0) {
 					result.put("stdVar", NurseryDetailsController.convertStandardVariableToJson(stdVariables.get(0)));
@@ -136,7 +143,7 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController {
 				}
 			}
 			result.put("error", "0");
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			result.put("error", "1");
 			NurseryDetailsController.LOG.error(e.getMessage(), e);
 		}

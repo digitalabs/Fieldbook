@@ -17,6 +17,7 @@ import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
@@ -68,7 +69,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 
 	@Override
-	public AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException, RuleException {
+	public AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareException, RuleException {
 
 		Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		Map<String, Method> breedingMethodCodeMap = new HashMap<>();
@@ -98,7 +99,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook,
-			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws MiddlewareQueryException {
+			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws MiddlewareException {
 
 		int nurseryId = advanceInfo.getStudy().getId();
 		if (workbook == null) {

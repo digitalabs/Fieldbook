@@ -35,6 +35,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
@@ -249,7 +250,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 */
 	protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel,
 			boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 
 		// create a map of id and its id-code-name combination
 		Map<String, String> idCodeNameMap = new HashMap<String, String>();
@@ -344,7 +345,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	protected List<SettingDetail> buildDefaultVariables(List<SettingDetail> defaults, String requiredFields,
-			List<String> requiredVariablesLabel) throws MiddlewareQueryException {
+			List<String> requiredVariablesLabel) throws MiddlewareException {
 		StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		int ctr = 0;
 		while (token.hasMoreTokens()) {
@@ -362,7 +363,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting detail
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
+	protected SettingDetail createSettingDetail(int id, String name) throws MiddlewareException {
 		String variableName = "";
 		StandardVariable stdVar = this.getStandardVariable(id);
 		if (name != null && !name.isEmpty()) {
@@ -412,7 +413,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @param var the var
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected void populateSettingVariable(SettingVariable var) throws MiddlewareQueryException {
+	protected void populateSettingVariable(SettingVariable var) throws MiddlewareException {
 		StandardVariable stdvar = this.getStandardVariable(var.getCvTermId());
 		if (stdvar != null) {
 			var.setDescription(stdvar.getDescription());
@@ -439,7 +440,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting variable
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected SettingVariable getSettingVariable(int id) throws MiddlewareQueryException {
+	protected SettingVariable getSettingVariable(int id) throws MiddlewareException {
 		StandardVariable stdVar = this.getStandardVariable(id);
 		if (stdVar != null) {
 			SettingVariable svar =
@@ -465,10 +466,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the standard variable
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected StandardVariable getStandardVariable(int id) throws MiddlewareQueryException {
+	protected StandardVariable getStandardVariable(int id) throws MiddlewareException {
 		StandardVariable variable = this.userSelection.getCacheStandardVariable(id);
 		if (variable == null) {
-			variable = this.fieldbookMiddlewareService.getStandardVariable(id);
+			variable = this.fieldbookMiddlewareService.getStandardVariable(id,contextUtil.getCurrentProgramUUID());
 			if (variable != null) {
 				this.userSelection.putStandardVariableInCache(variable);
 			}
@@ -565,7 +566,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	protected void resetSessionVariablesAfterSave(Workbook workbook, boolean isNursery) throws MiddlewareQueryException {
+	protected void resetSessionVariablesAfterSave(Workbook workbook, boolean isNursery) throws MiddlewareException {
 
 		// update variables in measurement rows
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
@@ -757,7 +758,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
 		Map<String, SettingDetail> removedConditionsMap = new HashMap<String, SettingDetail>();
 		if (workbook != null && idCodeNamePairs != null && !"".equalsIgnoreCase(idCodeNamePairs)) {
@@ -823,7 +824,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap,
-			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) throws MiddlewareQueryException {
+			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) 
+					throws MiddlewareException {
 		if (removedConditionsMap.get(id) == null) {
 			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName()));
 		}
@@ -936,7 +938,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
 				form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 	}

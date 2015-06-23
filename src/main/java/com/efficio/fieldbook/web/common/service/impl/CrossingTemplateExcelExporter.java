@@ -24,9 +24,11 @@ import org.generationcp.middleware.domain.dms.VariableType;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.util.PoiUtil;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
@@ -71,7 +73,8 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 			int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
 			List<Experiment> experiments =
-					this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, this.createPlotVariableTypeList());
+					this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, 
+							this.createPlotVariableTypeList(studyId));
 
 			for (Experiment gpData : experiments) {
 				PoiUtil.setCellValue(obsSheet, 0, rowIndex, studyName);
@@ -82,7 +85,7 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 			// 4. return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
 
-		} catch (MiddlewareQueryException | IOException | InvalidFormatException e) {
+		} catch (MiddlewareException | IOException | InvalidFormatException e) {
 			throw new CrossingTemplateExportException(e.getMessage(), e);
 		}
 	}
@@ -114,8 +117,11 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		}
 	}
 
-	protected VariableTypeList createPlotVariableTypeList() throws MiddlewareQueryException {
-		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
+	protected VariableTypeList createPlotVariableTypeList(int studyId) throws MiddlewareException {
+		DmsProject project = studyDataManager.getProject(studyId);
+		String programUUID = project.getProgramUUID();
+		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.
+				getStandardVariable(TermId.PLOT_NO.getId(),programUUID);
 		VariableType plotVariableType = new VariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
 		VariableTypeList plotVariableTypeList = new VariableTypeList();
 		plotVariableTypeList.add(plotVariableType);

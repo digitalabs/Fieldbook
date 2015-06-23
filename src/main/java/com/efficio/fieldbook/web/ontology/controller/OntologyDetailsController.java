@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.StandardVariableSummary;
@@ -31,6 +32,7 @@ import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -78,6 +80,9 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	/**
 	 * Gets the ontology details.
@@ -92,7 +97,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			Model model) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			StandardVariable variable = this.ontologyService.getStandardVariable(variableId);
+			StandardVariable variable = this.ontologyService.getStandardVariable(variableId,
+					contextUtil.getCurrentProgramUUID());
 			if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
 				resultMap.put("status", "success");
 				resultMap.put("variable", variable);
@@ -125,7 +131,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			Model model) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			StandardVariable variable = this.ontologyService.getStandardVariable(variableId);
+			StandardVariable variable = this.ontologyService.getStandardVariable(variableId,
+					contextUtil.getCurrentProgramUUID());
 			if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
 				resultMap.put("status", "success");
 				resultMap.put("variable", variable);
@@ -226,7 +233,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			}
 
 			Map<String, StandardVariable> standardVariableMap =
-					this.ontologyDataManager.getStandardVariablesForPhenotypicType(phenotype, 0, Integer.MAX_VALUE);
+					this.ontologyDataManager.getStandardVariablesForPhenotypicType(phenotype,
+							contextUtil.getCurrentProgramUUID(), 0, Integer.MAX_VALUE);
 
 			// create a Map - - we will select from this list to return, as the include method and scale information
 			Map<Integer, StandardVariableSummary> svMap = new HashMap<>();
@@ -265,7 +273,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			}
 			return propertyTrees;
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			OntologyDetailsController.LOG.error(e.getMessage(), e);
 		}
 
@@ -284,7 +292,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 
 		List<StandardVariable> standardVariables;
 		try {
-			standardVariables = this.ontologyService.getStandardVariablesByProperty(propertyId);
+			standardVariables = this.ontologyService.getStandardVariablesByProperty(propertyId,
+					contextUtil.getCurrentProgramUUID());
 
 			ObjectMapper om = new ObjectMapper();
 			return om.writeValueAsString(standardVariables);
@@ -294,7 +303,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			OntologyDetailsController.LOG.error("Error mapping JSON for property trees " + e.getMessage());
 		} catch (IOException e) {
 			OntologyDetailsController.LOG.error("Error writing JSON for property trees " + e.getMessage());
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			OntologyDetailsController.LOG.error("Error querying Ontology Manager for full Ontology Tree " + e.getMessage());
 		}
 
@@ -311,7 +320,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/OntologyBrowser/variables/{id}", method = RequestMethod.GET)
 	public String getStandardVariableById(@PathVariable int id) {
 		try {
-			StandardVariable standardVariable = this.ontologyService.getStandardVariable(id);
+			StandardVariable standardVariable = this.ontologyService.getStandardVariable(id,
+					contextUtil.getCurrentProgramUUID());
 
 			ObjectMapper om = new ObjectMapper();
 			return om.writeValueAsString(standardVariable);
@@ -321,7 +331,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			OntologyDetailsController.LOG.error("Error mapping JSON for property trees " + e.getMessage());
 		} catch (IOException e) {
 			OntologyDetailsController.LOG.error("Error writing JSON for property trees " + e.getMessage());
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			OntologyDetailsController.LOG.error("Error querying Ontology Manager for full Ontology Tree " + e.getMessage());
 		}
 

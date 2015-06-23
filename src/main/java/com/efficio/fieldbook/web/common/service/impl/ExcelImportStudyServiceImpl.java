@@ -35,11 +35,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
@@ -349,7 +351,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
 				try {
 					temp.setPossibleValues(this.fieldbookService.getAllPossibleValues(temp.getTermId(), true));
-				} catch (MiddlewareQueryException e) {
+				} catch (MiddlewareException e) {
 					ExcelImportStudyServiceImpl.LOG.error(e.getMessage(), e);
 				}
 
@@ -394,7 +396,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
 					try {
 						origVar.setPossibleValues(this.fieldbookService.getAllPossibleValues(origVar.getTermId(), true));
-					} catch (MiddlewareQueryException e) {
+					} catch (MiddlewareException e) {
 						ExcelImportStudyServiceImpl.LOG.error(e.getMessage(), e);
 					}
 
@@ -881,7 +883,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						MeasurementVariable mvar = null;
 						try {
 							mvar = this.getMeasurementVariable(row);
-						} catch (MiddlewareQueryException e) {
+						} catch (MiddlewareException e) {
 							ExcelImportStudyServiceImpl.LOG.error(e.getMessage(), e);
 							throw new WorkbookParserException(this.messageSource.getMessage("error.import.variate.duplicate.psmr",
 									new String[] {traitLabel}, LocaleContextHolder.getLocale()));
@@ -903,13 +905,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 
-	private MeasurementVariable getMeasurementVariable(Row row) throws MiddlewareQueryException {
+	private MeasurementVariable getMeasurementVariable(Row row) throws MiddlewareException {
 		String property = row.getCell(ExcelImportStudyServiceImpl.COLUMN_PROPERTY).getStringCellValue();
 		String scale = row.getCell(ExcelImportStudyServiceImpl.COLUMN_SCALE).getStringCellValue();
 		String method = row.getCell(ExcelImportStudyServiceImpl.COLUMN_METHOD).getStringCellValue();
 		MeasurementVariable mvar =
 				this.fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(property, scale, method,
-						PhenotypicType.VARIATE);
+						PhenotypicType.VARIATE,contextUtil.getCurrentProgramUUID());
 		if (mvar != null) {
 			mvar.setName(row.getCell(ExcelImportStudyServiceImpl.COLUMN_NAME).getStringCellValue());
 			mvar.setDescription(row.getCell(ExcelImportStudyServiceImpl.COLUMN_DESCRIPTION).getStringCellValue());

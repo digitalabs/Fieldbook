@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
@@ -108,7 +109,7 @@ public class CreateTrialController extends BaseTrialController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("createTrialForm") CreateTrialForm form, Model model, HttpSession session)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.USER_SELECTION_SESSION_NAME,
 				SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
@@ -144,7 +145,7 @@ public class CreateTrialController extends BaseTrialController {
 						trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			CreateTrialController.LOG.error(e.getMessage(), e);
 			form = this.addErrorMessageToResult(e);
 		}
@@ -153,12 +154,17 @@ public class CreateTrialController extends BaseTrialController {
 		return tabDetails;
 	}
 
-	private CreateTrialForm addErrorMessageToResult(MiddlewareQueryException e) {
+	private CreateTrialForm addErrorMessageToResult(MiddlewareException e) {
 		String param = AppConstants.TRIAL.getString();
 		CreateTrialForm form = new CreateTrialForm();
 		form.setHasError(true);
-		form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(e.getCode(), new Object[] {param,
+		if(e instanceof MiddlewareQueryException) {
+			form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(
+					((MiddlewareQueryException)e).getCode(), new Object[] {param,
 				param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
+		} else {
+			form.setErrorMessage(e.getMessage());
+		}
 		return form;
 	}
 
@@ -216,7 +222,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@RequestBody TrialData data) throws MiddlewareQueryException {
+	public String submit(@RequestBody TrialData data) throws MiddlewareException {
 		this.processEnvironmentData(data.getEnvironments());
 		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
@@ -238,13 +244,14 @@ public class CreateTrialController extends BaseTrialController {
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection
 						.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection
 						.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
-						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false);
+						data.getTreatmentFactors().getCurrentData(), null, 
+						this.userSelection.getNurseryConditions(), false, contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		Workbook workbook =
 				SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
 						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
-						this.userSelection.getExperimentalDesignVariables());
+						this.userSelection.getExperimentalDesignVariables(), contextUtil.getCurrentProgramUUID());
 
 		List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
 		variablesForEnvironment.addAll(workbook.getTrialVariables());
@@ -273,7 +280,7 @@ public class CreateTrialController extends BaseTrialController {
 			try {
 				SettingDetail detail = this.createSettingDetail(initialSettingID, null);
 				initialDetailList.add(detail);
-			} catch (MiddlewareQueryException e) {
+			} catch (MiddlewareException e) {
 				CreateTrialController.LOG.error(e.getMessage(), e);
 			}
 
@@ -289,7 +296,7 @@ public class CreateTrialController extends BaseTrialController {
 		return info;
 	}
 
-	protected TabInfo prepareEnvironmentsTabInfo(boolean isClearSettings) throws MiddlewareQueryException {
+	protected TabInfo prepareEnvironmentsTabInfo(boolean isClearSettings) throws MiddlewareException {
 		TabInfo info = new TabInfo();
 		EnvironmentData data = new EnvironmentData();
 		int noOfEnvironments = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
@@ -326,7 +333,7 @@ public class CreateTrialController extends BaseTrialController {
 		return info;
 	}
 
-	protected TabInfo prepareBasicDetailsTabInfo() throws MiddlewareQueryException {
+	protected TabInfo prepareBasicDetailsTabInfo() throws MiddlewareException {
 		Map<String, String> basicDetails = new HashMap<String, String>();
 		List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
 		List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
@@ -364,7 +371,7 @@ public class CreateTrialController extends BaseTrialController {
 		return info;
 	}
 
-	private List<SettingDetail> addUserIdIfNecessary(List<SettingDetail> basicDetails) throws MiddlewareQueryException {
+	private List<SettingDetail> addUserIdIfNecessary(List<SettingDetail> basicDetails) throws MiddlewareException {
 		boolean found = false;
 		List<SettingDetail> detailList = basicDetails;
 		if (basicDetails == null) {
@@ -403,7 +410,7 @@ public class CreateTrialController extends BaseTrialController {
 			if (this.userSelection.getImportedGermplasmMainInfo() != null) {
 				this.userSelection.setImportedGermplasmMainInfo(null);
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			CreateTrialController.LOG.error(e.getMessage(), e);
 		}
 		return "success";
@@ -411,7 +418,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
-	public Map<String, TabInfo> refreshSettingsTab() throws MiddlewareQueryException {
+	public Map<String, TabInfo> refreshSettingsTab() throws MiddlewareException {
 		Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
 
 		Workbook trialWorkbook = this.userSelection.getWorkbook();

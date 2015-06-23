@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -206,7 +207,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(List<MeasurementVariable> measurementVariables, boolean isUsePrevious)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 		List<Integer> requiredIDList = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
@@ -261,7 +262,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables, boolean isUsePrevious)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
 		Map<String, TreatmentFactorData> currentData = new HashMap<String, TreatmentFactorData>();
 		Map<String, List<SettingDetail>> treatmentFactorPairs = new HashMap<String, List<SettingDetail>>();
@@ -311,7 +312,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareMeasurementsTabInfo(List<MeasurementVariable> variatesList, boolean isUsePrevious)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 
 		List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 
@@ -337,7 +338,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareEnvironmentsTabInfo(Workbook workbook, boolean isUsePrevious) throws MiddlewareQueryException {
+	protected TabInfo prepareEnvironmentsTabInfo(Workbook workbook, boolean isUsePrevious) throws MiddlewareException {
 		TabInfo info = new TabInfo();
 		Map settingMap = new HashMap();
 		List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
@@ -476,7 +477,8 @@ public abstract class BaseTrialController extends SettingsController {
 
 		try {
 
-			StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId);
+			StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId,
+					contextUtil.getCurrentProgramUUID());
 
 			List<StandardVariable> pairs =
 					this.fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(), variable.getProperty().getId(),
@@ -486,7 +488,7 @@ public abstract class BaseTrialController extends SettingsController {
 				output.add(this.createSettingDetail(item.getId(), null));
 			}
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			BaseTrialController.LOG.error(e.getMessage(), e);
 		}
 
@@ -494,7 +496,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo(StudyDetails studyDetails, boolean isUsePrevious, int trialID)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		Map<String, String> basicDetails = new HashMap<String, String>();
 		List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
 		List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
@@ -559,7 +561,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareTrialSettingsTabInfo(List<MeasurementVariable> measurementVariables, boolean isUsePrevious)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		TabInfo info = new TabInfo();
 		Map<String, String> trialValues = new HashMap<String, String>();
 		List<SettingDetail> details = new ArrayList<SettingDetail>();
@@ -610,7 +612,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareExperimentalDesignSpecialData() throws MiddlewareQueryException {
+	protected TabInfo prepareExperimentalDesignSpecialData() throws MiddlewareException {
 		TabInfo info = new TabInfo();
 		ExpDesignData data = new ExpDesignData();
 		List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();
@@ -618,7 +620,8 @@ public abstract class BaseTrialController extends SettingsController {
 		List<Integer> ids = this.buildVariableIDList(AppConstants.CREATE_TRIAL_EXP_DESIGN_DEFAULT_FIELDS.getString());
 		for (Integer id : ids) {
 			// PLOT, REP, BLOCK, ENTRY NO
-			StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(id);
+			StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(id,
+					contextUtil.getCurrentProgramUUID());
 			SettingVariable svar = new SettingVariable();
 			svar.setCvTermId(id);
 			svar.setName(stdvar.getName());

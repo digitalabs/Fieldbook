@@ -40,6 +40,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -268,7 +269,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 						if (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
 							try {
 								variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
-							} catch (MiddlewareQueryException e) {
+							} catch (MiddlewareException e) {
 								ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
 							}
 						}
@@ -449,7 +450,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		try {
 			variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
 		}
 

@@ -34,6 +34,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -225,6 +226,12 @@ public class EditNurseryController extends SettingsController {
 					this.errorHandlerService.getErrorMessagesAsString(e.getCode(), new String[] {AppConstants.NURSERY.getString(),
 							StringUtils.capitalize(AppConstants.NURSERY.getString()), AppConstants.NURSERY.getString()}, "\n"));
 			return "redirect:" + ManageNurseriesController.URL;
+		} catch (MiddlewareException e) {
+			EditNurseryController.LOG.debug(e.getMessage(), e);
+			redirectAttributes.addFlashAttribute(
+					"redirectErrorMessage",
+					e.getMessage());
+			return "redirect:" + ManageNurseriesController.URL;
 		}
 
 	}
@@ -293,7 +300,7 @@ public class EditNurseryController extends SettingsController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpServletRequest req,
-			HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
+			HttpSession session, HttpServletRequest request) throws MiddlewareException {
 
 		final String contextParams = this.retrieveContextInfo(request);
 		this.clearSessionData(session);
@@ -308,7 +315,7 @@ public class EditNurseryController extends SettingsController {
 	 * @param form the form
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	private void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
+	private void assignDefaultValues(CreateNurseryForm form) throws MiddlewareException {
 		List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
 		List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
 		List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
@@ -417,11 +424,12 @@ public class EditNurseryController extends SettingsController {
 
 		Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
-						form.getPlotLevelVariables(), baselineTraits, this.userSelection, form.getNurseryConditions());
+						form.getPlotLevelVariables(), baselineTraits, this.userSelection, 
+						form.getNurseryConditions(),contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 
-		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, contextUtil.getCurrentProgramUUID());
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
 		workbook.setTrialDatasetId(trialDatasetId);
 		workbook.setMeasurementDatesetId(measurementDatasetId);
@@ -436,9 +444,9 @@ public class EditNurseryController extends SettingsController {
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
 			try {
 				WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, this.userSelection, this.ontologyService,
-						this.fieldbookService);
+						this.fieldbookService,contextUtil.getCurrentProgramUUID());
 				WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, this.userSelection, this.ontologyService,
-						this.fieldbookService);
+						this.fieldbookService,contextUtil.getCurrentProgramUUID());
 
 				workbook.setMeasurementDatasetVariables(null);
 				form.setMeasurementRowList(this.userSelection.getMeasurementRowList());
@@ -451,7 +459,7 @@ public class EditNurseryController extends SettingsController {
 						AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 				this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),
 						this.userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION.getString(), true);
-				this.fieldbookMiddlewareService.saveMeasurementRows(workbook);
+				this.fieldbookMiddlewareService.saveMeasurementRows(workbook,contextUtil.getCurrentProgramUUID());
 				workbook.setTrialObservations(this.fieldbookMiddlewareService.buildTrialObservations(trialDatasetId,
 						workbook.getTrialConditions(), workbook.getTrialConstants()));
 				workbook.setOriginalObservations(workbook.getObservations());
@@ -463,7 +471,7 @@ public class EditNurseryController extends SettingsController {
 								SettingsUtil.buildVariates(workbook.getVariates()))));
 
 				this.fieldbookService.saveStudyColumnOrdering(form.getStudyId(), workbook.getStudyName(), form.getColumnOrders(), workbook);
-			} catch (MiddlewareQueryException e) {
+			} catch (MiddlewareException e) {
 				resultMap.put(EditNurseryController.STATUS, EditNurseryController.ERROR);
 				resultMap.put("errorMessage", e.getMessage());
 
@@ -602,7 +610,7 @@ public class EditNurseryController extends SettingsController {
 				datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyId(), workbook.getStudyName());
 			}
 			form.setHasFieldmap(this.fieldbookMiddlewareService.hasFieldMap(datasetId));
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			EditNurseryController.LOG.error(e.getMessage(), e);
 		}
 	}
@@ -644,7 +652,7 @@ public class EditNurseryController extends SettingsController {
 	 */
 	@RequestMapping(value = "/recreate/session/variables", method = RequestMethod.GET)
 	public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model,
-			HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
+			HttpSession session, HttpServletRequest request) throws MiddlewareException {
 
 		final String contextParams = this.retrieveContextInfo(request);
 

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.dms.DmsProject;
@@ -184,7 +185,7 @@ public class StudyTreeController {
 			} else {
 				dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "0");
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 			dataResults.put(StudyTreeController.HAS_OBSERVATIONS, "0");
 		}

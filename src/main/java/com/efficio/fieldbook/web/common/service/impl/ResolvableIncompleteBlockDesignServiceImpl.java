@@ -11,11 +11,13 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,8 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	private ResourceBundleMessageSource messageSource;
 	@Resource
 	public FieldbookService fieldbookService;
+	@Resource
+	public ContextUtil contextUtil;
 
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
@@ -64,7 +68,8 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 		// we need to add the 4 vars
 		try {
 
-			StandardVariable stdvarTreatment = this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
+			StandardVariable stdvarTreatment = this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),
+					contextUtil.getCurrentProgramUUID());
 			StandardVariable stdvarRep = null;
 			StandardVariable stdvarBlock = null;
 			StandardVariable stdvarPlot = null;
@@ -122,14 +127,17 @@ public class ResolvableIncompleteBlockDesignServiceImpl implements ResolvableInc
 	public List<StandardVariable> getRequiredVariable() {
 		List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {
-			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());
-			StandardVariable stdvarBlock = this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId());
-			StandardVariable stdvarPlot = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
+			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(),
+					contextUtil.getCurrentProgramUUID());
+			StandardVariable stdvarBlock = this.fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(),
+					contextUtil.getCurrentProgramUUID());
+			StandardVariable stdvarPlot = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(),
+					contextUtil.getCurrentProgramUUID());
 
 			varList.add(stdvarRep);
 			varList.add(stdvarBlock);
 			varList.add(stdvarPlot);
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ResolvableIncompleteBlockDesignServiceImpl.LOG.error(e.getMessage(), e);
 		}
 		return varList;

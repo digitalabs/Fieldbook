@@ -25,6 +25,7 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
@@ -51,6 +52,7 @@ import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import org.generationcp.commons.spring.util.ContextUtil;
 
 /**
  * The Class DesignImportController.
@@ -78,6 +80,9 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -113,7 +118,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 			resultsMap.put("isSuccess", 1);
 
-		} catch (MiddlewareQueryException | FileParsingException e) {
+		} catch (MiddlewareException | FileParsingException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
@@ -218,7 +223,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 			resultsMap.put("success", Boolean.TRUE);
 
-		} catch (MiddlewareQueryException | DesignValidationException e) {
+		} catch (MiddlewareException | DesignValidationException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
@@ -230,13 +235,14 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 		return resultsMap;
 	}
 
-	protected void updateDesignMapping(Map<String, List<DesignHeaderItem>> mappedHeaders) throws MiddlewareQueryException {
+	protected void updateDesignMapping(Map<String, List<DesignHeaderItem>> mappedHeaders) throws MiddlewareException {
 		Map<PhenotypicType, List<DesignHeaderItem>> newMappingResults = new HashMap<>();
 
 		for (Map.Entry<String, List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
 			for (DesignHeaderItem mappedHeader : item.getValue()) {
 
-				StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(mappedHeader.getId());
+				StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(mappedHeader.getId(),
+						contextUtil.getCurrentProgramUUID());
 
 				mappedHeader.setVariable(stdVar);
 			}
@@ -350,9 +356,9 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
 							this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
 							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-							this.userSelection.getNurseryConditions(), false);
+							this.userSelection.getNurseryConditions(), false, contextUtil.getCurrentProgramUUID());
 
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, contextUtil.getCurrentProgramUUID());
 
 			details.setStudyType(StudyType.T);
 
@@ -372,9 +378,9 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
 							this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
 							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-							this.userSelection.getNurseryConditions(), true);
+							this.userSelection.getNurseryConditions(), true, contextUtil.getCurrentProgramUUID());
 
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, contextUtil.getCurrentProgramUUID());
 
 			details.setStudyType(StudyType.N);
 
@@ -386,7 +392,7 @@ public class DesignImportController extends AbstractBaseFieldbookController {
 
 	}
 
-	protected void performAutomap(DesignImportData designImportData) throws MiddlewareQueryException {
+	protected void performAutomap(DesignImportData designImportData) throws MiddlewareException {
 		Map<PhenotypicType, List<DesignHeaderItem>> result =
 				this.designImportService.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders());
 

@@ -38,6 +38,7 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Location;
@@ -116,7 +117,7 @@ public class CreateNurseryController extends SettingsController {
 	 */
 	@RequestMapping(value = "/nursery/{nurseryId}", method = RequestMethod.GET)
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int nurseryId, Model model,
-			HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
+			HttpSession session, HttpServletRequest request) throws MiddlewareException {
 
 		ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 		String contextParams = ContextUtil.getContextParameterString(contextInfo);
@@ -227,7 +228,7 @@ public class CreateNurseryController extends SettingsController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session,
-			HttpServletRequest request) throws MiddlewareQueryException {
+			HttpServletRequest request) throws MiddlewareException {
 
 		ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO);
 		String contextParams = ContextUtil.getContextParameterString(contextInfo);
@@ -244,7 +245,7 @@ public class CreateNurseryController extends SettingsController {
 		return super.show(model);
 	}
 
-	protected void setCheckVariablesInForm(ImportGermplasmListForm form2) throws MiddlewareQueryException {
+	protected void setCheckVariablesInForm(ImportGermplasmListForm form2) throws MiddlewareException {
 		List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
 		checkVariables =
 				this.buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(),
@@ -259,7 +260,7 @@ public class CreateNurseryController extends SettingsController {
 	 * @param form the form
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
+	protected void assignDefaultValues(CreateNurseryForm form) throws MiddlewareException {
 		List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
 		List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
 		List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
@@ -331,9 +332,10 @@ public class CreateNurseryController extends SettingsController {
 
 		Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
-						form.getPlotLevelVariables(), baselineTraits, this.userSelection, form.getNurseryConditions());
+						form.getPlotLevelVariables(), baselineTraits, this.userSelection, 
+						form.getNurseryConditions(), contextUtil.getCurrentProgramUUID());
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
-		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, contextUtil.getCurrentProgramUUID());
 		this.userSelection.setWorkbook(workbook);
 
 		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null);

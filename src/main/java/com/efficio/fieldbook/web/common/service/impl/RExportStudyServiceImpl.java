@@ -47,7 +47,6 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	@Override
 	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, List<Integer> instances) {
 		String outFile = this.fieldbookProperties.getUploadDirectory() + File.separator + outputFile;
-		boolean alreadyExists = new File(outFile).exists();
 		List<MeasurementRow> observations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
 		List<MeasurementRow> trialObservations =

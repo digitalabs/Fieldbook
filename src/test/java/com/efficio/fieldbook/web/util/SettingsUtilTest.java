@@ -23,6 +23,8 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 public class SettingsUtilTest {
 
+	private static final String PROGRAM_UUID = "123456789";
+	
 	@Test
 	public void testConvertXmlDatasetToWorkbookAndBack() {
 		Dataset dataset = new Dataset();
@@ -40,7 +42,7 @@ public class SettingsUtilTest {
 				new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
 						TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
 
-		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, PROGRAM_UUID);
 		Debug.println(0, workbook);
 
 		Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);

@@ -16,16 +16,19 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -66,7 +69,9 @@ public class GermplasmExportServiceTest {
 	private static final String CHECK = "check";
 	private static final String ENTRY_NUMBER_STORAGE = "entryNoStorage";
 
+	@InjectMocks
 	private GermplasmExportService exportService;
+	
 	private String testFileName;
 	private String sheetName;
 
@@ -77,6 +82,9 @@ public class GermplasmExportServiceTest {
 
 	@Mock
 	private UserSelection userSelection;
+	
+	@Mock
+	private ContextUtil contextUtil;
 
 	@Before
 	public void setUp() {
@@ -90,25 +98,25 @@ public class GermplasmExportServiceTest {
 		try {
 
 			Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), GermplasmExportServiceTest.ENTRY_NO))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId());
+					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(this.createStandardVariable(TermId.DESIG.getId(), GermplasmExportServiceTest.DESIGNATION))
-					.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId());
+					.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(this.createStandardVariable(TermId.GID.getId(), GermplasmExportServiceTest.GID)).when(this.ontologyService)
-					.getStandardVariable(TermId.GID.getId());
+					.getStandardVariable(TermId.GID.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(this.createStandardVariable(TermId.CROSS.getId(), GermplasmExportServiceTest.PARENTAGE))
-					.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId());
+					.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), GermplasmExportServiceTest.SEED_SOURCE))
-					.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId());
+					.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), GermplasmExportServiceTest.ENTRY_CODE))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId());
+					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(
 					this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), GermplasmExportServiceTest.ENTRY_NUMBER_STORAGE))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId());
+					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(this.createStandardVariable(TermId.CHECK.getId(), GermplasmExportServiceTest.CHECK))
-					.when(this.ontologyService).getStandardVariable(TermId.CHECK.getId());
+					.when(this.ontologyService).getStandardVariable(TermId.CHECK.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 
 		}
 
@@ -335,7 +343,7 @@ public class GermplasmExportServiceTest {
 
 		StandardVariable stdVar;
 		try {
-			stdVar = this.ontologyService.getStandardVariable(termId);
+			stdVar = this.ontologyService.getStandardVariable(termId,contextUtil.getCurrentProgramUUID());
 
 			settingDetail.getVariable().setName(stdVar.getName());
 			settingDetail.getVariable().setDescription(stdVar.getDescription());
@@ -344,7 +352,7 @@ public class GermplasmExportServiceTest {
 			settingDetail.getVariable().setMethod(stdVar.getMethod().getName());
 			settingDetail.getVariable().setDataType(stdVar.getDataType().getName());
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			// do nothing
 		}
 

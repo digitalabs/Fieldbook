@@ -18,6 +18,7 @@ import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -27,6 +28,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -75,6 +77,9 @@ public class DesignImportServiceImplTest {
 
 	@Mock
 	private UserSelection userSelection;
+	
+	@Mock
+	private ContextUtil contextUtil;
 
 	private DesignImportData designImportData;
 
@@ -84,7 +89,7 @@ public class DesignImportServiceImplTest {
 	private final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
 	@Before
-	public void setUp() throws MiddlewareQueryException, FileParsingException, URISyntaxException {
+	public void setUp() throws MiddlewareException, FileParsingException, URISyntaxException {
 
 		MockitoAnnotations.initMocks(this);
 
@@ -149,7 +154,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testAddVariatesToMeasurementRows() throws DesignValidationException, MiddlewareQueryException {
+	public void testAddVariatesToMeasurementRows() throws DesignValidationException, MiddlewareException {
 
 		Mockito.doReturn(this.createImportedGermplasmMainInfo()).when(this.userSelection).getImportedGermplasmMainInfo();
 
@@ -173,7 +178,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testAreTrialInstancesMatchTheSelectedEnvironments() throws MiddlewareQueryException {
+	public void testAreTrialInstancesMatchTheSelectedEnvironments() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 
@@ -184,7 +189,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testCategorizeHeadersByPhenotype() throws MiddlewareQueryException {
+	public void testCategorizeHeadersByPhenotype() throws MiddlewareException {
 
 		Map<PhenotypicType, List<DesignHeaderItem>> result =
 				this.service.categorizeHeadersByPhenotype(this.designImportData.getUnmappedHeaders());
@@ -239,7 +244,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testFilterDesignHeaderItemsByTermId() throws MiddlewareQueryException {
+	public void testFilterDesignHeaderItemsByTermId() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 
@@ -251,7 +256,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testGenerateDesignForOneInstanceOnly() throws MiddlewareQueryException, DesignValidationException {
+	public void testGenerateDesignForOneInstanceOnly() throws MiddlewareException, DesignValidationException {
 
 		Mockito.doReturn(this.createImportedGermplasmMainInfo()).when(this.userSelection).getImportedGermplasmMainInfo();
 
@@ -267,7 +272,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testGenerateDesignForThreeInstances() throws MiddlewareQueryException, DesignValidationException {
+	public void testGenerateDesignForThreeInstances() throws MiddlewareException, DesignValidationException {
 
 		Mockito.doReturn(this.createImportedGermplasmMainInfo()).when(this.userSelection).getImportedGermplasmMainInfo();
 
@@ -283,7 +288,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testGetDesignMeasurementVariables() throws MiddlewareQueryException {
+	public void testGetDesignMeasurementVariables() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 		Set<MeasurementVariable> result = this.service.getDesignMeasurementVariables(this.workbook, this.designImportData);
@@ -292,7 +297,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testGetDesignRequiredMeasurementVariable() throws MiddlewareQueryException {
+	public void testGetDesignRequiredMeasurementVariable() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 		Set<MeasurementVariable> result = this.service.getDesignRequiredMeasurementVariable(this.workbook, this.designImportData);
@@ -302,7 +307,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testGetDesignRequiredStandardVariables() throws MiddlewareQueryException {
+	public void testGetDesignRequiredStandardVariables() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 		Set<StandardVariable> result = this.service.getDesignRequiredStandardVariables(this.workbook, this.designImportData);
@@ -312,7 +317,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testGroupCsvRowsIntoTrialInstance() throws MiddlewareQueryException {
+	public void testGroupCsvRowsIntoTrialInstance() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 
@@ -331,7 +336,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateDesignData() throws MiddlewareQueryException {
+	public void testValidateDesignData() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 
@@ -347,7 +352,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateEntryNoMustBeUniquePerInstance() throws MiddlewareQueryException {
+	public void testValidateEntryNoMustBeUniquePerInstance() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 
@@ -373,7 +378,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateEntryNoMustBeUniquePerInstanceEntryNoIsNotUnique() throws MiddlewareQueryException {
+	public void testValidateEntryNoMustBeUniquePerInstanceEntryNoIsNotUnique() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 
@@ -422,7 +427,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateIfEntryNumberExistsNoEntryNumber() throws MiddlewareQueryException {
+	public void testValidateIfEntryNumberExistsNoEntryNumber() throws MiddlewareException {
 
 		try {
 
@@ -439,7 +444,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateIfEntryNumberExistsWithEntryNumber() throws MiddlewareQueryException {
+	public void testValidateIfEntryNumberExistsWithEntryNumber() throws MiddlewareException {
 
 		try {
 
@@ -456,7 +461,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateIfPlotNumberExistsNoPlotNumber() throws MiddlewareQueryException {
+	public void testValidateIfPlotNumberExistsNoPlotNumber() throws MiddlewareException {
 
 		try {
 
@@ -473,7 +478,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateIfPlotNumberExistsWithPlotNumber() throws MiddlewareQueryException {
+	public void testValidateIfPlotNumberExistsWithPlotNumber() throws MiddlewareException {
 
 		try {
 
@@ -490,7 +495,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateIfPlotNumberIsUnique() throws MiddlewareQueryException {
+	public void testValidateIfPlotNumberIsUnique() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 
@@ -513,7 +518,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateIfPlotNumberIsUniquePerInstance() throws MiddlewareQueryException {
+	public void testValidateIfPlotNumberIsUniquePerInstance() throws MiddlewareException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
 
@@ -545,7 +550,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateIfTrialFactorExists() throws MiddlewareQueryException {
+	public void testValidateIfTrialFactorExists() throws MiddlewareException {
 
 		try {
 
@@ -562,7 +567,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testValidateIfTrialFactorExistsTrialInstanceDoNotExist() throws MiddlewareQueryException {
+	public void testValidateIfTrialFactorExistsTrialInstanceDoNotExist() throws MiddlewareException {
 
 		try {
 
@@ -586,33 +591,33 @@ public class DesignImportServiceImplTest {
 
 	}
 
-	private void initializeOntologyService() throws MiddlewareQueryException {
+	private void initializeOntologyService() throws MiddlewareException {
 
 		Mockito.doReturn(this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId(),contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GID.getId(), "GID", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.GID.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.GID.getId(),contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.DESIG.getId(), "DESIG", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId(),contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(
 				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_TYPE.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_TYPE.getId(),contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.CROSS.getId(), "CROSS", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId(),contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(
 				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_CODE.getId(), "ENTRY_CODE", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId(),contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(
 				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GERMPLASM_SOURCE.getId(), "GERMPLASM_SOURCE", "", "", "", "",
-						"", "")).when(this.ontologyService).getStandardVariable(TermId.GERMPLASM_SOURCE.getId());
+						"", "")).when(this.ontologyService).getStandardVariable(TermId.GERMPLASM_SOURCE.getId(),contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(
 				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.SEED_SOURCE.getId(), "SEED_SOURCE", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId(),contextUtil.getCurrentProgramUUID());
 
 		Mockito.doReturn(this.createStandardVariable(PhenotypicType.VARIATE, 18000, "GYLD", "", "", "", "N", "", ""))
-				.when(this.ontologyService).getStandardVariable(18000);
+				.when(this.ontologyService).getStandardVariable(18000,contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(PhenotypicType.VARIATE, 22768, "CHALK_PCT", "", "", "N", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(22768);
+				.when(this.ontologyService).getStandardVariable(22768,contextUtil.getCurrentProgramUUID());
 
 		Property prop = new Property();
 		Term term = new Term();
@@ -635,7 +640,7 @@ public class DesignImportServiceImplTest {
 		map.put("BLOCK_NO", this.createList(this.createStandardVariable(PhenotypicType.TRIAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO",
 				"", "", "", "", "", "")));
 
-		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyList());
+		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyList(),Matchers.anyString());
 
 	}
 
@@ -740,7 +745,7 @@ public class DesignImportServiceImplTest {
 		}
 	}
 
-	protected void createDesignHeaderItemMap(DesignImportData designImportData) throws MiddlewareQueryException {
+	protected void createDesignHeaderItemMap(DesignImportData designImportData) throws MiddlewareException {
 
 		designImportData.getMappedHeaders().clear();
 		designImportData.getMappedHeaders().putAll(this.service.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders()));

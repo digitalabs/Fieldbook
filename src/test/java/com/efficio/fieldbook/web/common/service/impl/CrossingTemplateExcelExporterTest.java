@@ -68,7 +68,7 @@ public class CrossingTemplateExcelExporterTest {
 						GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
-		Mockito.doReturn(Mockito.mock(VariableTypeList.class)).when(this.DUT).createPlotVariableTypeList();
+		Mockito.doReturn(Mockito.mock(VariableTypeList.class)).when(this.DUT).createPlotVariableTypeList(STUDY_ID);
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager)
 				.getExperiments(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(), Matchers.any(VariableTypeList.class));
 

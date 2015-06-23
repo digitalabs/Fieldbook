@@ -11,7 +11,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,7 +45,7 @@ public class ImportGermplasmFileServiceImplTest {
 	}
 
 	@Test
-	public void testValidataAndAddCheckFactorNoCheckAndWithCheckFactor() throws MiddlewareQueryException {
+	public void testValidataAndAddCheckFactorNoCheckAndWithCheckFactor() throws MiddlewareException {
 
 		Workbook workbook = this.generateWorkbookWithCheckFactor();
 		workbook.setCheckFactorAddedOnly(true);
@@ -68,7 +68,7 @@ public class ImportGermplasmFileServiceImplTest {
 	}
 
 	@Test
-	public void testValidataAndAddCheckFactorNoCheckAndWithoutCheckFactor() throws MiddlewareQueryException {
+	public void testValidataAndAddCheckFactorNoCheckAndWithoutCheckFactor() throws MiddlewareException {
 
 		Workbook workbook = this.generateWorkbook();
 		workbook.setCheckFactorAddedOnly(false);
@@ -91,7 +91,7 @@ public class ImportGermplasmFileServiceImplTest {
 	}
 
 	@Test
-	public void testValidataAndAddCheckFactorWithNoExistingCheckFactor() throws MiddlewareQueryException {
+	public void testValidataAndAddCheckFactorWithNoExistingCheckFactor() throws MiddlewareException {
 
 		Workbook workbook = this.generateWorkbook();
 
@@ -99,7 +99,8 @@ public class ImportGermplasmFileServiceImplTest {
 		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
 		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
-		Mockito.doReturn(this.generateCheckStandardVariable()).when(this.fieldbookMiddlewareService).getStandardVariable(Matchers.anyInt());
+		Mockito.doReturn(this.generateCheckStandardVariable()).when(this.fieldbookMiddlewareService).
+			getStandardVariable(Matchers.anyInt(),Matchers.anyString());
 
 		this.importGermplasmFileService.validataAndAddCheckFactor(formImportedGermplasm, sessionImportedGermplasm, this.userSelection);
 
@@ -115,7 +116,7 @@ public class ImportGermplasmFileServiceImplTest {
 	}
 
 	@Test
-	public void testValidataAndAddCheckFactorWithExistingCheckFactor() throws MiddlewareQueryException {
+	public void testValidataAndAddCheckFactorWithExistingCheckFactor() throws MiddlewareException {
 
 		Workbook workbook = this.generateWorkbook();
 		StandardVariable checkStandardVariable = this.generateCheckStandardVariable();
@@ -124,7 +125,8 @@ public class ImportGermplasmFileServiceImplTest {
 		List<ImportedGermplasm> sessionImportedGermplasm = this.generateImportedGermplasm();
 
 		Mockito.doReturn(this.generateWorkbookWithCheckFactor()).when(this.userSelection).getWorkbook();
-		Mockito.doReturn(checkStandardVariable).when(this.fieldbookMiddlewareService).getStandardVariable(Matchers.anyInt());
+		Mockito.doReturn(checkStandardVariable).when(this.fieldbookMiddlewareService).getStandardVariable(
+				Matchers.anyInt(),Matchers.anyString());
 		Mockito.doReturn(TermId.CHECK.getId())
 				.when(this.fieldbookMiddlewareService)
 				.getStandardVariableIdByPropertyScaleMethodRole(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),

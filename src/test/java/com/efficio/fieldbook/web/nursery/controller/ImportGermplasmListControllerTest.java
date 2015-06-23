@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -324,7 +325,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 	}
 
 	@Test
-	public void testValidAndAddCheckFactor() throws MiddlewareQueryException {
+	public void testValidAndAddCheckFactor() throws MiddlewareException {
 		// testing when doing pagination, we simulate the pagination
 		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
@@ -386,7 +387,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 	}
 
 	@Test
-	public void testDisplayGermplasmDetailsForNursery() throws MiddlewareQueryException {
+	public void testDisplayGermplasmDetailsForNursery() throws MiddlewareException {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 
 		List<GermplasmListData> list = this.createGermplasmListData();
@@ -424,7 +425,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 	}
 
 	@Test
-	public void testDisplayGermplasmDetailsForTrial() throws MiddlewareQueryException {
+	public void testDisplayGermplasmDetailsForTrial() throws MiddlewareException {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 
 		List<GermplasmListData> list = this.createGermplasmListData();
@@ -462,7 +463,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 	}
 
 	@Test
-	public void testDisplaySelectedGermplasmDetailsForNursery() throws MiddlewareQueryException {
+	public void testDisplaySelectedGermplasmDetailsForNursery() throws MiddlewareException {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 
 		List<GermplasmListData> list = this.createGermplasmListData();
@@ -507,7 +508,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 	}
 
 	@Test
-	public void testDisplaySelectedGermplasmDetailsForTrial() throws MiddlewareQueryException {
+	public void testDisplaySelectedGermplasmDetailsForTrial() throws MiddlewareException {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 
 		List<GermplasmListData> list = this.createGermplasmListData();
@@ -552,7 +553,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 	}
 
 	@Test
-	public void testDisplayCheckGermplasmDetails() throws MiddlewareQueryException {
+	public void testDisplayCheckGermplasmDetails() throws MiddlewareException {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 
 		Mockito.doReturn(null).when(this.ontologyDataManager).getTermById(Matchers.anyInt());
@@ -573,7 +574,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 	}
 
 	@Test
-	public void testDisplaySelectedCheckGermplasmDetails() throws MiddlewareQueryException {
+	public void testDisplaySelectedCheckGermplasmDetails() throws MiddlewareException {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
 
 		Mockito.doReturn(null).when(this.ontologyDataManager).getTermById(Matchers.anyInt());

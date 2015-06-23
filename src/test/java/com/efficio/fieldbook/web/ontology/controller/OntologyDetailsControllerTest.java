@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.easymock.EasyMock;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -22,10 +23,14 @@ import org.generationcp.middleware.domain.dms.VariableConstraints;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +48,16 @@ public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegra
 
 	public static final Logger log = LoggerFactory.getLogger(OntologyDetailsControllerTest.class);
 
-	@Autowired
+	@InjectMocks
 	private OntologyDetailsController controller;
+	
+	@Mock
+	private ContextUtil contextUtil;
 
+	@Before
+	public void setUp() {
+		controller = new OntologyDetailsController();
+	}
 	/**
 	 * Test get ontology details.
 	 *
@@ -59,7 +71,7 @@ public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegra
 
 		OntologyService ontologyService = Mockito.mock(OntologyService.class);
 		StandardVariable stdvar = this.createStandardVariableTestData();
-		Mockito.when(ontologyService.getStandardVariable(8050)).thenReturn(stdvar);
+		Mockito.when(ontologyService.getStandardVariable(8050,contextUtil.getCurrentProgramUUID())).thenReturn(stdvar);
 		Mockito.when(ontologyService.countProjectsByVariable(8050)).thenReturn(123456L);
 		Mockito.when(ontologyService.countExperimentsByVariable(8050, 1010)).thenReturn(789000L);
 		this.controller.setOntologyService(ontologyService);
@@ -83,10 +95,10 @@ public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegra
 			EasyMock.expect(fieldbookService.filterStandardVariablesForSetting(1, new ArrayList<SettingDetail>())).andReturn(
 					filteredVariables);
 			EasyMock.expect(ontologyService.getAllTraitGroupsHierarchy(true)).andReturn(ontologyTree);
-			EasyMock.expect(ontologyService.getStandardVariable(1)).andReturn(sv1);
-			EasyMock.expect(ontologyService.getStandardVariable(2)).andReturn(sv2);
-			EasyMock.expect(ontologyService.getStandardVariable(3)).andReturn(sv3);
-		} catch (MiddlewareQueryException e) {
+			EasyMock.expect(ontologyService.getStandardVariable(1,contextUtil.getCurrentProgramUUID())).andReturn(sv1);
+			EasyMock.expect(ontologyService.getStandardVariable(2,contextUtil.getCurrentProgramUUID())).andReturn(sv2);
+			EasyMock.expect(ontologyService.getStandardVariable(3,contextUtil.getCurrentProgramUUID())).andReturn(sv3);
+		} catch (MiddlewareException e) {
 			OntologyDetailsControllerTest.log.error(e.getMessage());
 		}
 

@@ -25,6 +25,7 @@ import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermProperty;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
@@ -54,6 +55,8 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerIntegra
 	/** The ontology service. */
 	@Autowired
 	OntologyService ontologyService;
+	
+	private static final String PROGRAM_UUID = "123456789";
 
 	/** The standard variable. */
 	private StandardVariable standardVariable;
@@ -107,8 +110,8 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerIntegra
 			this.standardVariable.setStoredIn(storedIn);
 			this.standardVariable.setCropOntologyId("CO:1200");
 			this.standardVariable.setConstraints(new VariableConstraints(1.0, 10.0));
-			this.ontologyService.addStandardVariable(this.standardVariable);
-		} catch (MiddlewareQueryException e) {
+			this.ontologyService.addStandardVariable(this.standardVariable,PROGRAM_UUID);
+		} catch (MiddlewareException e) {
 			OntologyManagerControllerTest.LOG.error(e.getMessage(), e);
 		}
 
@@ -120,12 +123,12 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerIntegra
 	}
 
 	@Test
-	public void testSaveNewVariableConfirmPreselectVariableIdIsMaintainedIfFromPopup() throws MiddlewareQueryException {
+	public void testSaveNewVariableConfirmPreselectVariableIdIsMaintainedIfFromPopup() throws MiddlewareException {
 		int variableId = 10180;
 		String dataTypeId = "1";
 
 		Mockito.when(this.term.getName()).thenReturn("Categorical");
-		Mockito.when(this.mockOntologyService.getStandardVariable(10180)).thenReturn(Mockito.mock(StandardVariable.class));
+		Mockito.when(this.mockOntologyService.getStandardVariable(10180,PROGRAM_UUID)).thenReturn(Mockito.mock(StandardVariable.class));
 		Mockito.when(this.mockOntologyService.getTermById(Integer.parseInt(dataTypeId))).thenReturn(this.term);
 
 		BindingResult result = Mockito.mock(BindingResult.class);
@@ -148,12 +151,12 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerIntegra
 	}
 
 	@Test
-	public void testSaveNewVariableConfirmPreselectVariableIdIsIsNotMaintainedIfNotFromPopup() throws MiddlewareQueryException {
+	public void testSaveNewVariableConfirmPreselectVariableIdIsIsNotMaintainedIfNotFromPopup() throws MiddlewareException {
 		int variableId = 10180;
 		String dataTypeId = "1";
 
 		Mockito.when(this.term.getName()).thenReturn("Categorical");
-		Mockito.when(this.mockOntologyService.getStandardVariable(10180)).thenReturn(Mockito.mock(StandardVariable.class));
+		Mockito.when(this.mockOntologyService.getStandardVariable(10180,PROGRAM_UUID)).thenReturn(Mockito.mock(StandardVariable.class));
 		Mockito.when(this.mockOntologyService.getTermById(Integer.parseInt(dataTypeId))).thenReturn(this.term);
 
 		BindingResult result = Mockito.mock(BindingResult.class);

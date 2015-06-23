@@ -12,6 +12,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
@@ -130,7 +131,7 @@ public class OpenTrialControllerTest {
 
 			Mockito.doNothing().when(mocked).setUserSelectionImportedGermplasmMainInfo(Matchers.anyInt(), Matchers.any(Model.class));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
 	}
@@ -148,7 +149,7 @@ public class OpenTrialControllerTest {
 			Mockito.when(this.fieldbookService.getTrialDataSet(Matchers.anyInt())).thenReturn(this.trialWorkbook);
 			moleOpenTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, new ExtendedModelMap(), mockSession,
 					Mockito.mock(RedirectAttributes.class));
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
 
@@ -197,7 +198,7 @@ public class OpenTrialControllerTest {
 			Assert.assertTrue("Controller does not properly set into the model the data for measurement row count",
 					model.containsAttribute(OpenTrialController.MEASUREMENT_ROW_COUNT));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
 	}

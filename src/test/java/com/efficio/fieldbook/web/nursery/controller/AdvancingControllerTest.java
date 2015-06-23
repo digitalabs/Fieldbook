@@ -12,6 +12,7 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Method;
@@ -109,7 +110,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNursery() throws MiddlewareQueryException, RuleException {
+	public void testPostAdvanceNursery() throws RuleException, MiddlewareException {
 		// setup
 
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
@@ -136,7 +137,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareQueryException, RuleException {
+	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareException, RuleException {
 		// setup
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
@@ -158,7 +159,7 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNurseryGenerativeMethodError() throws MiddlewareQueryException, RuleException {
+	public void testPostAdvanceNurseryGenerativeMethodError() throws RuleException, MiddlewareException {
 		// setup
 		AdvancingNurseryForm form = new AdvancingNurseryForm();
 		ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
@@ -180,7 +181,7 @@ public class AdvancingControllerTest {
 	}
 
 	private void preparePostAdvanceNursery(AdvancingNurseryForm form, Method method, ArrayList<ImportedGermplasm> importedGermplasm)
-			throws MiddlewareQueryException, RuleException {
+			throws RuleException, MiddlewareException {
 		// setup
 		form.setMethodChoice("1");
 		form.setAdvanceBreedingMethodId("10");

@@ -30,7 +30,7 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermProperty;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -331,8 +331,8 @@ public class OntologyControllerTest extends AbstractBaseControllerIntegrationTes
 			standardVariable.setIsA(traitClass);
 			standardVariable.setStoredIn(storedIn);
 			standardVariable.setCropOntologyId("CO:1200");
-			this.ontologyService.addStandardVariable(standardVariable);
-		} catch (MiddlewareQueryException e) {
+			this.ontologyService.addStandardVariable(standardVariable,"1234567");
+		} catch (MiddlewareException e) {
 			OntologyControllerTest.LOG.error(e.getMessage(), e);
 		}
 	}

@@ -8,6 +8,7 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -58,10 +59,27 @@ public class ManageSettingsController extends SettingsController {
 	private ContextUtil contextUtil;
 
 	@ResponseBody
-	@RequestMapping(value = "/settings/properties")
+	@RequestMapping(value = "/settings/role/{roleId}", method = RequestMethod.GET,
+					produces = "application/json; charset=utf-8")
+	public List<PropertyTreeSummary> getOntologyPropertiesByRole(@PathVariable Integer roleId) {
+		assert !Objects.equals(roleId, null);
+
+		PhenotypicType phenotypicTypeById = PhenotypicType.getPhenotypicTypeById(roleId);
+
+		assert !Objects.equals(phenotypicTypeById, null);
+
+		Set<Integer> variableTypes = VariableType.getVariableTypesIdsByPhenotype(phenotypicTypeById);
+
+		return getOntologyPropertiesByVariableType(variableTypes.toArray(new Integer[variableTypes.size()]), null, false, true);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/settings/properties", method = RequestMethod.GET,
+					produces = "application/json; charset=utf-8")
 	public List<PropertyTreeSummary> getOntologyPropertiesByVariableType(
 			@RequestParam(value = "type", required = true) Integer[] variableTypes,
-			@RequestParam(value = "classes", required = false) String[] classes, @RequestParam(required = false) boolean isTrial) {
+			@RequestParam(value = "classes", required = false) String[] classes, @RequestParam(required = false) boolean isTrial,
+			@RequestParam(required = false) boolean showHiddenVariables) {
 		List<PropertyTreeSummary> propertyTreeList = new ArrayList<>();
 
 		try {
@@ -90,8 +108,12 @@ public class ManageSettingsController extends SettingsController {
 
 				variableFilterOptions.getVariableTypes().addAll(selectedVariableTypes);
 
-				List<OntologyVariableSummary> ontologyList = ontologyVariableDataManager.getWithFilter(variableFilterOptions,
-						new HashSet<>(filterOutVariablesByVariableType(selectedVariableTypes, isTrial)));
+				HashSet<Integer> filteredVariables = new HashSet<>();
+				if(!showHiddenVariables) {
+					filteredVariables.addAll(filterOutVariablesByVariableType(selectedVariableTypes, isTrial));
+				}
+
+				List<OntologyVariableSummary> ontologyList = ontologyVariableDataManager.getWithFilter(variableFilterOptions, filteredVariables);
 
 				if (!ontologyList.isEmpty()) {
 					PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);

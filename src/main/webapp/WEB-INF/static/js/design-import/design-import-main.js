@@ -200,7 +200,7 @@
 									$designMapModal.modal('show');
 								}, 200);
 							},
-							apiUrl: '/Fieldbook/OntologyBrowser/getVariablesByPhenotype?phenotypeStorageId=' + attrs.group
+							apiUrl: '/Fieldbook/manageSettings/settings/role/' + attrs.group
 						};
 
 						$designMapModal.one('hidden.bs.modal', function() {

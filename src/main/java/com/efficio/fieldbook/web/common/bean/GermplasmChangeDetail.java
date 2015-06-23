@@ -17,7 +17,6 @@ public class GermplasmChangeDetail {
 	private String trialInstanceNumber;
 	private String entryNumber;
 	private String plotNumber;
-	private List<String> addedTraits;
 	private int nameType;
 	private int importLocationId;
 	private int importMethodId;

@@ -16,7 +16,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -46,9 +45,6 @@ public class ExpDesignController extends BaseTrialController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignController.class);
 	public static final String URL = "/TrialManager/experimental/design";
-
-	@Resource
-	private OntologyService ontologyService;
 
 	@Resource
 	private RandomizeCompleteBlockDesignService randomizeCompleteBlockDesign;

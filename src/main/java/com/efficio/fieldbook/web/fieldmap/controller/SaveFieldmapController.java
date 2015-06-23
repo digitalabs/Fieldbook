@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
@@ -56,9 +55,6 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController {
 	/** The fieldbook middleware service. */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Resource
-	private WorkbenchService workbenchService;
 
 	/*
 	 * (non-Javadoc)

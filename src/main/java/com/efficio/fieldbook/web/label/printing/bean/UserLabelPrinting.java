@@ -169,7 +169,7 @@ public class UserLabelPrinting implements Serializable {
 		this.fieldMapInfo = fieldMapInfo;
 		int totalLabels = 0;
 		if (fieldMapInfo != null) {
-			if (fieldMapInfo.getDatasets() != null && fieldMapInfo.getDatasets().size() > 0) {
+			if (fieldMapInfo.getDatasets() != null && !fieldMapInfo.getDatasets().isEmpty()) {
 				FieldMapDatasetInfo info = fieldMapInfo.getDatasets().get(0);
 				if (info.getTrialInstances() != null) {
 					this.numberOfInstances = Integer.toString(info.getTrialInstances().size());

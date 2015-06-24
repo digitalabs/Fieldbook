@@ -4,8 +4,6 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public abstract class NumberSequenceExpression implements Expression {

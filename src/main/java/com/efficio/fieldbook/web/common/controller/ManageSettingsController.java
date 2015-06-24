@@ -19,7 +19,6 @@ import org.generationcp.middleware.domain.oms.OntologyVariableSummary;
 import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
@@ -84,19 +83,16 @@ public class ManageSettingsController extends SettingsController {
 
 		try {
 			Set<VariableType> selectedVariableTypes = new HashSet<>();
-
+			List<String> varTypeValues = new ArrayList<>();
 			for (Integer varType : variableTypes) {
 				selectedVariableTypes.add(VariableType.getById(varType));
+				varTypeValues.add(VariableType.getById(varType).getName());
 			}
 
 			List<Property> properties;
 
-			if (Objects.equals(classes, null) || classes.length == 0) {
-				// lets retrieve all properties given the classes
-				properties = ontologyPropertyDataManager.getAllProperties();
-			} else {
-				properties = ontologyPropertyDataManager.getAllPropertiesWithClass(classes);
-			}
+			properties = ontologyPropertyDataManager
+					.getAllPropertiesWithClassAndVariableType(classes, varTypeValues.toArray(new String[varTypeValues.size()]));
 
 			// Todo: add special case for treatment factor with pairs BMS-1077
 

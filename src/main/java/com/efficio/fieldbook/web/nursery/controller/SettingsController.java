@@ -11,28 +11,18 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -249,7 +239,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel,
-			boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination)
+			boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination, String role)
 			throws MiddlewareException {
 
 		// create a map of id and its id-code-name combination
@@ -307,7 +297,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		// add required variables that are not in existing nursery
 		for (int i = 0; i < requiredVariablesFlag.length; i++) {
 			if (!requiredVariablesFlag[i]) {
-				SettingDetail newSettingDetail = this.createSettingDetail(requiredVariables.get(i), requiredVariablesLabel.get(i));
+				SettingDetail newSettingDetail = this.createSettingDetail(requiredVariables.get(i), requiredVariablesLabel.get(i), role);
 				newSettingDetail.setOrder((requiredVariables.size() - i) * -1);
 				// set value of breeding method code if name is provided but id is not
 				if (TermId.BREEDING_METHOD_CODE.getId() == requiredVariables.get(i)
@@ -345,11 +335,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	protected List<SettingDetail> buildDefaultVariables(List<SettingDetail> defaults, String requiredFields,
-			List<String> requiredVariablesLabel) throws MiddlewareException {
+			List<String> requiredVariablesLabel, String role) throws MiddlewareException {
 		StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		int ctr = 0;
 		while (token.hasMoreTokens()) {
-			defaults.add(this.createSettingDetail(Integer.valueOf(token.nextToken()), requiredVariablesLabel.get(ctr)));
+			defaults.add(this.createSettingDetail(Integer.valueOf(token.nextToken()), requiredVariablesLabel.get(ctr), role));
 			ctr++;
 		}
 		return defaults;
@@ -363,7 +353,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the setting detail
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	protected SettingDetail createSettingDetail(int id, String name) throws MiddlewareException {
+	protected SettingDetail createSettingDetail(int id, String name, String role) throws MiddlewareException {
 		String variableName = "";
 		StandardVariable stdVar = this.getStandardVariable(id);
 		if (name != null && !name.isEmpty()) {
@@ -375,7 +365,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		if (stdVar != null && stdVar.getName() != null) {
 			SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
-							stdVar.getMethod().getName(), "", stdVar.getDataType().getName(), stdVar
+							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar
 									.getDataType().getId(), stdVar.getConstraints() != null
 									&& stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
 							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
@@ -387,6 +377,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 			List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
 			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+			PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
+			settingDetail.setRole(PhenotypicType.getPhenotypicTypeByName(role));
 			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
 				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
 			} else if (id == TermId.STUDY_UID.getId()) {
@@ -744,7 +736,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/**
 	 * Removes the hidden variables.
 	 *
-	 * @param nurseryLevelConditions the nursery level conditions
+
 	 */
 	private void removeHiddenVariables(List<SettingDetail> settingList, String hiddenVarList) {
 		if (settingList != null) {
@@ -828,7 +820,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) 
 					throws MiddlewareException {
 		if (removedConditionsMap.get(id) == null) {
-			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName()));
+			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName(), null));
 		}
 		if (removedConditions != null) {
 			for (SettingDetail setting : removedConditions) {
@@ -935,7 +927,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	private void addSettingDetails(List<SettingDetail> settingDetails, Integer termId, CreateNurseryForm form) {
 		try {
-			settingDetails.add(this.createSettingDetail(termId, null));
+			settingDetails.add(this.createSettingDetail(termId, null, null));
 			if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
 				form.setCreatedBy(this.fieldbookService.getPersonByUserId(this.getCurrentIbdbUserId()));
 			}

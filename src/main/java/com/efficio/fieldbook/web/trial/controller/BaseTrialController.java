@@ -1,11 +1,6 @@
-
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -14,15 +9,10 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.TreatmentVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -33,16 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
@@ -218,7 +199,7 @@ public abstract class BaseTrialController extends SettingsController {
 				continue;
 			}
 
-			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(), VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 
 			if (requiredIDList.contains(var.getTermId())) {
 				detail.setDeletable(false);
@@ -270,7 +251,7 @@ public abstract class BaseTrialController extends SettingsController {
 		for (TreatmentVariable treatmentVariable : treatmentVariables) {
 			Integer levelFactorID = treatmentVariable.getLevelVariable().getTermId();
 			if (!levelDetails.containsKey(levelFactorID)) {
-				SettingDetail detail = this.createSettingDetail(levelFactorID, treatmentVariable.getLevelVariable().getName());
+				SettingDetail detail = this.createSettingDetail(levelFactorID, treatmentVariable.getLevelVariable().getName(), VariableType.TREATMENT_FACTOR.getRole().name());
 
 				if (!isUsePrevious) {
 					detail.getVariable().setOperation(Operation.UPDATE);
@@ -317,7 +298,7 @@ public abstract class BaseTrialController extends SettingsController {
 		List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 
 		for (MeasurementVariable var : variatesList) {
-			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(), VariableType.TRAIT.getRole().name());
 
 			if (!isUsePrevious) {
 				detail.getVariable().setOperation(Operation.UPDATE);
@@ -350,7 +331,7 @@ public abstract class BaseTrialController extends SettingsController {
 		List<Integer> filterFields = this.buildVariableIDList(AppConstants.EXP_DESIGN_VARIABLES.getString());
 		Map<String, MeasurementVariable> factorsMap = SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
 		for (MeasurementVariable var : workbook.getTrialConditions()) {
-			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(), VariableType.ENVIRONMENT_DETAIL.getRole().name());
 
 			if (filterFields.contains(var.getTermId())) {
 				continue;
@@ -380,7 +361,7 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		for (MeasurementVariable var : workbook.getTrialConstants()) {
-			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(), VariableType.TRIAL_CONDITION.getRole().name());
 
 			if (!isUsePrevious) {
 				detail.getVariable().setOperation(Operation.UPDATE);
@@ -485,7 +466,7 @@ public abstract class BaseTrialController extends SettingsController {
 							AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 
 			for (StandardVariable item : pairs) {
-				output.add(this.createSettingDetail(item.getId(), null));
+				output.add(this.createSettingDetail(item.getId(), null, VariableType.TREATMENT_FACTOR.getRole().name()));
 			}
 
 		} catch (MiddlewareException e) {
@@ -504,7 +485,7 @@ public abstract class BaseTrialController extends SettingsController {
 		for (Integer initialSettingID : initialSettingIDs) {
 			try {
 				basicDetails.put(initialSettingID.toString(), "");
-				SettingDetail detail = this.createSettingDetail(initialSettingID, null);
+				SettingDetail detail = this.createSettingDetail(initialSettingID, null, VariableType.STUDY_DETAIL.getRole().name());
 
 				if (!isUsePrevious) {
 					detail.getVariable().setOperation(Operation.UPDATE);
@@ -571,7 +552,7 @@ public abstract class BaseTrialController extends SettingsController {
 		Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
 		for (MeasurementVariable var : measurementVariables) {
 			if (!basicDetailIDList.contains(var.getTermId())) {
-				SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+				SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(), VariableType.STUDY_DETAIL.getRole().name());
 				detail.setDeletable(true);
 				details.add(detail);
 

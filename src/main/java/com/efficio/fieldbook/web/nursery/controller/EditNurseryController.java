@@ -26,7 +26,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -47,12 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
@@ -128,7 +122,6 @@ public class EditNurseryController extends SettingsController {
 	 * @param form2 the form2
 	 * @param nurseryId the nursery id
 	 * @param model the model
-	 * @param session the session
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
@@ -165,7 +158,7 @@ public class EditNurseryController extends SettingsController {
 								this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true),
 								this.buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
 								this.userSelection.getStudyLevelConditions(), false,
-								AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+								AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString(), VariableType.NURSERY_CONDITION.getRole().name());
 
 				List<SettingDetail> basicDetails =
 						this.getSettingDetailsOfSection(nurseryLevelConditions, form, AppConstants.FIXED_NURSERY_VARIABLES.getString());
@@ -324,16 +317,16 @@ public class EditNurseryController extends SettingsController {
 
 		basicDetails =
 				this.buildDefaultVariables(basicDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString(),
-						this.buildRequiredVariablesLabel(AppConstants.FIXED_NURSERY_VARIABLES.getString(), false));
+						this.buildRequiredVariablesLabel(AppConstants.FIXED_NURSERY_VARIABLES.getString(), false), VariableType.STUDY_DETAIL.getRole().name());
 		form.setBasicDetails(basicDetails);
 		form.setStudyLevelVariables(nurseryDefaults);
 		form.setPlotLevelVariables(plotDefaults);
 		nurseryDefaults =
 				this.buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(),
-						this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true));
+						this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), VariableType.STUDY_DETAIL.getRole().name());
 		plotDefaults =
 				this.buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(),
-						this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
+						this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 
 		this.userSelection.setBasicDetails(basicDetails);
 		this.userSelection.setStudyLevelConditions(nurseryDefaults);
@@ -621,7 +614,6 @@ public class EditNurseryController extends SettingsController {
 	 * @param form the form
 	 * @param model the model
 	 * @param mode the mode
-	 * @param variableId the variable id
 	 * @return the map
 	 */
 	@ResponseBody

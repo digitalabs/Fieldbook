@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -30,23 +31,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
@@ -278,7 +268,7 @@ public class CreateTrialController extends BaseTrialController {
 
 		for (Integer initialSettingID : initialSettingIDs) {
 			try {
-				SettingDetail detail = this.createSettingDetail(initialSettingID, null);
+				SettingDetail detail = this.createSettingDetail(initialSettingID, null, VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 				initialDetailList.add(detail);
 			} catch (MiddlewareException e) {
 				CreateTrialController.LOG.error(e.getMessage(), e);
@@ -312,7 +302,7 @@ public class CreateTrialController extends BaseTrialController {
 		List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
 
 		for (Integer id : this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
-			SettingDetail detail = this.createSettingDetail(id, null);
+			SettingDetail detail = this.createSettingDetail(id, null, VariableType.ENVIRONMENT_DETAIL.getRole().name());
 			for (Integer hiddenField : hiddenFields) {
 				if (id.equals(hiddenField)) {
 					detail.setHidden(true);
@@ -341,7 +331,7 @@ public class CreateTrialController extends BaseTrialController {
 		for (Integer initialSettingID : initialSettingIDs) {
 			try {
 				basicDetails.put(initialSettingID.toString(), "");
-				SettingDetail detail = this.createSettingDetail(initialSettingID, null);
+				SettingDetail detail = this.createSettingDetail(initialSettingID, null, VariableType.STUDY_DETAIL.getRole().name());
 				initialDetailList.add(detail);
 			} catch (MiddlewareQueryException e) {
 				CreateTrialController.LOG.error(e.getMessage(), e);
@@ -384,7 +374,7 @@ public class CreateTrialController extends BaseTrialController {
 			}
 		}
 		if (!found) {
-			detailList.add(this.createSettingDetail(TermId.STUDY_UID.getId(), "STUDY_UID"));
+			detailList.add(this.createSettingDetail(TermId.STUDY_UID.getId(), "STUDY_UID", VariableType.STUDY_DETAIL.getRole().name()));
 		}
 		return detailList;
 	}

@@ -12,12 +12,7 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -49,12 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
@@ -65,11 +55,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.*;
 
 /**
  * The Class CreateNurseryController.
@@ -139,7 +125,7 @@ public class CreateNurseryController extends SettingsController {
 								this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true),
 								this.buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()),
 								this.userSelection.getStudyLevelConditions(), false,
-								AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+								AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString(), VariableType.NURSERY_CONDITION.getRole().name());
 				this.removeBasicDetailsVariables(nurseryLevelConditions);
 
 				// plot-level
@@ -147,7 +133,7 @@ public class CreateNurseryController extends SettingsController {
 						this.updateRequiredFields(this.buildVariableIDList(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()),
 								this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false),
 								this.buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()),
-								this.userSelection.getPlotsLevelList(), false, "");
+								this.userSelection.getPlotsLevelList(), false, "", VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 
 				// remove variables not needed
 				this.removeVariablesFromExistingNursery(plotLevelConditions, AppConstants.REMOVE_FACTORS_IN_USE_PREVIOUS_STUDY.getString());
@@ -249,7 +235,7 @@ public class CreateNurseryController extends SettingsController {
 		List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
 		checkVariables =
 				this.buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(),
-						this.buildRequiredVariablesLabel(AppConstants.CHECK_VARIABLES.getString(), false));
+						this.buildRequiredVariablesLabel(AppConstants.CHECK_VARIABLES.getString(), false), VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 		form2.setCheckVariables(checkVariables);
 		this.userSelection.setRemovedConditions(checkVariables);
 	}
@@ -269,16 +255,16 @@ public class CreateNurseryController extends SettingsController {
 
 		basicDetails =
 				this.buildDefaultVariables(basicDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString(),
-						this.buildRequiredVariablesLabel(AppConstants.FIXED_NURSERY_VARIABLES.getString(), false));
+						this.buildRequiredVariablesLabel(AppConstants.FIXED_NURSERY_VARIABLES.getString(), false), VariableType.STUDY_DETAIL.getRole().name());
 		form.setBasicDetails(basicDetails);
 		form.setStudyLevelVariables(nurseryDefaults);
 		form.setPlotLevelVariables(plotDefaults);
 		nurseryDefaults =
 				this.buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(),
-						this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), false));
+						this.buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), false), VariableType.STUDY_DETAIL.getRole().name());
 		plotDefaults =
 				this.buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(),
-						this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
+						this.buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 
 		this.userSelection.setBasicDetails(basicDetails);
 		this.userSelection.setStudyLevelConditions(nurseryDefaults);

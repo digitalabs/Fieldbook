@@ -1,12 +1,9 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import java.util.*;
+
+import javax.annotation.Resource;
+
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -27,8 +24,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import java.util.*;
+import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -94,8 +96,6 @@ public class ManageSettingsController extends SettingsController {
 			properties = ontologyPropertyDataManager
 					.getAllPropertiesWithClassAndVariableType(classes, varTypeValues.toArray(new String[varTypeValues.size()]));
 
-			// Todo: add special case for treatment factor with pairs BMS-1077
-
 			// fetch all standard variables given property
 			for (Property property : properties) {
 				OntologyVariableInfo variableFilterOptions = new OntologyVariableInfo();
@@ -109,12 +109,21 @@ public class ManageSettingsController extends SettingsController {
 					filteredVariables.addAll(filterOutVariablesByVariableType(selectedVariableTypes, isTrial));
 				}
 
-				List<OntologyVariableSummary> ontologyList = ontologyVariableDataManager.getWithFilter(variableFilterOptions, filteredVariables);
+				List<OntologyVariableSummary> ontologyList =
+						ontologyVariableDataManager.getWithFilter(variableFilterOptions, filteredVariables);
 
-				if (!ontologyList.isEmpty()) {
-					PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
-					propertyTreeList.add(propertyTree);
+				if (ontologyList.isEmpty()) {
+					continue;
 				}
+
+				if (selectedVariableTypes.contains(VariableType.TREATMENT_FACTOR)) {
+					ontologyVariableDataManager.processTreatmentFactorHasPairValue(ontologyList,
+							AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
+				}
+
+				PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
+				propertyTreeList.add(propertyTree);
+
 			}
 
 			// Todo: what to make of this.fieldbookMiddlewareService.filterStandardVariablesByIsAIds(...)
@@ -391,7 +400,7 @@ public class ManageSettingsController extends SettingsController {
 
 		if (newSetting == null) {
 			try {
-				newSetting = this.createSettingDetail(variableId, "");
+				newSetting = this.createSettingDetail(variableId, "", "");
 				newSetting.getVariable().setOperation(Operation.UPDATE);
 			} catch (MiddlewareException e) {
 				ManageSettingsController.LOG.error(e.getMessage(), e);

@@ -207,7 +207,8 @@ public class ManageSettingsController extends SettingsController {
 	 * @throws Exception the exception
 	 */
 	private void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception {
-		SettingsUtil.setSettingDetailRole(newDetails, VariableType.getById(Integer.valueOf(mode)));
+		
+		SettingsUtil.setSettingDetailRole(mode , newDetails);
 
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			if (this.userSelection.getStudyLevelConditions() == null) {

@@ -375,7 +375,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		if (stdVar != null && stdVar.getName() != null) {
 			SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
-							stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), stdVar.getDataType().getName(), stdVar
+							stdVar.getMethod().getName(), "", stdVar.getDataType().getName(), stdVar
 									.getDataType().getId(), stdVar.getConstraints() != null
 									&& stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
 							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
@@ -409,6 +409,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Populates Setting Variable.
+	 * @param mode 
 	 *
 	 * @param var the var
 	 * @throws MiddlewareQueryException the middleware query exception
@@ -421,7 +422,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			var.setScale(stdvar.getScale().getName());
 			var.setMethod(stdvar.getMethod().getName());
 			var.setDataType(stdvar.getDataType().getName());
-			var.setRole(stdvar.getStoredIn().getName());
+			var.setVariableTypes(stdvar.getVariableTypes());
 			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
 			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
 			var.setDataTypeId(stdvar.getDataType().getId());

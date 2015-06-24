@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -2343,12 +2344,43 @@ public class SettingsUtil {
 	    	}
 	    	return variableIdList;
 	}
-	
-	public static void setSettingDetailRole(List<SettingDetail> newDetails, VariableType variableType){
-		if(variableType != null){
-			for(SettingDetail settingDetails : newDetails){
-				settingDetails.setRole(variableType.getRole());
+
+
+	public static void setSettingDetailRole(int mode, List<SettingDetail> newDetails) {
+		
+		if(newDetails != null){
+			for(SettingDetail settingDetail : newDetails){
+				
+				//The default Role for Germplasm Descriptor is PhenotypicType.GERMPLASM
+				//but if the VariableType(s) assigned to the variable is only EXPERIMENTAL DESIGN then
+				//set the role as PhenotypicType.TRIAL_DESIGN
+				if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId().intValue()
+						&& settingDetail.getVariable().getVariableTypes().size() == 1
+						&& hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable().getVariableTypes())){
+					
+					settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
+
+				}else{
+					
+					settingDetail.setRole(VariableType.getById(Integer.valueOf(mode)).getRole());
+					
+				}
+				
+				
 			}
-		}		
+		}
+		
+		
+		
+	}
+
+	public static boolean hasVariableType(VariableType variableType,
+			Set<VariableType> variableTypes) {
+		for (VariableType varType : variableTypes){
+			if (varType.equals(variableType)){
+				return true;
+			}
+		}
+		return false;
 	}
 }

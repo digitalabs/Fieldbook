@@ -460,8 +460,7 @@ window.ChooseSettings = (function() {
 
 		// If we haven't loaded data for this group before, then load it
 		if (!group.data) {
-
-			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId, function(data) {
+			$.getJSON('/Fieldbook/manageSettings/settings/properties?type=' + groupId, function (data) {
 				variableSelectionGroups[groupId].data = data;
 
 				properties = _filterProperties(variableSelectionGroups[groupId].data, selectedVariables, groupId);

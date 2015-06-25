@@ -35,7 +35,8 @@
 
 				<div class="form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}!=*{breedingMethodId} and ${nurseryLevelVariable.variable.cvTermId}!=*{breedingMethodCode}">
 					<div class="col-xs-5 1st">
-						<input class="remove-indv-btn" type="checkbox" th:if="${nurseryLevelVariable.deletable}" th:attr="data-variable-type=1" th:attrappend="data-cv-term-id=${nurseryLevelVariable.variable.cvTermId}"/>
+						<input class="remove-indv-btn" type="checkbox" th:if="${nurseryLevelVariable.deletable}"
+							   th:attr="data-variable-type=1805" th:attrappend="data-cv-term-id=${nurseryLevelVariable.variable.cvTermId}"/>
 						<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						&nbsp;&nbsp;&nbsp;
 						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
@@ -126,7 +127,9 @@
 					<tbody>
 					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
 						<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
-							<input class="remove-indv-btn" type="checkbox" th:if="${plotLevelVariable.deletable}" th:attr="data-variable-type=2" th:attrappend="data-cv-term-id=${plotLevelVariable.variable.cvTermId}"/>
+							<input class="remove-indv-btn" type="checkbox" th:if="${plotLevelVariable.deletable}"
+								   th:attr="data-variable-type=1804"
+								   th:attrappend="data-cv-term-id=${plotLevelVariable.variable.cvTermId}"/>
 							<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						</td>
 						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
@@ -176,7 +179,9 @@
 					</tr>
 					<tr th:each="selectionVariatesVariable, rowStat : *{selectionVariatesVariables}">
 						<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
-							<input class="remove-indv-btn" type="checkbox" th:if="${selectionVariatesVariable.deletable}" th:attr="data-variable-type=6" th:attrappend="data-cv-term-id=${selectionVariatesVariable.variable.cvTermId}"/>
+							<input class="remove-indv-btn" type="checkbox" th:if="${selectionVariatesVariable.deletable}"
+								   th:attr="data-variable-type=1807"
+								   th:attrappend="data-cv-term-id=${selectionVariatesVariable.variable.cvTermId}"/>
 							<input class="cvTermIds" type="hidden" th:field="*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId}" />
 						</td>
 						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
@@ -252,7 +257,8 @@
 			<div class="form-horizontal sectionContainer collapse in nurseryConditionsDetails" id="nurseryConditionsSettings">
 				<div class="form-group nurseryConditionsSettings" th:each="nurseryCondition, rowStat : *{nurseryConditions}">
 					<div class="col-xs-5 col-md-5 1st">
-						<input class="remove-indv-btn" type="checkbox" th:if="${nurseryCondition.deletable}" th:attr="data-variable-type=7" th:attrappend="data-cv-term-id=${nurseryCondition.variable.cvTermId}"/>
+						<input class="remove-indv-btn" type="checkbox" th:if="${nurseryCondition.deletable}"
+							   th:attr="data-variable-type=1803" th:attrappend="data-cv-term-id=${nurseryCondition.variable.cvTermId}"/>
 						<input class="cvTermIds nurseryConditionVariableIdClass" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
 
 
@@ -333,7 +339,9 @@
 					</tr>
 					<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
 						<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'" >
-							<input class="remove-indv-btn" type="checkbox" th:if="${baselineTraitVariable.deletable}" th:attr="data-variable-type=3" th:attrappend="data-cv-term-id=${baselineTraitVariable.variable.cvTermId}"/>
+							<input class="remove-indv-btn" type="checkbox" th:if="${baselineTraitVariable.deletable}"
+								   th:attr="data-variable-type=1808"
+								   th:attrappend="data-cv-term-id=${baselineTraitVariable.variable.cvTermId}"/>
 							<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 						</td>
 						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">

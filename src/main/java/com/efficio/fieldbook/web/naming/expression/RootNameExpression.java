@@ -13,7 +13,9 @@ import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.pojos.Name;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RootNameExpression implements Expression {
 
 	@Override

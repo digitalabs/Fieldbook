@@ -31,7 +31,7 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 		final List<StringBuilder> builders = new ArrayList<StringBuilder>();
 		builders.add(new StringBuilder(currentInput + processCode));
 
-		ExpressionHelper.evaluateExpression(processCode, "\\[([^\\]]*)]", new ExpressionHelperCallback() {
+		ExpressionHelper.evaluateExpression(processCode, ExpressionHelper.PROCESS_CODE_PATTERN, new ExpressionHelperCallback() {
 
 			@Override
 			public void evaluateCapturedExpression(String capturedText, String originalInput, int start, int end) {

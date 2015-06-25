@@ -51,7 +51,6 @@ public class FieldroidExportStudyServiceImpl implements FieldroidExportStudyServ
 	@Override
 	public String export(Workbook workbook, String filename, List<Integer> instances) {
 		String outputFile = this.fieldbookProperties.getUploadDirectory() + File.separator + filename;
-		boolean alreadyExists = new File(outputFile).exists();
 		CsvWriter csvOutput = null;
 		List<MeasurementRow> observations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);

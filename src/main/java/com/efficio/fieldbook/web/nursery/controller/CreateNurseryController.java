@@ -835,7 +835,8 @@ public class CreateNurseryController extends SettingsController {
 	protected void setSettingDetailsValueFromVariable(MeasurementVariable var, SettingDetail detail) throws MiddlewareQueryException {
 		if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null && !var.getValue().isEmpty()) {
 			// set the value of code to ID for it to be selected in the popup
-			Method method = this.fieldbookMiddlewareService.getMethodByCode(var.getValue());
+			Method method = this.fieldbookMiddlewareService.getMethodByCode(var.getValue(),
+					contextUtil.getCurrentProgramUUID());
 			if (method != null) {
         		detail.setValue(String.valueOf(method.getMid()));
 			} else {

@@ -388,11 +388,12 @@
    	
    	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
 
-    <bean class="org.generationcp.commons.ruleengine.RulesPostProcessor">
+    <bean class="com.efficio.fieldbook.web.naming.expression.ComponentPostProcessor">
         <property name="ruleFactory" ref="ruleFactory"/>
+        <property name="processCodeFactory" ref="processCodeFactory"/>
     </bean>
 
-    <bean id="ruleFactory" class="org.generationcp.commons.ruleengine.RuleFactory"
+    <bean id="ruleFactory" class="org.generationcp.commons.ruleengine.ProcessCodeRuleFactory"
           init-method="init"/>
 
     <bean id="ruleConfigProvider"
@@ -412,6 +413,7 @@
          -->
     <context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
     <context:component-scan base-package="org.generationcp.commons.ruleengine.stockid"/>
+    <context:component-scan base-package="org.generationcp.commons.ruleengine.cross"/>
 
     <bean id="settingsPresetService" class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl"/>
 
@@ -435,22 +437,10 @@
         <aop:scoped-proxy/>
     </bean>
 
-    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
-        <!--TODO : possibly find a way to make list based on component scan of a certain package-->
-        <property name="registeredExpressions">
-            <list>
-                <bean class="com.efficio.fieldbook.web.naming.expression.BracketsExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.BulkCountExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.FirstExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.LocationAbbreviationExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.NumberExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.SeasonExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.SequenceExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.GroupCountExpression"/>
-            </list>
-        </property>
-    </bean>
+
+    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init"/>
+
+    <context:component-scan base-package="com.efficio.fieldbook.web.naming.expression"/>
 
     <bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
           scope="request">
@@ -459,6 +449,12 @@
 
 	<bean id="pedigreeService" factory-bean="managerFactory"
           factory-method="getPedigreeService"
+          scope="request">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <bean id="pedigreeDataManager" factory-bean="managerFactory"
+          factory-method="getPedigreeDataManager"
           scope="request">
         <aop:scoped-proxy/>
     </bean>

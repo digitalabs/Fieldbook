@@ -5,15 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency;
-import org.generationcp.middleware.manager.WorkbenchDataManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 public class FieldbookHandlerInterceptor implements HandlerInterceptor {
-
-	@Autowired
-	private WorkbenchDataManagerImpl workbenchDataManager;
 
 	@Autowired
 	private DynamicManagerFactoryProviderConcurrency managerFactoryProvider;

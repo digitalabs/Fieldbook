@@ -509,13 +509,16 @@ public class FieldbookServiceImpl implements FieldbookService {
         return null;
     }
 
-    private String getBreedingMethodByCode(String code) throws MiddlewareQueryException {
-		Method method = this.fieldbookMiddlewareService.getMethodByCode(code);
-        if (method != null) {
-            return method.getMname() + " - " + method.getMcode();
-        }
-        return "";
-    }
+
+	protected String getBreedingMethodByCode(String code) throws MiddlewareQueryException {
+		Method method = this.fieldbookMiddlewareService.getMethodByCode(code,
+				contextUtil.getCurrentProgramUUID());
+		if (method != null) {
+			return method.getMname() + " - " + method.getMcode();
+		}
+		return "";
+	}
+
 
     private String getBreedingMethodByName(String name) throws MiddlewareQueryException {
 		Method method = this.fieldbookMiddlewareService.getMethodByName(name);

@@ -42,6 +42,7 @@ public class AdvancingSource {
 	private String prefix;
 	private String suffix;
 	private Integer rootNameType;
+	private Integer locationId;
 
 	private boolean isForceUniqueNameGeneration;
 
@@ -298,4 +299,11 @@ public class AdvancingSource {
 				+ ", changeDetail=" + this.changeDetail + ", prefix=" + this.prefix + ", suffix=" + this.suffix + "]";
 	 }
 
+	public Integer getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
+	}
 }

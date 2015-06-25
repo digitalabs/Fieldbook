@@ -97,8 +97,6 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 				resultMap.put("status", "success");
 				resultMap.put("variable", variable);
 
-				NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-
 				form.setVariable(variable);
 
 				if (variable.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN

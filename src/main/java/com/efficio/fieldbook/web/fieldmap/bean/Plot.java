@@ -29,9 +29,6 @@ public class Plot implements Serializable {
 	/** The column. */
 	private int column;
 
-	/** The is upward. The direction of seed distribution */
-	private boolean isUpward;
-
 	/** The display string. */
 	private String displayString;
 

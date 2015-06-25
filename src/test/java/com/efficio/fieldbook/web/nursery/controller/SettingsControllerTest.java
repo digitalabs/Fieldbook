@@ -2,16 +2,20 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
-
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,7 +31,6 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 public class SettingsControllerTest extends AbstractBaseControllerIntegrationTest {
 
-	private static final int NO_OF_OBSERVATIONS = 5;
 	private SettingsController controller;
 
 	@Before
@@ -153,5 +156,107 @@ public class SettingsControllerTest extends AbstractBaseControllerIntegrationTes
 		SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 		return settingDetail;
 	}
+	
+	@Test
+	public void testGetMethod_ById() throws MiddlewareQueryException {
+		CreateNurseryController createNurseryController = new CreateNurseryController();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		createNurseryController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		int id = 70;
+		String name = "Accession into genebank";
+		String code = "AGB1";
+		String programUUID = null;
+		Method method = createMethod(id,name,code,programUUID);
+		Mockito.doReturn(method).when(fieldbookMiddlewareService).
+			getMethodById(id);
+		
+		String idTermId = Integer.toString(id);
+		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+		studyConditionMap.put(idTermId, createMeasurementVariable(idTermId));
+		
+		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		Assert.assertEquals(method.getMid(), resultingMethod.getMid());
+	}
+	
+	@Test
+	public void testGetMethod_ById_EmptyValue() throws MiddlewareQueryException {
+		CreateNurseryController createNurseryController = new CreateNurseryController();
+		int id = 70;
+		String code = "AGB1";
+		String programUUID = null;
+		
+		String idTermId = Integer.toString(id);
+		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+		studyConditionMap.put(idTermId, createMeasurementVariable(""));
+		
+		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		Assert.assertEquals(null, resultingMethod);
+	}
+	
+	@Test
+	public void testGetMethod_ByCode() throws MiddlewareQueryException {
+		CreateNurseryController createNurseryController = new CreateNurseryController();
+		FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		createNurseryController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		int id = 70;
+		String name = "Accession into genebank";
+		String code = "AGB1";
+		String programUUID = null;
+		Method method = createMethod(id,name,code,programUUID);
+		Mockito.doReturn(method).when(fieldbookMiddlewareService).
+			getMethodByCode(code,programUUID);
+		
+		String idTermId = Integer.toString(id);
+		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+		studyConditionMap.put(code, createMeasurementVariable(code));
+		
+		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		Assert.assertEquals(method.getMid(), resultingMethod.getMid());
+	}
+	
+	@Test
+	public void testGetMethod_ByCode_EmptyValue() throws MiddlewareQueryException {
+		CreateNurseryController createNurseryController = new CreateNurseryController();
+		
+		int id = 70;
+		String code = "AGB1";
+		String programUUID = null;
+		
+		String idTermId = Integer.toString(id);
+		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+		studyConditionMap.put(code, createMeasurementVariable(""));
+		
+		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		Assert.assertEquals(null, resultingMethod);
+	}
+	
+	@Test
+	public void testGetMethod_IdAndCodeNotFound() throws MiddlewareQueryException {
+		CreateNurseryController createNurseryController = new CreateNurseryController();
+		int id = 70;
+		String code = "AGB1";
+		String programUUID = null;
+		String idTermId = Integer.toString(id);
+		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+		
+		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
+		Assert.assertEquals(null, resultingMethod);
+	}
+
+	private Method createMethod(int id, String name,String code,String uniqueID) {
+		Method method = new Method();
+		method.setMid(id);
+		method.setMname(name);
+		method.setMcode(code);
+		method.setUniqueID(uniqueID);
+		return method;
+	}
+
+	private MeasurementVariable createMeasurementVariable(String value) {
+		MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setName("TEST");
+		measurementVariable.setValue(value);
+		return measurementVariable;
+	} 
 
 }

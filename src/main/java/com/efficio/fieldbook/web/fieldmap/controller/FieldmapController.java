@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -70,10 +69,6 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	/** The fieldbook middleware service. */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	/** The workbench data manager. */
-	@Resource
-	private WorkbenchService workbenchService;
 
 	@Resource
 	private CrossExpansionProperties crossExpansionProperties;

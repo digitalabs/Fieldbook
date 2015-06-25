@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -50,7 +51,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
+	
 	@Test
 	public void testGetReturnsCorrectModelAndView() throws Exception {
 
@@ -335,13 +336,19 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService =
 				Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
 		createNurseryController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+		ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
+		createNurseryController.setContextUtil(contextUtil);
 		String bmCode = "TST_CODE";
 		Integer bmId = 10001;
+		String uniqueID = "6c87aaae-9e0f-428b-a364-44fab9fa7fd1";
 		Method method = new Method();
 		method.setMcode(bmCode);
 		method.setMid(bmId);
+		method.setUniqueID(uniqueID);
 
-		Mockito.when(fieldbookMiddlewareService.getMethodByCode(bmCode)).thenReturn(method);
+		Mockito.doReturn(uniqueID).when(contextUtil).getCurrentProgramUUID();
+		Mockito.when(fieldbookMiddlewareService.getMethodByCode(bmCode,uniqueID)).thenReturn(method);
+		
 
 		SettingDetail detail = new SettingDetail();
 		MeasurementVariable var = new MeasurementVariable();

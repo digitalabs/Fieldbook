@@ -678,14 +678,10 @@ public class CSVOziel {
 
 	public void readDATACapture(File file, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) {
 
-		int variateCol = 0;
-		HashMap<String, Integer> traitsMap = new HashMap<String, Integer>();
-
 		try {
 			CsvReader csvReader = new CsvReader(file.toString());
 			csvReader.readHeaders();
-			String[] headers = csvReader.getHeaders();
-
+			
 			while (csvReader.readRecord()) {
 
 				// get name of breeding method property and get all methods

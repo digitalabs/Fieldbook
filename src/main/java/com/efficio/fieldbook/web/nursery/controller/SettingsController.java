@@ -773,32 +773,23 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             if (removedConditions != null) {
 				for (SettingDetail setting : removedConditions) {
 					if (setting != null) {
-                        removedConditionsMap.put(Integer.toString(setting.getVariable().getCvTermId()), setting);
-                    }
-                }
-            }
-            
-            StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+						removedConditionsMap.put(Integer.toString(setting.getVariable().getCvTermId()), setting);
+					}
+				}
+			}
+			String programUUID = contextUtil.getCurrentProgramUUID();
+			StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
 			if (tokenizer.hasMoreTokens()) {
 				// we iterate it
 				while (tokenizer.hasMoreTokens()) {
-                    String pair = tokenizer.nextToken();
-                    StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
-                    String idTermId = tokenizerPair.nextToken();
-                    String codeTermId = tokenizerPair.nextToken();
-                    String nameTermId = tokenizerPair.nextToken();
-                    
-                    Method method = null;
-                    if (studyConditionMap.get(idTermId) != null) {
-						method =
-								studyConditionMap.get(idTermId).getValue().isEmpty() ? null : this.fieldbookMiddlewareService
-										.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
-                    } else if (studyConditionMap.get(codeTermId) != null) {
-						method =
-								studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : this.fieldbookMiddlewareService
-										.getMethodByCode(studyConditionMap.get(codeTermId).getValue());
-                    }
-                    
+					String pair = tokenizer.nextToken();
+					StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+					String idTermId = tokenizerPair.nextToken();
+					String codeTermId = tokenizerPair.nextToken();
+					String nameTermId = tokenizerPair.nextToken();
+
+					Method method = getMethod(studyConditionMap,idTermId,codeTermId,programUUID);
+
 					// add code to the removed conditions if code is not yet in the list
 					if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null
 							&& removedConditionsMap.get(codeTermId) == null) {
@@ -810,15 +801,32 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                     if (studyConditionMap.get(nameTermId) != null && removedConditionsMap.get(nameTermId) == null) {
 						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId, method == null ? ""
 								: method.getMname(), this.getCurrentIbdbUserId().toString());
-                    }
-                }
-            }
-        }        
-    }
-    
-    private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap, 
-            Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) throws MiddlewareQueryException {
-        if (removedConditionsMap.get(id) == null) {
+
+					}
+				}
+			}
+		}
+	}
+
+	protected Method getMethod(Map<String, MeasurementVariable> studyConditionMap, 
+			String idTermId, String codeTermId, String programUUID) throws MiddlewareQueryException {
+		Method method = null;
+		if (studyConditionMap.get(idTermId) != null) {
+			method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : 
+						this.fieldbookMiddlewareService.getMethodById(
+								Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
+		} else if (studyConditionMap.get(codeTermId) != null) {
+			method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : 
+						this.fieldbookMiddlewareService.getMethodByCode(
+								studyConditionMap.get(codeTermId).getValue(),
+									programUUID);
+		}
+		return method;
+	}
+
+	private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap,
+			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) throws MiddlewareQueryException {
+		if (removedConditionsMap.get(id) == null) {
 			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName()));
         }
         if (removedConditions != null) {
@@ -997,5 +1005,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             userSelection.getDeletedTreatmentFactors().add(newSetting);
         }
     }
+
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+	
+	
 
 }

@@ -7,6 +7,18 @@ if (typeof (BMS) === 'undefined') {
 if (typeof (BMS.Fieldbook) === 'undefined') {
 	BMS.Fieldbook = {};
 }
+
+ BMS.Fieldbook.checkPagination = function(parentDiv) {
+	'use strict';
+	$(parentDiv + ' .dataTables_length select').on('change', function() {
+		if ($(parentDiv + ' .fbk-page-div ul.pagination li').length > 3) {
+			$(parentDiv + ' .fbk-page-div').removeClass('fbk-hide');
+		}else {
+			$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
+		}
+	});
+ };
+ 
 BMS.Fieldbook.MeasurementsTable = {
 	getColumnOrdering: function(tableName, forceGet) {
 		var orderedColumns = [];
@@ -81,7 +93,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					},
 					render: function(data, type, full, meta) {
 						if (data !== undefined) {
-							return ((data[0] != null) ? data[0]:  '') + "<input type='hidden' value='" + data[1] + "' />";
+							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
 						}
 					}
 				});
@@ -258,7 +270,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					var cellTdIndex =  $(this).index();
 					var rowIndex = $(this).parent('tr').data('row-index');
 
-					var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq('+cellTdIndex+')');
+					var $colHeader = $('#measurementsDiv .dataTables_scrollHead table th:eq(' + cellTdIndex + ')');
 					$(tableIdentifier).data('show-inline-edit', '1');
 					if ($colHeader.hasClass('variates')) {
 						$('body').data('last-td-time-clicked', new Date().getTime());
@@ -270,7 +282,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						processInlineEditInput();
 						if ($('#measurement-table').data('show-inline-edit') === '1') {
 							$.ajax({
-								url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/'+rowIndex+'/'+$colHeader.data('term-id'),
+								url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/cell/' + rowIndex + '/' + $colHeader.data('term-id'),
 								type: 'GET',
 								success: function(data) {
 									$tdCell.html(data);
@@ -358,7 +370,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					render: function(data, type, full, meta) {
-						return ((data[0] != null) ? data[0]:  '');
+						return ((data[0] != null) ? data[0] :  '');
 					}
 				});
 			}
@@ -379,8 +391,8 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 				$(nRow).attr('id', aData.experimentId);
 				$(nRow).data('row-index', this.fnGetPosition(nRow));
 
-				$('td', nRow).attr('nowrap','nowrap');
-				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
 
 				return nRow;
 			},
@@ -463,8 +475,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				$(nRow).attr('id', aData.experimentId);
 				$(nRow).data('row-index', this.fnGetPosition(nRow));
 
-				$('td', nRow).attr('nowrap','nowrap');
-				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
 
 				return nRow;
 			},
@@ -557,14 +569,14 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				$(nRow).data('index', aData.position);
 
 				$(nRow).addClass('draggable primaryRow');
-				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
 				return nRow;
 			},
 			fnInitComplete: function(oSettings, json) {
 
-				var totalPages = oSettings._iDisplayLength === -1 ? 0: Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
-					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
+					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
 				}
 				$(parentDiv).removeClass('fbk-hide-opacity');
 				oSettings.oInstance.fnAdjustColumnSizing();
@@ -632,15 +644,15 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 							if (full.checkOptions[count].id == full['8255-key']) {
 								actualVal = full.checkOptions[count].description;
 								actualCode = full.checkOptions[count].name;
-								domElem = '<input class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full['8255-key']+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
+								domElem = '<input class="check-hidden" type="hidden"  data-code="' + actualCode + '" value="' + full['8255-key'] + '" id="selectedCheck' + (meta.row) + '" name="' + fieldName + '">';
 								break;
 							}
 						}
 						if (domElem === '') {
-							domElem = '<input data-index="'+meta.row+'" class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full['8255-key']+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
+							domElem = '<input data-index="' + meta.row + '" class="check-hidden" type="hidden"  data-code="' + actualCode + '" value="' + full['8255-key'] + '" id="selectedCheck' + (meta.row) + '" name="' + fieldName + '">';
 						}
 
-						return '<a data-index="'+meta.row+'" class="check-href edit-check'+meta.row+'" data-code="'+actualCode+'" href="javascript: showPopoverCheck(&quot;'+(meta.row)+'&quot;, &quot;.germplasm-list-items&quot;, &quot;edit-check'+meta.row+'&quot;)">'+actualVal+'</a>' + domElem;
+						return '<a data-index="' + meta.row + '" class="check-href edit-check' + meta.row + '" data-code="' + actualCode + '" href="javascript: showPopoverCheck(&quot;' + (meta.row) + '&quot;, &quot;.germplasm-list-items&quot;, &quot;edit-check' + meta.row + '&quot;)">' + actualVal + '</a>' + domElem;
 					}
 				});
 			}
@@ -668,13 +680,13 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				$(nRow).data('index', aData.position);
 
 				$(nRow).addClass('primaryRow');
-				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
 				return nRow;
 			},
 			fnInitComplete: function(oSettings, json) {
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
-					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
+					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
 				}
 				$(parentDiv).removeClass('fbk-hide-opacity');
 				oSettings.oInstance.fnAdjustColumnSizing();
@@ -792,12 +804,12 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 							if (full.checkOptions[count].id == full.check) {
 								actualVal = full.checkOptions[count].description;
 								actualCode = full.checkOptions[count].name;
-								domElem = '<input data-index="'+meta.row+'" class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full.check+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
+								domElem = '<input data-index="' + meta.row + '" class="check-hidden" type="hidden"  data-code="' + actualCode + '" value="' + full.check + '" id="selectedCheck' + (meta.row) + '" name="' + fieldName + '">';
 								break;
 							}
 						}
 
-						return '<a data-index="'+meta.row+'" class="check-href edit-check'+meta.row+'" data-code="'+actualCode+'" href="javascript: showPopoverCheck(&quot;'+(meta.row)+'&quot;, &quot;.check-germplasm-list-items&quot;, &quot;edit-check'+meta.row+'&quot;)">'+actualVal+'</a>' + domElem;
+						return '<a data-index="' + meta.row + '" class="check-href edit-check' + meta.row + '" data-code="' + actualCode + '" href="javascript: showPopoverCheck(&quot;' + (meta.row) + '&quot;, &quot;.check-germplasm-list-items&quot;, &quot;edit-check' + meta.row + '&quot;)">' + actualVal + '</a>' + domElem;
 					}
 				});
 			} else if ($(this).data('col-name') == 'action') {
@@ -807,7 +819,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 					width: '20px',
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
-						return '<span class="delete-icon delete-check" data-index="'+meta.row+'"></span>';
+						return '<span class="delete-icon delete-check" data-index="' + meta.row + '"></span>';
 					}
 				});
 			}
@@ -828,15 +840,15 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				$(nRow).data('gid', aData.gid);
 				$(nRow).data('index', aData.index);
 
-				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
 				setTimeout(function() {makeCheckDraggable(makeCheckDraggableBool);}, 300);
 				return nRow;
 			},
 			fnInitComplete: function(oSettings, json) {
 
-				var totalPages = oSettings._iDisplayLength === -1 ? 0: Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
-					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
+					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
 				}
 				setTimeout(function() {oSettings.oInstance.fnAdjustColumnSizing();}, 1);
 				//hide delete icon for read only view
@@ -905,13 +917,13 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
-				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
 				return nRow;
 			},
 			fnInitComplete: function(oSettings, json) {
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
-					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
+					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
 				}
 				$(parentDiv).removeClass('fbk-hide-opacity');
 				oSettings.oInstance.fnAdjustColumnSizing();
@@ -1000,14 +1012,15 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
-				$('td', nRow).attr('nowrap','nowrap');
+				$('td', nRow).attr('nowrap', 'nowrap');
 				return nRow;
 			},
 			fnInitComplete: function(oSettings, json) {
-				var totalPages = oSettings._iDisplayLength === -1 ? 0: Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
-					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
+					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
 				}
+				BMS.Fieldbook.checkPagination(parentDiv);
 				$(parentDiv).removeClass('fbk-hide-opacity');
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize, tableIdentifier);

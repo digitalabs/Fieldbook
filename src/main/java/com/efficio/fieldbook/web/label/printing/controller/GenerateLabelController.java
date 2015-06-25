@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,13 +41,6 @@ public class GenerateLabelController extends AbstractBaseFieldbookController {
 	@Resource
 	private UserLabelPrinting userLabelPrinting;
 
-	/** The fieldbook middleware service. */
-	@Resource
-	private FieldbookService fieldbookMiddlewareService;
-
-	/** The Constant BUFFER_SIZE. */
-	private static final int BUFFER_SIZE = 4096 * 4;
-
 	/**
 	 * Show trial label details.
 	 *
@@ -66,7 +58,7 @@ public class GenerateLabelController extends AbstractBaseFieldbookController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
 	 */
 	@Override

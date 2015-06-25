@@ -2350,7 +2350,7 @@ public class SettingsUtil {
 				//The default Role for Germplasm Descriptor is PhenotypicType.GERMPLASM
 				//but if the VariableType(s) assigned to the variable is only EXPERIMENTAL DESIGN then
 				//set the role as PhenotypicType.TRIAL_DESIGN
-				if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId().intValue()
+				if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId().intValue() && settingDetail.getVariable().getVariableTypes() != null
 						&& settingDetail.getVariable().getVariableTypes().size() == 1
 						&& hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable().getVariableTypes())){
 					

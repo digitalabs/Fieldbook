@@ -415,6 +415,12 @@ public class EditNurseryController extends SettingsController {
 		// retain measurement dataset id
 		int measurementDatasetId = this.userSelection.getWorkbook().getMeasurementDatesetId();
 
+		//added code to set the role for the variables add
+		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables);
+		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables());
+		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions());
+		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits);
+		
 		Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
 						form.getPlotLevelVariables(), baselineTraits, this.userSelection, 

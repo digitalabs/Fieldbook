@@ -614,6 +614,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			throws MiddlewareException {
 		StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate),
 				contextUtil.getCurrentProgramUUID());
+		stdvar.setPhenotypicType(role);
 		MeasurementVariable var =
 				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
 						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()

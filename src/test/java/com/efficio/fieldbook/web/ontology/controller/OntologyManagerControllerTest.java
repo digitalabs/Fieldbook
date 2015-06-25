@@ -107,7 +107,6 @@ public class OntologyManagerControllerTest extends AbstractBaseControllerIntegra
 			this.standardVariable.setDataType(dataType);
 			this.standardVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			this.standardVariable.setIsA(traitClass);
-			this.standardVariable.setStoredIn(storedIn);
 			this.standardVariable.setCropOntologyId("CO:1200");
 			this.standardVariable.setConstraints(new VariableConstraints(1.0, 10.0));
 			this.ontologyService.addStandardVariable(this.standardVariable,PROGRAM_UUID);

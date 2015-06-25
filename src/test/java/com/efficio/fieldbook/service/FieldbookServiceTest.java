@@ -140,7 +140,7 @@ public class FieldbookServiceTest {
 
 	private StandardVariable createStandardVariable(Term property, Term scale, Term method, Term dataType, Term storedIn, Term isA,
 			PhenotypicType phenotypicType, int termId, String name) {
-		StandardVariable stdVar = new StandardVariable(property, scale, method, dataType, storedIn, isA, phenotypicType);
+		StandardVariable stdVar = new StandardVariable(property, scale, method, dataType, isA, phenotypicType);
 		stdVar.setId(termId);
 		stdVar.setName(name);
 

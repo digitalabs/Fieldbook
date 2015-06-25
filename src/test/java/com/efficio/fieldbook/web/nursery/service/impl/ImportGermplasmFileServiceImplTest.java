@@ -207,7 +207,6 @@ public class ImportGermplasmFileServiceImplTest {
 		StandardVariable stdVar = new StandardVariable();
 		stdVar.setId(TermId.CHECK.getId());
 		stdVar.setName("ENTRY_TYPE");
-		stdVar.setStoredIn(new Term(1040, "Germplasm entry", "Germplasm entry information stored in stockprop.value"));
 		stdVar.setProperty(new Term(2209, "Entry type", "Entry type"));
 		stdVar.setScale(new Term(6070, "Type", ""));
 		stdVar.setMethod(new Term(4030, "Assigned", "Term, name or id assigned"));

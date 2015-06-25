@@ -568,8 +568,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 		standardVariable.setDataType(this.ontologyService.getTermById(Integer.parseInt(form.getDataType())));
 
 		standardVariable.setPhenotypicType(this.ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
-		standardVariable.setStoredIn(this.ontologyService.getTermById(Integer.parseInt(form.getRole())));
-
 		standardVariable.setCropOntologyId(form.getCropOntologyDisplay());
 
 		return standardVariable;

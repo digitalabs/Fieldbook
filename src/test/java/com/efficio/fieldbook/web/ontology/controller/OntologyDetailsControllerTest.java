@@ -138,7 +138,7 @@ public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegra
 		enumerations.add(new Enumeration(4, "ENUM1", "ENUM4 DESC", 0));
 
 		StandardVariable stdvar =
-				new StandardVariable(property, scale, method, dataType, storedIn, traitClass, PhenotypicType.TRIAL_DESIGN);
+				new StandardVariable(property, scale, method, dataType, traitClass, PhenotypicType.TRIAL_DESIGN);
 		stdvar.setConstraints(constraints);
 		stdvar.setEnumerations(enumerations);
 		stdvar.setName("VARIABLE1");

@@ -768,7 +768,7 @@ public class DesignImportServiceImplTest {
 
 		StandardVariable stdVar =
 				new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(0, dataType, ""),
-						new Term(0, storedIn, ""), new Term(0, isA, ""), phenotypicType);
+						new Term(0, isA, ""), phenotypicType);
 
 		stdVar.setId(id);
 		stdVar.setName(name);

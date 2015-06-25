@@ -329,7 +329,6 @@ public class OntologyControllerTest extends AbstractBaseControllerIntegrationTes
 			standardVariable.setDataType(dataType);
 			standardVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			standardVariable.setIsA(traitClass);
-			standardVariable.setStoredIn(storedIn);
 			standardVariable.setCropOntologyId("CO:1200");
 			this.ontologyService.addStandardVariable(standardVariable,"1234567");
 		} catch (MiddlewareException e) {

@@ -5,11 +5,11 @@ window.ChooseSettings = (function() {
 	'use strict';
 
 	var MODES = {
-			MANAGEMENT_DETAILS: 1,
-			FACTORS: 2,
-			TRAITS: 3,
-			SELECTION_VARIATES: 6,
-			NURSERY_CONDITIONS: 7
+			MANAGEMENT_DETAILS: 1805,
+			FACTORS: 1804,
+			TRAITS: 1808,
+			SELECTION_VARIATES: 1807,
+			NURSERY_CONDITIONS: 1803
 		},
 
 		dialogOpenSelector = '.chs-add-variable',

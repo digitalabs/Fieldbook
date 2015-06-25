@@ -1,15 +1,7 @@
 window.TrialSettingsManager = (function() {
 	'use strict';
 
-	var MODES = {
-			TRIAL_SETTINGS: 5,
-			GERMPLASM_FACTORS: 4,
-			MEASUREMENT_TRAITS: 8,
-			TRIAL_ENVIRONMENT: 6,
-			TREATMENT_FACTORS: 9,
-			TRIAL_CONDITIONS: 2
-		},
-		variableSelectionGroups = {},
+	var variableSelectionGroups = {},
 		TrialSettingsManager, properties, selectedVariables, _translations;
 
 	/*

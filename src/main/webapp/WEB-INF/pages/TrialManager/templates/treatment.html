@@ -4,7 +4,10 @@
             <!-- title -->
             <section-container collapsible="true" th:attr="heading=#{trial.managesettings.treatment.factors.title}">
 
-                <section-container icon="bms-treatment-factors" name="content" th:attr="heading=#{trial.managesettings.treatment.factors},help-tooltip=#{trial.managesettings.treatment.factors.notes}" add-variable="true" model-data="settings.details" variable-type="9" callback="onAddVariable(result)" hide-variable="!trialMeasurement.hasMeasurement">
+                <section-container icon="bms-treatment-factors" name="content"
+                                   th:attr="heading=#{trial.managesettings.treatment.factors},help-tooltip=#{trial.managesettings.treatment.factors.notes}"
+                                   add-variable="true" model-data="settings.details" variable-type="1809" callback="onAddVariable(result)"
+                                   hide-variable="!trialMeasurement.hasMeasurement">
 
                     <div name="content">
                         <table class='factor-opts-tbl table table-curved table-condensed'>

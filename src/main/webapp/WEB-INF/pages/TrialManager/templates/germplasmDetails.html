@@ -10,11 +10,13 @@
 					<span class="glyphicon glyphicon-refresh"></span> Update
 				</span>
 
-				<span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="4" class="btn btn-info" >Add</span>
+				<span select-standard-variable="" ng-show="!trialMeasurement.hasMeasurement" modeldata="settings" variable-type="1804"
+					  class="btn btn-info">Add</span>
 			</span>
 
 			<section-container icon="bms-factors" name="content" th:attr="heading=#{trial.trialdetails.germplasm.descriptors},help-tooltip=#{trial.reminder.add.germplasm.factors}">
-				<display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="4" name="content"></display-settings>
+				<display-settings hide-delete="trialMeasurement.hasMeasurement" settings="settings" variable-type="1804"
+								  name="content"></display-settings>
 			</section-container>
 
 		</section-container>
@@ -70,7 +72,7 @@
 
 	<div id="entries-details" style="display: none">
 		Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<a href="javascript: void(0)" class="view-header" onclick="javascript: viewGermplasmLitDetails();">View Header</a>
+		<a href="javascript: void(0)" class="view-header" onclick="viewGermplasmLitDetails();">View Header</a>
 		<div class="col-show-hide pull-right">
 		</div>
 	</div>

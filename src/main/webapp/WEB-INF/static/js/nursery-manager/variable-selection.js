@@ -18,7 +18,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 	var VARIABLE_SELECT_EVENT = 'variable-select',
 		MODAL_SELECTOR = '.vs-modal',
-		TREATMENT_FACTOR_GROUP = 9,
+		TREATMENT_FACTOR_GROUP = 1809,
 
 		modalHeaderSelector = '.modal-header',
 		variableNameContainerSelector = '.vs-variable-name-container',

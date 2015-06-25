@@ -240,7 +240,7 @@ window.TrialSettingsManager = (function() {
 
 		// Currently we only have special handling for management details (1) and selection strategy (6)
 		switch (group) {
-			case 1:
+			case 1805:
 				// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
 				removedProperty = _removeById(studyLevelBreedingMethodPropertyId, filteredProperties, 'propertyId');
 
@@ -253,7 +253,7 @@ window.TrialSettingsManager = (function() {
 				exclusions = exclusions.concat(_removeVariables(basicDetails, filteredProperties));
 				break;
 
-			case 6:
+			case 1802:
 				// Remove variables and properties as necessary
 				exclusions = exclusions.concat(_performExclusions(selectionExclusions, selectedVariables, filteredProperties));
 				break;

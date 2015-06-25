@@ -733,7 +733,12 @@ public class DesignImportController extends SettingsController {
 					if (termId != null){
 
 						Location location = fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
-						copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
+						if (location == null){
+							copyOfManagementDetailValues.put(termId, "");
+						}else{
+							copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
+						}
+						
 						
 						String headerName = getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 						String standardVariableName = getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));

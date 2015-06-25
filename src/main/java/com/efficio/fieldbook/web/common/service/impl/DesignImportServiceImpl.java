@@ -610,12 +610,13 @@ public class DesignImportServiceImpl implements DesignImportService {
 	protected void populateEnvironmentDataWithValuesFromCsvFile(EnvironmentData environmentData,
 			Workbook workbook, DesignImportData designImportData) {
 		
-	
 			List<DesignHeaderItem> trialEnvironmentsDesignHeaderItems = designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT);
 			DesignHeaderItem trialInstanceHeaderItem = filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, trialEnvironmentsDesignHeaderItems);
 			Map<String, Map<Integer, List<String>>> groupedCsvRows = groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getCsvData());
 			
-			for (Environment environment : environmentData.getEnvironments()){
+			Iterator<Environment> iteratorEnvironment = environmentData.getEnvironments().iterator();
+			while(iteratorEnvironment.hasNext()){
+				Environment environment = iteratorEnvironment.next();
 				String trialInstanceNo = environment.getManagementDetailValues().get(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId()));
 				Map<Integer, List<String>> csvData =  groupedCsvRows.get(trialInstanceNo);
 				if (csvData != null){
@@ -623,9 +624,11 @@ public class DesignImportServiceImpl implements DesignImportService {
 						String value = getTheFirstValueFromCsv(item, csvData);
 						environment.getManagementDetailValues().put(String.valueOf(item.getId()), value);
 					}
+				}else{
+					iteratorEnvironment.remove();
 				}
+				
 			}
-	
 		
 	}
 	

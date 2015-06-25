@@ -1359,7 +1359,7 @@ public class SettingsUtil {
 	private static MeasurementVariable convertFactorToMeasurementVariable(Factor factor) {
 		MeasurementVariable mvar =
 				new MeasurementVariable(factor.getName(), factor.getDescription(), factor.getScale(), factor.getMethod(),
-						factor.getProperty(), factor.getDatatype(), null, PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0), PhenotypicType.getPhenotypicTypeByName(factor.getName()));
+						factor.getProperty(), factor.getDatatype(), null, PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0), PhenotypicType.getPhenotypicTypeByName(factor.getRole()));
 		mvar.setFactor(true);
 		mvar.setOperation(factor.getOperation());
 		mvar.setTermId(factor.getId());

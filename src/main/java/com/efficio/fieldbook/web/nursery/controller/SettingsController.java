@@ -438,7 +438,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		if (stdVar != null) {
 			SettingVariable svar =
 					new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale()
-							.getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), stdVar.getDataType().getName(),
+							.getName(), stdVar.getMethod().getName(), null, stdVar.getDataType().getName(),
 							stdVar.getDataType().getId(),
 							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
 									.getMinValue() : null,

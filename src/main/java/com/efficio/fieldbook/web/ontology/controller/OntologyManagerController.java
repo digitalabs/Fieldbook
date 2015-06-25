@@ -802,7 +802,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 			resultMap.put("name", stdVariable.getName() == null ? "" : stdVariable.getName());
 			resultMap.put("description", stdVariable.getDescription() == null ? "" : stdVariable.getDescription());
 			resultMap.put("dataType", this.checkIfNull(stdVariable.getDataType()));
-			resultMap.put("role", this.checkIfNull(stdVariable.getStoredIn()));
+			resultMap.put("role", null);
 			resultMap.put("cropOntologyDisplay", stdVariable.getCropOntologyId() == null ? "" : stdVariable.getCropOntologyId());
 			resultMap.put("traitClass", this.checkIfNull(stdVariable.getIsA()));
 			resultMap.put("property", this.checkIfNull(stdVariable.getProperty()));

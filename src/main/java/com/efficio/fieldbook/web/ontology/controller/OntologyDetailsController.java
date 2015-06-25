@@ -126,34 +126,6 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 		return super.showAjaxPage(model, OntologyDetailsController.DETAILS_TEMPLATE);
 	}
 
-	@RequestMapping(value = "/OntologyBrowser/details/usage/{variableId}", method = RequestMethod.GET)
-	public String getOntologyUsageDetails(@PathVariable int variableId, @ModelAttribute("ontologyDetailsForm") OntologyDetailsForm form,
-			Model model) {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		try {
-			StandardVariable variable = this.ontologyService.getStandardVariable(variableId,
-					contextUtil.getCurrentProgramUUID());
-			if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
-				resultMap.put("status", "success");
-				resultMap.put("variable", variable);
-
-				NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-
-				form.setProjectCount(numberFormat.format(this.ontologyService.countProjectsByVariable(variableId)));
-				form.setObservationCount(numberFormat.format(this.ontologyService.countExperimentsByVariable(variableId, variable
-						.getStoredIn().getId())));
-
-				form.setVariable(variable);
-			} else {
-				resultMap.put("status", "notfound");
-			}
-		} catch (Exception e) {
-			OntologyDetailsController.LOG.error(e.getMessage(), e);
-			resultMap.put("status", "fail");
-		}
-		return super.showAjaxPage(model, OntologyDetailsController.USAGE_DETAILS_TEMPLATE);
-	}
-
 	/**
 	 * Gets Properties, Trait Class and Standard Variables, based on a numeric filter that corresponds to the following
 	 * 

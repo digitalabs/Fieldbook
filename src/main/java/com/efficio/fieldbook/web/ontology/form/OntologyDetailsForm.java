@@ -303,7 +303,7 @@ public class OntologyDetailsForm {
 		if (variable != null) {
 			this.setTraitClassName(variable.getIsA().getName());
 			this.setPropertyName(variable.getProperty().getName());
-			this.setRoleName(variable.getStoredIn().getName());
+			this.setRoleName(null);
 			this.setMethodName(variable.getMethod().getName());
 			this.setScaleName(variable.getScale().getName());
 			this.setDataTypeName(variable.getDataType().getName());

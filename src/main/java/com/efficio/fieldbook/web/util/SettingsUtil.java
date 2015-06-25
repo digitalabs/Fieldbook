@@ -173,7 +173,6 @@ public class SettingsUtil {
 									variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(),
 							variable.getMinRange(), variable.getMaxRange());
 			condition.setOperation(variable.getOperation());
-			condition.setStoredIn(standardVariable.getStoredIn().getId());
 			condition.setId(variable.getCvTermId());
 			conditions.add(condition);
 		}
@@ -202,7 +201,6 @@ public class SettingsUtil {
 							variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
 							settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
 			variate.setOperation(variable.getOperation());
-			variate.setStoredIn(standardVariable.getStoredIn().getId());
 			variate.setId(variable.getCvTermId());
 			variateList.add(variate);
 
@@ -247,7 +245,6 @@ public class SettingsUtil {
 						variable.getMethod().getName(), variable.getPhenotypicType().name(), variable.getDataType().getName(),
 						variable.getId());
 
-		factor.setStoredIn(variable.getStoredIn().getId());
 		factor.setId(variable.getId());
 		factor.setDataTypeId(variable.getDataType().getId());
 
@@ -279,7 +276,6 @@ public class SettingsUtil {
 									variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(),
 							variable.getMinRange(), variable.getMaxRange(), isTrial);
 			constant.setOperation(variable.getOperation());
-			constant.setStoredIn(standardVariable.getStoredIn().getId());
 			constant.setId(variable.getCvTermId());
 			constants.add(constant);
 

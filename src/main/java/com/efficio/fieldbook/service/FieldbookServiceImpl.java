@@ -787,6 +787,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 						StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(
 								Integer.valueOf(nameTermId),contextUtil.getCurrentProgramUUID());
+						stdvar.setPhenotypicType(tempVarId.getRole());
 						MeasurementVariable tempVarName =
 								new MeasurementVariable(Integer.valueOf(nameTermId), tempVarId.getName(), stdvar.getDescription(), stdvar
 										.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar
@@ -801,7 +802,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 							workbook.resetTrialConditions();
 							SettingVariable svar =
 									new SettingVariable(tempVarName.getName(), stdvar.getDescription(), stdvar.getProperty().getName(),
-											stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getStoredIn().getName(),
+											stdvar.getScale().getName(), stdvar.getMethod().getName(),null,
 											stdvar.getDataType().getName(), stdvar.getDataType().getId(), stdvar.getConstraints() != null
 													&& stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints()
 													.getMinValue() : null, stdvar.getConstraints() != null

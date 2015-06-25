@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.common.bean;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.VariableType;
@@ -168,6 +169,7 @@ public class SettingVariable implements Serializable {
 			this.scale = HtmlUtils.htmlEscape(standardVariable.getScale().getName());
 			this.method = HtmlUtils.htmlEscape(standardVariable.getMethod().getName());
 			this.role = role;
+			standardVariable.setPhenotypicType(PhenotypicType.getPhenotypicTypeByName(role));
 			this.description = HtmlUtils.htmlEscape(standardVariable.getDescription());
 			this.dataType = this.getDataType(standardVariable.getDataType().getId());
 			this.dataTypeId = standardVariable.getDataType().getId();

@@ -23,7 +23,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;

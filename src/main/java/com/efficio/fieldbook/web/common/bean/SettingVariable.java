@@ -17,7 +17,7 @@ import java.util.Set;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
 import org.springframework.web.util.HtmlUtils;
 

@@ -11,18 +11,13 @@
 
 package com.efficio.fieldbook.service;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -53,7 +48,7 @@ import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -93,13 +88,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
+import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;

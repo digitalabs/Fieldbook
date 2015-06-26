@@ -1,12 +1,12 @@
 package com.efficio.fieldbook.web.common.bean;
 
-import org.apache.commons.lang.StringUtils;
-import org.generationcp.middleware.domain.oms.OntologyVariableSummary;
-import org.generationcp.middleware.domain.ontology.Property;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.generationcp.middleware.domain.ontology.OntologyVariableSummary;
+import org.generationcp.middleware.domain.ontology.Property;
 
 /**
  * Created by cyrus on 6/17/15.

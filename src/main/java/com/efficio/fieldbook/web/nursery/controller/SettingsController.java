@@ -374,11 +374,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			svar.setOperation(Operation.ADD);
-
 			List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
 			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
 			PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
-			settingDetail.setRole(PhenotypicType.getPhenotypicTypeByName(role));
+			settingDetail.setRole(type);
 			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
 				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
 			} else if (id == TermId.STUDY_UID.getId()) {

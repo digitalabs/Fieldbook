@@ -10,7 +10,7 @@ import junit.framework.Assert;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.util.AppConstants;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ManageSettingsControllerTest {

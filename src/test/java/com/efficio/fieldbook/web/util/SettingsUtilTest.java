@@ -10,7 +10,7 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.VariableType;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
@@ -204,7 +204,7 @@ public class SettingsUtilTest {
 			List<SettingDetail> newDetails = new ArrayList<SettingDetail>();
 			SettingDetail detail = new SettingDetail();
 			newDetails.add(detail);
-			SettingsUtil.setSettingDetailRole(newDetails, varType);
+			/*SettingsUtil.setSettingDetailRole(newDetails, varType);*/
 			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", detail.getRole(), varType.getRole());
 		}
 		

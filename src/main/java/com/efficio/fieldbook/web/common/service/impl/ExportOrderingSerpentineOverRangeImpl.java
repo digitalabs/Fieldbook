@@ -12,6 +12,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldmapBlockInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
@@ -19,6 +21,8 @@ import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 @Service
 public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionOrderService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ExportOrderingSerpentineOverRangeImpl.class);
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -82,7 +86,7 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 			}
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ExportOrderingSerpentineOverRangeImpl.LOG.error("Ordering of the workbook was not successful", e);
 		}
 
 		workbook.setExportArrangedObservations(arrangedExportObservations);

@@ -16,6 +16,8 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
@@ -27,6 +29,8 @@ import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
 public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(KsuExcelExportStudyServiceImpl.class);
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;
@@ -93,13 +97,13 @@ public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyServic
 			ZipUtil.zipIt(outputFilename, filenameList);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			KsuExcelExportStudyServiceImpl.LOG.error("Export was not successful", e);
 		} finally {
 			if (fos != null) {
 				try {
 					fos.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					KsuExcelExportStudyServiceImpl.LOG.error("Export was not successful", e);
 				}
 			}
 		}

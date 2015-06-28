@@ -21,6 +21,8 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,6 +43,8 @@ import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 @Controller
 @RequestMapping({PlantingDetailsController.URL})
 public class PlantingDetailsController extends AbstractBaseFieldbookController {
+
+	private static final Logger LOG = LoggerFactory.getLogger(PlantingDetailsController.class);
 
 	/** The Constant URL. */
 	public static final String URL = "/Fieldmap/plantingDetails";
@@ -133,7 +137,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 			form.setUserFieldmap(this.userFieldmap);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			PlantingDetailsController.LOG.error("Accessing the user field map was not successful", e);
 		}
 		return super.show(model);
 	}

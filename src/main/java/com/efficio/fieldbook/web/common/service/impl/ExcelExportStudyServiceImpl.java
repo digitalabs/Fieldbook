@@ -264,7 +264,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			for (MeasurementVariable variable : arrangedConditions) {
 				if (!ExcelExportStudyServiceImpl.STUDY_DETAILS_IDS.contains(variable.getTermId())) {
 					filteredConditions.add(variable);
-					if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(variable.getLabel())) {
+					if (PhenotypicType.TRIAL_ENVIRONMENT == variable.getRole()) {
 						variable.setValue(trialObservation.getMeasurementDataValue(variable.getTermId()));
 						if (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
 							try {
@@ -301,7 +301,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		List<MeasurementVariable> filteredConstants = new ArrayList<MeasurementVariable>();
 		for (MeasurementVariable variable : constants) {
 			filteredConstants.add(variable);
-			if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(variable.getLabel())) {
+			if (PhenotypicType.TRIAL_ENVIRONMENT == variable.getRole()) {
 				variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
 			}
 		}

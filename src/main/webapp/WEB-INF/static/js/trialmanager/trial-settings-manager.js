@@ -327,7 +327,7 @@ window.TrialSettingsManager = (function() {
 			},
 			thisInstance = this,
 			modal = this._variableSelection,
-			apiUrl = (params.apiUrl) ? params.apiUrl : '/Fieldbook/manageSettings/settings/properties?type=' + groupId + '&useTrialFiltering=true';
+			apiUrl = (params.apiUrl) ? params.apiUrl : '/Fieldbook/manageSettings/settings/properties?type=' + groupId + '&isTrial=true';
 
 		// Initialise a variable selection modal if we haven't done so before
 		if (!modal) {

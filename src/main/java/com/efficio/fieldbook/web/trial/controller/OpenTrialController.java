@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -546,6 +547,7 @@ public class OpenTrialController extends BaseTrialController {
 					if (currentVar == null) {
 						StandardVariable var = this.fieldbookMiddlewareService.getStandardVariable(id,
 								contextUtil.getCurrentProgramUUID());
+						var.setPhenotypicType(PhenotypicType.VARIATE);
 						MeasurementVariable newVar =
 								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 						newVar.setFactor(false);

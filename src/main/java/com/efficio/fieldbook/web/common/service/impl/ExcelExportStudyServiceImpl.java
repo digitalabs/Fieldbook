@@ -366,9 +366,6 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				if (isVariate) {
 					variable.setLabel(ExcelExportStudyServiceImpl.PLOT);
 				}
-				if("".equalsIgnoreCase(variable.getLabel()) && variable.getRole() != null){
-					variable.setLabel(variable.getRole().getLabelList().get(0));
-				}
 				
 				this.writeSectionRow(rowNumIndex++, xlsSheet, variable);
 			}

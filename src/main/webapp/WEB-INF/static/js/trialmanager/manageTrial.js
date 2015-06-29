@@ -15,23 +15,23 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 	// The following block defines an interceptor that hooks into AJAX operations initiated by Angular to start / stop the spinner operation
 	manageTrialApp.factory('spinnerHttpInterceptor', function($q) {
 		return {
-			'request': function(config) {
+			request: function(config) {
 				SpinnerManager.addActive();
 
 				return config || $q.when(config);
 			},
-			'requestError': function(config) {
+			requestError: function(config) {
 				SpinnerManager.resolveActive();
 				showErrorMessage('', ajaxGenericErrorMsg);
 
 				return config || $q.when(config);
 			},
-			'response': function(config) {
+			response: function(config) {
 				SpinnerManager.resolveActive();
 
 				return config || $q.when(config);
 			},
-			'responseError': function(config) {
+			responseError: function(config) {
 				SpinnerManager.resolveActive();
 				showErrorMessage('', ajaxGenericErrorMsg);
 
@@ -71,7 +71,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 				templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
 				params: ['addtlNumOfEnvironments', 'timestamp'],
 				views: {
-					'environment': {
+					environment: {
 						controller: 'EnvironmentCtrl',
 						templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
 					}
@@ -88,7 +88,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			.state('germplasm', {
 				url: '/germplasm',
 				views: {
-					'germplasm': {
+					germplasm: {
 						controller: 'GermplasmCtrl',
 						templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm'
 					}
@@ -99,7 +99,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			.state('createMeasurements', {
 				url: '/createMeasurements',
 				views: {
-					'createMeasurements': {
+					createMeasurements: {
 						controller: 'MeasurementsCtrl',
 						templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
 					}
@@ -110,7 +110,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			.state('editMeasurements', {
 				url: '/editMeasurements',
 				views: {
-					'editMeasurements': {
+					editMeasurements: {
 						controller: 'MeasurementsCtrl',
 						templateUrl: '/Fieldbook/TrialManager/openTrial/measurements'
 					}
@@ -165,27 +165,27 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$http', '$timeout', '_',
 		'$localStorage', '$state', function($scope, $rootScope, TrialManagerDataService, $http, $timeout, _, $localStorage, $state) {
 			$scope.trialTabs = [
-				{   'name': 'Settings',
-					'state': 'trialSettings'
+				{   name: 'Settings',
+					state: 'trialSettings'
 				},
-				{   'name': 'Germplasm',
-					'state': 'germplasm'
+				{   name: 'Germplasm',
+					state: 'germplasm'
 				},
-				{   'name': 'Treatment Factors',
-					'state': 'treatment'
+				{   name: 'Treatment Factors',
+					state: 'treatment'
 				},
-				{   'name': 'Environments',
-					'state': 'environment'
+				{   name: 'Environments',
+					state: 'environment'
 				},
-				{   'name': 'Experimental Design',
-					'state': 'experimentalDesign'
+				{   name: 'Experimental Design',
+					state: 'experimentalDesign'
 				},
-				{   'name': 'Measurements',
-					'state': 'createMeasurements'
+				{   name: 'Measurements',
+					state: 'createMeasurements'
 				},
 				{
-					'name': 'Measurements',
-					'state': 'editMeasurements'
+					name: 'Measurements',
+					state: 'editMeasurements'
 				}
 
 			];
@@ -349,7 +349,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			});
 		}]);
 
-		manageTrialApp.filter('filterMeasurementState', function() {
+	manageTrialApp.filter('filterMeasurementState', function() {
 			return function(tabs, isOpenTrial) {
 				var filtered = angular.copy(tabs);
 
@@ -369,7 +369,7 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 		});
 
-		manageTrialApp.controller('ConfirmModalController', function($scope, $modalInstance, MODAL_TITLE, MODAL_TEXT, CONFIRM_BUTTON_LABEL) {
+	manageTrialApp.controller('ConfirmModalController', function($scope, $modalInstance, MODAL_TITLE, MODAL_TEXT, CONFIRM_BUTTON_LABEL) {
 			$scope.title = MODAL_TITLE;
 			$scope.text = MODAL_TEXT;
 			$scope.confirmButtonLabel = CONFIRM_BUTTON_LABEL;
@@ -383,11 +383,11 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 			};
 		});
 
-		// README IMPORTANT: Code unmanaged by angular should go here
-		document.onInitManageTrial = function() {
+	// README IMPORTANT: Code unmanaged by angular should go here
+	document.onInitManageTrial = function() {
 			// do nothing for now
 			$('body').data('needGenerateExperimentalDesign', '0');
 			$('body').data('trialStatus', operationMode);
 		};
 
-	})();
+})();

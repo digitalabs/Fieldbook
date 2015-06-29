@@ -68,6 +68,18 @@
 	})();
 
 	angular.module('fieldbook-utils', ['ui.select2'])
+		.constant('VARIABLE_TYPES', {
+			ANALYSIS: 1801,
+			TRIAL_CONDITION: 1802,
+			NURSERY_CONDITION: 1803,
+			GERMPLASM_DESCRIPTOR: 1804,
+			STUDY_DETAIL: 1805,
+			ENVIRONMENT_DETAIL: 1806,
+			SELECTION_METHOD: 1807,
+			TRAIT: 1808,
+			TREATMENT_FACTOR: 1809,
+			EXPERIMENTAL_DESIGN: 1810
+		})
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', function(TrialManagerDataService, $filter, _) {
@@ -100,7 +112,7 @@
 						if (typeof $scope.predeleteFunction() === 'undefined') {
 							$scope.doDeleteSelectedSettings();
 						} else {
-							var promise = $scope.predeleteFunction()($attrs.variableType, $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(),$scope.settings.vals()));
+							var promise = $scope.predeleteFunction()($attrs.variableType, $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(), $scope.settings.vals()));
 							promise.then(function(doContinue) {
 								if (doContinue) {
 									$scope.doDeleteSelectedSettings();
@@ -297,7 +309,6 @@
 						$scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
 					$scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
 
-
 					$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
 					$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
@@ -336,7 +347,7 @@
 						$scope.updateDropdownValues();
 
 						$scope.computeMinimumSearchResults = function() {
-							return ($scope.dropdownValues.length > 0) ? 20: -1;
+							return ($scope.dropdownValues.length > 0) ? 20 : -1;
 						};
 
 						$scope.dropdownOptions = {
@@ -641,5 +652,5 @@
 			};
 		});
 
-		}
+}
 )();

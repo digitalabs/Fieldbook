@@ -9,7 +9,7 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('TrialSettingsCtrl', ['$scope', 'TrialManagerDataService', '_', '$filter', function($scope, TrialManagerDataService, _, $filter) {
+	manageTrialApp.controller('TrialSettingsCtrl', ['$scope', 'TrialManagerDataService', '_', '$filter','VARIABLE_TYPES', function($scope, TrialManagerDataService, _, $filter,VARIABLE_TYPES) {
 
 		$scope.settings = TrialManagerDataService.settings.trialSettings;
 		$scope.data = TrialManagerDataService.currentData.trialSettings;
@@ -29,7 +29,7 @@
 		};
 
 		$scope.removeSettings = function() {
-			TrialManagerDataService.removeSettings(1, $scope.settings).then(function(data) {
+			TrialManagerDataService.removeSettings(VARIABLE_TYPES.STUDY_DETAIL, $scope.settings).then(function(data) {
 				_(data).each(function(ids) {
 					delete $scope.data.userInput[ids];
 				});

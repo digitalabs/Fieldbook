@@ -2336,8 +2336,11 @@ public class SettingsUtil {
 					settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
 
 				}else{
-					
-					settingDetail.setRole(VariableType.getById(Integer.valueOf(mode)).getRole());
+					if(settingDetail.getVariable().getCvTermId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()){
+						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+					}else{
+						settingDetail.setRole(VariableType.getById(Integer.valueOf(mode)).getRole());
+					}
 					
 				}
 				

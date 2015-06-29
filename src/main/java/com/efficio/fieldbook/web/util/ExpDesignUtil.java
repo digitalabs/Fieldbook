@@ -343,6 +343,7 @@ public class ExpDesignUtil {
 			if (WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null) {
 				MeasurementVariable measureVar =
 						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
+				measureVar.setRole(PhenotypicType.TRIAL_DESIGN);
 				varList.add(measureVar);
 				if (WorkbookUtil.getMeasurementVariable(factors, var.getId()) == null) {
 					factors.add(measureVar);

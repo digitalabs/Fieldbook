@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -179,8 +180,10 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 		try {
 			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(),
 					contextUtil.getCurrentProgramUUID());
+			stdvarRep.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 			StandardVariable stdvarPlot = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(),
 					contextUtil.getCurrentProgramUUID());
+			stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 
 			varList.add(stdvarRep);
 			varList.add(stdvarPlot);

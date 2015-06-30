@@ -2332,40 +2332,40 @@ public class SettingsUtil {
     
     public static void addNewSettingDetails(int mode
 			, List<SettingDetail> newDetails, UserSelection userSelection) throws Exception {
-    	
-    	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+		SettingsUtil.setSettingDetailRole(mode , newDetails);
+
+		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			if (userSelection.getStudyLevelConditions() == null) {
 				userSelection.setStudyLevelConditions(newDetails);
 			} else {
 				userSelection.getStudyLevelConditions().addAll(newDetails);
 			}
 
-		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()
-				|| mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
+		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 			if (userSelection.getPlotsLevelList() == null) {
 				userSelection.setPlotsLevelList(newDetails);
 			} else {
 				userSelection.getPlotsLevelList().addAll(newDetails);
 			}
-		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+		} else if (mode == VariableType.TRAIT.getId()) {
 			if (userSelection.getBaselineTraitsList() == null) {
 				userSelection.setBaselineTraitsList(newDetails);
 			} else {
 				userSelection.getBaselineTraitsList().addAll(newDetails);
 			}
-		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 			if (userSelection.getSelectionVariates() == null) {
 				userSelection.setSelectionVariates(newDetails);
 			} else {
 				userSelection.getSelectionVariates().addAll(newDetails);
 			}
-		} else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
 			if (userSelection.getTreatmentFactors() == null) {
 				userSelection.setTreatmentFactors(newDetails);
 			} else {
 				userSelection.getTreatmentFactors().addAll(newDetails);
 			}
-		} else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 			if (userSelection.getTrialLevelVariableList() == null) {
 				userSelection.setTrialLevelVariableList(newDetails);
 			} else {

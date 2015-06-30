@@ -367,13 +367,13 @@ public class WorkbookUtil {
 	}
 	
 	public static void addMeasurementDataToRowsIfNecessary(List<MeasurementVariable> variableList, List<MeasurementRow> measurementRowList,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService)
+			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService, String programUUID)
 			throws MiddlewareException {
 		
 		// add new variables in measurement rows
 		for (MeasurementVariable variable : variableList) {
 				
-				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
 				
 				for (MeasurementRow row : measurementRowList) {
 					
@@ -392,7 +392,7 @@ public class WorkbookUtil {
 
 				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
 						&& isVariate) {
-					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, WorkbookUtil.DUMMY_PROGRAM_UUID));
+					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
 				} else {
 					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
 				}

@@ -308,8 +308,8 @@ public class ManageSettingsController extends SettingsController {
 						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
 			}
 		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId);
-			this.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);
+			this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId, true);
+			SettingsUtil.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);
 		} else if (mode == VariableType.TRAIT.getId()) {
 			this.addVariableInDeletedList(this.userSelection.getBaselineTraitsList(), mode, variableId, true);
 			SettingsUtil.deleteVariableInSession(this.userSelection.getBaselineTraitsList(), variableId);

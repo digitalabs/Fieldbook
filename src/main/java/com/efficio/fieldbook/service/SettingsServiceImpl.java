@@ -8,14 +8,15 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.slf4j.Logger;
@@ -57,10 +58,10 @@ public class SettingsServiceImpl implements SettingsService {
 	}
 
 	@Override
-	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection, int currentIbDbUserId, String programUUID) throws MiddlewareQueryException {
+	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection, int currentIbDbUserId, String programUUID) throws MiddlewareException {
         
 		String variableName;
-		StandardVariable stdVar = this.getCachedStandardVariable(id, userSelection);
+		StandardVariable stdVar = this.getCachedStandardVariable(id, userSelection, programUUID);
 		
          if (name != null && !name.isEmpty()) {
              variableName = name;
@@ -263,10 +264,10 @@ public class SettingsServiceImpl implements SettingsService {
      * @return the standard variable
      * @throws MiddlewareQueryException the middleware query exception
      */
-    protected StandardVariable getCachedStandardVariable(int id, UserSelection userSelection) throws MiddlewareQueryException {
+    protected StandardVariable getCachedStandardVariable(int id, UserSelection userSelection, String programUUID) throws MiddlewareException {
 		StandardVariable variable = userSelection.getCacheStandardVariable(id);
     	if (variable == null) {
-			variable = this.fieldbookMiddlewareService.getStandardVariable(id);
+			variable = this.fieldbookMiddlewareService.getStandardVariable(id, programUUID);
     		if (variable != null) {
 				userSelection.putStandardVariableInCache(variable);
     		}

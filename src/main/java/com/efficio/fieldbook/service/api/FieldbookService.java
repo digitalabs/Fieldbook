@@ -230,7 +230,8 @@ public interface FieldbookService {
 			throws IOException;
 
 	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId) throws MiddlewareQueryException;
+	
+	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook) throws MiddlewareQueryException;
 
-	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook)
-			throws MiddlewareQueryException;
+	void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException;
 }

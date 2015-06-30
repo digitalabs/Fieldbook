@@ -58,6 +58,7 @@ import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -362,13 +363,16 @@ public class EditNurseryController extends SettingsController {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
 		}
 		studyLevelVariables.addAll(form.getBasicDetails());
+		
 
 		List<SettingDetail> studyLevelVariablesSession = this.userSelection.getBasicDetails();
 		this.userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
-		if (this.userSelection.getRemovedConditions() != null) {
+		if (this.userSelection.getRemovedConditions() != null && !userSelection.isDesignGenerated()) {
 			studyLevelVariables.addAll(this.userSelection.getRemovedConditions());
 			this.userSelection.getStudyLevelConditions().addAll(this.userSelection.getRemovedConditions());
 		}
+		
+		addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, userSelection);
 
 		this.addNurseryTypeFromDesignImport(studyLevelVariables);
 		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
@@ -728,5 +732,28 @@ public class EditNurseryController extends SettingsController {
 	@ModelAttribute("projectID")
 	public String getProgramID() {
 		return this.getCurrentProjectId();
+	}
+	
+	private void addStudyLevelVariablesFromUserSelectionIfNecessary(List<SettingDetail> studyLevelVariables,
+			UserSelection userSelection) {
+		
+    	for (SettingDetail settingDetailFromUserSelection : userSelection.getStudyLevelConditions()){
+    		
+    		boolean settingDetailExists = false;
+    		
+    		for (SettingDetail settingDetail : studyLevelVariables){
+    			if (settingDetail.getVariable().getCvTermId().intValue() == settingDetailFromUserSelection.getVariable().getCvTermId().intValue()){
+    				settingDetailExists = true;
+    				break;
+    			}
+    		}
+    		
+    		if (!settingDetailExists){
+    			studyLevelVariables.add(settingDetailFromUserSelection);
+    		}
+    		
+    	}
+    	
+		
 	}
 }

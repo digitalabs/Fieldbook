@@ -158,7 +158,7 @@ public class DesignImportServiceImplTest {
 		this.processEnvironmentData(environmentData);
 		this.createDesignHeaderItemMap(this.designImportData);
 
-		List<MeasurementRow> measurements = this.service.generateDesign(this.workbook, this.designImportData, environmentData);
+		List<MeasurementRow> measurements = this.service.generateDesign(this.workbook, this.designImportData, environmentData, true);
 
 		// trigger the addition of variates by setting the Operation to 'ADD' or 'UPDATE'
 		for (MeasurementVariable measurementVariable : this.workbook.getVariates()) {
@@ -167,7 +167,7 @@ public class DesignImportServiceImplTest {
 
 		this.service.addVariatesToMeasurementRows(this.workbook, measurements);
 
-		Assert.assertEquals("The size of the data list should be 12 since 2 variates are added", 12, measurements.get(0).getDataList()
+		Assert.assertEquals("The size of the data list should be 13 since 2 variates are added", 13, measurements.get(0).getDataList()
 				.size());
 
 	}
@@ -260,7 +260,7 @@ public class DesignImportServiceImplTest {
 		this.processEnvironmentData(environmentData);
 		this.createDesignHeaderItemMap(this.designImportData);
 
-		List<MeasurementRow> measurements = this.service.generateDesign(this.workbook, this.designImportData, environmentData);
+		List<MeasurementRow> measurements = this.service.generateDesign(this.workbook, this.designImportData, environmentData, true);
 
 		Assert.assertEquals("The first trial instance has only 28 observations", 28, measurements.size());
 
@@ -276,7 +276,7 @@ public class DesignImportServiceImplTest {
 		this.processEnvironmentData(environmentData);
 		this.createDesignHeaderItemMap(this.designImportData);
 
-		List<MeasurementRow> measurements = this.service.generateDesign(this.workbook, this.designImportData, environmentData);
+		List<MeasurementRow> measurements = this.service.generateDesign(this.workbook, this.designImportData, environmentData, true);
 
 		Assert.assertEquals("The 3 trial instances have 84 observations", 84, measurements.size());
 
@@ -286,7 +286,7 @@ public class DesignImportServiceImplTest {
 	public void testGetDesignMeasurementVariables() throws MiddlewareQueryException {
 
 		this.createDesignHeaderItemMap(this.designImportData);
-		Set<MeasurementVariable> result = this.service.getDesignMeasurementVariables(this.workbook, this.designImportData);
+		Set<MeasurementVariable> result = this.service.getDesignMeasurementVariables(this.workbook, this.designImportData, true);
 
 		Assert.assertEquals("The total number of Factors and Variates in workbook is 12", 12, result.size());
 	}

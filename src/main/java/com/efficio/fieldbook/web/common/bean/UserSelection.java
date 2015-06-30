@@ -946,4 +946,8 @@ public class UserSelection implements Serializable {
 		this.nurseryTypeId = nurseryTypeId;
 
 	}
+	
+	public boolean isDesignGenerated(){
+		return this.getTemporaryWorkbook() != null;
+	}
 }

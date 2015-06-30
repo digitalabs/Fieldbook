@@ -245,7 +245,12 @@ public class CreateTrialController extends BaseTrialController {
 				SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
 						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
 						this.userSelection.getExperimentalDesignVariables());
-
+		
+		
+		if (userSelection.getTemporaryWorkbook() != null){
+			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments() , workbook, userSelection.getTemporaryWorkbook().getTrialObservations());
+		}
+		
 		List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
 		variablesForEnvironment.addAll(workbook.getTrialVariables());
 

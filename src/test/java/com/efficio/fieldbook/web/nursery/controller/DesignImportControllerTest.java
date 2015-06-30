@@ -178,7 +178,7 @@ public class DesignImportControllerTest {
 		Workbook workbook = Mockito.mock(Workbook.class);
 		Mockito.when(this.userSelection.getTemporaryWorkbook()).thenReturn(workbook);
 		Mockito.when(this.userSelection.getDesignImportData()).thenReturn(this.designImportData);
-		Mockito.when(this.designImportService.getDesignMeasurementVariables(workbook, this.designImportData)).thenReturn(
+		Mockito.when(this.designImportService.getDesignMeasurementVariables(workbook, this.designImportData, true)).thenReturn(
 						Mockito.mock(Set.class));
 
 		Model model = Mockito.mock(Model.class);

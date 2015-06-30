@@ -1,40 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * <p/>
  * Generation Challenge Programme (GCP)
- *
- *
+ * <p/>
+ * <p/>
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.controller;
-
-import java.util.*;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.commons.util.DateUtil;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.*;
-import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.service.api.DataImportService;
-import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
@@ -48,6 +22,30 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.*;
+import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.workbench.TemplateSetting;
+import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * The Class SettingsController.
@@ -92,6 +90,24 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected ContextUtil contextUtil;
 
 	/**
+	 * Checks if the measurement table has user input data for a particular variable id
+	 *
+	 * @param variableId, List<MeasurementRow>
+	 * @return
+	 */
+	public static boolean hasMeasurementDataEntered(int variableId, List<MeasurementRow> measurementRow) {
+		for (MeasurementRow row : measurementRow) {
+			for (MeasurementData data : row.getDataList()) {
+				if (data.getMeasurementVariable() != null && data.getMeasurementVariable().getTermId() == variableId
+						&& data.getValue() != null && !data.getValue().isEmpty()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Gets the settings list.
 	 *
 	 * @return the settings list
@@ -103,15 +119,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getNurseryTool(), null, null);
 			templateSettingFilter.setIsDefaultToNull();
 			List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
-			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "",
-					false));
+			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "", false));
 			return templateSettingsList;
 
 		} catch (MiddlewareQueryException e) {
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
-        return new ArrayList<>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -126,15 +141,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getTrialTool(), null, null);
 			templateSettingFilter.setIsDefaultToNull();
 			List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
-			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "",
-					false));
+			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "", false));
 			return templateSettingsList;
 
 		} catch (MiddlewareQueryException e) {
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
-        return new ArrayList<>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -150,7 +164,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
-        return new ArrayList<>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -166,7 +180,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
-        return new ArrayList<>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -188,7 +202,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 */
 	protected List<String> buildRequiredVariablesLabel(String requiredFields, boolean hasLabels) {
 
-        List<String> requiredVariables = new ArrayList<>();
+		List<String> requiredVariables = new ArrayList<>();
 		StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		while (token.hasMoreTokens()) {
 			if (hasLabels) {
@@ -243,7 +257,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			throws MiddlewareException {
 
 		// create a map of id and its id-code-name combination
-        Map<String, String> idCodeNameMap = new HashMap<>();
+		Map<String, String> idCodeNameMap = new HashMap<>();
 		if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
 			StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
 			if (tokenizer.hasMoreTokens()) {
@@ -256,7 +270,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		// save hidden conditions in a map
-        Map<String, SettingDetail> variablesMap = new HashMap<>();
+		Map<String, SettingDetail> variablesMap = new HashMap<>();
 		if (variables != null) {
 			for (SettingDetail variable : this.userSelection.getRemovedConditions()) {
 				variablesMap.put(variable.getVariable().getCvTermId().toString(), variable);
@@ -264,14 +278,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		for (SettingDetail variable : variables) {
-            Integer  stdVar;
+			Integer stdVar;
 			if (variable.getVariable().getCvTermId() != null) {
 				stdVar = variable.getVariable().getCvTermId();
 			} else {
-				stdVar =
-						this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-								variable.getVariable().getProperty(), variable.getVariable().getScale(),
-								variable.getVariable().getMethod(), PhenotypicType.valueOf(variable.getVariable().getRole()));
+				stdVar = this.fieldbookMiddlewareService
+						.getStandardVariableIdByPropertyScaleMethodRole(variable.getVariable().getProperty(),
+								variable.getVariable().getScale(), variable.getVariable().getMethod(),
+								PhenotypicType.valueOf(variable.getVariable().getRole()));
 			}
 
 			// mark required variables that are already in the list
@@ -303,9 +317,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				if (TermId.BREEDING_METHOD_CODE.getId() == requiredVariables.get(i)
 						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())) != null
 						&& variablesMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) == null) {
-					Method method =
-							this.fieldbookMiddlewareService.getMethodByName(variablesMap
-									.get(String.valueOf(TermId.BREEDING_METHOD.getId())).getValue());
+					Method method = this.fieldbookMiddlewareService
+							.getMethodByName(variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())).getValue());
 					newSettingDetail.setValue(method.getMid() == null ? "" : method.getMid().toString());
 				}
 
@@ -354,7 +367,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	protected SettingDetail createSettingDetail(int id, String name, String role) throws MiddlewareException {
-            String variableName;
+		String variableName;
 		StandardVariable stdVar = this.getStandardVariable(id);
 		if (name != null && !name.isEmpty()) {
 			variableName = name;
@@ -365,11 +378,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		if (stdVar != null && stdVar.getName() != null) {
 			SettingVariable svar =
 					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
-							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar
-									.getDataType().getId(), stdVar.getConstraints() != null
-									&& stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
-									.getMaxValue() : null);
+							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ?
+									stdVar.getConstraints().getMinValue() :
+									null, stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ?
+							stdVar.getConstraints().getMaxValue() :
+							null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
@@ -400,7 +414,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Populates Setting Variable.
-	 * @param mode 
 	 *
 	 * @param var the var
 	 * @throws MiddlewareQueryException the middleware query exception
@@ -417,10 +430,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
 			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
 			var.setDataTypeId(stdvar.getDataType().getId());
-			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints()
-					.getMinValue() : null);
-			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints()
-					.getMaxValue() : null);
+			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null ?
+					stdvar.getConstraints().getMinValue() :
+					null);
+			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ?
+					stdvar.getConstraints().getMaxValue() :
+					null);
 			var.setWidgetType();
 		}
 	}
@@ -435,17 +450,15 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected SettingVariable getSettingVariable(int id) throws MiddlewareException {
 		StandardVariable stdVar = this.getStandardVariable(id);
 		if (stdVar != null) {
-			SettingVariable svar =
-					new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale()
-							.getName(), stdVar.getMethod().getName(), null, stdVar.getDataType().getName(),
-							stdVar.getDataType().getId(),
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints()
-									.getMinValue() : null,
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
-									.getMaxValue() : null);
+			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
+					stdVar.getScale().getName(), stdVar.getMethod().getName(), null, stdVar.getDataType().getName(),
+					stdVar.getDataType().getId(), stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ?
+					stdVar.getConstraints().getMinValue() :
+					null, stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ?
+					stdVar.getConstraints().getMaxValue() :
+					null);
 			svar.setCvTermId(stdVar.getId());
-			svar.setCropOntologyId(
-                    stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			return svar;
 		}
@@ -462,7 +475,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected StandardVariable getStandardVariable(int id) throws MiddlewareException {
 		StandardVariable variable = this.userSelection.getCacheStandardVariable(id);
 		if (variable == null) {
-			variable = this.fieldbookMiddlewareService.getStandardVariable(id,contextUtil.getCurrentProgramUUID());
+			variable = this.fieldbookMiddlewareService.getStandardVariable(id, contextUtil.getCurrentProgramUUID());
 			if (variable != null) {
 				this.userSelection.putStandardVariableInCache(variable);
 			}
@@ -504,7 +517,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Checks if the measurement table has user input data for a particular variable id
-	 * 
+	 *
 	 * @param variableId
 	 * @return
 	 */
@@ -512,24 +525,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		for (MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 			for (MeasurementData data : row.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == variableId && data.getValue() != null && !data.getValue().isEmpty()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if the measurement table has user input data for a particular variable id
-	 * 
-	 * @param variableId, List<MeasurementRow>
-	 * @return
-	 */
-	public static boolean hasMeasurementDataEntered(int variableId, List<MeasurementRow> measurementRow) {
-		for (MeasurementRow row : measurementRow) {
-			for (MeasurementData data : row.getDataList()) {
-				if (data.getMeasurementVariable() != null && data.getMeasurementVariable().getTermId() == variableId
-						&& data.getValue() != null && !data.getValue().isEmpty()) {
 					return true;
 				}
 			}
@@ -594,7 +589,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		// reorder variates based on measurementrow order
 		int index = 0;
-        List<MeasurementVariable> newVariatesList = new ArrayList<>();
+		List<MeasurementVariable> newVariatesList = new ArrayList<>();
 		if (this.userSelection.getMeasurementRowList() != null) {
 			for (MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 				if (index == 0) {
@@ -633,8 +628,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			this.removeCodeVariablesIfNeeded(this.userSelection.getStudyLevelConditions(),
 					AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 			// set value of breeding method code back to code after saving
-			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
-					this.ontologyService);
+			SettingsUtil
+					.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService);
 			// remove selection variates from traits list
 			this.removeSelectionVariatesFromTraits(this.userSelection.getBaselineTraitsList());
 		}
@@ -735,16 +730,15 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Removes the hidden variables.
-     * @param settingList
-     * @param hiddenVarList
+	 * @param settingList
+	 * @param hiddenVarList
 	 */
 	private void removeHiddenVariables(List<SettingDetail> settingList, String hiddenVarList) {
 		if (settingList != null) {
 
 			Iterator<SettingDetail> iter = settingList.iterator();
 			while (iter.hasNext()) {
-                if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(),
-                        hiddenVarList)) {
+				if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), hiddenVarList)) {
 					iter.remove();
 				}
 			}
@@ -753,8 +747,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs)
 			throws MiddlewareException {
-        Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
-        Map<String, SettingDetail> removedConditionsMap = new HashMap<>();
+		Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+		Map<String, SettingDetail> removedConditionsMap = new HashMap<>();
 		if (workbook != null && idCodeNamePairs != null && !"".equalsIgnoreCase(idCodeNamePairs)) {
 			// we get a map so we can check easily instead of traversing it again
 			for (MeasurementVariable var : workbook.getConditions()) {
@@ -781,19 +775,19 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					String codeTermId = tokenizerPair.nextToken();
 					String nameTermId = tokenizerPair.nextToken();
 
-					Method method = getMethod(studyConditionMap,idTermId,codeTermId,programUUID);
-					
+					Method method = getMethod(studyConditionMap, idTermId, codeTermId, programUUID);
+
 					// add code to the removed conditions if code is not yet in the list
 					if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null
 							&& removedConditionsMap.get(codeTermId) == null) {
-						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, codeTermId, method == null ? ""
-								: method.getMcode(), this.getCurrentIbdbUserId().toString());
+						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, codeTermId,
+								method == null ? "" : method.getMcode(), this.getCurrentIbdbUserId().toString());
 					}
 
 					// add name to the removed conditions if name is not yet in the list
 					if (studyConditionMap.get(nameTermId) != null && removedConditionsMap.get(nameTermId) == null) {
-						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId, method == null ? ""
-								: method.getMname(), this.getCurrentIbdbUserId().toString());
+						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId,
+								method == null ? "" : method.getMname(), this.getCurrentIbdbUserId().toString());
 
 					}
 				}
@@ -801,25 +795,23 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	protected Method getMethod(Map<String, MeasurementVariable> studyConditionMap, 
-			String idTermId, String codeTermId, String programUUID) throws MiddlewareQueryException {
+	protected Method getMethod(Map<String, MeasurementVariable> studyConditionMap, String idTermId, String codeTermId, String programUUID)
+			throws MiddlewareQueryException {
 		Method method = null;
 		if (studyConditionMap.get(idTermId) != null) {
-			method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : 
-						this.fieldbookMiddlewareService.getMethodById(
-								Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
+			method = studyConditionMap.get(idTermId).getValue().isEmpty() ?
+					null :
+					this.fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
 		} else if (studyConditionMap.get(codeTermId) != null) {
-			method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : 
-						this.fieldbookMiddlewareService.getMethodByCode(
-								studyConditionMap.get(codeTermId).getValue(),
-									programUUID);
+			method = studyConditionMap.get(codeTermId).getValue().isEmpty() ?
+					null :
+					this.fieldbookMiddlewareService.getMethodByCode(studyConditionMap.get(codeTermId).getValue(), programUUID);
 		}
 		return method;
 	}
 
 	private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap,
-			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) 
-					throws MiddlewareException {
+			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) throws MiddlewareException {
 		if (removedConditionsMap.get(id) == null) {
 			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName(), null));
 		}
@@ -834,7 +826,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	private void removeCodeVariablesIfNeeded(List<SettingDetail> variableList, String idCodeNamePairs) {
-        Map<String, SettingDetail> variableListMap = new HashMap<>();
+		Map<String, SettingDetail> variableListMap = new HashMap<>();
 		if (variableList != null) {
 			for (SettingDetail setting : variableList) {
 				if (setting != null) {
@@ -885,7 +877,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 */
 	protected List<SettingDetail> getSettingDetailsOfSection(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form,
 			String variableList) {
-        List<SettingDetail> settingDetails = new ArrayList<>();
+		List<SettingDetail> settingDetails = new ArrayList<>();
 
 		StringTokenizer token = new StringTokenizer(variableList, ",");
 		while (token.hasMoreTokens()) {
@@ -941,69 +933,66 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		this.userSelection = userSelection;
 	}
 
-    protected void addVariableInDeletedList(List<SettingDetail> currentList, int mode,
-            int variableId,boolean createNewSettingIfNull) {
-        SettingDetail newSetting = null;
-        for (SettingDetail setting : currentList) {
-            if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-                newSetting = setting;
-            }
-        }
+	protected void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId, boolean createNewSettingIfNull)
+			throws MiddlewareException {
+		SettingDetail newSetting = null;
+		for (SettingDetail setting : currentList) {
+			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+				newSetting = setting;
+			}
+		}
 
-        if (newSetting == null && createNewSettingIfNull) {
-            try {
-                newSetting = createSettingDetail(variableId, "");
-                newSetting.getVariable().setOperation(Operation.UPDATE);
-            } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        } else if (newSetting == null) {
-            return;
-        }
+		if (newSetting == null && createNewSettingIfNull) {
+			try {
+				newSetting = createSettingDetail(variableId, "", "");
+				newSetting.getVariable().setOperation(Operation.UPDATE);
+			} catch (MiddlewareQueryException e) {
+				LOG.error(e.getMessage(), e);
+			}
+		} else if (newSetting == null) {
+			return;
+		}
 
-        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-            if (userSelection.getDeletedStudyLevelConditions() == null) {
-                userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
-            }
-            userSelection.getDeletedStudyLevelConditions().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()
-                || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
-            if (userSelection.getDeletedPlotLevelList() == null) {
-                userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
-            }
-            userSelection.getDeletedPlotLevelList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-            if (userSelection.getDeletedBaselineTraitsList() == null) {
-                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-            }
-            userSelection.getDeletedBaselineTraitsList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
-            if (userSelection.getDeletedBaselineTraitsList() == null) {
-                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-            }
-            userSelection.getDeletedBaselineTraitsList().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
-            if (userSelection.getDeletedNurseryConditions() == null) {
-                userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
-            }
-            userSelection.getDeletedNurseryConditions().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
-            if (userSelection.getDeletedTrialLevelVariables() == null) {
-                userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
-            }
-            userSelection.getDeletedTrialLevelVariables().add(newSetting);
-        } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
-            if (userSelection.getDeletedTreatmentFactors() == null) {
-                userSelection.setDeletedTreatmentFactors(new ArrayList<SettingDetail>());
-            }
-            userSelection.getDeletedTreatmentFactors().add(newSetting);
-        }
-    }
+		if (mode == VariableType.STUDY_DETAIL.getId()) {
+			if (this.userSelection.getDeletedStudyLevelConditions() == null) {
+				this.userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
+			}
+			this.userSelection.getDeletedStudyLevelConditions().add(newSetting);
+		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
+			if (this.userSelection.getDeletedPlotLevelList() == null) {
+				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
+			}
+			this.userSelection.getDeletedPlotLevelList().add(newSetting);
+		} else if (mode == VariableType.TRAIT.getId()) {
+			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
+				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+			}
+			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
+		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
+			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
+				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+			}
+			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
+		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
+			if (this.userSelection.getDeletedNurseryConditions() == null) {
+				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+			}
+			this.userSelection.getDeletedNurseryConditions().add(newSetting);
+		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
+			if (this.userSelection.getDeletedTrialLevelVariables() == null) {
+				this.userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
+			}
+			this.userSelection.getDeletedTrialLevelVariables().add(newSetting);
+		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
+			if (this.userSelection.getDeletedTreatmentFactors() == null) {
+				this.userSelection.setDeletedTreatmentFactors(new ArrayList<SettingDetail>());
+			}
+			this.userSelection.getDeletedTreatmentFactors().add(newSetting);
+		}
+	}
 
 	public void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}
-	
-	
 
 }

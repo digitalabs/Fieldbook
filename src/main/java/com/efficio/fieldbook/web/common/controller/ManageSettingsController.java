@@ -1,9 +1,12 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.*;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -21,16 +24,13 @@ import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataMana
 import org.generationcp.middleware.manager.ontology.daoElements.OntologyVariableInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.efficio.fieldbook.web.common.bean.PropertyTreeSummary;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -105,7 +105,7 @@ public class ManageSettingsController extends SettingsController {
 				variableFilterOptions.getVariableTypes().addAll(selectedVariableTypes);
 
 				HashSet<Integer> filteredVariables = new HashSet<>();
-				if(!showHiddenVariables) {
+				if (!showHiddenVariables) {
 					filteredVariables.addAll(filterOutVariablesByVariableType(selectedVariableTypes, isTrial));
 				}
 
@@ -124,16 +124,16 @@ public class ManageSettingsController extends SettingsController {
 				PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
 				propertyTreeList.add(propertyTree);
 
-				}
+			}
 
 			// Todo: what to make of this.fieldbookMiddlewareService.filterStandardVariablesByIsAIds(...)
 
 		} catch (MiddlewareException e) {
 			LOG.error(e.getMessage(), e);
-					}
+		}
 
 		return propertyTreeList;
-				}
+	}
 
 	private List<Integer> filterOutVariablesByVariableType(Set<VariableType> selectedVariableTypes, boolean isTrial) {
 		List<Integer> cvTermIDs = new ArrayList<>();
@@ -206,14 +206,14 @@ public class ManageSettingsController extends SettingsController {
 	/**
 	 * Adds the new setting details.
 	 *
-	 * @param mode the mode
+	 * @param mode       the mode
 	 * @param newDetails the new details
 	 * @return the string
 	 * @throws Exception the exception
 	 */
 	private void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception {
 		SettingsUtil.addNewSettingDetails(mode, newDetails, userSelection);
-			}
+	}
 
 	private Operation removeVarFromDeletedList(SettingVariable var, int mode) {
 		List<SettingDetail> settingsList = new ArrayList<SettingDetail>();
@@ -293,41 +293,45 @@ public class ManageSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
-	public String deleteVariable(@PathVariable int mode, @PathVariable int variableId) {
-		Map<String, String> idNameRetrieveSaveMap = this.fieldbookService.getIdNamePairForRetrieveAndSave();
-		if (mode == VariableType.STUDY_DETAIL.getId()) {
+	public ResponseEntity<String> deleteVariable(@PathVariable int mode, @PathVariable int variableId) {
+		try {
+			Map<String, String> idNameRetrieveSaveMap = this.fieldbookService.getIdNamePairForRetrieveAndSave();
+			if (mode == VariableType.STUDY_DETAIL.getId()) {
 
-			this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId, true);
-			SettingsUtil.deleteVariableInSession(userSelection.getStudyLevelConditions(),
-					variableId);
-			if (idNameRetrieveSaveMap.get(variableId) != null) {
-				//special case so we must delete it as well
-				this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode,
-						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)), true);
-				SettingsUtil.deleteVariableInSession(this.userSelection.getStudyLevelConditions(),
-						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
+				this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId, true);
+				SettingsUtil.deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
+				if (idNameRetrieveSaveMap.get(variableId) != null) {
+					//special case so we must delete it as well
+					this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode,
+							Integer.parseInt(idNameRetrieveSaveMap.get(variableId)), true);
+					SettingsUtil.deleteVariableInSession(this.userSelection.getStudyLevelConditions(),
+							Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
+				}
+			} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
+				this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId, true);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);
+			} else if (mode == VariableType.TRAIT.getId()) {
+				this.addVariableInDeletedList(this.userSelection.getBaselineTraitsList(), mode, variableId, true);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getBaselineTraitsList(), variableId);
+			} else if (mode == VariableType.SELECTION_METHOD.getId()) {
+				this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId, true);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
+			} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
+				this.addVariableInDeletedList(this.userSelection.getNurseryConditions(), mode, variableId, true);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getNurseryConditions(), variableId);
+			} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
+				this.addVariableInDeletedList(this.userSelection.getTreatmentFactors(), mode, variableId, true);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getTreatmentFactors(), variableId);
+			} else {
+				this.addVariableInDeletedList(this.userSelection.getTrialLevelVariableList(), mode, variableId, true);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getTrialLevelVariableList(), variableId);
 			}
-		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId, true);
-			SettingsUtil.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);
-		} else if (mode == VariableType.TRAIT.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getBaselineTraitsList(), mode, variableId, true);
-			SettingsUtil.deleteVariableInSession(this.userSelection.getBaselineTraitsList(), variableId);
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId, true);
-			SettingsUtil.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
-		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getNurseryConditions(), mode, variableId, true);
-			SettingsUtil.deleteVariableInSession(this.userSelection.getNurseryConditions(), variableId);
-		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getTreatmentFactors(), mode, variableId, true);
-			SettingsUtil.deleteVariableInSession(this.userSelection.getTreatmentFactors(), variableId);
-		} else {
-			this.addVariableInDeletedList(this.userSelection.getTrialLevelVariableList(), mode, variableId,true);
-			SettingsUtil.deleteVariableInSession(this.userSelection.getTrialLevelVariableList(),
-					variableId);
+		} catch (MiddlewareException e) {
+			LOG.error(e.getMessage(), e);
+			return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
 		}
-		return "";
+
+		return new ResponseEntity<>("", HttpStatus.OK);
 	}
 
 	@ResponseBody
@@ -345,7 +349,6 @@ public class ManageSettingsController extends SettingsController {
 
 		return "";
 	}
-
 
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)

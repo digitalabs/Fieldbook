@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -531,6 +532,7 @@ public class WorkbookUtil {
 			List<Integer> expDesignConstants = AppConstants.EXP_DESIGN_VARIABLES.getIntegerList();
 			for (MeasurementVariable condition : conditions) {
 				if (expDesignConstants.contains(condition.getTermId())) {
+					condition.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 					expDesignVariables.add(condition);
 				}
 			}

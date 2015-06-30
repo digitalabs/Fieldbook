@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -14,6 +17,7 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +25,8 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -49,6 +55,53 @@ public class SettingsServiceImpl implements SettingsService {
 	public List<SettingDetail> retrieveTrialSettings(Workbook workbook) {
 		throw new UnsupportedOperationException("Currently in the works");
 	}
+
+	@Override
+	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection, int currentIbDbUserId, String programUUID) throws MiddlewareQueryException {
+        
+		String variableName;
+		StandardVariable stdVar = this.getCachedStandardVariable(id, userSelection);
+		
+         if (name != null && !name.isEmpty()) {
+             variableName = name;
+         } else {
+             variableName = stdVar.getName();
+         }
+         
+         if (stdVar != null && stdVar.getName() != null) {
+			SettingVariable svar =
+					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
+							stdVar.getMethod().getName(), null, stdVar.getDataType().getName(), stdVar
+									.getDataType().getId(), stdVar.getConstraints() != null
+									&& stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
+							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
+									.getMaxValue() : null);
+             svar.setCvTermId(stdVar.getId());
+             svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+             svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
+             svar.setOperation(Operation.ADD);
+
+			List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
+                 SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+                 if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
+                     settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+                 } else if (id == TermId.STUDY_UID.getId()) {
+                     settingDetail.setValue(String.valueOf(currentIbDbUserId));
+                 } else if (id == TermId.STUDY_UPDATE.getId()) {
+                     settingDetail.setValue(DateUtil.getCurrentDateAsStringValue());
+                 }
+                 settingDetail.setPossibleValuesToJson(possibleValues);
+			List<ValueReference> possibleValuesFavorite =
+					this.fieldbookService.getAllPossibleValuesFavorite(id, programUUID);
+                 settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+                 settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                 return settingDetail;
+         } else {
+             SettingVariable svar = new SettingVariable();
+             svar.setCvTermId(stdVar.getId());
+             return new SettingDetail(svar, null, null, false);
+         }
+ }
 
 	@Override
 	public List<LabelFields> retrieveTrialSettingsAsLabels(Workbook workbook) {
@@ -203,4 +256,22 @@ public class SettingsServiceImpl implements SettingsService {
 		return managementDetailList;
 	}
 
+	 /**
+     * Get standard variable.
+     *
+     * @param id the id
+     * @return the standard variable
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    protected StandardVariable getCachedStandardVariable(int id, UserSelection userSelection) throws MiddlewareQueryException {
+		StandardVariable variable = userSelection.getCacheStandardVariable(id);
+    	if (variable == null) {
+			variable = this.fieldbookMiddlewareService.getStandardVariable(id);
+    		if (variable != null) {
+				userSelection.putStandardVariableInCache(variable);
+    		}
+    	}
+    	
+    	return variable;
+    }
 }

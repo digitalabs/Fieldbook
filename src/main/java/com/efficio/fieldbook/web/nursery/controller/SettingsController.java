@@ -103,7 +103,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getNurseryTool(), null, null);
 			templateSettingFilter.setIsDefaultToNull();
 			List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
-			templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(this.getCurrentProjectId()), "", null, "",
+			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "",
 					false));
 			return templateSettingsList;
 
@@ -111,7 +111,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
-		return new ArrayList<TemplateSetting>();
+        return new ArrayList<>();
 	}
 
 	/**
@@ -126,7 +126,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					new TemplateSetting(null, Integer.valueOf(this.getCurrentProjectId()), null, this.getTrialTool(), null, null);
 			templateSettingFilter.setIsDefaultToNull();
 			List<TemplateSetting> templateSettingsList = this.workbenchService.getTemplateSettings(templateSettingFilter);
-			templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(this.getCurrentProjectId()), "", null, "",
+			templateSettingsList.add(0, new TemplateSetting(0, Integer.valueOf(this.getCurrentProjectId()), "", null, "",
 					false));
 			return templateSettingsList;
 
@@ -134,7 +134,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
-		return new ArrayList<TemplateSetting>();
+        return new ArrayList<>();
 	}
 
 	/**
@@ -150,7 +150,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
-		return new ArrayList<StudyDetails>();
+        return new ArrayList<>();
 	}
 
 	/**
@@ -166,7 +166,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingsController.LOG.error(e.getMessage(), e);
 		}
 
-		return new ArrayList<StudyDetails>();
+        return new ArrayList<>();
 	}
 
 	/**
@@ -188,7 +188,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 */
 	protected List<String> buildRequiredVariablesLabel(String requiredFields, boolean hasLabels) {
 
-		List<String> requiredVariables = new ArrayList<String>();
+        List<String> requiredVariables = new ArrayList<>();
 		StringTokenizer token = new StringTokenizer(requiredFields, ",");
 		while (token.hasMoreTokens()) {
 			if (hasLabels) {
@@ -243,7 +243,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			throws MiddlewareException {
 
 		// create a map of id and its id-code-name combination
-		Map<String, String> idCodeNameMap = new HashMap<String, String>();
+        Map<String, String> idCodeNameMap = new HashMap<>();
 		if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
 			StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
 			if (tokenizer.hasMoreTokens()) {
@@ -256,7 +256,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		// save hidden conditions in a map
-		Map<String, SettingDetail> variablesMap = new HashMap<String, SettingDetail>();
+        Map<String, SettingDetail> variablesMap = new HashMap<>();
 		if (variables != null) {
 			for (SettingDetail variable : this.userSelection.getRemovedConditions()) {
 				variablesMap.put(variable.getVariable().getCvTermId().toString(), variable);
@@ -264,7 +264,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 
 		for (SettingDetail variable : variables) {
-			Integer stdVar = null;
+            Integer  stdVar;
 			if (variable.getVariable().getCvTermId() != null) {
 				stdVar = variable.getVariable().getCvTermId();
 			} else {
@@ -354,7 +354,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	protected SettingDetail createSettingDetail(int id, String name, String role) throws MiddlewareException {
-		String variableName = "";
+            String variableName;
 		StandardVariable stdVar = this.getStandardVariable(id);
 		if (name != null && !name.isEmpty()) {
 			variableName = name;
@@ -444,7 +444,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints()
 									.getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
-			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+			svar.setCropOntologyId(
+                    stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			return svar;
 		}
@@ -593,7 +594,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		// reorder variates based on measurementrow order
 		int index = 0;
-		List<MeasurementVariable> newVariatesList = new ArrayList<MeasurementVariable>();
+        List<MeasurementVariable> newVariatesList = new ArrayList<>();
 		if (this.userSelection.getMeasurementRowList() != null) {
 			for (MeasurementRow row : this.userSelection.getMeasurementRowList()) {
 				if (index == 0) {
@@ -734,15 +735,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	/**
 	 * Removes the hidden variables.
-	 *
-
+     * @param settingList
+     * @param hiddenVarList
 	 */
 	private void removeHiddenVariables(List<SettingDetail> settingList, String hiddenVarList) {
 		if (settingList != null) {
 
 			Iterator<SettingDetail> iter = settingList.iterator();
 			while (iter.hasNext()) {
-				if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), hiddenVarList)) {
+                if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(),
+                        hiddenVarList)) {
 					iter.remove();
 				}
 			}
@@ -751,8 +753,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs)
 			throws MiddlewareException {
-		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
-		Map<String, SettingDetail> removedConditionsMap = new HashMap<String, SettingDetail>();
+        Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
+        Map<String, SettingDetail> removedConditionsMap = new HashMap<>();
 		if (workbook != null && idCodeNamePairs != null && !"".equalsIgnoreCase(idCodeNamePairs)) {
 			// we get a map so we can check easily instead of traversing it again
 			for (MeasurementVariable var : workbook.getConditions()) {
@@ -781,7 +783,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 					Method method = getMethod(studyConditionMap,idTermId,codeTermId,programUUID);
 					
-
 					// add code to the removed conditions if code is not yet in the list
 					if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null
 							&& removedConditionsMap.get(codeTermId) == null) {
@@ -793,6 +794,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 					if (studyConditionMap.get(nameTermId) != null && removedConditionsMap.get(nameTermId) == null) {
 						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId, method == null ? ""
 								: method.getMname(), this.getCurrentIbdbUserId().toString());
+
 					}
 				}
 			}
@@ -832,7 +834,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	private void removeCodeVariablesIfNeeded(List<SettingDetail> variableList, String idCodeNamePairs) {
-		Map<String, SettingDetail> variableListMap = new HashMap<String, SettingDetail>();
+        Map<String, SettingDetail> variableListMap = new HashMap<>();
 		if (variableList != null) {
 			for (SettingDetail setting : variableList) {
 				if (setting != null) {
@@ -883,7 +885,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 */
 	protected List<SettingDetail> getSettingDetailsOfSection(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form,
 			String variableList) {
-		List<SettingDetail> settingDetails = new ArrayList<SettingDetail>();
+        List<SettingDetail> settingDetails = new ArrayList<>();
 
 		StringTokenizer token = new StringTokenizer(variableList, ",");
 		while (token.hasMoreTokens()) {
@@ -938,6 +940,65 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected void setUserSelection(UserSelection userSelection) {
 		this.userSelection = userSelection;
 	}
+
+    protected void addVariableInDeletedList(List<SettingDetail> currentList, int mode,
+            int variableId,boolean createNewSettingIfNull) {
+        SettingDetail newSetting = null;
+        for (SettingDetail setting : currentList) {
+            if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+                newSetting = setting;
+            }
+        }
+
+        if (newSetting == null && createNewSettingIfNull) {
+            try {
+                newSetting = createSettingDetail(variableId, "");
+                newSetting.getVariable().setOperation(Operation.UPDATE);
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        } else if (newSetting == null) {
+            return;
+        }
+
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            if (userSelection.getDeletedStudyLevelConditions() == null) {
+                userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedStudyLevelConditions().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()
+                || mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
+            if (userSelection.getDeletedPlotLevelList() == null) {
+                userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedPlotLevelList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+            if (userSelection.getDeletedBaselineTraitsList() == null) {
+                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedBaselineTraitsList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+            if (userSelection.getDeletedBaselineTraitsList() == null) {
+                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedBaselineTraitsList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+            if (userSelection.getDeletedNurseryConditions() == null) {
+                userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedNurseryConditions().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+            if (userSelection.getDeletedTrialLevelVariables() == null) {
+                userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedTrialLevelVariables().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+            if (userSelection.getDeletedTreatmentFactors() == null) {
+                userSelection.setDeletedTreatmentFactors(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedTreatmentFactors().add(newSetting);
+        }
+    }
 
 	public void setContextUtil(ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;

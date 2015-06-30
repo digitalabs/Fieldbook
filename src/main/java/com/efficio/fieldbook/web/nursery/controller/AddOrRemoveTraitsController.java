@@ -33,7 +33,6 @@ import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
@@ -62,9 +61,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 
 	@Resource
 	private MeasurementsGeneratorService measurementsGeneratorService;
-
-	@Resource
-	private ValidationService validationService;
 
 	@Resource
 	private PaginationListSelection paginationListSelection;

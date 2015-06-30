@@ -186,7 +186,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
 							continue;
 						}
-					} 
+					}
 
 					result.add(ref);
 				}
@@ -504,6 +504,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return null;
 	}
 
+
 	protected String getBreedingMethodByCode(String code) throws MiddlewareQueryException {
 		Method method = this.fieldbookMiddlewareService.getMethodByCode(code,
 				contextUtil.getCurrentProgramUUID());
@@ -512,6 +513,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 		return "";
 	}
+
 
 	private String getBreedingMethodByName(String name) throws MiddlewareQueryException {
 		Method method = this.fieldbookMiddlewareService.getMethodByName(name);
@@ -647,7 +649,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 							Method method =
 									studyConditionMap.get(idTermId).getValue().isEmpty() ? null : this.fieldbookMiddlewareService
 											.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
-							
+
 							// add code if it is not yet in the list
 							workbook.getConditions().add(this.createMeasurementVariable(codeTermId, method == null ? "" : method.getMcode(), Operation.ADD, measurementVar.getRole()));
 
@@ -899,7 +901,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 	}
 
-	private void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
+    @Override
+    public void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
 		if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
 				&& !workbook.getTrialConditions().isEmpty()) {
 
@@ -910,7 +913,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 				String entry = idNameMap.get(key);
 				nameIdMap.put(entry, key);
 			}
-			int index = 0;
+           
 			for (MeasurementVariable variable : workbook.getTrialConditions()) {
 				for (MeasurementRow row : workbook.getTrialObservations()) {
 					MeasurementData data = row.getMeasurementData(variable.getTermId());
@@ -921,13 +924,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 						String pairId = idNameMap.get(String.valueOf(variable.getTermId()));
 						if (pairId == null) {
 							pairId = nameIdMap.get(String.valueOf(variable.getTermId()));
+
+                            if (pairId != null){
+ 
 							idTerm = Integer.valueOf(pairId);
-						}
+                            	
 						MeasurementData pairData = row.getMeasurementData(Integer.valueOf(pairId));
 
 						MeasurementData idData = row.getMeasurementData(idTerm);
+                                 
 						if (idData != null) {
-							List<ValueReference> possibleValues = this.getVariablePossibleValues(idData.getMeasurementVariable());
+                                 	List<ValueReference> possibleValues = getVariablePossibleValues(idData.getMeasurementVariable());
 							for (ValueReference ref : possibleValues) {
 								if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(pairData.getValue())) {
 									actualNameVal = ref.getName();
@@ -935,10 +942,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 								}
 							}
 						}
+                            }
+                            
+                        }
 
 						MeasurementData newData = new MeasurementData(variable.getName(), actualNameVal);
 						newData.setMeasurementVariable(variable);
-						row.getDataList().add(index, newData);
+                        row.getDataList().add(row.getDataList().size()-1, newData);
+                        
 					} else if (nameIdMap.get(String.valueOf(variable.getTermId())) != null) {
 						Integer idTerm = Integer.valueOf(nameIdMap.get(String.valueOf(variable.getTermId())));
 						MeasurementData idData = row.getMeasurementData(idTerm);
@@ -955,7 +966,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						}
 					}
 				}
-				index++;
+               
 			}
 		}
 	}

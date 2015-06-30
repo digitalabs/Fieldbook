@@ -14,8 +14,6 @@ package com.efficio.fieldbook.web.trial.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,7 +30,6 @@ import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 @RequestMapping({"/TrialManager", ManageTrialController.URL})
 public class ManageTrialController extends AbstractBaseFieldbookController {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ManageTrialController.class);
 	/** The Constant URL. */
 	public static final String URL = "/TrialManager/manageTrial";
 

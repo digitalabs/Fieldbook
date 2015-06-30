@@ -6,7 +6,9 @@ import java.util.List;
 import org.generationcp.middleware.manager.GermplasmNameType;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BracketsExpression implements Expression {
 
 	public static final String KEY = "[BRACKETS]";

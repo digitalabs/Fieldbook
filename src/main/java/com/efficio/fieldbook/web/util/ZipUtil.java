@@ -54,7 +54,7 @@ public class ZipUtil {
 
 			ZipUtil.LOG.debug("Done");
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			ZipUtil.LOG.error("Zipping the file was not successful", ex);
 		}
 	}
 }

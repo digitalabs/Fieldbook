@@ -113,12 +113,14 @@ if (typeof (BreedingMethodsFunctions) === 'undefined') {
 			return selectItemList;
 		},
 
-		// FIXME : change declaration so function is not accessible to the outside
+
 		convertMethodToSelectItem: function(method) {
+			'use strict';
 			return {
-				'id': method.mid,
-				'text': method.mname + (method.mcode !== undefined ? ' - ' + method.mcode : ''),
-				'description': method.mdesc
+				id: method.mid,
+				text: method.mname + (method.mcode !== undefined ? ' - ' + method.mcode : ''),
+				description: method.mdesc,
+				suffix: method.suffix
 			};
 		},
 

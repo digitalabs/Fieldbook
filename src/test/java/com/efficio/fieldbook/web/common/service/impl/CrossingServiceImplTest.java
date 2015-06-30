@@ -98,8 +98,10 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testApplyCrossNameSettingToImportedCrosses() throws MiddlewareQueryException {
 
-		CrossNameSetting setting = this.createCrossNameSetting();
-		this.crossingService.applyCrossNameSettingToImportedCrosses(setting, this.importedCrossesList.getImportedCrosses());
+		CrossSetting crossSetting = createCrossSetting();
+		CrossNameSetting setting = crossSetting.getCrossNameSetting();
+
+		this.crossingService.applyCrossNameSettingToImportedCrosses(crossSetting, this.importedCrossesList.getImportedCrosses());
 
 		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
@@ -132,38 +134,43 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testBuildDesignationNameInSequenceDefaultSetting() {
 
+		CrossSetting crossSetting = createCrossSetting();
 		CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix("A");
 		setting.setSuffix("B");
 
-		String designationName = this.crossingService.buildDesignationNameInSequence(1, setting);
+		crossSetting.setCrossNameSetting(setting);
+		String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
 		Assert.assertEquals("A1B", designationName);
 	}
 
 	@Test
 	public void testBuildDesignationNameInSequenceWithSpacesInPrefixSuffix() {
 
+		CrossSetting crossSetting = createCrossSetting();
 		CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix("A");
 		setting.setSuffix("B");
 		setting.setAddSpaceBetweenPrefixAndCode(true);
 		setting.setAddSpaceBetweenSuffixAndCode(true);
 
-		String designationName = this.crossingService.buildDesignationNameInSequence(1, setting);
+		crossSetting.setCrossNameSetting(setting);
+		String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
 		Assert.assertEquals("A 1 B", designationName);
 	}
 
 	@Test
 	public void testBuildDesignationNameInSequenceWithNumOfDigits() {
 
-		CrossNameSetting setting = this.createCrossNameSetting();
+		CrossSetting crossSetting = createCrossSetting();
+		CrossNameSetting setting = crossSetting.getCrossNameSetting();
 		setting.setAddSpaceBetweenPrefixAndCode(true);
 		setting.setAddSpaceBetweenSuffixAndCode(true);
 		setting.setNumOfDigits(3);
 		setting.setPrefix("A");
 		setting.setSuffix("B");
 
-		String designationName = this.crossingService.buildDesignationNameInSequence(1, setting);
+		String designationName = this.crossingService.buildDesignationNameInSequence(null, 1, crossSetting);
 		Assert.assertEquals("A 001 B", designationName);
 	}
 
@@ -188,9 +195,10 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testBuildSuffixStringDefault() {
+
 		CrossNameSetting setting = new CrossNameSetting();
 		setting.setSuffix("  B   ");
-		String suffix = this.crossingService.buildSuffixString(setting);
+		String suffix = this.crossingService.buildSuffixString(setting, setting.getSuffix());
 
 		Assert.assertEquals("B", suffix);
 	}
@@ -200,7 +208,7 @@ public class CrossingServiceImplTest {
 		CrossNameSetting setting = new CrossNameSetting();
 		setting.setSuffix("   B   ");
 		setting.setAddSpaceBetweenSuffixAndCode(true);
-		String suffix = this.crossingService.buildSuffixString(setting);
+		String suffix = this.crossingService.buildSuffixString(setting, setting.getSuffix());
 
 		Assert.assertEquals(" B", suffix);
 	}
@@ -383,6 +391,10 @@ public class CrossingServiceImplTest {
 		cross.setMaleDesig("MALE-54321");
 		cross.setMaleGid("54321");
 		return cross;
+	}
+
+	private CrossSetting createCrossSetting() {
+		return new CrossSetting(null, null, createCrossNameSetting(), null);
 	}
 
 	private CrossNameSetting createCrossNameSetting() {

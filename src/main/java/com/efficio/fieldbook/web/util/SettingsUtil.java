@@ -40,6 +40,7 @@ import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.hazelcast.util.StringUtil;
 
 /**
  * The Class SettingsUtil.
@@ -139,7 +140,7 @@ public class SettingsUtil {
 			}
 
 			variable.setPSMRFromStandardVariable(standardVariable, settingDetail.getRole().name());
-			
+
 			if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) || variable.getCvTermId().equals(
 					Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())))
 					&& "0".equals(settingDetail.getValue())) {
@@ -263,7 +264,7 @@ public class SettingsUtil {
 		return constants;
 	}
 
-	protected static void setNameAndOperationFromSession(List<SettingDetail> listWithValue, List<SettingDetail> listFromSession) {
+    protected static void setNameAndOperationFromSession(List<SettingDetail> listWithValue, List<SettingDetail> listFromSession, boolean isDesignGenerated) {
 		if (listWithValue == null || listFromSession == null) {
 			return;
 		}
@@ -271,10 +272,15 @@ public class SettingsUtil {
 		for (SettingDetail detailWithValue : listWithValue) {
 			for (SettingDetail detailFromSession : listFromSession) {
 				if (detailFromSession.getVariable().getCvTermId().equals(detailWithValue.getVariable().getCvTermId())) {
+					
 					SettingVariable variable = detailWithValue.getVariable();
 					detailWithValue.setPossibleValues(detailFromSession.getPossibleValues());
 					variable.setName(detailFromSession.getVariable().getName());
 					variable.setOperation(detailFromSession.getVariable().getOperation());
+                    
+                    if (isDesignGenerated && !StringUtil.isNullOrEmpty(detailFromSession.getValue()) && !detailFromSession.getValue().equalsIgnoreCase("Please Choose") ){
+                    	detailWithValue.setValue(detailFromSession.getValue());
+                    }
 				}
 			}
 		}
@@ -300,7 +306,7 @@ public class SettingsUtil {
 			Factor valueFactor;
 			levelFactor.setOperation(detail.getVariable().getOperation());
 			levelFactor.setTreatmentLabel(detail.getVariable().getName());
-			
+
 			TreatmentFactorData data = treatmentFactorItems.get(termId.toString());
 
 			if (data != null) {
@@ -351,10 +357,11 @@ public class SettingsUtil {
 		// for properties
 		// also stored in the HTML form; e.g., value
 		if (fromNursery) {
-			SettingsUtil.setNameAndOperationFromSession(studyLevelConditions, userSelection.getStudyLevelConditions());
-			SettingsUtil.setNameAndOperationFromSession(plotsLevelList, userSelection.getPlotsLevelList());
-			SettingsUtil.setNameAndOperationFromSession(baselineTraitsList, userSelection.getBaselineTraitsList());
-			SettingsUtil.setNameAndOperationFromSession(nurseryConditions, userSelection.getNurseryConditions());
+        	
+			SettingsUtil.setNameAndOperationFromSession(studyLevelConditions, userSelection.getStudyLevelConditions(), userSelection.isDesignGenerated());
+			SettingsUtil.setNameAndOperationFromSession(plotsLevelList, userSelection.getPlotsLevelList(), false);
+			SettingsUtil.setNameAndOperationFromSession(baselineTraitsList, userSelection.getBaselineTraitsList(), false);
+			SettingsUtil.setNameAndOperationFromSession(nurseryConditions, userSelection.getNurseryConditions(), false);
 
 			// name and operation setting are no longer performed on the other setting lists provided as params in this method
 			// because those are only defined for trials
@@ -656,7 +663,9 @@ public class SettingsUtil {
 							} else if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId()))
 									&& condition.getValue() != null && !condition.getValue().isEmpty()) {
 								// set the value of code to ID for it to be selected in the popup
+
 								Method method = fieldbookMiddlewareService.getMethodByCode(condition.getValue(),programUUID);
+
 								if (method != null) {
 									settingDetail.setValue(String.valueOf(method.getMid()));
 								} else {
@@ -1286,7 +1295,7 @@ public class SettingsUtil {
 		mvar.setOperation(condition.getOperation());
 		mvar.setTermId(condition.getId());
 		mvar.setFactor(true);
-		mvar.setDataTypeId(condition.getDataTypeId());		
+		mvar.setDataTypeId(condition.getDataTypeId());
 		return mvar;
 	}
 
@@ -1702,7 +1711,7 @@ public class SettingsUtil {
 		return "";
 	}
 
-	private static List<SettingDetail> convertWorkbookFactorsToSettingDetails(List<MeasurementVariable> factors,
+    public static List<SettingDetail> convertWorkbookFactorsToSettingDetails(List<MeasurementVariable> factors,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
 
 		List<SettingDetail> plotsLevelList = new ArrayList<SettingDetail>();
@@ -1768,7 +1777,8 @@ public class SettingsUtil {
 
 	private static List<String> getSelectedVariatesPropertyNames(FieldbookService fieldbookService) throws MiddlewareQueryException {
 		List<String> names = new ArrayList<String>();
-		List<String> ids = Arrays.asList(AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(","));
+        List<String> ids = Arrays.asList(
+                AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(","));
 		for (String id : ids) {
 			Term term = fieldbookService.getTermById(Integer.valueOf(id));
 			if (term != null) {
@@ -2044,7 +2054,7 @@ public class SettingsUtil {
 		}
 	}
 
-	private static void addTrialCondition(TermId termId, ExpDesignParameterUi param, Workbook workbook,
+    public static void addTrialCondition(TermId termId, ExpDesignParameterUi param, Workbook workbook,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String programUUID) 
 					throws MiddlewareException {
 
@@ -2319,7 +2329,76 @@ public class SettingsUtil {
 	    	}
 	    	return variableIdList;
 	}
+    
+    public static void addNewSettingDetails(int mode
+			, List<SettingDetail> newDetails, UserSelection userSelection) throws Exception {
+    	
+    	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+			if (userSelection.getStudyLevelConditions() == null) {
+				userSelection.setStudyLevelConditions(newDetails);
+			} else {
+				userSelection.getStudyLevelConditions().addAll(newDetails);
+			}
 
+		} else if (mode == AppConstants.SEGMENT_PLOT.getInt()
+				|| mode == AppConstants.SEGMENT_GERMPLASM.getInt()) {
+			if (userSelection.getPlotsLevelList() == null) {
+				userSelection.setPlotsLevelList(newDetails);
+			} else {
+				userSelection.getPlotsLevelList().addAll(newDetails);
+			}
+		} else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+			if (userSelection.getBaselineTraitsList() == null) {
+				userSelection.setBaselineTraitsList(newDetails);
+			} else {
+				userSelection.getBaselineTraitsList().addAll(newDetails);
+			}
+		} else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+			if (userSelection.getSelectionVariates() == null) {
+				userSelection.setSelectionVariates(newDetails);
+			} else {
+				userSelection.getSelectionVariates().addAll(newDetails);
+			}
+		} else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+			if (userSelection.getTreatmentFactors() == null) {
+				userSelection.setTreatmentFactors(newDetails);
+			} else {
+				userSelection.getTreatmentFactors().addAll(newDetails);
+			}
+		} else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+			if (userSelection.getTrialLevelVariableList() == null) {
+				userSelection.setTrialLevelVariableList(newDetails);
+			} else {
+				userSelection.getTrialLevelVariableList().addAll(newDetails);
+			}
+		} else {
+			if (userSelection.getNurseryConditions() == null) {
+				userSelection.setNurseryConditions(newDetails);
+			} else {
+				userSelection.getNurseryConditions().addAll(newDetails);
+			}
+		}
+    }
+
+    public static void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
+        Iterator<SettingDetail> iter = variableList.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+                iter.remove();
+            }
+        }
+    }
+
+	public static void hideVariableInSession(List<SettingDetail> variableList, int variableId) {
+		 Iterator<SettingDetail> iter = variableList.iterator();
+	        while (iter.hasNext()) {
+	        	SettingDetail next = iter.next();
+	            if (next.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+	            	next.setHidden(true);
+	            }
+	        }
+		
+	}
 
 	public static void setSettingDetailRole(int mode, List<SettingDetail> newDetails) {
 		

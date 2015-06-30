@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.util.DateUtil;
@@ -52,6 +53,8 @@ public class AdvancingSourceListFactory {
 		List<AdvancingSource> rows = new ArrayList<AdvancingSource>();
 
 		String locationAbbreviation = advanceInfo.getHarvestLocationAbbreviation();
+		String locationIdString = advanceInfo.getHarvestLocationId();
+		Integer locationId = StringUtils.isEmpty(locationIdString) ? null : Integer.valueOf(locationIdString);
 		Integer methodVariateId = advanceInfo.getMethodVariateId();
 		Integer lineVariateId = advanceInfo.getLineVariateId();
 		Integer plotVariateId = advanceInfo.getPlotVariateId();
@@ -118,8 +121,10 @@ public class AdvancingSourceListFactory {
 								plantsSelected = this.getIntegerValue(row.getMeasurementDataValue(lineVariateId));
 							}
 						}
-						rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, nurseryName, season,
-								locationAbbreviation));
+						AdvancingSource source = new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, isCheck, nurseryName, season,
+								locationAbbreviation);
+						source.setLocationId(locationId);
+						rows.add(source);
 					}
 				}
 			}

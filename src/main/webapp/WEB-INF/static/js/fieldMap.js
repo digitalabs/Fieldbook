@@ -998,10 +998,6 @@ function doEnterFieldDetailsPageLoad() {
 
 	});
 
-	//if (locationSuggestionsFav.length > 0) {
-	//    $('#showFavoriteLocation').click();
-	//}
-
 	doPreselectValues(prevFieldLocationId, prevFieldId, prevBlockId);
 }
 

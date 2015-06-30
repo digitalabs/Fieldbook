@@ -19,15 +19,17 @@ import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
 public interface DesignImportService {
 
-	List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData)
+	List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData, boolean isPreview)
 			throws DesignValidationException;
-
-	Set<MeasurementVariable> getDesignMeasurementVariables(Workbook workbook, DesignImportData designImportData);
+	
+	Set<MeasurementVariable> getDesignMeasurementVariables(Workbook workbook, DesignImportData designImportData, boolean isPreview);
 
 	Set<StandardVariable> getDesignRequiredStandardVariables(Workbook workbook, DesignImportData designImportData);
-
+	
+	Set<MeasurementVariable> getMeasurementVariablesFromDataFile(Workbook workbook, DesignImportData designImportData);
+	
 	void validateDesignData(DesignImportData designImportData) throws DesignValidationException;
-
+	
 	boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData);
 
 	Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders)
@@ -35,4 +37,7 @@ public interface DesignImportService {
 
 	Set<MeasurementVariable> getDesignRequiredMeasurementVariable(Workbook workbook, DesignImportData designImportData);
 
+	Set<MeasurementVariable> extractMeasurementVariable(PhenotypicType phenotypicType,
+			Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders);
+	
 }

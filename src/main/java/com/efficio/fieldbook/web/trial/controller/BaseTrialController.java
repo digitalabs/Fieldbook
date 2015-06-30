@@ -615,4 +615,40 @@ public abstract class BaseTrialController extends SettingsController {
 
 		return info;
 	}
+	
+	protected void addMeasurementVariablesToTrialObservationIfNecessary(EnvironmentData environmentData, Workbook workbook,
+			List<MeasurementRow> trialObservations) {
+		
+		if (trialObservations == null) return;
+		
+		int x = 0;
+		for (MeasurementRow row : trialObservations){
+			
+			Map<String, String> trialDetailValues = environmentData.getEnvironments().get(x).getTrialDetailValues();
+			Map<String, String> managementDetailValues = environmentData.getEnvironments().get(x).getManagementDetailValues();
+			
+			for (MeasurementVariable measurementVariable : workbook.getTrialVariables()){
+				MeasurementData data = row.getMeasurementData(measurementVariable.getTermId());
+				if (data == null){
+					
+					String val = "";
+					String trialDetailValue = trialDetailValues.get(String.valueOf(measurementVariable.getTermId()));
+					String managementDetailValue = managementDetailValues.get(String.valueOf(measurementVariable.getTermId()));
+					
+					if (trialDetailValue != null){
+						val = trialDetailValue;
+					} else if (managementDetailValue != null){
+						val = managementDetailValue;
+					}
+					
+					MeasurementData newData = new MeasurementData(measurementVariable.getName(), val , false, measurementVariable.getDataType(), measurementVariable);
+					row.getDataList().add(newData);
+				}
+				
+			}
+			
+			x++;
+		}
+		
+	}
 }

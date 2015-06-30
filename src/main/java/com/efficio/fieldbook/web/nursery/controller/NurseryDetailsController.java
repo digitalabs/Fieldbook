@@ -136,7 +136,7 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController {
 				List<StandardVariable> stdVariables = this.ontologyService.getStandardVariables(id,
 						contextUtil.getCurrentProgramUUID());
 
-				if (stdVariables != null && stdVariables.size() > 0) {
+				if (stdVariables != null && !stdVariables.isEmpty()) {
 					result.put("stdVar", NurseryDetailsController.convertStandardVariableToJson(stdVariables.get(0)));
 				} else {
 					result.put("stdVar", null);

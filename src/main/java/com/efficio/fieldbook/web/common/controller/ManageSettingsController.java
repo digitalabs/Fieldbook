@@ -124,16 +124,16 @@ public class ManageSettingsController extends SettingsController {
 				PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
 				propertyTreeList.add(propertyTree);
 
-			}
+				}
 
 			// Todo: what to make of this.fieldbookMiddlewareService.filterStandardVariablesByIsAIds(...)
 
 		} catch (MiddlewareException e) {
 			LOG.error(e.getMessage(), e);
-		}
+					}
 
 		return propertyTreeList;
-	}
+				}
 
 	private List<Integer> filterOutVariablesByVariableType(Set<VariableType> selectedVariableTypes, boolean isTrial) {
 		List<Integer> cvTermIDs = new ArrayList<>();
@@ -206,60 +206,14 @@ public class ManageSettingsController extends SettingsController {
 	/**
 	 * Adds the new setting details.
 	 *
-	 * @param mode       the mode
+	 * @param mode the mode
 	 * @param newDetails the new details
 	 * @return the string
 	 * @throws Exception the exception
 	 */
 	private void addNewSettingDetails(int mode, List<SettingDetail> newDetails) throws Exception {
-		
-		SettingsUtil.setSettingDetailRole(mode , newDetails);
-
-		if (mode == VariableType.STUDY_DETAIL.getId()) {
-			if (this.userSelection.getStudyLevelConditions() == null) {
-				this.userSelection.setStudyLevelConditions(newDetails);
-			} else {
-				this.userSelection.getStudyLevelConditions().addAll(newDetails);
+		SettingsUtil.addNewSettingDetails(mode, newDetails, userSelection);
 			}
-
-		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
-			if (this.userSelection.getPlotsLevelList() == null) {
-				this.userSelection.setPlotsLevelList(newDetails);
-			} else {
-				this.userSelection.getPlotsLevelList().addAll(newDetails);
-			}
-		} else if (mode == VariableType.TRAIT.getId()) {
-			if (this.userSelection.getBaselineTraitsList() == null) {
-				this.userSelection.setBaselineTraitsList(newDetails);
-			} else {
-				this.userSelection.getBaselineTraitsList().addAll(newDetails);
-			}
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			if (this.userSelection.getSelectionVariates() == null) {
-				this.userSelection.setSelectionVariates(newDetails);
-			} else {
-				this.userSelection.getSelectionVariates().addAll(newDetails);
-			}
-		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
-			if (this.userSelection.getTreatmentFactors() == null) {
-				this.userSelection.setTreatmentFactors(newDetails);
-			} else {
-				this.userSelection.getTreatmentFactors().addAll(newDetails);
-			}
-		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
-			if (this.userSelection.getTrialLevelVariableList() == null) {
-				this.userSelection.setTrialLevelVariableList(newDetails);
-			} else {
-				this.userSelection.getTrialLevelVariableList().addAll(newDetails);
-			}
-		} else {
-			if (this.userSelection.getNurseryConditions() == null) {
-				this.userSelection.setNurseryConditions(newDetails);
-			} else {
-				this.userSelection.getNurseryConditions().addAll(newDetails);
-			}
-		}
-	}
 
 	private Operation removeVarFromDeletedList(SettingVariable var, int mode) {
 		List<SettingDetail> settingsList = new ArrayList<SettingDetail>();
@@ -343,33 +297,35 @@ public class ManageSettingsController extends SettingsController {
 		Map<String, String> idNameRetrieveSaveMap = this.fieldbookService.getIdNamePairForRetrieveAndSave();
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 
-			this.addVariableInDeletedList(this.userSelection.getStudyLevelConditions(), mode, variableId);
-			this.deleteVariableInSession(this.userSelection.getStudyLevelConditions(), variableId);
+			this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId, true);
+			SettingsUtil.deleteVariableInSession(userSelection.getStudyLevelConditions(),
+					variableId);
 			if (idNameRetrieveSaveMap.get(variableId) != null) {
-				// special case so we must delete it as well
-				this.addVariableInDeletedList(this.userSelection.getStudyLevelConditions(), mode,
-						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
-				this.deleteVariableInSession(this.userSelection.getStudyLevelConditions(),
+				//special case so we must delete it as well
+				this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode,
+						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)), true);
+				SettingsUtil.deleteVariableInSession(this.userSelection.getStudyLevelConditions(),
 						Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
 			}
 		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 			this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId);
 			this.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);
 		} else if (mode == VariableType.TRAIT.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getBaselineTraitsList(), mode, variableId);
-			this.deleteVariableInSession(this.userSelection.getBaselineTraitsList(), variableId);
+			this.addVariableInDeletedList(this.userSelection.getBaselineTraitsList(), mode, variableId, true);
+			SettingsUtil.deleteVariableInSession(this.userSelection.getBaselineTraitsList(), variableId);
 		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId);
-			this.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
+			this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId, true);
+			SettingsUtil.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
 		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getNurseryConditions(), mode, variableId);
-			this.deleteVariableInSession(this.userSelection.getNurseryConditions(), variableId);
+			this.addVariableInDeletedList(this.userSelection.getNurseryConditions(), mode, variableId, true);
+			SettingsUtil.deleteVariableInSession(this.userSelection.getNurseryConditions(), variableId);
 		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
-			this.addVariableInDeletedList(this.userSelection.getTreatmentFactors(), mode, variableId);
-			this.deleteVariableInSession(this.userSelection.getTreatmentFactors(), variableId);
+			this.addVariableInDeletedList(this.userSelection.getTreatmentFactors(), mode, variableId, true);
+			SettingsUtil.deleteVariableInSession(this.userSelection.getTreatmentFactors(), variableId);
 		} else {
-			this.addVariableInDeletedList(this.userSelection.getTrialLevelVariableList(), mode, variableId);
-			this.deleteVariableInSession(this.userSelection.getTrialLevelVariableList(), variableId);
+			this.addVariableInDeletedList(this.userSelection.getTrialLevelVariableList(), mode, variableId,true);
+			SettingsUtil.deleteVariableInSession(this.userSelection.getTrialLevelVariableList(),
+					variableId);
 		}
 		return "";
 	}
@@ -390,69 +346,6 @@ public class ManageSettingsController extends SettingsController {
 		return "";
 	}
 
-	private void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId) {
-		SettingDetail newSetting = null;
-		for (SettingDetail setting : currentList) {
-			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-				newSetting = setting;
-			}
-		}
-
-		if (newSetting == null) {
-			try {
-				newSetting = this.createSettingDetail(variableId, "", "");
-				newSetting.getVariable().setOperation(Operation.UPDATE);
-			} catch (MiddlewareException e) {
-				ManageSettingsController.LOG.error(e.getMessage(), e);
-			}
-		}
-
-		if (mode == VariableType.STUDY_DETAIL.getId()) {
-			if (this.userSelection.getDeletedStudyLevelConditions() == null) {
-				this.userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedStudyLevelConditions().add(newSetting);
-		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
-			if (this.userSelection.getDeletedPlotLevelList() == null) {
-				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == VariableType.TRAIT.getId()) {
-			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
-			if (this.userSelection.getDeletedNurseryConditions() == null) {
-				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedNurseryConditions().add(newSetting);
-		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
-			if (this.userSelection.getDeletedTrialLevelVariables() == null) {
-				this.userSelection.setDeletedTrialLevelVariables(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedTrialLevelVariables().add(newSetting);
-		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
-			if (this.userSelection.getDeletedTreatmentFactors() == null) {
-				this.userSelection.setDeletedTreatmentFactors(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedTreatmentFactors().add(newSetting);
-		}
-	}
-
-	private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
-		Iterator<SettingDetail> iter = variableList.iterator();
-		while (iter.hasNext()) {
-			if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-				iter.remove();
-			}
-		}
-	}
 
 	@ResponseBody
 	@RequestMapping(value = "/hasMeasurementData/{mode}", method = RequestMethod.POST)

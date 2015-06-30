@@ -160,7 +160,7 @@ public class CSVOziel {
 				try {
 					propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
 				} catch (MiddlewareQueryException e) {
-					e.printStackTrace();
+					CSVOziel.LOG.error("Write data was not successful", e);
 				}
 
 				for (MeasurementVariable variate : this.variateHeaders) {
@@ -206,7 +206,7 @@ public class CSVOziel {
 			try {
 				propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
 			} catch (MiddlewareQueryException e) {
-				e.printStackTrace();
+				CSVOziel.LOG.error("Write property data name was not successful", e);
 			}
 
 			for (MeasurementRow mRow : this.observations) {
@@ -332,7 +332,7 @@ public class CSVOziel {
 					methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
 					propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
 				} catch (MiddlewareQueryException e) {
-					e.printStackTrace();
+					CSVOziel.LOG.error("Read data of breeding method was not successful", e);
 				}
 
 				// create a map for methods
@@ -678,14 +678,10 @@ public class CSVOziel {
 
 	public void readDATACapture(File file, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) {
 
-		int variateCol = 0;
-		HashMap<String, Integer> traitsMap = new HashMap<String, Integer>();
-
 		try {
 			CsvReader csvReader = new CsvReader(file.toString());
 			csvReader.readHeaders();
-			String[] headers = csvReader.getHeaders();
-
+			
 			while (csvReader.readRecord()) {
 
 				// get name of breeding method property and get all methods
@@ -695,7 +691,7 @@ public class CSVOziel {
 					methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
 					propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
 				} catch (MiddlewareQueryException e) {
-					e.printStackTrace();
+					CSVOziel.LOG.error("Read data of breeding method was not successful", e);
 				}
 
 				// create a map for methods

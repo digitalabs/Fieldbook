@@ -54,7 +54,6 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 				String filenamePath =
 						this.fieldbookProperties.getUploadDirectory() + File.separator + studyName
 								+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
-				boolean alreadyExists = new File(filenamePath).exists();
 				List<Integer> indexes = new ArrayList<Integer>();
 				indexes.add(index);
 				List<MeasurementRow> observations =

@@ -165,6 +165,17 @@ var ImportCrosses = {
 		ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
 
 		$('#settingsNextButton').click(ImportCrosses.submitCrossImportSettings);
+		$('#breedingMethodDropdown').off('change');
+		$('#breedingMethodDropdown').on('change', function() {
+			var currentSelected = $('#breedingMethodDropdown').select2('data');
+			if (currentSelected && currentSelected.suffix) {
+				$('#crossSuffix').val(currentSelected.suffix);
+				$('#crossSuffix').prop('disabled', true);
+			} else {
+				$('#crossSuffix').val('');
+				$('#crossSuffix').prop('disabled', false);
+			}
+		});
 
 		$('#goBackToOpenCrossesButton').off('click');
 		$('#goBackToOpenCrossesButton').on('click', function() {

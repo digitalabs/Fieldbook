@@ -351,7 +351,8 @@ window.TrialSettingsManager = (function() {
 					variableUsageData: [],
 					selectedVariables: selectedVariables,
 					callback: params.callback,
-					onHideCallback: params.onHideCallback
+                    onHideCallback: params.onHideCallback,
+                    options: params.options
 				});
 			});
 
@@ -366,7 +367,8 @@ window.TrialSettingsManager = (function() {
 				variableUsageData: [],
 				selectedVariables: selectedVariables,
 				callback: params.callback,
-				onHideCallback: params.onHideCallback
+                onHideCallback: params.onHideCallback,
+                options: params.options
 			});
 		}
 	};

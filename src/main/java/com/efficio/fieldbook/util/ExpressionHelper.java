@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
  */
 public class ExpressionHelper {
 
+	public static final String PROCESS_CODE_PATTERN = "\\[([^\\]]*)]";
+
 	private ExpressionHelper() {
 
 	}

@@ -283,7 +283,7 @@ public class CreateNurseryController extends SettingsController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
-
+        //get the name of the nursery
 		String name = null;
 		for (SettingDetail nvar : form.getBasicDetails()) {
 			if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null
@@ -300,6 +300,8 @@ public class CreateNurseryController extends SettingsController {
 
 		studyLevelVariables.addAll(form.getBasicDetails());
 
+    	addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, userSelection);
+    	
 		this.addNurseryTypeFromDesignImport(studyLevelVariables);
 		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
 
@@ -320,7 +322,7 @@ public class CreateNurseryController extends SettingsController {
 		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables());
 		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions());
 		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits);
-		
+
 		Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables,
 						form.getPlotLevelVariables(), baselineTraits, this.userSelection, 
@@ -332,6 +334,29 @@ public class CreateNurseryController extends SettingsController {
 		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null);
 
 		return "success";
+	}
+
+    private void addStudyLevelVariablesFromUserSelectionIfNecessary(List<SettingDetail> studyLevelVariables,
+			UserSelection userSelection) {
+		
+    	for (SettingDetail settingDetailFromUserSelection : userSelection.getStudyLevelConditions()){
+    		
+    		boolean settingDetailExists = false;
+    		
+    		for (SettingDetail settingDetail : studyLevelVariables){
+    			if (settingDetail.getVariable().getCvTermId().intValue() == settingDetailFromUserSelection.getVariable().getCvTermId().intValue()){
+    				settingDetailExists = true;
+    				break;
+    			}
+    		}
+    		
+    		if (!settingDetailExists){
+    			studyLevelVariables.add(settingDetailFromUserSelection);
+    		}
+    		
+    	}
+    	
+		
 	}
 
 	private void addNurseryTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
@@ -733,39 +758,7 @@ public class CreateNurseryController extends SettingsController {
 	}
 
 	private void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId) {
-		SettingDetail newSetting = null;
-		for (SettingDetail setting : currentList) {
-			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-				newSetting = setting;
-			}
-		}
-
-		if (mode == VariableType.STUDY_DETAIL.getId()) {
-			if (this.userSelection.getDeletedStudyLevelConditions() == null) {
-				this.userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedStudyLevelConditions().add(newSetting);
-		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId() || mode == VariableType.EXPERIMENTAL_DESIGN.getId()) {
-			if (this.userSelection.getDeletedPlotLevelList() == null) {
-				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == VariableType.TRAIT.getId()) {
-			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-			if (this.userSelection.getDeletedBaselineTraitsList() == null) {
-				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
-			if (this.userSelection.getDeletedNurseryConditions() == null) {
-				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
-			}
-			this.userSelection.getDeletedNurseryConditions().add(newSetting);
-		}
+        this.addVariableInDeletedList(currentList, mode, variableId, false);
 	}
 
 	private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {

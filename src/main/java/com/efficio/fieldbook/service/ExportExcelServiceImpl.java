@@ -71,7 +71,6 @@ public class ExportExcelServiceImpl implements ExportExcelService {
 			// SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS
 			selectedFieldbookLabel = this.messageSource.getMessage("fieldmap.nursery.selected.nursery", null, locale); // Selected Nursery:
 		}
-		String selectedFieldbookValue = userFieldMap.getBlockName();
 
 		String orderHeader = this.messageSource.getMessage("fieldmap.trial.order", null, locale);
 		String studyHeader = this.messageSource.getMessage(isTrial ? "fieldmap.trial" : "fieldmap.nursery", null, locale);

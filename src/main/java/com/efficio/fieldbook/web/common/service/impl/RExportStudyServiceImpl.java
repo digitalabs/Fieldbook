@@ -22,6 +22,8 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
@@ -32,6 +34,8 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 @Service
 public class RExportStudyServiceImpl implements RExportStudyService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(RExportStudyServiceImpl.class);
 
 	@Resource
 	private FieldbookProperties fieldbookProperties;
@@ -47,7 +51,6 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	@Override
 	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, List<Integer> instances) {
 		String outFile = this.fieldbookProperties.getUploadDirectory() + File.separator + outputFile;
-		boolean alreadyExists = new File(outFile).exists();
 		List<MeasurementRow> observations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
 		List<MeasurementRow> trialObservations =
@@ -68,7 +71,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 			csv.writeDATAR(csvOutput, this.ontologyService);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			RExportStudyServiceImpl.LOG.error("CSV export was not successful", e);
 
 		} finally {
 			if (csvOutput != null) {

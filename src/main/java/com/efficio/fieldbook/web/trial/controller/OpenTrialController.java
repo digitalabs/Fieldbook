@@ -53,6 +53,8 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -352,10 +354,26 @@ public class OpenTrialController extends BaseTrialController {
 						this.userSelection.getExperimentalDesignVariables(),
 						contextUtil.getCurrentProgramUUID());
 
-		if (this.userSelection.getTemporaryWorkbook() != null) {
+		if (userSelection.isDesignGenerated()) {
+			
 			this.userSelection.setMeasurementRowList(null);
 			this.userSelection.getWorkbook().setOriginalObservations(null);
 			this.userSelection.getWorkbook().setObservations(null);
+			
+			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments() , workbook, userSelection.getTemporaryWorkbook().getTrialObservations());
+		
+			if (replace == 1){
+				for (MeasurementVariable mvar : userSelection.getWorkbook().getConditions()){
+					
+					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()){
+						mvar.setOperation(Operation.UPDATE);
+						break;
+					}else{
+						mvar.setOperation(Operation.ADD);
+						break;
+					}
+				}
+			}
 		}
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
@@ -765,4 +783,5 @@ public class OpenTrialController extends BaseTrialController {
 
 		return filteredObservations;
 	}
+	
 }

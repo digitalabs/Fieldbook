@@ -8,10 +8,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
+
+@Component
 public class GroupCountExpression implements Expression {
 
 	public static final String KEY = "[COUNT]";

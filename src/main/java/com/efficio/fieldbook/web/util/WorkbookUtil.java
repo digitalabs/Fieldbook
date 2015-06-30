@@ -365,6 +365,40 @@ public class WorkbookUtil {
 			}
 		}
 	}
+	
+	public static void addMeasurementDataToRowsIfNecessary(List<MeasurementVariable> variableList, List<MeasurementRow> measurementRowList,
+			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService)
+			throws MiddlewareException {
+		
+		// add new variables in measurement rows
+		for (MeasurementVariable variable : variableList) {
+				
+				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+				
+				for (MeasurementRow row : measurementRowList) {
+					
+					//only add if the measurement data doesn't exist in row
+					if (!WorkbookUtil.inMeasurementDataList(row.getDataList(), variable.getTermId())){
+						
+						MeasurementData measurementData =
+								new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
+
+						measurementData.setPhenotypeId(null);
+						int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
+						row.getDataList().add(insertIndex, measurementData);
+						
+					}
+				}
+
+				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
+						&& isVariate) {
+					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, WorkbookUtil.DUMMY_PROGRAM_UUID));
+				} else {
+					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
+				}
+			}
+		
+	}
 
 	/**
 	 * Gets the data type.

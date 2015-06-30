@@ -81,12 +81,27 @@ public class ManageSettingsController extends SettingsController {
 			@RequestParam(value = "type", required = true) Integer[] variableTypes,
 			@RequestParam(value = "classes", required = false) String[] classes, @RequestParam(required = false) boolean isTrial,
 			@RequestParam(required = false) boolean showHiddenVariables) {
+		
+		
+		// HACK! Workaround if callie is from design import
+		List<Integer> correctedVarTypes = new ArrayList<>();
+		for (Integer varType : variableTypes) {
+			// this is not a varType but a phenotype
+			if (!varType.toString().startsWith("18")) {
+				PhenotypicType phenotypicTypeById = PhenotypicType.getPhenotypicTypeById(varType);
+				correctedVarTypes.addAll(VariableType
+						.getVariableTypesIdsByPhenotype(phenotypicTypeById));
+			} else {
+				correctedVarTypes.add(varType);
+			}
+		}
+		
 		List<PropertyTreeSummary> propertyTreeList = new ArrayList<>();
 
 		try {
 			Set<VariableType> selectedVariableTypes = new HashSet<>();
 			List<String> varTypeValues = new ArrayList<>();
-			for (Integer varType : variableTypes) {
+			for (Integer varType : correctedVarTypes) {
 				selectedVariableTypes.add(VariableType.getById(varType));
 				varTypeValues.add(VariableType.getById(varType).getName());
 			}

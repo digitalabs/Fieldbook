@@ -285,7 +285,17 @@ public class DesignImportController extends SettingsController {
 
 				StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(mappedHeader.getId(),
 						contextUtil.getCurrentProgramUUID());
-
+				
+				if ("mappedEnvironmentalFactors".equals(item.getKey())) {
+					stdVar.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
+				} else if ("mappedDesignFactors".equals(item.getKey())) {
+					stdVar.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+				} else if ("mappedGermplasmFactors".equals(item.getKey())) {
+					stdVar.setPhenotypicType(PhenotypicType.GERMPLASM);
+				} else if ("mappedTraits".equals(item.getKey())) {
+					stdVar.setPhenotypicType(PhenotypicType.VARIATE);
+				}
+				
 				mappedHeader.setVariable(stdVar);
 			}
 
@@ -299,6 +309,8 @@ public class DesignImportController extends SettingsController {
 				newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
 			}
 		}
+		
+		
 
 		this.userSelection.getDesignImportData().setMappedHeaders(newMappingResults);
 	}

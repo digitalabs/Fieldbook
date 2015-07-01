@@ -266,21 +266,10 @@ public class DesignImportServiceImpl implements DesignImportService {
 		final Set<PhenotypicType> designImportRoles = new HashSet<>(Arrays.asList(new PhenotypicType[] {PhenotypicType.TRIAL_ENVIRONMENT,PhenotypicType.TRIAL_DESIGN,PhenotypicType.GERMPLASM,PhenotypicType.VARIATE}));
 		for (Entry<String,List<StandardVariable>> entryVar : variables.entrySet()) {
 			for (StandardVariable sv : entryVar.getValue()) {
-				Iterator<VariableType> varTypeIt = sv.getVariableTypes().iterator();
-
-				while (varTypeIt.hasNext()) {
-					VariableType variableType = sv.getVariableTypes().iterator().next();
-
-					if (Objects.equals(variableType,null)) {
-						continue;
-					}
-
+				for (VariableType variableType : sv.getVariableTypes()) {
 					if (designImportRoles.contains(variableType.getRole())) {
 						sv.setPhenotypicType(variableType.getRole());
-					}
-
-					if (!Objects.equals(sv.getPhenotypicType(),null)) {
-						 break;
+						break;
 					}
 				}
 			}

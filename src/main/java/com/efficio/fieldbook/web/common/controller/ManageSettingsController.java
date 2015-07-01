@@ -130,11 +130,12 @@ public class ManageSettingsController extends SettingsController {
 				if (ontologyList.isEmpty()) {
 					continue;
 				}
-
+				/*
 				if (selectedVariableTypes.contains(VariableType.TREATMENT_FACTOR)) {
 					ontologyVariableDataManager.processTreatmentFactorHasPairValue(ontologyList,
 							AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 				}
+				*/
 
 				PropertyTreeSummary propertyTree = new PropertyTreeSummary(property, ontologyList);
 				propertyTreeList.add(propertyTree);
@@ -157,9 +158,10 @@ public class ManageSettingsController extends SettingsController {
 			switch (varType) {
 				case STUDY_DETAIL:
 					cvTermIDs.addAll(AppConstants.HIDE_STUDY_DETAIL_VARIABLES.getIntegerList());
-
+					break;
 				case SELECTION_METHOD:
 					cvTermIDs.addAll(AppConstants.HIDE_ID_VARIABLES.getIntegerList());
+					break;
 				case ENVIRONMENT_DETAIL:
 					cvTermIDs.addAll(AppConstants.HIDE_TRIAL_VARIABLES.getIntegerList());
 
@@ -167,11 +169,13 @@ public class ManageSettingsController extends SettingsController {
 						cvTermIDs.addAll(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getIntegerList());
 						cvTermIDs.addAll(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getIntegerList());
 					}
-
+					break;
 				case TREATMENT_FACTOR:
 					cvTermIDs.addAll(AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
+					break;
 				default:
 					cvTermIDs.addAll(AppConstants.HIDE_PLOT_FIELDS.getIntegerList());
+					break;
 			}
 		}
 

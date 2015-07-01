@@ -2406,37 +2406,37 @@ public class SettingsUtil {
 		
 		if(newDetails != null){
 			for(SettingDetail settingDetail : newDetails){
-				if(settingDetail.getVariable().getVariableTypes()  == null && fieldbookMiddlewareService != null){
-					StandardVariable standardVariable =
-							SettingsUtil.getStandardVariable(settingDetail.getVariable().getCvTermId(), 
-									userSelection, fieldbookMiddlewareService, programUUID);
-					settingDetail.getVariable().setVariableTypes(standardVariable.getVariableTypes());
-				}
-				//The default Role for Germplasm Descriptor is PhenotypicType.GERMPLASM
-				//but if the VariableType(s) assigned to the variable is only EXPERIMENTAL DESIGN then
-				//set the role as PhenotypicType.TRIAL_DESIGN
 				
-				if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId().intValue() && settingDetail.getVariable().getVariableTypes() != null
-					      && !hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, settingDetail.getVariable().getVariableTypes())
-					      && hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable().getVariableTypes())){
-					     
-					     settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
-
-				}else{
-					if(settingDetail.getVariable().getCvTermId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()){
-						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
-					}else{
-						settingDetail.setRole(VariableType.getById(Integer.valueOf(mode)).getRole());
+				if(settingDetail.getRole()!=null){
+					continue;
+				}
+				
+				if(settingDetail.getVariable().getCvTermId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()){
+					settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+				} else if(mode == VariableType.GERMPLASM_DESCRIPTOR.getId().intValue()) {
+					
+					if(settingDetail.getVariable().getVariableTypes() == null && fieldbookMiddlewareService != null){
+						StandardVariable standardVariable =
+								SettingsUtil.getStandardVariable(settingDetail.getVariable().getCvTermId(), 
+										userSelection, fieldbookMiddlewareService, programUUID);
+						settingDetail.getVariable().setVariableTypes(standardVariable.getVariableTypes());
 					}
 					
+					//The default Role for Germplasm Descriptor is PhenotypicType.GERMPLASM
+					//but if the VariableType(s) assigned to the variable is only EXPERIMENTAL DESIGN then
+					//set the role as PhenotypicType.TRIAL_DESIGN
+					if (settingDetail.getVariable().getVariableTypes() != null
+						&& !hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, settingDetail.getVariable().getVariableTypes())
+						&& hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable().getVariableTypes())){
+						settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
+					} else {
+						settingDetail.setRole(VariableType.GERMPLASM_DESCRIPTOR.getRole());
+					}
+				} else {
+					settingDetail.setRole(VariableType.getById(Integer.valueOf(mode)).getRole());
 				}
-				
-				
 			}
 		}
-		
-		
-		
 	}
 
 	public static boolean hasVariableType(VariableType variableType,

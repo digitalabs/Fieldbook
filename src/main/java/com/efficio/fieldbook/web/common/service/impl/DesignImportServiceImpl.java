@@ -1,16 +1,8 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -23,8 +15,8 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -269,6 +261,30 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		Map<String, List<StandardVariable>> variables = this.ontologyDataManager.getStandardVariablesInProjects(headers,
 				contextUtil.getCurrentProgramUUID());
+
+		// ok, so these variables dont have Phenotypic information, we need to assign it via proj-prop or cvtermid
+		final Set<PhenotypicType> designImportRoles = new HashSet<>(Arrays.asList(new PhenotypicType[] {PhenotypicType.TRIAL_ENVIRONMENT,PhenotypicType.TRIAL_DESIGN,PhenotypicType.GERMPLASM,PhenotypicType.VARIATE}));
+		for (Entry<String,List<StandardVariable>> entryVar : variables.entrySet()) {
+			for (StandardVariable sv : entryVar.getValue()) {
+				Iterator<VariableType> varTypeIt = sv.getVariableTypes().iterator();
+
+				while (varTypeIt.hasNext()) {
+					VariableType variableType = sv.getVariableTypes().iterator().next();
+
+					if (Objects.equals(variableType,null)) {
+						continue;
+					}
+
+					if (designImportRoles.contains(variableType.getRole())) {
+						sv.setPhenotypicType(variableType.getRole());
+					}
+
+					if (!Objects.equals(sv.getPhenotypicType(),null)) {
+						 break;
+					}
+				}
+			}
+		}
 
 		for (DesignHeaderItem item : designHeaders) {
 			List<StandardVariable> match = variables.get(item.getName());

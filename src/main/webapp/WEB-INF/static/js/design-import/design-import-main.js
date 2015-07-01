@@ -204,8 +204,8 @@
 									$designMapModal.modal('show');
 								}, 200);
 							},
-					apiUrl: '/Fieldbook/manageSettings/settings/role/' + attrs.group,
-					options: {
+							apiUrl: '/Fieldbook/manageSettings/settings/role/' + attrs.group,
+							options: {
 						variableSelectBtnName: Messages.SELECT_TEXT, //TODO i18n
 						variableSelectBtnIco: 'glyphicon-chevron-right',
 						noAlias: true
@@ -225,16 +225,16 @@
 
 	app.service('DesignMappingService', ['$http', '$q', '_', 'ImportDesign', 'Messages', function($http, $q, _, ImportDesign, Messages) {
 
-			function validateMapping() {
+		function validateMapping() {
 
-				var postData = angular.copy(service.data);
-				var allMapped = true;
-				var deferred = $q.defer();
+			var postData = angular.copy(service.data);
+			var allMapped = true;
+			var deferred = $q.defer();
 
-				delete postData.unmappedHeaders;
+			delete postData.unmappedHeaders;
 
-				// lets grab all variables that are in groups but does not have mapped variables
-				_.forEach(postData, function(value) {
+			// lets grab all variables that are in groups but does not have mapped variables
+			_.forEach(postData, function (value) {
 					var results = _.filter(value, function(item) {
 						return !_.has(item, 'variable');
 					});
@@ -248,15 +248,15 @@
 					}
 				});
 
-				if (!allMapped) {
-					return deferred.promise;
-				}
+			if (!allMapped) {
+				return deferred.promise;
+			}
 
-				// transform postData into simpler list of standard variable ids
-				// output should be in the format
+			// transform postData into simpler list of standard variable ids
+			// output should be in the format
 			// result : { mappedDesignFactors : [ { name : header_name, id : std_var_id } ] }
 
-				_.forIn(postData, function(value) {
+			_.forIn(postData, function (value) {
 					for (var i = 0; i < value.length; i++) {
 
 						if (_.has(value[i], 'variable')) {
@@ -274,9 +274,9 @@
 					}
 				});
 
-				var envCnt = _isNursery() ? 1 : ImportDesign.trialManagerCurrentData().environments.environments.length;
+			var envCnt = _isNursery() ? 1 : ImportDesign.trialManagerCurrentData().environments.environments.length;
 
-				return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping/' + envCnt, postData).then(function(result) {
+			return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping/' + envCnt, postData).then(function (result) {
 				var deferred = $q.defer();
 				// note that angular $q promises is different from jquery's implem therefore we need to convert it to angular's defer()
 				ImportDesign.hideDesignMapPopup().then(function() {
@@ -321,9 +321,9 @@
 			}
 
 			return deferred.promise;
-			}
+		}
 
-			function getDistinctNurseryTypes() {
+		function getDistinctNurseryTypes() {
 				return $http.get('/Fieldbook/OntologyBrowser/getDistinctValue/8065').then(function(result) {
 					if (result.data && result.data.constructor === Array) {
 						return result.data;
@@ -333,11 +333,11 @@
 				});
 			}
 
-			function postSelectedNurseryType(nurseryTypeId) {
+		function postSelectedNurseryType(nurseryTypeId) {
 				return $http.post('/Fieldbook/DesignImport/postSelectedNurseryType', nurseryTypeId);
 			}
 
-			var service = {
+		var service = {
 				data: {
 					unmappedHeaders: [],
 					mappedEnvironmentalFactors: [],
@@ -350,11 +350,11 @@
 				postSelectedNurseryType: postSelectedNurseryType
 			};
 
-			return service;
+		return service;
 
-		}]);
+	}]);
 
-		app.service('DesignOntologyService', ['VARIABLE_SELECTION_LABELS', function(VARIABLE_SELECTION_LABELS) {
+	app.service('DesignOntologyService', ['VARIABLE_SELECTION_LABELS', function (VARIABLE_SELECTION_LABELS) {
 			var TrialSettingsManager = window.TrialSettingsManager;
 			var settingsManager = new TrialSettingsManager(VARIABLE_SELECTION_LABELS);
 
@@ -374,7 +374,7 @@
 			};
 		}]);
 
-		app.service('ImportDesign', function() {
+	app.service('ImportDesign', function () {
 			return ImportDesign;
 		});
 

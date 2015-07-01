@@ -1,26 +1,16 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
+import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.VariableType;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -31,7 +21,10 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.util.PoiUtil;
 
-import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
+import javax.annotation.Resource;
+import java.io.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cyrus on 2/10/15.
@@ -122,7 +115,7 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		String programUUID = project.getProgramUUID();
 		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.
 				getStandardVariable(TermId.PLOT_NO.getId(),programUUID);
-		VariableType plotVariableType = new VariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
+		DMSVariableType plotVariableType = new DMSVariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
 		VariableTypeList plotVariableTypeList = new VariableTypeList();
 		plotVariableTypeList.add(plotVariableType);
 

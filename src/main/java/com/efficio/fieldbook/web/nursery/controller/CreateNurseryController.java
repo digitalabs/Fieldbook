@@ -317,10 +317,10 @@ public class CreateNurseryController extends SettingsController {
 			this.userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
 		}
 		//added code to set the role for the variables add
-		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables);
-		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits);
+		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables, userSelection, fieldbookMiddlewareService,contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables(), userSelection, fieldbookMiddlewareService,contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions(), userSelection, fieldbookMiddlewareService,contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits, userSelection, fieldbookMiddlewareService,contextUtil.getCurrentProgramUUID());
 
 		Dataset dataset = (Dataset) SettingsUtil
 				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables, form.getPlotLevelVariables(),

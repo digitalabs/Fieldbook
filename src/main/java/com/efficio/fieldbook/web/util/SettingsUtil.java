@@ -2332,7 +2332,7 @@ public class SettingsUtil {
     
     public static void addNewSettingDetails(int mode
 			, List<SettingDetail> newDetails, UserSelection userSelection) throws Exception {
-		SettingsUtil.setSettingDetailRole(mode , newDetails);
+		SettingsUtil.setSettingDetailRole(mode , newDetails, userSelection, null, null);
 
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			if (userSelection.getStudyLevelConditions() == null) {
@@ -2400,19 +2400,27 @@ public class SettingsUtil {
 		
 	}
 
-	public static void setSettingDetailRole(int mode, List<SettingDetail> newDetails) {
+	public static void setSettingDetailRole(int mode, List<SettingDetail> newDetails, 
+			UserSelection userSelection, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
+			String programUUID) {
 		
 		if(newDetails != null){
 			for(SettingDetail settingDetail : newDetails){
-				
+				if(settingDetail.getVariable().getVariableTypes()  == null && fieldbookMiddlewareService != null){
+					StandardVariable standardVariable =
+							SettingsUtil.getStandardVariable(settingDetail.getVariable().getCvTermId(), 
+									userSelection, fieldbookMiddlewareService, programUUID);
+					settingDetail.getVariable().setVariableTypes(standardVariable.getVariableTypes());
+				}
 				//The default Role for Germplasm Descriptor is PhenotypicType.GERMPLASM
 				//but if the VariableType(s) assigned to the variable is only EXPERIMENTAL DESIGN then
 				//set the role as PhenotypicType.TRIAL_DESIGN
+				
 				if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId().intValue() && settingDetail.getVariable().getVariableTypes() != null
-						&& settingDetail.getVariable().getVariableTypes().size() == 1
-						&& hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable().getVariableTypes())){
-					
-					settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
+					      && !hasVariableType(VariableType.GERMPLASM_DESCRIPTOR, settingDetail.getVariable().getVariableTypes())
+					      && hasVariableType(VariableType.EXPERIMENTAL_DESIGN, settingDetail.getVariable().getVariableTypes())){
+					     
+					     settingDetail.setRole(VariableType.EXPERIMENTAL_DESIGN.getRole());
 
 				}else{
 					if(settingDetail.getVariable().getCvTermId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()){

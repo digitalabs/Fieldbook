@@ -1,12 +1,12 @@
 package com.efficio.fieldbook.web.common.bean;
 
+import org.apache.commons.lang.StringUtils;
+import org.generationcp.middleware.domain.ontology.Property;
+import org.generationcp.middleware.domain.ontology.Variable;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.generationcp.middleware.domain.ontology.OntologyVariableSummary;
-import org.generationcp.middleware.domain.ontology.Property;
 
 /**
  * Created by cyrus on 6/17/15.
@@ -14,9 +14,9 @@ import org.generationcp.middleware.domain.ontology.Property;
 public class PropertyTreeSummary implements Serializable {
 
 	private final Property property;
-	private final List<OntologyVariableSummary> variableSummaryList;
+	private final List<Variable> variableSummaryList;
 
-	public PropertyTreeSummary(Property property, List<OntologyVariableSummary> variableSummaryList) {
+	public PropertyTreeSummary(Property property, List<Variable> variableSummaryList) {
 		this.property = property;
 		this.variableSummaryList = variableSummaryList;
 	}
@@ -41,7 +41,7 @@ public class PropertyTreeSummary implements Serializable {
 		return StringUtils.join(this.getClasses(), ",");
 	}
 
-	public List<OntologyVariableSummary> getStandardVariables() {
+	public List<Variable> getStandardVariables() {
 		return variableSummaryList;
 	}
 }

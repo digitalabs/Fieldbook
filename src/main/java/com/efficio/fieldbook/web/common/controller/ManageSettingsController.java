@@ -14,14 +14,14 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.ontology.OntologyVariableSummary;
 import org.generationcp.middleware.domain.ontology.Property;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.ontology.api.OntologyPropertyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
-import org.generationcp.middleware.manager.ontology.daoElements.OntologyVariableInfo;
+import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -113,9 +113,9 @@ public class ManageSettingsController extends SettingsController {
 
 			// fetch all standard variables given property
 			for (Property property : properties) {
-				OntologyVariableInfo variableFilterOptions = new OntologyVariableInfo();
+				VariableFilter variableFilterOptions = new VariableFilter();
 				variableFilterOptions.setProgramUuid(contextUtil.getCurrentProgramUUID());
-				variableFilterOptions.setPropertyId(property.getId());
+				variableFilterOptions.addPropertyId(property.getId());
 
 				variableFilterOptions.getVariableTypes().addAll(selectedVariableTypes);
 
@@ -124,8 +124,7 @@ public class ManageSettingsController extends SettingsController {
 					filteredVariables.addAll(filterOutVariablesByVariableType(selectedVariableTypes, isTrial));
 				}
 
-				List<OntologyVariableSummary> ontologyList =
-						ontologyVariableDataManager.getWithFilter(variableFilterOptions, filteredVariables);
+				List<Variable> ontologyList = ontologyVariableDataManager.getWithFilter(variableFilterOptions);
 
 				if (ontologyList.isEmpty()) {
 					continue;

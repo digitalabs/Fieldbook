@@ -392,6 +392,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
 			PhenotypicType type = StringUtils.isEmpty(role) ? null : PhenotypicType.getPhenotypicTypeByName(role);
 			settingDetail.setRole(type);
+			stdVar.setPhenotypicType(type);
 			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
 				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
 			} else if (id == TermId.STUDY_UID.getId()) {

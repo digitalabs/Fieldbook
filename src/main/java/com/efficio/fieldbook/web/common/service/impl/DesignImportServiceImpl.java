@@ -74,7 +74,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		
 		Map<Integer, List<String>> csvData = designImportData.getCsvData();
-		Map<Integer, StandardVariable> germplasmStandardVariables = this.convertToStandardVariables(workbook.getGermplasmFactors());
+		Map<Integer, StandardVariable> germplasmStandardVariables = this.convertToStandardVariables(workbook.getGermplasmFactors(), PhenotypicType.GERMPLASM);
 
 		List<MeasurementRow> measurements = new ArrayList<>();
 
@@ -262,9 +262,13 @@ public class DesignImportServiceImpl implements DesignImportService {
 		Map<String, List<StandardVariable>> variables = this.ontologyDataManager.getStandardVariablesInProjects(headers,
 				contextUtil.getCurrentProgramUUID());
 
-		// ok, so these variables dont have Phenotypic information, we need to assign it via proj-prop or cvtermid
-		final Set<PhenotypicType> designImportRoles = new HashSet<>(Arrays.asList(new PhenotypicType[] {PhenotypicType.TRIAL_ENVIRONMENT,PhenotypicType.TRIAL_DESIGN,PhenotypicType.GERMPLASM,PhenotypicType.VARIATE}));
-		for (Entry<String,List<StandardVariable>> entryVar : variables.entrySet()) {
+		// ok, so these variables dont have Phenotypic information, we need to
+		// assign it via proj-prop or cvtermid
+		final Set<PhenotypicType> designImportRoles = new HashSet<>(
+				Arrays.asList(new PhenotypicType[] { PhenotypicType.TRIAL_ENVIRONMENT,
+						PhenotypicType.TRIAL_DESIGN, PhenotypicType.GERMPLASM,
+						PhenotypicType.VARIATE }));
+		for (Entry<String, List<StandardVariable>> entryVar : variables.entrySet()) {
 			for (StandardVariable sv : entryVar.getValue()) {
 				for (VariableType variableType : sv.getVariableTypes()) {
 					if (designImportRoles.contains(variableType.getRole())) {
@@ -274,7 +278,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 				}
 			}
 		}
-
+		  
 		for (DesignHeaderItem item : designHeaders) {
 			List<StandardVariable> match = variables.get(item.getName());
 
@@ -522,14 +526,16 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return variable;
 	}
 
-	protected Map<Integer, StandardVariable> convertToStandardVariables(List<MeasurementVariable> list) {
+	protected Map<Integer, StandardVariable> convertToStandardVariables(List<MeasurementVariable> list, PhenotypicType phenotypicType) {
 
 		Map<Integer, StandardVariable> map = new HashMap<>();
 
 		for (MeasurementVariable measurementVariable : list){
 			try {
-				map.put(measurementVariable.getTermId(), this.ontologyService.getStandardVariable(
-						measurementVariable.getTermId(),contextUtil.getCurrentProgramUUID()));
+				StandardVariable stdVar = this.ontologyService.getStandardVariable(
+						measurementVariable.getTermId(),contextUtil.getCurrentProgramUUID());
+				stdVar.setPhenotypicType(phenotypicType);
+				map.put(measurementVariable.getTermId(), stdVar);
 			} catch (MiddlewareException e) {
 				DesignImportServiceImpl.LOG.error(e.getMessage(), e);
 			}

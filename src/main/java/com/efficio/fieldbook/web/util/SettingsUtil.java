@@ -630,7 +630,8 @@ public class SettingsUtil {
 									possibleValues,
 									HtmlUtils.htmlUnescape(condition.getValue()),
 									SettingsUtil.isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
-
+					PhenotypicType type = StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
+					settingDetail.setRole(type);
 					settingDetail.setPossibleValuesToJson(possibleValues);
 					List<ValueReference> possibleValuesFavorite =
 							SettingsUtil.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
@@ -718,7 +719,8 @@ public class SettingsUtil {
 					SettingDetail settingDetail =
 							new SettingDetail(variable, null, null, SettingsUtil.isSettingVariableDeletable(stdVar,
 									AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
-
+					PhenotypicType type = StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
+					settingDetail.setRole(type);
 					if (factor.getRole() != null && !factor.getRole().equals(PhenotypicType.TRIAL_ENVIRONMENT.name())
 							&& !SettingsUtil.inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
 						plotsLevelList.add(settingDetail);
@@ -755,7 +757,8 @@ public class SettingsUtil {
 					List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 
 					SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, true);
-
+					PhenotypicType type = StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
+					settingDetail.setRole(type);
 					settingDetail.setPossibleValuesToJson(possibleValues);
 					List<ValueReference> possibleValuesFavorite =
 							SettingsUtil.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
@@ -792,7 +795,8 @@ public class SettingsUtil {
 					List<ValueReference> possibleValues = SettingsUtil.getFieldPossibleVales(fieldbookService, stdVar);
 					SettingDetail settingDetail =
 							new SettingDetail(variable, possibleValues, HtmlUtils.htmlUnescape(constant.getValue()), true);
-
+					PhenotypicType type = StringUtils.isEmpty(HtmlUtils.htmlUnescape(variable.getRole())) ? null : PhenotypicType.getPhenotypicTypeByName(HtmlUtils.htmlUnescape(variable.getRole()));
+					settingDetail.setRole(type);
 					settingDetail.setPossibleValuesToJson(possibleValues);
 					List<ValueReference> possibleValuesFavorite =
 							SettingsUtil.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);

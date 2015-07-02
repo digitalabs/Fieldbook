@@ -213,7 +213,7 @@ public class ExpDesignUtil {
 						.getProperty().getName(), var.getDataType().getName(), null, var.getPhenotypicType().getLabelList().get(0));
 		mvar.setFactor(true);
 		mvar.setOperation(operation);
-		mvar.setRole(PhenotypicType.TRIAL_DESIGN);
+		mvar.setRole(var.getPhenotypicType());
 		mvar.setTermId(var.getId());
 		mvar.setDataTypeId(var.getDataType().getId());
 

@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -31,7 +32,6 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -63,8 +63,6 @@ import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
-
-import org.generationcp.commons.spring.util.ContextUtil;
 
 
 /**
@@ -597,7 +595,9 @@ public class DesignImportController extends SettingsController {
 		List<SettingDetail> newDetails = new ArrayList<>();
 		
 		for (MeasurementVariable mvar : trialLevelFactors){
-			SettingDetail newDetail = settingsService.createSettingDetail(mvar.getTermId(), mvar.getName(), userSelection, this.getCurrentIbdbUserId() , this.getCurrentProject().getUniqueID());
+			//SettingDetail newDetail = settingsService.createSettingDetail(mvar.getTermId(), mvar.getName(), userSelection, this.getCurrentIbdbUserId() , this.getCurrentProject().getUniqueID());
+			SettingDetail newDetail = this.createSettingDetail(mvar.getTermId(), mvar.getName(), PhenotypicType.TRIAL_ENVIRONMENT.name());
+			newDetail.setRole(mvar.getRole());
 			newDetail.setDeletable(true);
 			newDetails.add(newDetail);
 		}
@@ -615,7 +615,9 @@ public class DesignImportController extends SettingsController {
 			
 			for (MeasurementVariable mvar : workbook.getConditions()){
 				
-				SettingDetail newDetail = settingsService.createSettingDetail(mvar.getTermId(), mvar.getName(), userSelection, this.getCurrentIbdbUserId() , this.getCurrentProject().getUniqueID());
+				//SettingDetail newDetail = settingsService.createSettingDetail(mvar.getTermId(), mvar.getName(), userSelection, this.getCurrentIbdbUserId() , this.getCurrentProject().getUniqueID());
+				SettingDetail newDetail = this.createSettingDetail(mvar.getTermId(), mvar.getName(), PhenotypicType.STUDY.name());
+				newDetail.setRole(mvar.getRole());
 				
 				String value = managementDetailValues.get(String.valueOf(newDetail.getVariable().getCvTermId()));
 				if (value != null){
@@ -764,12 +766,15 @@ public class DesignImportController extends SettingsController {
 						String standardVariableName = getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 						
 						SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName, VariableType.ENVIRONMENT_DETAIL.name());
+						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 						addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 						
 						MeasurementVariable measurementVariable = null;
 						StandardVariable var = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(termId), this.getCurrentProject().getUniqueID());
+						var.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
 						measurementVariable = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
 						measurementVariable.setName(standardVariableName + AppConstants.ID_SUFFIX.getString());
+						measurementVariable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 						trialVariables.add(measurementVariable);
 
 						copyOfManagementDetailValues.remove(managementDetail.getKey());
@@ -789,12 +794,15 @@ public class DesignImportController extends SettingsController {
 						String standardVariableName = getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 						
 						SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName, VariableType.ENVIRONMENT_DETAIL.name());
+						settingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 						addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 						
 						MeasurementVariable measurementVariable = null;
 						StandardVariable var = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(termId), this.getCurrentProject().getUniqueID());
+						var.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
 						measurementVariable = ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
 						measurementVariable.setName(standardVariableName + AppConstants.ID_SUFFIX.getString());
+						measurementVariable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 						trialVariables.add(measurementVariable);
 						
 						copyOfManagementDetailValues.remove(managementDetail.getKey());
@@ -806,6 +814,7 @@ public class DesignImportController extends SettingsController {
 				
 				//For Categorical Variables
 				StandardVariable tempStandardVarable = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(managementDetail.getKey()),  this.getCurrentProject().getUniqueID());
+				tempStandardVarable.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
 				if (tempStandardVarable != null && tempStandardVarable.hasEnumerations()){
 					
 					Enumeration enumeration = findInEnumeration(managementDetail.getValue(), tempStandardVarable.getEnumerations());
@@ -842,11 +851,17 @@ public class DesignImportController extends SettingsController {
 				if (termId != null){
 
 					Location location = fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
-					copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
+					if (location != null){
+						copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
+					}else{
+						copyOfManagementDetailValues.put(termId, "");
+					}
+					
 					
 					String headerName = getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 					
-					SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName , VariableType.ENVIRONMENT_DETAIL.name());
+					SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName , VariableType.STUDY_DETAIL.name());
+					settingDetail.setRole(PhenotypicType.STUDY);
 					settingDetail.getVariable().setOperation(Operation.ADD);
 					settingDetail.setValue("");
 					if (location != null){
@@ -869,7 +884,8 @@ public class DesignImportController extends SettingsController {
 					
 					String headerName = getHeaderName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 					
-					SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName, VariableType.ENVIRONMENT_DETAIL.name());
+					SettingDetail settingDetail = createSettingDetail(Integer.valueOf(termId), headerName, VariableType.STUDY_DETAIL.name());
+					settingDetail.setRole(PhenotypicType.STUDY);
 					settingDetail.getVariable().setOperation(Operation.ADD);
 					settingDetail.setValue(String.valueOf(super.getCurrentIbdbUserId()));
 					

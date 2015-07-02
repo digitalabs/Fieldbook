@@ -258,8 +258,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	}
 
 	protected GermplasmExportService getExportService(UserSelection userSelection, Boolean isNursery) {
-
-		return new GermplasmExportService(this.ontologyService, userSelection, isNursery);
+		return new GermplasmExportService(this.ontologyService, userSelection, isNursery, contextUtil);
 	}
 
 	protected void setMessageSource(SimpleResourceBundleMessageSource messageSource) {

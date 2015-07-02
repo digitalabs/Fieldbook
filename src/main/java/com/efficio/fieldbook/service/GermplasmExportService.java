@@ -34,15 +34,14 @@ public class GermplasmExportService extends ExportServiceImpl {
 
 	private final OntologyService ontologyService;
 	private UserSelection userSelection;
-	private final Boolean isNursery;
-	
-	@Resource
+	private final Boolean isNursery;	
 	private ContextUtil contextUtil;
 
-	public GermplasmExportService(OntologyService ontologyService, UserSelection userSelection, Boolean isNursery) {
+	public GermplasmExportService(OntologyService ontologyService, UserSelection userSelection, Boolean isNursery, ContextUtil contextUtil) {
 		this.ontologyService = ontologyService;
 		this.userSelection = userSelection;
 		this.isNursery = isNursery;
+		this.contextUtil = contextUtil;
 	}
 
 	@Override

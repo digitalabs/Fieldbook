@@ -516,19 +516,30 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void addExperimentDesign(Workbook workbook) throws MiddlewareException {
-		
+
 		ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 		designParam.setDesignType(3);
-		
+
 		List<Integer> expDesignTermIds = new ArrayList<>();
 		expDesignTermIds.add(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-		
-		userSelection.setExpDesignParams(designParam);
-		userSelection.setExpDesignVariables(expDesignTermIds);
-			
+
+		this.userSelection.setExpDesignParams(designParam);
+		this.userSelection.setExpDesignVariables(expDesignTermIds);
+
 		TermId termId = TermId.getById(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-		SettingsUtil.addTrialCondition(termId, designParam, workbook, fieldbookMiddlewareService, this.getCurrentProject().getUniqueID());
-		
+
+		SettingsUtil.addTrialCondition(termId, designParam, workbook,
+				this.fieldbookMiddlewareService, this.getCurrentProject().getUniqueID());
+
+		ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
+		if (expDesignVar != null && expDesignVar.getExperimentalDesign() != null) {
+			for (MeasurementVariable mvar : workbook.getConditions()) {
+				if (mvar.getTermId() == termId.getId()) {
+					mvar.setOperation(Operation.UPDATE);
+				}
+			}
+		}
+
 	}
 
 	protected void addFactorsIfNecessary(Workbook workbook, DesignImportData designImportData) {

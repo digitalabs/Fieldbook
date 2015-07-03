@@ -353,24 +353,26 @@ public class OpenTrialController extends BaseTrialController {
 						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
 						this.userSelection.getExperimentalDesignVariables(),
 						contextUtil.getCurrentProgramUUID());
+		if (this.userSelection.isDesignGenerated()) {
 
-		if (userSelection.isDesignGenerated()) {
-			
 			this.userSelection.setMeasurementRowList(null);
 			this.userSelection.getWorkbook().setOriginalObservations(null);
 			this.userSelection.getWorkbook().setObservations(null);
-			
-			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments() , workbook, userSelection.getTemporaryWorkbook().getTrialObservations());
-		
-			if (replace == 1){
-				for (MeasurementVariable mvar : userSelection.getWorkbook().getConditions()){
-					
-					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()){
+
+			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(),
+					workbook, this.userSelection.getTemporaryWorkbook().getTrialObservations());
+
+			if (replace == 1) {
+				for (MeasurementVariable mvar : workbook.getConditions()) {
+					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
 						mvar.setOperation(Operation.UPDATE);
 						break;
-					}else{
+					}
+				}
+			} else {
+				for (MeasurementVariable mvar : workbook.getConditions()) {
+					if (mvar.getTermId() == TermId.EXPERIMENT_DESIGN_FACTOR.getId()) {
 						mvar.setOperation(Operation.ADD);
-						break;
 					}
 				}
 			}

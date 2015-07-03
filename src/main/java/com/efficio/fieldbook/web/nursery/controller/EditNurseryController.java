@@ -740,27 +740,28 @@ public class EditNurseryController extends SettingsController {
 	public String getProgramID() {
 		return this.getCurrentProjectId();
 	}
-	
-	private void addStudyLevelVariablesFromUserSelectionIfNecessary(List<SettingDetail> studyLevelVariables,
-			UserSelection userSelection) {
-		
-    	for (SettingDetail settingDetailFromUserSelection : userSelection.getStudyLevelConditions()){
-    		
-    		boolean settingDetailExists = false;
-    		
-    		for (SettingDetail settingDetail : studyLevelVariables){
-    			if (settingDetail.getVariable().getCvTermId().intValue() == settingDetailFromUserSelection.getVariable().getCvTermId().intValue()){
-    				settingDetailExists = true;
-    				break;
-    			}
-    		}
-    		
-    		if (!settingDetailExists){
-    			studyLevelVariables.add(settingDetailFromUserSelection);
-    		}
-    		
-    	}
-    	
-		
+
+	private void addStudyLevelVariablesFromUserSelectionIfNecessary(
+			List<SettingDetail> studyLevelVariables, UserSelection userSelection) {
+
+		for (SettingDetail settingDetailFromUserSelection : userSelection.getStudyLevelConditions()) {
+
+			boolean settingDetailExists = false;
+
+			for (SettingDetail settingDetail : studyLevelVariables) {
+				if (settingDetail.getVariable().getCvTermId().intValue() == settingDetailFromUserSelection
+						.getVariable().getCvTermId().intValue()) {
+					settingDetail.setRole(settingDetailFromUserSelection.getRole());
+					settingDetailExists = true;
+					break;
+				}
+			}
+
+			if (!settingDetailExists) {
+				studyLevelVariables.add(settingDetailFromUserSelection);
+			}
+
+		}
+
 	}
 }

@@ -40,7 +40,7 @@
 						<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						&nbsp;&nbsp;&nbsp;
 						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-									*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');',1805">
 							<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold var-names" th:text="${nurseryLevelVariable.variable.name}"></span></a>:&nbsp;
 
 					</div>
@@ -134,7 +134,7 @@
 						</td>
 						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 							<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-									*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\',1804);'">
 								<span class="var-names" th:text="${plotLevelVariable.variable.name}"></span></a>
 						</td>
 						<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
@@ -186,7 +186,7 @@
 						</td>
 						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 							<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-									*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId} + '\',1807);'">
 								<span class="var-names" th:text="${selectionVariatesVariable.variable.name}"></span></a>
 						</td>
 						<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariatesVariable.variable.description}"></td>
@@ -263,7 +263,7 @@
 
 
 						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-									*{nurseryConditions[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									*{nurseryConditions[__${rowStat.index}__].variable.cvTermId} + '\',1803);'">
 							<span style="word-wrap: break-word" class="control-label nursery-condition-label label-bold var-names" th:text="${nurseryCondition.variable.name}"></span></a>:&nbsp;
 
 					</div>
@@ -346,7 +346,7 @@
 						</td>
 						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 							<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-									*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\',1808);'">
 								<span class="var-names" th:text="${baselineTraitVariable.variable.name}"></span></a>
 						</td>
 						<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>

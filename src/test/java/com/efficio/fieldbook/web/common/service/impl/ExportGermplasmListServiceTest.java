@@ -1,14 +1,10 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.efficio.fieldbook.service.GermplasmExportService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.ExportColumnHeader;
@@ -20,7 +16,6 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -28,16 +23,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
-import com.efficio.fieldbook.service.GermplasmExportService;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class ExportGermplasmListServiceTest {
 
@@ -103,10 +97,10 @@ public class ExportGermplasmListServiceTest {
 
 		this.exportGermplasmListService = Mockito.spy(this.exportGermplasmListServiceOrigin);
 
-		this.exportServiceTrial = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, false));
+		this.exportServiceTrial = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, false, contextUtil));
 		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportServiceTrial).getImportedGermplasms();
 
-		this.exportServiceNursery = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true));
+		this.exportServiceNursery = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil));
 		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportServiceNursery).getImportedGermplasms();
 
 		Mockito.when(this.contextUtil.getCurrentUserLocalId()).thenReturn(ExportGermplasmListServiceTest.CURRENT_USER_ID);

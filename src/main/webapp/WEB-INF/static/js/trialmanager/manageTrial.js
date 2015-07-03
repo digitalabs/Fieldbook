@@ -133,8 +133,9 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 	});
 
 	manageTrialApp.run(
-		['$rootScope', '$state', '$stateParams', 'uiSelect2Config',
-			function($rootScope, $state, $stateParams, uiSelect2Config) {
+		['$rootScope', '$state', '$stateParams', 'uiSelect2Config', 'VARIABLE_TYPES',
+			function ($rootScope, $state, $stateParams, uiSelect2Config, VARIABLE_TYPES) {
+				$rootScope.VARIABLE_TYPES = VARIABLE_TYPES;
 
 				$rootScope.$on('$stateChangeStart',
 					function(event) {

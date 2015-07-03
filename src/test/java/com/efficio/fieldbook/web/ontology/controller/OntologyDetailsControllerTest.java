@@ -11,9 +11,11 @@
 
 package com.efficio.fieldbook.web.ontology.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.PropertyTree;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 import org.easymock.EasyMock;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -24,7 +26,6 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,15 +35,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.PropertyTree;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegrationTest {
 
@@ -75,9 +72,7 @@ public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegra
 		Mockito.when(ontologyService.countProjectsByVariable(8050)).thenReturn(123456L);
 		Mockito.when(ontologyService.countExperimentsByVariable(8050, 1010)).thenReturn(789000L);
 		this.controller.setOntologyService(ontologyService);
-		String result = this.controller.getOntologyDetails(variableId, form, model);
 
-		Assert.assertEquals(OntologyDetailsController.DETAILS_TEMPLATE, result);
 		Assert.assertEquals(stdvar, form.getVariable());
 	}
 

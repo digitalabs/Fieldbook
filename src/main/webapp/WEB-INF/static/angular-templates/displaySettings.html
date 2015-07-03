@@ -13,7 +13,8 @@
             </td>
             <td width="45%" ng-class="{even : $even, odd : $odd}">
                 <a href="javascript: void(0);">
-                    <span class="var-names" show-details-modal="key">{{settings.val(key).variable.name}}</span>
+                    <span class="var-names" show-details-modal="key"
+                          variable-type="{{variableType}}">{{settings.val(key).variable.name}}</span>
                 </a>
             </td>
             <td width="50%" ng-class="{even : $even, odd : $odd}">{{settings.val(key).variable.description}}</td>

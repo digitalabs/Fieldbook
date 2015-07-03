@@ -92,6 +92,7 @@
 				},
 				templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
 				controller: function($scope, $element, $attrs) {
+					$scope.variableType = $attrs.variableType;
 					$scope.options = {
 						selectAll: false
 					};
@@ -132,12 +133,6 @@
 
 					};
 
-					$scope.showDetailsModal = function(setting) {
-						// this function is currently defined in the fieldbook-common.js, loaded globally for the page
-						// TODO: move away from global function definitions
-						showBaselineTraitDetailsModal(setting.variable.cvTermId);
-					};
-
 					$scope.size = function() {
 						return Object.keys($scope.settings).length;
 					};
@@ -147,13 +142,14 @@
 		.directive('showDetailsModal', function() {
 			return {
 				scope: {
-					showDetailsModal: '='
+					showDetailsModal: '=',
+					variableType: '@'
 				},
 
 				link: function(scope, elem) {
 					elem.css({ cursor: 'pointer' });
 					elem.on('click', function() {
-						showBaselineTraitDetailsModal(scope.showDetailsModal);
+						showBaselineTraitDetailsModal(scope.showDetailsModal, scope.variableType);
 					});
 				}
 			};
@@ -545,19 +541,6 @@
 				}
 			};
 		}])
-
-		.directive('showBaselineTraitDetailsModalLink', function() {
-			return {
-				scope: {
-					showBaselineTraitDetailsModalLink: '@'
-				},
-				link: function(scope, elem) {
-					elem.click(function() {
-						showBaselineTraitDetailsModal(scope.cvTermId);
-					});
-				}
-			};
-		})
 
 		.directive('inputType', function() {
 			return {

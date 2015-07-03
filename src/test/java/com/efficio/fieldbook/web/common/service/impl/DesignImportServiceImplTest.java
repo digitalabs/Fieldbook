@@ -1,19 +1,16 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -29,64 +26,43 @@ import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
-import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import javax.annotation.Resource;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.*;
 
 public class DesignImportServiceImplTest {
 
+	private final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 	@Spy
 	@Resource
 	private DesignImportParser parser;
-
 	@Mock
 	private FieldbookService fieldbookService;
-
 	@Mock
 	private OntologyService ontologyService;
-
 	@Mock
 	private OntologyDataManager ontologyDataManager;
-
 	@Mock
 	private MessageSource messageSource;
-
 	@Mock
 	private MockMultipartFile multiPartFile;
-
 	@Mock
 	private UserSelection userSelection;
-	
 	@Mock
 	private ContextUtil contextUtil;
-
 	private DesignImportData designImportData;
-
 	@InjectMocks
 	private DesignImportServiceImpl service;
-
-	private final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
 	@Before
 	public void setUp() throws MiddlewareException, FileParsingException, URISyntaxException {
@@ -201,24 +177,7 @@ public class DesignImportServiceImplTest {
 
 	}
 
-	@Test
-	public void testConvertToStandardVariables() {
 
-		Map<Integer, StandardVariable> result = this.service.convertToStandardVariables(this.workbook.getGermplasmFactors());
-
-		Assert.assertEquals(result.size(), this.workbook.getGermplasmFactors().size());
-
-		for (MeasurementVariable measurementVar : this.workbook.getFactors()) {
-			StandardVariable stdVar = result.get(measurementVar.getTermId());
-			if (stdVar != null) {
-				Assert.assertTrue(stdVar.getId() == measurementVar.getTermId());
-				Assert.assertTrue(stdVar.getPhenotypicType().getLabelList().contains(measurementVar.getLabel()));
-
-			}
-
-		}
-
-	}
 
 	@Test
 	public void testCreateMeasurementData() {

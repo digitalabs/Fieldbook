@@ -5,6 +5,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -44,6 +46,9 @@ import java.util.*;
 public class ManageSettingsController extends SettingsController {
 
 	public static final String URL = "/manageSettings";
+
+	public static final String DETAILS_TEMPLATE = "/OntologyBrowser/detailTab";
+	public static final String USAGE_DETAILS_TEMPLATE = "/OntologyBrowser/usageTab";
 
 	/**
 	 * The Constant LOG.
@@ -148,6 +153,59 @@ public class ManageSettingsController extends SettingsController {
 		}
 
 		return propertyTreeList;
+	}
+
+	/**
+	 * Gets the ontology details.
+	 *
+	 * @param variableTypeId
+	 * @param variableId
+	 * @param model
+	 * @param variableDetails
+	 * @return detailTab.html
+	 */
+	@RequestMapping(value = "/settings/details/{variableTypeId}/{variableId}", method = RequestMethod.GET)
+	public String getOntologyDetails(@PathVariable int variableTypeId, @PathVariable int variableId, Model model,
+			@ModelAttribute("variableDetails") OntologyDetailsForm variableDetails) {
+		try {
+			Variable ontologyVariable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), variableId);
+
+			if (!Objects.equals(ontologyVariable, null)) {
+				variableDetails.setVariable(ontologyVariable);
+				variableDetails.setCurrentVariableType(VariableType.getById(variableTypeId));
+
+				// TODO when treatmentfactor pairs is done
+				if (ontologyVariable.getVariableTypes().contains(VariableType.TREATMENT_FACTOR)) {
+
+				}
+
+			}
+
+		} catch (MiddlewareException e) {
+			ManageSettingsController.LOG.error(e.getMessage(), e);
+		}
+		return super.showAjaxPage(model, ManageSettingsController.DETAILS_TEMPLATE);
+	}
+
+	@RequestMapping(value = "/settings/details/usage/{variableTypeId}/{variableId}", method = RequestMethod.GET)
+	public String getOntologyUsageDetails(@PathVariable Integer variableId, @PathVariable Integer variableTypeId,
+			@ModelAttribute("variableDetails") OntologyDetailsForm form, Model model) {
+		try {
+			Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), variableId);
+
+			if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
+				form.setProjectCount(ontologyService.countProjectsByVariable(variableId));
+				form.setCurrentVariableType(VariableType.getById(variableTypeId));
+				if (!Objects.equals(variableTypeId, null)) {
+					form.setObservationCount(ontologyService.countExperimentsByVariable(variableId, variableTypeId));
+				}
+
+				form.setVariable(variable);
+			}
+		} catch (MiddlewareException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return super.showAjaxPage(model, USAGE_DETAILS_TEMPLATE);
 	}
 
 	private List<Integer> filterOutVariablesByVariableType(Set<VariableType> selectedVariableTypes, boolean isTrial) {

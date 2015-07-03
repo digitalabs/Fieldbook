@@ -26,7 +26,8 @@
                             <tr ng-repeat="(key,value) in data.currentData track by key">
                                 <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' style="cursor: pointer" ng-click="trialMeasurement.hasMeasurement || performDelete(key)" ng-hide="trialMeasurement.hasMeasurement"></span>
                                 </td>
-                                <td ng-class="{even : $even, odd : $odd}"><a show-details-modal="key" >{{settings.details.val(key).variable.name}}</a>
+                                <td ng-class="{even : $even, odd : $odd}"><a show-details-modal="key"
+                                                                             variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{settings.details.val(key).variable.name}}</a>
                                 </td>
                                 <td ng-class="{even : $even, odd : $odd}">{{settings.details.val(key).variable.description}}</td>
                                 <td ng-class="{even : $even, odd : $odd}">
@@ -73,12 +74,14 @@
                         <div class="col-sm-6">
                             <div>
                                 <b class="sub-content-heading">Treatment Factor:</b>
-                                <a style="text-transform: uppercase" show-details-modal="key">{{settings.details.val(key).variable.name}}</a> -
+                                <a style="text-transform: uppercase" show-details-modal="key"
+                                   variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{settings.details.val(key).variable.name}}</a> -
                                 <span>{{settings.details.val(key).variable.description}}</span>
                             </div>
                             <div class="add-bottom-padding" ng-show="data.currentData[key].variableId">
                                 <b class="sub-content-heading">Treatment Factor Level:</b>
-                                <a style="text-transform: uppercase" show-details-modal="data.currentData[key].variableId">{{retrievePairDetail(key).variable.name}}</a> -
+                                <a style="text-transform: uppercase" show-details-modal="data.currentData[key].variableId"
+                                   variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{retrievePairDetail(key).variable.name}}</a> -
                                 <span>{{retrievePairDetail(key).variable.description}}</span>
                             </div>
 
@@ -101,7 +104,9 @@
                                 <tbody>
                                 <tr ng-show="data.currentData[key].variableId" ng-repeat="n in data.currentData[key].labels track by $index">
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <a show-details-modal="retrievePairDetail(key).variable.cvTermId">{{retrievePairDetail(key).variable.name}} {{$index + 1}}</a>
+                                        <a show-details-modal="retrievePairDetail(key).variable.cvTermId"
+                                           variable-type="{{VARIABLE_TYPES.TREATMENT_FACTOR}}">{{retrievePairDetail(key).variable.name}}
+                                            {{$index + 1}}</a>
                                     </td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">{{retrievePairDetail(key).variable.scale}}</td>
                                     <td ng-class-odd="'odd'" ng-class-even="'even'">

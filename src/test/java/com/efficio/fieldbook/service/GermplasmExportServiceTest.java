@@ -1,13 +1,9 @@
 
 package com.efficio.fieldbook.service;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -22,7 +18,6 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.After;
 import org.junit.Assert;
@@ -33,12 +28,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class GermplasmExportServiceTest {
 
+	// Styles
+	public static final String LABEL_STYLE = "labelStyle";
+	public static final String HEADING_STYLE = "headingStyle";
+	public static final String NUMERIC_STYLE = "numericStyle";
 	private static final String CATEG_CODE_VALUE = "CATEG_CODE_VALUE";
 	private static final String DESIG_VALUE = "DESIG VALUE";
 	private static final String CROSS_VALUE = "Cross value";
@@ -52,11 +54,6 @@ public class GermplasmExportServiceTest {
 	private static final String TEST_SCALE = "TEST SCALE";
 	private static final String TEST_PROPERTY = "TEST PROPERTY";
 	private static final String TEST_DESCRIPTION = "TEST DESCRIPTION";
-	// Styles
-	public static final String LABEL_STYLE = "labelStyle";
-	public static final String HEADING_STYLE = "headingStyle";
-	public static final String NUMERIC_STYLE = "numericStyle";
-
 	private static final String CURRENT_USER_NAME = "User User";
 	private static final int CURRENT_USER_ID = 1;
 	// Columns
@@ -129,7 +126,7 @@ public class GermplasmExportServiceTest {
 		HSSFSheet descriptionSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, false);
+		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, false, contextUtil);
 		this.exportService.writeListFactorSection(styles, descriptionSheet, 1, this.getVisibleColumnMap());
 
 		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, descriptionSheet.getRow(1).getCell(0).getStringCellValue());
@@ -150,7 +147,7 @@ public class GermplasmExportServiceTest {
 		HSSFSheet descriptionSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, false);
+		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, false, contextUtil);
 		this.exportService.writeListFactorSection(styles, descriptionSheet, 1, this.getVisibleColumnMap());
 
 		Assert.assertNull(descriptionSheet.getRow(1));
@@ -164,7 +161,7 @@ public class GermplasmExportServiceTest {
 		HSSFSheet descriptionSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, true);
+		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil);
 		this.exportService.writeListFactorSection(styles, descriptionSheet, 1, this.getVisibleColumnMap());
 
 		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, descriptionSheet.getRow(1).getCell(0).getStringCellValue());
@@ -182,7 +179,7 @@ public class GermplasmExportServiceTest {
 		HSSFSheet observationSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, false));
+		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, false, contextUtil));
 
 		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportService).getImportedGermplasms();
 
@@ -216,7 +213,7 @@ public class GermplasmExportServiceTest {
 		HSSFSheet observationSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true));
+		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil));
 
 		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportService).getImportedGermplasms();
 
@@ -257,7 +254,7 @@ public class GermplasmExportServiceTest {
 
 		settingDetail.setPossibleValues(possibleValues);
 
-		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true));
+		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil));
 
 		String categValue = this.exportService.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
 
@@ -270,7 +267,7 @@ public class GermplasmExportServiceTest {
 		SettingDetail settingDetail = this.generateSettingDetail(TermId.CHECK.getId());
 		settingDetail.setPossibleValues(null);
 
-		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true));
+		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil));
 
 		String categValue = this.exportService.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
 

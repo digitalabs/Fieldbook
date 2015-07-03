@@ -420,7 +420,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 		newRow = newRow
 				+ '<a href="javascript: void(0);" onclick="javascript:showBaselineTraitDetailsModal('
-				+ settingDetail.variable.cvTermId
+			+ settingDetail.variable.cvTermId + ',' + varType
 				+ ');" ><span style="word-wrap: break-word"  class="var-names control-label label-bold">'
 				+ settingDetail.variable.name
 				+ '</span></a>: &nbsp;</div>';
@@ -709,7 +709,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 				+ '<td width="45%" class="'
 				+ className
 				+ '"><a href="javascript: void(0);" onclick="javascript:showBaselineTraitDetailsModal('
-				+ settingDetail.variable.cvTermId
+			+ settingDetail.variable.cvTermId + ',' + varType
 				+ ');" ><span class="var-names">' + settingDetail.variable.name
 				+ '</span></a></td>';
 		newRow = newRow + '<td width="50%" class="' + className

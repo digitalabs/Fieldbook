@@ -137,6 +137,7 @@ public class CrossingServiceImpl implements CrossingService {
 		Integer entryIdCounter = 0;
 
 		for (ImportedCrosses cross : importedCrosses) {
+			updateCrossNameSettingIfNecessary(setting.getCrossNameSetting(), cross);
 			entryIdCounter++;
 			cross.setEntryId(entryIdCounter);
 			cross.setEntryCode(String.valueOf(entryIdCounter));
@@ -154,6 +155,28 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 	}
 
+	protected void updateCrossNameSettingIfNecessary(CrossNameSetting setting, ImportedCrosses cross) throws MiddlewareQueryException{
+		if (StringUtils.isEmpty(cross.getRawBreedingMethod())) {
+			setting.setSuffix("");
+			return;
+		}
+
+		Method method = germplasmDataManager.getMethodByCode(cross.getRawBreedingMethod());
+
+		if (method == null) {
+			setting.setSuffix("");
+			return;
+		}
+
+		if (!StringUtils.isEmpty(method.getSuffix())) {
+			setting.setSuffix(method.getSuffix());
+		} else {
+			setting.setSuffix("");
+		}
+		
+
+	}
+
 	protected void processBreedingMethodProcessCodes(CrossSetting setting) {
 		CrossNameSetting nameSetting = setting.getCrossNameSetting();
 		BreedingMethodSetting breedingMethodSetting = setting.getBreedingMethodSetting();
@@ -163,7 +186,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 			// overwrite other name setting items using method values here
 
-			if (method.getSuffix() !=null) {
+			if (method != null && method.getSuffix() !=null) {
 				nameSetting.setSuffix(method.getSuffix());
 			}
 		} catch (MiddlewareQueryException e) {

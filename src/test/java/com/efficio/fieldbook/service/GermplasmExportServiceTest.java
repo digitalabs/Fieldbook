@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -68,7 +67,7 @@ public class GermplasmExportServiceTest {
 
 	@InjectMocks
 	private GermplasmExportService exportService;
-	
+
 	private String testFileName;
 	private String sheetName;
 
@@ -79,7 +78,7 @@ public class GermplasmExportServiceTest {
 
 	@Mock
 	private UserSelection userSelection;
-	
+
 	@Mock
 	private ContextUtil contextUtil;
 
@@ -94,23 +93,46 @@ public class GermplasmExportServiceTest {
 
 		try {
 
-			Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), GermplasmExportServiceTest.ENTRY_NO))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.DESIG.getId(), GermplasmExportServiceTest.DESIGNATION))
-					.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.GID.getId(), GermplasmExportServiceTest.GID)).when(this.ontologyService)
-					.getStandardVariable(TermId.GID.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.CROSS.getId(), GermplasmExportServiceTest.PARENTAGE))
-					.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), GermplasmExportServiceTest.SEED_SOURCE))
-					.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), GermplasmExportServiceTest.ENTRY_CODE))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId(),contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(
-					this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), GermplasmExportServiceTest.ENTRY_NUMBER_STORAGE))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.CHECK.getId(), GermplasmExportServiceTest.CHECK))
-					.when(this.ontologyService).getStandardVariable(TermId.CHECK.getId(),contextUtil.getCurrentProgramUUID());
+					this.createStandardVariable(TermId.ENTRY_NO.getId(),
+							GermplasmExportServiceTest.ENTRY_NO))
+					.when(this.ontologyService)
+					.getStandardVariable(TermId.ENTRY_NO.getId(),
+							contextUtil.getCurrentProgramUUID());
+			Mockito.doReturn(
+					this.createStandardVariable(TermId.DESIG.getId(),
+							GermplasmExportServiceTest.DESIGNATION)).when(this.ontologyService)
+					.getStandardVariable(TermId.DESIG.getId(), contextUtil.getCurrentProgramUUID());
+			Mockito.doReturn(
+					this.createStandardVariable(TermId.GID.getId(), GermplasmExportServiceTest.GID))
+					.when(this.ontologyService)
+					.getStandardVariable(TermId.GID.getId(), contextUtil.getCurrentProgramUUID());
+			Mockito.doReturn(
+					this.createStandardVariable(TermId.CROSS.getId(),
+							GermplasmExportServiceTest.PARENTAGE)).when(this.ontologyService)
+					.getStandardVariable(TermId.CROSS.getId(), contextUtil.getCurrentProgramUUID());
+			Mockito.doReturn(
+					this.createStandardVariable(TermId.SEED_SOURCE.getId(),
+							GermplasmExportServiceTest.SEED_SOURCE))
+					.when(this.ontologyService)
+					.getStandardVariable(TermId.SEED_SOURCE.getId(),
+							contextUtil.getCurrentProgramUUID());
+			Mockito.doReturn(
+					this.createStandardVariable(TermId.ENTRY_CODE.getId(),
+							GermplasmExportServiceTest.ENTRY_CODE))
+					.when(this.ontologyService)
+					.getStandardVariable(TermId.ENTRY_CODE.getId(),
+							contextUtil.getCurrentProgramUUID());
+			Mockito.doReturn(
+					this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
+							GermplasmExportServiceTest.ENTRY_NUMBER_STORAGE))
+					.when(this.ontologyService)
+					.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
+							contextUtil.getCurrentProgramUUID());
+			Mockito.doReturn(
+					this.createStandardVariable(TermId.CHECK.getId(),
+							GermplasmExportServiceTest.CHECK)).when(this.ontologyService)
+					.getStandardVariable(TermId.CHECK.getId(), contextUtil.getCurrentProgramUUID());
 			Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 
 		} catch (MiddlewareException e) {
@@ -126,15 +148,23 @@ public class GermplasmExportServiceTest {
 		HSSFSheet descriptionSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, false, contextUtil);
-		this.exportService.writeListFactorSection(styles, descriptionSheet, 1, this.getVisibleColumnMap());
+		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection,
+				false, contextUtil);
+		this.exportService.writeListFactorSection(styles, descriptionSheet, 1,
+				this.getVisibleColumnMap());
 
-		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, descriptionSheet.getRow(1).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.SEED_SOURCE, descriptionSheet.getRow(2).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE, descriptionSheet.getRow(3).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.PARENTAGE, descriptionSheet.getRow(4).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, descriptionSheet.getRow(5).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.GID, descriptionSheet.getRow(6).getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, descriptionSheet.getRow(1)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.SEED_SOURCE, descriptionSheet.getRow(2)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE, descriptionSheet.getRow(3)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.PARENTAGE, descriptionSheet.getRow(4)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, descriptionSheet.getRow(5)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.GID, descriptionSheet.getRow(6).getCell(0)
+				.getStringCellValue());
 
 	}
 
@@ -147,8 +177,10 @@ public class GermplasmExportServiceTest {
 		HSSFSheet descriptionSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, false, contextUtil);
-		this.exportService.writeListFactorSection(styles, descriptionSheet, 1, this.getVisibleColumnMap());
+		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection,
+				false, contextUtil);
+		this.exportService.writeListFactorSection(styles, descriptionSheet, 1,
+				this.getVisibleColumnMap());
 
 		Assert.assertNull(descriptionSheet.getRow(1));
 
@@ -161,15 +193,23 @@ public class GermplasmExportServiceTest {
 		HSSFSheet descriptionSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil);
-		this.exportService.writeListFactorSection(styles, descriptionSheet, 1, this.getVisibleColumnMap());
+		this.exportService = new GermplasmExportService(this.ontologyService, this.userSelection,
+				true, contextUtil);
+		this.exportService.writeListFactorSection(styles, descriptionSheet, 1,
+				this.getVisibleColumnMap());
 
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, descriptionSheet.getRow(1).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, descriptionSheet.getRow(2).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.GID, descriptionSheet.getRow(3).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.PARENTAGE, descriptionSheet.getRow(4).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.SEED_SOURCE, descriptionSheet.getRow(5).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE, descriptionSheet.getRow(6).getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, descriptionSheet.getRow(1)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, descriptionSheet.getRow(2)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.GID, descriptionSheet.getRow(3).getCell(0)
+				.getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.PARENTAGE, descriptionSheet.getRow(4)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.SEED_SOURCE, descriptionSheet.getRow(5)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE, descriptionSheet.getRow(6)
+				.getCell(0).getStringCellValue());
 
 	}
 
@@ -179,9 +219,11 @@ public class GermplasmExportServiceTest {
 		HSSFSheet observationSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, false, contextUtil));
+		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService,
+				this.userSelection, false, contextUtil));
 
-		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportService).getImportedGermplasms();
+		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportService)
+				.getImportedGermplasms();
 
 		try {
 
@@ -191,19 +233,31 @@ public class GermplasmExportServiceTest {
 
 		}
 
-		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, observationSheet.getRow(0).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.SEED_SOURCE, observationSheet.getRow(0).getCell(1).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE, observationSheet.getRow(0).getCell(2).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.PARENTAGE, observationSheet.getRow(0).getCell(3).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, observationSheet.getRow(0).getCell(4).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.GID, observationSheet.getRow(0).getCell(5).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, observationSheet.getRow(0)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.SEED_SOURCE, observationSheet.getRow(0)
+				.getCell(1).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE, observationSheet.getRow(0)
+				.getCell(2).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.PARENTAGE, observationSheet.getRow(0)
+				.getCell(3).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, observationSheet.getRow(0)
+				.getCell(4).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.GID, observationSheet.getRow(0).getCell(5)
+				.getStringCellValue());
 
-		Assert.assertEquals(GermplasmExportServiceTest.DESIG_VALUE, observationSheet.getRow(1).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.SOURCE_VALUE, observationSheet.getRow(1).getCell(1).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE_VALUE, observationSheet.getRow(1).getCell(2).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.CROSS_VALUE, observationSheet.getRow(1).getCell(3).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO_VALUE, observationSheet.getRow(1).getCell(4).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.GID_VALUE, observationSheet.getRow(1).getCell(5).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.DESIG_VALUE, observationSheet.getRow(1)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.SOURCE_VALUE, observationSheet.getRow(1)
+				.getCell(1).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE_VALUE, observationSheet.getRow(1)
+				.getCell(2).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.CROSS_VALUE, observationSheet.getRow(1)
+				.getCell(3).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO_VALUE, observationSheet.getRow(1)
+				.getCell(4).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.GID_VALUE, observationSheet.getRow(1)
+				.getCell(5).getStringCellValue());
 
 	}
 
@@ -213,9 +267,11 @@ public class GermplasmExportServiceTest {
 		HSSFSheet observationSheet = wb.createSheet(this.sheetName);
 		Map<String, CellStyle> styles = this.createStyles(wb);
 
-		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil));
+		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService,
+				this.userSelection, true, contextUtil));
 
-		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportService).getImportedGermplasms();
+		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportService)
+				.getImportedGermplasms();
 
 		try {
 
@@ -225,19 +281,31 @@ public class GermplasmExportServiceTest {
 
 		}
 
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, observationSheet.getRow(0).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, observationSheet.getRow(0).getCell(1).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.GID, observationSheet.getRow(0).getCell(2).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.PARENTAGE, observationSheet.getRow(0).getCell(3).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.SEED_SOURCE, observationSheet.getRow(0).getCell(4).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE, observationSheet.getRow(0).getCell(5).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO, observationSheet.getRow(0)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.DESIGNATION, observationSheet.getRow(0)
+				.getCell(1).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.GID, observationSheet.getRow(0).getCell(2)
+				.getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.PARENTAGE, observationSheet.getRow(0)
+				.getCell(3).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.SEED_SOURCE, observationSheet.getRow(0)
+				.getCell(4).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE, observationSheet.getRow(0)
+				.getCell(5).getStringCellValue());
 
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO_VALUE, observationSheet.getRow(1).getCell(0).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.DESIG_VALUE, observationSheet.getRow(1).getCell(1).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.GID_VALUE, observationSheet.getRow(1).getCell(2).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.CROSS_VALUE, observationSheet.getRow(1).getCell(3).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.SOURCE_VALUE, observationSheet.getRow(1).getCell(4).getStringCellValue());
-		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE_VALUE, observationSheet.getRow(1).getCell(5).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_NO_VALUE, observationSheet.getRow(1)
+				.getCell(0).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.DESIG_VALUE, observationSheet.getRow(1)
+				.getCell(1).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.GID_VALUE, observationSheet.getRow(1)
+				.getCell(2).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.CROSS_VALUE, observationSheet.getRow(1)
+				.getCell(3).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.SOURCE_VALUE, observationSheet.getRow(1)
+				.getCell(4).getStringCellValue());
+		Assert.assertEquals(GermplasmExportServiceTest.ENTRY_CODE_VALUE, observationSheet.getRow(1)
+				.getCell(5).getStringCellValue());
 
 	}
 
@@ -254,9 +322,11 @@ public class GermplasmExportServiceTest {
 
 		settingDetail.setPossibleValues(possibleValues);
 
-		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil));
+		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService,
+				this.userSelection, true, contextUtil));
 
-		String categValue = this.exportService.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
+		String categValue = this.exportService.getCategoricalCodeValue(
+				this.generateImportedGermplasm(), settingDetail);
 
 		Assert.assertEquals(GermplasmExportServiceTest.CATEG_CODE_VALUE, categValue);
 
@@ -267,9 +337,11 @@ public class GermplasmExportServiceTest {
 		SettingDetail settingDetail = this.generateSettingDetail(TermId.CHECK.getId());
 		settingDetail.setPossibleValues(null);
 
-		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService, this.userSelection, true, contextUtil));
+		this.exportService = Mockito.spy(new GermplasmExportService(this.ontologyService,
+				this.userSelection, true, contextUtil));
 
-		String categValue = this.exportService.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
+		String categValue = this.exportService.getCategoricalCodeValue(
+				this.generateImportedGermplasm(), settingDetail);
 
 		Assert.assertEquals(GermplasmExportServiceTest.CHECK_VALUE, categValue);
 	}
@@ -340,7 +412,8 @@ public class GermplasmExportServiceTest {
 
 		StandardVariable stdVar;
 		try {
-			stdVar = this.ontologyService.getStandardVariable(termId,contextUtil.getCurrentProgramUUID());
+			stdVar = this.ontologyService.getStandardVariable(termId,
+					contextUtil.getCurrentProgramUUID());
 
 			settingDetail.getVariable().setName(stdVar.getName());
 			settingDetail.getVariable().setDescription(stdVar.getDescription());

@@ -243,6 +243,9 @@
     <bean id="germplasmListManager" class="org.generationcp.middleware.manager.GermplasmListManagerImpl">
         <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
+    <bean id="userProgramStateDataManager" class="org.generationcp.middleware.manager.UserProgramStateDataManagerImpl">
+        <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
+    </bean>    
     
     <bean id="userDataManager" class="org.generationcp.middleware.manager.UserDataManagerImpl">
     	<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>

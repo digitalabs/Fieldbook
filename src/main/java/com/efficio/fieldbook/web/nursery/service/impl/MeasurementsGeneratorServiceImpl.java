@@ -46,7 +46,8 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @Service
 public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MeasurementsGeneratorServiceImpl.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(MeasurementsGeneratorServiceImpl.class);
 
 	/** The fieldbook middleware service. */
 	@Resource
@@ -56,20 +57,23 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService#generateRealMeasurementRows(com.efficio.fieldbook.web.nursery
+	 * com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService
+	 * #generateRealMeasurementRows(com.efficio.fieldbook.web.nursery
 	 * .bean.UserSelection)
 	 */
 	@Override
-	public List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection) throws MiddlewareQueryException {
+	public List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection)
+			throws MiddlewareQueryException {
 		long start = System.currentTimeMillis();
 		List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
 		Map<String, Integer> standardVariableMap = new HashMap<String, Integer>();
 		int entryNo, plotNo;
 
-		List<ExperimentalDesignInfo> designInfos = this.getExperimentalDesignInfo(userSelection.getTrialEnvironmentValues());
+		List<ExperimentalDesignInfo> designInfos = this.getExperimentalDesignInfo(userSelection
+				.getTrialEnvironmentValues());
 
-		MeasurementData[][] treatmentFactorPermutations =
-				this.generateTreatmentFactorPermutations(userSelection.getWorkbook().getTreatmentFactors(), standardVariableMap);
+		MeasurementData[][] treatmentFactorPermutations = this.generateTreatmentFactorPermutations(
+				userSelection.getWorkbook().getTreatmentFactors(), standardVariableMap);
 
 		for (ExperimentalDesignInfo designInfo : designInfos) {
 
@@ -81,24 +85,25 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 				entryNo = 1;
 				for (int blockNo = 1; blockNo <= designInfo.getBlocksPerRep(); blockNo++) {
 
-					for (ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList()
-							.getImportedGermplasms()) {
+					for (ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo()
+							.getImportedGermplasmList().getImportedGermplasms()) {
 
-						List<MeasurementRow> measurementRow =
-								this.createMeasurementRows(userSelection, trialNo, repNo, blockNo, germplasm, entryNo++, plotNo++,
-										standardVariableMap, treatmentFactorPermutations);
+						List<MeasurementRow> measurementRow = this.createMeasurementRows(
+								userSelection, trialNo, repNo, blockNo, germplasm, entryNo++,
+								plotNo++, standardVariableMap, treatmentFactorPermutations);
 						measurementRows.addAll(measurementRow);
 					}
 				}
 			}
 		}
-		MeasurementsGeneratorServiceImpl.LOG.info("generateRealMeasurementRows Time duration: " + (System.currentTimeMillis() - start)
-				/ 1000);
+		MeasurementsGeneratorServiceImpl.LOG.info("generateRealMeasurementRows Time duration: "
+				+ (System.currentTimeMillis() - start) / 1000);
 		return measurementRows;
 	}
 
-	private List<MeasurementRow> createMeasurementRows(UserSelection userSelection, int trialNo, int repNo, int blockNo,
-			ImportedGermplasm germplasm, int entryNo, int plotNo, Map<String, Integer> standardVariableMap,
+	private List<MeasurementRow> createMeasurementRows(UserSelection userSelection, int trialNo,
+			int repNo, int blockNo, ImportedGermplasm germplasm, int entryNo, int plotNo,
+			Map<String, Integer> standardVariableMap,
 			MeasurementData[][] treatmentFactorPermutations) throws MiddlewareQueryException {
 
 		List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
@@ -117,7 +122,8 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 				this.createTrialInstanceDataList(dataList, userSelection, trialNo);
 			}
 
-			this.createFactorDataList(dataList, userSelection, repNo, blockNo, germplasm, entryNo, plotNo, standardVariableMap);
+			this.createFactorDataList(dataList, userSelection, repNo, blockNo, germplasm, entryNo,
+					plotNo, standardVariableMap);
 
 			if (treatmentFactorPermutations != null && treatmentFactorPermutations.length > 0) {
 				for (MeasurementData treatmentFactor : treatmentFactorPermutations[i]) {
@@ -134,17 +140,18 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		return measurementRows;
 	}
 
-	private void createTrialInstanceDataList(List<MeasurementData> dataList, UserSelection userSelection, int trialNo) {
-		MeasurementVariable trialInstanceVar =
-				WorkbookUtil.getMeasurementVariable(userSelection.getWorkbook().getTrialVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId());
-		MeasurementData measurementData =
-				new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, trialInstanceVar.getDataType(),
-						trialInstanceVar);
+	private void createTrialInstanceDataList(List<MeasurementData> dataList,
+			UserSelection userSelection, int trialNo) {
+		MeasurementVariable trialInstanceVar = WorkbookUtil.getMeasurementVariable(userSelection
+				.getWorkbook().getTrialVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId());
+		MeasurementData measurementData = new MeasurementData(trialInstanceVar.getName(),
+				Integer.toString(trialNo), false, trialInstanceVar.getDataType(), trialInstanceVar);
 		dataList.add(measurementData);
 	}
 
-	private void createFactorDataList(List<MeasurementData> dataList, UserSelection userSelection, int repNo, int blockNo,
-			ImportedGermplasm germplasm, int entryNo, int plotNo, Map<String, Integer> standardVariableMap) throws MiddlewareQueryException {
+	private void createFactorDataList(List<MeasurementData> dataList, UserSelection userSelection,
+			int repNo, int blockNo, ImportedGermplasm germplasm, int entryNo, int plotNo,
+			Map<String, Integer> standardVariableMap) throws MiddlewareQueryException {
 
 		for (MeasurementVariable var : userSelection.getWorkbook().getNonTrialFactors()) {
 
@@ -152,58 +159,71 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 			if (var.getTreatmentLabel() == null || "".equals(var.getTreatmentLabel())) {
 				MeasurementData measurementData = null;
 
-				Integer termId = null;
-				String key =
-						var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":"
-								+ PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
-				if (standardVariableMap.get(key) == null) {
-					termId =
-							this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(),
-									var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
-					standardVariableMap.put(key, termId);
-				} else {
-					termId = standardVariableMap.get(key);
+				Integer termId = var.getTermId();
+				if (termId == null) {
+					String key = var.getProperty() + ":" + var.getScale() + ":" + var.getMethod()
+							+ ":" + PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
+					if (standardVariableMap.get(key) == null) {
+						termId = this.fieldbookMiddlewareService
+								.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(),
+										var.getScale(), var.getMethod(),
+										PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+						standardVariableMap.put(key, termId);
+					} else {
+						termId = standardVariableMap.get(key);
 
+					}
 				}
 
 				var.setFactor(true);
 
 				if (termId == null) {
 					// we default if null, but should not happen
-					measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
+					measurementData = new MeasurementData(var.getName(), "", true,
+							var.getDataType(), var);
 					var.setFactor(false);
 					measurementData.setEditable(true);
 				} else {
 
 					if (termId.intValue() == TermId.ENTRY_NO.getId()) {
-						measurementData = new MeasurementData(var.getName(), Integer.toString(entryNo), false, var.getDataType(), var);
-					} else if (termId.intValue() == TermId.SOURCE.getId() || termId.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
-						measurementData =
-								new MeasurementData(var.getName(), germplasm.getSource() != null ? germplasm.getSource() : "", false,
-										var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(),
+								Integer.toString(entryNo), false, var.getDataType(), var);
+					} else if (termId.intValue() == TermId.SOURCE.getId()
+							|| termId.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
+						measurementData = new MeasurementData(var.getName(),
+								germplasm.getSource() != null ? germplasm.getSource() : "", false,
+								var.getDataType(), var);
 					} else if (termId.intValue() == TermId.CROSS.getId()) {
-						measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(), germplasm.getCross(),
+								false, var.getDataType(), var);
 					} else if (termId.intValue() == TermId.DESIG.getId()) {
-						measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(), germplasm.getDesig(),
+								false, var.getDataType(), var);
 					} else if (termId.intValue() == TermId.GID.getId()) {
-						measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(), germplasm.getGid(),
+								false, var.getDataType(), var);
 					} else if (termId.intValue() == TermId.ENTRY_CODE.getId()) {
-						measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(),
+								germplasm.getEntryCode(), false, var.getDataType(), var);
 					} else if (termId.intValue() == TermId.PLOT_NO.getId()) {
-						measurementData = new MeasurementData(var.getName(), Integer.toString(plotNo), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(),
+								Integer.toString(plotNo), false, var.getDataType(), var);
 					} else if (termId.intValue() == TermId.CHECK.getId()) {
-						measurementData =
-								new MeasurementData(var.getName(), germplasm.getCheckName(), false, var.getDataType(),
-										germplasm.getCheckId(), var);
+						measurementData = new MeasurementData(var.getName(),
+								germplasm.getCheckName(), false, var.getDataType(),
+								germplasm.getCheckId(), var);
 
 					} else if (termId.intValue() == TermId.REP_NO.getId()) {
-						measurementData = new MeasurementData(var.getName(), Integer.toString(repNo), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(),
+								Integer.toString(repNo), false, var.getDataType(), var);
 					} else if (termId.intValue() == TermId.BLOCK_NO.getId()) {
-						measurementData = new MeasurementData(var.getName(), Integer.toString(blockNo), false, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(),
+								Integer.toString(blockNo), false, var.getDataType(), var);
 
 					} else {
 						// meaning non factor
-						measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
+						measurementData = new MeasurementData(var.getName(), "", true,
+								var.getDataType(), var);
 						var.setFactor(false);
 					}
 				}
@@ -224,7 +244,8 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		}
 	}
 
-	private List<ExperimentalDesignInfo> getExperimentalDesignInfo(List<List<ValueReference>> trialInfo) {
+	private List<ExperimentalDesignInfo> getExperimentalDesignInfo(
+			List<List<ValueReference>> trialInfo) {
 		List<ExperimentalDesignInfo> result = new ArrayList<ExperimentalDesignInfo>();
 
 		if (trialInfo != null && !trialInfo.isEmpty()) {
@@ -266,12 +287,14 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		return result;
 	}
 
-	private MeasurementData[][] generateTreatmentFactorPermutations(List<TreatmentVariable> treatmentVariables,
-			Map<String, Integer> standardVariableMap) throws MiddlewareQueryException {
+	private MeasurementData[][] generateTreatmentFactorPermutations(
+			List<TreatmentVariable> treatmentVariables, Map<String, Integer> standardVariableMap)
+			throws MiddlewareQueryException {
 
 		MeasurementData[][] output = null;
 		if (treatmentVariables != null && !treatmentVariables.isEmpty()) {
-			List<List<TreatmentVariable>> lists = this.rearrangeTreatmentVariables(treatmentVariables);
+			List<List<TreatmentVariable>> lists = this
+					.rearrangeTreatmentVariables(treatmentVariables);
 			int totalPermutations = this.getTotalPermutations(lists);
 			output = new MeasurementData[totalPermutations][lists.size() * 2];
 
@@ -285,8 +308,10 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 				for (int i = 0; i < currentPermutation; i++) {
 					for (int j = 0; j < reps; j++) {
 						TreatmentVariable factor = list.get(i % size);
-						MeasurementData levelData = this.createMeasurementData(factor.getLevelVariable(), standardVariableMap);
-						MeasurementData valueData = this.createMeasurementData(factor.getValueVariable(), standardVariableMap);
+						MeasurementData levelData = this.createMeasurementData(
+								factor.getLevelVariable(), standardVariableMap);
+						MeasurementData valueData = this.createMeasurementData(
+								factor.getValueVariable(), standardVariableMap);
 						output[reps * i + j][listIndex * 2] = levelData;
 						output[reps * i + j][listIndex * 2 + 1] = valueData;
 					}
@@ -298,7 +323,8 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		return output;
 	}
 
-	private List<List<TreatmentVariable>> rearrangeTreatmentVariables(List<TreatmentVariable> treatmentVariables) {
+	private List<List<TreatmentVariable>> rearrangeTreatmentVariables(
+			List<TreatmentVariable> treatmentVariables) {
 		List<List<TreatmentVariable>> groupedFactors = new ArrayList<List<TreatmentVariable>>();
 		Integer levelFactorId = null;
 		Map<Integer, List<TreatmentVariable>> map = new LinkedHashMap<Integer, List<TreatmentVariable>>();
@@ -326,27 +352,29 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		return totalPermutations;
 	}
 
-	private MeasurementData createMeasurementData(MeasurementVariable variable, Map<String, Integer> standardVariableMap)
-			throws MiddlewareQueryException {
+	private MeasurementData createMeasurementData(MeasurementVariable variable,
+			Map<String, Integer> standardVariableMap) throws MiddlewareQueryException {
 
 		Integer termId = variable.getTermId();
 		if (termId == 0) {
 			termId = this.getTermId(variable, standardVariableMap);
 		}
 
-		return new MeasurementData(variable.getName(), variable.getValue(), false, variable.getDataType(), variable);
+		return new MeasurementData(variable.getName(), variable.getValue(), false,
+				variable.getDataType(), variable);
 	}
 
-	private Integer getTermId(MeasurementVariable var, Map<String, Integer> standardVariableMap) throws MiddlewareQueryException {
+	private Integer getTermId(MeasurementVariable var, Map<String, Integer> standardVariableMap)
+			throws MiddlewareQueryException {
 
 		Integer termId = null;
-		String key =
-				var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":"
-						+ PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
+		String key = var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":"
+				+ PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
 		if (standardVariableMap.get(key) == null) {
-			termId =
-					this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(),
-							var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+			termId = this.fieldbookMiddlewareService
+					.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(),
+							var.getScale(), var.getMethod(),
+							PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
 			standardVariableMap.put(key, termId);
 		} else {
 			termId = standardVariableMap.get(key);
@@ -368,7 +396,8 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 
 		}
 
-		public ExperimentalDesignInfo(Integer trialNumber, Integer design, Integer numberOfReps, Integer blockSize, Integer blocksPerRep) {
+		public ExperimentalDesignInfo(Integer trialNumber, Integer design, Integer numberOfReps,
+				Integer blockSize, Integer blocksPerRep) {
 			this.trialNumber = trialNumber;
 			this.design = design;
 			this.numberOfReps = numberOfReps;
@@ -418,8 +447,9 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 
 		@Override
 		public String toString() {
-			return "ExperimentalDesignInfo [trialNumber=" + this.trialNumber + ", design=" + this.design + ", numberOfReps="
-					+ this.numberOfReps + ", blockSize=" + this.blockSize + ", blocksPerRep=" + this.blocksPerRep + "]";
+			return "ExperimentalDesignInfo [trialNumber=" + this.trialNumber + ", design="
+					+ this.design + ", numberOfReps=" + this.numberOfReps + ", blockSize="
+					+ this.blockSize + ", blocksPerRep=" + this.blocksPerRep + "]";
 		}
 
 	}

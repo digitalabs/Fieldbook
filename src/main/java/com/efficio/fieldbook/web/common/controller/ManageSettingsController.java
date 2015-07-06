@@ -124,9 +124,8 @@ public class ManageSettingsController extends SettingsController {
 
 				variableFilterOptions.getVariableTypes().addAll(selectedVariableTypes);
 
-				HashSet<Integer> filteredVariables = new HashSet<>();
 				if (!showHiddenVariables) {
-					filteredVariables.addAll(filterOutVariablesByVariableType(selectedVariableTypes, isTrial));
+					variableFilterOptions.getExcludedVariableIds().addAll(filterOutVariablesByVariableType(selectedVariableTypes, isTrial));
 				}
 
 				List<Variable> ontologyList = ontologyVariableDataManager.getWithFilter(variableFilterOptions);
@@ -134,6 +133,7 @@ public class ManageSettingsController extends SettingsController {
 				if (ontologyList.isEmpty()) {
 					continue;
 				}
+
 				/*
 				if (selectedVariableTypes.contains(VariableType.TREATMENT_FACTOR)) {
 					ontologyVariableDataManager.processTreatmentFactorHasPairValue(ontologyList,

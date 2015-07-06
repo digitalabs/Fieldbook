@@ -174,11 +174,6 @@ public class ManageSettingsController extends SettingsController {
 				variableDetails.setVariable(ontologyVariable);
 				variableDetails.setCurrentVariableType(VariableType.getById(variableTypeId));
 
-				// TODO when treatmentfactor pairs is done
-				if (ontologyVariable.getVariableTypes().contains(VariableType.TREATMENT_FACTOR)) {
-
-				}
-
 			}
 
 		} catch (MiddlewareException e) {

@@ -201,6 +201,11 @@ public abstract class BaseTrialController extends SettingsController {
 
 			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(), VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 
+			if (var.getRole() != null){
+				detail.setRole(var.getRole());
+				detail.getVariable().setRole(var.getRole().name());
+			}
+			
 			if (requiredIDList.contains(var.getTermId())) {
 				detail.setDeletable(false);
 			} else {

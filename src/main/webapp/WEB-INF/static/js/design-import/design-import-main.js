@@ -44,7 +44,7 @@
 				setTimeout(function() {
 					scope.$apply(function() {
 						var title = 'Ontology Browser';
-						var url = '/Fieldbook/OntologyManager/manage/variable';
+						var url = '/ibpworkbench/controller/ontology';
 
 						$modal.open({
 							windowClass: 'modal-very-huge',

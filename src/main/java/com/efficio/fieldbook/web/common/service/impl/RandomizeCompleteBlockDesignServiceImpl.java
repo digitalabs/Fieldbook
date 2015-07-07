@@ -1,14 +1,7 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -22,7 +15,6 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,8 +96,10 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 						int treatmentPair2 = Integer.parseInt(pairVar);
 						StandardVariable stdVar1 = this.fieldbookMiddlewareService.getStandardVariable(treatmentPair1,
 								contextUtil.getCurrentProgramUUID());
+						stdVar1.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 						StandardVariable stdVar2 = this.fieldbookMiddlewareService.getStandardVariable(treatmentPair2,
 								contextUtil.getCurrentProgramUUID());
+						stdVar2.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 						TreatmentVariable treatmentVar = new TreatmentVariable();
 						MeasurementVariable measureVar1 =
 								ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar1, Operation.ADD, this.fieldbookService);

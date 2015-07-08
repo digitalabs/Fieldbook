@@ -247,6 +247,9 @@ public class ImportGermplasmListController extends SettingsController {
 	    if (userSelection.getTemporaryWorkbook() != null) {
 			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
 			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook()
+					.getObservations(), false, this.userSelection, this.ontologyService, this.fieldbookService,
+					contextUtil.getCurrentProgramUUID());
+			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(), this.userSelection.getWorkbook()
 					.getObservations(), true, this.userSelection, this.ontologyService, this.fieldbookService,
 					contextUtil.getCurrentProgramUUID());
 

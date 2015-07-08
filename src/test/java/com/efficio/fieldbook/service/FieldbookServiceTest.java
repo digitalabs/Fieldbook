@@ -1,12 +1,13 @@
 
 package com.efficio.fieldbook.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -33,12 +34,9 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class FieldbookServiceTest {
 
@@ -169,8 +167,7 @@ public class FieldbookServiceTest {
 
 	@Test
 	public void testGetAllLocations() throws Exception {
-		List<ValueReference> resultPossibleValues =
-				this.fieldbookServiceImpl.getAllLocationsByUniqueID(FieldbookServiceTest.DUMMY_PROGRAM_UUID);
+		List<ValueReference> resultPossibleValues = this.fieldbookServiceImpl.getAllLocations(false);
 		Assert.assertEquals("First possible value should have an id of 1 as per our test data", Integer.valueOf(1), resultPossibleValues
 				.get(0).getId());
 		Assert.assertEquals("Second possible value should have an id of 2 as per our test data", Integer.valueOf(2), resultPossibleValues

@@ -11,23 +11,6 @@
 
 package com.efficio.fieldbook.service.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.generationcp.commons.ruleengine.RuleException;
-import org.generationcp.middleware.domain.dms.Enumeration;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -36,6 +19,23 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.BVDesignOutput;
 import com.efficio.fieldbook.web.trial.bean.xml.MainDesign;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -94,6 +94,8 @@ public interface FieldbookService {
 	 */
 	List<ValueReference> getAllPossibleValues(int id) throws MiddlewareException;
 
+	List<ValueReference> getAllPossibleValues(Variable variable) throws MiddlewareException;
+
 	/**
 	 * Gets the all possible values favorite.
 	 *
@@ -102,7 +104,7 @@ public interface FieldbookService {
 	 * @return the all possible values favorite
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException;
+	List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareException;
 
 	/**
 	 * Gets the all possible values by psmr.
@@ -126,7 +128,7 @@ public interface FieldbookService {
 	 * @return the value
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException;
+	String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareException;
 
 	/**
 	 * Retrieves the person by user id
@@ -207,7 +209,7 @@ public interface FieldbookService {
 	 * @return the variable possible values
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareQueryException;
+	List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareException;
 
 	/**
 	 * Get all possible values.
@@ -232,7 +234,7 @@ public interface FieldbookService {
 
 	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId) throws MiddlewareQueryException;
 
-	void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException;
+	void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareException;
 
 	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook)
 			throws MiddlewareException;

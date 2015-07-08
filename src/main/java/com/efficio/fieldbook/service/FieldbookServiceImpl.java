@@ -11,42 +11,6 @@
 
 package com.efficio.fieldbook.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.commons.ruleengine.RuleException;
-import org.generationcp.commons.service.FileService;
-import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.Enumeration;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.manager.api.UserDataManager;
-import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.User;
-import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.service.internal.DesignRunner;
@@ -65,6 +29,43 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.service.FileService;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermSummary;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.UserDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.service.api.OntologyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -84,6 +85,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Autowired
 	private OntologyService ontologyService;
+
+	@Resource
+	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Resource
 	private PossibleValuesCache possibleValuesCache;
@@ -110,9 +114,21 @@ public class FieldbookServiceImpl implements FieldbookService {
 		this.possibleValuesCache = possibleValuesCache;
 	}
 
+	protected static boolean inHideVariableFields(Integer stdVarId, String variableList) {
+		StringTokenizer token = new StringTokenizer(variableList, ",");
+		boolean inList = false;
+		while (token.hasMoreTokens()) {
+			if (stdVarId.equals(Integer.parseInt(token.nextToken()))) {
+				inList = true;
+				break;
+			}
+		}
+		return inList;
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.service.api.FieldbookService#storeUserWorkbook(java.io.InputStream)
 	 */
 	@Override
@@ -131,9 +147,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	/**
 	 * Advance Nursery
-	 * 
+	 *
 	 * @throws RuleException
-	 * @throws MiddlewareException 
+	 * @throws MiddlewareException
 	 */
 	@Override
 	public AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException, MiddlewareException {
@@ -311,43 +327,83 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return list;
 	}
 
-	protected static boolean inHideVariableFields(Integer stdVarId, String variableList) {
-		StringTokenizer token = new StringTokenizer(variableList, ",");
-		boolean inList = false;
-		while (token.hasMoreTokens()) {
-			if (stdVarId.equals(Integer.parseInt(token.nextToken()))) {
-				inList = true;
-				break;
-			}
-		}
-		return inList;
+	@Override
+	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareException {
+		Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), id);
+
+		assert !Objects.equals(variable, null);
+
+		return this.getAllPossibleValues(variable);
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareException {
-		List<ValueReference> possibleValues = this.possibleValuesCache.getPossibleValues(id);
-		if (possibleValues == null) {
+	public List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareException {
+		Variable variable = this.ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), id);
 
-			if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
-				List<ValueReference> list = new ArrayList<ValueReference>();
-				list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
-				possibleValues = list;
-				possibleValues.addAll(this.getAllBreedingMethods(true, this.contextUtil.getCurrentProgramUUID()));
-			} else if (TermId.LOCATION_ID.getId() == id) {
-				possibleValues =
-						this.convertLocationsToValueReferences(this.getAllBreedingLocationsByUniqueID(this.contextUtil
-								.getCurrentProgramUUID()));
-			} else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
-				possibleValues = this.convertPersonsToValueReferences(this.fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral());
-			} else if (TermId.NURSERY_TYPE.getId() == id) {
-				possibleValues = this.fieldbookMiddlewareService.getAllNurseryTypes(contextUtil.getCurrentProgramUUID());
+		assert !Objects.equals(variable, null);
+
+		List<ValueReference> possibleValues = getCachedValues(isGetAllRecords, variable);
+
+		if (possibleValues.isEmpty()) {
+			if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
+				// for location, we get all since it is for saving, so we would be able to set the name properly
+				possibleValues = this.getAllLocations(isGetAllRecords);
 			} else {
-				possibleValues = this.fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
+				possibleValues = this.getAllPossibleValues(variable);
 			}
-			this.possibleValuesCache.addPossibleValues(id, possibleValues);
 		}
 		return possibleValues;
 	}
+
+	@Override
+	public List<ValueReference> getAllPossibleValues(Variable variable) throws MiddlewareException {
+		List<ValueReference> possibleValues = getCachedValues(false, variable);
+
+		if (possibleValues.isEmpty()) {
+			switch (variable.getScale().getDataType()) {
+				case BREEDING_METHOD:
+					possibleValues
+							.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
+					List<ValueReference> allBreedingMethods = this.getAllBreedingMethods(true, this.contextUtil.getCurrentProgramUUID());
+					possibleValues.addAll(allBreedingMethods);
+					possibleValuesCache.addPossibleValuesByDataType(DataType.BREEDING_METHOD, allBreedingMethods);
+					break;
+				case LOCATION:
+					possibleValues = this.getAllLocations(true);
+					possibleValuesCache.addLocations(true, possibleValues);
+					break;
+				case PERSON:
+					possibleValues =
+							this.convertPersonsToValueReferences(this.fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral());
+					possibleValuesCache.addPossibleValuesByDataType(DataType.PERSON, possibleValues);
+					break;
+				case CATEGORICAL_VARIABLE:
+					// note as noticed: NURERY_TYPE is a categorical, has special handling in prev but we'll treat it as categorical type from now on
+					for (TermSummary value : variable.getScale().getCategories()) {
+						possibleValues.add(new ValueReference(value));
+					}
+					possibleValuesCache.addPossibleValues(variable.getId(), possibleValues);
+					break;
+			}
+		}
+
+		return possibleValues;
+	}
+
+	private List<ValueReference> getCachedValues(boolean isGetAllRecords, Variable variable) {
+		List<ValueReference> possibleValues = new ArrayList<>();
+		if (!variable.getScale().getDataType().isSystemDataType()) {
+			if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
+				possibleValues = this.possibleValuesCache.getLocationsCache(!isGetAllRecords);
+			} else {
+				possibleValues = this.possibleValuesCache.getPossibleValuesByDataType(variable.getScale().getDataType());
+			}
+		} else if (DataType.CATEGORICAL_VARIABLE.equals(variable.getScale().getDataType())) {
+			possibleValues = this.possibleValuesCache.getPossibleValues(variable.getId());
+		}
+		return (possibleValues != null ? possibleValues : new ArrayList<ValueReference>());
+	}
+
 
 	private List<Location> getAllBreedingLocationsByUniqueID(String programUUID) {
 		List<Location> breedingLocationsOfCurrentProgram = new ArrayList<Location>();
@@ -369,16 +425,19 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValuesFavorite(int id, String programUUID) throws MiddlewareQueryException {
+	public List<ValueReference> getAllPossibleValuesFavorite(int id, String programUUID) throws MiddlewareException {
+		Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id);
+		assert !Objects.equals(variable, null);
+
 		List<ValueReference> possibleValuesFavorite = null;
-		if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
+		if (DataType.BREEDING_METHOD.equals(variable.getScale().getDataType())) {
 			List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(programUUID);
-			List<ValueReference> list = new ArrayList<ValueReference>();
+			List<ValueReference> list = new ArrayList<>();
 			list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
 			possibleValuesFavorite = list;
 			possibleValuesFavorite.addAll(this.getFavoriteBreedingMethods(methodIds, false));
 
-		} else if (TermId.LOCATION_ID.getId() == id) {
+		} else if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
 			List<Long> locationIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID);
 			possibleValuesFavorite =
 					this.convertLocationsToValueReferences(this.fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationIds));
@@ -413,6 +472,26 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 		return list;
 	}
+
+	public List<ValueReference> getAllLocations(boolean isBreedingMethodOnly) throws MiddlewareException {
+		String currentProgramUUID = this.contextUtil.getCurrentProgramUUID();
+
+		if (isBreedingMethodOnly) {
+			return this.convertLocationsToValueReferences(this.getAllBreedingLocationsByUniqueID(currentProgramUUID));
+		}
+
+		// added filtering of location based on programUUID
+		List<Location> locations = this.fieldbookMiddlewareService.getAllLocations();
+		for (Iterator<Location> it = locations.iterator(); it.hasNext(); ) {
+			if (currentProgramUUID.equals(it.next().getUniqueID())) {
+				it.remove();
+			}
+		}
+
+		return this.convertLocationsToValueReferences(locations);
+
+	}
+
 
 	private List<ValueReference> convertLocationsToValueReferences(List<Location> locations) {
 		List<ValueReference> list = new ArrayList<ValueReference>();
@@ -455,7 +534,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException {
+	public String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareException {
+		Variable variable = this.ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), id);
+		assert !Objects.equals(variable, null);
+
 		List<ValueReference> possibleValues = this.possibleValuesCache.getPossibleValues(id);
 		if (!NumberUtils.isNumber(valueOrId) && TermId.BREEDING_METHOD_CODE.getId() != id && TermId.BREEDING_METHOD.getId() != id) {
 			return valueOrId;
@@ -474,16 +556,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (NumberUtils.isNumber(valueOrId)) {
 			valueId = Double.valueOf(valueOrId);
 		}
+
+		// TODO: Handling of breeding method variables cant be determined by just data types, also STUDY_UID :(
 		if (TermId.BREEDING_METHOD_ID.getId() == id) {
 			return this.getBreedingMethodById(valueId.intValue());
 		} else if (TermId.BREEDING_METHOD_CODE.getId() == id) {
 			return this.getBreedingMethodByCode(valueOrId);
 		} else if (TermId.BREEDING_METHOD.getId() == id) {
 			return this.getBreedingMethodByName(valueOrId);
-		} else if (TermId.LOCATION_ID.getId() == id) {
+		} else if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
 			return this.getLocationById(valueId.intValue());
-		} else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id
-				|| TermId.STUDY_UID.getId() == id) {
+		} else if (DataType.PERSON.equals(variable.getScale().getDataType()) || TermId.STUDY_UID.getId() == id) {
 			return this.getPersonByUserId(valueId.intValue());
 		} else if (isCategorical) {
 			Term term = this.ontologyService.getTermById(valueId.intValue());
@@ -556,25 +639,23 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Override
 	public void setAllPossibleValuesInWorkbook(Workbook workbook) throws MiddlewareQueryException {
 		List<MeasurementVariable> allVariables = workbook.getAllVariables();
-		if (allVariables != null) {
-			for (MeasurementVariable variable : allVariables) {
-				if (variable.getPossibleValues() == null || variable.getPossibleValues().isEmpty()) {
-					Property property = this.ontologyService.getProperty(variable.getProperty());
-					if (property != null && property.getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
-						List<ValueReference> list = new ArrayList<ValueReference>();
-						List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(true);
-						// since we only need the name for the display
-						// special handling for breeding methods
-						if (methodList != null && !methodList.isEmpty()) {
-							for (Method method : methodList) {
-								if (method != null) {
-									list.add(new ValueReference(method.getMid(), method.getMname() + " - " + method.getMcode(), method
-											.getMname() + " - " + method.getMcode()));
-								}
+		for (MeasurementVariable variable : allVariables) {
+			if (variable.getPossibleValues() == null || variable.getPossibleValues().isEmpty()) {
+
+				if (DataType.BREEDING_METHOD.getId().equals(variable.getDataTypeId())) {
+					List<ValueReference> list = new ArrayList<ValueReference>();
+					List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(true);
+					// since we only need the name for the display
+					// special handling for breeding methods
+					if (methodList != null && !methodList.isEmpty()) {
+						for (Method method : methodList) {
+							if (method != null) {
+								list.add(new ValueReference(method.getMid(), method.getMname() + " - " + method.getMcode(),
+										method.getMname() + " - " + method.getMcode()));
 							}
 						}
-						variable.setPossibleValues(list);
 					}
+					variable.setPossibleValues(list);
 				}
 			}
 		}
@@ -902,7 +983,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
     @Override
-    public void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
+	public void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareException {
 		if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
 				&& !workbook.getTrialConditions().isEmpty()) {
 
@@ -972,49 +1053,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareQueryException {
+	public List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareException {
 		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
 		// we need to get all possible values so we can check the favorites as well, since if we depend on the variable possible values, its
 		// already filtered, so it can be wrong
-		if (TermId.LOCATION_ID.getId() == var.getTermId()) {
-			possibleValues = this.getAllLocationsByUniqueID(this.contextUtil.getCurrentProgramUUID());
+		if (DataType.LOCATION.getId().equals(var.getDataTypeId())) {
+			possibleValues = this.getAllLocations(true);
 		} else {
 			possibleValues = var.getPossibleValues();
-		}
-		return possibleValues;
-	}
-
-	public List<ValueReference> getAllLocationsByUniqueID(String programUUID) {
-		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
-		try {
-
-			// added filtering of location based on programUUID
-			List<Location> locations = this.fieldbookMiddlewareService.getAllLocations();
-			List<Location> locationsOfCurrentProgram = new ArrayList<Location>();
-			for (Location location : locations) {
-				if (location.getUniqueID() == null || location.getUniqueID().equals(programUUID)) {
-					locationsOfCurrentProgram.add(location);
-				}
-			}
-
-			possibleValues = this.convertLocationsToValueReferences(locationsOfCurrentProgram);
-		} catch (MiddlewareQueryException e) {
-			FieldbookServiceImpl.LOG.error(e.getMessage(), e);
-		}
-		return possibleValues;
-	}
-
-	@Override
-	public List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareException {
-		List<ValueReference> possibleValues = null;
-		if (possibleValues == null) {
-
-			if (isGetAllRecords && TermId.LOCATION_ID.getId() == id) {
-				// for location, we get all since it is for saving, so we would be able to set the name properly
-				possibleValues = this.getAllLocationsByUniqueID(this.contextUtil.getCurrentProgramUUID());
-			} else {
-				possibleValues = this.getAllPossibleValues(id);
-			}
 		}
 		return possibleValues;
 	}

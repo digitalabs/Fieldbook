@@ -11,8 +11,12 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.*;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.*;
+import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
+import com.hazelcast.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -35,28 +39,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.*;
-import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.hazelcast.util.StringUtil;
+import java.util.*;
 
 /**
  * The Class SettingsUtil.
  */
 public class SettingsUtil {
 
-	/**
-	 * The Constant LOG.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
-	public static final List<String> HIDDEN_FIELDS = Arrays.asList(AppConstants.HIDDEN_FIELDS
-			.getString().split(","));
+	public static final List<String> HIDDEN_FIELDS = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
 	public static final List<String> TRIAL_BASIC_REQUIRED_FIELDS = Arrays
 			.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString().split(","));
 	public static final List<String> NURSERY_BASIC_REQUIRED_FIELDS = Arrays
 			.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
+	/**
+	 * The Constant LOG.
+	 */
+	private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
 
 	private SettingsUtil() {
 		// do nothing
@@ -490,7 +488,7 @@ public class SettingsUtil {
 		try {
 			possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId,
 					programUUID);
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			SettingsUtil.LOG.error(e.getMessage(), e);
 		}
 		return possibleValueList;

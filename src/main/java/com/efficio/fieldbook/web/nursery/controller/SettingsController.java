@@ -974,7 +974,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				this.userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedBaselineTraitsList().add(newSetting);
-		} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
+		} else if (mode == VariableType.NURSERY_CONDITION.getId() || mode == VariableType.TRIAL_CONDITION.getId()) {
 			if (this.userSelection.getDeletedNurseryConditions() == null) {
 				this.userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
 			}

@@ -388,7 +388,7 @@ public class ManageSettingsController extends SettingsController {
 			} else if (mode == VariableType.SELECTION_METHOD.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getSelectionVariates(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getSelectionVariates(), variableId);
-			} else if (mode == VariableType.NURSERY_CONDITION.getId()) {
+			} else if (mode == VariableType.NURSERY_CONDITION.getId() || mode == VariableType.TRIAL_CONDITION.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getNurseryConditions(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getNurseryConditions(), variableId);
 			} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {

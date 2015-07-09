@@ -261,7 +261,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 					} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 						if (FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())
 								|| FieldbookServiceImpl.inHideVariableFields(ref.getId(),
-										AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getString())
+								AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS_FROM_POPUP.getString())
 								|| FieldbookServiceImpl.inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_VARIABLES.getString())) {
 							continue;
 						}
@@ -360,7 +360,14 @@ public class FieldbookServiceImpl implements FieldbookService {
 		List<ValueReference> possibleValues = getCachedValues(false, variable);
 
 		if (possibleValues.isEmpty()) {
-			switch (variable.getScale().getDataType()) {
+			DataType dataType = variable.getScale().getDataType();
+
+			// hacks to override the dataType(s)
+			if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId()) {
+				dataType = DataType.BREEDING_METHOD;
+			}
+
+			switch (dataType) {
 				case BREEDING_METHOD:
 					possibleValues
 							.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
@@ -430,14 +437,21 @@ public class FieldbookServiceImpl implements FieldbookService {
 		assert !Objects.equals(variable, null);
 
 		List<ValueReference> possibleValuesFavorite = null;
-		if (DataType.BREEDING_METHOD.equals(variable.getScale().getDataType())) {
+		DataType dataType = variable.getScale().getDataType();
+
+		// hacks to override the dataType(s)
+		if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId()) {
+			dataType = DataType.BREEDING_METHOD;
+		}
+
+		if (DataType.BREEDING_METHOD.equals(dataType)) {
 			List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(programUUID);
 			List<ValueReference> list = new ArrayList<>();
 			list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
 			possibleValuesFavorite = list;
 			possibleValuesFavorite.addAll(this.getFavoriteBreedingMethods(methodIds, false));
 
-		} else if (DataType.LOCATION.equals(variable.getScale().getDataType())) {
+		} else if (DataType.LOCATION.equals(dataType)) {
 			List<Long> locationIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID);
 			possibleValuesFavorite =
 					this.convertLocationsToValueReferences(this.fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationIds));
@@ -693,7 +707,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		MeasurementVariable var =
 				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
 						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
-								.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
+						.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
 		var.setRole(role);
 		var.setDataTypeId(stdvar.getDataType().getId());
 		var.setFactor(false);
@@ -880,10 +894,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 									new SettingVariable(tempVarName.getName(), stdvar.getDescription(), stdvar.getProperty().getName(),
 											stdvar.getScale().getName(), stdvar.getMethod().getName(),null,
 											stdvar.getDataType().getName(), stdvar.getDataType().getId(), stdvar.getConstraints() != null
-													&& stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints()
-													.getMinValue() : null, stdvar.getConstraints() != null
-													&& stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints()
-													.getMaxValue() : null);
+											&& stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints()
+											.getMinValue() : null, stdvar.getConstraints() != null
+											&& stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints()
+											.getMaxValue() : null);
 							svar.setCvTermId(stdvar.getId());
 							svar.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
 							svar.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
@@ -982,7 +996,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 	}
 
-    @Override
+	@Override
 	public void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareException {
 		if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
 				&& !workbook.getTrialConditions().isEmpty()) {
@@ -994,7 +1008,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 				String entry = idNameMap.get(key);
 				nameIdMap.put(entry, key);
 			}
-           
+
 			for (MeasurementVariable variable : workbook.getTrialConditions()) {
 				for (MeasurementRow row : workbook.getTrialObservations()) {
 					MeasurementData data = row.getMeasurementData(variable.getTermId());
@@ -1006,31 +1020,31 @@ public class FieldbookServiceImpl implements FieldbookService {
 						if (pairId == null) {
 							pairId = nameIdMap.get(String.valueOf(variable.getTermId()));
 
-                            if (pairId != null){
- 
-							idTerm = Integer.valueOf(pairId);
-                            	
-						MeasurementData pairData = row.getMeasurementData(Integer.valueOf(pairId));
+							if (pairId != null){
 
-						MeasurementData idData = row.getMeasurementData(idTerm);
-                                 
-						if (idData != null) {
-                                 	List<ValueReference> possibleValues = getVariablePossibleValues(idData.getMeasurementVariable());
-							for (ValueReference ref : possibleValues) {
-								if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(pairData.getValue())) {
-									actualNameVal = ref.getName();
-									break;
+								idTerm = Integer.valueOf(pairId);
+
+								MeasurementData pairData = row.getMeasurementData(Integer.valueOf(pairId));
+
+								MeasurementData idData = row.getMeasurementData(idTerm);
+
+								if (idData != null) {
+									List<ValueReference> possibleValues = getVariablePossibleValues(idData.getMeasurementVariable());
+									for (ValueReference ref : possibleValues) {
+										if (ref.getId() != null && ref.getId().toString().equalsIgnoreCase(pairData.getValue())) {
+											actualNameVal = ref.getName();
+											break;
+										}
+									}
 								}
 							}
+
 						}
-                            }
-                            
-                        }
 
 						MeasurementData newData = new MeasurementData(variable.getName(), actualNameVal);
 						newData.setMeasurementVariable(variable);
-                        row.getDataList().add(row.getDataList().size()-1, newData);
-                        
+						row.getDataList().add(row.getDataList().size()-1, newData);
+
 					} else if (nameIdMap.get(String.valueOf(variable.getTermId())) != null) {
 						Integer idTerm = Integer.valueOf(nameIdMap.get(String.valueOf(variable.getTermId())));
 						MeasurementData idData = row.getMeasurementData(idTerm);
@@ -1047,7 +1061,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 						}
 					}
 				}
-               
+
 			}
 		}
 	}

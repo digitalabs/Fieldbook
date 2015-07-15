@@ -67,7 +67,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		long start = System.currentTimeMillis();
 		List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
 		Map<String, Integer> standardVariableMap = new HashMap<String, Integer>();
-		int entryNo, plotNo;
+		int plotNo;
 
 		List<ExperimentalDesignInfo> designInfos = this.getExperimentalDesignInfo(userSelection
 				.getTrialEnvironmentValues());
@@ -81,7 +81,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 			plotNo = 1;
 
 			for (int repNo = 1; repNo <= designInfo.getNumberOfReps(); repNo++) {
-				entryNo = 1;
+
 				for (int blockNo = 1; blockNo <= designInfo.getBlocksPerRep(); blockNo++) {
 
 					for (ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo()
@@ -89,8 +89,8 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 
 						List<MeasurementRow> measurementRow = this.createMeasurementRows(
 								userSelection, trialNo, repNo, blockNo, germplasm,
-								Integer.parseInt(entryNo++), plotNo++, standardVariableMap,
-								treatmentFactorPermutations);
+								Integer.parseInt(germplasm.getEntryCode()), plotNo++,
+								standardVariableMap, treatmentFactorPermutations);
 						measurementRows.addAll(measurementRow);
 					}
 				}

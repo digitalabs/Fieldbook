@@ -87,7 +87,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 	private ImportedGermplasm assignNewGermplasm(ImportedGermplasm source, int entryNumber) {
 		ImportedGermplasm germplasm = source.copy();
 		germplasm.setEntryId(entryNumber);
-		germplasm.setEntryCode(String.valueOf(entryNumber));
+		germplasm.setEntryCode(source.getEntryCode());
 		return germplasm;
 	}
 }

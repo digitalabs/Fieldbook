@@ -365,6 +365,13 @@ public class ImportGermplasmListController extends SettingsController {
 						List<ImportedGermplasm> newNurseryGermplasm = cleanGermplasmList(
 								form.getImportedGermplasm(), form.getImportedCheckGermplasm());
 						form.setImportedGermplasm(newNurseryGermplasm);
+					} else {
+						Integer entryNumber = form.getImportedGermplasm().size();
+						for (ImportedGermplasm checkGerm : form.getImportedCheckGermplasm()) {
+							entryNumber++;
+							String entryCode = Integer.toString(entryNumber);
+							checkGerm.setEntryCode(entryCode);
+						}
 					}
 
 					int interval = getIntervalValue(form);

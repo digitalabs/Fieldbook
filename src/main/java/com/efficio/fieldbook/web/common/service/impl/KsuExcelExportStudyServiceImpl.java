@@ -59,7 +59,7 @@ public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyServic
 				List<MeasurementRow> observations =
 						ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 				List<List<String>> dataTable =
-						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
+						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables(), workbook.getStudyDetails().getStudyName());
 
 				HSSFWorkbook xlsBook = new HSSFWorkbook();
 

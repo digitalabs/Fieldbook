@@ -86,30 +86,35 @@ public class KsuFieldbookUtil {
 		}
 	}
 
-	public static List<List<String>> convertWorkbookData(List<MeasurementRow> observations, List<MeasurementVariable> variables) {
+	public static List<List<String>> convertWorkbookData(List<MeasurementRow> observations, List<MeasurementVariable> variables, String fieldName) {
 		List<List<String>> table = new ArrayList<List<String>>();
 
 		if (observations != null && !observations.isEmpty()) {
 			List<Integer> factorHeaders = KsuFieldbookUtil.getFactorHeaders(variables);
-
+			int crossIndex = KsuFieldbookUtil.getCrossIndex(variables,true);
 			// write header row
-			table.add(KsuFieldbookUtil.getHeaderNames(variables, true));
+			table.add(KsuFieldbookUtil.getHeaderNames(variables, true, crossIndex));
 
 			List<MeasurementVariable> labels = KsuFieldbookUtil.getMeasurementLabels(factorHeaders, variables);
-
+			
 			for (MeasurementRow row : observations) {
 				List<String> dataRow = new ArrayList<String>();
-
+				//Add in the plot_id entry in the form fieldName_0000
+				dataRow.add(fieldName+"_"+String.format("%04d", Integer.parseInt(row.getMeasurementData("PLOT_NO").getValue())));
+				int labelCounter = 0;
 				for (MeasurementVariable label : labels) {
 					String value = null;
+					if(crossIndex != labelCounter && crossIndex!=-1){ 
 					if (label.getPossibleValues() != null && !label.getPossibleValues().isEmpty()) {
 						value =
 								ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementData(label.getName()).getValue(),
 										label.getPossibleValues());
 					} else {
-						value = row.getMeasurementData(label.getName()).getValue();
+						value = row.getMeasurementData(label.getName()).getValue();	
 					}
-					dataRow.add(value);
+						dataRow.add(value);
+					}
+					labelCounter++;
 				}
 
 				table.add(dataRow);
@@ -118,6 +123,8 @@ public class KsuFieldbookUtil {
 
 		return table;
 	}
+	
+	
 
 	private static List<Integer> getFactorHeaders(List<MeasurementVariable> headers) {
 		List<Integer> factorHeaders = new ArrayList<Integer>();
@@ -133,23 +140,44 @@ public class KsuFieldbookUtil {
 		return factorHeaders;
 	}
 
-	private static List<String> getHeaderNames(List<MeasurementVariable> headers, Boolean isFactor) {
+	private static List<String> getHeaderNames(List<MeasurementVariable> headers, Boolean isFactor, int crossIndex) {
 		List<String> names = new ArrayList<String>();
 
+		//Add in plot_id
+		names.add("plot_id");
 		if (headers != null && !headers.isEmpty()) {
+			int counterIndex = 0;
 			for (MeasurementVariable header : headers) {
 				if (isFactor == null || isFactor != null && (isFactor && header.isFactor() || !isFactor && !header.isFactor())) {
-
-					if (KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()) != null) {
-						names.add(KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()));
-					} else {
-						names.add(header.getName());
+					if(counterIndex != crossIndex && crossIndex != -1) {
+						if (KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()) != null) {
+							names.add(KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()));
+						} else {
+							names.add(header.getName());
+						}
 					}
+					counterIndex++;
 				}
+				
 			}
 		}
 
 		return names;
+	}
+	
+	private static int getCrossIndex(List<MeasurementVariable> headers, Boolean isFactor) {
+		if (headers != null && !headers.isEmpty()) {
+			int counter = 0;
+			for (MeasurementVariable header : headers) {
+				if (isFactor == null || isFactor != null && (isFactor && header.isFactor() || !isFactor && !header.isFactor())) {
+					if(header.getName().equals("CROSS")) {
+						return counter;
+					}
+					counter++;
+				}
+			}
+		}
+		return -1;
 	}
 
 	public static boolean isValidHeaderNames(String[] headerNames) {

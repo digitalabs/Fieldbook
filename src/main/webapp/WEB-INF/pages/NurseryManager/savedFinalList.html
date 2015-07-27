@@ -16,7 +16,7 @@
 				&nbsp; 
 				<span class="control-label control-label-italic list-notes-display"
 					th:text="*{listNotes}"></span>
-				<a th:if="*{#strings.length(listNotes) > 34 }" href="javascript: void(0)"
+				<a th:if="*{listNotes != null and  #strings.length(listNotes) > 34 }" href="javascript: void(0)"
 					th:onclick="'javascript: openGermplasmListDetailsPopop(\'' + ${listId} + '\');'" 
 					style="float: right;">See More</a>
 			</div>

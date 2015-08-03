@@ -946,30 +946,36 @@ function deleteNurseryInReview() {
 	var idVal = getCurrentStudyIdInTab();
 	doDeleteNursery(idVal, function(data) {
 		$('#deleteStudyModal').modal('hide');
-
-		setTimeout(function() {
-			//simulate close tab
-			$('#' + idVal).trigger('click');
-			//remove it from the tree
-			if ($('#studyTree').dynatree('getTree').getNodeByKey(idVal)) {
-				$('#studyTree').dynatree('getTree').getNodeByKey(idVal).remove();
-			}
-			showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
-		}, 500);
+		if (data.isSuccess === '1') {
+			setTimeout(function() {
+				//simulate close tab
+				$('#' + idVal).trigger('click');
+				//remove it from the tree
+				if ($('#studyTree').dynatree('getTree').getNodeByKey(idVal)) {
+					$('#studyTree').dynatree('getTree').getNodeByKey(idVal).remove();
+				}
+				showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
+			}, 500);
+		} else {
+			showErrorMessage('', data.message);
+		}
 	});
 }
 
 function deleteNurseryInEdit() {
 	'use strict';
-
 	var idVal = $('#studyId').val();
 	doDeleteNursery(idVal, function(data) {
 		$('#deleteStudyModal').modal('hide');
-		showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
-		setTimeout(function() {
-			//go back to review nursery page
-			location.href = $('#delete-success-return-url').attr('href');
-		}, 500);
+			if (data.isSuccess === '1') {
+			showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
+			setTimeout(function() {
+				//go back to review nursery page
+				location.href = $('#delete-success-return-url').attr('href');
+			}, 500);
+		} else {
+			showErrorMessage('', data.message);
+        }
 	});
 }
 
@@ -2225,14 +2231,16 @@ function submitDeleteFolder() {
 	} else {
 		doDeleteNursery(folderId, function(data) {
 			var node;
+			$('#deleteStudyFolder').modal('hide');
 			if (data.isSuccess === '1') {
-				$('#deleteStudyFolder').modal('hide');
 				node = $('#studyTree').dynatree('getTree').getActiveNode();
 				if (node != null) {
 					node.remove();
 				}
 				changeBrowseNurseryButtonBehavior(false);
 				showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
+			} else {
+				showErrorMessage('', data.message);
 			}
 		});
 	}

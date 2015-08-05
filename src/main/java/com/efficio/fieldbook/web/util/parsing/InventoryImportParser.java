@@ -37,7 +37,6 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	private static final Logger LOG = LoggerFactory.getLogger(InventoryImportParser.class);
 
-	public static final String ALL_INVENTORY_VALUES_REQUIRED = "inventory.import.parsing.validation.error.blank.inventory.value";
 	public static final String INVALID_HEADERS = "common.parsing.invalid.headers";
 
 	public static final int INVENTORY_SHEET = 0;
@@ -238,22 +237,6 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			String bulkWith = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH));
 			String bulkCompl = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL));
 
-			// perform some row-based validation
-			boolean inventorySpecificValuePresent = false;
-			boolean inventorySpecificValueEmpty = false;
-
-			for (int i : this.getInventorySpecificColumns()) {
-				if (StringUtils.isEmpty(rowValues.get(i))) {
-					inventorySpecificValueEmpty = true;
-				} else {
-					inventorySpecificValuePresent = true;
-				}
-			}
-
-			if (inventorySpecificValueEmpty && inventorySpecificValuePresent) {
-				throw new FileParsingException(InventoryImportParser.ALL_INVENTORY_VALUES_REQUIRED, this.getCurrentIndex(), null, null);
-			}
-
 			InventoryDetails details = new InventoryDetails();
 			details.setGid(gid);
 			details.setEntryId(entryId);
@@ -285,12 +268,6 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			details.setAmount(StringUtils.isEmpty(amountString) ? null : Double.parseDouble(amountString));
 
 			return details;
-		}
-
-		private int[] getInventorySpecificColumns() {
-			return new int[] {this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION),
-					this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT),
-					this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE)};
 		}
 	}
 

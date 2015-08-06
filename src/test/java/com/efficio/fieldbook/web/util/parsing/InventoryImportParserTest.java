@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.parsing.validation.BulkComplValidator;
 import org.generationcp.commons.parsing.validation.CommaDelimitedValueValidator;
@@ -18,7 +17,6 @@ import org.generationcp.commons.parsing.validation.NonEmptyValidator;
 import org.generationcp.commons.parsing.validation.ParseValidationMap;
 import org.generationcp.commons.parsing.validation.ValueRangeValidator;
 import org.generationcp.commons.parsing.validation.ValueTypeValidator;
-import org.generationcp.commons.pojo.GermplasmListExportInputValues;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
@@ -33,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -179,9 +176,9 @@ public class InventoryImportParserTest {
 		this.moled.setInventoryHeaderLabelsMap(this.inventoryHeaderLabelsMap);
 		this.moled.setHeaders(this.headers);
 	}
-	
+
 	@Test
-	public void TestObejectConversionAllInventoryItemsMissing() throws Exception{
+	public void testObejectConversionAllInventoryItemsMissing() throws Exception {
 		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
 		this.generateHeaders(germplasmListType);
 		InventoryImportParser.InventoryRowConverter rowConverter =
@@ -189,20 +186,16 @@ public class InventoryImportParserTest {
 		Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-//		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
-//		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE), "SCALE2");
 
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
-		
+
 		Assert.assertEquals(new Integer(-10), details.getGid());
-//		Assert.assertEquals("TEST1", details.getLocationAbbr());
-//		Assert.assertEquals("SCALE2", details.getScaleName());
 		Assert.assertNull(details.getAmount());
 		Assert.assertNull(details.getLocationAbbr());
 		Assert.assertNull(details.getScaleName());
 	}
-	
-	public void TestObejectConversionSomeInventoryItemsMissing() throws Exception{
+
+	public void testObejectConversionSomeInventoryItemsMissing() throws Exception {
 		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
 		this.generateHeaders(germplasmListType);
 		InventoryImportParser.InventoryRowConverter rowConverter =
@@ -214,13 +207,13 @@ public class InventoryImportParserTest {
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE), "SCALE2");
 
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
-		
+
 		Assert.assertEquals(new Integer(-10), details.getGid());
-		Assert.assertEquals("TEST1", details.getLocationAbbr());
-		Assert.assertEquals("SCALE2", details.getScaleName());
-		Assert.assertNull(details.getAmount());
+		Assert.assertEquals("Expecting that the LocationAbbr has a value", "TEST1", details.getLocationAbbr());
+		Assert.assertEquals("Expecting that the ScaleName has a value", "SCALE2", details.getScaleName());
+		Assert.assertNull("Expecting atleast one inventory row's amount to be null", details.getAmount());
 	}
-		
+
 	@Test
 	public void testObjectConversionNoInventoryItemsPresent() throws Exception {
 		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
@@ -230,7 +223,6 @@ public class InventoryImportParserTest {
 		Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-//think this is not needed anymore
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
 		Assert.assertNotNull("Inventory details could not be properly created when all inventory related columns are blank", details);
 		Assert.assertNull(details.getAmount());

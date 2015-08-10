@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
+
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;

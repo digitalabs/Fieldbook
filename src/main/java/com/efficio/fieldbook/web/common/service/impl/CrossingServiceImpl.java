@@ -214,6 +214,18 @@ public class CrossingServiceImpl implements CrossingService {
 
 	}
 
+	public Integer getFormattedHarvestDate(String harvestDate){
+		Integer dateIntValue = 0;
+		if (harvestDate != null) {
+			String replacedDateString = harvestDate.replace("-", "");
+			if (replacedDateString.length() == 6) {
+				replacedDateString += "00";
+			}
+			dateIntValue = Integer.parseInt(replacedDateString);
+		}
+		return dateIntValue;
+	}
+
 	protected Map<Germplasm, Name> generateGermplasmNameMap(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses,
 			Integer userId, boolean hasPlotDuplicate) throws MiddlewareQueryException {
 
@@ -228,11 +240,7 @@ public class CrossingServiceImpl implements CrossingService {
 			harvestLocationId = additionalDetailsSetting.getHarvestLocationId();
 		}
 
-		if (additionalDetailsSetting.getHarvestDate() != null) {
-			String dateString = additionalDetailsSetting.getHarvestDate();
-			String replacedDateString = dateString.replace("-", "");
-			dateIntValue = Integer.parseInt(replacedDateString);
-		}
+		dateIntValue = getFormattedHarvestDate(additionalDetailsSetting.getHarvestDate());
 
 		for (ImportedCrosses cross : importedCrosses) {
 

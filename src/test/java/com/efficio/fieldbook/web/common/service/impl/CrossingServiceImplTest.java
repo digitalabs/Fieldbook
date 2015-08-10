@@ -132,6 +132,11 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
+	public void testFormatHarvestDate() {
+		Assert.assertTrue(new Integer(20150500).equals(this.crossingService.getFormattedHarvestDate("2015-05")));
+	}
+
+	@Test
 	public void testBuildDesignationNameInSequenceDefaultSetting() {
 
 		CrossSetting crossSetting = createCrossSetting();

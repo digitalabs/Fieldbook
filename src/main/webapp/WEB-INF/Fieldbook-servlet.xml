@@ -18,7 +18,7 @@
 	<!-- Declare property file locations -->
 	<context:property-placeholder
 		location="classpath:fieldbook.properties, classpath:crossing.properties" />
-
+	
 	<!-- **************************************************************** -->
 	<!-- RESOURCE FOLDERS CONFIGURATION -->
 	<!-- Dispatcher configuration for serving static resources -->
@@ -45,7 +45,7 @@
 	<!-- **************************************************************** -->
 	<!-- SPRING ANNOTATION PROCESSING -->
 	<!-- **************************************************************** -->
-	<mvc:annotation-driven />
+	<mvc:annotation-driven/>
 	<context:component-scan base-package="com.efficio.fieldbook" />
 
 	<!-- **************************************************************** -->
@@ -453,7 +453,7 @@
 		<property name="transactionTimeout" value="300" />
 	</bean>
 
-	<tx:annotation-driven />
+	<tx:annotation-driven/>
 	<bean id="transactionManager"
 		class="org.springframework.transaction.jta.JtaTransactionManager"
 		depends-on="atomikosTransactionManagerFieldbook,atomikosUserTransactionFieldbook">
@@ -471,11 +471,5 @@
 		factory-method="createInstance" scope="request">
 		<aop:scoped-proxy />
 	</bean>
-	
-	<!-- <tx:advice id="txTransactionManagerAdvice" transaction-manager="transactionManager" 
-		> <tx:attributes> <tx:method name="*" propagation="REQUIRED" /> </tx:attributes> 
-		</tx:advice> <aop:config> <aop:pointcut id="allServices" expression="execution(* 
-		org.generationcp.middleware.*.*(..))" /> <aop:advisor advice-ref="txTransactionManagerAdvice" 
-		pointcut-ref="allServices"/> </aop:config> -->
 	
 </beans>

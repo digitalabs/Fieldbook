@@ -323,21 +323,9 @@
 	         -->
 	<context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
 
-	<bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
+	<bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init"/>
 
-        <property name="registeredExpressions">
-            <list>
-                <bean class="com.efficio.fieldbook.web.naming.expression.BracketsExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.BulkCountExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.FirstExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.LocationAbbreviationExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.NumberExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.SeasonExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.SequenceExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
-            </list>
-        </property>
-    </bean>
+	<context:component-scan base-package="com.efficio.fieldbook.web.naming.expression"/>
 
 	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
 	

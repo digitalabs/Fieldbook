@@ -92,8 +92,8 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		return new File(outputFileName);
 	}
 
-	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws MiddlewareQueryException,
-	CrossingTemplateExportException {
+	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId)
+			throws MiddlewareQueryException, CrossingTemplateExportException {
 		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
 
 		if (crossesList.isEmpty()) {

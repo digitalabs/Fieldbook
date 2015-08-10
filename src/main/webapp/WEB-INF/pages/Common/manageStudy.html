@@ -1,9 +1,9 @@
 <div class="row col-xs-12 col-md-12 landing-page" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header nursery-header" th:if="${type == 'N'}">
-		<h1 th:text="#{nursery.managenurseries.header}">Manage Nurseries</h1>
+		<h1><span th:text="#{nursery.managenurseries.header}">Manage Nurseries</span> <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_NURSERIES"></a></h1>
 	</div>
 	<div class="page-header trial-header" th:if="${type == 'T'}">
-		<h1 th:text="#{trial.managetrial.header}">Manage Trial</h1>
+		<h1><span th:text="#{trial.managetrial.header}">Manage Trials</span> <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_TRIALS"></a></h1>
 	</div>
 </div>
 <input type="hidden" id="preloadSummaryId" th:value="${preloadSummaryId}"/>

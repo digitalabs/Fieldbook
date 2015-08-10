@@ -22,9 +22,10 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.interfaces.GermplasmExportSource;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListData;
+import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -76,7 +77,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		try {
 
 			GermplasmList germplasmList;
-			List<? extends ListData> germplasmlistData = new ArrayList<>();
+			List<? extends GermplasmExportSource> germplasmlistData = new ArrayList<>();
 
 			germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
 
@@ -141,7 +142,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 			standardVariable = this.ontologyService.getStandardVariable(standardVariableId);
 			standardVariableMap.put(standardVariable.getId(), standardVariable);
 		} catch (MiddlewareQueryException e) {
-
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -157,20 +158,19 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	}
 
-	protected void processEntryTypeCode(List<? extends ListData> listData, List<ValueReference> possibleValues) {
+	protected void processEntryTypeCode(List<? extends GermplasmExportSource> listData, List<ValueReference> possibleValues) {
 
-		for (ListData data : listData) {
-			if (!possibleValues.isEmpty()) {
+		for (GermplasmExportSource data : listData) {
+			if (possibleValues != null && !possibleValues.isEmpty()) {
 				for (ValueReference possibleValue : possibleValues) {
 					if (possibleValue.getId().equals(Integer.valueOf(data.getCheckType().toString()))) {
-						data.setCheckTypeDescription(possibleValue.getName());
+						((ListDataProject) data).setCheckTypeDescription(possibleValue.getName());
 					}
 				}
 			} else {
-				data.setCheckTypeDescription(data.getCheckType().toString());
+				((ListDataProject) data).setCheckTypeDescription(String.valueOf(data.getCheckType()));
 			}
 		}
-
 	}
 
 	@Override

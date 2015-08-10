@@ -82,6 +82,8 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 			map.put(String.valueOf(TermId.CROSS.getId()), true);
 			map.put(String.valueOf(TermId.ENTRY_NO.getId()), true);
 			map.put(String.valueOf(TermId.DESIG.getId()), true);
+			map.put(String.valueOf(TermId.ENTRY_CODE.getId()), true);
+			map.put(String.valueOf(TermId.SEED_SOURCE.getId()), true);
 
 		} else {
 			for (SettingDetail factor : factorsList) {

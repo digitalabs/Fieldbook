@@ -15,11 +15,13 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 @Service
+@Transactional
 public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionOrderService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExportOrderingSerpentineOverRangeImpl.class);

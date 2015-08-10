@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.util.ExpressionHelper;
 import com.efficio.fieldbook.util.ExpressionHelperCallback;
@@ -15,6 +16,7 @@ import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Service
+@Transactional
 public class ProcessCodeServiceImpl implements ProcessCodeService {
 
 	@Resource

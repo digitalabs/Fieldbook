@@ -18,6 +18,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.util.FieldMapUtilityHelper;
@@ -29,6 +30,7 @@ import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
  * The Class FieldMapServiceImpl.
  */
 @Service
+@Transactional
 public class FieldMapServiceImpl implements FieldMapService {
 
 	/**

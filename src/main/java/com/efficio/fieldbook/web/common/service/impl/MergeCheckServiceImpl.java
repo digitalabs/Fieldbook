@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.service.MergeCheckService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
+@Transactional
 public class MergeCheckServiceImpl implements MergeCheckService {
 
 	@Override

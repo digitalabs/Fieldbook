@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 
@@ -27,6 +28,7 @@ import com.efficio.fieldbook.service.api.ErrorHandlerService;
  * The Class ErrorHandlerServiceImpl.
  */
 @Service
+@Transactional
 public class ErrorHandlerServiceImpl implements ErrorHandlerService {
 
 	/** The message source. */

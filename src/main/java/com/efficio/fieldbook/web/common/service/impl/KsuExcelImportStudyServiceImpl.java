@@ -25,6 +25,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
@@ -36,6 +37,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
+@Transactional
 public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl implements KsuExcelImportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KsuExcelImportStudyServiceImpl.class);

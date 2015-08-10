@@ -7,11 +7,11 @@ import javax.annotation.Resource;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
-
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 /**
  * Created by Daniel Villafuerte on 6/12/2015.

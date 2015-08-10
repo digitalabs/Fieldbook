@@ -6,9 +6,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte

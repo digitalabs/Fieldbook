@@ -33,11 +33,13 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
+@Transactional
 public class ValidationServiceImpl implements ValidationService {
 
 	private static final String DATA_TYPE_NUMERIC = "Numeric variable";

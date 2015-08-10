@@ -431,7 +431,7 @@ window.ChooseSettings = (function() {
 			variableSelectedMessage: this._translations.variableSelectedMessage,
 			invalidAliasError: this._translations.invalidAliasError
 		});
-		this._variableSelection.getModal().on('variable-select', addSelectedVariables);
+		this._variableSelection.getModal().off('variable-select').on('variable-select', addSelectedVariables);
 
 		return this._variableSelection;
 	};

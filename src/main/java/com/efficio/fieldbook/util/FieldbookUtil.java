@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.util;
 
 import java.io.IOException;
@@ -16,7 +15,9 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,8 @@ public class FieldbookUtil {
 	private static FieldbookUtil instance;
 
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
-	private static final char[] HEX_CHARS = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	private static final char[] HEX_CHARS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7',
+			'8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	static {
 		FieldbookUtil.instance = new FieldbookUtil();
@@ -86,7 +88,8 @@ public class FieldbookUtil {
 	public static String getDownloadFileName(String filename, HttpServletRequest request) {
 		String newFilename = filename;
 		try {
-			if (request.getHeader("User-Agent").indexOf("MSIE") != -1 || request.getHeader("User-Agent").indexOf("Trident") != -1) {
+			if (request.getHeader("User-Agent").indexOf("MSIE") != -1
+					|| request.getHeader("User-Agent").indexOf("Trident") != -1) {
 				URI uri = new URI(null, null, filename, null);
 				newFilename = uri.toASCIIString();
 				return newFilename;
@@ -96,7 +99,8 @@ public class FieldbookUtil {
 			buff.append("=?UTF-8?Q?");
 			for (byte b : bytes) {
 				int unsignedByte = b & 0xFF;
-				buff.append('=').append(FieldbookUtil.HEX_CHARS[unsignedByte >> 4]).append(FieldbookUtil.HEX_CHARS[unsignedByte & 0xF]);
+				buff.append('=').append(FieldbookUtil.HEX_CHARS[unsignedByte >> 4])
+						.append(FieldbookUtil.HEX_CHARS[unsignedByte & 0xF]);
 			}
 			return buff.append("?=").toString();
 
@@ -120,27 +124,33 @@ public class FieldbookUtil {
 		return false;
 	}
 
-	public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses, List<ImportedCrosses> importedGermplasmList) {
+	public static void mergeCrossesPlotDuplicateData(ImportedCrosses crosses,
+			List<ImportedCrosses> importedGermplasmList) {
 		if (FieldbookUtil.isPlotDuplicateNonFirstInstance(crosses)) {
 			// get the 1st instance of duplicate from the list
 			Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
 			// needed to minus 1 since a list is 0 based
-			ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate - 1);
+			ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList
+					.get(firstInstanceDuplicate - 1);
 			crosses.setGid(firstInstanceCrossGermplasm.getGid());
 			crosses.setCross(firstInstanceCrossGermplasm.getCross());
 			crosses.setDesig(firstInstanceCrossGermplasm.getDesig());
 		}
 	}
 
-	public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate, boolean isPreservePlotDuplicate, ImportedCrosses cross) {
-		if (hasPlotDuplicate && !isPreservePlotDuplicate && FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
+	public static boolean isContinueCrossingMerge(boolean hasPlotDuplicate,
+			boolean isPreservePlotDuplicate, ImportedCrosses cross) {
+		if (hasPlotDuplicate && !isPreservePlotDuplicate
+				&& FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
 			return true;
 		}
 		return false;
 	}
 
-	public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList, List<ImportedCrosses> importedCrosses) {
-		if (dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()) {
+	public static void copyDupeNotesToListDataProject(List<ListDataProject> dataProjectList,
+			List<ImportedCrosses> importedCrosses) {
+		if (dataProjectList != null && importedCrosses != null
+				&& dataProjectList.size() == importedCrosses.size()) {
 			for (int i = 0; i < dataProjectList.size(); i++) {
 				dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate());
 			}
@@ -150,10 +160,19 @@ public class FieldbookUtil {
 	public static List<Integer> getFilterForMeansAndStatisticalVars() {
 
 		List<Integer> isAIds = new ArrayList<Integer>();
-		StringTokenizer token = new StringTokenizer(AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
+		StringTokenizer token = new StringTokenizer(
+				AppConstants.FILTER_MEAN_AND_STATISCAL_VARIABLES_IS_A_IDS.getString(), ",");
 		while (token.hasMoreTokens()) {
 			isAIds.add(Integer.valueOf(token.nextToken()));
 		}
 		return isAIds;
+	}
+
+	public static boolean isFieldmapColOrRange(MeasurementVariable var) {
+		if (var.getTermId() == TermId.COLUMN_NO.getId()
+				|| var.getTermId() == TermId.RANGE_NO.getId()) {
+			return true;
+		}
+		return false;
 	}
 }

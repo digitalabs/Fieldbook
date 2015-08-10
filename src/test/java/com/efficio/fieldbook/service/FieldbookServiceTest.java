@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import junit.framework.Assert;
-
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -26,6 +24,7 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -624,5 +623,37 @@ public class FieldbookServiceTest {
 		method.setMcode(code);
 		method.setUniqueID(uniqueID);
 		return method;
+	}
+
+	@Test
+	public void testGetPersonNameByPersonId() throws MiddlewareQueryException {
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
+		fieldbookService.setUserDataManager(userDataManager);
+
+		int personId = 1;
+		Person person = new Person();
+		person.setFirstName("FirstName");
+		person.setMiddleName("MiddleName");
+		person.setLastName("LastName");
+
+		Mockito.doReturn(person).when(userDataManager).getPersonById(personId);
+
+		String personName = fieldbookService.getPersonNameByPersonId(personId);
+		Assert.assertEquals(person.getDisplayName(), personName);
+	}
+
+	@Test
+	public void testGetPersonNameByPersonId_PersonNotFound() throws MiddlewareQueryException {
+		FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		UserDataManager userDataManager = Mockito.mock(UserDataManager.class);
+		fieldbookService.setUserDataManager(userDataManager);
+
+		int personId = 100;
+		String expectedName = "";
+		Mockito.doReturn(null).when(userDataManager).getPersonById(personId);
+
+		String personName = fieldbookService.getPersonNameByPersonId(personId);
+		Assert.assertEquals(expectedName, personName);
 	}
 }

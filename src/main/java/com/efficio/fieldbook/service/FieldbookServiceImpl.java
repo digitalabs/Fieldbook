@@ -487,9 +487,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 			return this.getBreedingMethodByName(valueOrId);
         } else if (TermId.LOCATION_ID.getId() == id) {
 			return this.getLocationById(valueId.intValue());
-		} else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id
-				|| TermId.STUDY_UID.getId() == id) {
+		} else if (TermId.STUDY_UID.getId() == id) {
 			return this.getPersonByUserId(valueId.intValue());
+		} else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
+			return this.getPersonNameByPersonId(valueId.intValue());
         } else if (isCategorical) {
 			Term term = this.ontologyService.getTermById(valueId.intValue());
             if (term != null) {
@@ -544,7 +545,11 @@ public class FieldbookServiceImpl implements FieldbookService {
             return "";
         }
 
-		Person person = this.userDataManager.getPersonById(user.getPersonid());
+		return this.getPersonNameByPersonId(user.getPersonid());
+	}
+
+	protected String getPersonNameByPersonId(int personId) throws MiddlewareQueryException {
+		Person person = this.userDataManager.getPersonById(personId);
 
         if (person != null) {
             return person.getDisplayName();

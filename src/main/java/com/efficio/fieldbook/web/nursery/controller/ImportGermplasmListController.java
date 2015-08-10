@@ -509,20 +509,20 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 	}
 
-	private List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList,
+	protected List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList,
 			List<ImportedGermplasm> checkList) {
 		if (checkList == null || checkList.isEmpty()) {
 			return primaryList;
 		}
 
 		List<ImportedGermplasm> newPrimaryList = new ArrayList<>();
-		Map<Integer, ImportedGermplasm> checkGermplasmMap = new HashMap<>();
+		Map<String, ImportedGermplasm> checkGermplasmMap = new HashMap<>();
 		for (ImportedGermplasm checkGermplasm : checkList) {
-			checkGermplasmMap.put(checkGermplasm.getIndex(), checkGermplasm);
+			checkGermplasmMap.put(checkGermplasm.getGid() + "-" + checkGermplasm.getEntryCode(), checkGermplasm);
 		}
 
 		for (ImportedGermplasm primaryGermplasm : primaryList) {
-			if (checkGermplasmMap.get(primaryGermplasm.getIndex()) == null) {
+			if (checkGermplasmMap.get(primaryGermplasm.getGid() + "-" + primaryGermplasm.getEntryCode()) == null) {
 				newPrimaryList.add(primaryGermplasm);
 			}
 		}

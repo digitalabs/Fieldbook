@@ -19,9 +19,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
 import org.generationcp.middleware.domain.dms.Experiment;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.VariableType;
-import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -70,12 +67,11 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 			final Sheet obsSheet = excelWorkbook.getSheetAt(1);
 
 			int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId, studyName);
-			List<Experiment> experiments =
-					this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, this.createPlotVariableTypeList());
+			List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, 0, Integer.MAX_VALUE, null);
 
 			for (Experiment gpData : experiments) {
 				PoiUtil.setCellValue(obsSheet, 0, rowIndex, studyName);
-				PoiUtil.setCellValue(obsSheet, 1, rowIndex, gpData.getFactors().getVariables().get(0).getValue());
+				PoiUtil.setCellValue(obsSheet, 1, rowIndex, gpData.getFactors().findById(TermId.PLOT_NO).getValue());
 				rowIndex++;
 			}
 
@@ -97,7 +93,7 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 	}
 
 	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws MiddlewareQueryException,
-			CrossingTemplateExportException {
+	CrossingTemplateExportException {
 		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
 
 		if (crossesList.isEmpty()) {
@@ -112,15 +108,6 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 			return this.fileService.retrieveWorkbook(tempFile);
 		}
-	}
-
-	protected VariableTypeList createPlotVariableTypeList() throws MiddlewareQueryException {
-		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
-		VariableType plotVariableType = new VariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
-		VariableTypeList plotVariableTypeList = new VariableTypeList();
-		plotVariableTypeList.add(plotVariableType);
-
-		return plotVariableTypeList;
 	}
 
 	public void setTemplateFile(File templateFile) {

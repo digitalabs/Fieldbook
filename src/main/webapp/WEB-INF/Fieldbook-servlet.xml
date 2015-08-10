@@ -344,8 +344,6 @@
 
 	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider" />
 
-	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl" />
-
 	<bean
 		class="com.efficio.fieldbook.web.naming.expression.ComponentPostProcessor">
 		<property name="ruleFactory" ref="ruleFactory" />
@@ -404,6 +402,9 @@
 		<aop:scoped-proxy />
 	</bean>
 
+    <bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl">
+         <property name="templateFile" value="classpath:GermplasmListCode.xls"/>
+    </bean>
 
 	<bean id="processCodeFactory"
 		class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory"

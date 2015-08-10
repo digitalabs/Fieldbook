@@ -2,10 +2,8 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +17,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
 import org.generationcp.middleware.domain.dms.Experiment;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.VariableType;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -43,8 +44,6 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 	@Resource
 	private FileService fileService;
-
-	private File templateFile;
 
 	public File export(Integer studyId, String studyName) throws CrossingTemplateExportException {
 		try {
@@ -92,8 +91,8 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		return new File(outputFileName);
 	}
 
-	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId)
-			throws MiddlewareQueryException, CrossingTemplateExportException {
+	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(Integer studyId) throws MiddlewareQueryException,
+			CrossingTemplateExportException {
 		List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.NURSERY);
 
 		if (crossesList.isEmpty()) {
@@ -102,16 +101,14 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		return crossesList;
 	}
 
-	protected Workbook retrieveTemplate() throws IOException, InvalidFormatException {
-		try (InputStream is = new FileInputStream(this.templateFile)) {
-			String tempFile = this.fileService.saveTemporaryFile(is);
+	protected VariableTypeList createPlotVariableTypeList() throws MiddlewareQueryException {
+		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
+		VariableType plotVariableType = new VariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
+		VariableTypeList plotVariableTypeList = new VariableTypeList();
+		plotVariableTypeList.add(plotVariableType);
 
-			return this.fileService.retrieveWorkbook(tempFile);
-		}
-	}
+		return plotVariableTypeList;
 
-	public void setTemplateFile(File templateFile) {
-		this.templateFile = templateFile;
 	}
 
 }

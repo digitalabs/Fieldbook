@@ -472,9 +472,9 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
 		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-		.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.NURSERY);
+				.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.NURSERY);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
-		.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
+				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
 		Mockito.doReturn(this.workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
@@ -517,9 +517,9 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
 		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-		.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.TRIAL);
+				.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.TRIAL);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
-		.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
+				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
 		Mockito.doReturn(this.workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
@@ -655,6 +655,5 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		}
 		return list;
 	}
-
 
 }

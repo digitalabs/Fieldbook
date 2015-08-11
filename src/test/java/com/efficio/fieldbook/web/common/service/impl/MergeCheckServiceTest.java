@@ -31,10 +31,10 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testMergeGermplasmList_ChecksFromSameList() throws Exception {
-		List<ImportedGermplasm> primaryList =
-				this.createGermplasmList(PRIMARY_LIST_DESIG_PREFIX, NUMBER_OF_PRIMARY_LIST, STARTING_GID_1, TEST_ENTRY);
-		List<ImportedGermplasm> checkList =
-				this.createGermplasmList(PRIMARY_LIST_DESIG_PREFIX, NUMBER_OF_CHECKS, STARTING_GID_1, CHECK_ENTRY);
+		List<ImportedGermplasm> primaryList = this.createGermplasmList(MergeCheckServiceTest.PRIMARY_LIST_DESIG_PREFIX,
+				MergeCheckServiceTest.NUMBER_OF_PRIMARY_LIST, MergeCheckServiceTest.STARTING_GID_1, MergeCheckServiceTest.TEST_ENTRY);
+		List<ImportedGermplasm> checkList = this.createGermplasmList(MergeCheckServiceTest.PRIMARY_LIST_DESIG_PREFIX,
+				MergeCheckServiceTest.NUMBER_OF_CHECKS, MergeCheckServiceTest.STARTING_GID_1, MergeCheckServiceTest.CHECK_ENTRY);
 		this.removeChecksFromPrimaryList(primaryList, checkList);
 
 		int startIndex = 1;
@@ -70,9 +70,10 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testMergeGermplasmList_ChecksFromDiffList() throws Exception {
-		List<ImportedGermplasm> primaryList =
-				this.createGermplasmList(PRIMARY_LIST_DESIG_PREFIX, NUMBER_OF_PRIMARY_LIST, STARTING_GID_1, TEST_ENTRY);
-		List<ImportedGermplasm> checkList = this.createGermplasmList(CHECK_DESIG_PREFIX, NUMBER_OF_CHECKS, STARTING_GID_2, CHECK_ENTRY);
+		List<ImportedGermplasm> primaryList = this.createGermplasmList(MergeCheckServiceTest.PRIMARY_LIST_DESIG_PREFIX,
+				MergeCheckServiceTest.NUMBER_OF_PRIMARY_LIST, MergeCheckServiceTest.STARTING_GID_1, MergeCheckServiceTest.TEST_ENTRY);
+		List<ImportedGermplasm> checkList = this.createGermplasmList(MergeCheckServiceTest.CHECK_DESIG_PREFIX,
+				MergeCheckServiceTest.NUMBER_OF_CHECKS, MergeCheckServiceTest.STARTING_GID_2, MergeCheckServiceTest.CHECK_ENTRY);
 		this.updateEntryIdOfChecks(checkList, primaryList.size() + 1);
 
 		int startIndex = 1;
@@ -107,10 +108,10 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testMergeGermplasmListPerPosition_ChecksFromSameList() throws Exception {
-		List<ImportedGermplasm> primaryList =
-				this.createGermplasmList(PRIMARY_LIST_DESIG_PREFIX, NUMBER_OF_PRIMARY_LIST, STARTING_GID_1, TEST_ENTRY);
-		List<ImportedGermplasm> checkList =
-				this.createGermplasmList(PRIMARY_LIST_DESIG_PREFIX, NUMBER_OF_CHECKS, STARTING_GID_1, CHECK_ENTRY);
+		List<ImportedGermplasm> primaryList = this.createGermplasmList(MergeCheckServiceTest.PRIMARY_LIST_DESIG_PREFIX,
+				MergeCheckServiceTest.NUMBER_OF_PRIMARY_LIST, MergeCheckServiceTest.STARTING_GID_1, MergeCheckServiceTest.TEST_ENTRY);
+		List<ImportedGermplasm> checkList = this.createGermplasmList(MergeCheckServiceTest.PRIMARY_LIST_DESIG_PREFIX,
+				MergeCheckServiceTest.NUMBER_OF_CHECKS, MergeCheckServiceTest.STARTING_GID_1, MergeCheckServiceTest.CHECK_ENTRY);
 		this.removeChecksFromPrimaryList(primaryList, checkList);
 		int startIndex = 1;
 		int interval = 3;
@@ -143,9 +144,10 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testMergeGermplasmListPerPosition_ChecksFromDiffList() throws Exception {
-		List<ImportedGermplasm> primaryList =
-				this.createGermplasmList(PRIMARY_LIST_DESIG_PREFIX, NUMBER_OF_PRIMARY_LIST, STARTING_GID_1, TEST_ENTRY);
-		List<ImportedGermplasm> checkList = this.createGermplasmList(CHECK_DESIG_PREFIX, NUMBER_OF_CHECKS, STARTING_GID_2, CHECK_ENTRY);
+		List<ImportedGermplasm> primaryList = this.createGermplasmList(MergeCheckServiceTest.PRIMARY_LIST_DESIG_PREFIX,
+				MergeCheckServiceTest.NUMBER_OF_PRIMARY_LIST, MergeCheckServiceTest.STARTING_GID_1, MergeCheckServiceTest.TEST_ENTRY);
+		List<ImportedGermplasm> checkList = this.createGermplasmList(MergeCheckServiceTest.CHECK_DESIG_PREFIX,
+				MergeCheckServiceTest.NUMBER_OF_CHECKS, MergeCheckServiceTest.STARTING_GID_2, MergeCheckServiceTest.CHECK_ENTRY);
 		this.updateEntryIdOfChecks(checkList, primaryList.size() + 1);
 
 		int startIndex = 1;
@@ -264,12 +266,15 @@ public class MergeCheckServiceTest extends AbstractBaseIntegrationTest {
 
 	private ImportGermplasmListForm createImportGermplasmListFormTestData(boolean isChecksFromSameList) {
 		ImportGermplasmListForm form = new ImportGermplasmListForm();
-		form.setImportedGermplasm(this.createGermplasmList(PRIMARY_LIST_DESIG_PREFIX, 9, STARTING_GID_1, TEST_ENTRY));
-		if(isChecksFromSameList) {
-			form.setImportedCheckGermplasm(this.createGermplasmList(PRIMARY_LIST_DESIG_PREFIX, 3, STARTING_GID_1, CHECK_ENTRY));
+		form.setImportedGermplasm(this.createGermplasmList(MergeCheckServiceTest.PRIMARY_LIST_DESIG_PREFIX, 9,
+				MergeCheckServiceTest.STARTING_GID_1, MergeCheckServiceTest.TEST_ENTRY));
+		if (isChecksFromSameList) {
+			form.setImportedCheckGermplasm(this.createGermplasmList(MergeCheckServiceTest.PRIMARY_LIST_DESIG_PREFIX, 3,
+					MergeCheckServiceTest.STARTING_GID_1, MergeCheckServiceTest.CHECK_ENTRY));
 			form.setLastDraggedChecksList("0");
 		} else {
-			form.setImportedCheckGermplasm(this.createGermplasmList(CHECK_DESIG_PREFIX, 3, STARTING_GID_2, CHECK_ENTRY));
+			form.setImportedCheckGermplasm(this.createGermplasmList(MergeCheckServiceTest.CHECK_DESIG_PREFIX, 3,
+					MergeCheckServiceTest.STARTING_GID_2, MergeCheckServiceTest.CHECK_ENTRY));
 			form.setLastDraggedChecksList(null);
 		}
 

@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
@@ -18,13 +19,11 @@ import com.efficio.fieldbook.web.util.AppConstants;
 public class MergeCheckServiceImpl implements MergeCheckService {
 
 	@Override
-	public List<ImportedGermplasm> mergeGermplasmList(List<ImportedGermplasm> primaryList,
-			List<ImportedGermplasm> checkList, int startEntry, int interval, int manner,
-			String defaultTestCheckId) {
+	public List<ImportedGermplasm> mergeGermplasmList(List<ImportedGermplasm> primaryList, List<ImportedGermplasm> checkList,
+			int startEntry, int interval, int manner, String defaultTestCheckId) {
 
-		if (checkList == null || checkList.isEmpty() || startEntry < 1
-				|| startEntry > primaryList.size() || primaryList == null || primaryList.isEmpty()
-				|| interval < 1) {
+		if (checkList == null || checkList.isEmpty() || startEntry < 1 || startEntry > primaryList.size() || primaryList == null
+				|| primaryList.isEmpty() || interval < 1) {
 
 			return primaryList;
 		}
@@ -50,8 +49,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 
 			if (shouldInsert) {
 				shouldInsert = false;
-				List<ImportedGermplasm> checks = this.generateChecksToInsert(checkList, checkIndex,
-						manner, newEntry);
+				List<ImportedGermplasm> checks = this.generateChecksToInsert(checkList, checkIndex, manner, newEntry);
 				checkIndex++;
 				newEntry += checks.size();
 				intervalEntry += checks.size();
@@ -72,8 +70,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 		return newList;
 	}
 
-	private List<ImportedGermplasm> generateChecksToInsert(List<ImportedGermplasm> checkList,
-			int checkIndex, int manner, int newEntry) {
+	private List<ImportedGermplasm> generateChecksToInsert(List<ImportedGermplasm> checkList, int checkIndex, int manner, int newEntry) {
 		List<ImportedGermplasm> newList = new ArrayList<ImportedGermplasm>();
 		if (manner == AppConstants.MANNER_PER_LOCATION.getInt()) {
 			for (ImportedGermplasm checkGerm : checkList) {

@@ -1831,6 +1831,11 @@ input.review-select-all{
 	width: 640px;
 }
 
+.help-box #help_header {
+	margin: 18px 0;
+	font-weight: 600;
+}
+
 .help-box .modal-body {
 	height: 337px;
 	border: none;
@@ -1865,5 +1870,4 @@ input.review-select-all{
 	font-weight: 400;
 	text-align: right;
 	margin: 0 50px 0;
-
 }

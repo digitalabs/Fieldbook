@@ -511,7 +511,7 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 	}
 
-	private List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList,
+	public List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList,
 			List<ImportedGermplasm> checkList) {
 		if (checkList == null || checkList.isEmpty()) {
 			return primaryList;

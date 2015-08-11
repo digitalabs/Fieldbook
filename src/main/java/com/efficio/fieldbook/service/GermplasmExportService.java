@@ -4,8 +4,6 @@ package com.efficio.fieldbook.service;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -20,7 +18,6 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +31,7 @@ public class GermplasmExportService extends ExportServiceImpl {
 
 	private final OntologyService ontologyService;
 	private UserSelection userSelection;
-	private final Boolean isNursery;	
+	private final Boolean isNursery;
 	private ContextUtil contextUtil;
 
 	public GermplasmExportService(OntologyService ontologyService, UserSelection userSelection, Boolean isNursery, ContextUtil contextUtil) {
@@ -82,36 +79,36 @@ public class GermplasmExportService extends ExportServiceImpl {
 
 			if (this.isNursery) {
 
-				StandardVariable entryNo = this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(),
-						contextUtil.getCurrentProgramUUID());
-				this.addToDescriptionSheet(++actualRow, descriptionSheet, entryNo);
+				StandardVariable entryNo =
+						this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
+				this.addToDescriptionSheet(++actualRow, descriptionSheet, styles, entryNo);
 
-				StandardVariable desig = this.ontologyService.getStandardVariable(TermId.DESIG.getId(),
-						contextUtil.getCurrentProgramUUID());
-				this.addToDescriptionSheet(++actualRow, descriptionSheet, desig);
+				StandardVariable desig =
+						this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID());
+				this.addToDescriptionSheet(++actualRow, descriptionSheet, styles, desig);
 
-				StandardVariable gid = this.ontologyService.getStandardVariable(TermId.GID.getId(),
-						contextUtil.getCurrentProgramUUID());
-				this.addToDescriptionSheet(++actualRow, descriptionSheet, gid);
+				StandardVariable gid =
+						this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID());
+				this.addToDescriptionSheet(++actualRow, descriptionSheet, styles, gid);
 
-				StandardVariable cross = this.ontologyService.getStandardVariable(TermId.CROSS.getId(),
-						contextUtil.getCurrentProgramUUID());
-				this.addToDescriptionSheet(++actualRow, descriptionSheet, cross);
+				StandardVariable cross =
+						this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID());
+				this.addToDescriptionSheet(++actualRow, descriptionSheet, styles, cross);
 
-				StandardVariable seedSource = this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(),
-						contextUtil.getCurrentProgramUUID());
-				this.addToDescriptionSheet(++actualRow, descriptionSheet, seedSource);
+				StandardVariable seedSource =
+						this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID());
+				this.addToDescriptionSheet(++actualRow, descriptionSheet, styles, seedSource);
 
-				StandardVariable entryCode = this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(),
-						contextUtil.getCurrentProgramUUID());
-				this.addToDescriptionSheet(++actualRow, descriptionSheet, entryCode);
+				StandardVariable entryCode =
+						this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID());
+				this.addToDescriptionSheet(++actualRow, descriptionSheet, styles, entryCode);
 
 			} else {
 				if (this.userSelection.getPlotsLevelList() != null) {
 					for (SettingDetail settingDetail : this.userSelection.getPlotsLevelList()) {
 						Boolean isVisible = visibleColumnMap.get(settingDetail.getVariable().getCvTermId().toString());
 						if (!settingDetail.isHidden() && isVisible != null && isVisible) {
-							this.addToDescriptionSheet(++actualRow, descriptionSheet, settingDetail);
+							this.addToDescriptionSheet(++actualRow, descriptionSheet, styles, settingDetail);
 						}
 
 					}
@@ -123,26 +120,35 @@ public class GermplasmExportService extends ExportServiceImpl {
 
 	}
 
-	protected void addToDescriptionSheet(int rowIndex, HSSFSheet descriptionSheet, StandardVariable stdVar) {
-		HSSFRow entryIdRow = descriptionSheet.createRow(rowIndex);
-		entryIdRow.createCell(0).setCellValue(stdVar.getName());
-		entryIdRow.createCell(1).setCellValue(stdVar.getDescription());
-		entryIdRow.createCell(2).setCellValue(stdVar.getProperty().getName().toUpperCase());
-		entryIdRow.createCell(3).setCellValue(stdVar.getScale().getName().toUpperCase());
-		entryIdRow.createCell(4).setCellValue(stdVar.getMethod().getName().toUpperCase());
-		entryIdRow.createCell(5).setCellValue(stdVar.getDataType().getName().substring(0, 1));
-		entryIdRow.createCell(6).setCellValue("");
+	protected void addToDescriptionSheet(int rowIndex, HSSFSheet descriptionSheet, Map<String, CellStyle> styles, StandardVariable stdVar) {
+
+		CellStyle textStyle = styles.get(ExportServiceImpl.TEXT_STYLE);
+		CellStyle labelStyleFactor = styles.get(ExportServiceImpl.LABEL_STYLE_FACTOR);
+		HSSFRow row = descriptionSheet.createRow(rowIndex);
+
+		this.createCell(0, row, labelStyleFactor, stdVar.getName());
+		this.createCell(1, row, textStyle, stdVar.getDescription());
+		this.createCell(2, row, textStyle, stdVar.getProperty().getName().toUpperCase());
+		this.createCell(3, row, textStyle, stdVar.getScale().getName().toUpperCase());
+		this.createCell(4, row, textStyle, stdVar.getMethod().getName().toUpperCase());
+		this.createCell(5, row, textStyle, stdVar.getDataType().getName().substring(0, 1));
+		this.createCell(6, row, textStyle, "");
 	}
 
-	protected void addToDescriptionSheet(int rowIndex, HSSFSheet descriptionSheet, SettingDetail settingDetail) {
-		HSSFRow entryIdRow = descriptionSheet.createRow(rowIndex);
-		entryIdRow.createCell(0).setCellValue(settingDetail.getVariable().getName());
-		entryIdRow.createCell(1).setCellValue(settingDetail.getVariable().getDescription());
-		entryIdRow.createCell(2).setCellValue(settingDetail.getVariable().getProperty().toUpperCase());
-		entryIdRow.createCell(3).setCellValue(settingDetail.getVariable().getScale().toUpperCase());
-		entryIdRow.createCell(4).setCellValue(settingDetail.getVariable().getMethod().toUpperCase());
-		entryIdRow.createCell(5).setCellValue(settingDetail.getVariable().getDataType().substring(0, 1));
-		entryIdRow.createCell(6).setCellValue("");
+	protected void addToDescriptionSheet(int rowIndex, HSSFSheet descriptionSheet, Map<String, CellStyle> styles,
+			SettingDetail settingDetail) {
+
+		CellStyle textStyle = styles.get(ExportServiceImpl.TEXT_STYLE);
+		CellStyle labelStyleFactor = styles.get(ExportServiceImpl.LABEL_STYLE_FACTOR);
+
+		HSSFRow row = descriptionSheet.createRow(rowIndex);
+		this.createCell(0, row, labelStyleFactor, settingDetail.getVariable().getName());
+		this.createCell(1, row, textStyle, settingDetail.getVariable().getDescription());
+		this.createCell(2, row, textStyle, settingDetail.getVariable().getProperty().toUpperCase());
+		this.createCell(3, row, textStyle, settingDetail.getVariable().getScale().toUpperCase());
+		this.createCell(4, row, textStyle, settingDetail.getVariable().getMethod().toUpperCase());
+		this.createCell(5, row, textStyle, settingDetail.getVariable().getDataType().substring(0, 1));
+		this.createCell(6, row, textStyle, "");
 	}
 
 	@Override
@@ -258,43 +264,43 @@ public class GermplasmExportService extends ExportServiceImpl {
 
 				try {
 
-					StandardVariable entryNo = this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(),
-							contextUtil.getCurrentProgramUUID());
+					StandardVariable entryNo =
+							this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 					Cell entryIdCell1 = listEntriesHeader.createCell(columnIndex);
 					entryIdCell1.setCellValue(entryNo.getName());
 					entryIdCell1.setCellStyle(styles.get(ExportServiceImpl.HEADING_STYLE));
 					columnIndex++;
 
-					StandardVariable desig = this.ontologyService.getStandardVariable(TermId.DESIG.getId(),
-							contextUtil.getCurrentProgramUUID());
+					StandardVariable desig =
+							this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID());
 					Cell entryIdCell2 = listEntriesHeader.createCell(columnIndex);
 					entryIdCell2.setCellValue(desig.getName());
 					entryIdCell2.setCellStyle(styles.get(ExportServiceImpl.HEADING_STYLE));
 					columnIndex++;
 
-					StandardVariable gid = this.ontologyService.getStandardVariable(TermId.GID.getId(),
-							contextUtil.getCurrentProgramUUID());
+					StandardVariable gid =
+							this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID());
 					Cell entryIdCell3 = listEntriesHeader.createCell(columnIndex);
 					entryIdCell3.setCellValue(gid.getName());
 					entryIdCell3.setCellStyle(styles.get(ExportServiceImpl.HEADING_STYLE));
 					columnIndex++;
 
-					StandardVariable cross = this.ontologyService.getStandardVariable(TermId.CROSS.getId(),
-							contextUtil.getCurrentProgramUUID());
+					StandardVariable cross =
+							this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID());
 					Cell entryIdCell4 = listEntriesHeader.createCell(columnIndex);
 					entryIdCell4.setCellValue(cross.getName());
 					entryIdCell4.setCellStyle(styles.get(ExportServiceImpl.HEADING_STYLE));
 					columnIndex++;
 
-					StandardVariable seedSource = this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(),
-							contextUtil.getCurrentProgramUUID());
+					StandardVariable seedSource =
+							this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID());
 					Cell entryIdCell5 = listEntriesHeader.createCell(columnIndex);
 					entryIdCell5.setCellValue(seedSource.getName());
 					entryIdCell5.setCellStyle(styles.get(ExportServiceImpl.HEADING_STYLE));
 					columnIndex++;
 
-					StandardVariable entryCode = this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(),
-							contextUtil.getCurrentProgramUUID());
+					StandardVariable entryCode =
+							this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID());
 					Cell entryIdCell6 = listEntriesHeader.createCell(columnIndex);
 					entryIdCell6.setCellValue(entryCode.getName());
 					entryIdCell6.setCellStyle(styles.get(ExportServiceImpl.HEADING_STYLE));

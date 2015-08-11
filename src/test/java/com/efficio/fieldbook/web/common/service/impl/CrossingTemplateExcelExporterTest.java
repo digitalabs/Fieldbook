@@ -68,9 +68,8 @@ public class CrossingTemplateExcelExporterTest {
 						GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
-		Mockito.doReturn(Mockito.mock(VariableTypeList.class)).when(this.DUT).createPlotVariableTypeList(STUDY_ID);
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager)
-				.getExperiments(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(), Matchers.any(VariableTypeList.class));
+		.getExperiments(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(), Matchers.any(VariableTypeList.class));
 
 		Workbook wb = Mockito.mock(Workbook.class);
 		Mockito.when(wb.getSheetAt(1)).thenReturn(Mockito.mock(Sheet.class));
@@ -80,9 +79,9 @@ public class CrossingTemplateExcelExporterTest {
 
 		Mockito.doReturn(wb).when(this.DUT).retrieveTemplate();
 		Mockito.doNothing()
-				.when(this.DUT)
-				.writeListDetailsSection(Matchers.any(Map.class), Matchers.any(Sheet.class), Matchers.anyInt(),
-						Matchers.any(GermplasmList.class));
+		.when(this.DUT)
+		.writeListDetailsSection(Matchers.any(Map.class), Matchers.any(Sheet.class), Matchers.anyInt(),
+				Matchers.any(GermplasmList.class));
 
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
 

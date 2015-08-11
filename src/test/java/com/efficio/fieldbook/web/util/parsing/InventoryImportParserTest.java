@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.parsing.validation.BulkComplValidator;
 import org.generationcp.commons.parsing.validation.CommaDelimitedValueValidator;
@@ -178,19 +177,41 @@ public class InventoryImportParserTest {
 		this.moled.setHeaders(this.headers);
 	}
 
-	@Test(expected = FileParsingException.class)
-	public void testObjectConversionNotAllInventoryItemsPresent() throws Exception {
-		GermplasmListType germplasmListType = GermplasmListType.CROSSES;
+	@Test
+	public void testObejectConversionAllInventoryItemsMissing() throws Exception {
+		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
 		this.generateHeaders(germplasmListType);
 		InventoryImportParser.InventoryRowConverter rowConverter =
 				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
 		Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "DUMMY LOCATION");
 
-		// only location has a value out of the three inventory related columns, an exception needs to be thrown
-		rowConverter.convertToObject(testRowValue);
+		InventoryDetails details = rowConverter.convertToObject(testRowValue);
+
+		Assert.assertEquals(new Integer(-10), details.getGid());
+		Assert.assertNull(details.getAmount());
+		Assert.assertNull(details.getLocationAbbr());
+		Assert.assertNull(details.getScaleName());
+	}
+
+	public void testObejectConversionSomeInventoryItemsMissing() throws Exception {
+		GermplasmListType germplasmListType = GermplasmListType.ADVANCED;
+		this.generateHeaders(germplasmListType);
+		InventoryImportParser.InventoryRowConverter rowConverter =
+				this.createForTestingRowConverter(this.createWorkbook(germplasmListType));
+		Map<Integer, String> testRowValue = new HashMap<>();
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE), "SCALE2");
+
+		InventoryDetails details = rowConverter.convertToObject(testRowValue);
+
+		Assert.assertEquals(new Integer(-10), details.getGid());
+		Assert.assertEquals("Expecting that the LocationAbbr has a value", "TEST1", details.getLocationAbbr());
+		Assert.assertEquals("Expecting that the ScaleName has a value", "SCALE2", details.getScaleName());
+		Assert.assertNull("Expecting atleast one inventory row's amount to be null", details.getAmount());
 	}
 
 	@Test
@@ -202,7 +223,6 @@ public class InventoryImportParserTest {
 		Map<Integer, String> testRowValue = new HashMap<>();
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
-
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
 		Assert.assertNotNull("Inventory details could not be properly created when all inventory related columns are blank", details);
 		Assert.assertNull(details.getAmount());

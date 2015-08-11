@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -473,9 +472,9 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
 		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.NURSERY);
+		.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.NURSERY);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
-				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
+		.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
 		Mockito.doReturn(this.workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
@@ -518,9 +517,9 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
 		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.TRIAL);
+		.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.TRIAL);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
-				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
+		.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
 		Mockito.doReturn(this.workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
@@ -657,32 +656,5 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		return list;
 	}
 
-	@Test
-	public void testCleanGermplasmList_CheckFromSameList() {
-		List<ImportedGermplasm> primaryList = this.createListOfGermplasmList(259, 249, 250, 260, 251, 261, 257, 262, 263, 264, 251, 263,
-				262, 249, 250, 260, 259, 261, 264);
-		List<ImportedGermplasm> checkList = new ArrayList<ImportedGermplasm>();
-		checkList.add(primaryList.get(0));
-		checkList.add(primaryList.get(3));
-		List<ImportedGermplasm> primaryListWithoutCheckList = this.importGermplasmListController.cleanGermplasmList(primaryList, checkList);
-		Assert.assertNotNull(primaryListWithoutCheckList);
-		Assert.assertEquals(primaryList.size() - checkList.size(), primaryListWithoutCheckList.size());
-		Assert.assertFalse(primaryListWithoutCheckList.contains(primaryList.get(0)));
-		Assert.assertFalse(primaryListWithoutCheckList.contains(primaryList.get(3)));
-	}
-
-	private List<ImportedGermplasm> createListOfGermplasmList(Integer... gids) {
-		List<ImportedGermplasm> germplasmList = new ArrayList<ImportedGermplasm>();
-		for (int index = 0; index < gids.length; index++) {
-			ImportedGermplasm germplasm = new ImportedGermplasm();
-			String entryCode = Integer.toString(index + 1);
-			String gid = Integer.toString(gids[index]);
-			germplasm.setEntryCode("" + entryCode);
-			germplasm.setGid(gid);
-			germplasm.setIndex(index);
-			germplasmList.add(germplasm);
-		}
-		return germplasmList;
-	}
 
 }

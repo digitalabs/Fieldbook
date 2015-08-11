@@ -57,7 +57,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService
 	 * #generateRealMeasurementRows(com.efficio.fieldbook.web.nursery
@@ -91,7 +91,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 
 						List<MeasurementRow> measurementRow = this.createMeasurementRows(
 								userSelection, trialNo, repNo, blockNo, germplasm,
-								Integer.parseInt(germplasm.getEntryCode()), plotNo++,
+								germplasm.getEntryId(), plotNo++,
 								standardVariableMap, treatmentFactorPermutations);
 						measurementRows.addAll(measurementRow);
 					}
@@ -192,7 +192,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 							|| termId.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
 						measurementData = new MeasurementData(var.getName(),
 								germplasm.getSource() != null ? germplasm.getSource() : "", false,
-								var.getDataType(), var);
+										var.getDataType(), var);
 					} else if (termId.intValue() == TermId.CROSS.getId()) {
 						measurementData = new MeasurementData(var.getName(), germplasm.getCross(),
 								false, var.getDataType(), var);
@@ -289,7 +289,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 
 	private MeasurementData[][] generateTreatmentFactorPermutations(
 			List<TreatmentVariable> treatmentVariables, Map<String, Integer> standardVariableMap)
-			throws MiddlewareQueryException {
+					throws MiddlewareQueryException {
 
 		MeasurementData[][] output = null;
 		if (treatmentVariables != null && !treatmentVariables.isEmpty()) {

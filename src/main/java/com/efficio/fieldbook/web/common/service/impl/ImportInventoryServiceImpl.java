@@ -144,14 +144,20 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 			inventoryDetailsFromDB.setBulkWith(inventoryDetailsFromImport.getBulkWith());
 			inventoryDetailsFromDB.setBulkCompl(inventoryDetailsFromImport.getBulkCompl());
 		}
-		inventoryDetailsFromDB.setLocationId(inventoryDetailsFromImport.getLocationId());
-		inventoryDetailsFromDB.setScaleId(inventoryDetailsFromImport.getScaleId());
-		inventoryDetailsFromDB.setAmount(inventoryDetailsFromImport.getAmount());
+		if (inventoryDetailsFromImport.getLocationId() != null) {
+			inventoryDetailsFromDB.setLocationId(inventoryDetailsFromImport.getLocationId());
+		}
+		if (inventoryDetailsFromImport.getScaleId() != null) {
+			inventoryDetailsFromDB.setScaleId(inventoryDetailsFromImport.getScaleId());
+		}
+		if (inventoryDetailsFromImport.getAmount() != null) {
+			inventoryDetailsFromDB.setAmount(inventoryDetailsFromImport.getAmount());
+		}
 		inventoryDetailsFromDB.setComment(inventoryDetailsFromImport.getComment());
 	}
 
-	private void checkNumberOfEntries(List<InventoryDetails> inventoryDetailListFromDB, List<InventoryDetails> inventoryDetailListFromImport)
-			throws FieldbookException {
+	private void checkNumberOfEntries(List<InventoryDetails> inventoryDetailListFromDB,
+			List<InventoryDetails> inventoryDetailListFromImport) throws FieldbookException {
 		if (inventoryDetailListFromImport.size() > inventoryDetailListFromDB.size()) {
 			throw new FieldbookException(this.messageSource.getMessage("common.error.import.incorrect.number.of.entries",
 					new Object[] {inventoryDetailListFromDB.size()}, Locale.getDefault()));

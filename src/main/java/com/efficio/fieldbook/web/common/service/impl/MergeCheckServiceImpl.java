@@ -22,9 +22,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 	public List<ImportedGermplasm> mergeGermplasmList(List<ImportedGermplasm> primaryList, List<ImportedGermplasm> checkList,
 			int startEntry, int interval, int manner, String defaultTestCheckId) {
 
-		if (checkList == null || checkList.isEmpty() || startEntry < 1 || startEntry > primaryList.size() || primaryList == null
-				|| primaryList.isEmpty() || interval < 1) {
-
+		if (!this.isThereSomethingToMerge(primaryList, checkList, startEntry, interval)) {
 			return primaryList;
 		}
 
@@ -57,7 +55,7 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 				newList.addAll(checks);
 			}
 			ImportedGermplasm primaryNewGermplasm = primaryGermplasm.copy();
-			if (defaultTestCheckId != null && !defaultTestCheckId.equalsIgnoreCase("")) {
+			if (defaultTestCheckId != null && !"".equals(defaultTestCheckId)) {
 				primaryNewGermplasm.setCheck(defaultTestCheckId);
 				primaryNewGermplasm.setCheckId(Integer.valueOf(defaultTestCheckId));
 			}
@@ -70,16 +68,28 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 		return newList;
 	}
 
+	private boolean isThereSomethingToMerge(List<ImportedGermplasm> primaryList, List<ImportedGermplasm> checkList, int startEntry,
+			int interval) {
+		boolean isThereSomethingToMerge = true;
+		if (checkList == null || checkList.isEmpty()) {
+			isThereSomethingToMerge = false;
+		} else if (primaryList == null || primaryList.isEmpty()) {
+			isThereSomethingToMerge = false;
+		} else if (startEntry < 1 || startEntry > primaryList.size() || interval < 1) {
+			isThereSomethingToMerge = false;
+		}
+		return isThereSomethingToMerge;
+	}
+
 	private List<ImportedGermplasm> generateChecksToInsert(List<ImportedGermplasm> checkList, int checkIndex, int manner, int newEntry) {
 		List<ImportedGermplasm> newList = new ArrayList<ImportedGermplasm>();
 		if (manner == AppConstants.MANNER_PER_LOCATION.getInt()) {
 			for (ImportedGermplasm checkGerm : checkList) {
 				newList.add(checkGerm.copy());
-				newEntry++;
 			}
 		} else {
-			checkIndex = checkIndex % checkList.size();
-			ImportedGermplasm checkGerm = checkList.get(checkIndex);
+			int checkListIndex = checkIndex % checkList.size();
+			ImportedGermplasm checkGerm = checkList.get(checkListIndex);
 			newList.add(checkGerm.copy());
 		}
 		return newList;

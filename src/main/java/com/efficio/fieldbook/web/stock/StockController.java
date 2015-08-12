@@ -145,9 +145,8 @@ public class StockController extends AbstractBaseFieldbookController {
 		}
 
 		try {
-			String prefix =
-					this.stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(),
-							generationSettings.getSeparator());
+			String prefix = this.stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(),
+					generationSettings.getSeparator());
 			// for UI purposes, we remove the separator from the generated prefix
 			prefix = prefix.substring(0, prefix.length() - 1);
 			resultMap.put(StockController.IS_SUCCESS, StockController.SUCCESS);
@@ -187,16 +186,12 @@ public class StockController extends AbstractBaseFieldbookController {
 		resultMap.put(StockController.IS_SUCCESS, StockController.FAILURE);
 		switch (validationResult) {
 			case StockListGenerationSettings.NUMBERS_FOUND:
-				resultMap.put(
-						StockController.ERROR_MESSAGE,
-						this.messageSource.getMessage("stock.generate.id.breeder.identifier.error.numbers.found", new Object[] {},
-								Locale.getDefault()));
+				resultMap.put(StockController.ERROR_MESSAGE, this.messageSource
+						.getMessage("stock.generate.id.breeder.identifier.error.numbers.found", new Object[] {}, Locale.getDefault()));
 				break;
 			case StockListGenerationSettings.SPACE_FOUND:
-				resultMap.put(
-						StockController.ERROR_MESSAGE,
-						this.messageSource.getMessage("stock.generate.id.breeder.identifier.error.space.found", new Object[] {},
-								Locale.getDefault()));
+				resultMap.put(StockController.ERROR_MESSAGE, this.messageSource
+						.getMessage("stock.generate.id.breeder.identifier.error.space.found", new Object[] {}, Locale.getDefault()));
 				break;
 			default:
 				break;
@@ -220,9 +215,8 @@ public class StockController extends AbstractBaseFieldbookController {
 			Integer listDataID = this.germplasmListManager.retrieveDataListIDFromListDataProjectListID(listDataProjectListId);
 			Map<ListDataProject, GermplasmListData> germplasmMap = this.generateGermplasmMap(listDataID, listDataProjectListId);
 
-			String prefix =
-					this.stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(),
-							generationSettings.getSeparator());
+			String prefix = this.stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(),
+					generationSettings.getSeparator());
 			Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
 
 			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
@@ -301,6 +295,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			Map<String, Object> additionalParams = new HashMap<String, Object>();
 			additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(germplasmListType));
 			additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, listId);
+			additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, germplasmListType);
 			ImportedInventoryList importedInventoryList = this.importInventoryService.parseFile(form.getFile(), additionalParams);
 			List<InventoryDetails> inventoryDetailListFromDB =
 					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);

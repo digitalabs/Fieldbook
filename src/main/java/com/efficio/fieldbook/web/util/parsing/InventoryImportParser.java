@@ -20,6 +20,7 @@ import org.generationcp.commons.parsing.validation.NonEmptyValidator;
 import org.generationcp.commons.parsing.validation.ParseValidationMap;
 import org.generationcp.commons.parsing.validation.ValueRangeValidator;
 import org.generationcp.commons.parsing.validation.ValueTypeValidator;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -45,6 +46,8 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	public static final String LIST_ID_PARAM_KEY = "LIST_ID";
 
+	public static final String GERMPLASM_LIST_TYPE_PARAM_KEY = "GERMPLASM_LIST_TYPE";
+
 	private int currentParseIndex = 0;
 
 	private ImportedInventoryList importedInventoryList;
@@ -64,8 +67,11 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	private Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap;
 	private String[] headers;
+	private String[] requiredHeaders;
 
 	private Integer listId;
+
+	private GermplasmListType listType;
 
 	@Override
 	public ImportedInventoryList parseWorkbook(Workbook workbook, Map<String, Object> additionalParams) throws FileParsingException {
@@ -77,8 +83,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 		this.headers = InventoryHeaderLabels.getHeaderNames(this.inventoryHeaderLabelsMap);
 
+		this.requiredHeaders = InventoryHeaderLabels.getRequiredHeaderNames(this.inventoryHeaderLabelsMap);
 		this.listId = (Integer) additionalParams.get(InventoryImportParser.LIST_ID_PARAM_KEY);
-
+		this.listType = (GermplasmListType) additionalParams.get(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY);
 		this.validateFileHeader();
 
 		this.parseInventoryDetails();
@@ -86,19 +93,26 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		return this.importedInventoryList;
 	}
 
-	protected void validateFileHeader() throws FileParsingException {
-		if (this.isHeaderInvalid(this.currentParseIndex++, InventoryImportParser.INVENTORY_SHEET, this.headers)) {
+	void validateFileHeader() throws FileParsingException {
+		int tempRowNo = this.currentParseIndex;
+		if (this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.requiredHeaders)
+				&& this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.headers)) {
 			throw new FileParsingException(InventoryImportParser.INVALID_HEADERS);
 		}
+
+		if (!this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.requiredHeaders)) {
+			this.headers = this.requiredHeaders;
+			this.inventoryHeaderLabelsMap = InventoryHeaderLabels.getRequiredHeadersMap(this.listType);
+		}
+		this.currentParseIndex++;
 	}
 
 	protected void parseInventoryDetails() throws FileParsingException {
 
 		ParseValidationMap parseValidationMap = this.setupIndividualColumnValidation();
 		InventoryRowConverter inventoryDetailsConverter =
-				new InventoryRowConverter(this.workbook, this.currentParseIndex, InventoryImportParser.INVENTORY_SHEET,
-						this.headers.length, this.inventoryHeaderLabelsMap, this.convertToLocationMap(this.locations),
-						this.convertToScaleMap(this.scales));
+				new InventoryRowConverter(this.workbook, this.currentParseIndex, InventoryImportParser.INVENTORY_SHEET, this.headers.length,
+						this.inventoryHeaderLabelsMap, this.convertToLocationMap(this.locations), this.convertToScaleMap(this.scales));
 		inventoryDetailsConverter.setValidationMap(parseValidationMap);
 
 		List<InventoryDetails> detailList =

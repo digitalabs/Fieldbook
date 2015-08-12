@@ -576,7 +576,7 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 
 	newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 	checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + datasetId + '|' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-	newCell = '<td>' + checkBox + '&nbsp;' + datasetName + '</td><td>' + value.entryCount + '</td>';
+	newCell = '<td>' + checkBox + '&nbsp;' + datasetName + '</td><td>' + value.plotCount + '</td>';
 	newCell = newCell + '<td class="hasFieldMap">' + hasFieldMap + '</td>';
 	$('#studyFieldMapTree').append(newRow + newCell + '</tr>');
 }
@@ -611,7 +611,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 		if (withFieldMap) {
 			// For view fieldmap
 			newRow = '<tr id="' + realId + '" class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
-			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.plotCount + '</td>';
 			if (trial) {
 				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			}
@@ -623,7 +623,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.plotCount + '</td>';
 			if (trial) {
 				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			}

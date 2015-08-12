@@ -78,9 +78,9 @@
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.studyName}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == false}" th:text="${row.datasetName}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
-										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.entryCount}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.entryCount}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.repCount}"></td>
-										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.plotCount}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.plotCount}"></td>
 									</tr>
 								</table>
 							</div>

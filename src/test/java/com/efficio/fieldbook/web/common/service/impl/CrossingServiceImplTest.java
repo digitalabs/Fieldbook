@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -134,6 +136,27 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testFormatHarvestDate() {
 		Assert.assertTrue(new Integer(20150500).equals(this.crossingService.getFormattedHarvestDate("2015-05")));
+	}
+
+	@Test
+	public void testPopulateGdateWithCrossingDate() {
+		Germplasm germplasm = new Germplasm();
+		this.crossingService.populateGDate(germplasm, "20150303", "2015-06");
+		Assert.assertEquals(germplasm.getGdate(), new Integer(20150303));
+	}
+
+	@Test
+	public void testPopulateGdateWithHarvestDate() {
+		Germplasm germplasm = new Germplasm();
+		this.crossingService.populateGDate(germplasm, "", "2015-06");
+		Assert.assertEquals(germplasm.getGdate(), new Integer(20150600));
+	}
+
+	@Test
+	public void testPopulateGdateWithCurrentDate() {
+		Germplasm germplasm = new Germplasm();
+		this.crossingService.populateGDate(germplasm, "", "");
+		Assert.assertEquals(germplasm.getGdate(), DateUtil.getCurrentDateAsIntegerValue());
 	}
 
 	@Test

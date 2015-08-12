@@ -26,6 +26,8 @@ import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
+import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -216,7 +218,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	public Integer getFormattedHarvestDate(String harvestDate){
 		Integer dateIntValue = 0;
-		if (harvestDate != null) {
+		if (harvestDate != null && !StringUtil.isEmpty(harvestDate)) {
 			String replacedDateString = harvestDate.replace("-", "");
 			if (replacedDateString.length() == 6) {
 				replacedDateString += "00";
@@ -226,6 +228,17 @@ public class CrossingServiceImpl implements CrossingService {
 		return dateIntValue;
 	}
 
+	public void populateGDate(Germplasm germplasm, String crossingDate, String harvestDate) {
+		Integer formattedHarvestDate = getFormattedHarvestDate(harvestDate);
+		if (!StringUtil.isEmpty(crossingDate)) {
+			germplasm.setGdate(Integer.valueOf(crossingDate));
+		} else if (formattedHarvestDate != 0) {
+			germplasm.setGdate(formattedHarvestDate);
+		} else {
+			germplasm.setGdate(DateUtil.getCurrentDateAsIntegerValue());
+		}
+	}
+
 	protected Map<Germplasm, Name> generateGermplasmNameMap(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses,
 			Integer userId, boolean hasPlotDuplicate) throws MiddlewareQueryException {
 
@@ -233,14 +246,11 @@ public class CrossingServiceImpl implements CrossingService {
 		Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
 		AdditionalDetailsSetting additionalDetailsSetting = crossSetting.getAdditionalDetailsSetting();
 
-		Integer dateIntValue = 0;
 		Integer harvestLocationId = 0;
 
 		if (additionalDetailsSetting.getHarvestLocationId() != null) {
 			harvestLocationId = additionalDetailsSetting.getHarvestLocationId();
 		}
-
-		dateIntValue = getFormattedHarvestDate(additionalDetailsSetting.getHarvestDate());
 
 		for (ImportedCrosses cross : importedCrosses) {
 
@@ -254,7 +264,9 @@ public class CrossingServiceImpl implements CrossingService {
 
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
-			germplasm.setGdate(dateIntValue);
+
+			populateGDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
+
 			germplasm.setLocationId(harvestLocationId);
 
 			germplasm.setMethodId(0);
@@ -266,7 +278,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			name.setNval(cross.getDesig());
-			name.setNdate(dateIntValue);
+			name.setNdate(getFormattedHarvestDate(additionalDetailsSetting.getHarvestDate()));
 			name.setTypeId(crossingNameTypeId);
 			name.setLocationId(harvestLocationId);
 

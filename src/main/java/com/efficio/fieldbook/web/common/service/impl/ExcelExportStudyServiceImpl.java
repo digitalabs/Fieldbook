@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
@@ -58,6 +59,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
+@Transactional
 public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExcelExportStudyServiceImpl.class);

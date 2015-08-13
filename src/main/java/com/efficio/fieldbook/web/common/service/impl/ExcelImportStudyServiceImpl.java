@@ -55,6 +55,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
@@ -66,6 +67,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
+@Transactional
 public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExcelImportStudyServiceImpl.class);

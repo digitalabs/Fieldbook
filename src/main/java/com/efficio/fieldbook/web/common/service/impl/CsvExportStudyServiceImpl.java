@@ -23,6 +23,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
@@ -33,6 +34,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
+@Transactional
 public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CsvExportStudyServiceImpl.class);

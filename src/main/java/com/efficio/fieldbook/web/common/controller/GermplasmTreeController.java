@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,6 +75,7 @@ import com.efficio.pojos.treeview.TreeTableNode;
  */
 @Controller
 @RequestMapping(value = "/ListTreeManager")
+@Transactional
 public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	private static final String COMMON_SAVE_GERMPLASM_LIST = "Common/saveGermplasmList";

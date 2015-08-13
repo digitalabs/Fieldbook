@@ -14,6 +14,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
@@ -24,6 +25,7 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
+@Transactional
 public class DataKaptureExportStudyServiceImpl implements DataKaptureExportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DataKaptureExportStudyServiceImpl.class);

@@ -3,8 +3,9 @@ package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import org.springframework.stereotype.Component;
+
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 @Component
 public class LocationAbbreviationExpression implements Expression {

@@ -66,6 +66,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -101,6 +102,7 @@ import com.lowagie.text.pdf.PdfWriter;
  * The Class LabelPrintingServiceImpl.
  */
 @Service
+@Transactional
 public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	private static final String ADVANCED = "ADVANCED";

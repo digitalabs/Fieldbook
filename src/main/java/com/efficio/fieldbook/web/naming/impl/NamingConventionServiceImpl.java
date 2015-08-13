@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
@@ -44,6 +45,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
+@Transactional
 public class NamingConventionServiceImpl implements NamingConventionService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NamingConventionServiceImpl.class);

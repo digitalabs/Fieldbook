@@ -21,6 +21,7 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
@@ -29,6 +30,7 @@ import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 
 @Service
+@Transactional
 public class FieldroidImportStudyServiceImpl implements FieldroidImportStudyService {
 
 	@Override

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.service.api.CropOntologyService;
 import com.efficio.pojos.cropontology.CropTerm;
@@ -24,6 +25,7 @@ import com.efficio.pojos.cropontology.Ontology;
  * The Class CropOntologyServiceImpl.
  */
 @Service
+@Transactional
 public class CropOntologyServiceImpl extends AbstractRestfulService implements CropOntologyService {
 
 	/** The Constant SEARCH_TERMS_URL. */

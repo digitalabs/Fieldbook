@@ -498,6 +498,17 @@ tr.trialInstance {
     padding-left: 18px;
 
 }
+
+.page-header a {
+	cursor: pointer;
+	color: #5A5A59;
+}
+
+.page-header a:before {
+	font-size: 20px;
+	padding-left: 20px;
+}
+
 #nursery-table, #trial-table{
     table-layout: fixed;
 }
@@ -1812,4 +1823,51 @@ input.review-select-all{
 .unmapped .list-group-item:hover {
     cursor: pointer;
     background: #BED6B2;
+}
+
+
+.help-box .modal-content {
+	background: url('/ibpworkbench/VAADIN/themes/vaadin-retro/images/login.png');
+	width: 640px;
+}
+
+.help-box #help_header {
+	margin: 18px 0;
+	font-weight: 600;
+}
+
+.help-box .modal-body {
+	height: 337px;
+	border: none;
+}
+
+.help-box .bootbox-body {
+	margin-top: 30px;
+}
+
+.help-box .modal-header {
+	border: none;
+}
+
+.help-box .modal-header .close {
+	color: white;
+	opacity: 1;
+	text-shadow: none;
+}
+
+.help-box .modal-title h1 {
+	color: white;
+	font-size: 2rem;
+	font-weight: 100;
+	margin-right: 50px;
+	margin-bottom: 0;
+	text-align: right;
+}
+
+.help-box .modal-title h2 {
+	color: white;
+	font-size: 1.3rem;
+	font-weight: 400;
+	text-align: right;
+	margin: 0 50px 0;
 }

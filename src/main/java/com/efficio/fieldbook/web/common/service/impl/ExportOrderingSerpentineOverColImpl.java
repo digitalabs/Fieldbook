@@ -13,11 +13,13 @@ import org.generationcp.middleware.domain.fieldbook.FieldmapBlockInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 @Service
+@Transactional
 public class ExportOrderingSerpentineOverColImpl extends ExportDataCollectionOrderService {
 
 	@Resource

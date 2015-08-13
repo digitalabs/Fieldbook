@@ -4,9 +4,9 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.List;
 
 import org.generationcp.middleware.manager.GermplasmNameType;
+import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import org.springframework.stereotype.Component;
 
 @Component
 public class BracketsExpression implements Expression {

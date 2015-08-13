@@ -51,6 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -80,7 +81,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
  */
 @Controller
 @RequestMapping({ImportGermplasmListController.URL, ImportGermplasmListController.URL_2, ImportGermplasmListController.URL_3,
-		ImportGermplasmListController.URL_4})
+	ImportGermplasmListController.URL_4})
 public class ImportGermplasmListController extends SettingsController {
 
 	private static final String SUCCESS = "success";
@@ -178,8 +179,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+	 *
+	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName ()
 	 */
 	@Override
 	public String getContentName() {
@@ -188,8 +189,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
+	 *
+	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection ()
 	 */
 	/**
 	 * Gets the user selection.
@@ -236,6 +237,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
+	@Transactional
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model,
 			HttpServletRequest req) throws MiddlewareException {
 		// start: section for taking note of the check germplasm
@@ -291,7 +293,7 @@ public class ImportGermplasmListController extends SettingsController {
 					for (int i = 0; i < selectedCheck.length; i++) {
 						if (NumberUtils.isNumber(selectedCheck[i])) {
 							importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i)
-									.setCheck(selectedCheck[i]);
+							.setCheck(selectedCheck[i]);
 							importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i)
 									.setCheckId(Integer.parseInt(selectedCheck[i]));
 						}
@@ -356,7 +358,7 @@ public class ImportGermplasmListController extends SettingsController {
 									Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
 											TermId.CHECK_START.getId())), interval, SettingsUtil.getCodeInPossibleValues(
 													SettingsUtil.getFieldPossibleVales(this.fieldbookService, TermId.CHECK_PLAN.getId()),
-													SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId())),
+											SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId())),
 													defaultTestCheckId);
 
 					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
@@ -419,7 +421,7 @@ public class ImportGermplasmListController extends SettingsController {
 				if (this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() != null) {
 					importedGermplasmList =
 							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-							.getOriginalImportedGermplasms();
+									.getOriginalImportedGermplasms();
 				} else {
 					importedGermplasmList =
 							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
@@ -435,7 +437,7 @@ public class ImportGermplasmListController extends SettingsController {
 		} else {
 			// we delete the record in the db
 			this.fieldbookMiddlewareService
-			.deleteListDataProjects(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL);
+					.deleteListDataProjects(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL);
 		}
 		if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
 			if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null) {
@@ -1200,7 +1202,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
 		try {
 			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
-		} catch (MiddlewareException e) {
+		} catch (MiddlewareQueryException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
 		return super.showAjaxPage(model, ImportGermplasmListController.PAGINATION_TEMPLATE);
@@ -1224,7 +1226,7 @@ public class ImportGermplasmListController extends SettingsController {
 			ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
 			int realIndex = (previewPageNum - 1) * form.getResultPerPage() + i;
 			this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex)
-					.setCheck(importedGermplasm.getCheck());
+			.setCheck(importedGermplasm.getCheck());
 		}
 
 		form.setImportedCheckGermplasmMainInfo(this.getUserSelection().getImportedCheckGermplasmMainInfo());

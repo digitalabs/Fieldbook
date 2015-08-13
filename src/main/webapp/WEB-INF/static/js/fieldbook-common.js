@@ -2929,7 +2929,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	} else {
 		$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
 	}
-	TreePersist.preLoadStudyTreeState(false, '#studyTree');
+	TreePersist.preLoadStudyTreeState('#studyTree');
 }
 
 function isNursery() {

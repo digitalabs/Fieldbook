@@ -1,4 +1,6 @@
 /*global expandGermplasmListInTreeTable*/
+var GERMPLASM_LIST_TYPE = 'GERMPLASM_LIST';
+var STUDY_LIST_TYPE = 'STUDY_LIST';
 
 var TreePersist = {
 	retrieveExpandedNodes : function(isTreeTable, containerSection) {
@@ -32,11 +34,11 @@ var TreePersist = {
 	saveGermplasmTreeState : function(isTreeTable, containerSection) {
 		'use strict';
 		TreePersist.saveTreeState(isTreeTable, containerSection,
-				'GERMPLASM_LIST');
+				GERMPLASM_LIST_TYPE);
 	},
 	saveStudyTreeState : function(isTreeTable, containerSection) {
 		'use strict';
-		TreePersist.saveTreeState(isTreeTable, containerSection, 'STUDY_LIST');
+		TreePersist.saveTreeState(isTreeTable, containerSection, STUDY_LIST_TYPE);
 	},
 	saveTreeState : function(isTreeTable, containerSection, listType) {
 		'use strict';
@@ -59,21 +61,25 @@ var TreePersist = {
 			}
 		});
 	},
-	preLoadStudyTreeState : function(isTreeTable, containerSection) {
+	preLoadStudyTreeState : function(containerSection) {
 		'use strict';
-		TreePersist.preLoadTreeState(isTreeTable, containerSection,
-				'STUDY_LIST');
+		TreePersist.preLoadTreeState(containerSection,
+				STUDY_LIST_TYPE);
 	},
 	preLoadGermplasmTreeState : function(isTreeTable, containerSection) {
 		'use strict';
-		TreePersist.preLoadTreeState(isTreeTable, containerSection,
-				'GERMPLASM_LIST');
+
+		if (isTreeTable){
+			TreePersist.preLoadTreeTableState(GERMPLASM_LIST_TYPE);
+		} else {
+			TreePersist.preLoadTreeState(containerSection, STUDY_LIST_TYPE);
+		}
+
 	},
-	preLoadTreeState : function(isTreeTable, containerSection, listType) {
+
+	retrievePreviousTreeState : function(listType) {
 		'use strict';
-		
-		var expandedNodes = [];
-		var index, key;
+		var deferred = $.Deferred();
 		$.ajax({
 			url : '/Fieldbook/ListTreeManager/retrieve/state/' + listType,
 			type : 'GET',
@@ -81,43 +87,52 @@ var TreePersist = {
 			cache : false,
 			async : false,
 			success : function(data) {
-				expandedNodes = $.parseJSON(data);
+				var expandedNodes = $.parseJSON(data);
+				if(expandedNodes.length == 1 && expandedNodes[0] === ''){
+					deferred.reject(expandedNodes);
+				} else {
+					deferred.resolve(expandedNodes);
+				}
 			}
 		});
-		if(expandedNodes.length == 1 && expandedNodes[0] === ''){
-			return;
-		}
-		if (isTreeTable) {
-			// we simulate the opening of the folder
-			for (index = 0; index < expandedNodes.length; index++) {
-				key = expandedNodes[index];
-				if (index === 0) {
-					if (listType === 'GERMPLASM_LIST') {
-						key = 'LISTS';
-					} else if (listType === 'STUDY_LIST') {
-						key = 'LOCAL';
-					}
-				}
-				key = $.trim(key);
-				expandGermplasmListInTreeTable(key);
-			}
-		} else {
+
+		return deferred.promise();
+	},
+
+	preLoadTreeTableState : function(listType) {
+		'use strict';
+		TreePersist.retrievePreviousTreeState(listType).done(function(expandedNodes) {
+			TreePersist.traverseNodes(expandedNodes, listType, expandGermplasmListInTreeTable);
+		});
+	},
+
+	preLoadTreeState : function(containerSection, listType) {
+		'use strict';
+		
+		TreePersist.retrievePreviousTreeState(listType).done(function(expandedNodes){
 			var dynatree = $(containerSection).dynatree('getTree');
-			for (index = 0; index < expandedNodes.length; index++) {
-				key = expandedNodes[index];
-				if (index === 0) {
-					if (listType === 'GERMPLASM_LIST') {
-						key = 'LISTS';
-					} else if (listType === 'STUDY_LIST') {
-						key = 'LOCAL';
-					}
-				}
-				key = $.trim(key);
+			TreePersist.traverseNodes(expandedNodes, listType, function(key) {
 				var germplasmFocusNode = dynatree.getNodeByKey(key);
 				if (germplasmFocusNode !== null) {
 					germplasmFocusNode.expand();
 				}
-			}
-		}
+			});
+		});
 	},
+
+	traverseNodes : function(expandedNodes, listType, keyProcessor){
+		var key, index;
+		for (index = 0; index < expandedNodes.length; index++) {
+			key = expandedNodes[index];
+			if (index === 0) {
+				if (listType === GERMPLASM_LIST_TYPE) {
+					key = 'LISTS';
+				} else if (listType === STUDY_LIST_TYPE) {
+					key = 'LOCAL';
+				}
+			}
+			key = $.trim(key);
+			keyProcessor(key);
+		}
+	}
 };

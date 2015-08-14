@@ -117,6 +117,14 @@ var TreePersist = {
 					germplasmFocusNode.expand();
 				}
 			});
+
+			setTimeout(function() {
+				$(containerSection).dynatree('getRoot').visit(function(node) {
+					node.select(false);
+					node.deactivate();
+				});
+			}, 50);
+
 		});
 	},
 

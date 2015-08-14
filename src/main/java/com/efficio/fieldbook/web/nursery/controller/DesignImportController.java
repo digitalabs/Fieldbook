@@ -69,6 +69,10 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
+	private static final String IS_SUCCESS = "isSuccess";
+
+	private static final String ERROR = "error";
+
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportController.class);
 
 	public static final String URL = "/DesignImport";
@@ -119,15 +123,15 @@ public class DesignImportController extends SettingsController {
 
 			this.userSelection.setDesignImportData(designImportData);
 
-			resultsMap.put("isSuccess", 1);
+			resultsMap.put(IS_SUCCESS, 1);
 
 		} catch (MiddlewareQueryException | FileParsingException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
-			resultsMap.put("isSuccess", 0);
+			resultsMap.put(IS_SUCCESS, 0);
 			// error messages is still in .prop format,
-			resultsMap.put("error", new String[] {e.getMessage()});
+			resultsMap.put(ERROR, new String[] {e.getMessage()});
 		}
 
 		// we return string instead of json to fix IE issue rel. DataTable
@@ -241,7 +245,7 @@ public class DesignImportController extends SettingsController {
 			DesignImportController.LOG.error(e.getMessage(), e);
 
 			resultsMap.put("success", Boolean.FALSE);
-			resultsMap.put("error", e.getMessage());
+			resultsMap.put(ERROR, e.getMessage());
 			resultsMap.put("message", e.getMessage());
 		}
 
@@ -268,7 +272,7 @@ public class DesignImportController extends SettingsController {
 		return false;
 	}
 
-	protected void updateDesignMapping(Map<String, List<DesignHeaderItem>> mappedHeaders) throws MiddlewareQueryException {
+	protected void updateDesignMapping(Map<String, List<DesignHeaderItem>> mappedHeaders) {
 		Map<PhenotypicType, List<DesignHeaderItem>> newMappingResults = new HashMap<>();
 
 		for (Map.Entry<String, List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
@@ -352,7 +356,7 @@ public class DesignImportController extends SettingsController {
 
 			this.createTrialObservations(environmentData, workbook, designImportData);
 
-			resultsMap.put("isSuccess", 1);
+			resultsMap.put(IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
 			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());
 
@@ -360,9 +364,9 @@ public class DesignImportController extends SettingsController {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
-			resultsMap.put("isSuccess", 0);
+			resultsMap.put(IS_SUCCESS, 0);
 			// error messages is still in .prop format,
-			resultsMap.put("error", new String[] {e.getMessage()});
+			resultsMap.put(ERROR, new String[] {e.getMessage()});
 		}
 
 		return resultsMap;
@@ -490,8 +494,7 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void addExperimentDesign(Workbook workbook, Set<MeasurementVariable> experimentalDesignMeasurementVariables)
-			throws MiddlewareQueryException {
+	protected void addExperimentDesign(Workbook workbook, Set<MeasurementVariable> experimentalDesignMeasurementVariables) {
 
 		ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 		designParam.setDesignType(3);
@@ -556,7 +559,7 @@ public class DesignImportController extends SettingsController {
 		workbook.getVariates().addAll(new ArrayList<>(uniqueVariates));
 	}
 
-	protected void populateTrialLevelVariableListIfNecessary(Workbook workbook) throws MiddlewareQueryException {
+	protected void populateTrialLevelVariableListIfNecessary(Workbook workbook) {
 		// retrieve all trial level factors and convert them to setting details
 		Set<MeasurementVariable> trialLevelFactors = new HashSet<>();
 		for (MeasurementVariable factor : workbook.getFactors()) {
@@ -580,7 +583,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void populateStudyLevelVariableListIfNecessary(Workbook workbook, EnvironmentData environmentData,
-			DesignImportData designImportData) throws MiddlewareQueryException {
+			DesignImportData designImportData) {
 		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
 
 			Map<String, String> managementDetailValues = environmentData.getEnvironments().get(0).getManagementDetailValues();
@@ -639,8 +642,7 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void createTrialObservations(EnvironmentData environmentData, Workbook workbook, DesignImportData designImportData)
-			throws MiddlewareQueryException {
+	protected void createTrialObservations(EnvironmentData environmentData, Workbook workbook, DesignImportData designImportData) {
 
 		// get the Experiment Design MeasurementVariable
 		Set<MeasurementVariable> trialVariables = new HashSet<>(workbook.getTrialFactors());
@@ -687,7 +689,7 @@ public class DesignImportController extends SettingsController {
 		return dataMap;
 	}
 
-	protected void performAutomap(DesignImportData designImportData) throws MiddlewareQueryException {
+	protected void performAutomap(DesignImportData designImportData) {
 		Map<PhenotypicType, List<DesignHeaderItem>> result =
 				this.designImportService.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders());
 
@@ -709,7 +711,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void resolveTheEnvironmentFactorsWithIDNamePairing(EnvironmentData environmentData, Workbook workbook,
-			DesignImportData designImportData, Set<MeasurementVariable> trialVariables) throws MiddlewareQueryException {
+			DesignImportData designImportData, Set<MeasurementVariable> trialVariables) {
 
 		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		Map<String, String> nameIdMap = this.switchKey(idNameMap);
@@ -810,7 +812,7 @@ public class DesignImportController extends SettingsController {
 	}
 
 	protected void resolveTheEnvironmentFactorsWithIDNamePairing(EnvironmentData environmentData, DesignImportData designImportData,
-			List<SettingDetail> newDetails) throws MiddlewareQueryException {
+			List<SettingDetail> newDetails) {
 
 		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		Map<String, String> nameIdMap = this.switchKey(idNameMap);

@@ -310,6 +310,8 @@ public class DesignImportController extends SettingsController {
 			Workbook workbook = this.userSelection.getTemporaryWorkbook();
 			DesignImportData designImportData = this.userSelection.getDesignImportData();
 
+			this.removeExperimentDesignVariables(workbook.getFactors());
+
 			List<MeasurementRow> measurementRows;
 			Set<MeasurementVariable> measurementVariables;
 			Set<StandardVariable> expDesignVariables;
@@ -340,7 +342,7 @@ public class DesignImportController extends SettingsController {
 
 			this.addVariates(workbook, designImportData);
 
-			this.addExperimentDesign(workbook);
+			this.addExperimentDesign(workbook, experimentalDesignMeasurementVariables);
 
 			// Only for Trial
 			this.populateTrialLevelVariableListIfNecessary(workbook);
@@ -488,7 +490,8 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void addExperimentDesign(Workbook workbook) throws MiddlewareQueryException {
+	protected void addExperimentDesign(Workbook workbook, Set<MeasurementVariable> experimentalDesignMeasurementVariables)
+			throws MiddlewareQueryException {
 
 		ExpDesignParameterUi designParam = new ExpDesignParameterUi();
 		designParam.setDesignType(3);
@@ -501,6 +504,8 @@ public class DesignImportController extends SettingsController {
 
 		TermId termId = TermId.getById(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
 		SettingsUtil.addTrialCondition(termId, designParam, workbook, this.fieldbookMiddlewareService);
+
+		workbook.getFactors().addAll(experimentalDesignMeasurementVariables);
 
 	}
 
@@ -958,6 +963,17 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return null;
+	}
+
+	protected void removeExperimentDesignVariables(List<MeasurementVariable> variables) {
+		Iterator<MeasurementVariable> iterator = variables.iterator();
+		while (iterator.hasNext()) {
+			MeasurementVariable variable = iterator.next();
+			if (variable.getStoredIn() == TermId.TRIAL_DESIGN_INFO_STORAGE.getId()) {
+				iterator.remove();
+			}
+		}
+
 	}
 
 }

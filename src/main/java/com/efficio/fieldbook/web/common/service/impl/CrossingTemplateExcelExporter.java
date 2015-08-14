@@ -82,6 +82,25 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		}
 	}
 
+	@Override
+	public int writeListDetailsSection(Map<String, CellStyle> styles, Sheet descriptionSheet, int startingRow, GermplasmList germplasmList) {
+		int actualRow = startingRow - 1;
+
+		this.writeListDetailsRow(descriptionSheet, styles, actualRow, ExportServiceImpl.LIST_NAME, "",
+				"Enter a list name here, or add it when saving in the BMS");
+
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DESCRIPTION,
+				"", "Enter a list description here, or add it when saving in the BMS");
+
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_TYPE,
+				germplasmList.getType(), "See valid list types on Codes sheet for more options");
+
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DATE, String.valueOf(
+				germplasmList.getDate()), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
+
+		return ++actualRow;
+	}
+
 	protected File createExcelOutputFile(String studyName, Workbook excelWorkbook) throws IOException {
 		String outputFileName = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, this.cleanNameValueCommas(studyName));
 		try (OutputStream out = new FileOutputStream(outputFileName)) {

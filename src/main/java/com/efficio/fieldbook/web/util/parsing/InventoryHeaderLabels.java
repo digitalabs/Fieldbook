@@ -12,7 +12,7 @@ public enum InventoryHeaderLabels {
 	ENTRY("ENTRY", true, true), DESIGNATION("DESIGNATION", true, true), PARENTAGE("PARENTAGE", true, true), GID("GID", true,
 			true), SOURCE("SOURCE", true, true), DUPLICATE("DUPLICATE", false, true), BULK_WITH("BULK WITH", false,
 					true), BULK_COMPL("BULK COMPL?", false, true), LOCATION("LOCATION", true, true), AMOUNT("AMOUNT", true,
-							true), SCALE("SCALE", true, true), STOCKID("STOCKID", true, false), COMMENT("COMMENT", true, true);
+							true), UNITS("UNITS", true, true), STOCKID("STOCKID", true, false), COMMENT("COMMENT", true, true);
 
 	private final String name;
 	private final boolean isAnAdvancedListHeader;

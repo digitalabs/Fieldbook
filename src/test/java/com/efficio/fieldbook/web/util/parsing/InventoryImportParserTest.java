@@ -67,6 +67,7 @@ public class InventoryImportParserTest {
 	public static final String TEST_FILE_NAME_WITH_BULKING = "Inventory_Import_Template_Bulking.xlsx";
 	public static final int DUMMY_INDEX = 1;
 	private static final int TEST_LIST_ID = 1;
+	private static final GermplasmListType TEST_GERMPLASM_LIST_TYPE = GermplasmListType.CROSSES;
 
 	private static final String STOCKID_PREFIX = "SID";
 
@@ -152,22 +153,31 @@ public class InventoryImportParserTest {
 		this.generateHeaders(GermplasmListType.CROSSES);
 		ParseValidationMap map = this.moled.setupIndividualColumnValidation();
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).isEmpty());
-		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE)).isEmpty());
+		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.UNITS)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH)).isEmpty());
 		Assert.assertTrue(!map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL)).isEmpty());
 
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION)).get(0) instanceof ValueRangeValidator);
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE)).get(0) instanceof ValueRangeValidator);
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).get(0) instanceof ValueTypeValidator);
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).get(0) instanceof ValueTypeValidator);
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).get(0) instanceof ValueTypeValidator);
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).get(1) instanceof NonEmptyValidator);
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).get(1) instanceof NonEmptyValidator);
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH)).get(0) instanceof CommaDelimitedValueValidator);
-		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL)).get(0) instanceof BulkComplValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION))
+				.get(0) instanceof ValueRangeValidator);
+		Assert.assertTrue(
+				map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.UNITS)).get(0) instanceof ValueRangeValidator);
+		Assert.assertTrue(
+				map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT)).get(0) instanceof ValueTypeValidator);
+		Assert.assertTrue(
+				map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).get(0) instanceof ValueTypeValidator);
+		Assert.assertTrue(
+				map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).get(0) instanceof ValueTypeValidator);
+		Assert.assertTrue(
+				map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY)).get(1) instanceof NonEmptyValidator);
+		Assert.assertTrue(
+				map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID)).get(1) instanceof NonEmptyValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH))
+				.get(0) instanceof CommaDelimitedValueValidator);
+		Assert.assertTrue(map.getValidations(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_COMPL))
+				.get(0) instanceof BulkComplValidator);
 	}
 
 	private void generateHeaders(GermplasmListType crosses) {
@@ -204,7 +214,7 @@ public class InventoryImportParserTest {
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
-		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE), "SCALE2");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.UNITS), "SCALE2");
 
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
 
@@ -239,7 +249,7 @@ public class InventoryImportParserTest {
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.ENTRY), "1");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.GID), "-10");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION), "TEST1");
-		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE), "SCALE2");
+		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.UNITS), "SCALE2");
 		testRowValue.put(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT), "15");
 
 		InventoryDetails details = rowConverter.convertToObject(testRowValue);
@@ -299,6 +309,7 @@ public class InventoryImportParserTest {
 		Map<String, Object> additionalParams = new HashMap<String, Object>();
 		additionalParams.put(InventoryImportParser.HEADERS_MAP_PARAM_KEY, InventoryHeaderLabels.headers(GermplasmListType.CROSSES));
 		additionalParams.put(InventoryImportParser.LIST_ID_PARAM_KEY, InventoryImportParserTest.TEST_LIST_ID);
+		additionalParams.put(InventoryImportParser.GERMPLASM_LIST_TYPE_PARAM_KEY, InventoryImportParserTest.TEST_GERMPLASM_LIST_TYPE);
 		ImportedInventoryList importedInventoryList = this.moled.parseWorkbook(this.createWorkbook(germplasmListType), additionalParams);
 		Assert.assertNotNull(importedInventoryList);
 	}

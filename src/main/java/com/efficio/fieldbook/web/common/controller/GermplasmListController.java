@@ -219,7 +219,7 @@ public class GermplasmListController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.AMOUNT.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("germplasm.list.amount", null, locale)));
 
-		tableHeaderList.add(new TableHeader(ColumnLabels.SCALE.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
+		tableHeaderList.add(new TableHeader(ColumnLabels.UNITS.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("germplasm.list.scale", null, locale)));
 
 		tableHeaderList.add(new TableHeader(ColumnLabels.COMMENT.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
@@ -239,7 +239,7 @@ public class GermplasmListController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.AMOUNT.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("germplasm.list.amount", null, locale)));
 
-		tableHeaderList.add(new TableHeader(ColumnLabels.SCALE.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
+		tableHeaderList.add(new TableHeader(ColumnLabels.UNITS.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("germplasm.list.scale", null, locale)));
 
 		tableHeaderList.add(new TableHeader(ColumnLabels.STOCKID.getTermNameFromOntology(this.ontologyDataManager), this.messageSource

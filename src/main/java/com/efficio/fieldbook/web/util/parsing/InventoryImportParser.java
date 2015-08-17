@@ -156,7 +156,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 				ValueTypeValidator amountValidator = new ValueTypeValidator(Double.class);
 				amountValidator.setValidationErrorMessage("error.import.amount.must.be.numeric");
 				validationMap.addValidation(index, amountValidator);
-			} else if (InventoryHeaderLabels.SCALE.getName().equals(header)) {
+			} else if (InventoryHeaderLabels.UNITS.getName().equals(header)) {
 				ValueRangeValidator scaleValidator = new ValueRangeValidator(this.buildAllowedScaleList());
 				scaleValidator.setValidationErrorMessage("error.import.scales.unaccepted.value");
 				validationMap.addValidation(index, scaleValidator);
@@ -245,7 +245,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 			String source = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SOURCE));
 			String locationAbbr = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.LOCATION));
 			String amountString = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.AMOUNT));
-			String scale = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.SCALE));
+			String scale = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.UNITS));
 			String comment = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.COMMENT));
 			String duplicate = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.DUPLICATE));
 			String bulkWith = rowValues.get(this.inventoryHeaderLabelsMap.get(InventoryHeaderLabels.BULK_WITH));

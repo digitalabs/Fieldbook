@@ -20,7 +20,7 @@ public class InventoryHeaderLabelsTest {
 		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.SOURCE));
 		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.LOCATION));
 		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.AMOUNT));
-		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.SCALE));
+		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.UNITS));
 		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.STOCKID));
 		Assert.assertTrue(advancedHeadersMap.containsKey(InventoryHeaderLabels.COMMENT));
 	}
@@ -39,7 +39,7 @@ public class InventoryHeaderLabelsTest {
 		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.BULK_COMPL));
 		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.LOCATION));
 		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.AMOUNT));
-		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.SCALE));
+		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.UNITS));
 		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.STOCKID));
 		Assert.assertTrue(crossesHeadersMap.containsKey(InventoryHeaderLabels.COMMENT));
 	}
@@ -65,7 +65,7 @@ public class InventoryHeaderLabelsTest {
 		Assert.assertTrue(headers[4].equals(InventoryHeaderLabels.SOURCE.getName()));
 		Assert.assertTrue(headers[5].equals(InventoryHeaderLabels.LOCATION.getName()));
 		Assert.assertTrue(headers[6].equals(InventoryHeaderLabels.AMOUNT.getName()));
-		Assert.assertTrue(headers[7].equals(InventoryHeaderLabels.SCALE.getName()));
+		Assert.assertTrue(headers[7].equals(InventoryHeaderLabels.UNITS.getName()));
 		Assert.assertTrue(headers[8].equals(InventoryHeaderLabels.STOCKID.getName()));
 		Assert.assertTrue(headers[9].equals(InventoryHeaderLabels.COMMENT.getName()));
 	}
@@ -86,7 +86,7 @@ public class InventoryHeaderLabelsTest {
 		Assert.assertTrue(headers[7].equals(InventoryHeaderLabels.BULK_COMPL.getName()));
 		Assert.assertTrue(headers[8].equals(InventoryHeaderLabels.LOCATION.getName()));
 		Assert.assertTrue(headers[9].equals(InventoryHeaderLabels.AMOUNT.getName()));
-		Assert.assertTrue(headers[10].equals(InventoryHeaderLabels.SCALE.getName()));
+		Assert.assertTrue(headers[10].equals(InventoryHeaderLabels.UNITS.getName()));
 		Assert.assertTrue(headers[11].equals(InventoryHeaderLabels.STOCKID.getName()));
 		Assert.assertTrue(headers[12].equals(InventoryHeaderLabels.COMMENT.getName()));
 	}
@@ -104,7 +104,7 @@ public class InventoryHeaderLabelsTest {
 		Assert.assertTrue(headers[4].equals(InventoryHeaderLabels.SOURCE.getName()));
 		Assert.assertTrue(headers[5].equals(InventoryHeaderLabels.LOCATION.getName()));
 		Assert.assertTrue(headers[6].equals(InventoryHeaderLabels.AMOUNT.getName()));
-		Assert.assertTrue(headers[7].equals(InventoryHeaderLabels.SCALE.getName()));
+		Assert.assertTrue(headers[7].equals(InventoryHeaderLabels.UNITS.getName()));
 		Assert.assertTrue(headers[8].equals(InventoryHeaderLabels.COMMENT.getName()));
 	}
 
@@ -124,7 +124,7 @@ public class InventoryHeaderLabelsTest {
 		Assert.assertTrue(headers[7].equals(InventoryHeaderLabels.BULK_COMPL.getName()));
 		Assert.assertTrue(headers[8].equals(InventoryHeaderLabels.LOCATION.getName()));
 		Assert.assertTrue(headers[9].equals(InventoryHeaderLabels.AMOUNT.getName()));
-		Assert.assertTrue(headers[10].equals(InventoryHeaderLabels.SCALE.getName()));
+		Assert.assertTrue(headers[10].equals(InventoryHeaderLabels.UNITS.getName()));
 		Assert.assertTrue(headers[11].equals(InventoryHeaderLabels.COMMENT.getName()));
 	}
 }

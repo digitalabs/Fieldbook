@@ -139,7 +139,7 @@
 
 	<bean id="crossingTemplateExcelExporter"
 		class="com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExporter">
-		<property name="templateFile" value="classpath:CrossingTemplate_exported.xls" />
+		<property name="templateFile" value="CrossingTemplate_exported.xls" />
 	</bean>
 
 
@@ -403,7 +403,7 @@
 	</bean>
 
     <bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl">
-         <property name="templateFile" value="classpath*:GermplasmListCode.xls"/>
+         <property name="templateFile" value="GermplasmListCode.xls"/>
     </bean>
 
 	<bean id="processCodeFactory"

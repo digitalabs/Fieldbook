@@ -406,7 +406,7 @@ public class CrossingServiceImpl implements CrossingService {
 	 * 
 	 * @param germplasmListManager
 	 */
-	void setGermplasmListManager(GermplasmListManager germplasmListManager) {
+	public void setGermplasmListManager(GermplasmListManager germplasmListManager) {
 		this.germplasmListManager = germplasmListManager;
 	}
 
@@ -415,7 +415,7 @@ public class CrossingServiceImpl implements CrossingService {
 	 * 
 	 * @param germplasmDataManager
 	 */
-	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+	public void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
 
 	}

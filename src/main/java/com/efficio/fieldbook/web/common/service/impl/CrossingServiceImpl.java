@@ -38,6 +38,7 @@ import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,8 @@ public class CrossingServiceImpl implements CrossingService {
 	public static final String[] USER_DEF_FIELD_CROSS_NAME = {"CROSS NAME", "CROSSING NAME"};
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingServiceImpl.class);
+	private static final Integer PEDIGREE_NAME_TYPE = 18;
+	private static final Integer PREFERRED_NAME = 1;
 
 	@Autowired
 	private GermplasmDataManager germplasmDataManager;
@@ -109,6 +112,9 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 
 		List<Integer> savedGermplasmIds = this.saveGermplasm(germplasmToBeSaved);
+		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
+			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
+		}
 
 		Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
 		for (ImportedCrosses cross : importedCrossesList.getImportedCrosses()) {
@@ -122,6 +128,36 @@ public class CrossingServiceImpl implements CrossingService {
 			cross.setGid(newGid.toString());
 		}
 
+	}
+
+	void savePedigreeDesignationName(ImportedCrossesList importedCrossesList, List<Integer> germplasmIDs, CrossSetting crossSetting)
+			throws MiddlewareQueryException {
+
+		List<Name> parentageDesignationNames = new ArrayList<Name>();
+		Iterator<Integer> germplasmIdIterator = germplasmIDs.iterator();
+
+		for (ImportedCrosses entry : importedCrossesList.getImportedCrosses()) {
+
+			Integer gid = germplasmIdIterator.next();
+			String parentageDesignation = entry.getFemaleDesig() + "/" + entry.getMaleDesig();
+
+			Integer locationId = crossSetting.getAdditionalDetailsSetting().getHarvestLocationId();
+
+			Name parentageDesignationName = new Name();
+			parentageDesignationName.setGermplasmId(gid);
+			parentageDesignationName.setTypeId(PEDIGREE_NAME_TYPE);
+			parentageDesignationName.setUserId(this.contextUtil.getCurrentUserLocalId());
+			parentageDesignationName.setNval(parentageDesignation);
+			parentageDesignationName.setNstat(PREFERRED_NAME);
+			parentageDesignationName.setLocationId(locationId);
+			parentageDesignationName.setNdate(Util.getCurrentDateAsIntegerValue());
+			parentageDesignationName.setReferenceId(0);
+
+			parentageDesignationNames.add(parentageDesignationName);
+
+		}
+
+		this.germplasmDataManager.addGermplasmName(parentageDesignationNames);
 	}
 
 	protected boolean verifyGermplasmMethodPresent(Map<Germplasm, Name> germplasmNameMap) {

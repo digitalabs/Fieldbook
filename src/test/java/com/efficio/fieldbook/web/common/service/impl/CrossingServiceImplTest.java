@@ -2,6 +2,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.exceptions.verification.NeverWantedButInvoked;
+import org.mockito.exceptions.verification.TooLittleActualInvocations;
 
 public class CrossingServiceImplTest {
 
@@ -136,6 +139,66 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(cross2.getFemaleDesig() + setting.getSeparator() + cross2.getMaleDesig(), cross2.getCross());
 		Assert.assertEquals((Integer) 2, cross2.getEntryId());
 		Assert.assertEquals("2", cross2.getEntryCode());
+	}
+
+	@Test
+	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToTrue() {
+		Map<Germplasm, Name> germplasmToBeSaved = new HashMap<Germplasm, Name>();
+		Mockito.doReturn(germplasmToBeSaved)
+				.when(this.crossingService)
+				.generateGermplasmNameMap(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
+						CrossingServiceImplTest.USER_ID, this.importedCrossesList.hasPlotDuplicate());
+
+		List<Integer> savedGermplasmIds = new ArrayList<Integer>();
+		savedGermplasmIds.add(1);
+		savedGermplasmIds.add(2);
+		Mockito.doReturn(savedGermplasmIds).when(this.crossingService).saveGermplasm(germplasmToBeSaved);
+
+		Mockito.doNothing().when(this.crossingService)
+				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
+
+		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+		crossNameSetting.setSaveParentageDesignationAsAString(true);
+
+		this.crossSetting.setCrossNameSetting(crossNameSetting);
+		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
+
+		try {
+			Mockito.verify(this.crossingService, Mockito.times(1)).savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds,
+					this.crossSetting);
+		} catch (TooLittleActualInvocations e) {
+			Assert.fail("Expecting to save parentage designation names but didn't.");
+		}
+	}
+
+	@Test
+	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToFalse() {
+		Map<Germplasm, Name> germplasmToBeSaved = new HashMap<Germplasm, Name>();
+		Mockito.doReturn(germplasmToBeSaved)
+				.when(this.crossingService)
+				.generateGermplasmNameMap(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
+						CrossingServiceImplTest.USER_ID, this.importedCrossesList.hasPlotDuplicate());
+
+		List<Integer> savedGermplasmIds = new ArrayList<Integer>();
+		savedGermplasmIds.add(1);
+		savedGermplasmIds.add(2);
+		Mockito.doReturn(savedGermplasmIds).when(this.crossingService).saveGermplasm(germplasmToBeSaved);
+
+		Mockito.doNothing().when(this.crossingService)
+				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
+
+		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
+		crossNameSetting.setSaveParentageDesignationAsAString(false);
+
+		this.crossSetting.setCrossNameSetting(crossNameSetting);
+		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
+
+		try {
+			Mockito.verify(this.crossingService, Mockito.times(0)).savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds,
+					this.crossSetting);
+		} catch (NeverWantedButInvoked e) {
+			Assert.fail("Expecting to NOT save parentage designation names but didn't.");
+		}
 	}
 
 	@Test

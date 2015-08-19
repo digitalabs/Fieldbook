@@ -26,9 +26,9 @@ if (typeof StockIDFunctions === 'undefined') {
 			}
 
 			if (!hasPedigreeDupe) {
-				$('.withPedigreeDupeOnly').hide();
+				$('.withPedigreeDuplicateOnly').hide();
 			} else {
-				$('.withPedigreeDupeOnly').show();
+				$('.withPedigreeDuplicateOnly').show();
 			}
 
 			if (!hasPlotReciprocal) {

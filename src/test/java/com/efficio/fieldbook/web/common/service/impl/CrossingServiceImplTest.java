@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -22,6 +22,9 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +35,7 @@ import org.mockito.MockitoAnnotations;
 
 public class CrossingServiceImplTest {
 
+	private static final int BREEDING_METHOD_ID = 1;
 	private static final String SAVED_CROSSES_GID1 = "-9999";
 	private static final String SAVED_CROSSES_GID2 = "-8888";
 	private static final Integer USER_ID = 123;
@@ -40,9 +44,14 @@ public class CrossingServiceImplTest {
 
 	@Mock
 	private GermplasmListManager germplasmListManager;
-
 	@Mock
 	private GermplasmDataManager germplasmDataManager;
+	@Mock
+	private CrossExpansionProperties crossExpansionProperties;
+	@Mock
+	private ContextUtil contextUtil;
+
+	private CrossSetting crossSetting;
 
 	@Before
 	public void setUp() throws MiddlewareQueryException {
@@ -55,25 +64,33 @@ public class CrossingServiceImplTest {
 		this.crossingService = Mockito.spy(new CrossingServiceImpl());
 		this.crossingService.setGermplasmListManager(this.germplasmListManager);
 		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
+		this.crossingService.setCrossExpansionProperties(this.crossExpansionProperties);
+		this.crossingService.setContextUtil(this.contextUtil);
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyMap());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
+		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(BREEDING_METHOD_ID);
+		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
 
+		this.crossSetting = new CrossSetting();
+		this.crossSetting.setCrossNameSetting(this.createCrossNameSetting());
+		this.crossSetting.setBreedingMethodSetting(this.createBreedingMethodSetting());
+		this.crossSetting.setAdditionalDetailsSetting(this.getAdditionalDetailsSetting());
+	}
+
+	private Project createProject() {
+		Project project = new Project();
+		project.setCropType(new CropType("maize"));
+		return project;
 	}
 
 	@Test
 	public void testApplyCrossSetting() throws MiddlewareQueryException {
 
-		CrossSetting crossSetting = new CrossSetting();
-		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
-		BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
-		AdditionalDetailsSetting additionalDetailsSetting = new AdditionalDetailsSetting();
-		crossSetting.setCrossNameSetting(crossNameSetting);
-		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
-		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
+		CrossNameSetting crossNameSetting = this.crossSetting.getCrossNameSetting();
 
-		this.crossingService.applyCrossSetting(crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
+		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID);
 
 		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
@@ -100,10 +117,9 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testApplyCrossNameSettingToImportedCrosses() throws MiddlewareQueryException {
 
-		CrossSetting crossSetting = createCrossSetting();
-		CrossNameSetting setting = crossSetting.getCrossNameSetting();
+		CrossNameSetting setting = this.crossSetting.getCrossNameSetting();
 
-		this.crossingService.applyCrossNameSettingToImportedCrosses(crossSetting, this.importedCrossesList.getImportedCrosses());
+		this.crossingService.applyCrossNameSettingToImportedCrosses(this.crossSetting, this.importedCrossesList.getImportedCrosses());
 
 		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
@@ -162,7 +178,7 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testBuildDesignationNameInSequenceDefaultSetting() {
 
-		CrossSetting crossSetting = createCrossSetting();
+		CrossSetting crossSetting = this.createCrossSetting();
 		CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix("A");
 		setting.setSuffix("B");
@@ -175,7 +191,7 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testBuildDesignationNameInSequenceWithSpacesInPrefixSuffix() {
 
-		CrossSetting crossSetting = createCrossSetting();
+		CrossSetting crossSetting = this.createCrossSetting();
 		CrossNameSetting setting = new CrossNameSetting();
 		setting.setPrefix("A");
 		setting.setSuffix("B");
@@ -190,7 +206,7 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testBuildDesignationNameInSequenceWithNumOfDigits() {
 
-		CrossSetting crossSetting = createCrossSetting();
+		CrossSetting crossSetting = this.createCrossSetting();
 		CrossNameSetting setting = crossSetting.getCrossNameSetting();
 		setting.setAddSpaceBetweenPrefixAndCode(true);
 		setting.setAddSpaceBetweenSuffixAndCode(true);
@@ -422,7 +438,7 @@ public class CrossingServiceImplTest {
 	}
 
 	private CrossSetting createCrossSetting() {
-		return new CrossSetting(null, null, createCrossNameSetting(), null);
+		return new CrossSetting(null, null, this.createCrossNameSetting(), null);
 	}
 
 	private CrossNameSetting createCrossNameSetting() {
@@ -437,6 +453,16 @@ public class CrossingServiceImplTest {
 		setting.setNumOfDigits(7);
 
 		return setting;
+	}
+
+	private AdditionalDetailsSetting getAdditionalDetailsSetting() {
+		return new AdditionalDetailsSetting();
+	}
+
+	private BreedingMethodSetting createBreedingMethodSetting() {
+		BreedingMethodSetting breedingMethodSetting = new BreedingMethodSetting();
+		breedingMethodSetting.setMethodId(BREEDING_METHOD_ID);
+		return breedingMethodSetting;
 	}
 
 	private AdditionalDetailsSetting createAdditionalDetailsSetting() {

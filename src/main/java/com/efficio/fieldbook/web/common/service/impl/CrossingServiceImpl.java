@@ -313,7 +313,7 @@ public class CrossingServiceImpl implements CrossingService {
 		sb.append(this.buildPrefixString(nameSetting));
 		sb.append(this.getNumberWithLeadingZeroesAsString(number, nameSetting));
 
-		if (!StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
+		if (importedCrosses != null && !StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
 			Method method = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
 			if (!StringUtils.isEmpty(method.getSuffix())) {
 				nameSetting.setSuffix(method.getSuffix());
@@ -401,30 +401,40 @@ public class CrossingServiceImpl implements CrossingService {
 		return null;
 	}
 
-	public void setGermplasmListManager(GermplasmListManager germplasmListManager) {
+	/**
+	 * For Test Only
+	 * 
+	 * @param germplasmListManager
+	 */
+	void setGermplasmListManager(GermplasmListManager germplasmListManager) {
 		this.germplasmListManager = germplasmListManager;
 	}
 
-	public void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
+	/**
+	 * For Test Only
+	 * 
+	 * @param germplasmDataManager
+	 */
+	void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
 
 	}
 
 	/**
 	 * For Test Only
-	 *
-	 * @param contextUtil
+	 * 
+	 * @param crossExpansionProperties
 	 */
-	void setCrossExpansionProperties(CrossExpansionProperties cEP) {
-		this.crossExpansionProperties = cEP;
+	void setCrossExpansionProperties(CrossExpansionProperties crossExpansionProperties) {
+		this.crossExpansionProperties = crossExpansionProperties;
 	}
 
 	/**
 	 * For Test Only
-	 *
-	 * @param contextUtil2
+	 * 
+	 * @param contextUtil
 	 */
-	void setContextUtil(ContextUtil contextUtil2) {
-		this.contextUtil = contextUtil2;
+	void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
 	}
 }

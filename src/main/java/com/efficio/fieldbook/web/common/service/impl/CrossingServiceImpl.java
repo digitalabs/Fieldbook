@@ -98,15 +98,14 @@ public class CrossingServiceImpl implements CrossingService {
 			throws MiddlewareQueryException {
 
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
-		Map<Germplasm, Name> germplasmToBeSaved =
-				this.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), userId,
-						importedCrossesList.hasPlotDuplicate());
+		Map<Germplasm, Name> germplasmToBeSaved = this.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(),
+				userId, importedCrossesList.hasPlotDuplicate());
 
 		boolean isValid = this.verifyGermplasmMethodPresent(germplasmToBeSaved);
 
 		if (!isValid) {
-			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
-					Locale.getDefault()));
+			throw new MiddlewareQueryException(
+					this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {}, Locale.getDefault()));
 		}
 
 		List<Integer> savedGermplasmIds = this.saveGermplasm(germplasmToBeSaved);
@@ -138,13 +137,12 @@ public class CrossingServiceImpl implements CrossingService {
 	protected void applyCrossNameSettingToImportedCrosses(CrossSetting setting, List<ImportedCrosses> importedCrosses)
 			throws MiddlewareQueryException {
 
-		processBreedingMethodProcessCodes(setting);
+		this.processBreedingMethodProcessCodes(setting);
 
 		Integer nextNumberInSequence = this.getNextNumberInSequence(setting.getCrossNameSetting());
 		Integer entryIdCounter = 0;
 
 		for (ImportedCrosses cross : importedCrosses) {
-			updateCrossNameSettingIfNecessary(setting.getCrossNameSetting(), cross);
 			entryIdCounter++;
 			cross.setEntryId(entryIdCounter);
 			cross.setEntryCode(String.valueOf(entryIdCounter));
@@ -162,38 +160,16 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 	}
 
-	protected void updateCrossNameSettingIfNecessary(CrossNameSetting setting, ImportedCrosses cross) throws MiddlewareQueryException{
-		if (StringUtils.isEmpty(cross.getRawBreedingMethod())) {
-			setting.setSuffix("");
-			return;
-		}
-
-		Method method = germplasmDataManager.getMethodByCode(cross.getRawBreedingMethod());
-
-		if (method == null) {
-			setting.setSuffix("");
-			return;
-		}
-
-		if (!StringUtils.isEmpty(method.getSuffix())) {
-			setting.setSuffix(method.getSuffix());
-		} else {
-			setting.setSuffix("");
-		}
-		
-
-	}
-
 	protected void processBreedingMethodProcessCodes(CrossSetting setting) {
 		CrossNameSetting nameSetting = setting.getCrossNameSetting();
 		BreedingMethodSetting breedingMethodSetting = setting.getBreedingMethodSetting();
 
 		try {
-			Method method = germplasmDataManager.getMethodByID(breedingMethodSetting.getMethodId());
+			Method method = this.germplasmDataManager.getMethodByID(breedingMethodSetting.getMethodId());
 
 			// overwrite other name setting items using method values here
 
-			if (method != null && method.getSuffix() !=null) {
+			if (method != null && method.getSuffix() != null) {
 				nameSetting.setSuffix(method.getSuffix());
 			}
 		} catch (MiddlewareQueryException e) {
@@ -204,19 +180,19 @@ public class CrossingServiceImpl implements CrossingService {
 	@Override
 	public String getCross(final Germplasm germplasm, ImportedCrosses crosses, String separator) {
 		try {
-			if (CrossingUtil.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
-					.getCropName())) {
+			if (CrossingUtil.isCimmytWheat(this.crossExpansionProperties.getProfile(),
+					this.contextUtil.getProjectInContext().getCropType().getCropName())) {
 				return this.pedigreeService.getCrossExpansion(germplasm, null, this.crossExpansionProperties);
 			}
 			return this.buildCrossName(crosses, separator);
 		} catch (MiddlewareQueryException e) {
-			throw new RuntimeException("There was a problem accessing communicating with the database. "
-					+ "Please contact support for further help.", e);
+			throw new RuntimeException(
+					"There was a problem accessing communicating with the database. " + "Please contact support for further help.", e);
 		}
 
 	}
 
-	public Integer getFormattedHarvestDate(String harvestDate){
+	public Integer getFormattedHarvestDate(String harvestDate) {
 		Integer dateIntValue = 0;
 		if (harvestDate != null && !StringUtil.isEmpty(harvestDate)) {
 			String replacedDateString = harvestDate.replace("-", "");
@@ -229,7 +205,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	public void populateGDate(Germplasm germplasm, String crossingDate, String harvestDate) {
-		Integer formattedHarvestDate = getFormattedHarvestDate(harvestDate);
+		Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
 		if (!StringUtil.isEmpty(crossingDate)) {
 			germplasm.setGdate(Integer.valueOf(crossingDate));
 		} else if (formattedHarvestDate != 0) {
@@ -265,7 +241,7 @@ public class CrossingServiceImpl implements CrossingService {
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
 
-			populateGDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
+			this.populateGDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
 
 			germplasm.setLocationId(harvestLocationId);
 
@@ -278,7 +254,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			name.setNval(cross.getDesig());
-			name.setNdate(getFormattedHarvestDate(additionalDetailsSetting.getHarvestDate()));
+			name.setNdate(this.getFormattedHarvestDate(additionalDetailsSetting.getHarvestDate()));
 			name.setTypeId(crossingNameTypeId);
 			name.setLocationId(harvestLocationId);
 
@@ -331,33 +307,40 @@ public class CrossingServiceImpl implements CrossingService {
 
 	protected String buildDesignationNameInSequence(ImportedCrosses importedCrosses, Integer number, CrossSetting setting) {
 		CrossNameSetting nameSetting = setting.getCrossNameSetting();
-
+		Pattern pattern = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN);
 		StringBuilder sb = new StringBuilder();
+		String uDSuffix = nameSetting.getSuffix();
 		sb.append(this.buildPrefixString(nameSetting));
 		sb.append(this.getNumberWithLeadingZeroesAsString(number, nameSetting));
 
+		if (!StringUtils.isEmpty(importedCrosses.getRawBreedingMethod())) {
+			Method method = this.germplasmDataManager.getMethodByCode(importedCrosses.getRawBreedingMethod());
+			if (!StringUtils.isEmpty(method.getSuffix())) {
+				nameSetting.setSuffix(method.getSuffix());
+			}
+		}
 
 		if (!StringUtils.isEmpty(nameSetting.getSuffix())) {
 			String suffix = nameSetting.getSuffix().trim();
-			Pattern pattern = Pattern.compile(ExpressionHelper.PROCESS_CODE_PATTERN);
 			Matcher matcher = pattern.matcher(suffix);
 
 			if (matcher.find()) {
-				suffix = evaluateSuffixProcessCode(importedCrosses, setting,matcher.group());
+				suffix = this.evaluateSuffixProcessCode(importedCrosses, setting, matcher.group());
 			}
 
 			sb.append(this.buildSuffixString(nameSetting, suffix));
 		}
+		nameSetting.setSuffix(uDSuffix);
 		return sb.toString();
 	}
 
 	protected String evaluateSuffixProcessCode(ImportedCrosses crosses, CrossSetting setting, String processCode) {
-		ProcessCodeOrderedRule rule = processCodeRuleFactory.getRuleByProcessCode(processCode);
+		ProcessCodeOrderedRule rule = this.processCodeRuleFactory.getRuleByProcessCode(processCode);
 
 		CrossingRuleExecutionContext crossingRuleExecutionContext = new CrossingRuleExecutionContext(new ArrayList<String>(), setting,
 				crosses.getMaleGid() != null ? Integer.valueOf(crosses.getMaleGid()) : 0,
-				crosses.getFemaleGid() != null ? Integer.valueOf(crosses.getFemaleGid()) : 0,
-				germplasmDataManager, pedigreeDataManager);
+				crosses.getFemaleGid() != null ? Integer.valueOf(crosses.getFemaleGid()) : 0, this.germplasmDataManager,
+				this.pedigreeDataManager);
 
 		try {
 			return (String) rule.runRule(crossingRuleExecutionContext);
@@ -380,11 +363,10 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	protected String buildSuffixString(CrossNameSetting setting, String suffix) {
-
 		if (setting.isAddSpaceBetweenSuffixAndCode()) {
-			return " " + suffix;
+			return " " + suffix.trim();
 		}
-		return suffix;
+		return suffix.trim();
 	}
 
 	protected String getNumberWithLeadingZeroesAsString(Integer number, CrossNameSetting setting) {
@@ -426,5 +408,23 @@ public class CrossingServiceImpl implements CrossingService {
 	public void setGermplasmDataManager(GermplasmDataManager germplasmDataManager) {
 		this.germplasmDataManager = germplasmDataManager;
 
+	}
+
+	/**
+	 * For Test Only
+	 *
+	 * @param contextUtil
+	 */
+	void setCrossExpansionProperties(CrossExpansionProperties cEP) {
+		this.crossExpansionProperties = cEP;
+	}
+
+	/**
+	 * For Test Only
+	 *
+	 * @param contextUtil2
+	 */
+	void setContextUtil(ContextUtil contextUtil2) {
+		this.contextUtil = contextUtil2;
 	}
 }

@@ -101,14 +101,15 @@ public class CrossingServiceImpl implements CrossingService {
 			throws MiddlewareQueryException {
 
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
-		Map<Germplasm, Name> germplasmToBeSaved = this.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(),
-				userId, importedCrossesList.hasPlotDuplicate());
+		Map<Germplasm, Name> germplasmToBeSaved =
+				this.generateGermplasmNameMap(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+						importedCrossesList.hasPlotDuplicate());
 
 		boolean isValid = this.verifyGermplasmMethodPresent(germplasmToBeSaved);
 
 		if (!isValid) {
-			throw new MiddlewareQueryException(
-					this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {}, Locale.getDefault()));
+			throw new MiddlewareQueryException(this.messageSource.getMessage("error.save.cross.methods.unavailable", new Object[] {},
+					Locale.getDefault()));
 		}
 
 		List<Integer> savedGermplasmIds = this.saveGermplasm(germplasmToBeSaved);
@@ -216,14 +217,14 @@ public class CrossingServiceImpl implements CrossingService {
 	@Override
 	public String getCross(final Germplasm germplasm, ImportedCrosses crosses, String separator) {
 		try {
-			if (CrossingUtil.isCimmytWheat(this.crossExpansionProperties.getProfile(),
-					this.contextUtil.getProjectInContext().getCropType().getCropName())) {
+			if (CrossingUtil.isCimmytWheat(this.crossExpansionProperties.getProfile(), this.contextUtil.getProjectInContext().getCropType()
+					.getCropName())) {
 				return this.pedigreeService.getCrossExpansion(germplasm, null, this.crossExpansionProperties);
 			}
 			return this.buildCrossName(crosses, separator);
 		} catch (MiddlewareQueryException e) {
-			throw new RuntimeException(
-					"There was a problem accessing communicating with the database. " + "Please contact support for further help.", e);
+			throw new RuntimeException("There was a problem accessing communicating with the database. "
+					+ "Please contact support for further help.", e);
 		}
 
 	}
@@ -373,10 +374,10 @@ public class CrossingServiceImpl implements CrossingService {
 	protected String evaluateSuffixProcessCode(ImportedCrosses crosses, CrossSetting setting, String processCode) {
 		ProcessCodeOrderedRule rule = this.processCodeRuleFactory.getRuleByProcessCode(processCode);
 
-		CrossingRuleExecutionContext crossingRuleExecutionContext = new CrossingRuleExecutionContext(new ArrayList<String>(), setting,
-				crosses.getMaleGid() != null ? Integer.valueOf(crosses.getMaleGid()) : 0,
-				crosses.getFemaleGid() != null ? Integer.valueOf(crosses.getFemaleGid()) : 0, this.germplasmDataManager,
-				this.pedigreeDataManager);
+		CrossingRuleExecutionContext crossingRuleExecutionContext =
+				new CrossingRuleExecutionContext(new ArrayList<String>(), setting, crosses.getMaleGid() != null ? Integer.valueOf(crosses
+						.getMaleGid()) : 0, crosses.getFemaleGid() != null ? Integer.valueOf(crosses.getFemaleGid()) : 0,
+						this.germplasmDataManager, this.pedigreeDataManager);
 
 		try {
 			return (String) rule.runRule(crossingRuleExecutionContext);

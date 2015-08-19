@@ -24,9 +24,9 @@ import org.generationcp.middleware.domain.oms.TermId;
 class KsuCsvWorkbookParser extends AbstractCsvFileParser<KsuCsvWorkbookParser> {
 
 	private KsuCsvImportStudyServiceImpl ksuCsvImportStudyService;
-	private final Workbook workbook;
-	private final String trialInstanceNo;
-	private final Map<String, MeasurementRow> rowsMap;
+	private Workbook workbook;
+	private String trialInstanceNo;
+	private Map<String, MeasurementRow> rowsMap;
 	private List<GermplasmChangeDetail> changeDetailsList;
 	private Set<ChangeType> modes;
 

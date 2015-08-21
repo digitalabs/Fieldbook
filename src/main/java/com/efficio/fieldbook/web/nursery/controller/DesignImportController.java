@@ -31,6 +31,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
@@ -90,6 +91,12 @@ public class DesignImportController extends SettingsController {
 
 	@Resource
 	private MessageSource messageSource;
+
+	@Resource
+	private UserSelection userSelection;
+
+	@Resource
+	private OntologyDataManager ontologyDataManager;
 
 	/*
 	 * (non-Javadoc)
@@ -278,7 +285,7 @@ public class DesignImportController extends SettingsController {
 		for (Map.Entry<String, List<DesignHeaderItem>> item : mappedHeaders.entrySet()) {
 			for (DesignHeaderItem mappedHeader : item.getValue()) {
 
-				StandardVariable stdVar = this.fieldbookMiddlewareService.getStandardVariable(mappedHeader.getId());
+				StandardVariable stdVar = this.ontologyDataManager.getStandardVariable(mappedHeader.getId());
 
 				mappedHeader.setVariable(stdVar);
 			}
@@ -723,30 +730,49 @@ public class DesignImportController extends SettingsController {
 
 			for (Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
 
+				String headerName =
+						this.getLocalNameFromSettingDetails(Integer.valueOf(managementDetail.getKey()),
+								this.userSelection.getTrialLevelVariableList());
+				String standardVariableName =
+						this.getVariableNameFromSettingDetails(Integer.valueOf(managementDetail.getKey()),
+								this.userSelection.getTrialLevelVariableList());
+
+				if ("".equals(headerName)) {
+
+					headerName =
+							this.getHeaderName(Integer.valueOf(managementDetail.getKey()),
+									designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+				}
+
+				if ("".equals(standardVariableName)) {
+					standardVariableName =
+							this.getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData.getMappedHeaders()
+									.get(PhenotypicType.TRIAL_ENVIRONMENT));
+				}
+
 				// For TRIAL_LOCATION (Location Name)
 				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()) {
 					String termId = nameIdMap.get(managementDetail.getKey());
 					if (termId != null) {
 
-						Location location = this.fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
-						if (location == null) {
-							copyOfManagementDetailValues.put(termId, "");
-						} else {
-							copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
-						}
+						if (this.isTermIdExisting(Integer.valueOf(managementDetail.getKey()),
+								designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT))) {
 
-						String headerName =
-								this.getHeaderName(Integer.valueOf(managementDetail.getKey()),
-										designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-						String standardVariableName =
-								this.getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData
-										.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+							Location location =
+									this.fieldbookMiddlewareService.getLocationByName(managementDetail.getValue(), Operation.EQUAL);
+							if (location == null) {
+								copyOfManagementDetailValues.put(termId, "");
+							} else {
+								copyOfManagementDetailValues.put(termId, String.valueOf(location.getLocid()));
+							}
+
+						}
 
 						SettingDetail settingDetail = this.createSettingDetail(Integer.valueOf(termId), headerName);
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
 						MeasurementVariable measurementVariable = null;
-						StandardVariable var = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(termId));
+						StandardVariable var = this.ontologyDataManager.getStandardVariable(Integer.valueOf(termId));
 						measurementVariable =
 								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 						measurementVariable.setName(standardVariableName + AppConstants.ID_SUFFIX.getString());
@@ -757,27 +783,17 @@ public class DesignImportController extends SettingsController {
 						SettingsUtil.hideVariableInSession(this.userSelection.getTrialLevelVariableList(),
 								Integer.valueOf(managementDetail.getKey()));
 					}
-				}
-
-				// For COOPERATOR
-				if (Integer.valueOf(managementDetail.getKey()) == 8373) {
+				} else if (Integer.valueOf(managementDetail.getKey()) == 8373) {
 					String termId = nameIdMap.get(managementDetail.getKey());
 					if (termId != null) {
 
 						copyOfManagementDetailValues.put(termId, String.valueOf(super.getCurrentIbdbUserId()));
 
-						String headerName =
-								this.getHeaderName(Integer.valueOf(managementDetail.getKey()),
-										designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-						String standardVariableName =
-								this.getStandardVariableName(Integer.valueOf(managementDetail.getKey()), designImportData
-										.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-
 						SettingDetail settingDetail = this.createSettingDetail(Integer.valueOf(termId), headerName);
 						this.addSettingDetailToTrialLevelVariableListIfNecessary(settingDetail);
 
 						MeasurementVariable measurementVariable = null;
-						StandardVariable var = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(termId));
+						StandardVariable var = this.ontologyDataManager.getStandardVariable(Integer.valueOf(termId));
 						measurementVariable =
 								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 						measurementVariable.setName(standardVariableName + AppConstants.ID_SUFFIX.getString());
@@ -789,11 +805,20 @@ public class DesignImportController extends SettingsController {
 								Integer.valueOf(managementDetail.getKey()));
 					}
 
+				} else {
+
+					MeasurementVariable measurementVariable = null;
+					StandardVariable var = this.ontologyDataManager.getStandardVariable(Integer.valueOf(managementDetail.getKey()));
+					measurementVariable =
+							ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+					measurementVariable.setName(var.getName());
+					trialVariables.add(measurementVariable);
+
 				}
 
 				// For Categorical Variables
 				StandardVariable tempStandardVarable =
-						this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(managementDetail.getKey()));
+						this.ontologyDataManager.getStandardVariable(Integer.valueOf(managementDetail.getKey()));
 				if (tempStandardVarable != null && tempStandardVarable.hasEnumerations()) {
 
 					Enumeration enumeration = this.findInEnumeration(managementDetail.getValue(), tempStandardVarable.getEnumerations());
@@ -878,8 +903,7 @@ public class DesignImportController extends SettingsController {
 			}
 
 			// For Categorical Variables
-			StandardVariable tempStandardVarable =
-					this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(managementDetail.getKey()));
+			StandardVariable tempStandardVarable = this.ontologyDataManager.getStandardVariable(Integer.valueOf(managementDetail.getKey()));
 			if (tempStandardVarable != null && tempStandardVarable.hasEnumerations()) {
 
 				Enumeration enumeration = this.findInEnumeration(managementDetail.getValue(), tempStandardVarable.getEnumerations());
@@ -931,6 +955,15 @@ public class DesignImportController extends SettingsController {
 
 	}
 
+	protected boolean isTermIdExisting(int termId, List<DesignHeaderItem> items) {
+		for (DesignHeaderItem item : items) {
+			if (item.getId() == termId) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	protected String getHeaderName(int termId, List<DesignHeaderItem> items) {
 		for (DesignHeaderItem item : items) {
 			if (item.getId() == termId) {
@@ -976,6 +1009,29 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 
+	}
+
+	protected String getLocalNameFromSettingDetails(int termId, List<SettingDetail> settingDetails) {
+		for (SettingDetail detail : settingDetails) {
+			if (detail.getVariable().getCvTermId().intValue() == termId) {
+				if (detail.getDisplayValue() == null) {
+					return detail.getVariable().getName();
+				} else {
+					return detail.getDisplayValue();
+				}
+
+			}
+		}
+		return "";
+	}
+
+	protected String getVariableNameFromSettingDetails(int termId, List<SettingDetail> settingDetails) {
+		for (SettingDetail detail : settingDetails) {
+			if (detail.getVariable().getCvTermId().intValue() == termId) {
+				return detail.getVariable().getName();
+			}
+		}
+		return "";
 	}
 
 }

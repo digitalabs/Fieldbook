@@ -356,8 +356,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		Long dateLong = Long.valueOf(DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(),
 				saveListForm.getListDate()));
 
-		return new GermplasmList(null, listName, dateLong, listType, currentUserId, description,
+		GermplasmList germplasmList = new GermplasmList(null, listName, dateLong, listType, currentUserId, description,
 				parent, status, saveListForm.getListNotes());
+		germplasmList.setProgramUUID(this.contextUtil.getCurrentProgramUUID());
+		return germplasmList;
 
 	}
 
@@ -838,6 +840,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 
 			newList.setDescription("(NEW FOLDER) " + folderName);
+			newList.setProgramUUID(this.contextUtil.getCurrentProgramUUID());
 			Integer germplasmListFolderId = this.germplasmListManager.addGermplasmList(newList);
 			resultsMap.put("id", germplasmListFolderId);
 			resultsMap.put(GermplasmTreeController.IS_SUCCESS, "1");

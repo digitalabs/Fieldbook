@@ -257,8 +257,7 @@ public class StockController extends AbstractBaseFieldbookController {
 		return resultMap;
 	}
 
-	protected Map<ListDataProject, GermplasmListData> generateGermplasmMap(Integer listDataID, Integer listDataProjectListId)
-			throws MiddlewareException {
+	protected Map<ListDataProject, GermplasmListData> generateGermplasmMap(Integer listDataID, Integer listDataProjectListId) {
 		List<GermplasmListData> germplasmListDataList =
 				this.germplasmListManager.getGermplasmListDataByListId(listDataID, 0, Integer.MAX_VALUE);
 		List<ListDataProject> listDataProjectList = this.germplasmListManager.retrieveSnapshotListData(listDataProjectListId);
@@ -321,7 +320,7 @@ public class StockController extends AbstractBaseFieldbookController {
 		return this.convertObjectToJson(result);
 	}
 
-	private void updateInventory(Integer listId, List<InventoryDetails> inventoryDetailListFromDB) throws MiddlewareQueryException {
+	private void updateInventory(Integer listId, List<InventoryDetails> inventoryDetailListFromDB) {
 		this.inventoryDataManager.updateInventory(listId, inventoryDetailListFromDB);
 	}
 

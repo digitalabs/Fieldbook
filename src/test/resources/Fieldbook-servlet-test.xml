@@ -13,8 +13,8 @@
 			http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
 	<!-- Declare property file locations  -->
-	<context:property-placeholder location="classpath:fieldbook.properties, classpath:test.properties" />
-
+	<context:property-placeholder location="classpath:fieldbook.properties, classpath:test.properties, classpath:c3p0.properties, classpath:crossing.properties" />
+	
 	<!-- **************************************************************** -->
 	<!--  RESOURCE FOLDERS CONFIGURATION                                  -->
 	<!--  Dispatcher configuration for serving static resources           -->
@@ -305,7 +305,7 @@
         <property name="ruleFactory" ref="ruleFactory"/>
     </bean>
 
-    <bean id="ruleFactory" class="org.generationcp.commons.ruleengine.RuleFactory"
+    <bean id="ruleFactory" class="org.generationcp.commons.ruleengine.ProcessCodeRuleFactory"
           init-method="init"/>
 
     <bean id="ruleConfigProvider"
@@ -313,31 +313,24 @@
         <property name="ruleSequenceConfiguration">
             <map>
                 <entry key="naming" value="${naming.rules}"/>
+                <entry key="stockid" value="${stockid.rules}"/>
             </map>
         </property>
     </bean>
+    
 	<bean id="ruleService" class="org.generationcp.commons.ruleengine.impl.RulesServiceImpl" />	
 	<!--
 	        This component scan automatically registers all implementations of the Rule interface into the Spring context.
 	        In conjunction with the RulesPostProcessor above, this automatically populates the map in the RuleFactory
 	         -->
 	<context:component-scan base-package="com.efficio.fieldbook.web.naming.rules.naming"/>
+	<context:component-scan base-package="org.generationcp.commons.ruleengine.stockid"/>
+    <context:component-scan base-package="org.generationcp.commons.ruleengine.cross"/>
+    
 
-	<bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
+	<bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init"/>
 
-        <property name="registeredExpressions">
-            <list>
-                <bean class="com.efficio.fieldbook.web.naming.expression.BracketsExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.BulkCountExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.FirstExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.LocationAbbreviationExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.NumberExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.SeasonExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.SequenceExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
-            </list>
-        </property>
-    </bean>
+	<context:component-scan base-package="com.efficio.fieldbook.web.naming.expression"/>
 
 	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
 	
@@ -389,6 +382,10 @@
         <property name="wheatLevel" value="0" />
         <property name="defaultLevel" value="1" />
         <property name="profile" value="cimmyt" />
+    </bean>
+    
+    <bean id="pedigreeDataManager" class="org.generationcp.middleware.manager.PedigreeDataManagerImpl">
+         <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
 
 </beans>

@@ -379,6 +379,7 @@ var ImportCrosses = {
 			settingObject.crossNameSetting.numOfDigits = $('#sequenceNumberDigits').val();
 			settingObject.crossNameSetting.separator = $('#parentageDesignationSeparator').val();
 			settingObject.crossNameSetting.startNumber = $('#startingSequenceNumber').val();
+			settingObject.crossNameSetting.saveParentageDesignationAsAString= $('input:radio[name=hasParentageDesignationName]:checked').val() == 'true';
 			settingObject.preservePlotDuplicates =  ImportCrosses.preservePlotDuplicates;
 			settingObject.additionalDetailsSetting = {};
 			settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');

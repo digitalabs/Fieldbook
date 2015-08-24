@@ -1,8 +1,9 @@
 package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory;
 import org.generationcp.commons.ruleengine.RulesPostProcessor;
 import org.springframework.beans.BeansException;
+
+import com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory;
 
 
 /**

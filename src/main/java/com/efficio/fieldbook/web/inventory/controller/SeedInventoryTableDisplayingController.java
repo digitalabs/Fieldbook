@@ -52,7 +52,7 @@ public abstract class SeedInventoryTableDisplayingController extends AbstractBas
 				.getMessage("seed.inventory.table.location", null, locale)));
 		tableHeaderList.add(new TableHeader(ColumnLabels.AMOUNT.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("seed.inventory.amount", null, locale)));
-		tableHeaderList.add(new TableHeader(ColumnLabels.SCALE.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
+		tableHeaderList.add(new TableHeader(ColumnLabels.UNITS.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("seed.inventory.table.scale", null, locale)));
 		tableHeaderList.add(new TableHeader(ColumnLabels.COMMENT.getTermNameFromOntology(this.ontologyDataManager), this.messageSource
 				.getMessage("seed.inventory.comment", null, locale)));

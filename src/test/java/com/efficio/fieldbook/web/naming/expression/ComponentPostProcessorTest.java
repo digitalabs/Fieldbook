@@ -1,7 +1,9 @@
 package com.efficio.fieldbook.web.naming.expression;
 
-import com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory;
-import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
+
 import org.generationcp.commons.ruleengine.RuleFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,10 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory;
+import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 /**
  * Created by Daniel Villafuerte on 6/16/2015.

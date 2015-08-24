@@ -320,7 +320,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		form.changePage(1);
 		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
 		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68201-21-2-B-4-B-B"); // we check the parse data
-																												// here
+		// here
 	}
 
 	@Test
@@ -342,8 +342,8 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		userSelection.getWorkbook().setFactors(factors);
 		userSelection.getWorkbook().setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setImportedGermplasmMainInfo(mainInfo);
-		this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection.getImportedGermplasmMainInfo()
-				.getImportedGermplasmList().getImportedGermplasms(), userSelection);
+		this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(),
+				userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
 		// no check factor yet
 		Assert.assertEquals(0, userSelection.getWorkbook().getMeasurementDatasetVariables().size());
 		// we now need to add check

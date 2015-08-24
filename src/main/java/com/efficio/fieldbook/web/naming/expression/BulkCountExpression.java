@@ -4,11 +4,11 @@ package com.efficio.fieldbook.web.naming.expression;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.util.ExpressionHelper;
 import com.efficio.fieldbook.util.ExpressionHelperCallback;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
-import org.springframework.stereotype.Component;
 
 @Component
 public class BulkCountExpression implements Expression {

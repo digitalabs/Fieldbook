@@ -24,6 +24,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
@@ -32,6 +33,7 @@ import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 @Service
+@Transactional
 public class FieldroidExportStudyServiceImpl implements FieldroidExportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FieldroidExportStudyServiceImpl.class);

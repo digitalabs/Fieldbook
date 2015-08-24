@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+//TODO: TX get rid of this class
 public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 
 	@Autowired
@@ -32,8 +33,6 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
-		this.managerFactoryProvider.close();
 	}
 
 }

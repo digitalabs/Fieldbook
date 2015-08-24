@@ -1,7 +1,7 @@
 <div class="row col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
 		<h1>
-			LABEL PRINTING
+			LABEL PRINTING <a class="bms-fa-question-circle fbk-help" data-help-link="MAKE_LABELS"></a>
 		</h1>
 	</div>
 </div>
@@ -127,9 +127,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</thead>
 					<tr  th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[__0__].trialInstances}">
 						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.trialInstanceNo}"></td>
-						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.entryCount}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.entryCount}"></td>
 						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.repCount}"></td>
-						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.plotCount}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.plotCount}"></td>
 					</tr>
 				</table>
 			</div>
@@ -172,9 +172,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 									<td th:text="${map.fieldbookName}"></td>
 									<td th:if="*{isTrial == false}" th:text="${dataset.datasetName}"></td>
 									<td th:if="*{isTrial == true}" th:text="${trial.trialInstanceNo}"></td>
-									<td class="entry-count" th:text="${trial.entryCount}"></td>
+									<td th:if="*{isTrial == true}" class="entry-count" th:text="${trial.entryCount}"></td>
 									<td th:if="*{isTrial == true}" th:text="${trial.repCount}"></td>
-									<td class="plot-count" th:if="*{isTrial == true}" th:text="${trial.plotCount}"></td>
+									<td class="plot-count" th:text="${trial.plotCount}"></td>
 								</tr>
 							</div>
 						</div>

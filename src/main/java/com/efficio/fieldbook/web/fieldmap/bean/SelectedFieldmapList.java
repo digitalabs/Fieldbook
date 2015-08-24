@@ -105,11 +105,7 @@ public class SelectedFieldmapList implements Serializable {
 		long total = 0;
 		if (this.rows != null && !this.rows.isEmpty()) {
 			for (SelectedFieldmapRow row : this.rows) {
-				if (this.isTrial()) {
-					total += row.getPlotCount() != null ? row.getPlotCount() : 0;
-				} else {
-					total += row.getEntryCount() != null ? row.getEntryCount() : 0;
-				}
+				total += row.getPlotCount() != null ? row.getPlotCount() : 0;
 			}
 		}
 		return total;

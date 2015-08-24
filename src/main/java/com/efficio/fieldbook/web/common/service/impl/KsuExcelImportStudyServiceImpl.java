@@ -25,6 +25,7 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
@@ -36,6 +37,7 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
+@Transactional
 public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl implements KsuExcelImportStudyService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KsuExcelImportStudyServiceImpl.class);
@@ -88,14 +90,12 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 	protected String getTrialInstanceNoFromFileName(String filename) throws WorkbookParserException {
 		String trialInstanceNumber = "";
 
-		Integer startIndex = filename.lastIndexOf("-") + 1;
-		Integer endIndex = filename.lastIndexOf(".");
-
-		String pattern = "(.+)[-](\\d+)[\\.]xls";
+		String pattern = "(.+)[-](\\d+)";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(filename);
+
 		if (m.find()) {
-			trialInstanceNumber = filename.substring(startIndex, endIndex);
+			trialInstanceNumber = m.group(m.groupCount());
 		}
 
 		if (!NumberUtils.isNumber(trialInstanceNumber)) {

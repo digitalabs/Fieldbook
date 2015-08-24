@@ -229,6 +229,21 @@
                                 <label id="sampleParentageDesignation"/>
                             </div>
                         </div>
+						<div class="row form-group">
+                            <div class="col-xs-6 col-md-6 text-right">
+                                <label class="label-bold"
+                                       th:text="#{study.import.crosses.parentage.designation.label}"></label>
+                            </div>
+                            <div class="btn-group col-xs-6 col-md-6 text-left">
+                                <input type="radio" name="hasParentageDesignationName" value="true" class="cross-import-name-setting" >
+                                <label class="label-bold">Yes</label>
+                                </input>
+                                &nbsp;
+                                <input type="radio" name="hasParentageDesignationName" value="false" class="cross-import-name-setting" checked="true">
+                                <label class="label-bold">No</label>
+                                </input>
+                            </div>
+                        </div>
 
                         <div class="row form-group">
                             <div class="col-xs-11 col-md-11">

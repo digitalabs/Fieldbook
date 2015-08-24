@@ -60,6 +60,28 @@ $(function() {
 			$(document.body).css('padding-right', 0);
 		});
 
+	$('.page-header')
+		.on('click','.fbk-help',function() {
+		   var helpModule = $(this).data().helpLink;
+			$.get('/ibpworkbench/controller/help/getUrl/' + helpModule).success(function(helpUrl) {
+				if (!helpUrl || !helpUrl.length) {
+					$.when(
+						$.get('/ibpworkbench/controller/help/headerText'),
+						$.get('/ibpworkbench/VAADIN/themes/gcp-default/layouts/help_not_installed.html')
+					).done(function(headerText,helpHtml) {
+							bootbox.dialog({
+								title: headerText[0],
+								message: helpHtml[0],
+								className: 'help-box',
+								onEscape: true
+							});
+					});
+				} else {
+					window.open(helpUrl);
+				}
+			});
+		});
+
 });
 
 function isStudyNameUnique(studyName, studyId) {
@@ -554,7 +576,7 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 
 	newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 	checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + datasetId + '|' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-	newCell = '<td>' + checkBox + '&nbsp;' + datasetName + '</td><td>' + value.entryCount + '</td>';
+	newCell = '<td>' + checkBox + '&nbsp;' + datasetName + '</td><td>' + value.plotCount + '</td>';
 	newCell = newCell + '<td class="hasFieldMap">' + hasFieldMap + '</td>';
 	$('#studyFieldMapTree').append(newRow + newCell + '</tr>');
 }
@@ -589,7 +611,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 		if (withFieldMap) {
 			// For view fieldmap
 			newRow = '<tr id="' + realId + '" class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
-			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.plotCount + '</td>';
 			if (trial) {
 				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			}
@@ -601,7 +623,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.plotCount + '</td>';
 			if (trial) {
 				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			}
@@ -946,30 +968,36 @@ function deleteNurseryInReview() {
 	var idVal = getCurrentStudyIdInTab();
 	doDeleteNursery(idVal, function(data) {
 		$('#deleteStudyModal').modal('hide');
-
-		setTimeout(function() {
-			//simulate close tab
-			$('#' + idVal).trigger('click');
-			//remove it from the tree
-			if ($('#studyTree').dynatree('getTree').getNodeByKey(idVal)) {
-				$('#studyTree').dynatree('getTree').getNodeByKey(idVal).remove();
-			}
-			showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
-		}, 500);
+		if (data.isSuccess === '1') {
+			setTimeout(function() {
+				//simulate close tab
+				$('#' + idVal).trigger('click');
+				//remove it from the tree
+				if ($('#studyTree').dynatree('getTree').getNodeByKey(idVal)) {
+					$('#studyTree').dynatree('getTree').getNodeByKey(idVal).remove();
+				}
+				showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
+			}, 500);
+		} else {
+			showErrorMessage('', data.message);
+		}
 	});
 }
 
 function deleteNurseryInEdit() {
 	'use strict';
-
 	var idVal = $('#studyId').val();
 	doDeleteNursery(idVal, function(data) {
 		$('#deleteStudyModal').modal('hide');
-		showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
-		setTimeout(function() {
-			//go back to review nursery page
-			location.href = $('#delete-success-return-url').attr('href');
-		}, 500);
+			if (data.isSuccess === '1') {
+			showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
+			setTimeout(function() {
+				//go back to review nursery page
+				location.href = $('#delete-success-return-url').attr('href');
+			}, 500);
+		} else {
+			showErrorMessage('', data.message);
+        }
 	});
 }
 
@@ -2225,14 +2253,16 @@ function submitDeleteFolder() {
 	} else {
 		doDeleteNursery(folderId, function(data) {
 			var node;
+			$('#deleteStudyFolder').modal('hide');
 			if (data.isSuccess === '1') {
-				$('#deleteStudyFolder').modal('hide');
 				node = $('#studyTree').dynatree('getTree').getActiveNode();
 				if (node != null) {
 					node.remove();
 				}
 				changeBrowseNurseryButtonBehavior(false);
 				showSuccessfulMessage('', isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
+			} else {
+				showErrorMessage('', data.message);
 			}
 		});
 	}
@@ -2899,7 +2929,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 	} else {
 		$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
 	}
-	TreePersist.preLoadStudyTreeState(false, '#studyTree');
+	TreePersist.preLoadStudyTreeState('#studyTree');
 }
 
 function isNursery() {

@@ -82,7 +82,7 @@ public abstract class AbstractBaseFieldbookController {
 		return "0";
 	}
 
-	protected Project getCurrentProject() throws MiddlewareQueryException {
+	public Project getCurrentProject() throws MiddlewareQueryException {
 		return ContextUtil.getProjectInContext(this.workbenchDataManager, this.httpRequest);
 	}
 

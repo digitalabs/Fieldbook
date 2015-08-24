@@ -208,10 +208,21 @@ if (typeof StockIDFunctions === 'undefined') {
 
 		updateLabels: function() {
 			'use strict';
-			StockIDFunctions.retrieveNextStockIDPrefix().done(function(nextPrefix) {
-				$('#samplePrefixLabel').html(nextPrefix);
-				$('#nextStockIDLabel').html(nextPrefix + StockIDFunctions.defaultSeparator + '1');
-			});
+			var breederIdentifier = $('#breederIdentifierField').val().trim();
+			
+			if(!StockIDFunctions.validatePrefix(breederIdentifier)){
+				showErrorMessage('', stockIdGenerationPrefixError);
+			} else {
+				StockIDFunctions.retrieveNextStockIDPrefix().done(function(nextPrefix) {
+					$('#samplePrefixLabel').html(nextPrefix);
+					$('#nextStockIDLabel').html(nextPrefix + StockIDFunctions.defaultSeparator + '1');
+				});
+			}
+		},
+		
+		validatePrefix : function(prefix){
+			var patt = new RegExp("^[A-Za-z]*$");
+			return patt.test(prefix); 
 		},
 
 		retrieveNextStockIDPrefix: function() {

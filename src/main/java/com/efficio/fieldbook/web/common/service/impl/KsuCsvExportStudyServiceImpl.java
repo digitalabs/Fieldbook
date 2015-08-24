@@ -61,7 +61,7 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 				List<MeasurementRow> observations =
 						ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 				List<List<String>> dataTable =
-						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
+						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables(),workbook.getStudyDetails().getStudyName());
 
 				csvWriter = new CsvWriter(new FileWriter(filenamePath, false), ',');
 				for (List<String> row : dataTable) {

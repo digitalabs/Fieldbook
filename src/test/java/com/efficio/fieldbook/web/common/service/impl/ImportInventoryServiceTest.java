@@ -44,8 +44,8 @@ public class ImportInventoryServiceTest {
 	public void testMergeImportedData() {
 
 		ImportInventoryServiceImpl mole = Mockito.spy(this.dut);
-		Mockito.doReturn(false).when(mole)
-				.mergeIndividualDetailData(Matchers.any(InventoryDetails.class), Matchers.any(InventoryDetails.class));
+		Mockito.doReturn(false).when(mole).mergeIndividualDetailData(Matchers.any(InventoryDetails.class),
+				Matchers.any(InventoryDetails.class));
 
 		List<InventoryDetails> original = this.createOriginalInventoryDetailsList();
 		ImportedInventoryList inventoryList = this.createImportedInventoryList();
@@ -59,8 +59,8 @@ public class ImportInventoryServiceTest {
 		// and we use the original list as the control for importing
 		Mockito.verify(mole, Mockito.atMost(1)).mergeIndividualDetailData(param1.capture(), param2.capture());
 
-		Assert.assertEquals("Data merging should only done on items with the same GID", param1.getValue().getGid(), param2.getValue()
-				.getGid());
+		Assert.assertEquals("Data merging should only done on items with the same GID", param1.getValue().getGid(),
+				param2.getValue().getGid());
 
 	}
 
@@ -72,8 +72,8 @@ public class ImportInventoryServiceTest {
 
 	private List<InventoryDetails> createOriginalInventoryDetailsList() {
 		List<InventoryDetails> original = new ArrayList<>();
-		original.add(new InventoryDetails(ImportInventoryServiceTest.TEST_ORIGINAL_GID, ImportInventoryServiceTest.TEST_GERMPLASM_NAME_1,
-				1, 1, 10.0, 1, 1, 1));
+		original.add(new InventoryDetails(ImportInventoryServiceTest.TEST_ORIGINAL_GID, ImportInventoryServiceTest.TEST_GERMPLASM_NAME_1, 1,
+				1, 10.0, 1, 1, 1));
 		original.add(new InventoryDetails(3, "TEST", 1, 1, 5.0, 1, 1, 2));
 		return original;
 	}
@@ -100,4 +100,20 @@ public class ImportInventoryServiceTest {
 		Assert.assertEquals(inventoryDetailsFromImport.getComment(), inventoryDetailsFromDB.getComment());
 	}
 
+	@Test
+	public void testHasConflictTrue() throws FieldbookException {
+		ImportInventoryServiceImpl mole = Mockito.spy(this.dut);
+		List<InventoryDetails> inventoryDetailListFromDB = this.createOriginalInventoryDetailsList();
+		ImportedInventoryList importedInventoryList = this.createImportedInventoryList();
+		Assert.assertTrue(mole.hasConflict(inventoryDetailListFromDB, importedInventoryList));
+	}
+
+	@Test
+	public void testHasConflictFalse() throws FieldbookException {
+		ImportInventoryServiceImpl mole = Mockito.spy(this.dut);
+		List<InventoryDetails> inventoryDetailListFromDB = new ArrayList<>();
+		inventoryDetailListFromDB.add(new InventoryDetails(ImportInventoryServiceTest.TEST_ORIGINAL_GID, "TEST3", 1, 1, 5.0, 1, 1, 1));
+		ImportedInventoryList importedInventoryList = this.createImportedInventoryList();
+		Assert.assertFalse(mole.hasConflict(inventoryDetailListFromDB, importedInventoryList));
+	}
 }

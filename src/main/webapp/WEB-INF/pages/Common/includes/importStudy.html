@@ -264,6 +264,35 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal fade import-window" id="discardImportStockListDataConfirmation" role="dialog" aria-labelledby="discardImportDataConfirmation" aria-hidden="true">
+	<div class="modal-dialog modal-small">
+		<div class="modal-content">
+			<div class="modal-body" id="discardImportStockListDataConfirmationBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button id="close" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label label-bold" th:text="#{import.data.discard.confirmation}">Do you really want to discard your imported data?</label>
+					</div>
+				</div>
+
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"  th:text="#{common.form.no.text}">Cancel</button>
+					<button type="button" class="btn btn-primary"  onclick="javascript:revertStockListData(true);" th:text="#{common.form.yes.text}">Import</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="modal fade import-window" id="importOverwriteConfirmation" role="dialog" aria-labelledby="importOverwriteConfirmation" aria-hidden="true">
 	<div class="modal-dialog modal-small">
 		<div class="modal-content">
@@ -587,6 +616,37 @@ function confirmDesignation() {
 	}
 }
 
+function saveStockListImport(){
+	showSuccessfulMessage('', 'Imported data successfully saved.');
+	$('.fbk-save-nursery').removeClass('fbk-hide');
+	$('.fbk-save-stocklist').addClass('fbk-hide');
+	$('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+	stockListImportNotSaved = false;
+}
+
+function revertStockListData(){
+	'use strict';
+	var revertUrl = '/Fieldbook/stock/revertStockListData/data';
+	$.ajax({
+		url: revertUrl,
+		type: 'POST',
+		data: '',
+		cache: false,
+		success: function(resp) {
+			showSuccessfulMessage('', 'Imported data successfully discarded.');
+			$('.fbk-save-nursery').removeClass('fbk-hide');
+			$('.fbk-save-stocklist').addClass('fbk-hide');
+			$('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+			$('#discardImportStockListDataConfirmation').modal('hide');
+			$('.import-study-data').data('data-import', '0');
+			var response = JSON.parse(resp);
+			console.log(resp);
+			console.log(response.stockListId);
+			StockIDFunctions.displayStockList(response.stockListId);
+			stockListImportNotSaved = false;
+		}
+	});
+}
 function revertData(showMessage) {
 	'use strict';
 	var revertUrl = '/Fieldbook/ImportManager/revert/data';

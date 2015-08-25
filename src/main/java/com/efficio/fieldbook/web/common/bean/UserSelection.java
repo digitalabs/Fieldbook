@@ -27,6 +27,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
@@ -167,6 +168,10 @@ public class UserSelection implements Serializable {
 	private List<Integer> importedCrossesId;
 
 	private CrossSetting crossSettings;
+
+	private Integer listId;
+
+	List<InventoryDetails> previousInventoryDetails;
 
 	/**
 	 * Gets the current page germplasm list.
@@ -946,8 +951,24 @@ public class UserSelection implements Serializable {
 		this.nurseryTypeId = nurseryTypeId;
 
 	}
-	
-	public boolean isDesignGenerated(){
+
+	public boolean isDesignGenerated() {
 		return this.getTemporaryWorkbook() != null;
+	}
+
+	public void setListId(Integer listId) {
+		this.listId = listId;
+	}
+
+	public Integer getListId() {
+		return this.listId;
+	}
+
+	public void setInventoryDetails(List<InventoryDetails> inventoryDetailsList) {
+		this.previousInventoryDetails = inventoryDetailsList;
+	}
+
+	public List<InventoryDetails> getInventoryDetails() {
+		return this.previousInventoryDetails;
 	}
 }

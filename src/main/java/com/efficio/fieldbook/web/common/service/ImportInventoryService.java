@@ -21,6 +21,11 @@ public interface ImportInventoryService {
 
 	boolean mergeImportedData(List<InventoryDetails> originalList, ImportedInventoryList imported);
 
-	void mergeInventoryDetails(List<InventoryDetails> originalList, ImportedInventoryList imported, GermplasmListType germplasmListType)
+	void validateInventoryDetails(List<InventoryDetails> originalList, ImportedInventoryList imported, GermplasmListType germplasmListType)
 			throws FieldbookException;
+
+	boolean hasConflict(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList);
+
+	void mergeInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList,
+			GermplasmListType germplasmListType);
 }

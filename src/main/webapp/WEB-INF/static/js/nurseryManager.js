@@ -1778,6 +1778,13 @@ function discardImportedData() {
 	});
 }
 
+function discardImportedStockList(){
+	$('#discardImportStockListDataConfirmation').modal({
+		backdrop: 'static',
+		keyboard: true
+	});
+}
+
 function checkFavoritesIfValIsAFavorite(rowIndex) {
 	'use strict';
 

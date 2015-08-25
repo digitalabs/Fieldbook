@@ -3128,6 +3128,11 @@ function showSelectedTabNursery(selectedTabName) {
 		showAlertMessage('', importSaveDataWarningMessage);
 		return;
 	}
+	
+	if (stockListImportNotSaved) {
+		showAlertMessage('', importSaveDataWarningMessage);
+		e.preventDefault();
+	}
 
 	$('#create-nursery-tab-headers').show();
 	var tabs = $('#create-nursery-tabs').children();

@@ -1199,7 +1199,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			value = this.getValueForStockList(row.getLocationName());
 		} else if (termID.equals(TermId.AMOUNT_INVENTORY.getId())) {
 			value = this.getValueForStockList(row.getAmount());
-		} else if (termID.equals(TermId.SCALE_INVENTORY.getId())) {
+		} else if (termID.equals(TermId.UNITS_INVENTORY.getId())) {
 			value = this.getValueForStockList(row.getScaleName());
 		} else if (termID.equals(TermId.COMMENT_INVENTORY.getId())) {
 			value = this.getValueForStockList(row.getComment());
@@ -1563,7 +1563,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		labelFieldList.add(new LabelFields(ColumnLabels.AMOUNT.getTermNameFromOntology(this.ontologyDataManager), TermId.AMOUNT_INVENTORY
 				.getId(), true));
 
-		labelFieldList.add(new LabelFields(ColumnLabels.UNITS.getTermNameFromOntology(this.ontologyDataManager), TermId.SCALE_INVENTORY
+		labelFieldList.add(new LabelFields(ColumnLabels.UNITS.getTermNameFromOntology(this.ontologyDataManager), TermId.UNITS_INVENTORY
 				.getId(), true));
 
 		labelFieldList.add(new LabelFields(ColumnLabels.COMMENT.getTermNameFromOntology(this.ontologyDataManager), TermId.COMMENT_INVENTORY

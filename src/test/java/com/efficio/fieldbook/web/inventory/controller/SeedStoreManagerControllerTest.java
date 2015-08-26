@@ -152,7 +152,7 @@ public class SeedStoreManagerControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.LOT_LOCATION_INVENTORY.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.AMOUNT_INVENTORY.getId())).thenReturn(fromOntology);
-		Mockito.when(this.ontologyDataManager.getTermById(TermId.SCALE_INVENTORY.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.UNITS_INVENTORY.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.COMMENT_INVENTORY.getId())).thenReturn(fromOntology);
 
 		Locale locale = LocaleContextHolder.getLocale();

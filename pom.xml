@@ -11,7 +11,6 @@
 		<ibpcommons.version>4.0.0.ALPHA</ibpcommons.version>
 		<spring.version>3.2.11.RELEASE</spring.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
-		<webapp.path>${workbench.installation_dir}/infrastructure/tomcat/webapps</webapp.path>
 		<envConfig>${user.name}</envConfig>
 	</properties>
 
@@ -320,6 +319,34 @@
 		<developerConnection>scm:git:https://github.com/IntegratedBreedingPlatform/Fieldbook</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
+
+	<profiles>
+		<profile>
+			<id>localDeployment</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.tomcat.maven</groupId>
+						<artifactId>tomcat7-maven-plugin</artifactId>
+						<version>2.1</version>
+						<configuration>
+							<port>${server.port}</port>
+							<path>/${project.build.finalName}</path>
+							<url>${tomcat.manager.url}</url>
+							<username>${tomcat.manager.username}</username>
+							<password>${tomcat.manager.password}</password>
+							<update>true</update>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- TODO : setup another profile for the Tomcat 7 plugin that can be used for deploying to a remote server -->
+	</profiles>
+
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<filters>
@@ -398,16 +425,6 @@
 				<version>2.8</version>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<port>${server.port}</port>
-					<server>TomcatServer</server>
-					<path>/${project.build.finalName}</path>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.7.1.201405082137</version>
@@ -454,29 +471,6 @@
 						</manifestEntries>
 					</archive>
 				</configuration>
-			</plugin>
-			<!--
-				Used to refresh the copy of the application contained in the installed BMS environment
-			-->
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<id>default-cli</id>
-						<configuration>
-							<tasks>
-								<delete dir="${webapp.path}/${project.artifactId}" />
-								<copy todir="${webapp.path}/${project.artifactId}">
-									<fileset dir="target/${project.artifactId}" includes="**/*" />
-								</copy>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<!--
 				The following plugin makes the properties defined in the configured file available to the Maven build

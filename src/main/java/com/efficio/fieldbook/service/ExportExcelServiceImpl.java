@@ -233,7 +233,7 @@ public class ExportExcelServiceImpl implements ExportExcelService {
 					row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getPlotCount()));
 				} else {
 					row.createCell(columnIndex++).setCellValue(rec.getDatasetName());
-					row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getEntryCount()));
+					row.createCell(columnIndex++).setCellValue(String.valueOf(rec.getPlotCount()));
 				}
 			}
 

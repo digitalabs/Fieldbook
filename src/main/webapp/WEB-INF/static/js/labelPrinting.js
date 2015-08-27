@@ -423,11 +423,7 @@ LabelPrinting = {
 	LabelPrinting.setTotalLabels = function(checkbox) {
 		//count total number of labels to be generated based on selected trial/nursery instance
 		var labelCount = '';
-		if (LabelPrinting.isTrial) {
-			labelCount = $(checkbox).parents('tr').find('td.plot-count').html();
-		} else {
-			labelCount = $(checkbox).parents('tr').find('td.entry-count').html();
-		}
+		labelCount = $(checkbox).parents('tr').find('td.plot-count').html();
 		var totalCount = $('#totalLabelCount').text();
 
 		if ($(checkbox).is(':checked')) {

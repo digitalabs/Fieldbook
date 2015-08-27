@@ -228,7 +228,6 @@ function doStudyLazyLoad(node, preSelectId) {
                 //do nothing
 
                 setTimeout(function () {
-                    node.focus();
                     node.expand();
                 }, 50);
                 if (node.hasChildren()) {
@@ -267,7 +266,7 @@ function doStudyLazyLoad(node, preSelectId) {
     }
 }
 /** Germplasm Tree **/
-function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStudyFunctionParam, isPreSelect) {
+function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStudyFunctionParam, isPreSelect, postInitFunction) {
     'use strict';
 
     if (selectStudyFunctionParam) {
@@ -310,7 +309,7 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStud
             nodeLoading: ''
         },
         // TODO : add functionality to update the value in the rename folder input field to match that of the newly active node
-        onPostInit: function (isReloading, isError) {
+        onPostInit: function () {
             if (choosingType === 2) {
             	var prefixContainer = isNursery() ? '#create-nursery' : '#create-trial';
                 if(isPreSelect){
@@ -320,6 +319,10 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam, selectStud
                 		programLocal.focus();
                 	}
                 }
+            }
+
+            if (postInitFunction) {
+                postInitFunction();
             }
 
         },

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -95,6 +96,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@Autowired
 	@Qualifier("ksuExcelImportStudyService")
 	private KsuExcelImportStudyService ksuExcelImportStudyService;
+
+	@Resource
+	private KsuCsvImportStudyService ksuCsvImportStudyService;
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -215,6 +219,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 					importResult =
 							this.ksuExcelImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
 									this.ontologyService, this.fieldbookMiddlewareService);
+				} else if (AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
+					importResult = this.ksuCsvImportStudyService.importWorkbook(workbook,this.fileService.getFilePath(filename),file.getOriginalFilename());
 				}
 
 			} catch (WorkbookParserException e) {
@@ -233,7 +239,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 			result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
 		} else {
 			if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType
-					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType) {
+					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType
+					|| AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
 				boolean isCSVFile = file.getOriginalFilename().contains(".csv");
 				if (!isCSVFile) {
 					result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());

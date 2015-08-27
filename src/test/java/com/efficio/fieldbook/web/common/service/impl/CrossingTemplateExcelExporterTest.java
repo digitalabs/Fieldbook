@@ -2,6 +2,8 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.Variable;
@@ -56,9 +59,14 @@ public class CrossingTemplateExcelExporterTest {
 	@InjectMocks
 	private CrossingTemplateExcelExporter DUT;
 
+	private org.apache.poi.ss.usermodel.Workbook workbook;
+
 	@Before
-	public void setup() {
+	public void setup() throws IOException, InvalidFormatException {
 		this.DUT = Mockito.spy(this.exporter);
+		InputStream inp = this.getClass().getClassLoader().getResourceAsStream("testFilename.xls");
+
+		this.workbook = WorkbookFactory.create(inp);
 	}
 
 	@Test
@@ -69,7 +77,7 @@ public class CrossingTemplateExcelExporterTest {
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager)
-		.getExperiments(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(), Matchers.any(VariableTypeList.class));
+				.getExperiments(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(), Matchers.any(VariableTypeList.class));
 
 		Workbook wb = Mockito.mock(Workbook.class);
 		Mockito.when(wb.getSheetAt(1)).thenReturn(Mockito.mock(Sheet.class));
@@ -78,10 +86,10 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(style).when(this.DUT).createStyles(wb);
 
 		Mockito.doReturn(wb).when(this.DUT).retrieveTemplate();
-		Mockito.doNothing()
-		.when(this.DUT)
-		.writeListDetailsSection(Matchers.any(Map.class), Matchers.any(Sheet.class), Matchers.anyInt(),
-				Matchers.any(GermplasmList.class));
+		Mockito.doReturn(4)
+				.when(this.DUT)
+				.writeListDetailsSection(Matchers.any(Map.class), Matchers.any(Sheet.class), Matchers.anyInt(),
+						Matchers.any(GermplasmList.class));
 
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
 
@@ -106,6 +114,33 @@ public class CrossingTemplateExcelExporterTest {
 
 		this.DUT.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDYNAME);
 
+	}
+
+	@Test
+	public void testWriteListDetailsSection() throws IOException {
+		Map<String, CellStyle> styles = this.exporter.createStyles(this.workbook);
+		Sheet sheet = this.workbook.getSheetAt(0);
+		GermplasmList list = new GermplasmList();
+		list.setDate(20150506l);
+		list.setType("LST");
+		this.exporter.writeListDetailsSection(styles, sheet, 1, list);
+
+		Assert.assertEquals(sheet.getRow(0).getCell(0).getStringCellValue(), "LIST NAME");
+		Assert.assertEquals(sheet.getRow(0).getCell(1).getStringCellValue(), "");
+		Assert.assertEquals(sheet.getRow(0).getCell(3).getStringCellValue(), "Enter a list name here, or add it when saving in the BMS");
+
+		Assert.assertEquals(sheet.getRow(1).getCell(0).getStringCellValue(), "LIST DESCRIPTION");
+		Assert.assertEquals(sheet.getRow(1).getCell(1).getStringCellValue(), "");
+		Assert.assertEquals(sheet.getRow(1).getCell(3).getStringCellValue(),
+				"Enter a list description here, or add it when saving in the BMS");
+
+		Assert.assertEquals(sheet.getRow(2).getCell(0).getStringCellValue(), "LIST TYPE");
+		Assert.assertEquals(sheet.getRow(2).getCell(1).getStringCellValue(), "LST");
+		Assert.assertEquals(sheet.getRow(2).getCell(3).getStringCellValue(), "See valid list types on Codes sheet for more options");
+
+		Assert.assertEquals(sheet.getRow(3).getCell(0).getStringCellValue(), "LIST DATE");
+		Assert.assertEquals(sheet.getRow(3).getCell(1).getStringCellValue(), "20150506");
+		Assert.assertEquals(sheet.getRow(3).getCell(3).getStringCellValue(), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)

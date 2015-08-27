@@ -59,9 +59,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		List<Integer> advanceGermplasmListIds = this.parseDelimitedAdvanceGermplasmListIds(delimitedAdvanceGermplasmListIds);
 		List<String> filenameList = new ArrayList<String>();
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
-		String suffix =
-				AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type) ? AppConstants.EXPORT_XLS_SUFFIX.getString()
-						: AppConstants.EXPORT_CSV_SUFFIX.getString();
+		String suffix = AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)
+				? AppConstants.EXPORT_XLS_SUFFIX.getString() : AppConstants.EXPORT_CSV_SUFFIX.getString();
 
 		for (Integer advanceGermpasmListId : advanceGermplasmListIds) {
 			try {
@@ -84,9 +83,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		}
 
 		if (filenameList.size() > 1) {
-			outputFilename =
-					this.getFileNamePath(studyName + "-" + AppConstants.ADVANCE_ZIP_DEFAULT_FILENAME.getString())
-							+ AppConstants.ZIP_FILE_SUFFIX.getString();
+			outputFilename = this.getFileNamePath(studyName + "-" + AppConstants.ADVANCE_ZIP_DEFAULT_FILENAME.getString())
+					+ AppConstants.ZIP_FILE_SUFFIX.getString();
 			this.zipFileNameList(outputFilename, filenameList);
 		}
 
@@ -161,35 +159,36 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		List<ExportColumnHeader> exportColumnHeaders = new ArrayList<ExportColumnHeader>();
 		Locale locale = LocaleContextHolder.getLocale();
 
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(), this.messageSource.getMessage("seed.entry.number", null,
-				locale), true, ExportColumnHeader.GREEN));
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.DESIG.getId(), this.messageSource.getMessage("seed.entry.designation", null,
-				locale), true, ExportColumnHeader.GREEN));
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.CROSS.getId(), this.messageSource.getMessage("seed.entry.parentage", null,
-				locale), true, ExportColumnHeader.GREEN));
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.GID.getId(), this.messageSource
-				.getMessage("seed.inventory.gid", null, locale), true, ExportColumnHeader.GREEN));
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.SOURCE.getId(), this.messageSource.getMessage("seed.inventory.source", null,
-				locale), true, ExportColumnHeader.GREEN));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(),
+				this.messageSource.getMessage("seed.entry.number", null, locale), true, ExportColumnHeader.GREEN));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.DESIG.getId(),
+				this.messageSource.getMessage("seed.entry.designation", null, locale), true, ExportColumnHeader.GREEN));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.CROSS.getId(),
+				this.messageSource.getMessage("seed.entry.parentage", null, locale), true, ExportColumnHeader.GREEN));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.GID.getId(),
+				this.messageSource.getMessage("seed.inventory.gid", null, locale), true, ExportColumnHeader.GREEN));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.SOURCE.getId(),
+				this.messageSource.getMessage("seed.inventory.source", null, locale), true, ExportColumnHeader.GREEN));
 
 		if (displayCrossRelatedColumns) {
-			exportColumnHeaders.add(new ExportColumnHeader(TermId.DUPLICATE.getId(), this.messageSource.getMessage(
-					"seed.inventory.duplicate", null, locale), true, ExportColumnHeader.BLUE));
-			exportColumnHeaders.add(new ExportColumnHeader(TermId.BULK_WITH.getId(), this.messageSource.getMessage(
-					"seed.inventory.bulk.with", null, locale), true, ExportColumnHeader.BLUE));
-			exportColumnHeaders.add(new ExportColumnHeader(TermId.BULK_COMPL.getId(), this.messageSource.getMessage(
-					"seed.inventory.bulk.compl", null, locale), true, ExportColumnHeader.BLUE));
+			exportColumnHeaders.add(new ExportColumnHeader(TermId.DUPLICATE.getId(),
+					this.messageSource.getMessage("seed.inventory.duplicate", null, locale), true, ExportColumnHeader.BLUE));
+			exportColumnHeaders.add(new ExportColumnHeader(TermId.BULK_WITH.getId(),
+					this.messageSource.getMessage("seed.inventory.bulk.with", null, locale), true, ExportColumnHeader.BLUE));
+			exportColumnHeaders.add(new ExportColumnHeader(TermId.BULK_COMPL.getId(),
+					this.messageSource.getMessage("seed.inventory.bulk.compl", null, locale), true, ExportColumnHeader.BLUE));
 		}
 
-		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(), this.messageSource.getMessage(
-				"seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(), this.messageSource.getMessage(
-				"seed.inventory.amount", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(), this.messageSource.getMessage(
-				"seed.inventory.table.scale", null, locale), true, ExportColumnHeader.BLUE));
-		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(), this.messageSource.getMessage(
-				"seed.inventory.comment", null, locale), true, ExportColumnHeader.BLUE));
-
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.LOCATION_ID.getId(),
+				this.messageSource.getMessage("seed.inventory.table.location", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt(),
+				this.messageSource.getMessage("seed.inventory.amount", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_SCALE.getInt(),
+				this.messageSource.getMessage("seed.inventory.table.scale", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(TermId.STOCKID.getId(),
+				this.messageSource.getMessage("seed.inventory.stockid", null, locale), true, ExportColumnHeader.BLUE));
+		exportColumnHeaders.add(new ExportColumnHeader(AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt(),
+				this.messageSource.getMessage("seed.inventory.comment", null, locale), true, ExportColumnHeader.BLUE));
 		return exportColumnHeaders;
 	}
 
@@ -199,10 +198,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		for (InventoryDetails inventoryDetails : inventoryDetailList) {
 			Map<Integer, ExportColumnValue> dataMap = new HashMap<Integer, ExportColumnValue>();
 			for (ExportColumnHeader columnHeaders : exportColumnHeaders) {
-				dataMap.put(
-						columnHeaders.getId(),
-						new ExportColumnValue(columnHeaders.getId(), this.getInventoryDetailValueInfo(inventoryDetails,
-								columnHeaders.getId())));
+				dataMap.put(columnHeaders.getId(), new ExportColumnValue(columnHeaders.getId(),
+						this.getInventoryDetailValueInfo(inventoryDetails, columnHeaders.getId())));
 			}
 			exportColumnValues.add(dataMap);
 		}
@@ -234,6 +231,8 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 			val = this.getInventoryAmount(inventoryDetails);
 		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_SCALE.getInt()) {
 			val = this.getInventoryValue(inventoryDetails.getScaleName());
+		} else if (columnHeaderId == TermId.STOCKID.getId()) {
+			val = this.getInventoryValue(inventoryDetails.getInventoryID());
 		} else if (columnHeaderId == AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt()) {
 			val = this.getInventoryValue(inventoryDetails.getComment());
 		}

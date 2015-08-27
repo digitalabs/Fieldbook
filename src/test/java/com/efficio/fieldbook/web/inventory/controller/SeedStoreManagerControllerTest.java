@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import junit.framework.Assert;
-
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -32,6 +30,8 @@ import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
+
+import junit.framework.Assert;
 
 public class SeedStoreManagerControllerTest {
 
@@ -119,7 +119,7 @@ public class SeedStoreManagerControllerTest {
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.SEED_SOURCE.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.LOT_LOCATION_INVENTORY.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.AMOUNT_INVENTORY.getId())).thenReturn(fromOntology);
-		Mockito.when(this.ontologyDataManager.getTermById(TermId.SCALE_INVENTORY.getId())).thenReturn(fromOntology);
+		Mockito.when(this.ontologyDataManager.getTermById(TermId.UNITS_INVENTORY.getId())).thenReturn(fromOntology);
 		Mockito.when(this.ontologyDataManager.getTermById(TermId.COMMENT_INVENTORY.getId())).thenReturn(fromOntology);
 
 		Locale locale = LocaleContextHolder.getLocale();
@@ -177,7 +177,7 @@ public class SeedStoreManagerControllerTest {
 		Assert.assertTrue("Expecting to have a column name SEED SOURCE.", this.hasColumnHeader(tableHeaderList, "SEED SOURCE"));
 		Assert.assertTrue("Expecting to have a column name LOCATION.", this.hasColumnHeader(tableHeaderList, "LOCATION"));
 		Assert.assertTrue("Expecting to have a column name AMOUNT.", this.hasColumnHeader(tableHeaderList, "AMOUNT"));
-		Assert.assertTrue("Expecting to have a column name SCALE.", this.hasColumnHeader(tableHeaderList, "SCALE"));
+		Assert.assertTrue("Expecting to have a column name UNITS.", this.hasColumnHeader(tableHeaderList, "UNITS"));
 		Assert.assertTrue("Expecting to have a column name COMMENT.", this.hasColumnHeader(tableHeaderList, "COMMENT"));
 	}
 

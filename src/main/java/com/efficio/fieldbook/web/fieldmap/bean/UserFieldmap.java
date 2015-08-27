@@ -554,7 +554,7 @@ public class UserFieldmap implements Serializable {
 			return messageSource.getMessage("fieldmap.planting.order.serpentine", null, locale);
 		}
 		throw new FieldbookException("Invalid planting order.");
-	 }
+	}
 
 	/**
 	 * Checks if is serpentine.
@@ -899,11 +899,7 @@ public class UserFieldmap implements Serializable {
 		for (FieldMapInfo info : fieldMapTemp) {
 			for (FieldMapDatasetInfo dataset : info.getDatasets()) {
 				for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-					if (this.isTrial()) {
-						total += trial.getPlotCount();
-					} else {
-						total += trial.getEntryCount();
-					}
+					total += trial.getPlotCount();
 				}
 			}
 		}
@@ -929,74 +925,74 @@ public class UserFieldmap implements Serializable {
 		this.selectedFieldmapList = selectedFieldmapList;
 	}
 
-	  /**
-	   * Gets the field id.
-	   *
-	   * @return the field id
-	   */
-	  public Integer getFieldId() {
-		  return this.fieldId;
-	  }
+	/**
+	 * Gets the field id.
+	 *
+	 * @return the field id
+	 */
+	public Integer getFieldId() {
+		return this.fieldId;
+	}
 
-	  /**
-	   * Sets the field id.
-	   *
-	   * @param fieldId the new field id
-	   */
-	  public void setFieldId(Integer fieldId) {
-		  this.fieldId = fieldId;
-	  }
+	/**
+	 * Sets the field id.
+	 *
+	 * @param fieldId the new field id
+	 */
+	public void setFieldId(Integer fieldId) {
+		this.fieldId = fieldId;
+	}
 
-	  /**
-	   * Gets the block id.
-	   *
-	   * @return the block id
-	   */
-	  public Integer getBlockId() {
-		  return this.blockId;
-	  }
+	/**
+	 * Gets the block id.
+	 *
+	 * @return the block id
+	 */
+	public Integer getBlockId() {
+		return this.blockId;
+	}
 
-	  /**
-	   * Sets the block id.
-	   *
-	   * @param blockId the new block id
-	   */
-	  public void setBlockId(Integer blockId) {
-		  this.blockId = blockId;
-	  }
+	/**
+	 * Sets the block id.
+	 *
+	 * @param blockId the new block id
+	 */
+	public void setBlockId(Integer blockId) {
+		this.blockId = blockId;
+	}
 
-	  /**
-	   * Gets the deleted plots.
-	   *
-	   * @return the deletedPlots
-	   */
-	  public List<String> getDeletedPlots() {
-		  return this.deletedPlots;
-	  }
+	/**
+	 * Gets the deleted plots.
+	 *
+	 * @return the deletedPlots
+	 */
+	public List<String> getDeletedPlots() {
+		return this.deletedPlots;
+	}
 
-	  /**
-	   * Sets the deleted plots.
-	   *
-	   * @param deletedPlots the deletedPlots to set
-	   */
-	  public void setDeletedPlots(List<String> deletedPlots) {
-		  this.deletedPlots = deletedPlots;
-	  }
+	/**
+	 * Sets the deleted plots.
+	 *
+	 * @param deletedPlots the deletedPlots to set
+	 */
+	public void setDeletedPlots(List<String> deletedPlots) {
+		this.deletedPlots = deletedPlots;
+	}
 
-	  public List<FieldMapInfo> getSelectedFieldMapsToBeAdded() {
-		  return this.selectedFieldMapsToBeAdded;
-	  }
+	public List<FieldMapInfo> getSelectedFieldMapsToBeAdded() {
+		return this.selectedFieldMapsToBeAdded;
+	}
 
-	  public void setSelectedFieldMapsToBeAdded(List<FieldMapInfo> selectedFieldMapsToBeAdded) {
-		  this.selectedFieldMapsToBeAdded = selectedFieldMapsToBeAdded;
-	  }
+	public void setSelectedFieldMapsToBeAdded(List<FieldMapInfo> selectedFieldMapsToBeAdded) {
+		this.selectedFieldMapsToBeAdded = selectedFieldMapsToBeAdded;
+	}
 
-	  public SelectedFieldmapList getSelectedFieldmapListToBeAdded() {
-		  return this.selectedFieldmapListToBeAdded;
-	  }
+	public SelectedFieldmapList getSelectedFieldmapListToBeAdded() {
+		return this.selectedFieldmapListToBeAdded;
+	}
 
-	  public void setSelectedFieldmapListToBeAdded(SelectedFieldmapList selectedFieldmapListToBeAdded) {
-		  this.selectedFieldmapListToBeAdded = selectedFieldmapListToBeAdded;
-	  }
+	public void setSelectedFieldmapListToBeAdded(SelectedFieldmapList selectedFieldmapListToBeAdded) {
+		this.selectedFieldmapListToBeAdded = selectedFieldmapListToBeAdded;
+	}
 
 }

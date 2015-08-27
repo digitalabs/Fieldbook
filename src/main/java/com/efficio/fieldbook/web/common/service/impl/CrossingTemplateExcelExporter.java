@@ -2,13 +2,12 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -18,7 +17,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
+import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.Experiment;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -35,6 +37,7 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s.xls";
+	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -44,8 +47,6 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 	@Resource
 	private FileService fileService;
-
-	private File templateFile;
 
 	public File export(Integer studyId, String studyName) throws CrossingTemplateExportException {
 		try {
@@ -84,6 +85,25 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		}
 	}
 
+	@Override
+	public int writeListDetailsSection(Map<String, CellStyle> styles, Sheet descriptionSheet, int startingRow, GermplasmList germplasmList) {
+		int actualRow = startingRow - 1;
+
+		this.writeListDetailsRow(descriptionSheet, styles, actualRow, ExportServiceImpl.LIST_NAME, "",
+				"Enter a list name here, or add it when saving in the BMS");
+
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DESCRIPTION, "",
+				"Enter a list description here, or add it when saving in the BMS");
+
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_TYPE, germplasmList.getType(),
+				"See valid list types on Codes sheet for more options");
+
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DATE,
+				String.valueOf(germplasmList.getDate()), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
+
+		return ++actualRow;
+	}
+
 	protected File createExcelOutputFile(String studyName, Workbook excelWorkbook) throws IOException {
 		String outputFileName = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, this.cleanNameValueCommas(studyName));
 		try (OutputStream out = new FileOutputStream(outputFileName)) {
@@ -103,16 +123,14 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		return crossesList;
 	}
 
-	protected Workbook retrieveTemplate() throws IOException, InvalidFormatException {
-		try (InputStream is = new FileInputStream(this.templateFile)) {
-			String tempFile = this.fileService.saveTemporaryFile(is);
+	protected VariableTypeList createPlotVariableTypeList() throws MiddlewareQueryException {
+		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), PROGRAM_UUID);
+		DMSVariableType plotVariableType = new DMSVariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
+		VariableTypeList plotVariableTypeList = new VariableTypeList();
+		plotVariableTypeList.add(plotVariableType);
 
-			return this.fileService.retrieveWorkbook(tempFile);
-		}
-	}
+		return plotVariableTypeList;
 
-	public void setTemplateFile(File templateFile) {
-		this.templateFile = templateFile;
 	}
 
 }

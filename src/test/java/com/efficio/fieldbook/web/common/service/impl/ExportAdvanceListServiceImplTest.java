@@ -151,7 +151,8 @@ public class ExportAdvanceListServiceImplTest {
 				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt());
 		Assert.assertEquals("8th column should be INVENTORY_SCALE", exportColumnHeaders.get(7).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_SCALE.getInt());
-		Assert.assertEquals("9th column should be INVENTORY_COMMENT", exportColumnHeaders.get(8).getId().intValue(),
+		Assert.assertEquals("9th column should be STOCKID", exportColumnHeaders.get(8).getId().intValue(), TermId.STOCKID.getId());
+		Assert.assertEquals("10th column should be INVENTORY_COMMENT", exportColumnHeaders.get(9).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt());
 	}
 
@@ -172,7 +173,8 @@ public class ExportAdvanceListServiceImplTest {
 				AppConstants.TEMPORARY_INVENTORY_AMOUNT.getInt());
 		Assert.assertEquals("11th column should be INVENTORY_SCALE", exportColumnHeaders.get(10).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_SCALE.getInt());
-		Assert.assertEquals("12th column should be INVENTORY_COMMENT", exportColumnHeaders.get(11).getId().intValue(),
+		Assert.assertEquals("12th column should be STOCKID", exportColumnHeaders.get(11).getId().intValue(), TermId.STOCKID.getId());
+		Assert.assertEquals("13th column should be INVENTORY_COMMENT", exportColumnHeaders.get(12).getId().intValue(),
 				AppConstants.TEMPORARY_INVENTORY_COMMENT.getInt());
 	}
 

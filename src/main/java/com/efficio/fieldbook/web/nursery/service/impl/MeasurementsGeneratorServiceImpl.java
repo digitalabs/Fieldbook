@@ -85,9 +85,8 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 							.getImportedGermplasms()) {
 
 						List<MeasurementRow> measurementRow =
-								this.createMeasurementRows(userSelection, trialNo, repNo, blockNo, germplasm,
-										Integer.parseInt(germplasm.getEntryCode()), plotNo++, standardVariableMap,
-										treatmentFactorPermutations);
+								this.createMeasurementRows(userSelection, trialNo, repNo, blockNo, germplasm, germplasm.getEntryId(),
+										plotNo++, standardVariableMap, treatmentFactorPermutations);
 						measurementRows.addAll(measurementRow);
 					}
 				}

@@ -90,14 +90,12 @@ public class KsuExcelImportStudyServiceImpl extends ExcelImportStudyServiceImpl 
 	protected String getTrialInstanceNoFromFileName(String filename) throws WorkbookParserException {
 		String trialInstanceNumber = "";
 
-		Integer startIndex = filename.lastIndexOf("-") + 1;
-		Integer endIndex = filename.lastIndexOf(".");
-
-		String pattern = "(.+)[-](\\d+)[\\.]xls";
+		String pattern = "(.+)[-](\\d+)";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(filename);
+
 		if (m.find()) {
-			trialInstanceNumber = filename.substring(startIndex, endIndex);
+			trialInstanceNumber = m.group(m.groupCount());
 		}
 
 		if (!NumberUtils.isNumber(trialInstanceNumber)) {

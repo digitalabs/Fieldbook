@@ -127,9 +127,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</thead>
 					<tr  th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[__0__].trialInstances}">
 						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.trialInstanceNo}"></td>
-						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.entryCount}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.entryCount}"></td>
 						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.repCount}"></td>
-						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.plotCount}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.plotCount}"></td>
 					</tr>
 				</table>
 			</div>
@@ -172,9 +172,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 									<td th:text="${map.fieldbookName}"></td>
 									<td th:if="*{isTrial == false}" th:text="${dataset.datasetName}"></td>
 									<td th:if="*{isTrial == true}" th:text="${trial.trialInstanceNo}"></td>
-									<td class="entry-count" th:text="${trial.entryCount}"></td>
+									<td th:if="*{isTrial == true}" class="entry-count" th:text="${trial.entryCount}"></td>
 									<td th:if="*{isTrial == true}" th:text="${trial.repCount}"></td>
-									<td class="plot-count" th:if="*{isTrial == true}" th:text="${trial.plotCount}"></td>
+									<td class="plot-count" th:text="${trial.plotCount}"></td>
 								</tr>
 							</div>
 						</div>

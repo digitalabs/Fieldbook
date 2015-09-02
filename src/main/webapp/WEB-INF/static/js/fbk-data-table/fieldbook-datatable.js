@@ -73,7 +73,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				var isVariates = $(this).hasClass('variates');
 				columnsDef.push({
 					targets: columns.length - 1,
-					createdCell: function(td, cellData, rowData, row, col) {
+					createdCell: function(td) {
 						if (isVariates) {
 							$(td).addClass('numeric-variable');
 							var cellText = $(td).text();
@@ -91,7 +91,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						}
 						$(td).data('term-id', termId);
 					},
-					render: function(data, type, full, meta) {
+					render: function(data, type) {
 						if (data !== undefined) {
 							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
 						}
@@ -106,7 +106,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				var isVariates = $(this).hasClass('variates');
 				columnsDef.push({
 					targets: columns.length - 1,
-					createdCell: function(td, cellData, rowData, row, col) {
+					createdCell: function(td) {
 						if (isVariates) {
 							var cellText = $(td).text();
 							if ($.inArray(cellText, possibleValues) === -1) {
@@ -123,7 +123,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 						}
 						$(td).data('term-id', termId);
 					},
-					render: function(data, type, full, meta) {
+					render: function(data, type) {
 						if (data !== undefined) {
 							return ((data[0] != null) ? data[0] :  '') + "<input type='hidden' value='" + data[1] + "' />";
 						}
@@ -137,7 +137,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 					targets: columns.length - 1,
 					data: $(this).html(),
 					width: '100px',
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
@@ -148,7 +148,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
@@ -177,7 +177,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			bAutoWidth: true,
 			iDisplayLength: 100,
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			fnRowCallback: function(nRow, aData) {
 
 				var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
 				// Assuming ID is in last column
@@ -236,7 +236,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				});
 				return nRow;
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
@@ -264,7 +264,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 
 		if ($('#studyId').val() != '') {
 			// Activate an inline edit on click of a table cell
-			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function(e) {
+			$(tableIdentifier).on('click', 'tbody td:not(:first-child)', function() {
 				if (isAllowedEditMeasurementDataCell(false)) {
 					var $tdCell = $(this);
 					var cellTdIndex =  $(this).index();
@@ -369,7 +369,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110') {
 				columnsDef.push({
 					targets: columns.length - 1,
-					render: function(data, type, full, meta) {
+					render: function(data) {
 						return ((data[0] != null) ? data[0] :  '');
 					}
 				});
@@ -385,7 +385,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			bAutoWidth: true,
 			iDisplayLength: 100,
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			fnRowCallback: function(nRow, aData) {
 
 				// Assuming ID is in last column
 				$(nRow).attr('id', aData.experimentId);
@@ -396,7 +396,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 
 				return nRow;
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
@@ -443,7 +443,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			if ($(this).html() === 'DUPLICATE') {
 				columnsDef.push({
 					targets: columns.length - 1,
-					createdCell: function(td, cellData, rowData, row, col) {
+					createdCell: function(td) {
 
 						if ($(td).text().indexOf('Plot Dupe') != -1) {
 							$(td).addClass('plotDupe');
@@ -469,7 +469,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 			bAutoWidth: true,
 			iDisplayLength: 100,
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			fnRowCallback: function(nRow, aData) {
 
 				// Assuming ID is in last column
 				$(nRow).attr('id', aData.experimentId);
@@ -480,7 +480,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 
 				return nRow;
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 				$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
 				oSettings.oInstance.fnAdjustColumnSizing();
 				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
@@ -520,8 +520,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 		'use strict';
 
 		var columns = [],
-		columnsDef = [],
-		germplasmDataTable;
+		columnsDef = [];
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
@@ -531,7 +530,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					targets: columns.length - 1,
 					data: $(this).html(),
 					width: '100px',
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
@@ -542,7 +541,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
@@ -560,10 +559,10 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 			scrollCollapse: true,
 			dom: 'R<t><"fbk-page-div"p>',
 			iDisplayLength: 100,
-			fnDrawCallback: function(oSettings) {
+			fnDrawCallback: function() {
 				makeDraggable(true);
 			},
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			fnRowCallback: function(nRow, aData) {
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
 				$(nRow).data('index', aData.position);
@@ -572,7 +571,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				$('td', nRow).attr('nowrap', 'nowrap');
 				return nRow;
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
@@ -601,8 +600,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 
 		var columns = [],
 		columnsDef = [],
-		defaultOrdering = [],
-		table;
+		defaultOrdering = [];
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
 			if ($(this).data('col-name') == '8230-key') {
@@ -612,7 +610,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).data('col-name'),
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
@@ -623,7 +621,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).data('col-name'),
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
@@ -674,7 +672,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 			fnDrawCallback: function(oSettings) {
 
 			},
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			fnRowCallback: function(nRow, aData) {
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
 				$(nRow).data('index', aData.position);
@@ -683,7 +681,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				$('td', nRow).attr('nowrap', 'nowrap');
 				return nRow;
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
 					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
@@ -770,8 +768,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 		'use strict';
 
 		var columns = [],
-		columnsDef = [],
-		checkDataTable;
+		columnsDef = [];
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
@@ -780,7 +777,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
@@ -834,7 +831,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 			scrollCollapse: true,
 			dom: 'R<t><"fbk-page-div"p>',
 			iDisplayLength: 100,
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			fnRowCallback: function(nRow, aData) {
 				$(nRow).addClass('checkRow');
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
@@ -844,7 +841,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				setTimeout(function() {makeCheckDraggable(makeCheckDraggableBool);}, 300);
 				return nRow;
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
@@ -899,7 +896,7 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 	 * @param {string} parentDiv parentdiv of that contains the table
 	 * @param {dataList} json representation of the data to be displayed
 	 */
-	var dataTableConstructor = function AdvancedGermplasmListDataTable(tableIdentifier, parentDiv, dataList) {
+	var dataTableConstructor = function AdvancedGermplasmListDataTable(tableIdentifier, parentDiv) {
 		'use strict';
 
 		var germplasmDataTable;
@@ -910,17 +907,17 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 			scrollCollapse: true,
 			dom: 'R<t><"fbk-page-div"p>',
 			iDisplayLength: 100,
-			fnDrawCallback: function(oSettings) {
+			fnDrawCallback: function() {
 				makeDraggable(true);
 			},
 
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			fnRowCallback: function(nRow, aData) {
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
 				$('td', nRow).attr('nowrap', 'nowrap');
 				return nRow;
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
 					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
@@ -957,8 +954,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 
 		var columns = [],
 		columnsDef = [],
-		aoColumnsDef = [],
-		germplasmDataTable;
+		aoColumnsDef = [];
 
 		$(tableIdentifier + ' thead tr th').each(function(index) {
 			columns.push({data: $(this).data('col-name')});
@@ -974,7 +970,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 					targets: columns.length - 1,
 					data: $(this).html(),
 					width: '100px',
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
@@ -985,7 +981,7 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
@@ -1003,19 +999,19 @@ BMS.Fieldbook.FinalAdvancedGermplasmListDataTable = (function($) {
 			dom: 'R<"mdt-header" rli><t><"fbk-page-div"p>',
 
 			iDisplayLength: 100,
-			fnDrawCallback: function(oSettings) {
+			fnDrawCallback: function() {
 				$(parentDiv + ' #selectAllAdvance').prop('checked', false);
 				$(parentDiv + ' #selectAllAdvance').change();
 				$(parentDiv + ' input.advancingListGid:checked').parent().parent().addClass('selected');
 				$(parentDiv + ' .numberOfAdvanceSelected').html($(parentDiv + ' tr.primaryRow.selected').length);
 			},
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			fnRowCallback: function(nRow, aData) {
 				$(nRow).data('entry', aData.entry);
 				$(nRow).data('gid', aData.gid);
 				$('td', nRow).attr('nowrap', 'nowrap');
 				return nRow;
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
 				if (totalPages === 1) {
 					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
@@ -1064,7 +1060,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					targets: columns.length - 1,
 					data: $(this).html(),
 					width: '100px',
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
@@ -1075,7 +1071,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
-					render: function(data, type, full, meta) {
+					render: function(data, type, full) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
 							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + data + '</a>';
@@ -1084,7 +1080,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 			} else {
 				columnsDef.push({
 					targets: columns.length - 1,
-					render: function(data, type, full, meta) {
+					render: function(data) {
 						if (data !== undefined) {
 							if (Array.isArray(data)) {
 								return ((data[0] != null) ? data[0] :  '');
@@ -1118,7 +1114,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 			colReorder: {
 				fixedColumns: 1
 			},
-			fnInitComplete: function(oSettings, json) {
+			fnInitComplete: function(oSettings) {
 				oSettings.oInstance.fnAdjustColumnSizing();
 			}
 		});
@@ -1152,9 +1148,6 @@ $(function() {
 			}
 		},
 		beforeOpen: function(event, ui) {
-			var $menu = ui.menu,
-				$target = ui.target,
-				extraData = ui.extraData;
 			ui.menu.zIndex(9999);
 		}
 	});

@@ -296,7 +296,7 @@ function triggerFieldMapTableSelection(tableName) {
 	});
 }
 
-function createFieldMap(tableName) {
+function createFieldMap() {
 
 	if ($('.import-study-data').data('data-import') === '1') {
 		showErrorMessage('', needSaveImportDataError);
@@ -725,7 +725,7 @@ function showFieldMapPopUpCreate(ids) {
 		url: link + encodeURIComponent(ids),
 		type: 'GET',
 		data: '',
-		success: function(data) {
+		success: function() {
 			selectTrialInstanceCreate();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
@@ -843,7 +843,7 @@ function setSelectedTrialsAsDraggable() {
 
 	$('#selectedTrials').tableDnD({
 		onDragClass: 'myDragClass',
-		onDrop: function(table, row) {
+		onDrop: function() {
 			setSelectTrialOrderValues();
 		}
 	});
@@ -899,7 +899,7 @@ function openStudyOldFb() {
 	});
 }
 
-function openStudy(tableName) {
+function openStudy() {
 	'use strict';
 	var count = 0,
 		idVal = getCurrentStudyIdInTab();
@@ -1082,9 +1082,9 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
 	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#' + getJquerySafeId('harvestLocationIdAll')).select2({
 		query: function(query) {
-			var data = {results: locationSuggestionsObj}, i, j, s;
+			var data = {results: locationSuggestionsObj};
 			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
+			data.results = $.grep(data.results, function(item) {
 				return ($.fn.select2.defaults.matcher(query.term, item.text));
 			});
 			query.callback(data);
@@ -1115,9 +1115,9 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 	$('#' + getJquerySafeId('harvestLocationIdFavorite')).select2({
 		minimumResultsForSearch: locationSuggestionsFavObj.length == 0 ? -1 : 20,
 		query: function(query) {
-			var data = {results: locationSuggestionsFavObj}, i, j, s;
+			var data = {results: locationSuggestionsFavObj};
 			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
+			data.results = $.grep(data.results, function(item) {
 				return ($.fn.select2.defaults.matcher(query.term, item.text));
 			});
 			query.callback(data);
@@ -1148,9 +1148,9 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
 	$('#' + getJquerySafeId('methodIdAll')).select2({
 		minimumResultsForSearch: methodSuggestionsObj.length == 0 ? -1 : 20,
 		query: function(query) {
-			var data = {results: methodSuggestionsObj}, i, j, s;
+			var data = {results: methodSuggestionsObj};
 			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
+			data.results = $.grep(data.results, function(item) {
 				return ($.fn.select2.defaults.matcher(query.term, item.text));
 			});
 			query.callback(data);
@@ -1183,9 +1183,9 @@ function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavOb
 	$('#' + getJquerySafeId('methodIdFavorite')).select2({
 		minimumResultsForSearch: methodSuggestionsFavObj.length == 0 ? -1 : 20,
 		query: function(query) {
-			var data = {results: methodSuggestionsFavObj}, i, j, s;
+			var data = {results: methodSuggestionsFavObj};
 			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
+			data.results = $.grep(data.results, function(item) {
 				return ($.fn.select2.defaults.matcher(query.term, item.text));
 			});
 			query.callback(data);
@@ -2272,8 +2272,7 @@ function moveStudy(sourceNode, targetNode) {
 	'use strict';
 	var sourceId = sourceNode.data.key,
 		targetId = targetNode.data.key,
-		isStudy = sourceNode.data.isFolder === true ? 0 : 1,
-		title;
+		isStudy = sourceNode.data.isFolder === true ? 0 : 1;
 
 	if (targetId === 'LOCAL') {
 		targetId = 1;
@@ -2284,7 +2283,7 @@ function moveStudy(sourceNode, targetNode) {
 		type: 'POST',
 		data: 'sourceId=' + sourceId + '&targetId=' + targetId + '&isStudy=' + isStudy,
 		cache: false,
-		success: function(data) {
+		success: function() {
 			var node = targetNode;
 			sourceNode.remove();
 			doStudyLazyLoad(node);
@@ -2336,8 +2335,7 @@ function submitDeleteGermplasmFolder() {
 function moveGermplasm(sourceNode, targetNode) {
 	'use strict';
 	var sourceId = sourceNode.data.key,
-		targetId = targetNode.data.key,
-		title;
+		targetId = targetNode.data.key;
 
 	if (targetId === 'LOCAL') {
 		targetId = 1;
@@ -2348,7 +2346,7 @@ function moveGermplasm(sourceNode, targetNode) {
 		type: 'POST',
 		data: 'sourceId=' + sourceId + '&targetId=' + targetId,
 		cache: false,
-		success: function(data) {
+		success: function() {
 			var node = targetNode;
 			sourceNode.remove();
 			doGermplasmLazyLoad(node);
@@ -2822,7 +2820,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 								};
 								// return the array that matches
 								data.results = $.grep(data.results, function(
-										item, index) {
+										item) {
 									return ($.fn.select2.defaults.matcher(
 											query.term, item.text));
 								});
@@ -3163,7 +3161,7 @@ function initializeReviewDatasetTabs(datasetId) {
 	'use strict';
 	$('#dataset-li' + datasetId).on('click', function() {
 		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option:selected').prop('selected', false);
-		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option').each(function(index) {
+		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option').each(function() {
 			if ($(this).val() === datasetId) {
 				$(this).prop('selected', true);
 			}
@@ -3417,7 +3415,7 @@ function showExportAdvanceOptions() {
 	$('#exportAdvanceListModal').modal({ backdrop: 'static', keyboard: true });
 
 }
-function showExportAdvanceResponse(responseText, statusText, xhr, $form) {
+function showExportAdvanceResponse(responseText) {
 	'use strict';
 	var resp = $.parseJSON(responseText);
 	$('#exportAdvanceStudyDownloadForm #outputFilename').val(resp.outputFilename);

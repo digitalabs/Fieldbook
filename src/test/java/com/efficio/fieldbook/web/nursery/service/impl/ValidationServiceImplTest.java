@@ -80,9 +80,9 @@ public class ValidationServiceImplTest {
 
 		Assert.assertTrue("The value is valid therefore it must be true.", this.validationService.isValidValue(var, "", false));
 		Assert.assertTrue("The value is valid therefore it must be true.", this.validationService.isValidValue(var, null, false));
-		Assert.assertFalse("The value is valid therefore it must be true.", this.validationService.isValidValue(var, "101", false));
-		Assert.assertFalse("The value is valid therefore it must be true.", this.validationService.isValidValue(var, "0", false));
-		Assert.assertFalse("The value is valid therefore it must be true.", this.validationService.isValidValue(var, "abc", false));
+		Assert.assertTrue("The value is valid therefore it must be true.", this.validationService.isValidValue(var, "101", false));
+		Assert.assertTrue("The value is valid therefore it must be true.", this.validationService.isValidValue(var, "0", false));
+		Assert.assertFalse("The value is not valid therefore it must be false.", this.validationService.isValidValue(var, "abc", false));
 
 	}
 

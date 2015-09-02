@@ -29,7 +29,7 @@ public class CountRuleTest extends BaseNamingRuleTest {
 		this.breedingMethod = new Method();
 		this.breedingMethod.setSnametype(this.breedingMethodSnameType);
 		this.breedingMethod.setSeparator("-");
-		this.breedingMethod.setCount("[NUMBER]");
+		this.breedingMethod.setCount("");
 		this.row = new AdvancingSource();
 		this.row.setBreedingMethod(this.breedingMethod);
 		this.rule = new CountRule();
@@ -73,7 +73,7 @@ public class CountRuleTest extends BaseNamingRuleTest {
 			this.rule.runRule(context);
 			input = (List<String>) context.getRuleExecutionOutput();
 			Assert.assertEquals(1, input.size());
-			Assert.assertEquals("Should return the correct countr", "TestGP3", input.get(0));
+			Assert.assertEquals("Should return the correct countr", "TestGP", input.get(0));
 
 		} catch (RuleException re) {
 			Assert.fail("Rule failed to run for Count" + this.row.getBreedingMethod().getCount());
@@ -132,10 +132,8 @@ public class CountRuleTest extends BaseNamingRuleTest {
 		try {
 			input = (List<String>) this.rule.runRule(context);
 
-			Assert.assertEquals(3, input.size());
-			Assert.assertEquals("Should return the correct countr", "TestGP1", input.get(0));
-			Assert.assertEquals("Should return the correct countr", "TestGP2", input.get(1));
-			Assert.assertEquals("Should return the correct countr", "TestGP3", input.get(2));
+			Assert.assertEquals(1, input.size());
+			Assert.assertEquals("Should return the correct countr", "TestGP", input.get(0));
 		} catch (RuleException re) {
 			Assert.fail("Rule failed to run for Count" + this.row.getBreedingMethod().getCount());
 		}

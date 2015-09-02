@@ -29,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -39,7 +40,7 @@ import com.efficio.pojos.treeview.TreeNode;
 
 public class StudyTreeControllerTest extends AbstractBaseControllerIntegrationTest {
 
-	/** The controller. */
+	@Mock
 	private StudyTreeController controller;
 
 	@Autowired
@@ -87,7 +88,7 @@ public class StudyTreeControllerTest extends AbstractBaseControllerIntegrationTe
 	public void setUp() throws Exception {
 		this.controller = Mockito.spy(this.studyTreeController);
 		this.selectedProject = this.createProject();
-		Mockito.when(this.controller.getCurrentProgramUUID()).thenReturn(this.selectedProject.getUniqueID());
+		Mockito.doReturn(this.selectedProject.getUniqueID()).when(this.controller).getCurrentProgramUUID();
 		this.mockFieldbookServiceAndItsMethods();
 	}
 

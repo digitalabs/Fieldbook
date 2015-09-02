@@ -21,11 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
-import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldmapBlockInfo;
+import org.generationcp.middleware.domain.fieldbook.*;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -35,11 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
@@ -89,7 +81,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 
-		return null;
+		return new ArrayList<>();
 	}
 
 	/**
@@ -109,7 +101,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 			FieldmapController.LOG.error(e.getMessage(), e);
 		}
 
-		return null;
+		return new ArrayList<>();
 	}
 
 	/**

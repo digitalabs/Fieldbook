@@ -108,8 +108,7 @@ public class GermplasmListController {
 		return GermplasmListController.NURSERY_MANAGER_SAVED_FINAL_LIST;
 	}
 
-	protected void prepareStockList(Model model, Integer listId, List<InventoryDetails> detailList, GermplasmList germplasmList)
-			throws MiddlewareQueryException {
+	protected void prepareStockList(Model model, Integer listId, List<InventoryDetails> detailList, GermplasmList germplasmList) {
 
 		model.addAttribute("totalNumberOfGermplasms", detailList.size());
 		model.addAttribute("listId", listId);
@@ -131,7 +130,7 @@ public class GermplasmListController {
 		model.addAttribute("hasCompletedBulking", hasCompletedBulking);
 	}
 
-	private boolean stockHasCompletedBulking(Integer listId) throws MiddlewareQueryException {
+	private boolean stockHasCompletedBulking(Integer listId) {
 		return this.inventoryService.stockHasCompletedBulking(listId);
 	}
 

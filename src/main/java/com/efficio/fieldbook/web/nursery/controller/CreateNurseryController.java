@@ -12,12 +12,7 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -47,12 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
@@ -63,11 +53,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.SessionUtility;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.efficio.fieldbook.web.util.*;
 
 /**
  * The Class CreateNurseryController.
@@ -111,11 +97,10 @@ public class CreateNurseryController extends SettingsController {
      * @param model the model
      * @param session the session
      * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
      */
 	@RequestMapping(value = "/nursery/{nurseryId}", method = RequestMethod.GET)
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int nurseryId, Model model,
-			HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
+			HttpSession session, HttpServletRequest request) {
     	
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
@@ -175,7 +160,7 @@ public class CreateNurseryController extends SettingsController {
     
 	@RequestMapping(value = "/nursery/getChecks/{nurseryId}", method = RequestMethod.GET)
 	public String getChecksForUseExistingNursery(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form,
-			@PathVariable int nurseryId, Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
+			@PathVariable int nurseryId, Model model, HttpSession session, HttpServletRequest request) {
 		if (this.userSelection.getRemovedConditions() != null) {
     		CreateNurseryForm createNurseryForm = new CreateNurseryForm();
 			List<SettingDetail> checkVariables = this.getCheckVariables(this.userSelection.getRemovedConditions(), createNurseryForm);
@@ -221,12 +206,11 @@ public class CreateNurseryController extends SettingsController {
      * @param model the model
      * @param session the session
      * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
 			@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session,
-			HttpServletRequest request) throws MiddlewareQueryException {
+			HttpServletRequest request) {
     	    	
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);    	
@@ -243,7 +227,7 @@ public class CreateNurseryController extends SettingsController {
     	return super.show(model);
     }
     
-    protected void setCheckVariablesInForm(ImportGermplasmListForm form2) throws MiddlewareQueryException {
+    protected void setCheckVariablesInForm(ImportGermplasmListForm form2) {
     	List<SettingDetail> checkVariables = new ArrayList<SettingDetail>();
 		checkVariables =
 				this.buildDefaultVariables(checkVariables, AppConstants.CHECK_VARIABLES.getString(),
@@ -256,9 +240,8 @@ public class CreateNurseryController extends SettingsController {
      * Assign default values.
      *
      * @param form the form
-     * @throws MiddlewareQueryException the middleware query exception
      */
-    protected void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
+    protected void assignDefaultValues(CreateNurseryForm form) {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
         List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
         List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
@@ -290,11 +273,10 @@ public class CreateNurseryController extends SettingsController {
      *
      * @param form the form
      * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
+    public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
         //get the name of the nursery
         String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
@@ -793,7 +775,7 @@ public class CreateNurseryController extends SettingsController {
     
 	@RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
 	public String refreshSettingsTab(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, HttpSession session,
-			HttpServletRequest request) throws MiddlewareQueryException {
+			HttpServletRequest request) {
     	    	
     	    	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	    	String contextParams = ContextUtil.getContextParameterString(contextInfo);
@@ -832,7 +814,7 @@ public class CreateNurseryController extends SettingsController {
 		return super.showAjaxPage(model, CreateNurseryController.URL_SETTINGS);
     	    }
     
-	protected void setSettingDetailsValueFromVariable(MeasurementVariable var, SettingDetail detail) throws MiddlewareQueryException {
+	protected void setSettingDetailsValueFromVariable(MeasurementVariable var, SettingDetail detail) {
 		if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null && !var.getValue().isEmpty()) {
 			// set the value of code to ID for it to be selected in the popup
 			Method method = this.fieldbookMiddlewareService.getMethodByCode(var.getValue(),
@@ -864,7 +846,7 @@ public class CreateNurseryController extends SettingsController {
 		}
     }
 
-	protected void setLocationVariableValue(SettingDetail detail, MeasurementVariable var) throws MiddlewareQueryException {
+	protected void setLocationVariableValue(SettingDetail detail, MeasurementVariable var) {
 		int locationId =
 				var.getValue() != null && !var.getValue().isEmpty() && NumberUtils.isNumber(var.getValue()) ? Integer.valueOf(var
 						.getValue()) : 0;

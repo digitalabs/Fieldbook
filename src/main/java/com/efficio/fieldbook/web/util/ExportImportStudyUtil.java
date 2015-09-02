@@ -114,7 +114,7 @@ public class ExportImportStudyUtil {
 	}
 
 	public static String getSiteNameOfTrialInstance(MeasurementRow trialObservation,
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		if (trialObservation != null && trialObservation.getMeasurementVariables() != null) {
 			for (MeasurementData data : trialObservation.getDataList()) {
 				if (data.getMeasurementVariable().getTermId() == TermId.TRIAL_LOCATION.getId()) {
@@ -128,8 +128,7 @@ public class ExportImportStudyUtil {
 	}
 
 	private static String getSiteNameOfTrialInstanceBasedOnLocationID(
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, MeasurementData data)
-			throws MiddlewareQueryException {
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, MeasurementData data) {
 		if (data.getValue() != null && !data.getValue().isEmpty() && NumberUtils.isNumber(data.getValue())) {
 			return "_" + fieldbookMiddlewareService.getLocationById(Integer.parseInt(data.getValue())).getLname();
 		} else {

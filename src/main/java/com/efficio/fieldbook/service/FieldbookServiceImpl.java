@@ -13,15 +13,7 @@ package com.efficio.fieldbook.service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -103,7 +95,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 	@Resource
 	private UserDataManager userDataManager;
 
-	// @Resource(name = "BVDesignRunner")
 	@Resource
 	private DesignRunner designRunner;
 
@@ -141,18 +132,17 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 * @throws RuleException
 	 */
 	@Override
-	public AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException, RuleException {
+	public AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException {
 
 		return this.namingConventionService.advanceNursery(advanceInfo, workbook);
 	}
 
 	@Override
-	public List<StandardVariableReference> filterStandardVariablesForSetting(int mode, Collection<SettingDetail> selectedList)
-			throws MiddlewareQueryException {
+	public List<StandardVariableReference> filterStandardVariablesForSetting(int mode, Collection<SettingDetail> selectedList) {
 
-		List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
+		List<StandardVariableReference> result = new ArrayList<>();
 
-		Set<Integer> selectedIds = new HashSet<Integer>();
+		Set<Integer> selectedIds = new HashSet<>();
 		if (selectedList != null && !selectedList.isEmpty()) {
 			for (SettingDetail settingDetail : selectedList) {
 				selectedIds.add(settingDetail.getVariable().getCvTermId());
@@ -204,12 +194,11 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<StandardVariableReference> filterStandardVariablesForTrialSetting(int mode, Collection<SettingDetail> selectedList)
-			throws MiddlewareQueryException {
+	public List<StandardVariableReference> filterStandardVariablesForTrialSetting(int mode, Collection<SettingDetail> selectedList) {
 
-		List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
+		List<StandardVariableReference> result = new ArrayList<>();
 
-		Set<Integer> selectedIds = new HashSet<Integer>();
+		Set<Integer> selectedIds = new HashSet<>();
 		if (selectedList != null && !selectedList.isEmpty()) {
 			for (SettingDetail settingDetail : selectedList) {
 				selectedIds.add(settingDetail.getVariable().getCvTermId());
@@ -324,7 +313,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException {
+	public List<ValueReference> getAllPossibleValues(int id) {
 		List<ValueReference> possibleValues = this.possibleValuesCache.getPossibleValues(id);
 		if (possibleValues == null) {
 
@@ -368,7 +357,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValuesFavorite(int id, String programUUID) throws MiddlewareQueryException {
+	public List<ValueReference> getAllPossibleValuesFavorite(int id, String programUUID) {
 		List<ValueReference> possibleValuesFavorite = null;
 		if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
 			List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(programUUID);
@@ -385,8 +374,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return possibleValuesFavorite;
 	}
 
-	private List<ValueReference> getFavoriteBreedingMethods(List<Integer> methodIDList, boolean isFilterOutGenerative)
-			throws MiddlewareQueryException {
+	private List<ValueReference> getFavoriteBreedingMethods(List<Integer> methodIDList, boolean isFilterOutGenerative) {
 		List<ValueReference> list = new ArrayList<ValueReference>();
 		List<Method> methods = this.fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIDList, isFilterOutGenerative);
 		if (methods != null && !methods.isEmpty()) {
@@ -400,7 +388,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative, String programUUID) throws MiddlewareQueryException {
+	public List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative, String programUUID) {
 		List<ValueReference> list = new ArrayList<ValueReference>();
 		List<Method> methods = this.fieldbookMiddlewareService.getAllBreedingMethods(isFilterOutGenerative);
 		if (methods != null && !methods.isEmpty()) {
@@ -430,8 +418,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType)
-			throws MiddlewareQueryException {
+	public List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType) {
 		List<ValueReference> list = new ArrayList<ValueReference>();
 		Integer standardVariableId =
 				this.fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(property, scale, method, phenotypeType);
@@ -454,7 +441,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException {
+	public String getValue(int id, String valueOrId, boolean isCategorical) {
 		List<ValueReference> possibleValues = this.possibleValuesCache.getPossibleValues(id);
 		if (!NumberUtils.isNumber(valueOrId) && TermId.BREEDING_METHOD_CODE.getId() != id && TermId.BREEDING_METHOD.getId() != id) {
 			return valueOrId;
@@ -496,7 +483,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return null;
 	}
 
-	private String getBreedingMethodById(int id) throws MiddlewareQueryException {
+	private String getBreedingMethodById(int id) {
 		Method method = this.fieldbookMiddlewareService.getBreedingMethodById(id);
 		if (method != null) {
 			return method.getMname() + " - " + method.getMcode();
@@ -504,7 +491,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return null;
 	}
 
-	protected String getBreedingMethodByCode(String code) throws MiddlewareQueryException {
+	protected String getBreedingMethodByCode(String code) {
 		Method method = this.fieldbookMiddlewareService.getMethodByCode(code, this.contextUtil.getCurrentProgramUUID());
 		if (method != null) {
 			return method.getMname() + " - " + method.getMcode();
@@ -512,7 +499,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return "";
 	}
 
-	private String getBreedingMethodByName(String name) throws MiddlewareQueryException {
+	private String getBreedingMethodByName(String name) {
 		Method method = this.fieldbookMiddlewareService.getMethodByName(name);
 		if (method != null) {
 			return method.getMname() + " - " + method.getMcode();
@@ -520,7 +507,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return "";
 	}
 
-	private String getLocationById(int id) throws MiddlewareQueryException {
+	private String getLocationById(int id) {
 		Location location = this.fieldbookMiddlewareService.getLocationById(id);
 		if (location != null) {
 			return location.getLname();
@@ -529,7 +516,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public String getPersonByUserId(int userId) throws MiddlewareQueryException {
+	public String getPersonByUserId(int userId) {
 		User user = this.userDataManager.getUserById(userId);
 
 		if (user == null) {
@@ -539,7 +526,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return this.getPersonNameByPersonId(user.getPersonid());
 	}
 
-	protected String getPersonNameByPersonId(int personId) throws MiddlewareQueryException {
+	protected String getPersonNameByPersonId(int personId) {
 		Person person = this.userDataManager.getPersonById(personId);
 
 		if (person != null) {
@@ -550,12 +537,12 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public Term getTermById(int termId) throws MiddlewareQueryException {
+	public Term getTermById(int termId) {
 		return this.ontologyService.getTermById(termId);
 	}
 
 	@Override
-	public void setAllPossibleValuesInWorkbook(Workbook workbook) throws MiddlewareQueryException {
+	public void setAllPossibleValuesInWorkbook(Workbook workbook) {
 		List<MeasurementVariable> allVariables = workbook.getAllVariables();
 		if (allVariables != null) {
 			for (MeasurementVariable variable : allVariables) {
@@ -582,7 +569,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<Enumeration> getCheckList() throws MiddlewareQueryException {
+	public List<Enumeration> getCheckList() {
 		return this.ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
 	}
 
@@ -604,8 +591,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return idNameMap;
 	}
 
-	protected MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation)
-			throws MiddlewareQueryException {
+	protected MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation) {
 		StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate));
 		MeasurementVariable var = new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
 				stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType().getName(),
@@ -619,7 +605,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException {
+	public void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs) {
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
 		if (workbook != null && idCodeNamePairs != null && !"".equalsIgnoreCase(idCodeNamePairs)) {
 			// we get a map so we can check easily instead of traversing it again
@@ -706,7 +692,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs,
-			boolean deleteNameWhenIdNotExist) throws MiddlewareQueryException {
+			boolean deleteNameWhenIdNotExist) {
 
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
 		Map<String, List<MeasurementVariable>> studyConditionMapList = new HashMap<String, List<MeasurementVariable>>();
@@ -893,7 +879,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException {
+	public void addConditionsToTrialObservationsIfNecessary(Workbook workbook) {
 		if (workbook.getTrialObservations() != null && !workbook.getTrialObservations().isEmpty() && workbook.getTrialConditions() != null
 				&& !workbook.getTrialConditions().isEmpty()) {
 
@@ -963,7 +949,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareQueryException {
+	public List<ValueReference> getVariablePossibleValues(MeasurementVariable var) {
 		List<ValueReference> possibleValues = new ArrayList<ValueReference>();
 		// we need to get all possible values so we can check the favorites as well, since if we depend on the variable possible values, its
 		// already filtered, so it can be wrong
@@ -996,7 +982,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareQueryException {
+	public List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) {
 		List<ValueReference> possibleValues = null;
 		if (possibleValues == null) {
 
@@ -1011,7 +997,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) throws MiddlewareQueryException {
+	public void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) {
 		if (userSelection.getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null) {
 			if (!form.getImportedCheckGermplasm().isEmpty() && !this.hasCheckVariables(userSelection.getWorkbook().getConditions())) {
 				// add check variables
@@ -1052,7 +1038,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		}
 	}
 
-	private void addCheckVariables(List<MeasurementVariable> conditions, ImportGermplasmListForm form) throws MiddlewareQueryException {
+	private void addCheckVariables(List<MeasurementVariable> conditions, ImportGermplasmListForm form) {
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()),
 				SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId()), Operation.ADD));
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()),
@@ -1137,7 +1123,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId) throws MiddlewareQueryException {
+	public void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId) {
 		if (crossesIds != null && !crossesIds.isEmpty()) {
 			for (Integer crossesId : crossesIds) {
 				this.fieldbookMiddlewareService.updateGermlasmListInfoStudy(crossesId, studyId != null ? studyId : 0);
@@ -1147,8 +1133,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
-	public void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook)
-			throws MiddlewareQueryException {
+	public void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook) {
 		List<Integer> columnOrdersList = FieldbookUtil.getColumnOrderList(columnOrderDelimited);
 		if (studyId != null && !columnOrdersList.isEmpty()) {
 			this.fieldbookMiddlewareService.saveStudyColumnOrdering(studyId, studyName, columnOrdersList);

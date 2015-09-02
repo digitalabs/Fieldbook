@@ -79,7 +79,7 @@ public class StudyTreeController {
 		return "[]";
 	}
 
-	private List<TreeNode> getChildNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException {
+	private List<TreeNode> getChildNodes(String parentKey, boolean isNursery, boolean isFolderOnly) {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
@@ -107,7 +107,7 @@ public class StudyTreeController {
 		return childNodes;
 	}
 
-	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException {
+	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		int parentId = Integer.valueOf(parentKey);
 		List<Reference> folders = this.fieldbookMiddlewareService.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
@@ -302,12 +302,12 @@ public class StudyTreeController {
 
 	@ResponseBody
 	@RequestMapping(value = "/moveStudyFolder", method = RequestMethod.POST)
-	public Map<String, Object> moveStudyFolder(HttpServletRequest req) throws MiddlewareQueryException {
+	public Map<String, Object> moveStudyFolder(HttpServletRequest req) {
 		String sourceId = req.getParameter("sourceId");
 		String targetId = req.getParameter("targetId");
 		String isStudy = req.getParameter("isStudy");
 		boolean isAStudy = "1".equalsIgnoreCase(isStudy) ? true : false;
-		Map<String, Object> resultsMap = new HashMap<String, Object>();
+		Map<String, Object> resultsMap = new HashMap<>();
 		try {
 			this.studyDataManager.moveDmsProject(Integer.parseInt(sourceId), Integer.parseInt(targetId), isAStudy);
 		} catch (MiddlewareQueryException e) {

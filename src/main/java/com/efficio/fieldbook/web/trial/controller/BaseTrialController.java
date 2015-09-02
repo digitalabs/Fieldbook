@@ -1,10 +1,6 @@
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -12,13 +8,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.TreatmentVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -31,16 +21,7 @@ import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
@@ -136,7 +117,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareExperimentalDesignTabInfo(ExperimentalDesignVariable xpDesignVariable,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) {
 		TabInfo tabInfo = new TabInfo();
 		// currently, the saved experimental design information is not loaded up
 		// when choosing a previous trial as template
@@ -223,7 +204,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(List<MeasurementVariable> measurementVariables,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) {
 		List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 		List<Integer> requiredIDList = this
 				.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
@@ -285,7 +266,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) {
 		Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
 		Map<String, TreatmentFactorData> currentData = new HashMap<String, TreatmentFactorData>();
 		Map<String, List<SettingDetail>> treatmentFactorPairs = new HashMap<String, List<SettingDetail>>();
@@ -337,7 +318,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareMeasurementsTabInfo(List<MeasurementVariable> variatesList,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) {
 
 		List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 
@@ -363,8 +344,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareEnvironmentsTabInfo(Workbook workbook, boolean isUsePrevious)
-			throws MiddlewareQueryException {
+	protected TabInfo prepareEnvironmentsTabInfo(Workbook workbook, boolean isUsePrevious){
 		TabInfo info = new TabInfo();
 		Map settingMap = new HashMap();
 		List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
@@ -530,7 +510,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo(StudyDetails studyDetails, boolean isUsePrevious,
-			int trialID) throws MiddlewareQueryException {
+			int trialID) {
 		Map<String, String> basicDetails = new HashMap<String, String>();
 		List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
 		List<Integer> initialSettingIDs = this
@@ -599,7 +579,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareTrialSettingsTabInfo(List<MeasurementVariable> measurementVariables,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) {
 		TabInfo info = new TabInfo();
 		Map<String, String> trialValues = new HashMap<String, String>();
 		List<SettingDetail> details = new ArrayList<SettingDetail>();
@@ -654,7 +634,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareExperimentalDesignSpecialData() throws MiddlewareQueryException {
+	protected TabInfo prepareExperimentalDesignSpecialData() {
 		TabInfo info = new TabInfo();
 		ExpDesignData data = new ExpDesignData();
 		List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();
@@ -683,8 +663,10 @@ public abstract class BaseTrialController extends SettingsController {
 			EnvironmentData environmentData, Workbook workbook,
 			List<MeasurementRow> trialObservations) {
 
-		if (trialObservations == null)
+		if (trialObservations == null) {
 			return;
+		}
+
 
 		int x = 0;
 		for (MeasurementRow row : trialObservations) {

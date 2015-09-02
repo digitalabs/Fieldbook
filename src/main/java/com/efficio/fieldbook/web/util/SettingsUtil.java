@@ -11,13 +11,7 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -27,35 +21,21 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.TreatmentVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.workbench.settings.Condition;
-import org.generationcp.middleware.pojos.workbench.settings.Constant;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.pojos.workbench.settings.Factor;
-import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
-import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
-import org.generationcp.middleware.pojos.workbench.settings.Variate;
+import org.generationcp.middleware.pojos.workbench.settings.*;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.PairedVariable;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
-import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.hazelcast.util.StringUtil;
@@ -483,7 +463,7 @@ public class SettingsUtil {
      */
 	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection,
-			String programUUID, boolean isUsePrevious, boolean isTrial) throws MiddlewareQueryException {
+			String programUUID, boolean isUsePrevious, boolean isTrial) {
         if (!isTrial) {
 			SettingsUtil.convertXmlNurseryDatasetToPojo(fieldbookMiddlewareService, fieldbookService, (Dataset) dataset, userSelection,
 					programUUID, isUsePrevious);
@@ -573,7 +553,7 @@ public class SettingsUtil {
      */
     private static void convertXmlNurseryDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
                                                        com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection,
-                                                       String programUUID, boolean isUsePrevious) throws MiddlewareQueryException {
+                                                       String programUUID, boolean isUsePrevious) {
         Operation operation = isUsePrevious ? Operation.ADD : Operation.UPDATE;
         if (dataset != null && userSelection != null) {
 			// we copy it to User session object
@@ -845,7 +825,7 @@ public class SettingsUtil {
      */
 	private static void convertXmlTrialDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection,
-			String programUUID) throws MiddlewareQueryException {
+			String programUUID) {
         if (dataset != null && userSelection != null) {
 			// we copy it to User session object
 			// nursery level
@@ -1412,7 +1392,7 @@ public class SettingsUtil {
 
 	private static SettingDetail createTreatmentFactor(Factor factor,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService,
-			int group, UserSelection userSelection) throws MiddlewareQueryException {
+			int group, UserSelection userSelection) {
 
 		SettingVariable variable =
 				new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(), factor.getScale(), factor.getMethod(),
@@ -1431,7 +1411,7 @@ public class SettingsUtil {
 
 	public static StudyDetails convertWorkbookToStudyDetails(Workbook workbook,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService,
-			UserSelection userSelection) throws MiddlewareQueryException {
+			UserSelection userSelection) {
 
 		StudyDetails studyDetails =
 				SettingsUtil.convertWorkbookStudyLevelVariablesToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService,
@@ -1468,7 +1448,7 @@ public class SettingsUtil {
 
     private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(Workbook workbook,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService,
-			UserSelection userSelection, String projectId) throws MiddlewareQueryException {
+			UserSelection userSelection, String projectId) {
 
         StudyDetails details = new StudyDetails();
         details.setId(workbook.getStudyId());
@@ -1516,7 +1496,7 @@ public class SettingsUtil {
 
     private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(List<MeasurementVariable> conditions, int index,
 			UserSelection userSelection, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-			FieldbookService fieldbookService) throws MiddlewareQueryException {
+			FieldbookService fieldbookService) {
 		return SettingsUtil.convertWorkbookOtherStudyVariablesToSettingDetails(conditions, index, userSelection,
 				fieldbookMiddlewareService, fieldbookService, false);
     }
@@ -1524,7 +1504,7 @@ public class SettingsUtil {
 	private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(List<MeasurementVariable> conditions,
 			int orderIndex, UserSelection userSelection,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService,
-			boolean isVariate) throws MiddlewareQueryException {
+			boolean isVariate) {
     	int index = orderIndex;
 
         List<SettingDetail> details = new ArrayList<SettingDetail>();
@@ -1606,7 +1586,7 @@ public class SettingsUtil {
 
     private static List<SettingDetail> convertWorkbookToSettingDetails(List<String> fields, List<MeasurementVariable> conditions,
                                                                        org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService,
-			UserSelection userSelection, Workbook workbook) throws MiddlewareQueryException {
+			UserSelection userSelection, Workbook workbook) {
 
         List<SettingDetail> details = new ArrayList<SettingDetail>();
         int index = fields != null ? fields.size() : 0;
@@ -1676,8 +1656,7 @@ public class SettingsUtil {
     }
 
     private static String getSpecialFieldValue(String specialFieldLabel, Integer datasetId,
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, Workbook workbook)
-            throws MiddlewareQueryException {
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, Workbook workbook) {
 
         if (AppConstants.SPFLD_ENTRIES.getString().equals(specialFieldLabel)) {
             long count = fieldbookMiddlewareService.countStocks(datasetId);
@@ -1703,7 +1682,7 @@ public class SettingsUtil {
     }
 
     public static List<SettingDetail> convertWorkbookFactorsToSettingDetails(List<MeasurementVariable> factors,
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 
         List<SettingDetail> plotsLevelList = new ArrayList<SettingDetail>();
         if (factors == null) {
@@ -1738,7 +1717,7 @@ public class SettingsUtil {
 
     public static void convertWorkbookVariatesToSettingDetails(List<MeasurementVariable> variates,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService,
-			List<SettingDetail> traits, List<SettingDetail> selectedVariates) throws MiddlewareQueryException {
+			List<SettingDetail> traits, List<SettingDetail> selectedVariates) {
 
 		List<String> svProperties = SettingsUtil.getSelectedVariatesPropertyNames(fieldbookService);
         if (variates == null) {
@@ -1765,7 +1744,7 @@ public class SettingsUtil {
 
     }
 
-    private static List<String> getSelectedVariatesPropertyNames(FieldbookService fieldbookService) throws MiddlewareQueryException {
+    private static List<String> getSelectedVariatesPropertyNames(FieldbookService fieldbookService) {
         List<String> names = new ArrayList<String>();
         List<String> ids = Arrays.asList(
                 AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(","));
@@ -1780,7 +1759,7 @@ public class SettingsUtil {
 
 	private static SettingVariable getSettingVariable(String name, String description, String property, String scale, String method,
 			String role, String dataType, Integer dataTypeId, Double minRange, Double maxRange, UserSelection userSelection,
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 
 		SettingVariable variable =
 				new SettingVariable(name, description, property, scale, method, role, dataType, dataTypeId, minRange, maxRange);
@@ -1813,7 +1792,7 @@ public class SettingsUtil {
     }
 
 	private static List<Integer> getBreedingMethodIndeces(List<MeasurementRow> observations, OntologyService ontologyService,
-			boolean isResetAll) throws MiddlewareQueryException {
+			boolean isResetAll) {
         List<Integer> indeces = new ArrayList<Integer>();
         MeasurementRow mrow = observations.get(0);
         int index = 0;
@@ -1830,7 +1809,7 @@ public class SettingsUtil {
     }
 
     public static void resetBreedingMethodValueToId(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-                                                    List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) throws MiddlewareQueryException {
+                                                    List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) {
         if (observations == null || observations.isEmpty()) {
             return;
         }
@@ -1861,7 +1840,7 @@ public class SettingsUtil {
     }
 
     public static void resetBreedingMethodValueToCode(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-                                                      List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) throws MiddlewareQueryException {
+                                                      List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) {
 		// set value of breeding method code in selection variates to code instead of id
         if (observations == null || observations.isEmpty()) {
             return;
@@ -1918,8 +1897,7 @@ public class SettingsUtil {
         }
     }
 
-    private static List<TreatmentFactorDetail> convertWorkbookFactorsToTreatmentDetailFactors(List<TreatmentVariable> factors)
-            throws MiddlewareQueryException {
+    private static List<TreatmentFactorDetail> convertWorkbookFactorsToTreatmentDetailFactors(List<TreatmentVariable> factors) {
         List<TreatmentFactorDetail> details = new ArrayList<TreatmentFactorDetail>();
         if (factors != null && !factors.isEmpty()) {
             MeasurementVariable levelFactor, amountFactor;
@@ -2023,7 +2001,7 @@ public class SettingsUtil {
     	}
     }
     
-    public static void setConstantLabels(Dataset dataset, List<MeasurementVariable> constants) throws MiddlewareQueryException {
+    public static void setConstantLabels(Dataset dataset, List<MeasurementVariable> constants) {
 		if (constants != null && !constants.isEmpty() && dataset != null && dataset.getConstants() != null
 				&& !dataset.getConstants().isEmpty()) {
     		for (Constant constant : dataset.getConstants()) {
@@ -2043,7 +2021,7 @@ public class SettingsUtil {
     }
     
     public static void addTrialCondition(TermId termId, ExpDesignParameterUi param, Workbook workbook,
-    		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
+    		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
     	
 		String value = SettingsUtil.getExperimentalDesignValue(param, termId);
     	MeasurementVariable mvar = null;
@@ -2076,7 +2054,7 @@ public class SettingsUtil {
     	}
     }
     
-	private static void removeTrialConditions(List<Integer> ids, Workbook workbook) throws MiddlewareQueryException {
+	private static void removeTrialConditions(List<Integer> ids, Workbook workbook) {
     	
     	if (workbook.getTrialConditions() != null && !workbook.getTrialConditions().isEmpty()) {
     		for (MeasurementVariable var : workbook.getConditions()) {
@@ -2113,7 +2091,7 @@ public class SettingsUtil {
 
 	private static void setExperimentalDesignToWorkbook(ExpDesignParameterUi param, List<Integer> included, Workbook workbook,
 			List<MeasurementVariable> allExpDesignVariables,
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) throws MiddlewareQueryException {
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
     	
 		SettingsUtil.addOldExperimentalDesignToCurrentWorkbook(workbook, allExpDesignVariables);
     	if (param != null && included != null) {

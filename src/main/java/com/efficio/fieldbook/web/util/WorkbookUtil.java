@@ -14,7 +14,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 
@@ -282,8 +281,7 @@ public class WorkbookUtil {
 	}
 
 	public static void addMeasurementDataToRowsExp(List<MeasurementVariable> variableList, List<MeasurementRow> observations,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService)
-			throws MiddlewareQueryException {
+			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService) {
 		// add new variables in measurement rows
 		if (observations != null && !observations.isEmpty()) {
 			for (MeasurementVariable variable : variableList) {
@@ -312,7 +310,7 @@ public class WorkbookUtil {
 	}
 
 	public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, boolean isVariate, UserSelection userSelection,
-			OntologyService ontologyService, FieldbookService fieldbookService) throws MiddlewareQueryException {
+			OntologyService ontologyService, FieldbookService fieldbookService) {
 		// add new variables in measurement rows
 		for (MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
@@ -337,8 +335,7 @@ public class WorkbookUtil {
 	}
 
 	public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, List<MeasurementRow> measurementRowList,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService)
-			throws MiddlewareQueryException {
+			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService) {
 		// add new variables in measurement rows
 		for (MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
@@ -363,8 +360,7 @@ public class WorkbookUtil {
 	}
 	
 	public static void addMeasurementDataToRowsIfNecessary(List<MeasurementVariable> variableList, List<MeasurementRow> measurementRowList,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService)
-			throws MiddlewareQueryException {
+			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService) {
 		
 		// add new variables in measurement rows
 		for (MeasurementVariable variable : variableList) {

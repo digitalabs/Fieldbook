@@ -15,13 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -210,7 +204,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	}
 
 	private void importDescriptionSheetToWorkbook(Workbook originalWorkbook, String trialInstanceNumber, Workbook descriptionWorkbook,
-			List<MeasurementRow> trialObservations, Map<Object, String> originalValueMap) throws MiddlewareQueryException {
+			List<MeasurementRow> trialObservations, Map<Object, String> originalValueMap) {
 		Map<String, Object> variableMap = new HashMap<String, Object>();
 		if (originalWorkbook != null && descriptionWorkbook != null) {
 			for (MeasurementVariable var : descriptionWorkbook.getConditions()) {
@@ -436,8 +430,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	}
 
 	protected void importDataToWorkbook(Set<ChangeType> modes, Sheet observationSheet, Map<String, MeasurementRow> rowsMap,
-			String trialInstanceNumber, List<GermplasmChangeDetail> changeDetailsList, Workbook workbook) throws MiddlewareQueryException,
-			WorkbookParserException {
+			String trialInstanceNumber, List<GermplasmChangeDetail> changeDetailsList, Workbook workbook) throws WorkbookParserException {
 
 		List<MeasurementVariable> variablesFactors = workbook.getFactors();
 		List<MeasurementRow> observations = workbook.getObservations();
@@ -609,8 +602,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		return realValue;
 	}
 
-	private void validate(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook) throws WorkbookParserException,
-			MiddlewareQueryException {
+	private void validate(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook) throws WorkbookParserException {
 
 		// partially parse the file to parse the description sheet only at first
 		this.validateNumberOfSheets(xlsBook);
@@ -905,7 +897,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 
-	private MeasurementVariable getMeasurementVariable(Row row) throws MiddlewareQueryException {
+	private MeasurementVariable getMeasurementVariable(Row row) {
 		String property = row.getCell(ExcelImportStudyServiceImpl.COLUMN_PROPERTY).getStringCellValue();
 		String scale = row.getCell(ExcelImportStudyServiceImpl.COLUMN_SCALE).getStringCellValue();
 		String method = row.getCell(ExcelImportStudyServiceImpl.COLUMN_METHOD).getStringCellValue();

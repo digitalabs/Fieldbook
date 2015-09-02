@@ -11,11 +11,7 @@
 
 package com.efficio.fieldbook.web.nursery.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -82,7 +78,7 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	@Override
-	public void validateObservationValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException {
+	public void validateObservationValues(Workbook workbook, String instanceNumber) {
 		Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getObservations() != null) {
 			List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
@@ -109,7 +105,7 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	@Override
-	public void validateConditionAndConstantValues(Workbook workbook, String instanceNumber) throws MiddlewareQueryException {
+	public void validateConditionAndConstantValues(Workbook workbook, String instanceNumber) {
 		Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getConditions() != null) {
 
@@ -164,7 +160,7 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	@Override
-	public void validateObservationValues(Workbook workbook, MeasurementRow row) throws MiddlewareQueryException {
+	public void validateObservationValues(Workbook workbook, MeasurementRow row) {
 		Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getObservations() != null) {
 			for (MeasurementData data : row.getDataList()) {

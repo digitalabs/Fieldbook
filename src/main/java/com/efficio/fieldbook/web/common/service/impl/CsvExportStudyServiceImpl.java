@@ -18,7 +18,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.ZipUtil;
+import com.efficio.fieldbook.web.util.*;
 
 @Service
 @Transactional
@@ -114,8 +109,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		return ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 	}
 
-	protected String getFileNamePath(int index, MeasurementRow trialObservation, List<Integer> instances, String filename, boolean isNursery)
-			throws MiddlewareQueryException {
+	protected String getFileNamePath(int index, MeasurementRow trialObservation, List<Integer> instances, String filename, boolean isNursery) {
 		String filenamePath = this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(filename);
 		if (instances != null && (instances.size() > 1 || !isNursery)) {
 			int fileExtensionIndex = filenamePath.lastIndexOf(".");

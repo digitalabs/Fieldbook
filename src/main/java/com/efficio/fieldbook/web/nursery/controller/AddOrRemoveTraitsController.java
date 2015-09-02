@@ -86,8 +86,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 	 * @return the string
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, HttpSession session)
-			throws MiddlewareQueryException {
+	public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, HttpSession session) {
 
 		this.getUserSelection().setMeasurementRowList(
 				this.measurementsGeneratorService.generateRealMeasurementRows(this.getUserSelection()));

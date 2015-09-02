@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.nursery.service;
 import java.util.List;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 
@@ -29,6 +28,6 @@ public interface MeasurementsGeneratorService {
 	 * @param userSelection the user selection
 	 * @return the list
 	 */
-	List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection) throws MiddlewareQueryException;
+	List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection);
 
 }

@@ -55,7 +55,7 @@ public class SettingsServiceImpl implements SettingsService {
 	}
 	
 	@Override
-	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection, int currentIbDbUserId, String programUUID) throws MiddlewareQueryException {
+	public SettingDetail createSettingDetail(int id, String name, UserSelection userSelection, int currentIbDbUserId, String programUUID) {
         
 		String variableName;
 		StandardVariable stdVar = this.getCachedStandardVariable(id, userSelection);
@@ -256,9 +256,8 @@ public class SettingsServiceImpl implements SettingsService {
      *
      * @param id the id
      * @return the standard variable
-     * @throws MiddlewareQueryException the middleware query exception
      */
-    protected StandardVariable getCachedStandardVariable(int id, UserSelection userSelection) throws MiddlewareQueryException {
+    protected StandardVariable getCachedStandardVariable(int id, UserSelection userSelection) {
 		StandardVariable variable = userSelection.getCacheStandardVariable(id);
     	if (variable == null) {
 			variable = this.fieldbookMiddlewareService.getStandardVariable(id);

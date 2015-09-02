@@ -1,11 +1,7 @@
 
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -70,7 +66,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 
 	@Override
-	public AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException, RuleException {
+	public AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws RuleException {
 
 		Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		Map<String, Method> breedingMethodCodeMap = new HashMap<>();
@@ -100,7 +96,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook,
-			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws MiddlewareQueryException {
+			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) {
 
 		int nurseryId = advanceInfo.getStudy().getId();
 		if (workbook == null) {
@@ -152,7 +148,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	protected void addImportedGermplasmToList(List<ImportedGermplasm> list, AdvancingSource source, String newGermplasmName,
-			Method breedingMethod, int index, String nurseryName) throws MiddlewareQueryException {
+			Method breedingMethod, int index, String nurseryName) {
 		// GCP-7652 use the entry number of the originial : index
 		ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
@@ -184,7 +180,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	@Override
 	public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean isCheckForDuplicateName)
-			throws MiddlewareQueryException, RuleException {
+			throws RuleException {
 		List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
 		int index = 1;
 		TimerWatch timer = new TimerWatch("advance");
@@ -238,7 +234,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	// 1. RootNameGeneratorRule
 	// FIXME : breedingMethodNameType NOT USED : hard coded 1 in the 'Expression'
-	protected String getGermplasmRootName(Integer breedingMethodSnameType, AdvancingSource row) throws MiddlewareQueryException {
+	protected String getGermplasmRootName(Integer breedingMethodSnameType, AdvancingSource row) {
 
 		RootNameExpression expression = new RootNameExpression();
 		List<StringBuilder> builders = new ArrayList<StringBuilder>();

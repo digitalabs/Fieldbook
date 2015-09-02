@@ -27,18 +27,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.generationcp.commons.parsing.pojo.ImportedCondition;
-import org.generationcp.commons.parsing.pojo.ImportedFactor;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.commons.parsing.pojo.*;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -544,7 +539,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	 */
 	@Override
 	public void validataAndAddCheckFactor(List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
-			UserSelection userSelection) throws MiddlewareQueryException {
+			UserSelection userSelection) {
 		long start = System.currentTimeMillis();
 		boolean hasCheck = false;
 		List<ImportedGermplasm> sessionImportedGermplasmList = importedGermplasms;

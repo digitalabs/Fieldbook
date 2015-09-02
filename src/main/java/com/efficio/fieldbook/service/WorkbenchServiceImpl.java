@@ -38,73 +38,72 @@ public class WorkbenchServiceImpl implements WorkbenchService {
 	private WorkbenchDataManager workbenchDataManager;
 
 	@Override
-	public Tool getToolWithName(String toolName) throws MiddlewareQueryException {
+	public Tool getToolWithName(String toolName) {
 		return this.workbenchDataManager.getToolWithName(toolName);
 	}
 
 	@Override
-	public List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) throws MiddlewareQueryException {
+	public List<TemplateSetting> getTemplateSettings(TemplateSetting templateSettingFilter) {
 		return this.workbenchDataManager.getTemplateSettings(templateSettingFilter);
 	}
 
 	@Override
-	public List<StandardPreset> getAllStandardPresets() throws MiddlewareQueryException {
+	public List<StandardPreset> getAllStandardPresets() {
 		return this.workbenchDataManager.getStandardPresetDAO().getAll();
 	}
 
 	@Override
-	public List<StandardPreset> getStandardPresetByCrop(String cropName) throws MiddlewareQueryException {
+	public List<StandardPreset> getStandardPresetByCrop(String cropName) {
 		return this.workbenchDataManager.getStandardPresetFromCropAndTool(cropName, this.getFieldbookWebTool().getToolId().intValue());
 	}
 
 	@Override
-	public List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName, String toolSection) throws MiddlewareQueryException {
+	public List<StandardPreset> getStandardPresetByCrop(int toolId, String cropName, String toolSection) {
 		return this.workbenchDataManager.getStandardPresetFromCropAndTool(cropName, toolId, toolSection);
 	}
 
 	@Override
-	public List<StandardPreset> getStandardPresetByCropAndPresetName(String presetName, int toolId, String cropName, String toolSection)
-			throws MiddlewareQueryException {
+	public List<StandardPreset> getStandardPresetByCropAndPresetName(String presetName, int toolId, String cropName, String toolSection) {
 		return this.workbenchDataManager.getStandardPresetFromCropAndToolByName(presetName, cropName, toolId, toolSection);
 	}
 
 	@Override
-	public Tool getFieldbookWebTool() throws MiddlewareQueryException {
+	public Tool getFieldbookWebTool() {
 		return this.workbenchDataManager.getToolWithName("fieldbook_web");
 	}
 
 	@Override
-	public StandardPreset getStandardPresetById(Integer id) throws MiddlewareQueryException {
+	public StandardPreset getStandardPresetById(Integer id) {
 		return this.workbenchDataManager.getStandardPresetDAO().getById(id);
 	}
 
 	@Override
-	public StandardPreset saveOrUpdateStandardPreset(StandardPreset preset) throws MiddlewareQueryException {
+	public StandardPreset saveOrUpdateStandardPreset(StandardPreset preset) {
 		return this.workbenchDataManager.saveOrUpdateStandardPreset(preset);
 	}
 
 	@Override
-	public Integer addTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException {
+	public Integer addTemplateSetting(TemplateSetting templateSetting) {
 		return this.workbenchDataManager.addTemplateSetting(templateSetting);
 	}
 
 	@Override
-	public void updateTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException {
+	public void updateTemplateSetting(TemplateSetting templateSetting) {
 		this.workbenchDataManager.updateTemplateSetting(templateSetting);
 	}
 
 	@Override
-	public void deleteTemplateSetting(Integer templateSettingId) throws MiddlewareQueryException {
+	public void deleteTemplateSetting(Integer templateSettingId) {
 		this.workbenchDataManager.deleteTemplateSetting(templateSettingId);
 	}
 
 	@Override
-	public Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId) throws MiddlewareQueryException {
+	public Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId) {
 		return this.workbenchDataManager.getCurrentIbdbUserId(projectId, workbenchUserId);
 	}
 
 	@Override
-	public Project getProjectById(Long projectId) throws MiddlewareQueryException {
+	public Project getProjectById(Long projectId) {
 		return this.workbenchDataManager.getProjectById(projectId);
 	}
 

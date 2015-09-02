@@ -1,13 +1,7 @@
 
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -48,7 +42,7 @@ public class AdvancingSourceListFactory {
 	private static final String DEFAULT_TEST_VALUE = "T";
 
 	public AdvancingSourceList create(Workbook workbook, AdvancingNursery advanceInfo, Study nursery,
-			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws MiddlewareQueryException {
+			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) {
 
 		AdvancingSourceList list = new AdvancingSourceList();
 
@@ -137,7 +131,7 @@ public class AdvancingSourceListFactory {
 		return list;
 	}
 
-	private void setNamesToGermplasm(List<AdvancingSource> rows, List<Integer> gids) throws MiddlewareQueryException {
+	private void setNamesToGermplasm(List<AdvancingSource> rows, List<Integer> gids) {
 		if (rows != null && !rows.isEmpty()) {
 			Map<Integer, List<Name>> map = this.fieldbookMiddlewareService.getNamesByGids(gids);
 			for (AdvancingSource row : rows) {
@@ -184,7 +178,7 @@ public class AdvancingSourceListFactory {
 		return germplasm;
 	}
 
-	private void assignSourceGermplasms(AdvancingSourceList list, Map<Integer, Method> breedingMethodMap) throws MiddlewareQueryException {
+	private void assignSourceGermplasms(AdvancingSourceList list, Map<Integer, Method> breedingMethodMap) {
 		List<Integer> gidList = new ArrayList<Integer>();
 
 		if (list != null && list.getRows() != null && !list.getRows().isEmpty()) {
@@ -221,7 +215,7 @@ public class AdvancingSourceListFactory {
 		}
 	}
 
-	protected void checkIfGermplasmIsExisting(Germplasm germplasm) throws MiddlewareQueryException {
+	protected void checkIfGermplasmIsExisting(Germplasm germplasm) {
 		if (germplasm == null) {
 			// we throw exception becuase germplasm is not existing
 			Locale locale = LocaleContextHolder.getLocale();

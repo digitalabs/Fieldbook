@@ -11,13 +11,7 @@
 
 package com.efficio.fieldbook.web.ontology.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -26,11 +20,7 @@ import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.VariableConstraints;
-import org.generationcp.middleware.domain.oms.CvId;
-import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.domain.oms.*;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -45,22 +35,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.bean.EnumerationOperation;
-import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyModalForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
-import com.efficio.fieldbook.web.ontology.form.OntologyTraitClassForm;
+import com.efficio.fieldbook.web.ontology.form.*;
 import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 
@@ -413,11 +393,9 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 	 *
 	 * @param form the form
 	 * @param stdVariable the std variable
-	 * @throws MiddlewareQueryException the middleware query exception
 	 * @throws MiddlewareException the middleware exception
 	 */
-	private void saveConstraintsAndValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException,
-			MiddlewareException {
+	private void saveConstraintsAndValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareException {
 		String dataTypeId = form.getDataType() == null ? form.getDataTypeId() : form.getDataType();
 		String dataType = this.ontologyService.getTermById(Integer.parseInt(dataTypeId)).getName();
 		if (dataType.contains("Categorical")) {
@@ -448,11 +426,9 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 	 *
 	 * @param form the form
 	 * @param stdVariable the std variable
-	 * @throws MiddlewareQueryException the middleware query exception
 	 * @throws MiddlewareException the middleware exception
 	 */
-	private void saveConstraints(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException,
-			MiddlewareException {
+	private void saveConstraints(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareException {
 		Double minValue = form.getMinValue();
 		Double maxValue = form.getMaxValue();
 
@@ -475,10 +451,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 	 *
 	 * @param form the form
 	 * @param stdVariable the std variable
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	private void saveValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException,
-			MiddlewareException {
+	private void saveValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareException {
 		List<EnumerationOperation> enumerations = OntologyManagerController.convertToEnumerationOperation(form.getEnumerations());
 		for (EnumerationOperation enumeration : enumerations) {
 			if (enumeration.getOperation() > 0) {
@@ -504,7 +478,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 		}
 	}
 
-	private void deleteValidValues(StandardVariable stdVariable) throws MiddlewareQueryException {
+	private void deleteValidValues(StandardVariable stdVariable) {
 		for (Enumeration enumeration : stdVariable.getEnumerations()) {
 			this.ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
 		}
@@ -534,9 +508,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 	 * @param form the form
 	 * @param operation the operation
 	 * @return the standard variable
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	private StandardVariable createStandardVariableObject(OntologyBrowserForm form, Operation operation) throws MiddlewareQueryException {
+	private StandardVariable createStandardVariableObject(OntologyBrowserForm form, Operation operation) {
 		StandardVariable standardVariable = new StandardVariable();
 		String description = null;
 
@@ -742,7 +715,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 		return new ArrayList<Term>();
 	}
 
-	private List<TraitClassReference> getAllTraitClassesFromHierarchy(List<TraitClassReference> refList) throws MiddlewareQueryException {
+	private List<TraitClassReference> getAllTraitClassesFromHierarchy(List<TraitClassReference> refList) {
 
 		List<TraitClassReference> traitClass = new ArrayList<TraitClassReference>();
 		for (TraitClassReference ref : refList) {
@@ -1001,7 +974,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 		return result;
 	}
 
-	protected void validatePropertyName(OntologyModalForm form) throws MiddlewareQueryException {
+	protected void validatePropertyName(OntologyModalForm form) {
 		if (((OntologyPropertyForm) form).getId() == null) {
 			Term term = this.ontologyService.findTermByName(((OntologyPropertyForm) form).getManagePropertyName(), CvId.PROPERTIES);
 			if (term != null) {
@@ -1059,9 +1032,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController {
 	/**
 	 * Delete ontology.
 	 *
-	 * @param id the id
-	 * @param name the name
-	 * @param ontology the ontology
+	 * @param standardVariableId the id
+	 * @param enumerationId the name
 	 * @return the map
 	 */
 	@ResponseBody

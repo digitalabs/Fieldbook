@@ -244,8 +244,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	@Override
-	public Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders)
-			throws MiddlewareQueryException {
+	public Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders) {
 		List<String> headers = new ArrayList<>();
 		// get headers as string list
 		for (DesignHeaderItem item : designHeaders) {

@@ -1,11 +1,7 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -96,10 +92,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		return this.importedCrossesList;
 	}
 
-	/**
-	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
-	 */
-	protected void parseObservationSheet(String programUUID) throws FileParsingException, MiddlewareQueryException {
+	protected void parseObservationSheet(String programUUID) throws FileParsingException {
 		if (this.isObservationsHeaderInvalid()) {
 			throw new FileParsingException("Invalid Observation headers");
 		}
@@ -226,10 +219,9 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	 * @param studyName - femaleNursery/maleNursery equivalent from the template
 	 * @param genderedPlotNo - femalePlot/malePlot equivalent from the template
 	 * @return ListDataProject - We need the Desig, and female/male gids information that we can retrive using this data structure
-	 * @throws org.generationcp.middleware.exceptions.MiddlewareQueryException
 	 */
 	protected ListDataProject getCrossingListProjectData(String studyName, Integer genderedPlotNo, String programUUID)
-					throws MiddlewareQueryException, FileParsingException {
+					throws FileParsingException {
 		// 1 get the particular study's list
 		final Integer studyId = this.studyDataManager.getStudyIdByNameAndProgramUUID(studyName, programUUID);
 

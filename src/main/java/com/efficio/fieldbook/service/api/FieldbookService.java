@@ -25,7 +25,6 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -57,10 +56,9 @@ public interface FieldbookService {
 	 * @param advanceInfo the advance info
 	 * @param workbook the workbook
 	 * @return the list
-	 * @throws MiddlewareQueryException the middleware query exception
 	 * @throws RuleException
 	 */
-	AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException, RuleException;
+	AdvanceResult advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws RuleException;
 
 	/**
 	 * Filters the variables based on the current setting mode and excludes the selected ones.
@@ -68,10 +66,8 @@ public interface FieldbookService {
 	 * @param mode the mode
 	 * @param selectedList the selected list
 	 * @return the list
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<StandardVariableReference> filterStandardVariablesForSetting(int mode, Collection<SettingDetail> selectedList)
-			throws MiddlewareQueryException;
+	List<StandardVariableReference> filterStandardVariablesForSetting(int mode, Collection<SettingDetail> selectedList);
 
 	/**
 	 * Filter standard variables for trial setting.
@@ -79,19 +75,16 @@ public interface FieldbookService {
 	 * @param mode the mode
 	 * @param selectedList the selected list
 	 * @return the list
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<StandardVariableReference> filterStandardVariablesForTrialSetting(int mode, Collection<SettingDetail> selectedList)
-			throws MiddlewareQueryException;
+	List<StandardVariableReference> filterStandardVariablesForTrialSetting(int mode, Collection<SettingDetail> selectedList);
 
 	/**
 	 * Get all possible values.
 	 *
 	 * @param id the id
 	 * @return the all possible values
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException;
+	List<ValueReference> getAllPossibleValues(int id);
 
 	/**
 	 * Gets the all possible values favorite.
@@ -99,9 +92,8 @@ public interface FieldbookService {
 	 * @param id the id
 	 * @param projectId the project id
 	 * @return the all possible values favorite
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException;
+	List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId);
 
 	/**
 	 * Gets the all possible values by psmr.
@@ -111,10 +103,8 @@ public interface FieldbookService {
 	 * @param method the method
 	 * @param phenotypeType the phenotype type
 	 * @return the all possible values by psmr
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType)
-			throws MiddlewareQueryException;
+	List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType);
 
 	/**
 	 * Gets the value.
@@ -123,27 +113,24 @@ public interface FieldbookService {
 	 * @param valueOrId the value or id
 	 * @param isCategorical the is categorical
 	 * @return the value
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException;
+	String getValue(int id, String valueOrId, boolean isCategorical);
 
 	/**
 	 * Retrieves the person by user id
 	 * 
 	 * @param userId
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	String getPersonByUserId(int userId) throws MiddlewareQueryException;
+	String getPersonByUserId(int userId);
 
 	/**
 	 * Gets the term by id.
 	 *
 	 * @param termId the term id
 	 * @return the term by id
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	Term getTermById(int termId) throws MiddlewareQueryException;
+	Term getTermById(int termId);
 
 	/**
 	 * Gets the all breeding methods.
@@ -151,25 +138,22 @@ public interface FieldbookService {
 	 * @param programUUID - unique id of the current program
 	 * @param isFilterOutGenerative the is filter out generative
 	 * @return the all breeding methods
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative, String programUUID) throws MiddlewareQueryException;
+	List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative, String programUUID);
 
 	/**
 	 * Sets the all possible values in workbook.
 	 *
 	 * @param workbook the new all possible values in workbook
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	void setAllPossibleValuesInWorkbook(Workbook workbook) throws MiddlewareQueryException;
+	void setAllPossibleValuesInWorkbook(Workbook workbook);
 
 	/**
 	 * Gets the check list.
 	 *
 	 * @return the check list
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<Enumeration> getCheckList() throws MiddlewareQueryException;
+	List<Enumeration> getCheckList();
 
 	/**
 	 * Creates the id name variable pairs.
@@ -178,19 +162,16 @@ public interface FieldbookService {
 	 * @param settingDetails the setting details
 	 * @param idNamePairs the id name pairs
 	 * @param deleteIdWhenNameExists the delete id when name exists
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteIdWhenNameExists)
-			throws MiddlewareQueryException;
+	void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteIdWhenNameExists);
 
 	/**
 	 * Creates the id code name variable pairs.
 	 *
 	 * @param workbook the workbook
 	 * @param idCodeNamePairs the id code name pairs
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException;
+	void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs);
 
 	/**
 	 * Gets the id name pair for retrieve and save.
@@ -204,9 +185,8 @@ public interface FieldbookService {
 	 *
 	 * @param var the var
 	 * @return the variable possible values
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<ValueReference> getVariablePossibleValues(MeasurementVariable var) throws MiddlewareQueryException;
+	List<ValueReference> getVariablePossibleValues(MeasurementVariable var);
 
 	/**
 	 * Get all possible values.
@@ -214,9 +194,8 @@ public interface FieldbookService {
 	 * @param id the id
 	 * @param isGetAllRecords the is get all records
 	 * @return the all possible values
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) throws MiddlewareQueryException;
+	List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords);
 
 	/**
 	 * Add/Updates/Deletes check variables.
@@ -224,14 +203,14 @@ public interface FieldbookService {
 	 * @param userSelection the userSelection
 	 * @param form the form
 	 */
-	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form) throws MiddlewareQueryException;
+	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form);
 
 	BVDesignOutput runBVDesign(WorkbenchService workbenchService, FieldbookProperties fieldbookProperties, MainDesign design)
 			throws IOException;
 
-	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId) throws MiddlewareQueryException;
+	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId);
 	
-	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook) throws MiddlewareQueryException;
+	void saveStudyColumnOrdering(Integer studyId, String studyName, String columnOrderDelimited, Workbook workbook);
 
-	void addConditionsToTrialObservationsIfNecessary(Workbook workbook) throws MiddlewareQueryException;
+	void addConditionsToTrialObservationsIfNecessary(Workbook workbook);
 }

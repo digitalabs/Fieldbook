@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -47,18 +46,15 @@ public interface FieldMapService {
 	 * @param plotIterator
 	 * @param isSavedAlready
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready,
-			List<String> deletedPlots) throws MiddlewareQueryException;
+	Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready,
+			List<String> deletedPlots);
 
 	/**
 	 * Generate fieldmap.
 	 *
 	 * @param info the info
 	 * @return the plot[][]
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready)
-			throws MiddlewareQueryException;
+	Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready);
 }

@@ -128,13 +128,11 @@ public class EditNurseryController extends SettingsController {
 	 * @param model the model
 	 * @param session the session
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, @PathVariable int nurseryId, @RequestParam(
-					required = false) String isAjax, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes)
-			throws MiddlewareQueryException {
+					required = false) String isAjax, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
 		final String contextParams = this.retrieveContextInfo(request);
 
@@ -228,7 +226,7 @@ public class EditNurseryController extends SettingsController {
 
 	}
 
-	protected String getNurseryFolderName(int folderId) throws MiddlewareQueryException {
+	protected String getNurseryFolderName(int folderId) {
 		if (folderId == 1) {
 			return AppConstants.NURSERIES.getString();
 		}
@@ -239,7 +237,7 @@ public class EditNurseryController extends SettingsController {
 		SettingsUtil.removeBasicDetailsVariables(nurseryLevelConditions);
 	}
 
-	protected void convertToXmlDatasetPojo(Workbook workbook) throws MiddlewareQueryException {
+	protected void convertToXmlDatasetPojo(Workbook workbook) {
 		Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 
 		SettingsUtil.convertXmlDatasetToPojo(this.fieldbookMiddlewareService, this.fieldbookService, dataset, this.userSelection, this
@@ -287,12 +285,11 @@ public class EditNurseryController extends SettingsController {
 	 * @param model the model
 	 * @param session the session
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpServletRequest req,
-			HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
+			HttpSession session, HttpServletRequest request) {
 
 		final String contextParams = this.retrieveContextInfo(request);
 		this.clearSessionData(session);
@@ -305,9 +302,8 @@ public class EditNurseryController extends SettingsController {
 	 * Assign default values.
 	 *
 	 * @param form the form
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	private void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
+	private void assignDefaultValues(CreateNurseryForm form) {
 		List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
 		List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
 		List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
@@ -340,12 +336,10 @@ public class EditNurseryController extends SettingsController {
 	 * @param form the form
 	 * @param model the model
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String, String> submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model)
-			throws MiddlewareQueryException {
+	public Map<String, String> submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
 		// get the name of the nursery
 
 		String name = null;
@@ -642,11 +636,10 @@ public class EditNurseryController extends SettingsController {
 	 * @param model the model
 	 * @param session the session
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(value = "/recreate/session/variables", method = RequestMethod.GET)
 	public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model,
-			HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
+			HttpSession session, HttpServletRequest request) {
 
 		final String contextParams = this.retrieveContextInfo(request);
 

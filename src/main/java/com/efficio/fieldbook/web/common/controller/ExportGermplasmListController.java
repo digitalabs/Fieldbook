@@ -112,7 +112,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
-	protected void setExportListTypeFromOriginalGermplasm(GermplasmList list) throws MiddlewareQueryException {
+	protected void setExportListTypeFromOriginalGermplasm(GermplasmList list) {
 		if (list != null && list.getListRef() != null) {
 			GermplasmList origList = this.fieldbookMiddlewareService.getGermplasmListById(list.getListRef());
 

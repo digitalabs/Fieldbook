@@ -692,7 +692,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 */
 	@Override
 	public String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting,
-			ByteArrayOutputStream baos) throws MiddlewareQueryException {
+			ByteArrayOutputStream baos) {
 
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
 		boolean includeHeader = "1".equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf()) ? true : false;
@@ -984,7 +984,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public void deleteProgramPreset(Integer programPresetId) throws MiddlewareQueryException {
+	public void deleteProgramPreset(Integer programPresetId) {
 
 		this.presetDataManager.deleteProgramPreset(programPresetId);
 
@@ -1690,7 +1690,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public LabelPrintingPresets getLabelPrintingPreset(Integer presetId, Integer presetType) throws MiddlewareQueryException {
+	public LabelPrintingPresets getLabelPrintingPreset(Integer presetId, Integer presetType) {
 		if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
 			StandardPreset standardPreset = this.workbenchService.getStandardPresetById(presetId);
 
@@ -1704,13 +1704,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public ProgramPreset getLabelPrintingProgramPreset(Integer programPresetId) throws MiddlewareQueryException {
+	public ProgramPreset getLabelPrintingProgramPreset(Integer programPresetId) {
 		return this.presetDataManager.getProgramPresetById(programPresetId);
 	}
 
 	@Override
-	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId, Integer presetType)
-			throws MiddlewareQueryException {
+	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId, Integer presetType) {
 		final List<LabelPrintingPresets> out = new ArrayList<>();
 
 		final Project project = this.workbenchService.getProjectById(programId.longValue());
@@ -1790,8 +1789,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 }
 
 	@Override
-	public void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId)
-			throws MiddlewareQueryException {
+	public void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId) {
 		// check if exists, override if true else add new
 		List<LabelPrintingPresets> searchPresetList =
 				this.getAllLabelPrintingPresetsByName(settingsName, programId, LabelPrintingPresets.PROGRAM_PRESET);

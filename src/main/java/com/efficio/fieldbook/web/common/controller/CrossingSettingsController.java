@@ -330,7 +330,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	}
 
-	protected void saveCrossSetting(CrossSetting setting, String programUUID) throws MiddlewareQueryException, JAXBException {
+	protected void saveCrossSetting(CrossSetting setting, String programUUID) throws JAXBException {
 
 		List<ProgramPreset> presets =
 				this.presetDataManager.getProgramPresetFromProgramAndTool(programUUID, this.getFieldbookToolID(),
@@ -359,7 +359,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		this.presetDataManager.saveOrUpdateProgramPreset(forSaving);
 	}
 
-	protected Integer getFieldbookToolID() throws MiddlewareQueryException {
+	protected Integer getFieldbookToolID() {
 		return this.workbenchService.getFieldbookWebTool().getToolId().intValue();
 	}
 

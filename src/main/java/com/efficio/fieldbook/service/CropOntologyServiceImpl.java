@@ -11,6 +11,7 @@
 
 package com.efficio.fieldbook.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +49,7 @@ public class CropOntologyServiceImpl extends AbstractRestfulService implements C
 			String url = CropOntologyServiceImpl.SEARCH_TERMS_URL + query;
 			return this.getList(url, CropTerm.class);
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	/*
@@ -77,7 +78,7 @@ public class CropOntologyServiceImpl extends AbstractRestfulService implements C
 			String url = CropOntologyServiceImpl.GET_ONTOLOGIES_BY_CATEGORY + category;
 			return this.getList(url, Ontology.class);
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 }

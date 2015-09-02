@@ -153,8 +153,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		return outputFilename;
 	}
 
-	protected String getFileNamePath(int index, MeasurementRow trialObservation, List<Integer> instances, String filename, boolean isNursery)
-			throws MiddlewareQueryException {
+	protected String getFileNamePath(int index, MeasurementRow trialObservation, List<Integer> instances, String filename, boolean isNursery) {
 		String filenamePath = this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(filename);
 		if (instances != null && (instances.size() > 1 || !isNursery)) {
 			int fileExtensionIndex = filenamePath.lastIndexOf(".");

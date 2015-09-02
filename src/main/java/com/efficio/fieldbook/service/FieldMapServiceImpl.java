@@ -50,8 +50,7 @@ public class FieldMapServiceImpl implements FieldMapService {
 	}
 
 	@Override
-	public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready)
-			throws MiddlewareQueryException {
+	public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready) {
 
 		return this.generateFieldmap(info, plotIterator, isSavedAlready, null);
 	}
@@ -63,7 +62,7 @@ public class FieldMapServiceImpl implements FieldMapService {
 	 */
 	@Override
 	public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready,
-			List<String> deletedPlots) throws MiddlewareQueryException {
+			List<String> deletedPlots) {
 
 		int totalColumns = info.getNumberOfColumnsInBlock();
 		int totalRanges = info.getNumberOfRangesInBlock();
@@ -82,12 +81,11 @@ public class FieldMapServiceImpl implements FieldMapService {
 					plot.setRange(range);
 					plot.setDatasetId(label.getDatasetId());
 					plot.setGeolocationId(label.getGeolocationId());
-					if (isSerpentine && column % 2 == 0) {
-					}
 					plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
 					plot.setNotStarted(false);
 					plot.setSavedAlready(isSavedAlready);
 				} else {
+					// TODO replace with a more appropriate exception
 					throw new MiddlewareQueryException("The Column/Range of the Field Map exceeded the Total Columns/Ranges");
 				}
 			}

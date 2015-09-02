@@ -25,11 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -75,7 +71,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
 	public String show(@PathVariable String studyType, @PathVariable int id,
-			@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) throws MiddlewareQueryException {
+			@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
 
 		boolean isNursery = studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType) ? true : false;
 		Workbook workbook;
@@ -123,7 +119,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@ResponseBody
 	@RequestMapping(value = "/datasets/{nurseryId}")
-	public List<DatasetReference> loadDatasets(@PathVariable int nurseryId) throws MiddlewareQueryException {
+	public List<DatasetReference> loadDatasets(@PathVariable int nurseryId) {
 		return this.fieldbookMiddlewareService.getDatasetReferences(nurseryId);
 	}
 

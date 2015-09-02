@@ -1,19 +1,8 @@
 
 package com.efficio.fieldbook.web.common.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -48,26 +37,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.CsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExportAdvanceListService;
-import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
-import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
-import com.efficio.fieldbook.web.common.service.KsuExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.RExportStudyService;
+import com.efficio.fieldbook.web.common.service.*;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
@@ -185,8 +162,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/export/{exportType}/{selectedTraitTermId}/{exportWayType}", method = RequestMethod.POST)
 	public String exportRFileForNursery(@RequestBody Map<String, String> data, @PathVariable int exportType,
-			@PathVariable int selectedTraitTermId, @PathVariable int exportWayType, HttpServletRequest req, HttpServletResponse response)
-			throws MiddlewareQueryException {
+			@PathVariable int selectedTraitTermId, @PathVariable int exportWayType, HttpServletRequest req, HttpServletResponse response) {
 		boolean isTrial = false;
 		List<Integer> instancesList = new ArrayList<Integer>();
 		instancesList.add(1);
@@ -196,8 +172,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/export/custom/report", method = RequestMethod.POST)
-	public String exportCustomReport(@RequestBody Map<String, String> data, HttpServletRequest req, HttpServletResponse response)
-			throws MiddlewareQueryException {
+	public String exportCustomReport(@RequestBody Map<String, String> data, HttpServletRequest req, HttpServletResponse response) {
 		String studyId = this.getStudyId(data);
 		String reportCode = data.get("customReportCode");
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -227,7 +202,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFile(@RequestBody Map<String, String> data, @PathVariable int exportType, @PathVariable int exportWayType,
-			HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
+			HttpServletRequest req, HttpServletResponse response) {
 		boolean isTrial = false;
 		List<Integer> instancesList = new ArrayList<Integer>();
 		instancesList.add(1);
@@ -238,7 +213,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/exportTrial/{exportType}/{selectedTraitTermId}/{instances}/{exportWayType}", method = RequestMethod.POST)
 	public String exportRFileForTrial(@RequestBody Map<String, String> data, @PathVariable int exportType,
 			@PathVariable int selectedTraitTermId, @PathVariable String instances, @PathVariable int exportWayType, HttpServletRequest req,
-			HttpServletResponse response) throws MiddlewareQueryException {
+			HttpServletResponse response) {
 		boolean isTrial = true;
 		List<Integer> instancesList = new ArrayList<Integer>();
 		StringTokenizer tokenizer = new StringTokenizer(instances, "|");
@@ -252,7 +227,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/exportTrial/{exportType}/{instances}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFileTrial(@RequestBody Map<String, String> data, @PathVariable int exportType, @PathVariable String instances,
-			@PathVariable int exportWayType, HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
+			@PathVariable int exportWayType, HttpServletRequest req, HttpServletResponse response) {
 		boolean isTrial = true;
 		List<Integer> instancesList = new ArrayList<Integer>();
 		StringTokenizer tokenizer = new StringTokenizer(instances, "|");
@@ -335,7 +310,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	private String doExport(int exportType, int selectedTraitTermId, HttpServletResponse response, boolean isTrial,
-			List<Integer> instances, int exportWayType, Map<String, String> data) throws MiddlewareQueryException {
+			List<Integer> instances, int exportWayType, Map<String, String> data) {
 
 		/*
 		 * exportWayType 1 - row column 2 - serpentine (range) 3 - serpentine (col)
@@ -551,7 +526,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export/advanced/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doAdvanceExport(HttpServletResponse response, HttpServletRequest req) throws MiddlewareQueryException {
+	public String doAdvanceExport(HttpServletResponse response, HttpServletRequest req) {
 
 		String advancedListIds = req.getParameter("exportAdvanceListGermplasmIds");
 		String exportType = req.getParameter("exportAdvanceListGermplasmType");
@@ -632,7 +607,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export/stock/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doExportStockList(HttpServletResponse response, HttpServletRequest req) throws MiddlewareQueryException {
+	public String doExportStockList(HttpServletResponse response, HttpServletRequest req) {
 
 		String stockIds = req.getParameter("exportStockListId");
 

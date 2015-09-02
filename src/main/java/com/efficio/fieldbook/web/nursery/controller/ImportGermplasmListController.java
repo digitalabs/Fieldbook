@@ -229,13 +229,12 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param result the result
 	 * @param model the model
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@ResponseBody
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
 	@Transactional
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model,
-			HttpServletRequest req) throws MiddlewareQueryException {
+			HttpServletRequest req) {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 		String[] selectedCheck = form.getSelectedCheck();
@@ -392,7 +391,7 @@ public class ImportGermplasmListController extends SettingsController {
 		return 0;
 	}
 
-	private void saveListDataProject(boolean isNursery, int studyId) throws MiddlewareQueryException {
+	private void saveListDataProject(boolean isNursery, int studyId) {
 		// we call here to have
 
 		if (this.getUserSelection().getImportedGermplasmMainInfo() != null
@@ -814,7 +813,7 @@ public class ImportGermplasmListController extends SettingsController {
 		return this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty();
 	}
 
-	protected String getCheckId(String checkCode, List<Enumeration> checksList) throws MiddlewareQueryException {
+	protected String getCheckId(String checkCode, List<Enumeration> checksList) {
 		String checkId = "";
 
 		for (Enumeration enumVar : checksList) {

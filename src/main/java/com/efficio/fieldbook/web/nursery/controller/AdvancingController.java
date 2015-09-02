@@ -14,15 +14,7 @@ package com.efficio.fieldbook.web.nursery.controller;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -53,22 +45,12 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.AdvanceGermplasmChangeDetail;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -143,11 +125,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param session the session
 	 * @param nurseryId the nursery id
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
-			HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException {
+			HttpSession session, @PathVariable int nurseryId) {
 		form.setMethodChoice("1");
 		form.setLineChoice("1");
 		form.setLineSelected("1");
@@ -313,12 +294,11 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param result the result
 	 * @param model the model
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result,
-			Model model) throws MiddlewareQueryException {
+			Model model) {
 		Map<String, Object> results = new HashMap<>();
 		this.advancingNursery.setMethodChoice(form.getMethodChoice());
 		this.advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
@@ -427,7 +407,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result, Model model,
-			HttpServletRequest req) throws MiddlewareQueryException {
+			HttpServletRequest req) {
 
 		try {
 			/* The imported germplasm list. */
@@ -454,7 +434,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@RequestMapping(value = "/delete/entries", method = RequestMethod.POST)
 	public String deleteAdvanceNurseryEntries(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, BindingResult result,
-			Model model, HttpServletRequest req) throws MiddlewareQueryException {
+			Model model, HttpServletRequest req) {
 
 		try {
 			/* The imported germplasm list. */
@@ -556,7 +536,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/countPlots/{ids}", method = RequestMethod.GET)
-	public int countPlots(@PathVariable String ids) throws MiddlewareQueryException {
+	public int countPlots(@PathVariable String ids) {
 		String[] idList = ids.split(",");
 		List<Integer> idParams = new ArrayList<>();
 		for (String id : idList) {
@@ -571,7 +551,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/checkMethodTypeMode/{methodVariateId}", method = RequestMethod.GET)
-	public String checkMethodTypeMode(@PathVariable int methodVariateId) throws MiddlewareQueryException {
+	public String checkMethodTypeMode(@PathVariable int methodVariateId) {
 		List<MeasurementRow> observations = this.userSelection.getWorkbook().getObservations();
 		if (observations != null && !observations.isEmpty()) {
 			Set<Integer> methodIds = new HashSet<>();

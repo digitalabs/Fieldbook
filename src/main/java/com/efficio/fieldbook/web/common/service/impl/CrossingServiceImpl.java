@@ -1,12 +1,7 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,8 +92,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	@Override
-	public void applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId)
-			throws MiddlewareQueryException {
+	public void applyCrossSetting(CrossSetting crossSetting, ImportedCrossesList importedCrossesList, Integer userId) {
 
 		this.applyCrossNameSettingToImportedCrosses(crossSetting, importedCrossesList.getImportedCrosses());
 		Map<Germplasm, Name> germplasmToBeSaved =
@@ -131,8 +125,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	}
 
-	void savePedigreeDesignationName(ImportedCrossesList importedCrossesList, List<Integer> germplasmIDs, CrossSetting crossSetting)
-			throws MiddlewareQueryException {
+	void savePedigreeDesignationName(ImportedCrossesList importedCrossesList, List<Integer> germplasmIDs, CrossSetting crossSetting) {
 
 		List<Name> parentageDesignationNames = new ArrayList<Name>();
 		Iterator<Integer> germplasmIdIterator = germplasmIDs.iterator();
@@ -171,8 +164,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return true;
 	}
 
-	protected void applyCrossNameSettingToImportedCrosses(CrossSetting setting, List<ImportedCrosses> importedCrosses)
-			throws MiddlewareQueryException {
+	protected void applyCrossNameSettingToImportedCrosses(CrossSetting setting, List<ImportedCrosses> importedCrosses) {
 
 		this.processBreedingMethodProcessCodes(setting);
 
@@ -253,7 +245,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	protected Map<Germplasm, Name> generateGermplasmNameMap(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses,
-			Integer userId, boolean hasPlotDuplicate) throws MiddlewareQueryException {
+			Integer userId, boolean hasPlotDuplicate) {
 
 		Map<Germplasm, Name> germplasmNameMap = new LinkedHashMap<>();
 		Integer crossingNameTypeId = this.getIDForUserDefinedFieldCrossingName();
@@ -320,11 +312,11 @@ public class CrossingServiceImpl implements CrossingService {
 		name.setUserId(userId);
 	}
 
-	protected List<Integer> saveGermplasm(Map<Germplasm, Name> germplasmNameMap) throws MiddlewareQueryException {
+	protected List<Integer> saveGermplasm(Map<Germplasm, Name> germplasmNameMap) {
 		return this.germplasmDataManager.addGermplasm(germplasmNameMap);
 	}
 
-	protected Integer getNextNumberInSequence(CrossNameSetting setting) throws MiddlewareQueryException {
+	protected Integer getNextNumberInSequence(CrossNameSetting setting) {
 
 		String lastPrefixUsed = this.buildPrefixString(setting);
 		int nextNumberInSequence = 1;
@@ -424,7 +416,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return sb.toString();
 	}
 
-	public Integer getIDForUserDefinedFieldCrossingName() throws MiddlewareQueryException {
+	public Integer getIDForUserDefinedFieldCrossingName() {
 
 		List<UserDefinedField> nameTypes = this.germplasmListManager.getGermplasmNameTypes();
 		for (UserDefinedField type : nameTypes) {

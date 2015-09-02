@@ -11,14 +11,7 @@
 
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -28,11 +21,7 @@ import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -245,11 +234,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @param variables the variables
      * @param hasLabels the has labels
      * @return the list
-     * @throws MiddlewareQueryException the middleware query exception
      */
     protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel, 
-			boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination)
-			throws MiddlewareQueryException {
+			boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination) {
         
 		// create a map of id and its id-code-name combination
         Map<String, String> idCodeNameMap = new HashMap<>();
@@ -341,10 +328,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @param requiredFields the required fields
      * @param requiredVariablesLabel the required variables label
      * @return the list
-     * @throws MiddlewareQueryException the middleware query exception
      */
 	protected List<SettingDetail> buildDefaultVariables(List<SettingDetail> defaults, String requiredFields,
-			List<String> requiredVariablesLabel) throws MiddlewareQueryException {
+			List<String> requiredVariablesLabel) {
         StringTokenizer token = new StringTokenizer(requiredFields, ",");
         int ctr = 0;
 		while (token.hasMoreTokens()) {
@@ -360,9 +346,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @param id the id
      * @param name the name
      * @return the setting detail
-     * @throws MiddlewareQueryException the middleware query exception
      */
-    protected SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
+    protected SettingDetail createSettingDetail(int id, String name) {
             String variableName;
 		StandardVariable stdVar = this.getStandardVariable(id);
             if (name != null && !name.isEmpty()) {
@@ -410,9 +395,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * Populates Setting Variable.
      *
      * @param var the var
-     * @throws MiddlewareQueryException the middleware query exception
      */
-    protected void populateSettingVariable(SettingVariable var) throws MiddlewareQueryException {
+    protected void populateSettingVariable(SettingVariable var) {
 		StandardVariable stdvar = this.getStandardVariable(var.getCvTermId());
     	if (stdvar != null) {
 			var.setDescription(stdvar.getDescription());
@@ -437,9 +421,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      *
      * @param id the id
      * @return the setting variable
-     * @throws MiddlewareQueryException the middleware query exception
      */
-    protected SettingVariable getSettingVariable(int id) throws MiddlewareQueryException {
+    protected SettingVariable getSettingVariable(int id) {
 		StandardVariable stdVar = this.getStandardVariable(id);
 		if (stdVar != null) {
 			SettingVariable svar =
@@ -464,9 +447,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      *
      * @param id the id
      * @return the standard variable
-     * @throws MiddlewareQueryException the middleware query exception
      */
-    protected StandardVariable getStandardVariable(int id) throws MiddlewareQueryException {
+    protected StandardVariable getStandardVariable(int id) {
 		StandardVariable variable = this.userSelection.getCacheStandardVariable(id);
     	if (variable == null) {
 			variable = this.fieldbookMiddlewareService.getStandardVariable(id);
@@ -566,7 +548,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         }
     }
             
-    protected void resetSessionVariablesAfterSave(Workbook workbook, boolean isNursery) throws MiddlewareQueryException {
+    protected void resetSessionVariablesAfterSave(Workbook workbook, boolean isNursery) {
         
 		// update variables in measurement rows
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty()) {
@@ -726,9 +708,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * Removes the selection variates from traits.
      *
      * @param traits the traits
-     * @throws MiddlewareQueryException the middleware query exception
      */
-    private void removeSelectionVariatesFromTraits(List<SettingDetail> traits) throws MiddlewareQueryException {
+    private void removeSelectionVariatesFromTraits(List<SettingDetail> traits) {
         if (traits != null) {
             Iterator<SettingDetail> iter = traits.iterator();
             while (iter.hasNext()) {
@@ -758,8 +739,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         }
     }
     
-	private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs)
-			throws MiddlewareQueryException {
+	private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs) {
         Map<String, MeasurementVariable> studyConditionMap = new HashMap<>();
         Map<String, SettingDetail> removedConditionsMap = new HashMap<>();
 		if (workbook != null && idCodeNamePairs != null && !"".equalsIgnoreCase(idCodeNamePairs)) {
@@ -809,7 +789,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	protected Method getMethod(Map<String, MeasurementVariable> studyConditionMap, 
-			String idTermId, String codeTermId, String programUUID) throws MiddlewareQueryException {
+			String idTermId, String codeTermId, String programUUID) {
 		Method method = null;
 		if (studyConditionMap.get(idTermId) != null) {
 			method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : 
@@ -825,7 +805,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap,
-			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) throws MiddlewareQueryException {
+			Map<String, MeasurementVariable> studyConditionMap, String id, String value, String userId) {
 		if (removedConditionsMap.get(id) == null) {
 			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName()));
         }

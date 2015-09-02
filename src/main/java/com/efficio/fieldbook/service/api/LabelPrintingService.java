@@ -22,7 +22,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 
@@ -56,10 +55,8 @@ public interface LabelPrintingService {
 	 * @param userLabelPrinting the user label printing
 	 * @param baos the baos
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
-					throws MiddlewareQueryException;
+	String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos);
 
 	/**
 	 * Generate csv labels.
@@ -68,7 +65,6 @@ public interface LabelPrintingService {
 	 * @param userLabelPrinting the user label printing
 	 * @param baos the baos
 	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	String generateCSVLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
 					throws IOException;
@@ -117,17 +113,15 @@ public interface LabelPrintingService {
 	 * @param presetId
 	 * @param presetType
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	LabelPrintingPresets getLabelPrintingPreset(Integer presetId, Integer presetType) throws MiddlewareQueryException;
+	LabelPrintingPresets getLabelPrintingPreset(Integer presetId, Integer presetType);
 
 	/**
 	 *
 	 * @param programPresetId
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	ProgramPreset getLabelPrintingProgramPreset(Integer programPresetId) throws MiddlewareQueryException;
+	ProgramPreset getLabelPrintingProgramPreset(Integer programPresetId);
 
 	/**
 	 *
@@ -135,10 +129,8 @@ public interface LabelPrintingService {
 	 * @param programId
 	 * @param presetType
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId, Integer presetType)
-					throws MiddlewareQueryException;
+	List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId, Integer presetType);
 
 	/**
 	 *
@@ -162,14 +154,13 @@ public interface LabelPrintingService {
 	 * @param settingsName
 	 * @param xmlConfig
 	 * @param programId
-	 * @throws MiddlewareQueryException
 	 */
-	void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId) throws MiddlewareQueryException;
+	void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId);
 
-	public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields,
+	void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields,
 			boolean isTrial, boolean isStockList);
 
-	void deleteProgramPreset(Integer programPresetId) throws MiddlewareQueryException;
+	void deleteProgramPreset(Integer programPresetId);
 
 	/**
 	 * Returns if the list is either ADVANCED list of CROSSES list
@@ -183,7 +174,6 @@ public interface LabelPrintingService {
 	 * 
 	 * @param stockList
 	 * @return
-	 * @throws MiddlewareQueryException
 	 */
-	public Map<String, InventoryDetails> getInventoryDetailsMap(GermplasmList stockList);
+	Map<String, InventoryDetails> getInventoryDetailsMap(GermplasmList stockList);
 }

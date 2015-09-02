@@ -11,13 +11,7 @@
 
 package com.efficio.fieldbook.web.nursery.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -30,7 +24,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +57,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	 * .bean.UserSelection)
 	 */
 	@Override
-	public List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection)
-			throws MiddlewareQueryException {
+	public List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection) {
 		long start = System.currentTimeMillis();
 		List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
 		Map<String, Integer> standardVariableMap = new HashMap<String, Integer>();
@@ -106,7 +98,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	private List<MeasurementRow> createMeasurementRows(UserSelection userSelection, int trialNo,
 			int repNo, int blockNo, ImportedGermplasm germplasm, int entryNo, int plotNo,
 			Map<String, Integer> standardVariableMap,
-			MeasurementData[][] treatmentFactorPermutations) throws MiddlewareQueryException {
+			MeasurementData[][] treatmentFactorPermutations) {
 
 		List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
 
@@ -153,7 +145,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 
 	private void createFactorDataList(List<MeasurementData> dataList, UserSelection userSelection,
 			int repNo, int blockNo, ImportedGermplasm germplasm, int entryNo, int plotNo,
-			Map<String, Integer> standardVariableMap) throws MiddlewareQueryException {
+			Map<String, Integer> standardVariableMap) {
 
 		for (MeasurementVariable var : userSelection.getWorkbook().getNonTrialFactors()) {
 
@@ -288,8 +280,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	}
 
 	private MeasurementData[][] generateTreatmentFactorPermutations(
-			List<TreatmentVariable> treatmentVariables, Map<String, Integer> standardVariableMap)
-					throws MiddlewareQueryException {
+			List<TreatmentVariable> treatmentVariables, Map<String, Integer> standardVariableMap) {
 
 		MeasurementData[][] output = null;
 		if (treatmentVariables != null && !treatmentVariables.isEmpty()) {
@@ -353,7 +344,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	}
 
 	private MeasurementData createMeasurementData(MeasurementVariable variable,
-			Map<String, Integer> standardVariableMap) throws MiddlewareQueryException {
+			Map<String, Integer> standardVariableMap) {
 
 		Integer termId = variable.getTermId();
 		if (termId == 0) {
@@ -364,8 +355,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 				variable.getDataType(), variable);
 	}
 
-	private Integer getTermId(MeasurementVariable var, Map<String, Integer> standardVariableMap)
-			throws MiddlewareQueryException {
+	private Integer getTermId(MeasurementVariable var, Map<String, Integer> standardVariableMap) {
 
 		Integer termId = null;
 		String key = var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":"

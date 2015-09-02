@@ -37,9 +37,8 @@ public interface NamingConventionService {
 	 * @throws MiddlewareQueryException
 	 * @throws RuleException
 	 */
-	AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException, RuleException;
+	AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws RuleException;
 
-	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean checkForUniqueness) throws MiddlewareQueryException,
-			RuleException;
+	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean checkForUniqueness) throws RuleException;
 
 }

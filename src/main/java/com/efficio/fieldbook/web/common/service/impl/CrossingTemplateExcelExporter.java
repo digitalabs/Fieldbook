@@ -14,7 +14,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -41,9 +40,6 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 	@Resource
 	private StudyDataManager studyDataManager;
-
-	@Resource
-	private FileService fileService;
 
 	public File export(Integer studyId, String studyName) throws CrossingTemplateExportException {
 		try {

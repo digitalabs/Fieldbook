@@ -6,6 +6,16 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
@@ -13,24 +23,10 @@ import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
-import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class KsuCsvImportStudyServiceImpl extends KsuExcelImportStudyServiceImpl implements KsuCsvImportStudyService {
-	private static final Logger LOG = LoggerFactory.getLogger(KsuCsvImportStudyServiceImpl.class);
-
 	@Resource
 	protected FieldbookService fieldbookMiddlewareService;
 

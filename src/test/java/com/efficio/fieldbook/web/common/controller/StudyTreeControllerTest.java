@@ -96,7 +96,7 @@ public class StudyTreeControllerTest extends AbstractBaseControllerIntegrationTe
 		Project project = new Project();
 		project.setProjectId(1L);
 		project.setProjectName("Project 1");
-		project.setUniqueID("12345678");
+		project.setUniqueID(DUMMY_PROGRAM_UUID);
 		return project;
 	}
 

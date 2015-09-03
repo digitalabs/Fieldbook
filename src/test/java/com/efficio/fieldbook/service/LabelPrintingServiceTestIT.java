@@ -33,7 +33,7 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 
 import com.csvreader.CsvReader;
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
@@ -52,7 +52,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceTestIT.class);
 
 	private static int[] fieldMapLabels = {AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
-			AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
+		AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
 
 	private static final String PLOT_COORDINATES = "Plot Coordinates";
 
@@ -60,7 +60,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	private LabelPrintingService labelPrintingService;
 
 	@Resource
-	private ResourceBundleMessageSource messageSource;
+	private MessageSource messageSource;
 
 	@Test
 	public void testGetAvailableLabelFieldsFromTrialWithoutFieldMap() {
@@ -392,8 +392,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testPrintHeaderFieldsIfIncludeHeader() {
-		LabelPrintingServiceImpl labelPrintingServiceImpl = new LabelPrintingServiceImpl();
-		labelPrintingServiceImpl.setMessageSource(this.messageSource);
+		LabelPrintingServiceImpl labelPrintingServiceImpl = (LabelPrintingServiceImpl) this.labelPrintingService;
 		Row row = Mockito.mock(Row.class);
 		Cell cell = Mockito.mock(Cell.class);
 		Mockito.doReturn(cell).when(row).createCell(Matchers.anyInt());
@@ -409,8 +408,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testPrintHeaderFieldsIfNotIncludeHeader() {
-		LabelPrintingServiceImpl labelPrintingServiceImpl = new LabelPrintingServiceImpl();
-		labelPrintingServiceImpl.setMessageSource(this.messageSource);
+		LabelPrintingServiceImpl labelPrintingServiceImpl = (LabelPrintingServiceImpl) this.labelPrintingService;
 		Row row = Mockito.mock(Row.class);
 		Cell cell = Mockito.mock(Cell.class);
 		Mockito.doReturn(cell).when(row).createCell(Matchers.anyInt());
@@ -447,21 +445,20 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	private boolean areHeadersEqual(String[] headers, UserLabelPrinting userLabelPrinting) {
 		int headerLength =
 				userLabelPrinting.getLeftSelectedLabelFields().split(",").length
-						+ userLabelPrinting.getRightSelectedLabelFields().split(",").length;
+				+ userLabelPrinting.getRightSelectedLabelFields().split(",").length;
 		return headers.length == headerLength;
 	}
 
 	@Test
 	public void testPopulateUserSpecifiedLabelFieldsForNurseryEnvironmentDataOnly() {
 		String testDesigValue = "123";
-		LabelPrintingService printingService = new LabelPrintingServiceImpl();
 
 		String testSelectedFields = Integer.toString(TermId.DESIG.getId()) + "," + Integer.toString(TermId.ENTRY_NO.getId());
 
 		List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
 		input.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
 
-		printingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, false);
+		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, false);
 
 		Assert.assertEquals(testDesigValue,
 				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));

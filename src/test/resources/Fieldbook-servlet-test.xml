@@ -288,8 +288,7 @@
 
 	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl"/>
 	
-	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil"
-          scope="request">
+	<bean id="contextUtil" class="org.generationcp.commons.spring.util.ContextUtil">
         <aop:scoped-proxy/>
     </bean>
 

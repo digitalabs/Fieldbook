@@ -11,11 +11,9 @@
 
 package com.efficio.fieldbook.web.ontology.controller;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.PropertyTree;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.easymock.EasyMock;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -38,23 +36,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.PropertyTree;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 
-public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegrationTest {
+public class OntologyDetailsControllerTest extends AbstractBaseIntegrationTest {
 
 	public static final Logger log = LoggerFactory.getLogger(OntologyDetailsControllerTest.class);
 
 	@InjectMocks
 	private OntologyDetailsController controller;
-	
+
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Override
 	@Before
 	public void setUp() {
-		controller = new OntologyDetailsController();
+		this.controller = new OntologyDetailsController();
 	}
+
 	/**
 	 * Test get ontology details.
 	 *
@@ -68,7 +71,7 @@ public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegra
 
 		OntologyService ontologyService = Mockito.mock(OntologyService.class);
 		StandardVariable stdvar = this.createStandardVariableTestData();
-		Mockito.when(ontologyService.getStandardVariable(8050,contextUtil.getCurrentProgramUUID())).thenReturn(stdvar);
+		Mockito.when(ontologyService.getStandardVariable(8050, this.contextUtil.getCurrentProgramUUID())).thenReturn(stdvar);
 		Mockito.when(ontologyService.countProjectsByVariable(8050)).thenReturn(123456L);
 		Mockito.when(ontologyService.countExperimentsByVariable(8050, 1010)).thenReturn(789000L);
 		this.controller.setOntologyService(ontologyService);
@@ -90,9 +93,9 @@ public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegra
 			EasyMock.expect(fieldbookService.filterStandardVariablesForSetting(1, new ArrayList<SettingDetail>())).andReturn(
 					filteredVariables);
 			EasyMock.expect(ontologyService.getAllTraitGroupsHierarchy(true)).andReturn(ontologyTree);
-			EasyMock.expect(ontologyService.getStandardVariable(1,contextUtil.getCurrentProgramUUID())).andReturn(sv1);
-			EasyMock.expect(ontologyService.getStandardVariable(2,contextUtil.getCurrentProgramUUID())).andReturn(sv2);
-			EasyMock.expect(ontologyService.getStandardVariable(3,contextUtil.getCurrentProgramUUID())).andReturn(sv3);
+			EasyMock.expect(ontologyService.getStandardVariable(1, this.contextUtil.getCurrentProgramUUID())).andReturn(sv1);
+			EasyMock.expect(ontologyService.getStandardVariable(2, this.contextUtil.getCurrentProgramUUID())).andReturn(sv2);
+			EasyMock.expect(ontologyService.getStandardVariable(3, this.contextUtil.getCurrentProgramUUID())).andReturn(sv3);
 		} catch (MiddlewareException e) {
 			OntologyDetailsControllerTest.log.error(e.getMessage());
 		}
@@ -132,8 +135,7 @@ public class OntologyDetailsControllerTest extends AbstractBaseControllerIntegra
 		enumerations.add(new Enumeration(3, "ENUM1", "ENUM3 DESC", 0));
 		enumerations.add(new Enumeration(4, "ENUM1", "ENUM4 DESC", 0));
 
-		StandardVariable stdvar =
-				new StandardVariable(property, scale, method, dataType, traitClass, PhenotypicType.TRIAL_DESIGN);
+		StandardVariable stdvar = new StandardVariable(property, scale, method, dataType, traitClass, PhenotypicType.TRIAL_DESIGN);
 		stdvar.setConstraints(constraints);
 		stdvar.setEnumerations(enumerations);
 		stdvar.setName("VARIABLE1");

@@ -34,11 +34,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.pojos.treeview.TreeNode;
 
-public class StudyTreeControllerTest extends AbstractBaseControllerIntegrationTest {
+public class StudyTreeControllerTest extends AbstractBaseIntegrationTest {
 
 	@Mock
 	private StudyTreeController controller;
@@ -103,7 +103,7 @@ public class StudyTreeControllerTest extends AbstractBaseControllerIntegrationTe
 	private void mockFieldbookServiceAndItsMethods() throws MiddlewareQueryException {
 		FieldbookService fieldbookService = Mockito.mock(FieldbookService.class);
 		Mockito.when(fieldbookService.getRootFolders(Matchers.anyString()))
-				.thenReturn(this.getChildren(StudyTreeControllerTest.ROOT_STUDY));
+		.thenReturn(this.getChildren(StudyTreeControllerTest.ROOT_STUDY));
 		for (int i = 1; i <= 8; i++) {
 			Mockito.when(fieldbookService.getChildrenOfFolder(i, this.selectedProject.getUniqueID())).thenReturn(
 					this.getChildrenOfFolder(i));

@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -25,13 +26,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.ModelAndViewAssert;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.FieldbookServiceImpl;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -41,8 +45,7 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-// TODO : setup testing framework for Fieldbook so that they are not essentially partly an integration test
-public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegrationTest {
+public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 
 	@Autowired
 	private CreateNurseryController controller;
@@ -52,27 +55,13 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	@Test
-	public void testGetReturnsCorrectModelAndView() throws Exception {
-
-		boolean isHandler = this.verifyHandler(CreateNurseryController.URL, HttpMethod.GET.name(), CreateNurseryController.class, "show");
-		Assert.assertTrue(isHandler);
-
-		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		FieldbookServiceImpl fieldbookServiceImpl = new FieldbookServiceImpl(this.fieldbookMiddlewareService, new PossibleValuesCache());
-		this.setupMockReturns();
-		this.controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-		this.controller.setFieldbookService(fieldbookServiceImpl);
-
-		CreateNurseryForm form = new CreateNurseryForm();
-		ImportGermplasmListForm form2 = new ImportGermplasmListForm();
-		ExtendedModelMap model = new ExtendedModelMap();
-
-		String viewName = this.controller.show(form, form2, model, this.session, this.request);
-		Assert.assertEquals(AbstractBaseFieldbookController.BASE_TEMPLATE_NAME, viewName);
-
-		Assert.assertEquals("/NurseryManager/createNursery", model.get(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE));
+	public void testGet() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get(CreateNurseryController.URL))
+				.andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "/NurseryManager/createNursery"));
 	}
 
 	@Test
@@ -87,7 +76,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 		ImportGermplasmListForm form2 = new ImportGermplasmListForm();
 		Model model = Mockito.mock(Model.class);
 		try {
-			this.controller.show(form, form2, model, this.session, this.request);
+			this.controller.show(form, form2, model, this.mockSession, this.mockRequest);
 			Assert.assertNotNull(form2.getCheckVariables());
 			Assert.assertTrue("Expected only check variables but the list has non check variables as well.",
 					WorkbookTestUtil.areDetailsFilteredVariables(form2.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
@@ -117,7 +106,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 		this.controller.setUserSelection(this.userSelection);
 
 		try {
-			this.controller.getChecksForUseExistingNursery(form, -1, model, this.session, this.request);
+			this.controller.getChecksForUseExistingNursery(form, -1, model, this.mockSession, this.mockRequest);
 			Assert.assertNotNull(form.getCheckVariables());
 			Assert.assertTrue("Expected only check variables but the list has non check variables as well.",
 					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
@@ -135,7 +124,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 		this.controller.setUserSelection(this.userSelection);
 
 		try {
-			this.controller.getChecksForUseExistingNursery(form, -1, model, this.session, this.request);
+			this.controller.getChecksForUseExistingNursery(form, -1, model, this.mockSession, this.mockRequest);
 			Assert.assertNull(form.getCheckVariables());
 		} catch (MiddlewareQueryException e) {
 			Assert.fail("Expected mock values but still called the middleware class");
@@ -212,17 +201,11 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 
 	@Test
 	public void testUseExistingNursery() throws Exception {
-		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		Mockito.when(this.fieldbookMiddlewareService.getStudyVariableSettings(1, true)).thenThrow(
-				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
-		this.controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		ModelAndView mav = this.request(CreateNurseryController.URL + "/nursery/1", HttpMethod.GET.name());
-
-		Assert.assertEquals("Expected HttpStatus OK but got " + this.response.getStatus() + " instead.", HttpStatus.OK.value(),
-				this.response.getStatus());
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "createNurseryForm");
-
+		this.mockMvc.perform(MockMvcRequestBuilders.get(CreateNurseryController.URL + "/nursery/1"))
+			.andDo(MockMvcResultHandlers.print())
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.model().attributeExists("createNurseryForm"))
+			.andExpect(MockMvcResultMatchers.model().attribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "/NurseryManager/createNursery"));
 	}
 
 	@Test
@@ -303,7 +286,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 
 	@Test
 	public void testSetSettingDetailsValueFromVariableWhenVariableLocationIdIsANonEmptyValue() throws NumberFormatException,
-			MiddlewareQueryException {
+	MiddlewareQueryException {
 		CreateNurseryController createNurseryController = new CreateNurseryController();
 		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService =
 				Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
@@ -325,7 +308,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 
 	@Test
 	public void testSetSettingDetailsValueFromVariableWhenVariableLocationIdIsAnEmptyValue() throws NumberFormatException,
-			MiddlewareQueryException {
+	MiddlewareQueryException {
 		CreateNurseryController createNurseryController = new CreateNurseryController();
 		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService =
 				Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
@@ -347,7 +330,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 
 	@Test
 	public void testSetSettingDetailsValueFromVariableWhenVariableBreedingMethodCodeIsANonEmptyValue() throws NumberFormatException,
-			MiddlewareQueryException {
+	MiddlewareQueryException {
 		CreateNurseryController createNurseryController = new CreateNurseryController();
 		org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService =
 				Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
@@ -363,8 +346,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 		method.setUniqueID(uniqueID);
 
 		Mockito.doReturn(uniqueID).when(contextUtil).getCurrentProgramUUID();
-		Mockito.when(fieldbookMiddlewareService.getMethodByCode(bmCode,uniqueID)).thenReturn(method);
-		
+		Mockito.when(fieldbookMiddlewareService.getMethodByCode(bmCode, uniqueID)).thenReturn(method);
 
 		SettingDetail detail = new SettingDetail();
 		MeasurementVariable var = new MeasurementVariable();

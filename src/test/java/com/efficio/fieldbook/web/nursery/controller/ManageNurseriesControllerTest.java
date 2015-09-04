@@ -13,24 +13,24 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.junit.Test;
-import org.springframework.http.HttpMethod;
-import org.springframework.test.web.ModelAndViewAssert;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
-public class ManageNurseriesControllerTest extends AbstractBaseControllerIntegrationTest {
+public class ManageNurseriesControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
-	public void testGetReturnsCorrectModelAndView() throws Exception {
-
-		ModelAndView mav = this.request(ManageNurseriesController.URL, HttpMethod.GET.name());
-
-		ModelAndViewAssert.assertViewName(mav, AbstractBaseFieldbookController.BASE_TEMPLATE_NAME);
-		ModelAndViewAssert.assertModelAttributeValue(mav, AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy");
-		ModelAndViewAssert.assertModelAttributeValue(mav, "type", StudyType.N.getName());
-
+	public void testGet() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get(ManageNurseriesController.URL))
+				.andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attribute("type", StudyType.N.getName()))
+				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryId"))
+				.andExpect(MockMvcResultMatchers.model().attributeExists("preloadSummaryName"))
+				.andExpect(MockMvcResultMatchers.model().attribute(AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "Common/manageStudy"));
 	}
 
 }

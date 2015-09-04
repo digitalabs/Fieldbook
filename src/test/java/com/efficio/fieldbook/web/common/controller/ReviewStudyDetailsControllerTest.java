@@ -20,15 +20,14 @@ import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.web.ModelAndViewAssert;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 
-public class ReviewStudyDetailsControllerTest extends AbstractBaseControllerIntegrationTest {
+public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
 
 	@Resource
 	private ReviewStudyDetailsController reviewStudyDetailsController;
@@ -38,30 +37,25 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseControllerInte
 
 	@Test
 	public void testShowReviewNurserySummaryWithError() throws Exception {
-		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		Mockito.when(this.fieldbookMiddlewareService.getStudyVariableSettings(1, true)).thenThrow(
+		FieldbookService fieldbookMiddlewareServiceSpy =
+				Mockito.spy(this.<FieldbookService>getTargetObject(this.fieldbookMiddlewareService));
+		Mockito.when(fieldbookMiddlewareServiceSpy.getStudyVariableSettings(1, true)).thenThrow(
 				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
-		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 
-		ModelAndView mav = this.request(ReviewStudyDetailsController.URL + "/show/N/1", HttpMethod.GET.name());
-
-		Assert.assertEquals("Expected HttpStatus OK but got " + this.response.getStatus() + " instead.", HttpStatus.OK.value(),
-				this.response.getStatus());
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "nurseryDetails");
+		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/N/1"))
+				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attributeExists("nurseryDetails"));
 	}
 
 	@Test
 	public void testShowReviewTrialSummaryWithError() throws Exception {
-		this.fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		Mockito.when(this.fieldbookMiddlewareService.getStudyVariableSettings(1, false)).thenThrow(
+		FieldbookService fieldbookMiddlewareServiceSpy = Mockito.spy(this.<FieldbookService>getTargetObject(this.fieldbookMiddlewareService));
+		Mockito.when(fieldbookMiddlewareServiceSpy.getStudyVariableSettings(1, false)).thenThrow(
 				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
-		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 
-		ModelAndView mav = this.request(ReviewStudyDetailsController.URL + "/show/T/1", HttpMethod.GET.name());
-
-		Assert.assertEquals("Expected HttpStatus OK but got " + this.response.getStatus() + " instead.", HttpStatus.OK.value(),
-				this.response.getStatus());
-		ModelAndViewAssert.assertModelAttributeAvailable(mav, "trialDetails");
+		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/T/1"))
+				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attributeExists("trialDetails"));
 	}
 
 	@Test

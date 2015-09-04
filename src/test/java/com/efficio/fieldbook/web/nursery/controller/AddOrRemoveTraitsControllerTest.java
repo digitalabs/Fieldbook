@@ -31,14 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 
-public class AddOrRemoveTraitsControllerTest extends AbstractBaseControllerIntegrationTest {
+public class AddOrRemoveTraitsControllerTest extends AbstractBaseIntegrationTest {
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(AddOrRemoveTraitsControllerTest.class);
@@ -62,6 +62,7 @@ public class AddOrRemoveTraitsControllerTest extends AbstractBaseControllerInteg
 	/**
 	 * Sets the up.
 	 */
+	@Override
 	@Before
 	public void setUp() {
 		try {

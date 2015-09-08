@@ -28,8 +28,10 @@
 			</span>
 
 						<div class="fbk-nursery-heading-btns">
-							<input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
+							<input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-nursery" />
+							<input type="button" value="Save" class="btn btn-info fbk-save-stocklist fbk-hide" onclick="saveStockListImport();" th:value="#{common.form.save.text}"/>
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>
+							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide" onclick="discardImportedStockList();" th:value="#{import.discard.data}"/>							
 						</div>
 					</div>
 					<div class="pull-right fbk-nursery-heading-right">
@@ -473,6 +475,8 @@ function submitEditWorkbook() {
 			}
 			$('.import-study-data').data('data-import', '0');
 			$('.fbk-discard-imported-data').addClass('fbk-hide');
+			$('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
+			stockListImportNotSaved = false;
 		}
 	});
 }
@@ -610,6 +614,10 @@ $(document).ready(function() {
 	});
 	$('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
 		if ($('.import-inventory').data('data-import') === '1') {
+			showAlertMessage('', importSaveDataWarningMessage);
+			e.preventDefault();
+		}
+		if (stockListImportNotSaved) {
 			showAlertMessage('', importSaveDataWarningMessage);
 			e.preventDefault();
 		}

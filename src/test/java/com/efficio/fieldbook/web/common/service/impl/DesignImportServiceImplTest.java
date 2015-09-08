@@ -311,8 +311,7 @@ public class DesignImportServiceImplTest {
 		Set<MeasurementVariable> result = this.service.getDesignMeasurementVariables(this.workbook,
 				this.designImportData, true);
 
-		Assert.assertEquals("The total number of Factors and Variates in workbook is 12", 12,
-				result.size());
+		Assert.assertEquals("The total number of Factors and Variates in workbook is 13", 13, result.size());
 	}
 
 	@Test

@@ -15,11 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.easymock.EasyMock;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
@@ -32,6 +31,7 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -45,6 +45,8 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TreeTableNode;
 
+import junit.framework.Assert;
+
 public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegrationTest {
 
 	private static final String ROOT_FOLDER_NAME = "Lists";
@@ -57,27 +59,42 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 	private static final String TEST_GERMPLASM_LIST = "Test Germplasm List";
 	private static final String LISTS = "LISTS";
 	private static final String NAME_NOT_UNIQUE = "Name not unique";
+	private static final String PROGRAM_UUID = "1234567";
 
 	/** The Constant LIST_1. */
-	private static final GermplasmList LIST_1 = new GermplasmList(1, "List 1", null, "LST", GermplasmTreeControllerTestIT.LIST_USER_ID,
-			"List 1", null, 1);
+	private static final GermplasmList LIST_1 =
+			new GermplasmList(1, "List 1", null, "LST", GermplasmTreeControllerTestIT.LIST_USER_ID, "List 1", null, 1);
 
 	/** The Constant LIST_2. */
-	private static final GermplasmList LIST_2 = new GermplasmList(2, "List 2", null, "LST", GermplasmTreeControllerTestIT.LIST_USER_ID,
-			"List 2", null, 1);
+	private static final GermplasmList LIST_2 =
+			new GermplasmList(2, "List 2", null, "LST", GermplasmTreeControllerTestIT.LIST_USER_ID, "List 2", null, 1);
 
 	/** The Constant LOCAL_LIST_3. */
-	private static final GermplasmList LIST_3 = new GermplasmList(3, "List 3", null, "LST", GermplasmTreeControllerTestIT.LIST_USER_ID,
-			"List 3", null, 1);
+	private static final GermplasmList LIST_3 =
+			new GermplasmList(3, "List 3", null, "LST", GermplasmTreeControllerTestIT.LIST_USER_ID, "List 3", null, 1);
+
+	private static final GermplasmList SHARED_LIST =
+			new GermplasmList(4, "Shared List", null, "LST", GermplasmTreeControllerTestIT.LIST_USER_ID, "Shared List", null, 1);
+
+	private static final GermplasmList OTHER_LIST =
+			new GermplasmList(5, "Other List", null, "LST", GermplasmTreeControllerTestIT.LIST_USER_ID, "Other List", null, 1);
 
 	/** The Constant LOCAL_GERMPLASM_LIST_TEST_DATA. */
 	private static final List<GermplasmList> GERMPLASM_LIST_TEST_DATA = Arrays.asList(GermplasmTreeControllerTestIT.LIST_1,
-			GermplasmTreeControllerTestIT.LIST_2, GermplasmTreeControllerTestIT.LIST_3);
+			GermplasmTreeControllerTestIT.LIST_2, GermplasmTreeControllerTestIT.LIST_3, GermplasmTreeControllerTestIT.SHARED_LIST);
 
 	private static final List<GermplasmList> EMPTY_GERMPLASM_LIST_TEST_DATA = new ArrayList<GermplasmList>();
 
 	/** The object mapper. */
 	private final ObjectMapper objectMapper = new ObjectMapper();
+
+	@BeforeClass
+	public static void setUpClass() {
+		GermplasmTreeControllerTestIT.LIST_1.setProgramUUID(GermplasmTreeControllerTestIT.PROGRAM_UUID);
+		GermplasmTreeControllerTestIT.LIST_2.setProgramUUID(GermplasmTreeControllerTestIT.PROGRAM_UUID);
+		GermplasmTreeControllerTestIT.LIST_3.setProgramUUID(GermplasmTreeControllerTestIT.PROGRAM_UUID);
+		GermplasmTreeControllerTestIT.OTHER_LIST.setProgramUUID("other12345");
+	}
 
 	/**
 	 * Sets the up.
@@ -88,6 +105,13 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 	public void setUp() throws Exception {
 		this.mockGermplasmListManagerAndItsMethods();
 		this.mockUserDataManagerAndItsMethods();
+		this.mockCurrentProgramUUID();
+	}
+
+	private void mockCurrentProgramUUID() {
+		ContextUtil contextUtil = Mockito.mock(ContextUtil.class);
+		Mockito.when(contextUtil.getCurrentProgramUUID()).thenReturn(GermplasmTreeControllerTestIT.PROGRAM_UUID);
+		ReflectionTestUtils.setField(this.controller, "contextUtil", contextUtil, ContextUtil.class);
 	}
 
 	/**
@@ -117,11 +141,12 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 		Assert.assertNotNull(jsonResponse);
 		TreeNode[] treeNodes = this.objectMapper.readValue(jsonResponse, TreeNode[].class);
 
-		Assert.assertEquals(3, treeNodes.length);
+		Assert.assertEquals(4, treeNodes.length);
 		for (int i = 0; i < 3; i++) {
 			Assert.assertEquals(String.valueOf(i + 1), treeNodes[i].getKey());
 			Assert.assertEquals("List " + (i + 1), treeNodes[i].getTitle());
 		}
+		Assert.assertEquals(String.valueOf(4), treeNodes[3].getKey());
 	}
 
 	/**
@@ -168,10 +193,11 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 
 	private void mockGermplasmListManagerAndItsMethods() throws MiddlewareQueryException {
 		GermplasmListManager germplasmListManager = Mockito.mock(GermplasmListManager.class);
-		Mockito.when(germplasmListManager.getAllTopLevelListsBatched(GermplasmTreeController.BATCH_SIZE)).thenReturn(
-				GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
-		Mockito.when(germplasmListManager.getGermplasmListByParentFolderIdBatched(Matchers.anyInt(), Matchers.anyInt())).thenReturn(
-				GermplasmTreeControllerTestIT.EMPTY_GERMPLASM_LIST_TEST_DATA);
+		Mockito.when(germplasmListManager.getAllTopLevelListsBatched(GermplasmTreeControllerTestIT.PROGRAM_UUID,
+				GermplasmTreeController.BATCH_SIZE)).thenReturn(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
+		Mockito.when(
+				germplasmListManager.getGermplasmListByParentFolderIdBatched(Matchers.anyInt(), Matchers.anyString(), Matchers.anyInt()))
+				.thenReturn(GermplasmTreeControllerTestIT.EMPTY_GERMPLASM_LIST_TEST_DATA);
 		List<UserDefinedField> userDefinedFields = this.createGermplasmListUserDefinedFields();
 		Mockito.when(germplasmListManager.getGermplasmListTypes()).thenReturn(userDefinedFields);
 		ReflectionTestUtils.setField(this.controller, "germplasmListManager", germplasmListManager, GermplasmListManager.class);
@@ -192,12 +218,11 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 
 	@Test
 	public void testMarkIfHasChildren() throws MiddlewareQueryException {
-		TreeTableNode anyChildNode =
-				new TreeTableNode(Integer.toString(EasyMock.anyInt()), GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null,
-						null, "1");
+		TreeTableNode anyChildNode = new TreeTableNode(Integer.toString(EasyMock.anyInt()),
+				GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null, null, "1");
 		this.controller.markIfHasChildren(anyChildNode);
-		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should not have children", anyChildNode.getNumOfChildren()
-				.equals("0"));
+		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should not have children",
+				anyChildNode.getNumOfChildren().equals("0"));
 
 		TreeTableNode localRootNode =
 				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
@@ -207,12 +232,11 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 
 	@Test
 	public void testGetGermplasmListChildren() throws MiddlewareQueryException {
-		TreeTableNode anyChildNode =
-				new TreeTableNode(Integer.toString(EasyMock.anyInt()), GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null,
-						null, "1");
+		TreeTableNode anyChildNode = new TreeTableNode(Integer.toString(EasyMock.anyInt()),
+				GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null, null, "1");
 		List<GermplasmList> germplasmListChildren = this.controller.getGermplasmListChildren(anyChildNode.getId());
-		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have " + germplasmListChildren.size()
-				+ " number of children",
+		Assert.assertTrue(
+				GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have " + germplasmListChildren.size() + " number of children",
 				germplasmListChildren.size() == GermplasmTreeControllerTestIT.EMPTY_GERMPLASM_LIST_TEST_DATA.size());
 
 		TreeTableNode localRootNode =
@@ -227,17 +251,17 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 		TreeTableNode localRootNode =
 				new TreeTableNode(GermplasmTreeControllerTestIT.LISTS, AppConstants.LISTS.getString(), null, null, null, null, "1");
 		List<TreeTableNode> childNodes = this.controller.getGermplasmListFolderChildNodes(localRootNode);
-		Assert.assertTrue(AppConstants.LISTS.getString() + " should have " + GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA.size()
-				+ " children",
+		Assert.assertTrue(
+				AppConstants.LISTS.getString() + " should have " + GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA.size()
+						+ " children",
 				localRootNode.getNumOfChildren().equals(Integer.toString(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA.size())));
 		Assert.assertTrue(AppConstants.LISTS.getString() + " should have " + childNodes.size() + " children", !childNodes.isEmpty());
 
-		TreeTableNode anyChildNode =
-				new TreeTableNode(Integer.toString(EasyMock.anyInt()), GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null,
-						null, "1");
+		TreeTableNode anyChildNode = new TreeTableNode(Integer.toString(EasyMock.anyInt()),
+				GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null, null, "1");
 		childNodes = this.controller.getGermplasmListFolderChildNodes(anyChildNode);
-		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have children", anyChildNode.getNumOfChildren()
-				.equals("0"));
+		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have children",
+				anyChildNode.getNumOfChildren().equals("0"));
 		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have no children", childNodes.isEmpty());
 	}
 
@@ -256,7 +280,7 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 		ExtendedModelMap model = new ExtendedModelMap();
 		this.controller.expandGermplasmListFolder(GermplasmTreeControllerTestIT.LISTS, model);
 		List<TreeTableNode> treeNodes = (List<TreeTableNode>) model.get(GermplasmTreeController.GERMPLASM_LIST_CHILD_NODES);
-		Assert.assertEquals("The number of children under the node with id LOCAL should be 3", 3, treeNodes.size());
+		Assert.assertEquals("The number of children under the node with id LOCAL should be 4", 4, treeNodes.size());
 		for (TreeTableNode treeTableNode : treeNodes) {
 			Assert.assertEquals("The parent id of " + treeTableNode.getName() + " should be " + GermplasmTreeControllerTestIT.LISTS,
 					GermplasmTreeControllerTestIT.LISTS, treeTableNode.getParentId());
@@ -277,8 +301,8 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 		GermplasmListManager germplasmListManager = Mockito.mock(GermplasmListManager.class);
 		String folderName = "Sample Folder Name";
 
-		Mockito.when(germplasmListManager.getGermplasmListByName(folderName, 0, 1, null)).thenReturn(
-				GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
+		Mockito.when(germplasmListManager.getGermplasmListByName(folderName, GermplasmTreeControllerTestIT.PROGRAM_UUID, 0, 1, null))
+				.thenReturn(GermplasmTreeControllerTestIT.GERMPLASM_LIST_TEST_DATA);
 		ReflectionTestUtils.setField(this.controller, "germplasmListManager", germplasmListManager, GermplasmListManager.class);
 		try {
 			this.controller.checkIfUnique(folderName);
@@ -308,9 +332,8 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 		Integer userId = 9;
 		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
 		Integer crossesId = 5;
-		Mockito.when(
-				fieldbookMiddlewareService.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class),
-						Matchers.anyInt(), Matchers.anyListOf(ListDataProject.class), Matchers.anyInt())).thenReturn(crossesId);
+		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class),
+				Matchers.anyInt(), Matchers.anyListOf(ListDataProject.class), Matchers.anyInt())).thenReturn(crossesId);
 		treeController.setUserSelection(userSelection);
 		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);
@@ -332,9 +355,8 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseControllerIntegra
 		Integer userId = 9;
 		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
 		Integer crossesId = 88;
-		Mockito.when(
-				fieldbookMiddlewareService.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class),
-						Matchers.anyInt(), Matchers.anyListOf(ListDataProject.class), Matchers.anyInt())).thenReturn(crossesId);
+		Mockito.when(fieldbookMiddlewareService.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class),
+				Matchers.anyInt(), Matchers.anyListOf(ListDataProject.class), Matchers.anyInt())).thenReturn(crossesId);
 		treeController.setUserSelection(userSelection);
 		treeController.setFieldbookMiddlewareService(fieldbookMiddlewareService);
 		int savedCrossesId = treeController.saveCrossesList(germplasmListId, listDataProject, userId);

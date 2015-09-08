@@ -233,7 +233,8 @@ public class OpenTrialController extends BaseTrialController {
 				ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 				importedGermplasmList.setImportedGermplasms(list);
 				ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-				mainInfo.setListId(germplasmList.getId());
+				// BMS-1419 requires that the list id should still refer to the original list's id
+			    mainInfo.setListId(germplasmList.getListRef());
 				mainInfo.setAdvanceImportType(true);
 				mainInfo.setImportedGermplasmList(importedGermplasmList);
 				this.userSelection.setImportedGermplasmMainInfo(mainInfo);

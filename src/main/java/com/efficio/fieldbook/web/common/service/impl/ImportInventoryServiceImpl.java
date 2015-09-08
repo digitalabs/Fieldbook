@@ -109,16 +109,31 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 	}
 
 	@Override
-	public void mergeInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList,
+	public void validateInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList,
 			GermplasmListType germplasmListType) throws FieldbookException {
 		List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
+		this.validateImportedInventoryDetails(inventoryDetailListFromImport);
 		this.checkNumberOfEntries(inventoryDetailListFromDB, inventoryDetailListFromImport);
-		this.checkEntriesIfTheyMatchThenUpdate(inventoryDetailListFromImport, inventoryDetailListFromDB, germplasmListType);
+		this.checkEntriesIfTheyMatch(inventoryDetailListFromImport, inventoryDetailListFromDB);
 	}
 
-	private void checkEntriesIfTheyMatchThenUpdate(List<InventoryDetails> inventoryDetailListFromImport,
-			List<InventoryDetails> inventoryDetailListFromDB, GermplasmListType germplasmListType) throws FieldbookException {
+	private void validateImportedInventoryDetails(List<InventoryDetails> inventoryDetailListFromImport) throws FieldbookException {
+		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+			if (inventoryDetailsFromImport.getLocationId() != null && inventoryDetailsFromImport.getScaleId() != null
+					&& inventoryDetailsFromImport.getAmount() != null) {
+				continue;
+			} else if (inventoryDetailsFromImport.getLocationId() != null || inventoryDetailsFromImport.getScaleId() != null
+					|| (inventoryDetailsFromImport.getAmount() != null && inventoryDetailsFromImport.getAmount() != 0)) {
+				throw new FieldbookException(this.messageSource.getMessage("common.error.import.missing.inventory.values.for.row",
+						new Object[] {inventoryDetailsFromImport.getEntryId()}, Locale.getDefault()));
+			}
+		}
+	}
+
+	private void checkEntriesIfTheyMatch(List<InventoryDetails> inventoryDetailListFromImport,
+			List<InventoryDetails> inventoryDetailListFromDB) throws FieldbookException {
 		Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<Integer, InventoryDetails>();
+
 		for (InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
 			entryIdInventoryMap.put(inventoryDetailsFromDB.getEntryId(), inventoryDetailsFromDB);
 		}
@@ -128,29 +143,32 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 				throw new FieldbookException(this.messageSource.getMessage("common.error.import.entry.id.does.not.exist",
 						new Object[] {inventoryDetailsFromImport.getEntryId().toString()}, Locale.getDefault()));
 			} else if (!inventoryDetailsFromDB.getGid().equals(inventoryDetailsFromImport.getGid())) {
-				throw new FieldbookException(this.messageSource.getMessage("common.error.import.gid.does.not.match", new Object[] {
-						inventoryDetailsFromDB.getEntryId().toString(), inventoryDetailsFromDB.getGid().toString(),
-						inventoryDetailsFromImport.getGid().toString()}, Locale.getDefault()));
-			} else {
-				this.updateInventoryDetailsFromImport(inventoryDetailsFromDB, inventoryDetailsFromImport, germplasmListType);
+				throw new FieldbookException(this.messageSource.getMessage(
+						"common.error.import.gid.does.not.match", new Object[] {inventoryDetailsFromDB.getEntryId().toString(),
+								inventoryDetailsFromDB.getGid().toString(), inventoryDetailsFromImport.getGid().toString()},
+						Locale.getDefault()));
 			}
 		}
-
 	}
 
 	protected void updateInventoryDetailsFromImport(InventoryDetails inventoryDetailsFromDB, InventoryDetails inventoryDetailsFromImport,
 			GermplasmListType germplasmListType) {
 		if (germplasmListType == GermplasmListType.CROSSES) {
-			inventoryDetailsFromDB.setBulkWith(inventoryDetailsFromImport.getBulkWith());
-			inventoryDetailsFromDB.setBulkCompl(inventoryDetailsFromImport.getBulkCompl());
+			if (inventoryDetailsFromImport.getDuplicate() != null) {
+				inventoryDetailsFromDB.setDuplicate(inventoryDetailsFromImport.getDuplicate());
+			}
+			if (inventoryDetailsFromImport.getBulkWith() != null) {
+				inventoryDetailsFromDB.setBulkWith(inventoryDetailsFromImport.getBulkWith());
+			}
+			if (inventoryDetailsFromImport.getBulkCompl() != null) {
+				inventoryDetailsFromDB.setBulkCompl(inventoryDetailsFromImport.getBulkCompl());
+			}
 		}
-		if (inventoryDetailsFromImport.getLocationId() != null) {
+
+		if (inventoryDetailsFromImport.getLocationId() != null && inventoryDetailsFromImport.getScaleId() != null
+				&& inventoryDetailsFromImport.getAmount() != null) {
 			inventoryDetailsFromDB.setLocationId(inventoryDetailsFromImport.getLocationId());
-		}
-		if (inventoryDetailsFromImport.getScaleId() != null) {
 			inventoryDetailsFromDB.setScaleId(inventoryDetailsFromImport.getScaleId());
-		}
-		if (inventoryDetailsFromImport.getAmount() != null) {
 			inventoryDetailsFromDB.setAmount(inventoryDetailsFromImport.getAmount());
 		}
 		inventoryDetailsFromDB.setComment(inventoryDetailsFromImport.getComment());
@@ -162,5 +180,57 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
 			throw new FieldbookException(this.messageSource.getMessage("common.error.import.incorrect.number.of.entries",
 					new Object[] {inventoryDetailListFromDB.size()}, Locale.getDefault()));
 		}
+	}
+
+	@Override
+	public boolean hasConflict(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList) {
+		Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<Integer, InventoryDetails>();
+		List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
+		for (InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
+			entryIdInventoryMap.put(inventoryDetailsFromDB.getEntryId(), inventoryDetailsFromDB);
+		}
+		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+			InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
+			if (this.checkConflict(inventoryDetailsFromImport, inventoryDetailsFromDB)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void mergeInventoryDetails(List<InventoryDetails> inventoryDetailListFromDB, ImportedInventoryList importedInventoryList,
+			GermplasmListType germplasmListType) {
+		Map<Integer, InventoryDetails> entryIdInventoryMap = new HashMap<Integer, InventoryDetails>();
+		List<InventoryDetails> inventoryDetailListFromImport = importedInventoryList.getImportedInventoryDetails();
+
+		for (InventoryDetails inventoryDetailsFromDB : inventoryDetailListFromDB) {
+			entryIdInventoryMap.put(inventoryDetailsFromDB.getEntryId(), inventoryDetailsFromDB);
+		}
+		for (InventoryDetails inventoryDetailsFromImport : inventoryDetailListFromImport) {
+			InventoryDetails inventoryDetailsFromDB = entryIdInventoryMap.get(inventoryDetailsFromImport.getEntryId());
+			this.updateInventoryDetailsFromImport(inventoryDetailsFromDB, inventoryDetailsFromImport, germplasmListType);
+		}
+	}
+
+	public boolean checkConflict(InventoryDetails inventoryDetailsFromImport, InventoryDetails inventoryDetailsFromDB) {
+		boolean isLocationNotEq = inventoryDetailsFromImport.getLocationName() != null && inventoryDetailsFromDB.getLocationName() != null
+				&& !inventoryDetailsFromImport.getLocationName().equals(inventoryDetailsFromDB.getLocationName());
+
+		boolean isAmountConflict = this.checkConflictAmount(inventoryDetailsFromImport, inventoryDetailsFromDB);
+
+		boolean isInventoryScaleNotEq = inventoryDetailsFromImport.getScaleName() != null && inventoryDetailsFromDB.getScaleName() != null
+				&& !inventoryDetailsFromImport.getScaleName().equals(inventoryDetailsFromDB.getScaleName());
+
+		return isLocationNotEq || isAmountConflict || isInventoryScaleNotEq;
+	}
+
+	public boolean checkConflictAmount(InventoryDetails inventoryDetailsFromImport, InventoryDetails inventoryDetailsFromDB) {
+		if (inventoryDetailsFromDB.getAmount() != null && inventoryDetailsFromDB.getAmount() != 0
+				&& inventoryDetailsFromImport.getAmount() != null && inventoryDetailsFromImport.getAmount() != 0
+				&& !inventoryDetailsFromImport.getAmount().toString().equals(inventoryDetailsFromDB.getAmount().toString())) {
+			return true;
+		}
+		return false;
 	}
 }

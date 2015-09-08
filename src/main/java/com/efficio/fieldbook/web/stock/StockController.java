@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.ImportStockForm;
 import com.efficio.fieldbook.web.common.service.ImportInventoryService;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
@@ -63,7 +64,7 @@ public class StockController extends AbstractBaseFieldbookController {
 	public static final String SUCCESS = "1";
 	public static final String ERROR_MESSAGE = "errorMessage";
 	public static final String HAS_ERROR = "hasError";
-
+	public static final String STOCK_ID = "stockListId";
 	@Resource
 	private StockService stockService;
 
@@ -87,6 +88,9 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private OntologyService ontologyService;
+
+	@Resource
+	private UserSelection userSelection;
 
 	/**
 	 * Gets the data types.
@@ -135,7 +139,8 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/retrieveNextStockPrefix", method = RequestMethod.POST)
-	public Map<String, String> retrieveNextStockIDPrefix(@RequestBody StockListGenerationSettings generationSettings) {
+	public Map<String, String> retrieveNextStockIDPrefix(@RequestBody
+	StockListGenerationSettings generationSettings) {
 		Map<String, String> resultMap = new HashMap<>();
 
 		Integer validationResult = generationSettings.validateSettings();
@@ -161,7 +166,8 @@ public class StockController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/generateStockTabIfNecessary/{listId}", method = RequestMethod.GET)
-	public String generateStockTabIfNecessary(@PathVariable Integer listId, Model model) {
+	public String generateStockTabIfNecessary(@PathVariable
+	Integer listId, Model model) {
 
 		try {
 			boolean transactionsExist = this.inventoryDataManager.transactionsExistForListProjectDataListID(listId);
@@ -202,8 +208,9 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/generateStockList/{listId}", method = RequestMethod.POST)
-	public Map<String, String> generateStockList(@RequestBody StockListGenerationSettings generationSettings,
-			@PathVariable("listId") Integer listDataProjectListId) {
+	public Map<String, String> generateStockList(@RequestBody
+	StockListGenerationSettings generationSettings, @PathVariable("listId")
+	Integer listDataProjectListId) {
 		Map<String, String> resultMap = new HashMap<>();
 		Integer validationResult = generationSettings.validateSettings();
 
@@ -285,7 +292,8 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
-	public String importList(@ModelAttribute("importStockForm") ImportStockForm form) {
+	public String importList(@ModelAttribute("importStockForm")
+	ImportStockForm form) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			Integer listId = form.getStockListId();
@@ -298,10 +306,18 @@ public class StockController extends AbstractBaseFieldbookController {
 			ImportedInventoryList importedInventoryList = this.importInventoryService.parseFile(form.getFile(), additionalParams);
 			List<InventoryDetails> inventoryDetailListFromDB =
 					this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType);
+			this.importInventoryService.validateInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
+			if (this.importInventoryService.hasConflict(inventoryDetailListFromDB, importedInventoryList)) {
+				result.put("hasConflict", true);
+				this.userSelection.setListId(listId);
+				this.userSelection
+						.setInventoryDetails(this.inventoryService.getInventoryListByListDataProjectListId(listId, germplasmListType));
+			}
 			this.importInventoryService.mergeInventoryDetails(inventoryDetailListFromDB, importedInventoryList, germplasmListType);
 			this.updateInventory(listId, inventoryDetailListFromDB);
 			result.put(StockController.HAS_ERROR, false);
-			result.put("stockListId", listId);
+			result.put(StockController.STOCK_ID, listId);
+			result.put("listType", germplasmListType);
 		} catch (FileParsingException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			result.put(StockController.HAS_ERROR, true);
@@ -320,13 +336,26 @@ public class StockController extends AbstractBaseFieldbookController {
 		return this.convertObjectToJson(result);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/revertStockListData/data", method = RequestMethod.POST)
+	public String revertStockListData(@ModelAttribute("importStockForm")
+	ImportStockForm form) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Integer listId = this.userSelection.getListId();
+		List<InventoryDetails> inventoryDetailListFromDB = this.userSelection.getInventoryDetails();
+		this.updateInventory(listId, inventoryDetailListFromDB);
+		result.put(StockController.STOCK_ID, listId);
+		return this.convertObjectToJson(result);
+	}
+
 	private void updateInventory(Integer listId, List<InventoryDetails> inventoryDetailListFromDB) {
 		this.inventoryDataManager.updateInventory(listId, inventoryDetailListFromDB);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/executeBulkingInstructions/{listId}", method = RequestMethod.POST)
-	public Map<String, Object> executeBulkingInstructions(@PathVariable Integer listId) {
+	public Map<String, Object> executeBulkingInstructions(@PathVariable
+	Integer listId) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
@@ -336,7 +365,7 @@ public class StockController extends AbstractBaseFieldbookController {
 			this.stockService.verifyIfBulkingForStockListCanProceed(listId, inventoryDetailsList);
 			this.stockService.executeBulkingInstructions(inventoryDetailsList);
 			result.put(StockController.HAS_ERROR, false);
-			result.put("stockListId", listId);
+			result.put(StockController.STOCK_ID, listId);
 		} catch (StockException e) {
 			StockController.LOG.error(e.getMessage(), e);
 			result.put(StockController.HAS_ERROR, true);
@@ -352,8 +381,10 @@ public class StockController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/ajax/{listId}/{entryIdList}", method = RequestMethod.GET)
-	public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, @PathVariable Integer listId,
-			@PathVariable String entryIdList, Model model, HttpSession session) {
+	public String showAjax(@ModelAttribute("seedStoreForm")
+	SeedStoreForm form, @PathVariable
+	Integer listId, @PathVariable
+	String entryIdList, Model model, HttpSession session) {
 		form.setListId(listId);
 		form.setEntryIdList(entryIdList);
 		return super.showAjaxPage(model, "Inventory/addLotsModal");
@@ -361,7 +392,8 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/update/lots", method = RequestMethod.POST)
-	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, Locale local) {
+	public Map<String, Object> updateLots(@ModelAttribute("seedStoreForm")
+	SeedStoreForm form, Model model, Locale local) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		List<Integer> entryIdList = new ArrayList<Integer>();
 

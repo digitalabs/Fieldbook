@@ -80,7 +80,7 @@ public class NamingConventionServiceImplTest extends AbstractBaseIntegrationTest
 		breedingMethod.setSnametype(5);
 		breedingMethod.setSeparator("-");
 		breedingMethod.setPrefix("B");
-		breedingMethod.setCount("[NUMBER]");
+		breedingMethod.setCount("");
 		as1.setBreedingMethod(breedingMethod);
 
 		as1.setPlantsSelected(1);

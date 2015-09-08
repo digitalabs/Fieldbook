@@ -314,7 +314,16 @@ if (typeof StockIDFunctions === 'undefined') {
 			if (resp.hasError) {
 				showErrorMessage('', resp.errorMessage);
 			} else {
-				showSuccessfulMessage('', 'Import Success');
+				if(resp.hasConflict){
+					$('.fbk-save-nursery').addClass('fbk-hide');
+					$('.fbk-save-stocklist').removeClass('fbk-hide');
+					$('.fbk-discard-imported-stocklist-data').removeClass('fbk-hide');
+					showAlertMessage('', importStocklistSuccessOverwriteDataWarningToSaveMessage);
+					stockListImportNotSaved = true;
+				}
+				else{
+					showSuccessfulMessage('', 'Import Success');
+				}
 				$('.import-stock-section .modal').modal('hide');
 				StockIDFunctions.displayStockList(resp.stockListId);
 			}

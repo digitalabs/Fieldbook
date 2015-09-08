@@ -168,7 +168,6 @@ public class StockControllerTest {
 
 		Assert.assertEquals(validPrefix + listDataParam.getValue().getEntryId(), detailParam.getValue().getInventoryID());
 		Assert.assertEquals(listDataParam.getValue().getGermplasmId(), detailParam.getValue().getGid());
-		Assert.assertEquals(Location.UNKNOWN_LOCATION_ID, detailParam.getValue().getLocationId().intValue());
 		Assert.assertEquals(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID, detailParam.getValue().getSourceId().intValue());
 
 	}

@@ -50,7 +50,7 @@ public class PrefixRuleTest extends BaseNamingRuleTest {
 
 	@Test
 	public void testSeasonCodePrefix() {
-		this.breedingMethod.setPrefix("[SEASON]");
+		this.breedingMethod.setPrefix("Wet");
 		this.row.setSeason("Wet");
 		List<String> input = new ArrayList<String>();
 		input.add(this.testGermplasmName);

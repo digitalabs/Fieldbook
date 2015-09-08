@@ -266,9 +266,9 @@ public class ExportGermplasmListControllerTest {
 		Assert.assertTrue(result.get(String.valueOf(TermId.DESIG.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_NO.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.CROSS.getId())));
-
-		Assert.assertNull(result.get(String.valueOf(TermId.ENTRY_CODE.getId())));
-		Assert.assertNull(result.get(String.valueOf(TermId.SEED_SOURCE.getId())));
+		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_CODE.getId())));
+		Assert.assertTrue(result.get(String.valueOf(TermId.SEED_SOURCE.getId())));
+		
 		Assert.assertNull(result.get(String.valueOf(TermId.ENTRY_NUMBER_STORAGE.getId())));
 		Assert.assertNull(result.get(String.valueOf(TermId.CHECK.getId())));
 	}

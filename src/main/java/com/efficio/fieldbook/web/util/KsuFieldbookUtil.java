@@ -44,6 +44,10 @@ public class KsuFieldbookUtil {
 	private static final String TEXT_FORMAT = "text";
 
 	private static final Map<Integer, String> ID_NAME_MAP;
+	
+	// August 2015 : KSU handheld does not process CROSS information, so using
+	// this list to handle omissions of standard Germplasm variables from the export
+	private static final List<Integer> fieldsToOmit = new ArrayList<Integer>();
 
 	static {
 		ID_NAME_MAP = new HashMap<Integer, String>();
@@ -51,6 +55,9 @@ public class KsuFieldbookUtil {
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_RANGE, KsuFieldbookUtil.RANGE);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT1, KsuFieldbookUtil.PLOT);
 		KsuFieldbookUtil.ID_NAME_MAP.put(KsuFieldbookUtil.TERM_PLOT2, KsuFieldbookUtil.PLOT);
+		// Aug 2015 : we are omitting the CROSS and CHECK columns for KSU - add further omissions here
+		fieldsToOmit.add(TermId.CROSS.getId());
+		fieldsToOmit.add(TermId.CHECK.getId());
 	}
 
 	public enum KsuRequiredColumnEnum {
@@ -87,15 +94,15 @@ public class KsuFieldbookUtil {
 	}
 
 	public static List<List<String>> convertWorkbookData(List<MeasurementRow> observations, List<MeasurementVariable> variables) {
+		
 		List<List<String>> table = new ArrayList<List<String>>();
 
 		if (observations != null && !observations.isEmpty()) {
-			List<Integer> factorHeaders = KsuFieldbookUtil.getFactorHeaders(variables);
 
 			// write header row
-			table.add(KsuFieldbookUtil.getHeaderNames(variables, true));
+			table.add(KsuFieldbookUtil.getHeaderNames(variables));
 
-			List<MeasurementVariable> labels = KsuFieldbookUtil.getMeasurementLabels(factorHeaders, variables);
+			List<MeasurementVariable> labels = KsuFieldbookUtil.getMeasurementLabels(variables);
 
 			for (MeasurementRow row : observations) {
 				List<String> dataRow = new ArrayList<String>();
@@ -111,39 +118,34 @@ public class KsuFieldbookUtil {
 					}
 					dataRow.add(value);
 				}
-
 				table.add(dataRow);
 			}
 		}
 
 		return table;
 	}
-
-	private static List<Integer> getFactorHeaders(List<MeasurementVariable> headers) {
-		List<Integer> factorHeaders = new ArrayList<Integer>();
-
-		if (headers != null && !headers.isEmpty()) {
-			for (MeasurementVariable header : headers) {
-				if (header.isFactor()) {
-					factorHeaders.add(header.getTermId());
-				}
-			}
-		}
-
-		return factorHeaders;
-	}
-
-	private static List<String> getHeaderNames(List<MeasurementVariable> headers, Boolean isFactor) {
+	
+	/**
+	 * Writes the Header Row to the CSV or Excel file. Omits designated columns.
+	 * 
+	 * @param headers : List of MeasurementVariables to filter, processing the name of the Variable
+	 * @param isFactor
+	 * @return a list of Strings to print in appropriate format
+	 * 
+	 */
+	private static List<String> getHeaderNames(List<MeasurementVariable> headers) {
 		List<String> names = new ArrayList<String>();
 
 		if (headers != null && !headers.isEmpty()) {
 			for (MeasurementVariable header : headers) {
-				if (isFactor == null || isFactor != null && (isFactor && header.isFactor() || !isFactor && !header.isFactor())) {
-
-					if (KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()) != null) {
-						names.add(KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()));
-					} else {
-						names.add(header.getName());
+				// checking first to see if we are omitting fields for KSU - currently 'CROSS' and 'CHECK' is omitted
+				if(!KsuFieldbookUtil.fieldsToOmit.contains(header.getTermId())) {
+					if (header.isFactor()) {
+						if (KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()) != null) {
+							names.add(KsuFieldbookUtil.ID_NAME_MAP.get(header.getTermId()));
+						} else {
+							names.add(header.getName());
+						}
 					}
 				}
 			}
@@ -179,16 +181,20 @@ public class KsuFieldbookUtil {
 		}
 		return false;
 	}
-
-	private static List<MeasurementVariable> getMeasurementLabels(List<Integer> factorIds, List<MeasurementVariable> variables) {
+	
+	/**
+	 * Collects the measurement data required to export. Processes omissions as required in {@link KsuFieldbookUtil}
+	 * 
+	 * @param factorIds : IDs corresponding to variables to export
+	 * @param variables : The variables to export
+	 * @return
+	 */
+	private static List<MeasurementVariable> getMeasurementLabels(List<MeasurementVariable> variables) {
 		List<MeasurementVariable> labels = new ArrayList<MeasurementVariable>();
 
-		for (Integer factorId : factorIds) {
-			for (MeasurementVariable factor : variables) {
-				if (factor.isFactor() && factorId.equals(factor.getTermId())) {
-					labels.add(factor);
-					break;
-				}
+		for (MeasurementVariable factor : variables) {
+			if (factor.isFactor() && !KsuFieldbookUtil.fieldsToOmit.contains(new Integer(factor.getTermId()))) {
+				labels.add(factor);
 			}
 		}
 

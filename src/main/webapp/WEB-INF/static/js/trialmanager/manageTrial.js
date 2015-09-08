@@ -144,6 +144,10 @@ showAlertMessage,importSaveDataWarningMessage,showMeasurementsPreview,createErro
 
 							event.preventDefault();
 						}
+						if (stockListImportNotSaved) {
+							showAlertMessage('', importSaveDataWarningMessage);
+							e.preventDefault();
+						}
 
 						// a 'transition prevented' error
 					});

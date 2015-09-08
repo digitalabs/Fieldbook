@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -21,6 +22,7 @@ import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.interfaces.GermplasmExportSource;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -41,6 +43,7 @@ import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 public class ExportGermplasmListServiceImpl implements ExportGermplasmListService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExportGermplasmListServiceImpl.class);
+	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 
 	@Resource
 	private OntologyService ontologyService;
@@ -139,7 +142,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	private void addStandardVariableToMap(Map<Integer, StandardVariable> standardVariableMap, int standardVariableId) {
 		StandardVariable standardVariable;
 		try {
-			standardVariable = this.ontologyService.getStandardVariable(standardVariableId);
+			standardVariable = this.ontologyService.getStandardVariable(standardVariableId, PROGRAM_UUID);
 			standardVariableMap.put(standardVariable.getId(), standardVariable);
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.getMessage(), e);
@@ -199,24 +202,30 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		if (isNursery) {
 
 			try {
-				StandardVariable gid = this.ontologyService.getStandardVariable(TermId.GID.getId());
+				StandardVariable gid =
+						this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.GID.getId(), gid.getName(), true));
 
-				StandardVariable cross = this.ontologyService.getStandardVariable(TermId.CROSS.getId());
+				StandardVariable cross =
+						this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.CROSS.getId(), cross.getName(), true));
 
-				StandardVariable entryNo = this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId());
+				StandardVariable entryNo =
+						this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_NO.getId(), entryNo.getName(), true));
 
-				StandardVariable desig = this.ontologyService.getStandardVariable(TermId.DESIG.getId());
+				StandardVariable desig =
+						this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.DESIG.getId(), desig.getName(), true));
 
-				StandardVariable seedSource = this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId());
+				StandardVariable seedSource =
+						this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.SEED_SOURCE.getId(), seedSource.getName(), true));
 
-				StandardVariable entryCode = this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId());
+				StandardVariable entryCode =
+						this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID());
 				exportColumnHeaders.add(new ExportColumnHeader(TermId.ENTRY_CODE.getId(), entryCode.getName(), true));
-			} catch (MiddlewareQueryException e) {
+			} catch (MiddlewareException e) {
 				ExportGermplasmListServiceImpl.LOG.error(e.getMessage(), e);
 			}
 

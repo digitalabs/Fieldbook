@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 
 public class SettingDetail implements Serializable {
@@ -32,6 +33,7 @@ public class SettingDetail implements Serializable {
 	private int order;
 	private Integer group;
 	private PairedVariable pairedVariable;
+	private PhenotypicType role;
 
 	public SettingDetail() {
 		super();
@@ -163,6 +165,14 @@ public class SettingDetail implements Serializable {
 
 	public void setHidden(boolean isHidden) {
 		this.isHidden = isHidden;
+	}
+
+	public PhenotypicType getRole() {
+		return role;
+	}
+
+	public void setRole(PhenotypicType role) {
+		this.role = role;
 	}
 
 	public String getDisplayValue() {

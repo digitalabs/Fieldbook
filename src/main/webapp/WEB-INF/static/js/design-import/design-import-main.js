@@ -5,7 +5,7 @@
 (function(_isNursery) {
 	'use strict';
 
-	var app = angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
+	var app =  angular.module('designImportApp', ['ui.bootstrap', 'ngLodash', 'ngResource', 'ui.sortable']);
 
 	app.controller('designImportCtrl', ['$scope', 'DesignMappingService', 'DesignOntologyService', 'ImportDesign', '$modal', 'Messages', function(scope, DesignMappingService, DesignOntologyService, ImportDesign, $modal, Messages) {
 		// we can retrieve this from a service
@@ -44,7 +44,7 @@
 				setTimeout(function() {
 					scope.$apply(function() {
 						var title = 'Ontology Browser';
-						var url = '/Fieldbook/OntologyManager/manage/variable';
+						var url = '/ibpworkbench/controller/ontology';
 
 						$modal.open({
 							windowClass: 'modal-very-huge',
@@ -60,7 +60,7 @@
 								}
 							}
 						}).result.finally(function() {
-							// do something after this modal closes
+								// do something after this modal closes
 							DesignOntologyService.clearData();
 
 							setTimeout(function() {
@@ -101,15 +101,15 @@
 	}]);
 
 	app.controller('OntologyBrowserController', ['$scope', '$modalInstance', 'title', 'url',
-        function($scope, $modalInstance, title, url) {
-	$scope.title = title;
-	$scope.url = url;
-	$scope.close = function() {
-		$modalInstance.dismiss('Cancelled');
-	};
+		function($scope, $modalInstance, title, url) {
+			$scope.title = title;
+			$scope.url = url;
+			$scope.close = function() {
+				$modalInstance.dismiss('Cancelled');
+			};
 
-        }
-    ]);
+		}
+	]);
 
 	app.directive('mappingGroup', ['Messages', function(Messages) {
 		return {
@@ -162,66 +162,66 @@
 
 	app.directive('designMapVariableSelection', ['VARIABLE_SELECTION_MODAL_SELECTOR', 'DesignOntologyService', 'Messages',
         function(VARIABLE_SELECTION_MODAL_SELECTOR, DesignOntologyService, Messages) {
-	return {
-		restrict: 'A',
-		scope: {
-			modeldata: '=',
-			callback: '&'
-		},
+			return {
+				restrict: 'A',
+				scope: {
+					modeldata: '=',
+					callback: '&'
+				},
 
-		link: function(scope, elem, attrs) {
-			scope.processData = function(data) {
-				scope.$apply(function() {
-					if (data.responseData) {
-						data = data.responseData;
-					}
-					if (data) {
-						// if retrieved data is an array of values
-						if (data.length && data.length > 0) {
-							$.each(data, function(key, value) {
-								scope.modeldata.id = value.variable.cvTermId;
-								scope.modeldata.variable = value.variable;
-							});
-						}
-					}
+				link: function(scope, elem, attrs) {
+					scope.processData = function(data) {
+						scope.$apply(function() {
+							if (data.responseData) {
+								data = data.responseData;
+							}
+							if (data) {
+								// if retrieved data is an array of values
+								if (data.length && data.length > 0) {
+									$.each(data, function(key, value) {
+										scope.modeldata.id = value.variable.cvTermId;
+										scope.modeldata.variable = value.variable;
+									});
+								}
+							}
 
-					$(VARIABLE_SELECTION_MODAL_SELECTOR).modal('hide');
-				});
-			};
+							$(VARIABLE_SELECTION_MODAL_SELECTOR).modal('hide');
+						});
+					};
 
-			elem.on('click', function() {
-				// temporarily close the current modal
-				var $designMapModal = $('#designMapModal');
+					elem.on('click', function() {
+						// temporarily close the current modal
+						var $designMapModal = $('#designMapModal');
 
-				var params = {
-					variableType: attrs.group,
-					retrieveSelectedVariableFunction: function() {
-						return {};
-					},
-					callback: scope.processData,
-					onHideCallback: function() {
-						setTimeout(function() {
-							$designMapModal.modal('show');
-						}, 200);
-					},
-					apiUrl: '/Fieldbook/OntologyBrowser/getVariablesByPhenotype?phenotypeStorageId=' + attrs.group,
-					options: {
+						var params = {
+							variableType: attrs.group,
+							retrieveSelectedVariableFunction: function() {
+								return {};
+							},
+							callback: scope.processData,
+							onHideCallback: function() {
+								setTimeout(function() {
+									$designMapModal.modal('show');
+								}, 200);
+							},
+							apiUrl: '/Fieldbook/manageSettings/settings/role/' + attrs.group,
+							options: {
 						variableSelectBtnName: Messages.SELECT_TEXT, //TODO i18n
 						variableSelectBtnIco: 'glyphicon-chevron-right',
 						noAlias: true
 					}
-				};
+						};
 
-				$designMapModal.one('hidden.bs.modal', function() {
-					setTimeout(function() {
-						DesignOntologyService.openVariableSelectionDialog(params);
-					}, 200);
-				}).modal('hide');
+						$designMapModal.one('hidden.bs.modal', function() {
+							setTimeout(function() {
+								DesignOntologyService.openVariableSelectionDialog(params);
+							}, 200);
+						}).modal('hide');
 
-			});
-		}
-	};
-        }]);
+					});
+				}
+			};
+		}]);
 
 	app.service('DesignMappingService', ['$http', '$q', '_', 'ImportDesign', 'Messages', function($http, $q, _, ImportDesign, Messages) {
 
@@ -234,19 +234,19 @@
 			delete postData.unmappedHeaders;
 
 			// lets grab all variables that are in groups but does not have mapped variables
-			_.forEach(postData, function(value) {
-				var results = _.filter(value, function(item) {
-					return !_.has(item, 'variable');
+			_.forEach(postData, function (value) {
+					var results = _.filter(value, function(item) {
+						return !_.has(item, 'variable');
+					});
+
+					if (results.length > 0) {
+						allMapped = false;
+
+						deferred.reject(results[0].name);
+
+						return false;
+					}
 				});
-
-				if (results.length > 0) {
-					allMapped = false;
-
-					deferred.reject(results[0].name);
-
-					return false;
-				}
-			});
 
 			if (!allMapped) {
 				return deferred.promise;
@@ -256,27 +256,27 @@
 			// output should be in the format
 			// result : { mappedDesignFactors : [ { name : header_name, id : std_var_id } ] }
 
-			_.forIn(postData, function(value) {
-				for (var i = 0; i < value.length; i++) {
+			_.forIn(postData, function (value) {
+					for (var i = 0; i < value.length; i++) {
 
-					if (_.has(value[i], 'variable')) {
-						if (_.has(value[i].variable, 'id') && value[i].variable.id) {
-							value[i].id = value[i].variable.id;
-						} else if (_.has(value[i].variable, 'cvTermId') && value[i].variable.cvTermId) {
-							value[i].id = value[i].variable.cvTermId;
-						} else {
-							value[i].id = 0;
+						if (_.has(value[i], 'variable')) {
+							if (_.has(value[i].variable, 'id') && value[i].variable.id) {
+								value[i].id = value[i].variable.id;
+							} else if (_.has(value[i].variable, 'cvTermId') && value[i].variable.cvTermId) {
+								value[i].id = value[i].variable.cvTermId;
+							} else {
+								value[i].id = 0;
+							}
+
+							value[i] = _.pick(value[i], ['id', 'name', 'columnIndex']);
 						}
 
-						value[i] = _.pick(value[i], ['id', 'name', 'columnIndex']);
 					}
-
-				}
-			});
+				});
 
 			var envCnt = _isNursery() ? 1 : ImportDesign.trialManagerCurrentData().environments.environments.length;
 
-			return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping/' + envCnt, postData).then(function(result) {
+			return $http.post('/Fieldbook/DesignImport/validateAndSaveNewMapping/' + envCnt, postData).then(function (result) {
 				var deferred = $q.defer();
 				// note that angular $q promises is different from jquery's implem therefore we need to convert it to angular's defer()
 				ImportDesign.hideDesignMapPopup().then(function() {
@@ -324,58 +324,58 @@
 		}
 
 		function getDistinctNurseryTypes() {
-			return $http.get('/Fieldbook/OntologyBrowser/getDistinctValue/8065').then(function(result) {
-				if (result.data && result.data.constructor === Array) {
-					return result.data;
-				}
+				return $http.get('/Fieldbook/OntologyBrowser/getDistinctValue/8065').then(function(result) {
+					if (result.data && result.data.constructor === Array) {
+						return result.data;
+					}
 
-				return false;
-			});
-		}
+					return false;
+				});
+			}
 
 		function postSelectedNurseryType(nurseryTypeId) {
-			return $http.post('/Fieldbook/DesignImport/postSelectedNurseryType', nurseryTypeId);
-		}
+				return $http.post('/Fieldbook/DesignImport/postSelectedNurseryType', nurseryTypeId);
+			}
 
 		var service = {
-			data: {
-				unmappedHeaders: [],
-				mappedEnvironmentalFactors: [],
-				mappedDesignFactors: [],
-				mappedGermplasmFactors: [],
-				mappedTraits: []
-			},
-			validateMapping: validateMapping,
-			getDistinctNurseryTypes: getDistinctNurseryTypes,
-			postSelectedNurseryType: postSelectedNurseryType
-		};
+				data: {
+					unmappedHeaders: [],
+					mappedEnvironmentalFactors: [],
+					mappedDesignFactors: [],
+					mappedGermplasmFactors: [],
+					mappedTraits: []
+				},
+				validateMapping: validateMapping,
+				getDistinctNurseryTypes: getDistinctNurseryTypes,
+				postSelectedNurseryType: postSelectedNurseryType
+			};
 
 		return service;
 
 	}]);
 
-	app.service('DesignOntologyService', ['VARIABLE_SELECTION_LABELS', function(VARIABLE_SELECTION_LABELS) {
-		var TrialSettingsManager = window.TrialSettingsManager;
-		var settingsManager = new TrialSettingsManager(VARIABLE_SELECTION_LABELS);
+	app.service('DesignOntologyService', ['VARIABLE_SELECTION_LABELS', function (VARIABLE_SELECTION_LABELS) {
+			var TrialSettingsManager = window.TrialSettingsManager;
+			var settingsManager = new TrialSettingsManager(VARIABLE_SELECTION_LABELS);
 
-		return {
-			openVariableSelectionDialog: function(params) {
-				settingsManager._openVariableSelectionDialog(params);
-			},
+			return {
+				openVariableSelectionDialog: function(params) {
+					settingsManager._openVariableSelectionDialog(params);
+				},
 
-			// @param = this map contains variables of the pair that will be filtered
-			addDynamicFilterObj: function(_map, group) {
-				settingsManager._addDynamicFilter(_map, group);
-			},
-			clearData: function() {
-				settingsManager._clearCache();
-			}
+				// @param = this map contains variables of the pair that will be filtered
+				addDynamicFilterObj: function(_map, group) {
+					settingsManager._addDynamicFilter(_map, group);
+				},
+				clearData: function() {
+					settingsManager._clearCache();
+				}
 
-		};
-	}]);
+			};
+		}]);
 
-	app.service('ImportDesign', function() {
-		return ImportDesign;
-	});
+	app.service('ImportDesign', function () {
+			return ImportDesign;
+		});
 
 })(isNursery);

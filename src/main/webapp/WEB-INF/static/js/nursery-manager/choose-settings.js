@@ -5,11 +5,11 @@ window.ChooseSettings = (function() {
 	'use strict';
 
 	var MODES = {
-			MANAGEMENT_DETAILS: 1,
-			FACTORS: 2,
-			TRAITS: 3,
-			SELECTION_VARIATES: 6,
-			NURSERY_CONDITIONS: 7
+			MANAGEMENT_DETAILS: 1805,
+			FACTORS: 1804,
+			TRAITS: 1808,
+			SELECTION_VARIATES: 1807,
+			NURSERY_CONDITIONS: 1803
 		},
 
 		dialogOpenSelector = '.chs-add-variable',
@@ -211,7 +211,7 @@ window.ChooseSettings = (function() {
 
 		// Currently we only have special handling for management details (1) and selection strategy (6)
 		switch (group) {
-			case 1:
+			case 1805:
 				// This property must be excluded as the variables it contains are duplicated by a dropdown on the main page
 				removedProperty = _removeById(studyLevelBreedingMethodPropertyId, filteredProperties, 'propertyId');
 
@@ -223,7 +223,7 @@ window.ChooseSettings = (function() {
 				// Remove variables and properties as necessary
 				exclusions = exclusions.concat(_removeVariables(basicDetails, filteredProperties));
 				break;
-			case 6:
+			case 1807:
 				// Remove variables and properties as necessary
 				exclusions = exclusions.concat(_performExclusions(selectionExclusions, selectedVariables, filteredProperties));
 				break;
@@ -460,8 +460,7 @@ window.ChooseSettings = (function() {
 
 		// If we haven't loaded data for this group before, then load it
 		if (!group.data) {
-
-			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId, function(data) {
+			$.getJSON('/Fieldbook/manageSettings/settings/properties?type=' + groupId, function (data) {
 				variableSelectionGroups[groupId].data = data;
 
 				properties = _filterProperties(variableSelectionGroups[groupId].data, selectedVariables, groupId);

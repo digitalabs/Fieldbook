@@ -14,6 +14,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.junit.Assert;
@@ -91,7 +92,7 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 					this.createBvOutput());
 
 			Mockito.when(this.workbenchService.getToolWithName(AppConstants.TOOL_NAME_BREEDING_VIEW.getString())).thenReturn(new Tool());
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ExpDesignUtilTest.LOG.error(e.getMessage(), e);
 			Assert.fail("Expected mock values but called original Middleware method.");
 		} catch (IOException e) {

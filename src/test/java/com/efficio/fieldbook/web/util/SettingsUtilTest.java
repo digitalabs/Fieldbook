@@ -10,6 +10,7 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
@@ -22,6 +23,8 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 public class SettingsUtilTest {
 
+	private static final String PROGRAM_UUID = "123456789";
+	
 	@Test
 	public void testConvertXmlDatasetToWorkbookAndBack() {
 		Dataset dataset = new Dataset();
@@ -39,7 +42,7 @@ public class SettingsUtilTest {
 				new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N",
 						TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
 
-		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, PROGRAM_UUID);
 		Debug.println(0, workbook);
 
 		Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
@@ -193,5 +196,17 @@ public class SettingsUtilTest {
 				SettingsUtil.getCodeInPossibleValues(valueRefs, "8414"));
 		Assert.assertEquals("Should return 2 since the matching name for 8415 is 2", 2,
 				SettingsUtil.getCodeInPossibleValues(valueRefs, "8415"));
+	}
+	
+	@Test
+	public void testSetSettingDetailRole(){
+		for(VariableType varType : VariableType.values()){
+			List<SettingDetail> newDetails = new ArrayList<SettingDetail>();
+			SettingDetail detail = new SettingDetail();
+			newDetails.add(detail);
+			/*SettingsUtil.setSettingDetailRole(newDetails, varType);*/
+			Assert.assertEquals("Should have the correct phenotypic type role as per the variable type", detail.getRole(), varType.getRole());
+		}
+		
 	}
 }

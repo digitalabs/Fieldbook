@@ -18,7 +18,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 	var VARIABLE_SELECT_EVENT = 'variable-select',
 		MODAL_SELECTOR = '.vs-modal',
-		TREATMENT_FACTOR_GROUP = 5,
+		TREATMENT_FACTOR_GROUP = 1809,
 
 		modalHeaderSelector = '.modal-header',
 		variableNameContainerSelector = '.vs-variable-name-container',
@@ -81,7 +81,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			splitColumns = {
 				column1: filteredProperties,
 				column2: [],
-				className: selectedProperty.traitClass.traitClassName
+				className: selectedProperty.classesStr
 			};
 
 		// Split the list of filtered properties in two if there are more than 4
@@ -298,7 +298,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			toExclude = this._excludedProperties,
 			propertyVariableList = $(propertyContainerSelector),
 			relatedPropertyList = $(relatedPropertyListSelector),
-			classId = selectedProperty.traitClass.traitClassId,
+            classesStr = selectedProperty.classesStr,
 			selectedVariables = this._currentlySelectedVariables,
 			generalAjaxErrorMessage = this._translations.generalAjaxError,
 
@@ -337,7 +337,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		propertyVariableList.empty();
 		propertyVariableList.append(generatePropertyVariableList({
 			propertyName: this._selectedProperty.name,
-			className: this._selectedProperty.traitClass.traitClassName,
+			className: this._selectedProperty.classesStr,
 			variables: variables
 		}));
 
@@ -357,12 +357,16 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		relatedPropertyList.empty();
 
 		// Key identifies whether we have retrieved the related properties for this group / class before (so we don't retrieve them again)
-		relatedPropertiesKey = this._group + ':' + classId;
+		relatedPropertiesKey = this._group + ':' + classesStr;
 
 		if (!this._relatedProperties[relatedPropertiesKey]) {
+			var classReqStr = '';
+			$.each(selectedProperty.classes, function(key, val) {
+				classReqStr += '&classes=' + val;
+			});
 
 			var groupId = this._group,
-				url = '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId + '&classId=' + classId;
+				url = '/Fieldbook/manageSettings/settings/properties?type=' + groupId + classReqStr;
 			if (!isNursery()) {
 				url += '&useTrialFiltering=true';
 			}

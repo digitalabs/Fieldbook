@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -334,14 +335,14 @@ public class OpenTrialController extends BaseTrialController {
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection
 						.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection
 						.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
-						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false);
+						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 
 		Workbook workbook =
 				SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
 						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
-						this.userSelection.getExperimentalDesignVariables());
+						this.userSelection.getExperimentalDesignVariables(), this.contextUtil.getCurrentProgramUUID());
 
 		if (userSelection.isDesignGenerated()) {
 			
@@ -392,10 +393,12 @@ public class OpenTrialController extends BaseTrialController {
 		// saving of measurement rows
 		if (this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty() && replace == 0) {
 			try {
-				WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, this.userSelection, this.ontologyService,
-						this.fieldbookService);
-				WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, this.userSelection, this.ontologyService,
-						this.fieldbookService);
+				WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false,
+						this.userSelection, this.ontologyService, this.fieldbookService,
+						this.contextUtil.getCurrentProgramUUID());
+				WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true,
+						this.userSelection, this.ontologyService, this.fieldbookService,
+						this.contextUtil.getCurrentProgramUUID());
 
 				workbook.setMeasurementDatasetVariables(null);
 				workbook.setObservations(this.userSelection.getMeasurementRowList());
@@ -405,7 +408,8 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 						AppConstants.ID_NAME_COMBINATION.getString(), true);
 
-				this.fieldbookMiddlewareService.saveMeasurementRows(workbook);
+				this.fieldbookMiddlewareService.saveMeasurementRows(workbook,
+						this.contextUtil.getCurrentProgramUUID());
 
 				returnVal.put(
 						OpenTrialController.MEASUREMENT_DATA_EXISTING,
@@ -551,9 +555,12 @@ public class OpenTrialController extends BaseTrialController {
 					int id = Integer.valueOf(token.nextToken());
 					MeasurementVariable currentVar = WorkbookUtil.getMeasurementVariable(measurementDatasetVariables, id);
 					if (currentVar == null) {
-						StandardVariable var = this.fieldbookMiddlewareService.getStandardVariable(id);
-						MeasurementVariable newVar =
-								ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
+						StandardVariable var = this.fieldbookMiddlewareService.getStandardVariable(
+								id, this.contextUtil.getCurrentProgramUUID());
+						var.setPhenotypicType(PhenotypicType.VARIATE);
+						MeasurementVariable newVar = ExpDesignUtil
+								.convertStandardVariableToMeasurementVariable(var, Operation.ADD,
+										this.fieldbookService);
 						newVar.setFactor(false);
 						newMeasurementDatasetVariables.add(newVar);
 						SettingsUtil.findAndUpdateVariableName(traitList, newVar);
@@ -669,9 +676,9 @@ public class OpenTrialController extends BaseTrialController {
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
 						this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
 						this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-						this.userSelection.getNurseryConditions(), false);
+						this.userSelection.getNurseryConditions(), false, this.contextUtil.getCurrentProgramUUID());
 
-		Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+		Workbook tempWorkbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.contextUtil.getCurrentProgramUUID());
 		StudyDetails details = new StudyDetails();
 		details.setStudyType(StudyType.T);
 		tempWorkbook.setStudyDetails(details);

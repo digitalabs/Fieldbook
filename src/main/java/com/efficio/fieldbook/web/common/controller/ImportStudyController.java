@@ -16,6 +16,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.service.FileService;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -23,6 +24,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
@@ -110,6 +112,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public String getContentName() {
@@ -441,7 +446,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@RequestMapping(value = "/import/save", method = RequestMethod.POST)
 	public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		UserSelection userSelection = this.getUserSelection(false);
 		List<MeasurementVariable> traits =
 				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
@@ -455,7 +460,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// will do the cleanup for BM_CODE_VTE here
 		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService);
-		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook());
+		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(),contextUtil.getCurrentProgramUUID());
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService);
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 

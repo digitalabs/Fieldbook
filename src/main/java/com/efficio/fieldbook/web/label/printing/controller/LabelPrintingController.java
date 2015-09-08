@@ -182,7 +182,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				fieldMapInfo = fieldMapInfoDetail;
 				hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 		}
 		this.userLabelPrinting.setStudyId(id);
@@ -230,7 +230,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				fieldMapInfo = fieldMapInfoDetail;
 				hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			LabelPrintingController.LOG.error(e.getMessage(), e);
 		}
 		this.userLabelPrinting.setStudyId(id);
@@ -319,7 +319,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 					fieldMapInfo.getDatasets().get(0).getTrialInstances().get(0).setStockList(stockList);
 					hasFieldMap = this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
 				}
-			} catch (MiddlewareQueryException e) {
+			} catch (MiddlewareException e) {
 				LabelPrintingController.LOG.error(e.getMessage(), e);
 			}
 			this.userLabelPrinting.setStudy(study);

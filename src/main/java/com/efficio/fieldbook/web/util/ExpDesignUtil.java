@@ -16,12 +16,14 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.slf4j.Logger;
@@ -211,13 +213,13 @@ public class ExpDesignUtil {
 						.getProperty().getName(), var.getDataType().getName(), null, var.getPhenotypicType().getLabelList().get(0));
 		mvar.setFactor(true);
 		mvar.setOperation(operation);
-		mvar.setStoredIn(var.getStoredIn().getId());
+		mvar.setRole(var.getPhenotypicType());
 		mvar.setTermId(var.getId());
 		mvar.setDataTypeId(var.getDataType().getId());
 
 		try {
 			mvar.setPossibleValues(fieldbookService.getAllPossibleValues(var.getId()));
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ExpDesignUtil.LOG.error(e.getMessage(), e);
 		}
 		return mvar;
@@ -341,6 +343,7 @@ public class ExpDesignUtil {
 			if (WorkbookUtil.getMeasurementVariable(nonTrialFactors, var.getId()) == null) {
 				MeasurementVariable measureVar =
 						ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, fieldbookService);
+				measureVar.setRole(PhenotypicType.TRIAL_DESIGN);
 				varList.add(measureVar);
 				if (WorkbookUtil.getMeasurementVariable(factors, var.getId()) == null) {
 					factors.add(measureVar);

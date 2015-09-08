@@ -2,8 +2,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -11,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -38,7 +35,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
-import org.olap4j.impl.ArrayMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingTemplateExcelExporterTest {
@@ -75,13 +71,13 @@ public class CrossingTemplateExcelExporterTest {
 
 	@Test
 	public void testExport() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID, GermplasmListType.NURSERY)).thenReturn(
-				this.initializeCrossesList());
+		Mockito.when(
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
+						GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
-		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager).getExperiments(Matchers.anyInt(), Matchers.anyInt(),
-				Matchers.anyInt(), Matchers.any(VariableTypeList.class));
+		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager)
+				.getExperiments(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(), Matchers.any(VariableTypeList.class));
 
 		Workbook wb = Mockito.mock(Workbook.class);
 		Mockito.when(wb.getSheetAt(1)).thenReturn(Mockito.mock(Sheet.class));
@@ -90,8 +86,10 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.doReturn(style).when(this.DUT).createStyles(wb);
 
 		Mockito.doReturn(wb).when(this.DUT).retrieveTemplate();
-		Mockito.doReturn(4).when(this.DUT).writeListDetailsSection(Matchers.any(Map.class), Matchers.any(Sheet.class), Matchers.anyInt(),
-				Matchers.any(GermplasmList.class));
+		Mockito.doReturn(4)
+				.when(this.DUT)
+				.writeListDetailsSection(Matchers.any(Map.class), Matchers.any(Sheet.class), Matchers.anyInt(),
+						Matchers.any(GermplasmList.class));
 
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
 
@@ -120,12 +118,12 @@ public class CrossingTemplateExcelExporterTest {
 
 	@Test
 	public void testWriteListDetailsSection() throws IOException {
-		Map<String, CellStyle> styles = exporter.createStyles(workbook);
-		Sheet sheet = workbook.getSheetAt(0);
+		Map<String, CellStyle> styles = this.exporter.createStyles(this.workbook);
+		Sheet sheet = this.workbook.getSheetAt(0);
 		GermplasmList list = new GermplasmList();
 		list.setDate(20150506l);
 		list.setType("LST");
-		exporter.writeListDetailsSection(styles, sheet, 1, list);
+		this.exporter.writeListDetailsSection(styles, sheet, 1, list);
 
 		Assert.assertEquals(sheet.getRow(0).getCell(0).getStringCellValue(), "LIST NAME");
 		Assert.assertEquals(sheet.getRow(0).getCell(1).getStringCellValue(), "");
@@ -133,7 +131,8 @@ public class CrossingTemplateExcelExporterTest {
 
 		Assert.assertEquals(sheet.getRow(1).getCell(0).getStringCellValue(), "LIST DESCRIPTION");
 		Assert.assertEquals(sheet.getRow(1).getCell(1).getStringCellValue(), "");
-		Assert.assertEquals(sheet.getRow(1).getCell(3).getStringCellValue(), "Enter a list description here, or add it when saving in the BMS");
+		Assert.assertEquals(sheet.getRow(1).getCell(3).getStringCellValue(),
+				"Enter a list description here, or add it when saving in the BMS");
 
 		Assert.assertEquals(sheet.getRow(2).getCell(0).getStringCellValue(), "LIST TYPE");
 		Assert.assertEquals(sheet.getRow(2).getCell(1).getStringCellValue(), "LST");
@@ -146,8 +145,9 @@ public class CrossingTemplateExcelExporterTest {
 
 	@Test(expected = CrossingTemplateExportException.class)
 	public void retrieveAndValidateIfHasGermplasmListExceptionHandling() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.NURSERY)).thenReturn(Collections.EMPTY_LIST);
+		Mockito.when(
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
+						GermplasmListType.NURSERY)).thenReturn(Collections.EMPTY_LIST);
 
 		this.DUT.retrieveAndValidateIfHasGermplasmList(CrossingTemplateExcelExporterTest.STUDY_ID);
 	}

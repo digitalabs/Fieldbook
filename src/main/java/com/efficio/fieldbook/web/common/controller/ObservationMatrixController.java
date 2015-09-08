@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -18,6 +19,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -70,6 +72,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 	@Resource
 	private PaginationListSelection paginationListSelection;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public String getContentName() {
@@ -140,9 +145,9 @@ public class ObservationMatrixController extends AbstractBaseFieldbookController
 
 		try {
 			this.validationService.validateObservationValues(workbook, "");
-			this.fieldbookMiddlewareService.saveMeasurementRows(workbook);
+			this.fieldbookMiddlewareService.saveMeasurementRows(workbook,contextUtil.getCurrentProgramUUID());
 			resultMap.put(ObservationMatrixController.STATUS, "1");
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ObservationMatrixController.LOG.error(e.getMessage(), e);
 			resultMap.put(ObservationMatrixController.STATUS, "-1");
 			resultMap.put(ObservationMatrixController.ERROR_MESSAGE, e.getMessage());

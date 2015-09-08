@@ -12,9 +12,12 @@
 package com.efficio.fieldbook.web.common.bean;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
 import org.springframework.web.util.HtmlUtils;
 
@@ -41,6 +44,7 @@ public class SettingVariable implements Serializable {
 	private WidgetType widgetType;
 	private Operation operation;
 	private Integer storedInId;
+	private Set<VariableType> variableTypes;
 
 	public SettingVariable() {
 		super();
@@ -159,12 +163,13 @@ public class SettingVariable implements Serializable {
 		this.cvTermId = cvTermId;
 	}
 
-	public void setPSMRFromStandardVariable(StandardVariable standardVariable) {
+	public void setPSMRFromStandardVariable(StandardVariable standardVariable, String role) {
 		if (standardVariable != null) {
 			this.property = HtmlUtils.htmlEscape(standardVariable.getProperty().getName());
 			this.scale = HtmlUtils.htmlEscape(standardVariable.getScale().getName());
 			this.method = HtmlUtils.htmlEscape(standardVariable.getMethod().getName());
-			this.role = HtmlUtils.htmlEscape(standardVariable.getPhenotypicType().name());
+			this.role = role;
+			standardVariable.setPhenotypicType(PhenotypicType.getPhenotypicTypeByName(role));
 			this.description = HtmlUtils.htmlEscape(standardVariable.getDescription());
 			this.dataType = this.getDataType(standardVariable.getDataType().getId());
 			this.dataTypeId = standardVariable.getDataType().getId();
@@ -303,6 +308,14 @@ public class SettingVariable implements Serializable {
 	public String toString() {
 		return "SettingVariable [cvTermId=" + this.cvTermId + ", name=" + this.name + ", description=" + this.description + ", property="
 				+ this.property + ", scale=" + this.scale + ", method=" + this.method + "]";
+	}
+
+	public void setVariableTypes(Set<VariableType> variableTypes) {
+		this.variableTypes = variableTypes;
+	}
+	
+	public Set<VariableType> getVariableTypes() {
+		return this.variableTypes;
 	}
 
 }

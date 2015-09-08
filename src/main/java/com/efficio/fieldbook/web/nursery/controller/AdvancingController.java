@@ -38,6 +38,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -147,7 +148,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(value = "/{nurseryId}", method = RequestMethod.GET)
 	public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req,
-			HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException {
+			HttpSession session, @PathVariable int nurseryId) throws MiddlewareException {
 		form.setMethodChoice("1");
 		form.setLineChoice("1");
 		form.setLineSelected("1");
@@ -369,7 +370,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			results.put("advanceGermplasmChangeDetails", advanceGermplasmChangeDetails);
 			results.put(AdvancingController.UNIQUE_ID, id);
 
-		} catch (MiddlewareQueryException | RuleException e) {
+		} catch (MiddlewareException | RuleException e) {
 			AdvancingController.LOG.error(e.getMessage(), e);
 			form.setErrorInAdvance(e.getMessage());
 			form.setGermplasmList(new ArrayList<ImportedGermplasm>());

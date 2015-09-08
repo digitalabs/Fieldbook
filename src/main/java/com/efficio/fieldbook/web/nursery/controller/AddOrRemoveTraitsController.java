@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -105,7 +106,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 
 		try {
 			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			AddOrRemoveTraitsController.LOG.error(e.getMessage(), e);
 		}
 
@@ -142,7 +143,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 			this.fieldbookService.setAllPossibleValuesInWorkbook(workbook);
 			SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 					this.ontologyService);
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			AddOrRemoveTraitsController.LOG.error(e.getMessage(), e);
 		}
 		this.getUserSelection().setMeasurementRowList(workbook.arrangeMeasurementObservation(workbook.getObservations()));

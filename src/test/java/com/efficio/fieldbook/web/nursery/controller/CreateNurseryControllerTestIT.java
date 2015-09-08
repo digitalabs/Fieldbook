@@ -11,6 +11,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.Location;
@@ -90,7 +91,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 			Assert.assertNotNull(form2.getCheckVariables());
 			Assert.assertTrue("Expected only check variables but the list has non check variables as well.",
 					WorkbookTestUtil.areDetailsFilteredVariables(form2.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			Assert.fail("Expected mock values but still called the middleware class");
 		}
 	}
@@ -103,7 +104,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 			Assert.assertNotNull(form.getCheckVariables());
 			Assert.assertTrue("Expected only check variables but the list has non check variables as well.",
 					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			Assert.fail("Expected mock values but still called the middleware class");
 		}
 	}
@@ -146,43 +147,58 @@ public class CreateNurseryControllerTestIT extends AbstractBaseControllerIntegra
 		try {
 			Mockito.when(this.fieldbookMiddlewareService.getPersonById(-1)).thenReturn(new Person());
 
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_NAME.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_NAME.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_NAME.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_TITLE.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_TITLE.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_TITLE.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.START_DATE.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.START_DATE.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.START_DATE.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_OBJECTIVE.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_OBJECTIVE.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_OBJECTIVE.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.END_DATE.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.END_DATE.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.END_DATE.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UID.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_UID.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UPDATE.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.STUDY_UPDATE.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.STUDY_UPDATE.getId()));
 
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.BREEDING_METHOD_CODE.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.BREEDING_METHOD_CODE.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.BREEDING_METHOD_CODE.getId()));
 
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.ENTRY_NO.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.DESIG.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.DESIG.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CROSS.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CROSS.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.CROSS.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.GID.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.GID.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.PLOT_NO.getId()));
 
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.CHECK_START.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(),
+					Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.CHECK_INTERVAL.getId()));
-			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId())).thenReturn(
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(),Mockito.anyString())).thenReturn(
 					this.createStandardVariable(TermId.CHECK_PLAN.getId()));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			Assert.fail("Expected mock returns but still called the middleware class.");
 		}
 	}

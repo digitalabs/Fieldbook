@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -16,12 +17,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.service.impl.ExportServiceImpl;
+import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.VariableType;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -35,6 +37,7 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s.xls";
+	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -77,7 +80,7 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 			// 4. return the resulting file back to the user
 			return this.createExcelOutputFile(studyName, excelWorkbook);
 
-		} catch (MiddlewareQueryException | IOException | InvalidFormatException e) {
+		} catch (MiddlewareException | IOException | InvalidFormatException e) {
 			throw new CrossingTemplateExportException(e.getMessage(), e);
 		}
 	}
@@ -89,14 +92,14 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 		this.writeListDetailsRow(descriptionSheet, styles, actualRow, ExportServiceImpl.LIST_NAME, "",
 				"Enter a list name here, or add it when saving in the BMS");
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DESCRIPTION,
-				"", "Enter a list description here, or add it when saving in the BMS");
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DESCRIPTION, "",
+				"Enter a list description here, or add it when saving in the BMS");
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_TYPE,
-				germplasmList.getType(), "See valid list types on Codes sheet for more options");
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_TYPE, germplasmList.getType(),
+				"See valid list types on Codes sheet for more options");
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DATE, String.valueOf(
-				germplasmList.getDate()), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DATE,
+				String.valueOf(germplasmList.getDate()), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 
 		return ++actualRow;
 	}
@@ -121,8 +124,8 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 	}
 
 	protected VariableTypeList createPlotVariableTypeList() throws MiddlewareQueryException {
-		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
-		VariableType plotVariableType = new VariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
+		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), PROGRAM_UUID);
+		DMSVariableType plotVariableType = new DMSVariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
 		VariableTypeList plotVariableTypeList = new VariableTypeList();
 		plotVariableTypeList.add(plotVariableType);
 

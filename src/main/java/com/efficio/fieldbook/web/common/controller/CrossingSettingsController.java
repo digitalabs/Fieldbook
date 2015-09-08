@@ -1,4 +1,3 @@
-
 package com.efficio.fieldbook.web.common.controller;
 
 import java.io.File;
@@ -56,7 +55,8 @@ import com.efficio.fieldbook.web.common.service.impl.CrossingTemplateExcelExport
 import com.efficio.fieldbook.web.util.DuplicatesUtil;
 
 /**
- * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 1/21/2015 Time: 1:49 PM
+ * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 1/21/2015 Time: 1:49
+ * PM
  */
 
 @Controller
@@ -111,13 +111,13 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 		List<CrossImportSettings> settings = new ArrayList<>();
 
 		try {
-			List<ProgramPreset> presets =
-					this.presetDataManager.getProgramPresetFromProgramAndTool(this.getCurrentProgramID(), this.getFieldbookToolID(),
-							ToolSection.FBK_CROSS_IMPORT.name());
+			List<ProgramPreset> presets = this.presetDataManager
+					.getProgramPresetFromProgramAndTool(this.getCurrentProgramID(),
+							this.getFieldbookToolID(), ToolSection.FBK_CROSS_IMPORT.name());
 
 			for (ProgramPreset preset : presets) {
-				CrossSetting crossSetting =
-						(CrossSetting) this.settingsPresetService.convertPresetFromXmlString(preset.getConfiguration(), CrossSetting.class);
+				CrossSetting crossSetting = (CrossSetting) this.settingsPresetService
+						.convertPresetFromXmlString(preset.getConfiguration(), CrossSetting.class);
 				CrossImportSettings importSettings = new CrossImportSettings();
 				importSettings.populate(crossSetting);
 				settings.add(importSettings);
@@ -131,8 +131,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/submitAndSaveSetting", method = RequestMethod.POST, consumes = "application/json",
-			produces = "application/json")
+	@RequestMapping(value = "/submitAndSaveSetting", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public Map<String, Object> submitAndSaveCrossSettings(@RequestBody CrossSetting settings) {
 		Map<String, Object> returnVal = new HashMap<>();
 		try {
@@ -147,13 +146,14 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/generateSequenceValue", method = RequestMethod.POST, consumes = "application/json",
-			produces = "application/json")
-	public Map<String, String> generateSequenceValue(@RequestBody CrossSetting setting, HttpServletRequest request) {
+	@RequestMapping(value = "/generateSequenceValue", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public Map<String, String> generateSequenceValue(@RequestBody CrossSetting setting,
+			HttpServletRequest request) {
 		Map<String, String> returnVal = new HashMap<>();
 
 		try {
-			String sequenceValue = this.crossNameService.getNextNameInSequence(setting.getCrossNameSetting());
+			String sequenceValue = this.crossNameService.getNextNameInSequence(setting
+					.getCrossNameSetting());
 			returnVal.put(CrossingSettingsController.SUCCESS_KEY, "1");
 			returnVal.put("sequenceValue", sequenceValue);
 		} catch (MiddlewareQueryException e) {
@@ -219,7 +219,7 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	/**
 	 * Validates if current study can perform an export
-	 *
+	 * 
 	 * @return a JSON result object
 	 */
 	@ResponseBody
@@ -227,9 +227,12 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 	public Map<String, Object> doCrossingExport() {
 		Map<String, Object> out = new HashMap<>();
 		try {
-			File result =
-					this.crossingTemplateExcelExporter.export(this.studySelection.getWorkbook().getStudyId(), this.studySelection
-							.getWorkbook().getStudyName());
+			Integer studyId = this.studySelection.getWorkbook().getStudyId();
+			if (studyId == null && this.studySelection.getWorkbook().getStudyDetails() != null) {
+				studyId = this.studySelection.getWorkbook().getStudyDetails().getId();
+			}
+			File result = this.crossingTemplateExcelExporter.export(studyId, this.studySelection
+					.getWorkbook().getStudyName());
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.TRUE);
 			out.put("outputFilename", result.getAbsolutePath());
@@ -238,9 +241,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			CrossingSettingsController.LOG.debug(e.getMessage(), e);
 
 			out.put(CrossingSettingsController.IS_SUCCESS, Boolean.FALSE);
-			out.put("errorMessage",
-					this.messageSource.getMessage(e.getMessage(), new String[] {}, "cannot export a crossing template",
-							LocaleContextHolder.getLocale()));
+			out.put("errorMessage", this.messageSource.getMessage(e.getMessage(), new String[] {},
+					"cannot export a crossing template", LocaleContextHolder.getLocale()));
 		}
 
 		return out;
@@ -248,8 +250,10 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@ResponseBody
 	@RequestMapping(value = "/download/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public ResponseEntity<FileSystemResource> download(HttpServletRequest req) throws UnsupportedEncodingException {
-		String outputFilename = new String(req.getParameter("outputFilename").getBytes("iso-8859-1"), "UTF-8");
+	public ResponseEntity<FileSystemResource> download(HttpServletRequest req)
+			throws UnsupportedEncodingException {
+		String outputFilename = new String(req.getParameter("outputFilename")
+				.getBytes("iso-8859-1"), "UTF-8");
 
 		try {
 			File resource = new File(outputFilename);
@@ -272,11 +276,13 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	@ResponseBody
 	@RequestMapping(value = "/germplasm", method = RequestMethod.POST)
-	public String importFile(Model model, @ModelAttribute("importCrossesForm") ImportCrossesForm form) {
+	public String importFile(Model model,
+			@ModelAttribute("importCrossesForm") ImportCrossesForm form) {
 
 		Map<String, Object> resultsMap = new HashMap<>();
 
-		// 1. PARSE the file into an ImportCrosses List REF: deprecated: CrossingManagerUploader.java
+		// 1. PARSE the file into an ImportCrosses List REF: deprecated:
+		// CrossingManagerUploader.java
 		try {
 			ImportedCrossesList parseResults = this.crossingService.parseFile(form.getFile());
 			// 2. Process duplicates and set to ImportedCrossesList
@@ -286,12 +292,13 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			this.studySelection.setimportedCrossesList(parseResults);
 
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 1);
-			resultsMap.put(CrossingSettingsController.HAS_PLOT_DUPLICATE, parseResults.hasPlotDuplicate());
+			resultsMap.put(CrossingSettingsController.HAS_PLOT_DUPLICATE,
+					parseResults.hasPlotDuplicate());
 
 		} catch (FileParsingException e) {
 			CrossingSettingsController.LOG.error(e.getMessage(), e);
 			resultsMap.put(CrossingSettingsController.IS_SUCCESS, 0);
-			resultsMap.put("error", new String[] {e.getMessage()});
+			resultsMap.put("error", new String[] { e.getMessage() });
 		}
 		return super.convertObjectToJson(resultsMap);
 	}
@@ -306,7 +313,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			return masterList;
 		}
 
-		for (ImportedCrosses cross : this.studySelection.getImportedCrossesList().getImportedCrosses()) {
+		for (ImportedCrosses cross : this.studySelection.getImportedCrossesList()
+				.getImportedCrosses()) {
 			masterList.add(this.generateDatatableDataMap(cross));
 		}
 
@@ -330,17 +338,18 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 
 	}
 
-	protected void saveCrossSetting(CrossSetting setting, String programUUID) throws MiddlewareQueryException, JAXBException {
+	protected void saveCrossSetting(CrossSetting setting, String programUUID)
+			throws MiddlewareQueryException, JAXBException {
 
-		List<ProgramPreset> presets =
-				this.presetDataManager.getProgramPresetFromProgramAndTool(programUUID, this.getFieldbookToolID(),
-						ToolSection.FBK_CROSS_IMPORT.name());
+		List<ProgramPreset> presets = this.presetDataManager.getProgramPresetFromProgramAndTool(
+				programUUID, this.getFieldbookToolID(), ToolSection.FBK_CROSS_IMPORT.name());
 
 		boolean found = false;
 		ProgramPreset forSaving = null;
 		for (ProgramPreset preset : presets) {
 			if (preset.getName().equals(setting.getName())) {
-				preset.setConfiguration(this.settingsPresetService.convertPresetSettingToXml(setting, CrossSetting.class));
+				preset.setConfiguration(this.settingsPresetService.convertPresetSettingToXml(
+						setting, CrossSetting.class));
 				found = true;
 				forSaving = preset;
 				break;
@@ -353,7 +362,8 @@ public class CrossingSettingsController extends AbstractBaseFieldbookController 
 			forSaving.setToolId(this.getFieldbookToolID());
 			forSaving.setProgramUuid(programUUID);
 			forSaving.setToolSection(ToolSection.FBK_CROSS_IMPORT.name());
-			forSaving.setConfiguration(this.settingsPresetService.convertPresetSettingToXml(setting, CrossSetting.class));
+			forSaving.setConfiguration(this.settingsPresetService.convertPresetSettingToXml(
+					setting, CrossSetting.class));
 		}
 
 		this.presetDataManager.saveOrUpdateProgramPreset(forSaving);

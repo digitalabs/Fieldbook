@@ -400,7 +400,7 @@ function isFloatNumber(val) {
 	if (!val || (typeof val != 'string' || val.constructor != String)) {
 		return(false);
 	}
-	var isNumber = !isNaN(new Number(val));
+	var isNumber = !isNaN(Number(val));
 	if (isNumber) {
 		if (val.indexOf('.') != -1) {
 			return(true);
@@ -1415,7 +1415,7 @@ function showWarningMessageForRequiredColumns(visibleColumns) {
 		'necessary to identify your data when you import it back into the system.';
 	if (hasRequiredColumnsHiddenInMeasurementDataTable(visibleColumns)) {
 		showAlertMessage('', warningMessage);
-	};
+	}
 }
 
 function getMeasurementTableVisibleColumns(isNursery) {
@@ -1780,7 +1780,7 @@ function showBaselineTraitDetailsModal(id) {
 
 	if (id !== '') {
 		$.ajax({
-			url: '/Fieldbook/OntologyBrowser/details/' + id,
+			url: '/Fieldbook/manageSettings/settings/details/' + id,
 			type: 'GET',
 			cache: false,
 			success: function(html) {
@@ -1790,7 +1790,30 @@ function showBaselineTraitDetailsModal(id) {
 				}
 				$('#variableDetailsModal').modal('toggle');
 				if ($('#variableDetailsModal')) {
-					var variableName = $('#' + getJquerySafeId('variable.name')).val();
+					var variableName = $('#ontology-tabs').data('selectedvariablename');
+					$('#variableDetailsModal .modal-title').html(variableDetailsHeader + ' ' + variableName);
+				}
+			}
+		});
+	}
+}
+
+function showBaselineTraitDetailsModal(id, variableTypeId) {
+	'use strict';
+
+	if (id !== '') {
+		$.ajax({
+			url: '/Fieldbook/manageSettings/settings/details/' + variableTypeId + '/' + id,
+			type: 'GET',
+			cache: false,
+			success: function (html) {
+				$('.variable-details-section').empty().append(html);
+				if ($('#selectedStdVarId').length != 0) {
+					$('#selectedStdVarId').val(id);
+				}
+				$('#variableDetailsModal').modal('toggle');
+				if ($('#variableDetailsModal')) {
+					var variableName = $('#ontology-tabs').data('selectedvariablename');
 					$('#variableDetailsModal .modal-title').html(variableDetailsHeader + ' ' + variableName);
 				}
 			}
@@ -3105,10 +3128,11 @@ function showSelectedTab(selectedTabName) {
 }
 
 function getUsageDetails() {
-	var id = $('#selectedStdVarId').val();
+	var id = $('#ontology-tabs').data('selectedvariableid');
+	var variableTypeId = $('#ontology-tabs').data('selectedvariabletypeid');
 	$('#ontology-usage-tab').html('');
 	$.ajax({
-		url: '/Fieldbook/OntologyBrowser/details/usage/' + id,
+		url: '/Fieldbook/manageSettings/settings/details/usage/' + variableTypeId + '/' + id,
 		type: 'GET',
 		async: true,
 		success: function(html) {

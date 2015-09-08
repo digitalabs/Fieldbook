@@ -186,7 +186,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/export/{exportType}/{selectedTraitTermId}/{exportWayType}", method = RequestMethod.POST)
 	public String exportRFileForNursery(@RequestBody Map<String, String> data, @PathVariable int exportType,
 			@PathVariable int selectedTraitTermId, @PathVariable int exportWayType, HttpServletRequest req, HttpServletResponse response)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		boolean isTrial = false;
 		List<Integer> instancesList = new ArrayList<Integer>();
 		instancesList.add(1);
@@ -227,7 +227,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/export/{exportType}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFile(@RequestBody Map<String, String> data, @PathVariable int exportType, @PathVariable int exportWayType,
-			HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
+			HttpServletRequest req, HttpServletResponse response) throws MiddlewareException {
 		boolean isTrial = false;
 		List<Integer> instancesList = new ArrayList<Integer>();
 		instancesList.add(1);
@@ -238,7 +238,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/exportTrial/{exportType}/{selectedTraitTermId}/{instances}/{exportWayType}", method = RequestMethod.POST)
 	public String exportRFileForTrial(@RequestBody Map<String, String> data, @PathVariable int exportType,
 			@PathVariable int selectedTraitTermId, @PathVariable String instances, @PathVariable int exportWayType, HttpServletRequest req,
-			HttpServletResponse response) throws MiddlewareQueryException {
+			HttpServletResponse response) throws MiddlewareException {
 		boolean isTrial = true;
 		List<Integer> instancesList = new ArrayList<Integer>();
 		StringTokenizer tokenizer = new StringTokenizer(instances, "|");
@@ -252,7 +252,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/exportTrial/{exportType}/{instances}/{exportWayType}", method = RequestMethod.POST)
 	public String exportFileTrial(@RequestBody Map<String, String> data, @PathVariable int exportType, @PathVariable String instances,
-			@PathVariable int exportWayType, HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
+			@PathVariable int exportWayType, HttpServletRequest req, HttpServletResponse response) throws MiddlewareException {
 		boolean isTrial = true;
 		List<Integer> instancesList = new ArrayList<Integer>();
 		StringTokenizer tokenizer = new StringTokenizer(instances, "|");
@@ -335,7 +335,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	private String doExport(int exportType, int selectedTraitTermId, HttpServletResponse response, boolean isTrial,
-			List<Integer> instances, int exportWayType, Map<String, String> data) throws MiddlewareQueryException {
+			List<Integer> instances, int exportWayType, Map<String, String> data) throws MiddlewareException {
 
 		/*
 		 * exportWayType 1 - row column 2 - serpentine (range) 3 - serpentine (col)

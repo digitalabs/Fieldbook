@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -14,7 +15,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 
@@ -24,8 +25,6 @@ import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 public class WorkbookUtil {
-
-	private static final String DUMMY_PROGRAM_UUID = "1234567890";
 
 	public static Integer getMeasurementVariableId(List<MeasurementVariable> variables, String name) {
 		if (variables != null && !variables.isEmpty()) {
@@ -281,15 +280,18 @@ public class WorkbookUtil {
 		return false;
 	}
 
-	public static void addMeasurementDataToRowsExp(List<MeasurementVariable> variableList, List<MeasurementRow> observations,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService)
-			throws MiddlewareQueryException {
+	public static void addMeasurementDataToRowsExp(List<MeasurementVariable> variableList, 
+			List<MeasurementRow> observations, boolean isVariate, 
+			UserSelection userSelection, OntologyService ontologyService, 
+			FieldbookService fieldbookService, String programUUID)
+			throws MiddlewareException {
 		// add new variables in measurement rows
 		if (observations != null && !observations.isEmpty()) {
 			for (MeasurementVariable variable : variableList) {
 				if (variable.getOperation().equals(Operation.ADD)
 						&& !WorkbookUtil.inMeasurementDataList(observations.get(0).getDataList(), variable.getTermId())) {
-					StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+					StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(),
+							programUUID);
 					for (MeasurementRow row : observations) {
 						MeasurementData measurementData =
 								new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()),
@@ -302,7 +304,7 @@ public class WorkbookUtil {
 
 					if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
 							&& isVariate) {
-						variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, WorkbookUtil.DUMMY_PROGRAM_UUID));
+						variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
 					} else {
 						variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
 					}
@@ -312,11 +314,11 @@ public class WorkbookUtil {
 	}
 
 	public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, boolean isVariate, UserSelection userSelection,
-			OntologyService ontologyService, FieldbookService fieldbookService) throws MiddlewareQueryException {
+			OntologyService ontologyService, FieldbookService fieldbookService, String programUUID) throws MiddlewareException {
 		// add new variables in measurement rows
 		for (MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
-				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(),programUUID);
 				for (MeasurementRow row : userSelection.getMeasurementRowList()) {
 					MeasurementData measurementData =
 							new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
@@ -328,7 +330,7 @@ public class WorkbookUtil {
 
 				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
 						&& isVariate) {
-					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, WorkbookUtil.DUMMY_PROGRAM_UUID));
+					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
 				} else {
 					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
 				}
@@ -336,13 +338,16 @@ public class WorkbookUtil {
 		}
 	}
 
-	public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, List<MeasurementRow> measurementRowList,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService)
-			throws MiddlewareQueryException {
+	public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, 
+			List<MeasurementRow> measurementRowList,
+			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, 
+			FieldbookService fieldbookService, String programUUID)
+			throws MiddlewareException {
 		// add new variables in measurement rows
 		for (MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
-				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+				StandardVariable stdVariable = ontologyService.getStandardVariable(
+						variable.getTermId(),programUUID);
 				for (MeasurementRow row : measurementRowList) {
 					MeasurementData measurementData =
 							new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
@@ -354,7 +359,7 @@ public class WorkbookUtil {
 
 				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
 						&& isVariate) {
-					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, WorkbookUtil.DUMMY_PROGRAM_UUID));
+					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
 				} else {
 					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
 				}
@@ -363,13 +368,13 @@ public class WorkbookUtil {
 	}
 	
 	public static void addMeasurementDataToRowsIfNecessary(List<MeasurementVariable> variableList, List<MeasurementRow> measurementRowList,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService)
-			throws MiddlewareQueryException {
+			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService, String programUUID)
+			throws MiddlewareException {
 		
 		// add new variables in measurement rows
 		for (MeasurementVariable variable : variableList) {
 				
-				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
 				
 				for (MeasurementRow row : measurementRowList) {
 					
@@ -388,7 +393,7 @@ public class WorkbookUtil {
 
 				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
 						&& isVariate) {
-					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, WorkbookUtil.DUMMY_PROGRAM_UUID));
+					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
 				} else {
 					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
 				}
@@ -561,6 +566,7 @@ public class WorkbookUtil {
 			List<Integer> expDesignConstants = AppConstants.EXP_DESIGN_VARIABLES.getIntegerList();
 			for (MeasurementVariable condition : conditions) {
 				if (expDesignConstants.contains(condition.getTermId())) {
+					condition.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 					expDesignVariables.add(condition);
 				}
 			}

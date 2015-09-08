@@ -16,9 +16,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -59,6 +61,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
+	
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public String getContentName() {
@@ -85,7 +90,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			workbook.setStudyId(id);
 			details =
 					SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
-							this.userSelection);
+							this.userSelection,contextUtil.getCurrentProgramUUID());
 			this.rearrangeDetails(details);
 			this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
 			if (workbook.getMeasurementDatesetId() != null) {
@@ -94,7 +99,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 				details.setHasMeasurements(false);
 			}
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ReviewStudyDetailsController.LOG.error(e.getMessage(), e);
 			details = new StudyDetails();
 			this.addErrorMessageToResult(details, e, isNursery, id);
@@ -109,7 +114,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		return this.showAjaxPage(model, this.getContentName(!isNursery));
 	}
 
-	protected void addErrorMessageToResult(StudyDetails details, MiddlewareQueryException e, boolean isNursery, int id) {
+	protected void addErrorMessageToResult(StudyDetails details, MiddlewareException e, boolean isNursery, int id) {
 		String param;
 		if (isNursery) {
 			param = AppConstants.NURSERY.getString();
@@ -117,8 +122,13 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			param = AppConstants.TRIAL.getString();
 		}
 		details.setId(id);
-		details.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(e.getCode(), new Object[] {param,
-				param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
+		String errorMessage = e.getMessage();
+		if(e instanceof MiddlewareQueryException) {
+			errorMessage = this.errorHandlerService.getErrorMessagesAsString(
+					((MiddlewareQueryException)e).getCode(), new Object[] {param,
+						param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
+		}
+		details.setErrorMessage(errorMessage);
 	}
 
 	@ResponseBody

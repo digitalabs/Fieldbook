@@ -1,16 +1,8 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -23,7 +15,8 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -41,48 +34,52 @@ import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import org.generationcp.commons.spring.util.ContextUtil;
 import com.mysql.jdbc.StringUtils;
 
 public class DesignImportServiceImpl implements DesignImportService {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportServiceImpl.class);
 
 	@Resource
-    private UserSelection userSelection;
-	
-	@Resource
-    private FieldbookService fieldbookService;
+	private UserSelection userSelection;
 
 	@Resource
-    private OntologyService ontologyService;
+	private FieldbookService fieldbookService;
+
+	@Resource
+	private OntologyService ontologyService;
 
 	@Resource
 	private OntologyDataManager ontologyDataManager;
-	
+
 	@Resource
-    private MessageSource messageSource;
-	 
+	private MessageSource messageSource;
+
+	@Resource
+	private ContextUtil contextUtil;
+
 	@Override
 	public List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData, boolean isPreview)
 			throws DesignValidationException {
-		
+
 		Set<String> generatedTrialInstancesFromUI = this.extractTrialInstancesFromEnvironmentData(environmentData);
-		
+
 		/** this will add the trial environment factors and their values to ManagementDetailValues 
 		so we can pass them to the UI and reflect the values in the Environments Tab **/
 		populateEnvironmentDataWithValuesFromCsvFile(environmentData, workbook , designImportData);
 
 		List<ImportedGermplasm> importedGermplasm =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-		
+
 		
 		Map<Integer, List<String>> csvData = designImportData.getCsvData();
-		Map<Integer, StandardVariable> germplasmStandardVariables = this.convertToStandardVariables(workbook.getGermplasmFactors());
-		
+		Map<Integer, StandardVariable> germplasmStandardVariables = this.convertToStandardVariables(workbook.getGermplasmFactors(), PhenotypicType.GERMPLASM);
+
 		List<MeasurementRow> measurements = new ArrayList<>();
-		
+
 		Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
-		
+
 		//row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
 
@@ -94,7 +91,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 				measurements.add(measurementRow);
 			}
 			rowCounter++;
-			
+
 		}
 
 		// add factor data to the list of measurement row
@@ -102,37 +99,37 @@ public class DesignImportServiceImpl implements DesignImportService {
 		
 		// add trait data to the list of measurement row
 		addVariatesToMeasurementRows(workbook, measurements);
-		
+
 		return measurements;
 	}
-	
+
 	@Override
 	public void validateDesignData(DesignImportData designImportData) throws DesignValidationException {
-		
+
 		Map<Integer, List<String>> csvData = designImportData.getCsvData();
-		
+
 		DesignHeaderItem trialInstanceDesignHeaderItem =
 				this.validateIfTrialFactorExists(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 		DesignHeaderItem entryNoDesignHeaderItem =
 				this.validateIfEntryNumberExists(designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
 		this.validateIfPlotNumberExists(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
-		
+
 		Map<String, Map<Integer, List<String>>> csvMap = this.groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, csvData);
-		
+
 		this.validateEntryNoMustBeUniquePerInstance(entryNoDesignHeaderItem, csvMap);
 		this.validateIfPlotNumberIsUniquePerInstance(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), csvMap);
-		
+
 	}
 
 	@Override
 	public Set<MeasurementVariable> getDesignMeasurementVariables(Workbook workbook, DesignImportData designImportData, boolean isPreview) {
-		
+
 		Set<MeasurementVariable> measurementVariables = new LinkedHashSet<>();
 		Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
-		
+
 		//Add the trial environments first
 		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.TRIAL_ENVIRONMENT, mappedHeaders));
-		
+
 		//remove the trial environment factors if NOT in PREVIEW mode except for TRIAL INSTANCE
 		if (!isPreview){
 			Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
@@ -146,24 +143,24 @@ public class DesignImportServiceImpl implements DesignImportService {
 		
 		//Add the germplasm factors that exist from csv file header
 		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.GERMPLASM, mappedHeaders));
-		
+
 		//Add the germplasm factors from the selected germplasm in workbook
 		measurementVariables.addAll(workbook.getGermplasmFactors());
-		
+
 		//Add the design factors that exists from csv file header
 		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.TRIAL_DESIGN, mappedHeaders));
-		
+
 		//Add the variates that exist from csv file header
 		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.VARIATE, mappedHeaders));
-		
+
 		//Add the variates from the added traits in workbook
 		measurementVariables.addAll(workbook.getVariates());
-		
+
 		
 		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
-			
+
 			measurementVariables.addAll(workbook.getFactors());
-			
+
 			//remove the trial instance factor if the Study is Nursery because it only has 1 trial instance by default
 			Iterator<MeasurementVariable> iterator = measurementVariables.iterator();
 			while(iterator.hasNext()){
@@ -174,35 +171,35 @@ public class DesignImportServiceImpl implements DesignImportService {
 				}
 			}
 		}
-		
+
 		return measurementVariables;
 	}
-	
+
 	@Override
 	public Set<StandardVariable> getDesignRequiredStandardVariables(Workbook workbook, DesignImportData designImportData) {
-		
+
 		Set<StandardVariable> standardVariables = new LinkedHashSet<>();
 		Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
-		
+
 		for (DesignHeaderItem designHeaderItem : mappedHeaders.get(PhenotypicType.TRIAL_DESIGN)){
 			standardVariables.add(designHeaderItem.getVariable());
 		}
-		
+
 		return standardVariables;
 	}
-	
+
 	@Override
 	public Set<MeasurementVariable> getDesignRequiredMeasurementVariable(Workbook workbook, DesignImportData designImportData) {
-		
+
 		Set<MeasurementVariable> measurementVariables = new LinkedHashSet<>();
 		Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
-		
+
 		measurementVariables.addAll(this.extractMeasurementVariable(PhenotypicType.TRIAL_DESIGN, mappedHeaders));
-		
+
 		return measurementVariables;
-		
+
 	}
-	
+
 	@Override
 	public Set<MeasurementVariable> getMeasurementVariablesFromDataFile(Workbook workbook,
 			DesignImportData designImportData) {
@@ -224,28 +221,28 @@ public class DesignImportServiceImpl implements DesignImportService {
 		
 		return measurementVariables;
 	}
-	
+
 	@Override
 	public boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData){
 		
 		DesignHeaderItem trialInstanceDesignHeaderItem =
 				this.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR,
-					designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-			
+						designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+
 			if (trialInstanceDesignHeaderItem != null){
 			Map<String, Map<Integer, List<String>>> csvMap =
 					this.groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, designImportData.getCsvData());
 				if (noOfEnvironments == csvMap.size()){
-					return true;
-				}
+				return true;
 			}
-		
+		}
+
 		return false;
 	}
 
 	@Override
 	public Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders)
-			throws MiddlewareQueryException {
+					throws MiddlewareException {
 		List<String> headers = new ArrayList<>();
 		// get headers as string list
 		for (DesignHeaderItem item : designHeaders) {
@@ -262,8 +259,26 @@ public class DesignImportServiceImpl implements DesignImportService {
 		mappedDesignHeaders.put(PhenotypicType.GERMPLASM,new ArrayList<DesignHeaderItem>());
 		mappedDesignHeaders.put(PhenotypicType.VARIATE,new ArrayList<DesignHeaderItem>());
 
-		Map<String, List<StandardVariable>> variables = this.ontologyDataManager.getStandardVariablesInProjects(headers);
+		Map<String, List<StandardVariable>> variables = this.ontologyDataManager.getStandardVariablesInProjects(headers,
+				contextUtil.getCurrentProgramUUID());
 
+		// ok, so these variables dont have Phenotypic information, we need to
+		// assign it via proj-prop or cvtermid
+		final Set<PhenotypicType> designImportRoles = new HashSet<>(
+				Arrays.asList(new PhenotypicType[] { PhenotypicType.TRIAL_ENVIRONMENT,
+						PhenotypicType.TRIAL_DESIGN, PhenotypicType.GERMPLASM,
+						PhenotypicType.VARIATE }));
+		for (Entry<String, List<StandardVariable>> entryVar : variables.entrySet()) {
+			for (StandardVariable sv : entryVar.getValue()) {
+				for (VariableType variableType : sv.getVariableTypes()) {
+					if (designImportRoles.contains(variableType.getRole())) {
+						sv.setPhenotypicType(variableType.getRole());
+						break;
+					}
+				}
+			}
+		}
+		  
 		for (DesignHeaderItem item : designHeaders) {
 			List<StandardVariable> match = variables.get(item.getName());
 
@@ -286,7 +301,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		return mappedDesignHeaders;
 	}
-	
+
 	protected DesignHeaderItem validateIfTrialFactorExists(List<DesignHeaderItem> headerDesignItems) throws DesignValidationException {
 		DesignHeaderItem headerItem = this.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, headerDesignItems);
 		if (headerItem == null){
@@ -296,7 +311,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 			return headerItem;
 		}
 	}
-	
+
 	protected DesignHeaderItem validateIfEntryNumberExists(List<DesignHeaderItem> headerDesignItems) throws DesignValidationException {
 		DesignHeaderItem headerItem = this.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, headerDesignItems);
 		if (headerItem == null){
@@ -306,7 +321,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 			return headerItem;
 		}
 	}
-	
+
 	protected void validateIfPlotNumberExists(List<DesignHeaderItem> headerDesignItems) throws DesignValidationException {
 		for (DesignHeaderItem headerDesignItem : headerDesignItems){
 			if (headerDesignItem.getVariable().getId() == TermId.PLOT_NO.getId()){
@@ -315,10 +330,10 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 		throw new DesignValidationException(this.messageSource.getMessage("design.import.error.plot.no.is.required", null, Locale.ENGLISH));
 	}
-	
+
 	protected void validateIfPlotNumberIsUniquePerInstance(List<DesignHeaderItem> headerDesignItems,
 			Map<String, Map<Integer, List<String>>> csvMap) throws DesignValidationException {
-		
+
 		for (DesignHeaderItem headerDesignItem : headerDesignItems){
 			if (headerDesignItem.getVariable().getId() == TermId.PLOT_NO.getId()){
 				for (Entry<String,Map<Integer, List<String>>> entry : csvMap.entrySet()){
@@ -327,26 +342,26 @@ public class DesignImportServiceImpl implements DesignImportService {
 			}
 		}
 	}
-	
+
 	protected void validateEntryNoMustBeUniquePerInstance(DesignHeaderItem entryNoHeaderItem,
 			Map<String, Map<Integer, List<String>>> csvMapGrouped) throws DesignValidationException {
-		
+
 		for (Entry<String,Map<Integer, List<String>>> entry : csvMapGrouped.entrySet()){
 			this.validateEntryNumberMustBeUnique(entryNoHeaderItem, entry.getValue());
-			
+
 		}
-		
+
 	}
-	
+
 	protected void validatePlotNumberMustBeUnique(DesignHeaderItem plotNoHeaderItem, Map<Integer, List<String>> csvMap)
 			throws DesignValidationException {
-		
+
 		Set<String> set = new HashSet<String>();
-		
+
 		Iterator<Entry<Integer, List<String>>> iterator = csvMap.entrySet().iterator();
 		while(iterator.hasNext()){
 			String value = iterator.next().getValue().get(plotNoHeaderItem.getColumnIndex());
-			
+
 			if (!StringUtils.isNullOrEmpty(value)){
 				if (set.contains(value)){
 					throw new DesignValidationException(this.messageSource.getMessage("design.import.error.plot.number.must.be.unique",
@@ -356,13 +371,13 @@ public class DesignImportServiceImpl implements DesignImportService {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	protected void validateEntryNumberMustBeUnique(DesignHeaderItem entryNoHeaderItem, Map<Integer, List<String>> csvMap)
 			throws DesignValidationException {
 		Set<String> set = new HashSet<String>();
-		
+
 		Iterator<Entry<Integer, List<String>>> iterator = csvMap.entrySet().iterator();
 		while(iterator.hasNext()){
 			String value = iterator.next().getValue().get(entryNoHeaderItem.getColumnIndex());
@@ -375,9 +390,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 		this.validateGermplasmEntriesFromShouldMatchTheGermplasmList(set);
 	}
-	
+
 	protected void validateGermplasmEntriesFromShouldMatchTheGermplasmList(Set<String> entryNumbers) throws DesignValidationException {
-		
+
 		List<ImportedGermplasm> importedGermplasmList =
 				this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 		for (ImportedGermplasm importedGermplasm : importedGermplasmList){
@@ -393,9 +408,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	protected Map<String, Map<Integer, List<String>>> groupCsvRowsIntoTrialInstance(DesignHeaderItem trialInstanceHeaderItem, Map<Integer, List<String>> csvMap){
-		
+
 		Map<String, Map<Integer, List<String>>> csvMapGrouped = new HashMap<>();
-		
+
 		Iterator<Entry<Integer, List<String>>> iterator = csvMap.entrySet().iterator();
 		//skip the header row
 		iterator.next();
@@ -408,9 +423,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 			csvMapGrouped.get(trialInstance).put(entry.getKey(), entry.getValue());
 		}
 		return csvMapGrouped;
-		
+
 	}
-	
+
 	protected DesignHeaderItem filterDesignHeaderItemsByTermId(TermId termId, List<DesignHeaderItem> headerDesignItems){
 		for (DesignHeaderItem headerDesignItem : headerDesignItems){
 			if (headerDesignItem.getVariable().getId() == termId.getId()){
@@ -422,50 +437,50 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public Set<MeasurementVariable> extractMeasurementVariable(PhenotypicType phenotypicType, Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders){
-		
+
 		Set<MeasurementVariable> measurementVariables = new HashSet<>();
-		
+
 		for (DesignHeaderItem designHeaderItem : mappedHeaders.get(phenotypicType)){
 			MeasurementVariable measurementVariable = this.createMeasurementVariable(designHeaderItem.getVariable());
 			measurementVariables.add(measurementVariable);
 		}
-		
+
 		return measurementVariables;
 	}
-	
+
 	protected MeasurementRow createMeasurementRow(Workbook workbook, Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders,
 			List<String> rowValues, List<ImportedGermplasm> importedGermplasm, Map<Integer, StandardVariable> germplasmStandardVariables,
 			Set<String> trialInstancesFromUI,boolean isPreview) {
-		
+
 		MeasurementRow measurement = new MeasurementRow();
 
 		List<MeasurementData> dataList = new ArrayList<>();
-		
+
 		for (Entry<PhenotypicType, List<DesignHeaderItem>> entry : mappedHeaders.entrySet()){
 			for (DesignHeaderItem headerItem : entry.getValue()){
-				
+
 				//do not add the trial instance record from file if it is not selected in environment tab
 				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
 						&& !trialInstancesFromUI.contains(rowValues.get(headerItem.getColumnIndex()))) {
 					return null;
 				}
-				
+
 				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
 						&& workbook.getStudyDetails().getStudyType() == StudyType.N) {
-					
+
 					// do not add the trial instance to measurement data list if the workbook is Nursery
 					continue;
 				}
-					
+
 				if (headerItem.getVariable().getId() == TermId.ENTRY_NO.getId()){
-					
+
 					Integer entryNo = Integer.parseInt(rowValues.get(headerItem.getColumnIndex()));
 					this.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables,
 							dataList, entryNo);
 				}
-					
+
 				if (headerItem.getVariable().getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT && isPreview){
-					
+
 					//only add the trial environment factors in measurement row ONLY in PREVIEW mode
 					String value = rowValues.get(headerItem.getColumnIndex());
 					dataList.add(createMeasurementData(headerItem.getVariable(), value));
@@ -474,19 +489,19 @@ public class DesignImportServiceImpl implements DesignImportService {
 				if (headerItem.getVariable().getPhenotypicType() == PhenotypicType.TRIAL_DESIGN
 						|| headerItem.getVariable().getPhenotypicType() == PhenotypicType.VARIATE
 						|| headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-					
+
 					String value = rowValues.get(headerItem.getColumnIndex());
 					dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
-					
+
 				}
-				
+
 			}
 		}
-		
+
 		measurement.setDataList(dataList);
 		return measurement;
 	}
-	
+
 	protected MeasurementData createMeasurementData(StandardVariable standardVariable, String value){ 
 		MeasurementData data = new MeasurementData();
 		data.setMeasurementVariable(this.createMeasurementVariable(standardVariable));
@@ -495,7 +510,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		data.setDataType(data.getMeasurementVariable().getDataType());
 		return data;
 	}
-	
+
 	protected MeasurementData createMeasurementData(MeasurementVariable measurementVariable, String value){ 
 		MeasurementData data = new MeasurementData();
 		data.setMeasurementVariable(measurementVariable);
@@ -504,31 +519,34 @@ public class DesignImportServiceImpl implements DesignImportService {
 		data.setDataType(data.getMeasurementVariable().getDataType());
 		return data;
 	}
-	
+
 	protected MeasurementVariable createMeasurementVariable(StandardVariable standardVariable){
 		MeasurementVariable variable =
 				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
 		return variable;
 	}
-	
-	protected Map<Integer, StandardVariable> convertToStandardVariables(List<MeasurementVariable> list) {
-			
+
+	protected Map<Integer, StandardVariable> convertToStandardVariables(List<MeasurementVariable> list, PhenotypicType phenotypicType) {
+
 		Map<Integer, StandardVariable> map = new HashMap<>();
 
 		for (MeasurementVariable measurementVariable : list){
 			try {
-				map.put(measurementVariable.getTermId(), this.ontologyService.getStandardVariable(measurementVariable.getTermId()));
-			} catch (MiddlewareQueryException e) {
+				StandardVariable stdVar = this.ontologyService.getStandardVariable(
+						measurementVariable.getTermId(),contextUtil.getCurrentProgramUUID());
+				stdVar.setPhenotypicType(phenotypicType);
+				map.put(measurementVariable.getTermId(), stdVar);
+			} catch (MiddlewareException e) {
 				DesignImportServiceImpl.LOG.error(e.getMessage(), e);
 			}
 		}
 
 		return map;
 	}
-	
+
 	protected void addGermplasmDetailsToDataList(List<ImportedGermplasm> importedGermplasm,
 			Map<Integer, StandardVariable> germplasmStandardVariables, List<MeasurementData> dataList, Integer entryNo) {
-		
+
 		ImportedGermplasm germplasmEntry = importedGermplasm.get(entryNo-1);
 
 		if (germplasmStandardVariables.get(TermId.ENTRY_NO.getId()) != null){
@@ -559,7 +577,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource()));
 		}
 	}
-	
+
 	private void addFactorsToMeasurementRows(Workbook workbook, List<MeasurementRow> measurements) {
 		
 		if (workbook.getStudyDetails().getStudyType() == StudyType.N){
@@ -583,13 +601,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 			}
 			
 			WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
-					this.userSelection, this.ontologyService, this.fieldbookService);
-			
-		} catch (MiddlewareQueryException e) {
+					this.userSelection, this.ontologyService, this.fieldbookService, contextUtil.getCurrentProgramUUID());
+		} catch (MiddlewareException e) {
 			DesignImportServiceImpl.LOG.error(e.getMessage(), e);
 		}
 	}
-	
+
 	protected void addFactorToDataListIfNecessary(MeasurementVariable factor, List<MeasurementData> dataList){
 		for (MeasurementData data : dataList){
 			if (data.getMeasurementVariable().equals(factor)){

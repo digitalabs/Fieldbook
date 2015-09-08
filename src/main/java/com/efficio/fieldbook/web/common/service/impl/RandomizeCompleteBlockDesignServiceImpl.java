@@ -1,25 +1,20 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +54,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	public FieldbookService fieldbookService;
 	@Resource
 	private UserSelection userSelection;
+	@Resource
+	private ContextUtil contextUtil;
 
 	@Override
 	public List<MeasurementRow> generateDesign(List<ImportedGermplasm> germplasmList, ExpDesignParameterUi parameter,
@@ -99,8 +96,12 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 					if (key != null && NumberUtils.isNumber(key) && pairVar != null && NumberUtils.isNumber(pairVar)) {
 						int treatmentPair1 = Integer.parseInt(key);
 						int treatmentPair2 = Integer.parseInt(pairVar);
-						StandardVariable stdVar1 = this.fieldbookMiddlewareService.getStandardVariable(treatmentPair1);
-						StandardVariable stdVar2 = this.fieldbookMiddlewareService.getStandardVariable(treatmentPair2);
+						StandardVariable stdVar1 = this.fieldbookMiddlewareService.getStandardVariable(treatmentPair1,
+								contextUtil.getCurrentProgramUUID());
+						stdVar1.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+						StandardVariable stdVar2 = this.fieldbookMiddlewareService.getStandardVariable(treatmentPair2,
+								contextUtil.getCurrentProgramUUID());
+						stdVar2.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 						TreatmentVariable treatmentVar = new TreatmentVariable();
 						MeasurementVariable measureVar1 =
 								ExpDesignUtil.convertStandardVariableToMeasurementVariable(stdVar1, Operation.ADD, this.fieldbookService);
@@ -131,7 +132,8 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 				}
 			}
 
-			StandardVariable stdvarTreatment = this.fieldbookMiddlewareService.getStandardVariable(TermId.ENTRY_NO.getId());
+			StandardVariable stdvarTreatment = this.fieldbookMiddlewareService.getStandardVariable(
+					TermId.ENTRY_NO.getId(),contextUtil.getCurrentProgramUUID());
 
 			treatmentFactorValues.put(stdvarTreatment.getName(), Arrays.asList(Integer.toString(germplasmList.size())));
 			treatmentFactor.add(stdvarTreatment.getName());
@@ -172,12 +174,16 @@ public class RandomizeCompleteBlockDesignServiceImpl implements RandomizeComplet
 	public List<StandardVariable> getRequiredVariable() {
 		List<StandardVariable> varList = new ArrayList<StandardVariable>();
 		try {
-			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId());
-			StandardVariable stdvarPlot = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId());
+			StandardVariable stdvarRep = this.fieldbookMiddlewareService.getStandardVariable(TermId.REP_NO.getId(),
+					contextUtil.getCurrentProgramUUID());
+			stdvarRep.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+			StandardVariable stdvarPlot = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(),
+					contextUtil.getCurrentProgramUUID());
+			stdvarPlot.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
 
 			varList.add(stdvarRep);
 			varList.add(stdvarPlot);
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			RandomizeCompleteBlockDesignServiceImpl.LOG.error(e.getMessage(), e);
 		}
 		return varList;

@@ -68,6 +68,18 @@
 	})();
 
 	angular.module('fieldbook-utils', ['ui.select2'])
+		.constant('VARIABLE_TYPES', {
+			ANALYSIS: 1801,
+			TRIAL_CONDITION: 1802,
+			NURSERY_CONDITION: 1803,
+			GERMPLASM_DESCRIPTOR: 1804,
+			STUDY_DETAIL: 1805,
+			ENVIRONMENT_DETAIL: 1806,
+			SELECTION_METHOD: 1807,
+			TRAIT: 1808,
+			TREATMENT_FACTOR: 1809,
+			EXPERIMENTAL_DESIGN: 1810
+		})
 		.constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.vs-modal')
 		.constant('VARIABLE_SELECTED_EVENT_TYPE', 'variable-select')
 		.directive('displaySettings', ['TrialManagerDataService', '$filter', '_', function(TrialManagerDataService, $filter, _) {
@@ -80,6 +92,7 @@
 				},
 				templateUrl: '/Fieldbook/static/angular-templates/displaySettings.html',
 				controller: function($scope, $element, $attrs) {
+					$scope.variableType = $attrs.variableType;
 					$scope.options = {
 						selectAll: false
 					};
@@ -100,7 +113,7 @@
 						if (typeof $scope.predeleteFunction() === 'undefined') {
 							$scope.doDeleteSelectedSettings();
 						} else {
-							var promise = $scope.predeleteFunction()($attrs.variableType, $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(),$scope.settings.vals()));
+							var promise = $scope.predeleteFunction()($attrs.variableType, $filter('removeHiddenAndDeletablesVariableFilter')($scope.settings.keys(), $scope.settings.vals()));
 							promise.then(function(doContinue) {
 								if (doContinue) {
 									$scope.doDeleteSelectedSettings();
@@ -120,12 +133,6 @@
 
 					};
 
-					$scope.showDetailsModal = function(setting) {
-						// this function is currently defined in the fieldbook-common.js, loaded globally for the page
-						// TODO: move away from global function definitions
-						showBaselineTraitDetailsModal(setting.variable.cvTermId);
-					};
-
 					$scope.size = function() {
 						return Object.keys($scope.settings).length;
 					};
@@ -135,13 +142,14 @@
 		.directive('showDetailsModal', function() {
 			return {
 				scope: {
-					showDetailsModal: '='
+					showDetailsModal: '=',
+					variableType: '@'
 				},
 
 				link: function(scope, elem) {
 					elem.css({ cursor: 'pointer' });
 					elem.on('click', function() {
-						showBaselineTraitDetailsModal(scope.showDetailsModal);
+						showBaselineTraitDetailsModal(scope.showDetailsModal, scope.variableType);
 					});
 				}
 			};
@@ -297,7 +305,6 @@
 						$scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
 					$scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
 
-
 					$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
 					$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
@@ -336,7 +343,7 @@
 						$scope.updateDropdownValues();
 
 						$scope.computeMinimumSearchResults = function() {
-							return ($scope.dropdownValues.length > 0) ? 20: -1;
+							return ($scope.dropdownValues.length > 0) ? 20 : -1;
 						};
 
 						$scope.dropdownOptions = {
@@ -535,19 +542,6 @@
 			};
 		}])
 
-		.directive('showBaselineTraitDetailsModalLink', function() {
-			return {
-				scope: {
-					showBaselineTraitDetailsModalLink: '@'
-				},
-				link: function(scope, elem) {
-					elem.click(function() {
-						showBaselineTraitDetailsModal(scope.cvTermId);
-					});
-				}
-			};
-		})
-
 		.directive('inputType', function() {
 			return {
 				require: 'ngModel',
@@ -641,5 +635,5 @@
 			};
 		});
 
-		}
+}
 )();

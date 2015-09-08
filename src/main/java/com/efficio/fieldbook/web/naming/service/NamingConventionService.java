@@ -16,6 +16,7 @@ import java.util.List;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.bean.AdvanceResult;
@@ -37,7 +38,7 @@ public interface NamingConventionService {
 	 * @throws MiddlewareQueryException
 	 * @throws RuleException
 	 */
-	AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException, RuleException;
+	AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareException, RuleException;
 
 	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean checkForUniqueness) throws MiddlewareQueryException,
 			RuleException;

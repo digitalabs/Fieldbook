@@ -20,7 +20,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
@@ -99,7 +99,7 @@ public class ExportGermplasmListServiceTest {
 	private ExportService exportService;
 
 	@Before
-	public void setUp() throws MiddlewareQueryException {
+	public void setUp() throws MiddlewareException {
 
 		MockitoAnnotations.initMocks(this);
 
@@ -112,22 +112,23 @@ public class ExportGermplasmListServiceTest {
 		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportGermplasmListService).getImportedGermplasm();
 
 		Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportGermplasmListServiceTest.ENTRY_NO))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId());
+		.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportGermplasmListServiceTest.DESIGNATION))
-				.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId());
+		.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(TermId.GID.getId(), ExportGermplasmListServiceTest.GID)).when(this.ontologyService)
-				.getStandardVariable(TermId.GID.getId());
+		.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportGermplasmListServiceTest.PARENTAGE))
-				.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId());
+		.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportGermplasmListServiceTest.SEED_SOURCE))
-				.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportGermplasmListServiceTest.ENTRY_CODE))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId());
+				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(
 				this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), ExportGermplasmListServiceTest.ENTRY_NUMBER_STORAGE))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId());
+				.when(this.ontologyService)
+				.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportGermplasmListServiceTest.CHECK))
-				.when(this.ontologyService).getStandardVariable(TermId.CHECK.getId());
+		.when(this.ontologyService).getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID());
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 		Mockito.doReturn(this.getGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListById(ExportGermplasmListServiceTest.LIST_ID);
@@ -372,7 +373,7 @@ public class ExportGermplasmListServiceTest {
 
 		StandardVariable stdVar;
 		try {
-			stdVar = this.ontologyService.getStandardVariable(termId);
+			stdVar = this.ontologyService.getStandardVariable(termId, this.contextUtil.getCurrentProgramUUID());
 
 			settingDetail.getVariable().setName(stdVar.getName());
 			settingDetail.getVariable().setDescription(stdVar.getDescription());
@@ -382,7 +383,7 @@ public class ExportGermplasmListServiceTest {
 			settingDetail.getVariable().setDataType(stdVar.getDataType().getName());
 			settingDetail.setPossibleValues(new ArrayList<ValueReference>());
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			// do nothing
 		}
 

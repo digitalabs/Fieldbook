@@ -37,6 +37,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.CropType;
@@ -354,7 +355,7 @@ public class ExportStudyControllerTest {
 	}
 
 	@Test
-	public void testDoExportNurseryInCSVFormatWithDefinedVisibleColumns() throws MiddlewareQueryException, JsonParseException,
+	public void testDoExportNurseryInCSVFormatWithDefinedVisibleColumns() throws MiddlewareException, JsonParseException,
 			JsonMappingException, IOException {
 
 		ExportStudyController exportStudyControllerMock = this.initializeExportStudyControllerForStudyCSVExport();
@@ -446,7 +447,7 @@ public class ExportStudyControllerTest {
 	}
 
 	@Test
-	public void testDoExportTrialWith1InstanceInCSVFormat() throws MiddlewareQueryException, JsonParseException, JsonMappingException,
+	public void testDoExportTrialWith1InstanceInCSVFormat() throws MiddlewareException, JsonParseException, JsonMappingException,
 			IOException {
 
 		ExportStudyController exportStudyControllerMock = this.initializeExportStudyControllerForStudyCSVExport();
@@ -486,8 +487,8 @@ public class ExportStudyControllerTest {
 	}
 
 	@Test
-	public void testDoExportTrialWithMultipleInstancesInCSVFormat() throws MiddlewareQueryException, JsonParseException,
-			JsonMappingException, IOException {
+	public void testDoExportTrialWithMultipleInstancesInCSVFormat() throws JsonParseException,
+			JsonMappingException, IOException, MiddlewareException {
 
 		ExportStudyController exportStudyControllerMock = this.initializeExportStudyControllerForStudyCSVExport();
 

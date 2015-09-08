@@ -218,7 +218,7 @@ var ImportDesign = (function() {
 				});
 
 				$.ajax({
-					url: '/Fieldbook/DesignImport/showDetails/data',
+					url: '/Fieldbook/DesignImport/showDetails/data/',
 					type: 'POST',
 					data: JSON.stringify(environmentData),
 					dataType: 'json',

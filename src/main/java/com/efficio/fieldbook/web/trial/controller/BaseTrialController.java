@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
@@ -21,6 +22,8 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -223,7 +226,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareGermplasmTabInfo(List<MeasurementVariable> measurementVariables,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) throws MiddlewareException {
 		List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 		List<Integer> requiredIDList = this
 				.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
@@ -236,7 +239,13 @@ public abstract class BaseTrialController extends SettingsController {
 				continue;
 			}
 
-			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(),
+					VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
+
+			if (var.getRole() != null) {
+				detail.setRole(var.getRole());
+				detail.getVariable().setRole(var.getRole().name());
+			}
 
 			if (requiredIDList.contains(var.getTermId())) {
 				detail.setDeletable(false);
@@ -245,11 +254,13 @@ public abstract class BaseTrialController extends SettingsController {
 			}
 
 			// set all variables with trial design role to hidden
-			if (var.getStoredIn() == TermId.TRIAL_DESIGN_INFO_STORAGE.getId()) {
+			if (var.getRole() == PhenotypicType.TRIAL_DESIGN) {
 				detail.setHidden(true);
-				if (FieldbookUtil.isFieldmapColOrRange(var)) {
-					detail.setHidden(false);
+				// BMS-1048
+				if (var.getTermId() == TermId.COLUMN_NO.getId()
+						|| var.getTermId() == TermId.RANGE_NO.getId()) {
 					detail.setDeletable(false);
+					detail.setHidden(false);
 				}
 			} else {
 				detail.setHidden(false);
@@ -285,7 +296,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareTreatmentFactorsInfo(List<TreatmentVariable> treatmentVariables,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) throws MiddlewareException {
 		Map<Integer, SettingDetail> levelDetails = new HashMap<Integer, SettingDetail>();
 		Map<String, TreatmentFactorData> currentData = new HashMap<String, TreatmentFactorData>();
 		Map<String, List<SettingDetail>> treatmentFactorPairs = new HashMap<String, List<SettingDetail>>();
@@ -294,7 +305,8 @@ public abstract class BaseTrialController extends SettingsController {
 			Integer levelFactorID = treatmentVariable.getLevelVariable().getTermId();
 			if (!levelDetails.containsKey(levelFactorID)) {
 				SettingDetail detail = this.createSettingDetail(levelFactorID, treatmentVariable
-						.getLevelVariable().getName());
+						.getLevelVariable().getName(), VariableType.TREATMENT_FACTOR.getRole()
+						.name());
 
 				if (!isUsePrevious) {
 					detail.getVariable().setOperation(Operation.UPDATE);
@@ -337,12 +349,13 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareMeasurementsTabInfo(List<MeasurementVariable> variatesList,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) throws MiddlewareException {
 
 		List<SettingDetail> detailList = new ArrayList<SettingDetail>();
 
 		for (MeasurementVariable var : variatesList) {
-			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(),
+					VariableType.TRAIT.getRole().name());
 
 			if (!isUsePrevious) {
 				detail.getVariable().setOperation(Operation.UPDATE);
@@ -364,7 +377,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareEnvironmentsTabInfo(Workbook workbook, boolean isUsePrevious)
-			throws MiddlewareQueryException {
+			throws MiddlewareException {
 		TabInfo info = new TabInfo();
 		Map settingMap = new HashMap();
 		List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
@@ -380,7 +393,8 @@ public abstract class BaseTrialController extends SettingsController {
 		Map<String, MeasurementVariable> factorsMap = SettingsUtil
 				.buildMeasurementVariableMap(workbook.getTrialConditions());
 		for (MeasurementVariable var : workbook.getTrialConditions()) {
-			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(),
+					VariableType.ENVIRONMENT_DETAIL.getRole().name());
 
 			if (filterFields.contains(var.getTermId())) {
 				continue;
@@ -411,7 +425,8 @@ public abstract class BaseTrialController extends SettingsController {
 		}
 
 		for (MeasurementVariable var : workbook.getTrialConstants()) {
-			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+			SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(),
+					VariableType.TRIAL_CONDITION.getRole().name());
 
 			if (!isUsePrevious) {
 				detail.getVariable().setOperation(Operation.UPDATE);
@@ -512,17 +527,19 @@ public abstract class BaseTrialController extends SettingsController {
 
 		try {
 
-			StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId);
+			StandardVariable variable = this.ontologyService.getStandardVariable(cvTermId,
+					contextUtil.getCurrentProgramUUID());
 
 			List<StandardVariable> pairs = this.fieldbookMiddlewareService
 					.getPossibleTreatmentPairs(variable.getId(), variable.getProperty().getId(),
 							AppConstants.CREATE_TRIAL_REMOVE_TREATMENT_FACTOR_IDS.getIntegerList());
 
 			for (StandardVariable item : pairs) {
-				output.add(this.createSettingDetail(item.getId(), null));
+				output.add(this.createSettingDetail(item.getId(), null,
+						VariableType.TREATMENT_FACTOR.getRole().name()));
 			}
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			BaseTrialController.LOG.error(e.getMessage(), e);
 		}
 
@@ -530,7 +547,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo(StudyDetails studyDetails, boolean isUsePrevious,
-			int trialID) throws MiddlewareQueryException {
+			int trialID) throws MiddlewareException {
 		Map<String, String> basicDetails = new HashMap<String, String>();
 		List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
 		List<Integer> initialSettingIDs = this
@@ -539,7 +556,8 @@ public abstract class BaseTrialController extends SettingsController {
 		for (Integer initialSettingID : initialSettingIDs) {
 			try {
 				basicDetails.put(initialSettingID.toString(), "");
-				SettingDetail detail = this.createSettingDetail(initialSettingID, null);
+				SettingDetail detail = this.createSettingDetail(initialSettingID, null,
+						VariableType.STUDY_DETAIL.getRole().name());
 
 				if (!isUsePrevious) {
 					detail.getVariable().setOperation(Operation.UPDATE);
@@ -599,7 +617,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	protected TabInfo prepareTrialSettingsTabInfo(List<MeasurementVariable> measurementVariables,
-			boolean isUsePrevious) throws MiddlewareQueryException {
+			boolean isUsePrevious) throws MiddlewareException {
 		TabInfo info = new TabInfo();
 		Map<String, String> trialValues = new HashMap<String, String>();
 		List<SettingDetail> details = new ArrayList<SettingDetail>();
@@ -612,7 +630,8 @@ public abstract class BaseTrialController extends SettingsController {
 				.buildMeasurementVariableMap(measurementVariables);
 		for (MeasurementVariable var : measurementVariables) {
 			if (!basicDetailIDList.contains(var.getTermId())) {
-				SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName());
+				SettingDetail detail = this.createSettingDetail(var.getTermId(), var.getName(),
+						VariableType.STUDY_DETAIL.getRole().name());
 				detail.setDeletable(true);
 				details.add(detail);
 
@@ -654,7 +673,7 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	protected TabInfo prepareExperimentalDesignSpecialData() throws MiddlewareQueryException {
+	protected TabInfo prepareExperimentalDesignSpecialData() throws MiddlewareException {
 		TabInfo info = new TabInfo();
 		ExpDesignData data = new ExpDesignData();
 		List<ExpDesignDataDetail> detailList = new ArrayList<ExpDesignDataDetail>();
@@ -664,7 +683,8 @@ public abstract class BaseTrialController extends SettingsController {
 						.getString());
 		for (Integer id : ids) {
 			// PLOT, REP, BLOCK, ENTRY NO
-			StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(id);
+			StandardVariable stdvar = this.fieldbookMiddlewareService.getStandardVariable(id,
+					contextUtil.getCurrentProgramUUID());
 			SettingVariable svar = new SettingVariable();
 			svar.setCvTermId(id);
 			svar.setName(stdvar.getName());

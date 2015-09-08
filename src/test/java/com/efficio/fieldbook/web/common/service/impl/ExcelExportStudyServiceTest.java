@@ -29,6 +29,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.junit.Assert;
@@ -72,7 +73,7 @@ public class ExcelExportStudyServiceTest extends AbstractBaseIntegrationTest {
 		((ExcelExportStudyServiceImpl) this.excelExportStudyService).setFieldbookService(ExcelExportStudyServiceTest.fieldbookService);
 		try {
 			Mockito.when(ExcelExportStudyServiceTest.fieldbookService.getAllPossibleValues(1)).thenReturn(new ArrayList<ValueReference>());
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ExcelExportStudyServiceTest.LOG.error(e.getMessage(), e);
 			Assert.fail("Error in mocking the FieldbookService class");
 		}

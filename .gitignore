@@ -86,3 +86,4 @@ Thumbs.db
 *.iml
 atlassian-ide-plugin.xml
 /bin
+/src/main/resources/crossing.properties

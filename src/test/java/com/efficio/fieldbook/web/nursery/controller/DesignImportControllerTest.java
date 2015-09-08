@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -54,6 +55,7 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 public class DesignImportControllerTest {
 
 	public static final String TEST_FILE_NAME = "Design_Import_Template_With_Environment_Factors.csv";
+	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 
 	private final DesignImportParser parser = Mockito.spy(new DesignImportParser());
 
@@ -106,7 +108,7 @@ public class DesignImportControllerTest {
 		Mockito.doNothing().when(this.designImportController).updateDesignMapping(Matchers.any(Map.class));
 
 		Mockito.when(this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
-				.thenReturn(true);
+		.thenReturn(true);
 
 		Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(Mockito.mock(Map.class), 3);
 
@@ -120,7 +122,7 @@ public class DesignImportControllerTest {
 		Mockito.doNothing().when(this.designImportController).updateDesignMapping(Matchers.any(Map.class));
 
 		Mockito.when(this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
-				.thenReturn(false);
+		.thenReturn(false);
 
 		Mockito.when(this.messageSource.getMessage("design.import.warning.trial.instances.donotmatch", null, Locale.ENGLISH)).thenReturn(
 				"WARNING_MSG");
@@ -138,10 +140,10 @@ public class DesignImportControllerTest {
 		Mockito.doNothing().when(this.designImportController).updateDesignMapping(Matchers.any(Map.class));
 
 		Mockito.when(this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
-				.thenReturn(false);
+		.thenReturn(false);
 
 		Mockito.doThrow(new DesignValidationException("DesignValidationException thrown")).when(this.designImportService)
-				.validateDesignData(Matchers.any(DesignImportData.class));
+		.validateDesignData(Matchers.any(DesignImportData.class));
 
 		Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(Mockito.mock(Map.class), 3);
 
@@ -183,7 +185,7 @@ public class DesignImportControllerTest {
 
 		Mockito.doNothing().when(this.designImportController).initializeTemporaryWorkbook(Matchers.anyString());
 		Mockito.doThrow(new FileParsingException("force file parse exception")).when(this.parser)
-				.parseFile(Matchers.any(MultipartFile.class));
+		.parseFile(Matchers.any(MultipartFile.class));
 
 		String resultsMap = this.designImportController.importFile(form, "N");
 
@@ -331,25 +333,28 @@ public class DesignImportControllerTest {
 		map.put("REP_NO", this.createList(repNo));
 		map.put("BLOCK_NO", this.createList(blockNo));
 
-		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyList());
+		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyList(), PROGRAM_UUID);
 
-		Mockito.doReturn(trialInstance).when(this.ontologyDataManager).getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId());
-		Mockito.doReturn(siteName).when(this.ontologyDataManager).getStandardVariable(TermId.SITE_NAME.getId());
-		Mockito.doReturn(locationName).when(this.ontologyDataManager).getStandardVariable(TermId.TRIAL_LOCATION.getId());
-		Mockito.doReturn(locationID).when(this.ontologyDataManager).getStandardVariable(TermId.LOCATION_ID.getId());
-		Mockito.doReturn(entryNo).when(this.ontologyDataManager).getStandardVariable(TermId.ENTRY_NO.getId());
-		Mockito.doReturn(plotNo).when(this.ontologyDataManager).getStandardVariable(TermId.PLOT_NO.getId());
-		Mockito.doReturn(blockNo).when(this.ontologyDataManager).getStandardVariable(TermId.BLOCK_NO.getId());
-		Mockito.doReturn(repNo).when(this.ontologyDataManager).getStandardVariable(TermId.REP_NO.getId());
+		Mockito.doReturn(trialInstance).when(this.ontologyDataManager)
+				.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), PROGRAM_UUID);
+		Mockito.doReturn(siteName).when(this.ontologyDataManager).getStandardVariable(TermId.SITE_NAME.getId(), PROGRAM_UUID);
+		Mockito.doReturn(locationName).when(this.ontologyDataManager).getStandardVariable(TermId.TRIAL_LOCATION.getId(), PROGRAM_UUID);
+		Mockito.doReturn(locationID).when(this.ontologyDataManager).getStandardVariable(TermId.LOCATION_ID.getId(), PROGRAM_UUID);
+		Mockito.doReturn(entryNo).when(this.ontologyDataManager).getStandardVariable(TermId.ENTRY_NO.getId(), PROGRAM_UUID);
+		Mockito.doReturn(plotNo).when(this.ontologyDataManager).getStandardVariable(TermId.PLOT_NO.getId(), PROGRAM_UUID);
+		Mockito.doReturn(blockNo).when(this.ontologyDataManager).getStandardVariable(TermId.BLOCK_NO.getId(), PROGRAM_UUID);
+		Mockito.doReturn(repNo).when(this.ontologyDataManager).getStandardVariable(TermId.REP_NO.getId(), PROGRAM_UUID);
 
-		Mockito.doReturn(trialInstance).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId());
-		Mockito.doReturn(siteName).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.SITE_NAME.getId());
-		Mockito.doReturn(locationName).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.TRIAL_LOCATION.getId());
-		Mockito.doReturn(locationID).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.LOCATION_ID.getId());
-		Mockito.doReturn(entryNo).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.ENTRY_NO.getId());
-		Mockito.doReturn(plotNo).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.PLOT_NO.getId());
-		Mockito.doReturn(blockNo).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.BLOCK_NO.getId());
-		Mockito.doReturn(repNo).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.REP_NO.getId());
+		Mockito.doReturn(trialInstance).when(this.fieldbookMiddlewareService)
+		.getStandardVariable(TermId.TRIAL_INSTANCE_FACTOR.getId(), PROGRAM_UUID);
+		Mockito.doReturn(siteName).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.SITE_NAME.getId(), PROGRAM_UUID);
+		Mockito.doReturn(locationName).when(this.fieldbookMiddlewareService)
+		.getStandardVariable(TermId.TRIAL_LOCATION.getId(), PROGRAM_UUID);
+		Mockito.doReturn(locationID).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.LOCATION_ID.getId(), PROGRAM_UUID);
+		Mockito.doReturn(entryNo).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.ENTRY_NO.getId(), PROGRAM_UUID);
+		Mockito.doReturn(plotNo).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.PLOT_NO.getId(), PROGRAM_UUID);
+		Mockito.doReturn(blockNo).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.BLOCK_NO.getId(), PROGRAM_UUID);
+		Mockito.doReturn(repNo).when(this.fieldbookMiddlewareService).getStandardVariable(TermId.REP_NO.getId(), PROGRAM_UUID);
 
 	}
 
@@ -358,7 +363,7 @@ public class DesignImportControllerTest {
 
 		StandardVariable stdVar =
 				new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(0, dataType, ""),
-						new Term(0, storedIn, ""), new Term(0, isA, ""), phenotypicType);
+						new Term(0, isA, ""), phenotypicType);
 
 		stdVar.setId(id);
 		stdVar.setName(name);

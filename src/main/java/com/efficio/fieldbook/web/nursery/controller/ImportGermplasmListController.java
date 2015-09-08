@@ -28,6 +28,7 @@ import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -80,7 +81,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
  */
 @Controller
 @RequestMapping({ImportGermplasmListController.URL, ImportGermplasmListController.URL_2, ImportGermplasmListController.URL_3,
-		ImportGermplasmListController.URL_4})
+	ImportGermplasmListController.URL_4})
 public class ImportGermplasmListController extends SettingsController {
 
 	private static final String SUCCESS = "success";
@@ -173,9 +174,12 @@ public class ImportGermplasmListController extends SettingsController {
 	private static String DEFAULT_CHECK_VALUE = "C";
 	private static String DEFAULT_TEST_VALUE = "T";
 
+	@Resource
+	private ContextUtil contextUtil;
+
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName ()
 	 */
 	@Override
@@ -185,7 +189,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection ()
 	 */
 	/**
@@ -212,8 +216,8 @@ public class ImportGermplasmListController extends SettingsController {
 		if (this.getUserSelection().getImportedGermplasmMainInfo() != null
 				&& this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null) {
 			// this would be use to display the imported germplasm info
-			form.setImportedGermplasm(
-					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+			form.setImportedGermplasm(this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
+					.getImportedGermplasms());
 
 			form.changePage(1);
 			this.userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
@@ -235,7 +239,7 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
 	@Transactional
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model,
-			HttpServletRequest req) throws MiddlewareQueryException {
+			HttpServletRequest req) throws MiddlewareException {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 		String[] selectedCheck = form.getSelectedCheck();
@@ -244,12 +248,12 @@ public class ImportGermplasmListController extends SettingsController {
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
 			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
-			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(),
-					this.userSelection.getWorkbook().getObservations(), false, this.userSelection, this.ontologyService,
-					this.fieldbookService);
-			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(),
-					this.userSelection.getWorkbook().getObservations(), true, this.userSelection, this.ontologyService,
-					this.fieldbookService);
+			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook()
+					.getObservations(), false, this.userSelection, this.ontologyService, this.fieldbookService, this.contextUtil
+					.getCurrentProgramUUID());
+			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getVariates(), this.userSelection.getWorkbook()
+					.getObservations(), true, this.userSelection, this.ontologyService, this.fieldbookService, this.contextUtil
+					.getCurrentProgramUUID());
 
 			if (this.userSelection.getExperimentalDesignVariables() != null) {
 				Set<MeasurementVariable> unique = new HashSet<>(this.userSelection.getWorkbook().getFactors());
@@ -264,8 +268,9 @@ public class ImportGermplasmListController extends SettingsController {
 				this.userSelection.getWorkbook().getVariates().addAll(makeUniqueVariates);
 			}
 
-			Map<Integer, MeasurementVariable> observationVariables = WorkbookUtil
-					.createVariableList(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook().getVariates());
+			Map<Integer, MeasurementVariable> observationVariables =
+					WorkbookUtil.createVariableList(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook()
+							.getVariates());
 
 			WorkbookUtil.deleteDeletedVariablesInObservations(observationVariables, this.userSelection.getWorkbook().getObservations());
 			this.userSelection.setMeasurementRowList(this.userSelection.getWorkbook().getObservations());
@@ -288,9 +293,9 @@ public class ImportGermplasmListController extends SettingsController {
 					for (int i = 0; i < selectedCheck.length; i++) {
 						if (NumberUtils.isNumber(selectedCheck[i])) {
 							importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i)
-									.setCheck(selectedCheck[i]);
+							.setCheck(selectedCheck[i]);
 							importedGermplasmMainInfoToUse.getImportedGermplasmList().getImportedGermplasms().get(i)
-									.setCheckId(Integer.parseInt(selectedCheck[i]));
+							.setCheckId(Integer.parseInt(selectedCheck[i]));
 						}
 					}
 				}
@@ -298,8 +303,7 @@ public class ImportGermplasmListController extends SettingsController {
 				// we set the check to null
 				if (this.getUserSelection().getImportedGermplasmMainInfo() != null
 						&& this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null
-						&& this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-								.getImportedGermplasms() != null) {
+						&& this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null) {
 					// this is to keep track of the original list before merging
 					// with the checks
 					for (ImportedGermplasm germplasm : this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
@@ -313,12 +317,12 @@ public class ImportGermplasmListController extends SettingsController {
 			// end: section for taking note of the check germplasm
 			if (this.getUserSelection().getImportedGermplasmMainInfo() != null) {
 				form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
-				form.setImportedGermplasm(
-						this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+				form.setImportedGermplasm(this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
+						.getImportedGermplasms());
 				form.setImportedCheckGermplasmMainInfo(this.getUserSelection().getImportedCheckGermplasmMainInfo());
 				if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
-					form.setImportedCheckGermplasm(
-							this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+					form.setImportedCheckGermplasm(this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
+							.getImportedGermplasms());
 				}
 				if (this.getUserSelection().getImportedGermplasmMainInfo() != null
 						&& this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null) {
@@ -338,24 +342,21 @@ public class ImportGermplasmListController extends SettingsController {
 							this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckList());
 					List<ImportedGermplasm> newImportedGermplasm =
 							this.mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), form.getImportedCheckGermplasm(),
-									Integer.parseInt(
-											SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId())),
-							interval,
-							SettingsUtil.getCodeInPossibleValues(
-									SettingsUtil.getFieldPossibleVales(this.fieldbookService, TermId.CHECK_PLAN.getId()),
-									SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId())),
-							defaultTestCheckId);
+									Integer.parseInt(SettingsUtil.getSettingDetailValue(form.getCheckVariables(),
+											TermId.CHECK_START.getId())), interval, SettingsUtil.getCodeInPossibleValues(
+											SettingsUtil.getFieldPossibleVales(this.fieldbookService, TermId.CHECK_PLAN.getId()),
+											SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId())),
+									defaultTestCheckId);
 
 					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-							.setImportedGermplasms(newImportedGermplasm);
-					form.setImportedGermplasm(
-							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+					.setImportedGermplasms(newImportedGermplasm);
+					form.setImportedGermplasm(this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
+							.getImportedGermplasms());
 				}
 
 				// this would validate and add CHECK factor if necessary
-				this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(),
-						this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
-						this.userSelection);
+				this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), this.getUserSelection()
+						.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), this.userSelection);
 				this.userSelection.setMeasurementRowList(this.measurementsGeneratorService.generateRealMeasurementRows(this.userSelection));
 
 				// add or remove check variables if needed
@@ -372,8 +373,9 @@ public class ImportGermplasmListController extends SettingsController {
 				AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
-		int studyId = this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true, isDeleteObservations,
-				this.getCurrentProject().getUniqueID());
+		int studyId =
+				this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true, isDeleteObservations, this.getCurrentProject()
+						.getUniqueID());
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 		// for saving the list data project
 		this.saveListDataProject(isNursery, studyId);
@@ -403,10 +405,10 @@ public class ImportGermplasmListController extends SettingsController {
 			List<ImportedGermplasm> importedGermplasmList;
 
 			if (isNursery) {
-				if (this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-						.getOriginalImportedGermplasms() != null) {
-					importedGermplasmList = this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-							.getOriginalImportedGermplasms();
+				if (this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getOriginalImportedGermplasms() != null) {
+					importedGermplasmList =
+							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
+									.getOriginalImportedGermplasms();
 				} else {
 					importedGermplasmList =
 							this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
@@ -417,31 +419,33 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(importedGermplasmList);
-			this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId,
-					isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL, listId, listDataProject, this.getCurrentIbdbUserId());
+			this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, isNursery ? GermplasmListType.NURSERY
+					: GermplasmListType.TRIAL, listId, listDataProject, this.getCurrentIbdbUserId());
 		} else {
 			// we delete the record in the db
-			this.fieldbookMiddlewareService.deleteListDataProjects(studyId,
-					isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL);
+			this.fieldbookMiddlewareService
+					.deleteListDataProjects(studyId, isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL);
 		}
 		if (this.getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
 			if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId() != null) {
 				// came from a list
 				Integer listId = this.getUserSelection().getImportedCheckGermplasmMainInfo().getListId();
-				List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(
-						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+				List<ListDataProject> listDataProject =
+						ListDataProjectUtil.createListDataProject(this.getUserSelection().getImportedCheckGermplasmMainInfo()
+								.getImportedGermplasmList().getImportedGermplasms());
 				this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, listId, listDataProject,
 						this.getCurrentIbdbUserId());
 
 			} else if (this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
-					&& this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-							.getImportedGermplasms() != null
+					&& this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null
 					&& !this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
-							.isEmpty()) {
-				List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(
-						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+					.isEmpty()) {
+				List<ListDataProject> listDataProject =
+						ListDataProjectUtil.createListDataProject(this.getUserSelection().getImportedCheckGermplasmMainInfo()
+								.getImportedGermplasmList().getImportedGermplasms());
 				this.fieldbookMiddlewareService.saveOrUpdateListDataProject(studyId, GermplasmListType.CHECK, null, listDataProject,
 						this.getCurrentIbdbUserId());
+
 			} else {
 				// we delete it
 				this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.CHECK);
@@ -641,8 +645,7 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	@RequestMapping(value = "/displaySelectedCheckGermplasmDetails", method = RequestMethod.GET)
-	public String displaySelectedCheckGermplasmDetails(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form,
-			Model model) {
+	public String displaySelectedCheckGermplasmDetails(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
 
 		try {
 			ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
@@ -704,8 +707,8 @@ public class ImportGermplasmListController extends SettingsController {
 					ImportGermplasmListController.ENTRY));
 			tableHeaderList.add(new TableHeader(ColumnLabels.DESIGNATION.getTermNameFromOntology(this.ontologyDataManager),
 					ImportGermplasmListController.DESIG));
-			tableHeaderList.add(
-					new TableHeader(ColumnLabels.GID.getTermNameFromOntology(this.ontologyDataManager), ImportGermplasmListController.GID));
+			tableHeaderList.add(new TableHeader(ColumnLabels.GID.getTermNameFromOntology(this.ontologyDataManager),
+					ImportGermplasmListController.GID));
 			tableHeaderList.add(new TableHeader(ColumnLabels.PARENTAGE.getTermNameFromOntology(this.ontologyDataManager),
 					ImportGermplasmListController.CROSS));
 			tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(this.ontologyDataManager),
@@ -716,11 +719,12 @@ public class ImportGermplasmListController extends SettingsController {
 		} else if (type != null && type.equalsIgnoreCase(StudyType.T.getName()) && factorsList != null) {
 			// we iterate the map for dynamic header of trial
 			for (SettingDetail factorDetail : factorsList) {
-				if (factorDetail != null && factorDetail.getVariable() != null
+				if (factorDetail != null
+						&& factorDetail.getVariable() != null
 						&& !SettingsUtil.inHideVariableFields(factorDetail.getVariable().getCvTermId(),
 								AppConstants.HIDE_GERMPLASM_DESCRIPTOR_HEADER_TABLE.getString())) {
-					tableHeaderList.add(new TableHeader(factorDetail.getVariable().getName(),
-							factorDetail.getVariable().getCvTermId() + AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));
+					tableHeaderList.add(new TableHeader(factorDetail.getVariable().getName(), factorDetail.getVariable().getCvTermId()
+							+ AppConstants.TABLE_HEADER_KEY_SUFFIX.getString()));
 				}
 
 			}
@@ -1073,11 +1077,13 @@ public class ImportGermplasmListController extends SettingsController {
 		try {
 			ImportedGermplasm importedCheckGermplasm = null;
 			if (type != null && type.equalsIgnoreCase(StudyType.T.getName())) {
-				importedCheckGermplasm = this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms().get(dataTableIndex);
+				importedCheckGermplasm =
+						this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
+								.get(dataTableIndex);
 			} else if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
-				importedCheckGermplasm = this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms().get(dataTableIndex);
+				importedCheckGermplasm =
+						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
+								.get(dataTableIndex);
 			}
 			importedCheckGermplasm.setCheck(currentVal);
 			List<Enumeration> allEnumerations = this.fieldbookService.getCheckList();
@@ -1100,11 +1106,13 @@ public class ImportGermplasmListController extends SettingsController {
 		try {
 			ImportedGermplasm importedCheckGermplasm = null;
 			if (type != null && type.equalsIgnoreCase(StudyType.T.getName())) {
-				importedCheckGermplasm = this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms().get(form.getIndex());
+				importedCheckGermplasm =
+						this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
+								.get(form.getIndex());
 			} else if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
-				importedCheckGermplasm = this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
-						.getImportedGermplasms().get(form.getIndex());
+				importedCheckGermplasm =
+						this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()
+								.get(form.getIndex());
 			}
 			importedCheckGermplasm.setCheck(form.getCheckVal());
 			importedCheckGermplasm.setCheckId(Integer.valueOf(form.getCheckVal()));
@@ -1157,8 +1165,7 @@ public class ImportGermplasmListController extends SettingsController {
 		// this set the necessary info from the session variable
 
 		form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
-		form.setImportedGermplasm(
-				this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+		form.setImportedGermplasm(this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
 		form.changePage(pageNum);
 		this.userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
 		try {
@@ -1187,17 +1194,17 @@ public class ImportGermplasmListController extends SettingsController {
 			ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
 			int realIndex = (previewPageNum - 1) * form.getResultPerPage() + i;
 			this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex)
-					.setCheck(importedGermplasm.getCheck());
+			.setCheck(importedGermplasm.getCheck());
 		}
 
 		form.setImportedCheckGermplasmMainInfo(this.getUserSelection().getImportedCheckGermplasmMainInfo());
-		form.setImportedCheckGermplasm(
-				this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+		form.setImportedCheckGermplasm(this.getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList()
+				.getImportedGermplasms());
 		form.changeCheckPage(pageNum);
 		this.userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
 		try {
 			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
 		return super.showAjaxPage(model, ImportGermplasmListController.CHECK_PAGINATION_TEMPLATE);
@@ -1247,7 +1254,7 @@ public class ImportGermplasmListController extends SettingsController {
 			result.put(ImportGermplasmListController.SUCCESS, "1");
 			result.put("allCheckTypes", this.convertObjectToJson(allEnumerations));
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 			result.put(ImportGermplasmListController.SUCCESS, "-1");
 		}
@@ -1270,18 +1277,21 @@ public class ImportGermplasmListController extends SettingsController {
 		Map<String, String> result = new HashMap<>();
 
 		try {
-			StandardVariable stdVar = this.ontologyService.getStandardVariable(TermId.CHECK.getId());
+			StandardVariable stdVar =
+					this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID());
 			Enumeration enumeration;
 			String message;
 			if (operation == 1) {
 				enumeration = new Enumeration(null, form.getManageCheckCode(), form.getManageCheckValue(), 0);
-				message = this.messageSource.getMessage("nursery.manage.check.types.add.success", new Object[] {form.getManageCheckValue()},
-						local);
+				message =
+						this.messageSource.getMessage("nursery.manage.check.types.add.success", new Object[] {form.getManageCheckValue()},
+								local);
 			} else {
 				enumeration = stdVar.getEnumeration(Integer.parseInt(form.getManageCheckCode()));
 				enumeration.setDescription(form.getManageCheckValue());
-				message = this.messageSource.getMessage("nursery.manage.check.types.edit.success", new Object[] {enumeration.getName()},
-						local);
+				message =
+						this.messageSource.getMessage("nursery.manage.check.types.edit.success", new Object[] {enumeration.getName()},
+								local);
 			}
 			if (!this.validateEnumerationDescription(stdVar.getEnumerations(), enumeration)) {
 				result.put(ImportGermplasmListController.SUCCESS, "-1");
@@ -1289,7 +1299,9 @@ public class ImportGermplasmListController extends SettingsController {
 						this.messageSource.getMessage("error.add.check.duplicate.description", null, local));
 			} else {
 				this.ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
-				List<Enumeration> allEnumerations = this.ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+				List<Enumeration> allEnumerations =
+						this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
+								.getEnumerations();
 				result.put("checkTypes", this.convertObjectToJson(allEnumerations));
 
 				result.put(ImportGermplasmListController.SUCCESS, "1");
@@ -1321,8 +1333,9 @@ public class ImportGermplasmListController extends SettingsController {
 		Map<String, String> result = new HashMap<>();
 
 		try {
-			String name = this.ontologyService.getStandardVariable(TermId.CHECK.getId())
-					.getEnumeration(Integer.parseInt(form.getManageCheckCode())).getName();
+			String name =
+					this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
+							.getEnumeration(Integer.parseInt(form.getManageCheckCode())).getName();
 
 			if (!this.ontologyService.validateDeleteStandardVariableEnumeration(TermId.CHECK.getId(),
 					Integer.parseInt(form.getManageCheckCode()))) {
@@ -1334,11 +1347,13 @@ public class ImportGermplasmListController extends SettingsController {
 				result.put(ImportGermplasmListController.SUCCESS, "1");
 				result.put("successMessage",
 						this.messageSource.getMessage("nursery.manage.check.types.delete.success", new Object[] {name}, local));
-				List<Enumeration> allEnumerations = this.ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+				List<Enumeration> allEnumerations =
+						this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
+								.getEnumerations();
 				result.put("checkTypes", this.convertObjectToJson(allEnumerations));
 			}
 
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.debug(e.getMessage(), e);
 			result.put(ImportGermplasmListController.SUCCESS, "-1");
 			result.put(ImportGermplasmListController.ERROR, e.getMessage());
@@ -1356,7 +1371,7 @@ public class ImportGermplasmListController extends SettingsController {
 	public List<Enumeration> getCheckTypes() {
 		try {
 			return this.fieldbookService.getCheckList();
-		} catch (MiddlewareQueryException e) {
+		} catch (MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
 		return new ArrayList<>();

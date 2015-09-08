@@ -7,6 +7,7 @@ import java.util.List;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,12 +20,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
-import com.efficio.fieldbook.web.util.AppConstants;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsServiceImplTest {
 
-	private static final int GERMPLASM_GROUP = AppConstants.SEGMENT_GERMPLASM.getInt();;
+	private static final int GERMPLASM_GROUP = VariableType.GERMPLASM_DESCRIPTOR.getId();
 
 	@Mock
 	private Workbook workbook;

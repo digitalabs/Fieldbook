@@ -70,9 +70,9 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
-	private static final String IS_SUCCESS = "isSuccess";
+	public static final String IS_SUCCESS = "isSuccess";
 
-	private static final String ERROR = "error";
+	public static final String ERROR = "error";
 
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportController.class);
 
@@ -200,8 +200,8 @@ public class DesignImportController extends SettingsController {
 		for (MeasurementRow row : measurementRows) {
 
 			Map<String, Object> dataMap = this.generateDatatableDataMap(row, null);
-
 			masterList.add(dataMap);
+
 		}
 
 		return masterList;
@@ -286,8 +286,8 @@ public class DesignImportController extends SettingsController {
 			for (DesignHeaderItem mappedHeader : item.getValue()) {
 
 				StandardVariable stdVar = this.ontologyDataManager.getStandardVariable(mappedHeader.getId());
-
 				mappedHeader.setVariable(stdVar);
+
 			}
 
 			if ("mappedEnvironmentalFactors".equals(item.getKey())) {
@@ -467,13 +467,7 @@ public class DesignImportController extends SettingsController {
 
 		if ("T".equalsIgnoreCase(studyType)) {
 
-			Dataset dataset =
-					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
-							this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
-							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-							this.userSelection.getNurseryConditions(), false);
-
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, false);
+			workbook = this.createWorkbookFromUserSelection(combinedList, name, false);
 
 			details.setStudyType(StudyType.T);
 
@@ -489,13 +483,7 @@ public class DesignImportController extends SettingsController {
 				variatesList.addAll(this.userSelection.getSelectionVariates());
 			}
 
-			Dataset dataset =
-					(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
-							this.userSelection.getPlotsLevelList(), variatesList, this.userSelection,
-							this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
-							this.userSelection.getNurseryConditions(), true);
-
-			workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true);
+			workbook = this.createWorkbookFromUserSelection(combinedList, name, true);
 
 			details.setStudyType(StudyType.N);
 
@@ -505,6 +493,18 @@ public class DesignImportController extends SettingsController {
 
 		this.userSelection.setTemporaryWorkbook(workbook);
 
+	}
+
+	Workbook createWorkbookFromUserSelection(List<SettingDetail> combinedList, String name, boolean isNursery) {
+		Workbook workbook;
+		Dataset dataset =
+				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList,
+						this.userSelection.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection,
+						this.userSelection.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(), null, null,
+						this.userSelection.getNurseryConditions(), isNursery);
+
+		workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, isNursery);
+		return workbook;
 	}
 
 	void addExperimentDesign(Workbook workbook, Set<MeasurementVariable> experimentalDesignMeasurementVariables) {
@@ -670,9 +670,7 @@ public class DesignImportController extends SettingsController {
 
 		this.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, trialVariables);
 
-		List<MeasurementRow> trialEnvironmentValues =
-				WorkbookUtil.createMeasurementRowsFromEnvironments(environmentData.getEnvironments(), new ArrayList<>(trialVariables),
-						this.userSelection.getExpDesignParams());
+		List<MeasurementRow> trialEnvironmentValues = this.createTrialEnvironmentValues(environmentData, trialVariables);
 
 		workbook.setTrialObservations(trialEnvironmentValues);
 
@@ -680,6 +678,13 @@ public class DesignImportController extends SettingsController {
 			this.fieldbookService.addConditionsToTrialObservationsIfNecessary(workbook);
 		}
 
+	}
+
+	protected List<MeasurementRow> createTrialEnvironmentValues(EnvironmentData environmentData, Set<MeasurementVariable> trialVariables) {
+		List<MeasurementRow> trialEnvironmentValues =
+				WorkbookUtil.createMeasurementRowsFromEnvironments(environmentData.getEnvironments(), new ArrayList<>(trialVariables),
+						this.userSelection.getExpDesignParams());
+		return trialEnvironmentValues;
 	}
 
 	Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix) {

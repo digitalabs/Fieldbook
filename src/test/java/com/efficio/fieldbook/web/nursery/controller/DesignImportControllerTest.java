@@ -118,7 +118,7 @@ public class DesignImportControllerTest {
 	private DesignImportServiceImpl designImportService;
 
 	@InjectMocks
-	private final DesignImportController designImportController = new DesignImportController();
+	private DesignImportController designImportController;
 
 	@InjectMocks
 	private DesignImportParser designImportParser;
@@ -128,9 +128,10 @@ public class DesignImportControllerTest {
 	@BeforeClass
 	public static void runOnce() throws URISyntaxException {
 
-		csvFile = new File(ClassLoader.getSystemClassLoader().getResource(DesignImportControllerTest.TEST_FILE_NAME).toURI());
+		DesignImportControllerTest.csvFile =
+				new File(ClassLoader.getSystemClassLoader().getResource(DesignImportControllerTest.TEST_FILE_NAME).toURI());
 
-		assert csvFile.exists();
+		assert DesignImportControllerTest.csvFile.exists();
 
 	}
 
@@ -266,7 +267,7 @@ public class DesignImportControllerTest {
 		this.designImportController.performAutomap(this.userSelection.getDesignImportData());
 
 		// Vefiy that the categorizeHeadersByPhenotype is called, which is actually the method that maps headers to standard variables
-		Mockito.verify(this.designImportService).categorizeHeadersByPhenotype(Mockito.anyList());
+		Mockito.verify(this.designImportService).categorizeHeadersByPhenotype(Matchers.anyList());
 	}
 
 	@Test
@@ -287,7 +288,7 @@ public class DesignImportControllerTest {
 
 		final ImportDesignForm form = Mockito.mock(ImportDesignForm.class);
 		Mockito.when(form.getFile()).thenReturn(this.multiPartFile);
-		Mockito.when(this.multiPartFile.getOriginalFilename()).thenReturn(TEST_FILE_NAME_INVALID);
+		Mockito.when(this.multiPartFile.getOriginalFilename()).thenReturn(DesignImportControllerTest.TEST_FILE_NAME_INVALID);
 
 		final String resultsMap = this.designImportController.importFile(form, "N");
 
@@ -919,15 +920,15 @@ public class DesignImportControllerTest {
 
 		try {
 
-			Mockito.when(this.multiPartFile.getOriginalFilename()).thenReturn(TEST_FILE_NAME);
-			Mockito.when(this.multiPartFile.getInputStream()).thenReturn(new FileInputStream(csvFile));
-			Mockito.when(this.fileService.retrieveFileFromFileName(Mockito.anyString())).thenReturn(csvFile);
+			Mockito.when(this.multiPartFile.getOriginalFilename()).thenReturn(DesignImportControllerTest.TEST_FILE_NAME);
+			Mockito.when(this.multiPartFile.getInputStream()).thenReturn(new FileInputStream(DesignImportControllerTest.csvFile));
+			Mockito.when(this.fileService.retrieveFileFromFileName(Matchers.anyString())).thenReturn(DesignImportControllerTest.csvFile);
 
 			return this.createDesignHeaderItemMap(this.designImportParser.parseFile(this.multiPartFile));
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 
-			Assert.fail("Failed to load the test data file: " + TEST_FILE_NAME);
+			Assert.fail("Failed to load the test data file: " + DesignImportControllerTest.TEST_FILE_NAME);
 
 		}
 		return null;
@@ -948,16 +949,16 @@ public class DesignImportControllerTest {
 		return data;
 	}
 
-	private Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> unmappedHeaders) {
+	private Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(final List<DesignHeaderItem> unmappedHeaders) {
 
-		List<String> headers = new ArrayList<>();
+		final List<String> headers = new ArrayList<>();
 		// get headers as string list
-		for (DesignHeaderItem item : unmappedHeaders) {
+		for (final DesignHeaderItem item : unmappedHeaders) {
 			headers.add(item.getName());
 		}
 
 		// create groups for the Design Headers
-		Map<PhenotypicType, List<DesignHeaderItem>> mappedDesignHeaders = new HashMap<>();
+		final Map<PhenotypicType, List<DesignHeaderItem>> mappedDesignHeaders = new HashMap<>();
 
 		// note: the null key here is for unmapped headers
 		mappedDesignHeaders.put(null, new ArrayList<DesignHeaderItem>());
@@ -966,13 +967,13 @@ public class DesignImportControllerTest {
 		mappedDesignHeaders.put(PhenotypicType.GERMPLASM, new ArrayList<DesignHeaderItem>());
 		mappedDesignHeaders.put(PhenotypicType.VARIATE, new ArrayList<DesignHeaderItem>());
 
-		Map<String, List<StandardVariable>> variables = this.ontologyDataManager.getStandardVariablesInProjects(headers);
+		final Map<String, List<StandardVariable>> variables = this.ontologyDataManager.getStandardVariablesInProjects(headers);
 
-		for (DesignHeaderItem item : unmappedHeaders) {
-			List<StandardVariable> match = variables.get(item.getName());
+		for (final DesignHeaderItem item : unmappedHeaders) {
+			final List<StandardVariable> match = variables.get(item.getName());
 
 			if (null != match && !match.isEmpty() && null != mappedDesignHeaders.get(match.get(0).getPhenotypicType())) {
-				StandardVariable standardVariable = match.get(0);
+				final StandardVariable standardVariable = match.get(0);
 				item.setVariable(standardVariable);
 				mappedDesignHeaders.get(standardVariable.getPhenotypicType()).add(item);
 			} else {
@@ -1196,11 +1197,11 @@ public class DesignImportControllerTest {
 	}
 
 	private Map<String, List<DesignHeaderItem>> createTestMappedHeaders() {
-		Map<String, List<DesignHeaderItem>> testNewMap = new HashMap<>();
-		DesignHeaderItem designHeaderItem = new DesignHeaderItem();
+		final Map<String, List<DesignHeaderItem>> testNewMap = new HashMap<>();
+		final DesignHeaderItem designHeaderItem = new DesignHeaderItem();
 		designHeaderItem.setId(TermId.SITE_NAME.getId());
 		designHeaderItem.setName("SITE_NAME");
-		List<DesignHeaderItem> designHeaderItems = new ArrayList<>();
+		final List<DesignHeaderItem> designHeaderItems = new ArrayList<>();
 		designHeaderItems.add(designHeaderItem);
 		testNewMap.put("mappedEnvironmentalFactors", designHeaderItems);
 		testNewMap.put("mappedDesignFactors", new ArrayList<DesignHeaderItem>());

@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -53,20 +54,21 @@ public class DesignImportParserTest {
 	@BeforeClass
 	public static void runOnce() throws URISyntaxException {
 
-		csvFile = new File(ClassLoader.getSystemClassLoader().getResource(DesignImportParserTest.TEST_FILE_NAME).toURI());
+		DesignImportParserTest.csvFile =
+				new File(ClassLoader.getSystemClassLoader().getResource(DesignImportParserTest.TEST_FILE_NAME).toURI());
 
-		assert csvFile.exists();
+		assert DesignImportParserTest.csvFile.exists();
 
 	}
 
 	@Test
 	public void testParseFile() throws FileParsingException, IOException {
 
-		Mockito.doReturn(TEST_FILE_NAME).when(this.multiPartFile).getOriginalFilename();
-		Mockito.doReturn(new FileInputStream(csvFile)).when(this.multiPartFile).getInputStream();
-		Mockito.doReturn(csvFile).when(this.fileService).retrieveFileFromFileName(Mockito.anyString());
+		Mockito.doReturn(DesignImportParserTest.TEST_FILE_NAME).when(this.multiPartFile).getOriginalFilename();
+		Mockito.doReturn(new FileInputStream(DesignImportParserTest.csvFile)).when(this.multiPartFile).getInputStream();
+		Mockito.doReturn(DesignImportParserTest.csvFile).when(this.fileService).retrieveFileFromFileName(Matchers.anyString());
 
-		DesignImportData result = this.parser.parseFile(this.multiPartFile);
+		final DesignImportData result = this.parser.parseFile(this.multiPartFile);
 
 		Assert.assertTrue(!result.getUnmappedHeaders().isEmpty());
 
@@ -86,12 +88,12 @@ public class DesignImportParserTest {
 	@Test
 	public void testParseFileInvalidFileFormat() {
 
-		Mockito.doReturn(TEST_FILE_NAME_INVALID).when(this.multiPartFile).getOriginalFilename();
+		Mockito.doReturn(DesignImportParserTest.TEST_FILE_NAME_INVALID).when(this.multiPartFile).getOriginalFilename();
 
 		try {
 			this.parser.parseFile(this.multiPartFile);
 			Assert.fail();
-		} catch (FileParsingException e) {
+		} catch (final FileParsingException e) {
 			assert true;
 		}
 
@@ -100,8 +102,8 @@ public class DesignImportParserTest {
 	@Test
 	public void testParseCsv() throws FileParsingException, IOException {
 
-		Map<Integer, List<String>> csvMap = new HashMap<>();
-		CSVReader reader = new CSVReader(new FileReader(this.csvFile));
+		final Map<Integer, List<String>> csvMap = new HashMap<>();
+		final CSVReader reader = new CSVReader(new FileReader(DesignImportParserTest.csvFile));
 
 		String nextLine[];
 		Integer key = 0;
@@ -111,7 +113,7 @@ public class DesignImportParserTest {
 
 		reader.close();
 
-		DesignImportData result = this.parser.parseCsvMap(csvMap);
+		final DesignImportData result = this.parser.parseCsvMap(csvMap);
 
 		Assert.assertTrue(!result.getUnmappedHeaders().isEmpty());
 
@@ -131,12 +133,12 @@ public class DesignImportParserTest {
 	@Test
 	public void testCreateDesignHeaders() {
 
-		List<String> headers = new ArrayList<>();
+		final List<String> headers = new ArrayList<>();
 		headers.add("TRIAL_INSTANCE");
 		headers.add("ENTRY_NO");
 		headers.add("PLOT_NO");
 
-		List<DesignHeaderItem> designHeaderItems = this.parser.createDesignHeaders(headers);
+		final List<DesignHeaderItem> designHeaderItems = this.parser.createDesignHeaders(headers);
 
 		Assert.assertEquals(3, designHeaderItems.size());
 		Assert.assertEquals("TRIAL_INSTANCE", designHeaderItems.get(0).getName());

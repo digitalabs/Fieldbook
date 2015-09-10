@@ -1045,4 +1045,8 @@ public class DesignImportController extends SettingsController {
 		return "";
 	}
 
+	public void setDesignImportParser(DesignImportParser designImportParser) {
+		this.parser = designImportParser;
+	}
+
 }

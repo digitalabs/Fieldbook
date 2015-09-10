@@ -148,7 +148,6 @@ public class EditNurseryController extends SettingsController {
 		final String contextParams = this.retrieveContextInfo(request);
 
 		this.clearSessionData(request.getSession());
-
 		try {
 			Workbook workbook = null;
 			if (nurseryId != 0) {
@@ -562,20 +561,16 @@ public class EditNurseryController extends SettingsController {
 
 	}
 
-	private void addNurseryTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
+	void addNurseryTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
 
 		SettingDetail nurseryTypeSettingDetail = new SettingDetail();
 		SettingVariable nurseryTypeSettingVariable = new SettingVariable();
 
 		Integer nurseryTypeValue = this.userSelection.getNurseryTypeForDesign();
-
-		nurseryTypeSettingDetail.setValue(String.valueOf(nurseryTypeValue));
-		nurseryTypeSettingVariable.setCvTermId(TermId.NURSERY_TYPE.getId());
-		nurseryTypeSettingVariable.setName("NURSERY_TYPE");
-		nurseryTypeSettingVariable.setOperation(Operation.ADD);
-		nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
-
-		if (this.userSelection.getNurseryTypeForDesign() != null && nurseryTypeValue != null) {
+		
+		this.setUpForDesignImport(nurseryTypeSettingDetail, nurseryTypeSettingVariable, String.valueOf(nurseryTypeValue), TermId.NURSERY_TYPE.getId(), "NURSERY_TYPE");
+		
+		if (nurseryTypeValue != null) {
 
 			for (SettingDetail settingDetail : studyLevelVariables) {
 				if (settingDetail.getVariable().getCvTermId() == TermId.NURSERY_TYPE.getId()) {
@@ -593,17 +588,13 @@ public class EditNurseryController extends SettingsController {
 
 	}
 
-	private void addExperimentalDesignTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
+	void addExperimentalDesignTypeFromDesignImport(List<SettingDetail> studyLevelVariables) {
 
 		SettingDetail nurseryTypeSettingDetail = new SettingDetail();
 		SettingVariable nurseryTypeSettingVariable = new SettingVariable();
-
-		nurseryTypeSettingDetail.setValue(String.valueOf(TermId.OTHER_DESIGN.getId()));
-		nurseryTypeSettingVariable.setCvTermId(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
-		nurseryTypeSettingVariable.setName("EXPERIMENT_DESIGN");
-		nurseryTypeSettingVariable.setOperation(Operation.ADD);
-		nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
-
+		
+		this.setUpForDesignImport(nurseryTypeSettingDetail, nurseryTypeSettingVariable, String.valueOf(TermId.OTHER_DESIGN.getId()), TermId.EXPERIMENT_DESIGN_FACTOR.getId(), "EXPERIMENT_DESIGN");
+		
 		if (this.userSelection.getExpDesignVariables() != null
 				&& !this.userSelection.getExpDesignVariables().isEmpty()) {
 
@@ -861,5 +852,16 @@ public class EditNurseryController extends SettingsController {
 
 		}
 
+	}
+	
+	private void setUpForDesignImport(SettingDetail nurseryTypeSettingDetail, SettingVariable nurseryTypeSettingVariable, String value, Integer cvTermId, String name){
+		//String.valueOf(nurseryTypeValue)
+		//TermId.NURSERY_TYPE.getId()
+		//"NURSERY_TYPE"
+		nurseryTypeSettingDetail.setValue(value);
+		nurseryTypeSettingVariable.setCvTermId(cvTermId);
+		nurseryTypeSettingVariable.setName(name);
+		nurseryTypeSettingVariable.setOperation(Operation.ADD);
+		nurseryTypeSettingDetail.setVariable(nurseryTypeSettingVariable);
 	}
 }

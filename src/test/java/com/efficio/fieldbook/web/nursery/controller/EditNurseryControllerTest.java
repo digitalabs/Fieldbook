@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,16 @@ import javax.servlet.http.HttpSession;
 
 import junit.framework.Assert;
 
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.*;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.dms.DmsProject;
+import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -21,13 +30,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EditNurseryControllerTest {
@@ -41,81 +54,110 @@ public class EditNurseryControllerTest {
 	private static final int NURSERY_ID = 1;
 	public static final int CHILD_FOLDER_ID = 2;
 	@Mock
-	HttpServletRequest request;
+	private HttpServletRequest request;
 
 	@Mock
-	HttpSession session;
+	private HttpSession session;
 
 	@Mock
-	CreateNurseryForm createNurseryForm;
+	private CreateNurseryForm createNurseryForm;
 
 	@Mock
-	ImportGermplasmListForm importGermplasmListForm;
+	private ImportGermplasmListForm importGermplasmListForm;
 
 	@Mock
-	Model model;
+	private Model model;
 
 	@Mock
-	RedirectAttributes redirectAttributes;
+	private RedirectAttributes redirectAttributes;
 
 	@Mock
-	UserSelection userSelection;
+	private UserSelection userSelection;
 
 	@Mock
 	org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	@Mock
-	ErrorHandlerService errorHandlerService;
-
+	private ErrorHandlerService errorHandlerService;
+	
+	@Mock
+	private SettingVariable settingVar;
+	
+	@Mock
+	private StudyDataManager studyDataManagerImpl;
+	
+	@Mock
+	private WorkbenchDataManager workBenchDataManager;
+	
+	@Mock
+	private StandardVariable standardVariable;
+	
+	@Mock
+	private ContextUtil contextUtil;
+	
+	@Mock
+	private AbstractBaseFieldbookController abstractBaseFieldbookController;
+	
+	@Mock
+	private WorkbenchRuntimeData workbenchRD;
+	
+	@Mock
+	private FieldbookService fieldbookService;
+	
+	@Mock
+	private SettingsController settingsController;
+	
+	@Mock
+	private WorkbenchService workbenchService;
+	
+	@Mock
+	private FieldbookProperties fieldbookProperties;
+	
 	@InjectMocks
-	EditNurseryController editNurseryController;
+	private EditNurseryController editNurseryController;
 
 	@Test
 	public void testUseExistingNurseryNoRedirect() throws Exception {
-		EditNurseryController moleEditNurseryController = Mockito.spy(this.editNurseryController);
-
-		Workbook workbook = Mockito.mock(Workbook.class);
-		List<SettingDetail> basicDetails = Arrays.asList(Mockito.mock(SettingDetail.class));
+		EditNurseryController moleEditNurseryController = Mockito.mock(EditNurseryController.class);
+		DmsProject dmsProject = Mockito.mock(DmsProject.class);
 		StudyDetails studyDetails = Mockito.mock(StudyDetails.class);
-
-		// setup: we dont care actually whats happening inside controller.useExistingNursery, we just want it to return the url
+		Workbook workbook = Mockito.mock(Workbook.class);
+		Project project = Mockito.mock(Project.class);
+		List<SettingDetail> basicDetails = Arrays.asList(Mockito.mock(SettingDetail.class));
+		
+		Mockito.doReturn(dmsProject).when(studyDataManagerImpl).getProject(Matchers.anyInt());
+		Mockito.when(dmsProject.getProgramUUID()).thenReturn("1002");
 		Mockito.when(studyDetails.getParentFolderId()).thenReturn((long) 1);
 		Mockito.when(workbook.getStudyDetails()).thenReturn(studyDetails);
+		Mockito.doReturn(project).when(abstractBaseFieldbookController).getCurrentProject();
 		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(Matchers.anyInt())).thenReturn(workbook);
-
-		Mockito.doNothing().when(moleEditNurseryController).convertToXmlDatasetPojo(workbook);
-		Mockito.doReturn(basicDetails)
-				.when(moleEditNurseryController)
-				.updateRequiredFields(Matchers.anyList(), Matchers.anyList(), Matchers.any(boolean[].class), Matchers.anyList(),
-						Matchers.anyBoolean(), Matchers.anyString(), Matchers.anyString());
-		Mockito.doReturn(basicDetails).when(moleEditNurseryController)
-				.getSettingDetailsOfSection(basicDetails, this.createNurseryForm, AppConstants.FIXED_NURSERY_VARIABLES.getString());
-		Mockito.doNothing().when(moleEditNurseryController)
-				.setCheckVariables(Matchers.anyList(), Matchers.any(ImportGermplasmListForm.class), Matchers.eq(this.createNurseryForm));
-		Mockito.doNothing().when(moleEditNurseryController).removeBasicDetailsVariables(basicDetails);
-		Mockito.doNothing().when(moleEditNurseryController)
-				.setFormStaticData(Matchers.eq(this.createNurseryForm), Matchers.anyString(), Matchers.eq(workbook));
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(Matchers.anyInt(), Matchers.anyString())).thenReturn(standardVariable);
+		Mockito.when(this.workBenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
+		Mockito.when(this.workBenchDataManager.getWorkbenchRuntimeData()).thenReturn(this.workbenchRD);
+		Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn(Matchers.anyString());
 		// test
 		String out =
-				moleEditNurseryController.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm,
+				this.editNurseryController.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm,
 						EditNurseryControllerTest.NURSERY_ID, "context-info", this.model, this.request, this.redirectAttributes);
 
 		Mockito.verify(this.fieldbookMiddlewareService).getNurseryDataSet(Matchers.anyInt());
-		Assert.assertEquals("should return the URL of the base_template", AbstractBaseFieldbookController.BASE_TEMPLATE_NAME, out);
+		Assert.assertEquals("Should return the URL of the base_template", AbstractBaseFieldbookController.BASE_TEMPLATE_NAME, out);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testUseExistingNurseryRedirectForIncompatibleStudy() throws Exception {
-		EditNurseryController moleEditNurseryController = Mockito.spy(this.editNurseryController);
-
+		DmsProject dmsProject = Mockito.mock(DmsProject.class);
+		
+		// setup: we don't care actually what's happening inside controller.useExistingNursery, we just want it to return the URL
+		Mockito.doReturn(dmsProject).when(studyDataManagerImpl).getProject(Matchers.anyInt());
+		Mockito.when(dmsProject.getProgramUUID()).thenReturn("1002");
 		Mockito.when(this.request.getCookies()).thenReturn(new Cookie[] {});
-		Mockito.doReturn("context-info").when(moleEditNurseryController).retrieveContextInfo(this.request);
-		Mockito.doNothing().when(moleEditNurseryController).clearSessionData(this.session);
 		Mockito.when(this.fieldbookMiddlewareService.getNurseryDataSet(EditNurseryControllerTest.NURSERY_ID)).thenThrow(
 				MiddlewareQueryException.class);
 
 		String out =
-				moleEditNurseryController.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm,
+				editNurseryController.useExistingNursery(this.createNurseryForm, this.importGermplasmListForm,
 						EditNurseryControllerTest.NURSERY_ID, "context-info", this.model, this.request, this.redirectAttributes);
 		Assert.assertEquals("should redirect to manage nurseries page", "redirect:" + ManageNurseriesController.URL, out);
 
@@ -124,7 +166,7 @@ public class EditNurseryControllerTest {
 		ArgumentCaptor<String> redirectArg2 = ArgumentCaptor.forClass(String.class);
 
 		Mockito.verify(this.redirectAttributes).addFlashAttribute(redirectArg1.capture(), redirectArg2.capture());
-		Assert.assertEquals("value should be redirectErrorMessage", "redirectErrorMessage", redirectArg1.getValue());
+		Assert.assertEquals("Value should be redirectErrorMessage", "redirectErrorMessage", redirectArg1.getValue());
 	}
 
 	@Test
@@ -182,7 +224,102 @@ public class EditNurseryControllerTest {
 		this.editNurseryController.getNurseryFolderName(EditNurseryControllerTest.CHILD_FOLDER_ID);
 		Mockito.verify(this.fieldbookMiddlewareService).getFolderNameById(EditNurseryControllerTest.CHILD_FOLDER_ID);
 	}
-
+	
+	@Test
+	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueIsNull(){
+		List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		Mockito.doReturn(null).when(this.userSelection).getNurseryTypeForDesign();
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		
+		Assert.assertTrue("studyLevelVariables should not be null", studyLevelVariables.isEmpty());
+	}
+	
+	@Test
+	public void testAddNurseryTypeFromDesignImportWhenNurseryTypeValueHasValue(){
+		List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		
+		Assert.assertNotNull("studyLevelVariables should not be null", studyLevelVariables);
+		SettingDetail settingDetail = studyLevelVariables.get(0);
+		
+		Assert.assertEquals("Value should be zero but " + settingDetail.getValue(), "0", settingDetail.getValue());
+		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
+		
+	}
+	
+	@Test
+	public void testAddNurseryFromDesignImportWhenDesignImportHasValue(){
+		List<SettingDetail> studyLevelVariables = Arrays.asList(this.initializeSettingDetails(true));
+		List<Integer> expDesignVariables = new ArrayList<Integer>();
+		expDesignVariables.add(1);
+		
+		Mockito.when(this.userSelection.getExpDesignVariables()).thenReturn(expDesignVariables);
+		
+		this.editNurseryController.addNurseryTypeFromDesignImport(studyLevelVariables);
+		
+		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
+		SettingDetail settingDetail = studyLevelVariables.get(0);
+		
+		Assert.assertNull("SettingDetail value should be null but " + settingDetail.getValue(), settingDetail.getValue());
+		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
+		
+	}
+	
+	@Test
+	public void  testAddExperimentalDesignTypeFromDesignImportTrue(){
+		List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		List<Integer> expDesignVariables = new ArrayList<Integer>();
+		expDesignVariables.add(1);
+		Mockito.doReturn(expDesignVariables).when(this.userSelection).getExpDesignVariables();
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		
+		Assert.assertFalse("studyLevelVariables should not be empty", studyLevelVariables.isEmpty());
+		SettingDetail settingDetail = studyLevelVariables.get(0);
+		
+		Assert.assertEquals("Value should be "+TermId.OTHER_DESIGN.getId()+" but " + settingDetail.getValue(), String.valueOf(TermId.OTHER_DESIGN.getId()), settingDetail.getValue());
+		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
+	}
+	
+	@Test
+	public void  testAddExperimentalDesignTypeFromDesignImportFalse(){
+		List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		
+		Assert.assertTrue("studyLevelVariables should be empty", studyLevelVariables.isEmpty());
+	}
+	
+	@Test
+	public void  testAddExperimentalDesignTypeFromDesignImportUpdate(){
+		List<SettingDetail> studyLevelVariables = Arrays.asList(this.initializeSettingDetails(false));
+		List<Integer> expDesignVariables = new ArrayList<Integer>();
+		expDesignVariables.add(1);
+		
+		Mockito.when(this.userSelection.getExpDesignVariables()).thenReturn(expDesignVariables);
+		
+		this.editNurseryController.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
+		
+		Assert.assertEquals("studyLevelVariables' size should be 1", studyLevelVariables.size(), 1);
+		SettingDetail settingDetail = studyLevelVariables.get(0);
+		
+		Assert.assertNull("SettingDetail value should be null but " + settingDetail.getValue(), settingDetail.getValue());
+		Assert.assertNotNull("settingDetail Variable should not be null ", settingDetail.getVariable());
+	}
+	
+	private SettingDetail initializeSettingDetails(boolean isAddNursery){
+		SettingDetail settingDetail = Mockito.mock(SettingDetail.class);
+		
+		SettingVariable settingVariable = new SettingVariable();
+		if(isAddNursery){
+			settingVariable.setCvTermId(TermId.NURSERY_TYPE.getId());
+		}
+		else{
+			settingVariable.setCvTermId(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+		}
+		
+		Mockito.when(settingDetail.getVariable()).thenReturn(settingVariable);
+		
+		return settingDetail;
+	}
 	private void initializeMeasurementRowList() {
 		final Random random = new Random(1000);
 		// random numbers generated up-to 3 digits only so as not to conflict with test data

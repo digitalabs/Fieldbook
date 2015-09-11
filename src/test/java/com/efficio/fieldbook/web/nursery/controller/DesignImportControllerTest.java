@@ -155,7 +155,7 @@ public class DesignImportControllerTest {
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.TRIAL_DESIGN).size());
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.VARIATE).size());
 
-		DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
+		final DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
 		Assert.assertEquals("The DesignHeaderItem SITE_NAME should be mapped to the SITE_NAME Standard Variable", TermId.SITE_NAME.getId(),
 				designHeaderItem.getVariable().getId());
 
@@ -197,7 +197,7 @@ public class DesignImportControllerTest {
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.TRIAL_DESIGN).size());
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.VARIATE).size());
 
-		DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
+		final DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
 		Assert.assertEquals("The DesignHeaderItem SITE_NAME should be mapped to the SITE_NAME Standard Variable", TermId.SITE_NAME.getId(),
 				designHeaderItem.getVariable().getId());
 
@@ -225,7 +225,7 @@ public class DesignImportControllerTest {
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.TRIAL_DESIGN).size());
 		Assert.assertEquals(0, mappedHeaders.get(PhenotypicType.VARIATE).size());
 
-		DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
+		final DesignHeaderItem designHeaderItem = mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT).get(0);
 		Assert.assertEquals("The DesignHeaderItem SITE_NAME should be mapped to the SITE_NAME Standard Variable", TermId.SITE_NAME.getId(),
 				designHeaderItem.getVariable().getId());
 
@@ -918,7 +918,7 @@ public class DesignImportControllerTest {
 
 	private DesignImportData createDesignImportData() {
 
-		DesignImportData designImportData = new DesignImportData();
+		final DesignImportData designImportData = new DesignImportData();
 
 		designImportData.setMappedHeaders(this.createTestMappedHeadersForDesignImportData());
 		designImportData.setCsvData(this.createTestCsvDataForDesignImportData());
@@ -929,26 +929,27 @@ public class DesignImportControllerTest {
 
 	private Map<PhenotypicType, List<DesignHeaderItem>> createTestMappedHeadersForDesignImportData() {
 
-		Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = new HashMap<>();
+		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = new HashMap<>();
 
-		List<DesignHeaderItem> trialEvironmentItems = new ArrayList<>();
+		final List<DesignHeaderItem> trialEvironmentItems = new ArrayList<>();
 		trialEvironmentItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.TRIAL_INSTANCE_FACTOR.getId(),
 				"TRIAL_INSTANCE", 0));
 		trialEvironmentItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.TRIAL_LOCATION.getId(),
 				"LOCATION_NAME", 1));
 		trialEvironmentItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 2));
-		trialEvironmentItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, COOPERATOR_TERMID, "COOPERATOR", 3));
+		trialEvironmentItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT,
+				DesignImportControllerTest.COOPERATOR_TERMID, "COOPERATOR", 3));
 
-		List<DesignHeaderItem> germplasmItems = new ArrayList<>();
+		final List<DesignHeaderItem> germplasmItems = new ArrayList<>();
 		germplasmItems.add(this.createDesignHeaderItem(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", 4));
 
-		List<DesignHeaderItem> trialDesignItems = new ArrayList<>();
+		final List<DesignHeaderItem> trialDesignItems = new ArrayList<>();
 		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.PLOT_NO.getId(), "PLOT_NO", 5));
 		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.REP_NO.getId(), "REP_NO", 6));
 		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO", 7));
 
-		List<DesignHeaderItem> variateItems = new ArrayList<>();
-		variateItems.add(this.createDesignHeaderItem(PhenotypicType.VARIATE, GW_100G_TERMID, "GW_100G", 8));
+		final List<DesignHeaderItem> variateItems = new ArrayList<>();
+		variateItems.add(this.createDesignHeaderItem(PhenotypicType.VARIATE, DesignImportControllerTest.GW_100G_TERMID, "GW_100G", 8));
 
 		mappedHeaders.put(PhenotypicType.TRIAL_ENVIRONMENT, trialEvironmentItems);
 		mappedHeaders.put(PhenotypicType.GERMPLASM, germplasmItems);
@@ -961,7 +962,7 @@ public class DesignImportControllerTest {
 
 	private Map<Integer, List<String>> createTestCsvDataForDesignImportData() {
 
-		Map<Integer, List<String>> csvData = new HashMap<>();
+		final Map<Integer, List<String>> csvData = new HashMap<>();
 
 		// The first row is the header
 		csvData.put(0, this.createListOfString("TRIAL_INSTANCE", "LOCATION_NAME", "SITE_NAME", "COOPERATOR", "ENTRY_NO", "PLOT_NO",
@@ -1001,9 +1002,9 @@ public class DesignImportControllerTest {
 
 	}
 
-	private List<String> createListOfString(String... listData) {
-		List<String> list = new ArrayList<>();
-		for (String data : listData) {
+	private List<String> createListOfString(final String... listData) {
+		final List<String> list = new ArrayList<>();
+		for (final String data : listData) {
 			list.add(data);
 		}
 		return list;
@@ -1033,7 +1034,8 @@ public class DesignImportControllerTest {
 		return items;
 	}
 
-	private DesignHeaderItem createDesignHeaderItem(PhenotypicType phenotypicType, int termId, String headerName, int columnIndex) {
+	private DesignHeaderItem createDesignHeaderItem(final PhenotypicType phenotypicType, final int termId, final String headerName,
+			final int columnIndex) {
 		final DesignHeaderItem designHeaderItem = new DesignHeaderItem();
 		designHeaderItem.setId(termId);
 		designHeaderItem.setName(headerName);

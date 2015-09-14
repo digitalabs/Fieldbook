@@ -58,6 +58,8 @@ public class DesignImportServiceImplTest {
 
 	private static final int GYLD_TERMID = 18000;
 
+	private static final int NO_OF_TEST_ENTRIES = 5;
+
 	private static final String PROGRAM_UUID = "789c6438-5a94-11e5-885d-feff819cdc9f";
 
 	@Mock
@@ -275,7 +277,7 @@ public class DesignImportServiceImplTest {
 
 		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
 
-		Assert.assertEquals("The first trial instance has only 5 observations", 5, measurements.size());
+		Assert.assertEquals("The first trial instance has only 5 observations", NO_OF_TEST_ENTRIES, measurements.size());
 
 	}
 
@@ -306,7 +308,7 @@ public class DesignImportServiceImplTest {
 
 		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
 
-		Assert.assertEquals("The first trial instance only has 5 observations", 5, measurements.size());
+		Assert.assertEquals("The first trial instance only has 5 observations", NO_OF_TEST_ENTRIES, measurements.size());
 
 	}
 
@@ -365,9 +367,9 @@ public class DesignImportServiceImplTest {
 				this.service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getCsvData());
 
 		Assert.assertEquals("The total number of trial instances in file is 3", 3, result.size());
-		Assert.assertEquals("Each trial instance in file has 5 observations", 5, result.get("1").size());
-		Assert.assertEquals("Each trial instance in file has 5 observations", 5, result.get("2").size());
-		Assert.assertEquals("Each trial instance in file has 5 observations", 5, result.get("3").size());
+		Assert.assertEquals("Each trial instance in file has 5 observations", NO_OF_TEST_ENTRIES, result.get("1").size());
+		Assert.assertEquals("Each trial instance in file has 5 observations", NO_OF_TEST_ENTRIES, result.get("2").size());
+		Assert.assertEquals("Each trial instance in file has 5 observations", NO_OF_TEST_ENTRIES, result.get("3").size());
 
 	}
 
@@ -441,7 +443,7 @@ public class DesignImportServiceImplTest {
 	public void testValidateGermplasmEntriesFromShouldMatchTheGermplasmList() {
 
 		final Set<String> entryNumbers = new HashSet<>();
-		for (int x = 1; x <= 5; x++) {
+		for (int x = 1; x <= NO_OF_TEST_ENTRIES; x++) {
 			entryNumbers.add(String.valueOf(x));
 		}
 
@@ -699,7 +701,7 @@ public class DesignImportServiceImplTest {
 
 	private List<ImportedGermplasm> createImportedGermplasmList() {
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-		for (int x = 1; x <= 5; x++) {
+		for (int x = 1; x <= NO_OF_TEST_ENTRIES; x++) {
 			importedGermplasmList.add(this.createImportedGermplasm(x));
 		}
 

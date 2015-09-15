@@ -422,9 +422,9 @@ public class DesignImportServiceImplTest {
 						this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
 
 		final Map<Integer, List<String>> csvData = this.designImportData.getCsvData();
-		csvData.get(0).set(entryNoHeaderItem.getColumnIndex(), "1");
 		csvData.get(1).set(entryNoHeaderItem.getColumnIndex(), "1");
 		csvData.get(2).set(entryNoHeaderItem.getColumnIndex(), "1");
+		csvData.get(3).set(entryNoHeaderItem.getColumnIndex(), "1");
 
 		final Map<String, Map<Integer, List<String>>> data = this.service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, csvData);
 
@@ -432,7 +432,7 @@ public class DesignImportServiceImplTest {
 
 			this.service.validateEntryNoMustBeUniquePerInstance(entryNoHeaderItem, data);
 
-			// Assert.fail("The list shouldn't pass the validateEntryNoMustBeUniquePerInstance test");
+			Assert.fail("The list shouldn't pass the validateEntryNoMustBeUniquePerInstance test");
 
 		} catch (final DesignValidationException e) {
 

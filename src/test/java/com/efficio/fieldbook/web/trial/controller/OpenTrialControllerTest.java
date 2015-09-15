@@ -14,8 +14,11 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -43,7 +46,11 @@ public class OpenTrialControllerTest {
 	private static final int NO_OF_TRIAL_INSTANCES = 3;
 	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int TRIAL_ID = 1;
+	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	public static final String TEST_TRIAL_NAME = "dummyTrial";
+
+	@Mock
+	private StudyDataManager studyDataManager;
 
 	@Mock
 	private UserSelection userSelection;
@@ -72,14 +79,27 @@ public class OpenTrialControllerTest {
 	@InjectMocks
 	private OpenTrialController openTrialController;
 
+	@Before
+	public void setUp() {
+
+		DmsProject dmsProject = this.createDmsProject();
+		Mockito.when(this.studyDataManager.getProject(1)).thenReturn(dmsProject);
+
+		WorkbookDataUtil.setTestWorkbook(null);
+
+	}
+
 	@Test
 	public void testOpenTrialNoRedirect() throws Exception {
+
 		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
-		Workbook workbook = Mockito.mock(Workbook.class);
+
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+
 		Mockito.when(this.fieldbookService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 
 		Mockito.doNothing().when(moleOpenTrialController)
-		.setModelAttributes(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, workbook);
+				.setModelAttributes(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, workbook);
 
 		String out =
 				moleOpenTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, this.session,
@@ -112,7 +132,7 @@ public class OpenTrialControllerTest {
 	protected void prepareHappyPathScenario(OpenTrialController mocked) {
 		try {
 			Mockito.doReturn(new TabInfo()).when(mocked)
-			.prepareBasicDetailsTabInfo(Matchers.any(StudyDetails.class), Matchers.anyBoolean(), Matchers.anyInt());
+					.prepareBasicDetailsTabInfo(Matchers.any(StudyDetails.class), Matchers.anyBoolean(), Matchers.anyInt());
 			Mockito.doReturn(new TabInfo()).when(mocked).prepareGermplasmTabInfo(Matchers.anyList(), Matchers.anyBoolean());
 			Mockito.doReturn(new TabInfo()).when(mocked).prepareEnvironmentsTabInfo(Matchers.any(Workbook.class), Matchers.anyBoolean());
 			Mockito.doReturn(new TabInfo()).when(mocked).prepareTrialSettingsTabInfo(Matchers.anyList(), Matchers.anyBoolean());
@@ -161,13 +181,17 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testHappyPathOpenTrialCheckModelAttributes() {
+
 		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
+
 		this.prepareHappyPathScenario(moleOpenTrialController);
 
 		Model model = new ExtendedModelMap();
 
 		try {
+
 			Mockito.when(this.fieldbookService.getTrialDataSet(Matchers.anyInt())).thenReturn(this.trialWorkbook);
+
 			moleOpenTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, model, new MockHttpSession(),
 					Mockito.mock(RedirectAttributes.class));
 
@@ -242,7 +266,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testGetFilteredTrialObservations() {
-		WorkbookDataUtil.setTestWorkbook(null);
+
 		Workbook workbook =
 				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
@@ -288,7 +312,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testGetFilteredObservations() {
-		WorkbookDataUtil.setTestWorkbook(null);
+
 		Workbook workbook =
 				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
@@ -338,5 +362,13 @@ public class OpenTrialControllerTest {
 		final OpenTrialController moleOpenTrialController = Mockito.spy(this.openTrialController);
 		Mockito.doNothing().when(moleOpenTrialController).clearSessionData(this.session);
 		return moleOpenTrialController;
+	}
+
+	protected DmsProject createDmsProject() {
+		DmsProject dmsProject = new DmsProject();
+		dmsProject.setProjectId(TRIAL_ID);
+		dmsProject.setName(TEST_TRIAL_NAME);
+		dmsProject.setProgramUUID(PROGRAM_UUID);
+		return dmsProject;
 	}
 }

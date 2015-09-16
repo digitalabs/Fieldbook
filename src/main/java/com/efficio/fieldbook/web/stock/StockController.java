@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +53,7 @@ import com.efficio.fieldbook.web.util.parsing.InventoryImportParser;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/24/2015 Time: 4:38 PM
  */
+@Transactional
 @Controller
 @RequestMapping(value = StockController.URL)
 public class StockController extends AbstractBaseFieldbookController {

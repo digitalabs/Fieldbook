@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,7 @@ import com.efficio.fieldbook.web.common.bean.TableHeader;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/22/2015 Time: 12:44 PM
  */
-
+@Transactional
 @Controller
 @RequestMapping(GermplasmListController.URL)
 public class GermplasmListController {

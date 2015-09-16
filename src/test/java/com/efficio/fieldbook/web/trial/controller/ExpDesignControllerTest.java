@@ -22,11 +22,11 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.junit.Test;
 
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 
-public class ExpDesignControllerTest extends AbstractBaseControllerIntegrationTest {
+public class ExpDesignControllerTest extends AbstractBaseIntegrationTest {
 
 	private static final int NO_OF_OBSERVATIONS = 10;
 	private static final String ENVIRONMENTS = "3";

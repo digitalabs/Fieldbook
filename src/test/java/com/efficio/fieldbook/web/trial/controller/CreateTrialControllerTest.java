@@ -14,10 +14,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 
-public class CreateTrialControllerTest extends AbstractBaseControllerIntegrationTest {
+public class CreateTrialControllerTest extends AbstractBaseIntegrationTest {
 
 	@Autowired
 	private CreateTrialController controller;

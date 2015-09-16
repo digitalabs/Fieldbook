@@ -6,11 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -24,15 +25,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.FieldbookServiceImpl;
@@ -78,7 +75,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		ImportGermplasmListForm form2 = new ImportGermplasmListForm();
 		Model model = Mockito.mock(Model.class);
 		try {
-			this.controller.show(form, form2, model, this.mockSession, this.mockRequest);
+			this.controller.show(form, form2, model, Mockito.mock(HttpSession.class), Mockito.mock(HttpServletRequest.class));
 			Assert.assertNotNull(form2.getCheckVariables());
 			Assert.assertTrue("Expected only check variables but the list has non check variables as well.",
 					WorkbookTestUtil.areDetailsFilteredVariables(form2.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
@@ -108,7 +105,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		this.controller.setUserSelection(this.userSelection);
 
 		try {
-			this.controller.getChecksForUseExistingNursery(form, -1, model, this.mockSession, this.mockRequest);
+			this.controller.getChecksForUseExistingNursery(form, -1, model, Mockito.mock(HttpSession.class), Mockito.mock(HttpServletRequest.class));
 			Assert.assertNotNull(form.getCheckVariables());
 			Assert.assertTrue("Expected only check variables but the list has non check variables as well.",
 					WorkbookTestUtil.areDetailsFilteredVariables(form.getCheckVariables(), AppConstants.CHECK_VARIABLES.getString()));
@@ -126,7 +123,7 @@ public class CreateNurseryControllerTestIT extends AbstractBaseIntegrationTest {
 		this.controller.setUserSelection(this.userSelection);
 
 		try {
-			this.controller.getChecksForUseExistingNursery(form, -1, model, this.mockSession, this.mockRequest);
+			this.controller.getChecksForUseExistingNursery(form, -1, model, Mockito.mock(HttpSession.class), Mockito.mock(HttpServletRequest.class));
 			Assert.assertNull(form.getCheckVariables());
 		} catch (MiddlewareQueryException e) {
 			Assert.fail("Expected mock values but still called the middleware class");

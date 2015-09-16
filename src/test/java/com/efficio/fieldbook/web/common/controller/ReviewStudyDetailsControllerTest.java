@@ -17,10 +17,7 @@ import junit.framework.Assert;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -28,41 +25,28 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
 
 	@Resource
 	private ReviewStudyDetailsController reviewStudyDetailsController;
 
-	@Resource
-	private FieldbookService fieldbookMiddlewareService;
-
 	@Test
 	public void testShowReviewNurserySummaryWithError() throws Exception {
-		FieldbookService fieldbookMiddlewareServiceSpy =
-				Mockito.spy(this.<FieldbookService>getTargetObject(this.fieldbookMiddlewareService));
-		Mockito.when(fieldbookMiddlewareServiceSpy.getStudyVariableSettings(1, true)).thenThrow(
-				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
-
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/N/1"))
-				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.model().attributeExists("nurseryDetails"));
+		.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.model().attributeExists("nurseryDetails"));
 	}
 
 	@Test
 	public void testShowReviewTrialSummaryWithError() throws Exception {
-		FieldbookService fieldbookMiddlewareServiceSpy = Mockito.spy(this.<FieldbookService>getTargetObject(this.fieldbookMiddlewareService));
-		Mockito.when(fieldbookMiddlewareServiceSpy.getStudyVariableSettings(1, false)).thenThrow(
-				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
-
 		this.mockMvc.perform(MockMvcRequestBuilders.get(ReviewStudyDetailsController.URL + "/show/T/1"))
-				.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.model().attributeExists("trialDetails"));
+		.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.model().attributeExists("trialDetails"));
 	}
 
 	@Test
 	public void testAddErrorMessageToResultForNursery() throws Exception {
-		StudyDetails details = new StudyDetails();
+		final StudyDetails details = new StudyDetails();
 
 		this.reviewStudyDetailsController.addErrorMessageToResult(details,
 				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), true, 1);
@@ -74,7 +58,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 	@Test
 	public void testAddErrorMessageToResultForTrial() throws Exception {
-		StudyDetails details = new StudyDetails();
+		final StudyDetails details = new StudyDetails();
 
 		this.reviewStudyDetailsController.addErrorMessageToResult(details,
 				new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"), false, 1);

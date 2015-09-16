@@ -7,8 +7,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.aop.framework.Advised;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -50,17 +48,5 @@ public abstract class AbstractBaseIntegrationTest {
 		this.contextUtil = Mockito.mock(ContextUtil.class);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(this.PROGRAM_UUID);
 
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> T getTargetObject(Object proxy) {
-		if ((AopUtils.isJdkDynamicProxy(proxy))) {
-			try {
-				return (T) this.getTargetObject(((Advised) proxy).getTargetSource().getTarget());
-			} catch (Exception e) {
-				throw new RuntimeException("Failed to unproxy target.", e);
-			}
-		}
-		return (T) proxy;
 	}
 }

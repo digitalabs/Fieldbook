@@ -184,8 +184,28 @@
 	</bean>
 	
 	<bean id="exportService" class="org.generationcp.commons.service.impl.ExportServiceImpl"></bean>
-    
-     <bean id="ontologyDataManagerV2" class="org.generationcp.middleware.manager.OntologyDataManagerImpl">
+
+	<bean id="ontologyVariableManager"
+		class="org.generationcp.middleware.manager.ontology.OntologyVariableDataManagerImpl">
+		<property name="sessionProvider" ref="ibdbHibernateSessionProvider" />
+	</bean>
+
+	<bean id="propertyDataManager"
+		class="org.generationcp.middleware.manager.ontology.OntologyPropertyDataManagerImpl">
+		<property name="sessionProvider" ref="ibdbHibernateSessionProvider" />
+	</bean>
+
+	<bean id="methodDataManager"
+		class="org.generationcp.middleware.manager.ontology.OntologyMethodDataManagerImpl">
+		<property name="sessionProvider" ref="ibdbHibernateSessionProvider" />
+	</bean>
+
+	<bean id="scaleDataManager"
+		class="org.generationcp.middleware.manager.ontology.OntologyScaleDataManagerImpl">
+		<property name="sessionProvider" ref="ibdbHibernateSessionProvider" />
+	</bean>
+	
+    <bean id="ontologyDataManagerV2" class="org.generationcp.middleware.manager.OntologyDataManagerImpl">
         <property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
     
@@ -211,10 +231,8 @@
     </bean>
     
     <bean id="inventoryMiddlewareService" class="org.generationcp.middleware.service.InventoryServiceImpl">
-    	<constructor-arg name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
-        <constructor-arg name="localDatabaseName" value="${crop.db.name}"/>
+    	<property name="sessionProvider" ref="ibdbHibernateSessionProvider"/>
     </bean>
-    
     
     <bean id="ontologyService" class="org.generationcp.middleware.service.OntologyServiceImpl">
         <constructor-arg name="sessionProvider" ref="ibdbHibernateSessionProvider"/>

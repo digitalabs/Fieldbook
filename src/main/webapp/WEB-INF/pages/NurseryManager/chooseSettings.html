@@ -40,7 +40,7 @@
 						<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						&nbsp;&nbsp;&nbsp;
 						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-									*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');',1805">
+									*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\',1805);'">
 							<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold var-names" th:text="${nurseryLevelVariable.variable.name}"></span></a>:&nbsp;
 
 					</div>

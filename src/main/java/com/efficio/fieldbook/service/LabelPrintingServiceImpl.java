@@ -1531,6 +1531,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(studyID);
 
 			labelFieldsList.addAll(this.settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
+			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
 		} catch (MiddlewareException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
@@ -1625,13 +1626,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		try {
 			GermplasmList germplasmList = null;
 			GermplasmListType listType = isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
-			 List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyID, listType);
-			 if (!germplasmLists.isEmpty()) {
-				 germplasmList = germplasmLists.get(0);
-			 }
+			List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyID, listType);
+			if (!germplasmLists.isEmpty()) {
+				germplasmList = germplasmLists.get(0);
+			}
 
 			if (germplasmList != null) {
-				 Integer listId = germplasmList.getId();
+				Integer listId = germplasmList.getId();
 				String germplasmListType = germplasmList.getType();
 				List<InventoryDetails> inventoryDetailList =
 						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId, germplasmListType);
@@ -1642,9 +1643,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 					}
 				}
 			}
-		 } catch (MiddlewareQueryException e) {
-			 LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-		 }
+		} catch (MiddlewareQueryException e) {
+			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
+		}
 
 		return false;
 	}
@@ -1662,10 +1663,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), false));
 
 		return labelFieldList;
-	 }
+	}
 
 	@Override
-	 public boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail) {
+	public boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail) {
 		// if there are datasets with fieldmap, check if all trial instances of the study have fieldmaps
 		if (!fieldMapInfoDetail.getDatasetsWithFieldMap().isEmpty()) {
 			for (FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
@@ -1731,56 +1732,56 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return out;
 	}
 
-	 @Override
-	 public List<LabelPrintingPresets> getAllLabelPrintingPresets(Integer programId) throws LabelPrintingException {
-		 try {
-			 List<LabelPrintingPresets> allLabelPrintingPresets = new ArrayList<LabelPrintingPresets>();
+	@Override
+	public List<LabelPrintingPresets> getAllLabelPrintingPresets(Integer programId) throws LabelPrintingException {
+		try {
+			List<LabelPrintingPresets> allLabelPrintingPresets = new ArrayList<LabelPrintingPresets>();
 
-			 // 1. get the crop name of the particular programId,
-			 final Project project = this.workbenchService.getProjectById(programId.longValue());
-			 final String cropName = project.getCropType().getCropName();
+			// 1. get the crop name of the particular programId,
+			final Project project = this.workbenchService.getProjectById(programId.longValue());
+			final String cropName = project.getCropType().getCropName();
 			final Integer fieldbookToolId = this.workbenchService.getFieldbookWebTool().getToolId().intValue();
 
 			// 2. retrieve the standard presets
-			 for (StandardPreset preset : this.workbenchService.getStandardPresetByCrop(fieldbookToolId, cropName,
+			for (StandardPreset preset : this.workbenchService.getStandardPresetByCrop(fieldbookToolId, cropName,
 					ToolSection.FBK_LABEL_PRINTING.name())) {
-				 allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
-						 LabelPrintingPresets.STANDARD_PRESET));
-			 }
+				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
+						LabelPrintingPresets.STANDARD_PRESET));
+			}
 
 			// 3. add all program presets for fieldbook
-			 for (ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(this.contextUtil.getCurrentProgramUUID(),
+			for (ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(this.contextUtil.getCurrentProgramUUID(),
 					fieldbookToolId, ToolSection.FBK_LABEL_PRINTING.name())) {
-				 allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
-						 LabelPrintingPresets.PROGRAM_PRESET));
-			 }
+				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
+						LabelPrintingPresets.PROGRAM_PRESET));
+			}
 
-			 return allLabelPrintingPresets;
+			return allLabelPrintingPresets;
 
-		 } catch (MiddlewareQueryException e) {
+		} catch (MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-			 throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
+			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
 
-		 }
-	 }
+		}
+	}
 
-	 @Override
-	 public String getLabelPrintingPresetConfig(int presetId, int presetType) throws LabelPrintingException {
-		 try {
-			 if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
-				 return this.workbenchService.getStandardPresetById(presetId).getConfiguration();
-			 } else {
-				 return this.presetDataManager.getProgramPresetById(presetId).getConfiguration();
-			 }
-		 } catch (MiddlewareQueryException e) {
+	@Override
+	public String getLabelPrintingPresetConfig(int presetId, int presetType) throws LabelPrintingException {
+		try {
+			if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
+				return this.workbenchService.getStandardPresetById(presetId).getConfiguration();
+			} else {
+				return this.presetDataManager.getProgramPresetById(presetId).getConfiguration();
+			}
+		} catch (MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-			 throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
-		 } catch (NullPointerException e) {
+			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
+		} catch (NullPointerException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-			 throw new LabelPrintingException("label.printing.preset.does.not.exists", "label.printing.preset.does.not.exists",
+			throw new LabelPrintingException("label.printing.preset.does.not.exists", "label.printing.preset.does.not.exists",
 					e.getMessage());
-		 }
-	 }
+		}
+	}
 
 	@Override
 	public void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId)
@@ -1808,19 +1809,19 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		}
 	}
 
-	 public void setMessageSource(ResourceBundleMessageSource messageSource) {
-		 this.messageSource = messageSource;
-	 }
+	public void setMessageSource(ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
 
-	 public void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
-		 this.fieldbookMiddlewareService = fieldbookMiddlewareService;
-	 }
+	public void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
 
-	 public void setInventoryMiddlewareService(InventoryService inventoryMiddlewareService) {
-		 this.inventoryMiddlewareService = inventoryMiddlewareService;
-	 }
+	public void setInventoryMiddlewareService(InventoryService inventoryMiddlewareService) {
+		this.inventoryMiddlewareService = inventoryMiddlewareService;
+	}
 
-	 public void setContextUtil(ContextUtil contextUtil) {
-		 this.contextUtil = contextUtil;
-	 }
+	public void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
 }

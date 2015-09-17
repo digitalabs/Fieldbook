@@ -33,7 +33,6 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -66,7 +65,6 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
  * Created by cyrus on 5/28/15.
  */
 @RunWith(MockitoJUnitRunner.class)
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class DesignImportControllerTest {
 
 	private static final int GW_100G_TERMID = 9999;

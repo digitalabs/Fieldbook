@@ -12,7 +12,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 2/13/2015 Time: 6:02 PM
  */
-public class BaseNamingRuleTest extends AbstractBaseIntegrationTest {
+public abstract class BaseNamingRuleTest extends AbstractBaseIntegrationTest {
 
 	@Resource
 	protected ProcessCodeService processCodeService;

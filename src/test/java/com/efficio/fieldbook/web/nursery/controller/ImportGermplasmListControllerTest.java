@@ -44,13 +44,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ExtendedModelMap;
 
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
-public class ImportGermplasmListControllerTest extends AbstractBaseControllerIntegrationTest {
+public class ImportGermplasmListControllerTest extends AbstractBaseIntegrationTest {
 
 	private static final int CHECK_TYPE = 1;
 	private static final Integer PROJECT_ID = 97;
@@ -109,6 +109,7 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 	/**
 	 * Sets the up.
 	 */
+	@Override
 	@Before
 	public void setUp() {
 
@@ -343,8 +344,8 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		userSelection.getWorkbook().setFactors(factors);
 		userSelection.getWorkbook().setVariates(new ArrayList<MeasurementVariable>());
 		userSelection.setImportedGermplasmMainInfo(mainInfo);
-		this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(),
-				userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
+		this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection.getImportedGermplasmMainInfo()
+				.getImportedGermplasmList().getImportedGermplasms(), userSelection);
 		// no check factor yet
 		Assert.assertEquals(0, userSelection.getWorkbook().getMeasurementDatasetVariables().size());
 		// we now need to add check
@@ -473,9 +474,9 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
 		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.NURSERY);
+		.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.NURSERY);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
-				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
+		.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
 		Mockito.doReturn(this.workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
@@ -518,9 +519,9 @@ public class ImportGermplasmListControllerTest extends AbstractBaseControllerInt
 		Mockito.doReturn("1").when(this.importGermplasmListController).getCheckId(Matchers.anyString(), Matchers.anyList());
 		Mockito.doReturn(checkList).when(this.fieldbookService).getCheckList();
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.TRIAL);
+		.getGermplasmListsByProjectId(Integer.valueOf(ImportGermplasmListControllerTest.STUDY_ID), GermplasmListType.TRIAL);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
-				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
+		.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
 		Mockito.doReturn(this.workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();

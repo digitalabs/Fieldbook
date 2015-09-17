@@ -22,7 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +36,6 @@ import com.efficio.fieldbook.web.common.bean.TableHeader;
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 4/22/2015 Time: 12:44 PM
  */
-@Transactional
 @Controller
 @RequestMapping(GermplasmListController.URL)
 public class GermplasmListController {
@@ -61,6 +63,9 @@ public class GermplasmListController {
 	@Resource
 	private InventoryService inventoryService;
 
+	@Resource
+	private PlatformTransactionManager transactionManager;
+
 	@RequestMapping(value = "/advance/{listId}", method = RequestMethod.GET)
 	public String displayAdvanceGermplasmList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
 		this.processGermplasmList(listId, GermplasmListType.ADVANCED.name(), req, model);
@@ -74,16 +79,21 @@ public class GermplasmListController {
 	}
 
 	@RequestMapping(value = "/stock/{listId}", method = RequestMethod.GET)
-	public String displayStockList(@PathVariable Integer listId, HttpServletRequest req, Model model) {
+	public String displayStockList(@PathVariable final Integer listId, HttpServletRequest req, final Model model) {
 		try {
-			GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(listId);
-			List<InventoryDetails> detailList =
-					this.inventoryService.getInventoryListByListDataProjectListId(listId,
-							GermplasmListType.valueOf(germplasmList.getType()));
+			final TransactionTemplate transactionTemplate = new TransactionTemplate(this.transactionManager);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-			model.addAttribute(GermplasmListController.INVENTORY_VIEW_TOGGLED, false);
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus arg0) {
+					GermplasmList germplasmList = GermplasmListController.this.germplasmListManager.getGermplasmListById(listId);
+					List<InventoryDetails> detailList = GermplasmListController.this.inventoryService
+							.getInventoryListByListDataProjectListId(listId, GermplasmListType.valueOf(germplasmList.getType()));
+					model.addAttribute(GermplasmListController.INVENTORY_VIEW_TOGGLED, false);
+					GermplasmListController.this.prepareStockList(model, listId, detailList, germplasmList);
+				}
 
-			this.prepareStockList(model, listId, detailList, germplasmList);
+			});
 		} catch (MiddlewareQueryException e) {
 			GermplasmListController.LOG.error(e.getMessage(), e);
 		}

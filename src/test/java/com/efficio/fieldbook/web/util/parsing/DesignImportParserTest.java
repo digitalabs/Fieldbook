@@ -12,47 +12,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.io.IOUtils;
 import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.commons.service.FileService;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.MessageSource;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DesignImportParserTest {
-
-	@Mock
-	private FileService fileService;
-
-	@Mock
-	private MessageSource messageSource;
-
-	@Mock
-	private MultipartFile multiPartFile;
-
-	@InjectMocks
-	private DesignImportParser parser;
+public class DesignImportParserTest extends AbstractBaseIntegrationTest {
 
 	private static File csvFile;
 
 	public static final String TEST_FILE_NAME = "Design_Import_Template.csv";
+
 	public static final String TEST_FILE_NAME_INVALID = "Design_Import_Template.xls";
 
+	@Resource
+	private DesignImportParser parser;
+
 	@BeforeClass
-	public static void runOnce() throws URISyntaxException {
+	public static void runOnce() throws URISyntaxException, IOException {
 
 		DesignImportParserTest.csvFile =
 				new File(ClassLoader.getSystemClassLoader().getResource(DesignImportParserTest.TEST_FILE_NAME).toURI());
@@ -64,11 +52,10 @@ public class DesignImportParserTest {
 	@Test
 	public void testParseFile() throws FileParsingException, IOException {
 
-		Mockito.doReturn(DesignImportParserTest.TEST_FILE_NAME).when(this.multiPartFile).getOriginalFilename();
-		Mockito.doReturn(new FileInputStream(DesignImportParserTest.csvFile)).when(this.multiPartFile).getInputStream();
-		Mockito.doReturn(DesignImportParserTest.csvFile).when(this.fileService).retrieveFileFromFileName(Matchers.anyString());
+		FileInputStream input = new FileInputStream(csvFile);
+		MultipartFile multiPartFile = new MockMultipartFile("file", csvFile.getName(), "text/plain", IOUtils.toByteArray(input));
 
-		final DesignImportData result = this.parser.parseFile(this.multiPartFile);
+		final DesignImportData result = this.parser.parseFile(multiPartFile);
 
 		Assert.assertTrue(!result.getUnmappedHeaders().isEmpty());
 
@@ -86,12 +73,13 @@ public class DesignImportParserTest {
 	}
 
 	@Test
-	public void testParseFileInvalidFileFormat() {
+	public void testParseFileInvalidFileFormat() throws FileParsingException, IOException {
 
-		Mockito.doReturn(DesignImportParserTest.TEST_FILE_NAME_INVALID).when(this.multiPartFile).getOriginalFilename();
+		FileInputStream input = new FileInputStream(csvFile);
+		MultipartFile multiPartFile = new MockMultipartFile("file", TEST_FILE_NAME_INVALID, "text/plain", IOUtils.toByteArray(input));
 
 		try {
-			this.parser.parseFile(this.multiPartFile);
+			this.parser.parseFile(multiPartFile);
 			Assert.fail();
 		} catch (final FileParsingException e) {
 			assert true;

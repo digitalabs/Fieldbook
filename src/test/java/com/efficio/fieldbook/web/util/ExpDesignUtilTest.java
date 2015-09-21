@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -109,6 +110,39 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 		Assert.assertEquals(standardVariable.getScale().getName(), measurementVariable.getScale());
 		Assert.assertEquals(standardVariable.getMethod().getName(), measurementVariable.getMethod());
 		Assert.assertEquals(standardVariable.getDataType().getName(), measurementVariable.getDataType());
+		Assert.assertNull(measurementVariable.getRole());
+		Assert.assertEquals("", measurementVariable.getLabel());
+	}
+
+	@Test
+	public void testConvertStandardVariableToMeasurementVariable_StandardVariableHasPhenotypicType() {
+
+		FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
+
+		Mockito.when(mockFieldbookService.getAllPossibleValues(1)).thenReturn(new ArrayList<ValueReference>());
+
+		StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(1);
+		standardVariable.setName("TEST VARIABLE");
+		standardVariable.setDescription("TEST DESCRIPTION");
+		standardVariable.setProperty(new Term(10, "TEST PROPERTY", ""));
+		standardVariable.setScale(new Term(11, "TEST SCALE", ""));
+		standardVariable.setMethod(new Term(12, "TEST METHOD", ""));
+		standardVariable.setDataType(new Term(13, "TEST DATATYPE", ""));
+		standardVariable.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
+
+		MeasurementVariable measurementVariable =
+				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, mockFieldbookService);
+
+		Assert.assertEquals(standardVariable.getId(), measurementVariable.getTermId());
+		Assert.assertEquals(standardVariable.getName(), measurementVariable.getName());
+		Assert.assertEquals(standardVariable.getDescription(), measurementVariable.getDescription());
+		Assert.assertEquals(standardVariable.getProperty().getName(), measurementVariable.getProperty());
+		Assert.assertEquals(standardVariable.getScale().getName(), measurementVariable.getScale());
+		Assert.assertEquals(standardVariable.getMethod().getName(), measurementVariable.getMethod());
+		Assert.assertEquals(standardVariable.getDataType().getName(), measurementVariable.getDataType());
+		Assert.assertEquals(standardVariable.getPhenotypicType(), measurementVariable.getRole());
+		Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().get(0), measurementVariable.getLabel());
 	}
 
 	private void setMockValues(MainDesign design) {

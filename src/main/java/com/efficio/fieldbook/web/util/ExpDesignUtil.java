@@ -208,14 +208,20 @@ public class ExpDesignUtil {
 
 	public static MeasurementVariable convertStandardVariableToMeasurementVariable(StandardVariable var, Operation operation,
 			FieldbookService fieldbookService) {
+
 		MeasurementVariable mvar =
 				new MeasurementVariable(var.getName(), var.getDescription(), var.getScale().getName(), var.getMethod().getName(), var
-						.getProperty().getName(), var.getDataType().getName(), null, var.getPhenotypicType().getLabelList().get(0));
+						.getProperty().getName(), var.getDataType().getName(), null, "");
+
 		mvar.setFactor(true);
 		mvar.setOperation(operation);
-		mvar.setRole(var.getPhenotypicType());
 		mvar.setTermId(var.getId());
 		mvar.setDataTypeId(var.getDataType().getId());
+
+		if (var.getPhenotypicType() != null) {
+			mvar.setRole(var.getPhenotypicType());
+			mvar.setLabel(var.getPhenotypicType().getLabelList().get(0));
+		}
 
 		try {
 			mvar.setPossibleValues(fieldbookService.getAllPossibleValues(var.getId()));

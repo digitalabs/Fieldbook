@@ -9,13 +9,16 @@ import java.util.Map;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.junit.Assert;
 import org.junit.Test;
@@ -78,6 +81,34 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 			ExpDesignUtilTest.LOG.error(e.getMessage(), e);
 			Assert.fail("Expected mock values but called original BV Design generator.");
 		}
+	}
+
+	@Test
+	public void testConvertStandardVariableToMeasurementVariable() {
+
+		FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
+
+		Mockito.when(mockFieldbookService.getAllPossibleValues(1)).thenReturn(new ArrayList<ValueReference>());
+
+		StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(1);
+		standardVariable.setName("TEST VARIABLE");
+		standardVariable.setDescription("TEST DESCRIPTION");
+		standardVariable.setProperty(new Term(10, "TEST PROPERTY", ""));
+		standardVariable.setScale(new Term(11, "TEST SCALE", ""));
+		standardVariable.setMethod(new Term(12, "TEST METHOD", ""));
+		standardVariable.setDataType(new Term(13, "TEST DATATYPE", ""));
+
+		MeasurementVariable measurementVariable =
+				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, mockFieldbookService);
+
+		Assert.assertEquals(standardVariable.getId(), measurementVariable.getTermId());
+		Assert.assertEquals(standardVariable.getName(), measurementVariable.getName());
+		Assert.assertEquals(standardVariable.getDescription(), measurementVariable.getDescription());
+		Assert.assertEquals(standardVariable.getProperty().getName(), measurementVariable.getProperty());
+		Assert.assertEquals(standardVariable.getScale().getName(), measurementVariable.getScale());
+		Assert.assertEquals(standardVariable.getMethod().getName(), measurementVariable.getMethod());
+		Assert.assertEquals(standardVariable.getDataType().getName(), measurementVariable.getDataType());
 	}
 
 	private void setMockValues(MainDesign design) {

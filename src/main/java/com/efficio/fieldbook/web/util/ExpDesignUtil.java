@@ -233,7 +233,7 @@ public class ExpDesignUtil {
 
 	public static MeasurementRow createMeasurementRow(List<MeasurementVariable> headerVariable, ImportedGermplasm germplasm,
 			Map<String, String> bvEntryMap, Map<String, List<String>> treatmentFactorValues, List<MeasurementVariable> trialVariables,
-			int trialNo, List<MeasurementVariable> factors, String entryNo) throws MiddlewareQueryException {
+			int trialNo, List<MeasurementVariable> factors, String entryNo) {
 		MeasurementRow measurementRow = new MeasurementRow();
 		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
 		MeasurementData treatmentLevelData = null;

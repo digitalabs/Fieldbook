@@ -860,6 +860,8 @@ public class DesignImportController extends SettingsController {
 					StandardVariable var =
 							this.ontologyDataManager.getStandardVariable(Integer.valueOf(managementDetail.getKey()), this
 									.getCurrentProject().getUniqueID());
+
+					var.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
 					measurementVariable =
 							ExpDesignUtil.convertStandardVariableToMeasurementVariable(var, Operation.ADD, this.fieldbookService);
 					measurementVariable.setName(var.getName());

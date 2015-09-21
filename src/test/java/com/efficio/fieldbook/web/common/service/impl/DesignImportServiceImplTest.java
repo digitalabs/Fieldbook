@@ -58,7 +58,7 @@ public class DesignImportServiceImplTest {
 
 	private static final int GYLD_TERMID = 18000;
 
-	private static final int NO_OF_TEST_ENTRIES = 5;
+	private static final int NO_OF_TEST_ENTRIES = 2;
 
 	private static final String PROGRAM_UUID = "789c6438-5a94-11e5-885d-feff819cdc9f";
 
@@ -294,7 +294,7 @@ public class DesignImportServiceImplTest {
 
 		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
 
-		Assert.assertEquals("The 3 trial instances have 15 observations", 15, measurements.size());
+		Assert.assertEquals("The 3 trial instances have 6 observations", 6, measurements.size());
 
 	}
 
@@ -874,19 +874,10 @@ public class DesignImportServiceImplTest {
 		// csv data
 		csvData.put(1, this.createListOfString("1", "Laguna", "1", "1", "1", "1"));
 		csvData.put(2, this.createListOfString("1", "Laguna", "2", "2", "1", "1"));
-		csvData.put(3, this.createListOfString("1", "Laguna", "3", "3", "1", "1"));
-		csvData.put(4, this.createListOfString("1", "Laguna", "4", "4", "1", "1"));
-		csvData.put(5, this.createListOfString("1", "Laguna", "5", "5", "1", "1"));
-		csvData.put(6, this.createListOfString("2", "Bicol", "1", "6", "1", "1"));
-		csvData.put(7, this.createListOfString("2", "Bicol", "2", "7", "1", "1"));
-		csvData.put(8, this.createListOfString("2", "Bicol", "3", "8", "1", "2"));
-		csvData.put(9, this.createListOfString("2", "Bicol", "4", "9", "1", "2"));
-		csvData.put(10, this.createListOfString("2", "Bicol", "5", "10", "1", "2"));
-		csvData.put(11, this.createListOfString("3", "Bulacan", "1", "11", "1", "2"));
-		csvData.put(12, this.createListOfString("3", "Bulacan", "2", "12", "1", "2"));
-		csvData.put(13, this.createListOfString("3", "Bulacan", "3", "13", "1", "2"));
-		csvData.put(14, this.createListOfString("3", "Bulacan", "4", "14", "1", "2"));
-		csvData.put(15, this.createListOfString("3", "Bulacan", "5", "15", "2", "3"));
+		csvData.put(3, this.createListOfString("2", "Bicol", "1", "6", "1", "1"));
+		csvData.put(4, this.createListOfString("2", "Bicol", "2", "7", "1", "1"));
+		csvData.put(5, this.createListOfString("3", "Bulacan", "1", "11", "1", "2"));
+		csvData.put(6, this.createListOfString("3", "Bulacan", "2", "12", "1", "2"));
 
 		return csvData;
 

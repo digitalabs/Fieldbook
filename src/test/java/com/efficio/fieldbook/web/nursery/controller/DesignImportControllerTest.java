@@ -972,31 +972,6 @@ public class DesignImportControllerTest {
 		csvData.put(1, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "1", "1", "1", "1", "98"));
 		csvData.put(2, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "2", "2", "1", "1", "4"));
 		csvData.put(3, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "3", "3", "1", "1", "13"));
-		csvData.put(4, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "4", "4", "1", "1", "53"));
-		csvData.put(5, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "5", "5", "1", "1", "6"));
-		csvData.put(6, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "6", "6", "1", "1", "23"));
-		csvData.put(7, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "7", "7", "1", "1", "12"));
-		csvData.put(8, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "8", "8", "1", "2", "34"));
-		csvData.put(9, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "9", "9", "1", "2", "77"));
-		csvData.put(10, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "10", "10", "1", "2", "23"));
-		csvData.put(11, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "11", "11", "1", "2", "45"));
-		csvData.put(12, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "12", "12", "1", "2", "77"));
-		csvData.put(13, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "13", "13", "1", "2", "66"));
-		csvData.put(14, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "14", "14", "1", "2", "36"));
-		csvData.put(15, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "1", "15", "2", "3", "85"));
-		csvData.put(16, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "2", "16", "2", "3", "12"));
-		csvData.put(17, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "3", "17", "2", "3", "45"));
-		csvData.put(18, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "4", "18", "2", "3", "56"));
-		csvData.put(19, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "5", "19", "2", "3", "67"));
-		csvData.put(20, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "6", "20", "2", "3", "78"));
-		csvData.put(21, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "7", "21", "2", "3", "89"));
-		csvData.put(22, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "8", "22", "2", "4", "12"));
-		csvData.put(23, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "9", "23", "2", "4", "1"));
-		csvData.put(24, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "10", "24", "2", "4", "2"));
-		csvData.put(25, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "11", "25", "2", "4", "4"));
-		csvData.put(26, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "12", "26", "2", "4", "55"));
-		csvData.put(27, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "13", "27", "2", "4", "33"));
-		csvData.put(28, this.createListOfString("1", "Philippines", "Laguna", "John Doe", "14", "28", "2", "4", "44"));
 
 		return csvData;
 

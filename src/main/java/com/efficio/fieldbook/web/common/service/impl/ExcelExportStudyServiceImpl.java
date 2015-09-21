@@ -350,7 +350,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		List<MeasurementVariable> filteredConstants = new ArrayList<MeasurementVariable>();
 		for (MeasurementVariable variable : constants) {
 			filteredConstants.add(variable);
-			if (PhenotypicType.TRIAL_ENVIRONMENT == variable.getRole()) {
+			if (PhenotypicType.VARIATE == variable.getRole()) {
 				variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
 			}
 		}

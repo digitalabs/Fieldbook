@@ -394,8 +394,15 @@ public class ImportGermplasmListController extends SettingsController {
 		return 0;
 	}
 
+	/**
+	 * List data project data is the germplasm list that is attached to a nursery or a trial
+	 * This method is saving the germplasm for this nursery/trial
+	 *
+	 * @param isNursery
+	 * @param studyId
+	 * @throws MiddlewareQueryException
+	 */
 	private void saveListDataProject(boolean isNursery, int studyId) throws MiddlewareQueryException {
-		// we call here to have
 
 		if (this.getUserSelection().getImportedGermplasmMainInfo() != null
 				&& this.getUserSelection().getImportedGermplasmMainInfo().getListId() != null) {

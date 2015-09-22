@@ -15,9 +15,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 
-public class FieldmapControllerTest extends AbstractBaseControllerIntegrationTest {
+public class FieldmapControllerTest extends AbstractBaseIntegrationTest {
 
 	@Test
 	public void testGetReturnsCorrectModelAndView() {

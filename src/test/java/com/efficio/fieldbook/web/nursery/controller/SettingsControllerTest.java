@@ -17,27 +17,31 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.AbstractBaseControllerIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-public class SettingsControllerTest extends AbstractBaseControllerIntegrationTest {
+public class SettingsControllerTest {
 
-	private SettingsController controller;
+	/**
+	 * Class under test (SettingsController) is an abstract class so using a dummy impl to invoke methods for testing.
+	 */
+	class SettingsControllerUnitTestEnabler extends SettingsController {
 
-	@Before
-	public void setup() {
-		this.controller = Mockito.mock(SettingsController.class);
+		@Override
+		public String getContentName() {
+			return null;
+		}
 	}
+
+	private final SettingsControllerUnitTestEnabler controller = new SettingsControllerUnitTestEnabler();
 
 	@Test
 	public void testGetCheckVariables() {
@@ -157,7 +161,7 @@ public class SettingsControllerTest extends AbstractBaseControllerIntegrationTes
 		SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 		return settingDetail;
 	}
-	
+
 	@Test
 	public void testGetMethod_ById() throws MiddlewareQueryException {
 		CreateNurseryController createNurseryController = new CreateNurseryController();
@@ -167,33 +171,32 @@ public class SettingsControllerTest extends AbstractBaseControllerIntegrationTes
 		String name = "Accession into genebank";
 		String code = "AGB1";
 		String programUUID = null;
-		Method method = createMethod(id,name,code,programUUID);
-		Mockito.doReturn(method).when(fieldbookMiddlewareService).
-			getMethodById(id);
-		
+		Method method = this.createMethod(id, name, code, programUUID);
+		Mockito.doReturn(method).when(fieldbookMiddlewareService).getMethodById(id);
+
 		String idTermId = Integer.toString(id);
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
-		studyConditionMap.put(idTermId, createMeasurementVariable(idTermId));
-		
+		studyConditionMap.put(idTermId, this.createMeasurementVariable(idTermId));
+
 		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(method.getMid(), resultingMethod.getMid());
 	}
-	
+
 	@Test
 	public void testGetMethod_ById_EmptyValue() throws MiddlewareQueryException {
 		CreateNurseryController createNurseryController = new CreateNurseryController();
 		int id = 70;
 		String code = "AGB1";
 		String programUUID = null;
-		
+
 		String idTermId = Integer.toString(id);
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
-		studyConditionMap.put(idTermId, createMeasurementVariable(""));
-		
+		studyConditionMap.put(idTermId, this.createMeasurementVariable(""));
+
 		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(null, resultingMethod);
 	}
-	
+
 	@Test
 	public void testGetMethod_ByCode() throws MiddlewareQueryException {
 		CreateNurseryController createNurseryController = new CreateNurseryController();
@@ -203,34 +206,33 @@ public class SettingsControllerTest extends AbstractBaseControllerIntegrationTes
 		String name = "Accession into genebank";
 		String code = "AGB1";
 		String programUUID = null;
-		Method method = createMethod(id,name,code,programUUID);
-		Mockito.doReturn(method).when(fieldbookMiddlewareService).
-			getMethodByCode(code,programUUID);
-		
+		Method method = this.createMethod(id, name, code, programUUID);
+		Mockito.doReturn(method).when(fieldbookMiddlewareService).getMethodByCode(code, programUUID);
+
 		String idTermId = Integer.toString(id);
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
-		studyConditionMap.put(code, createMeasurementVariable(code));
-		
+		studyConditionMap.put(code, this.createMeasurementVariable(code));
+
 		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(method.getMid(), resultingMethod.getMid());
 	}
-	
+
 	@Test
 	public void testGetMethod_ByCode_EmptyValue() throws MiddlewareQueryException {
 		CreateNurseryController createNurseryController = new CreateNurseryController();
-		
+
 		int id = 70;
 		String code = "AGB1";
 		String programUUID = null;
-		
+
 		String idTermId = Integer.toString(id);
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
-		studyConditionMap.put(code, createMeasurementVariable(""));
-		
+		studyConditionMap.put(code, this.createMeasurementVariable(""));
+
 		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(null, resultingMethod);
 	}
-	
+
 	@Test
 	public void testGetMethod_IdAndCodeNotFound() throws MiddlewareQueryException {
 		CreateNurseryController createNurseryController = new CreateNurseryController();
@@ -239,12 +241,12 @@ public class SettingsControllerTest extends AbstractBaseControllerIntegrationTes
 		String programUUID = null;
 		String idTermId = Integer.toString(id);
 		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
-		
+
 		Method resultingMethod = createNurseryController.getMethod(studyConditionMap, idTermId, code, programUUID);
 		Assert.assertEquals(null, resultingMethod);
 	}
 
-	private Method createMethod(int id, String name,String code,String uniqueID) {
+	private Method createMethod(int id, String name, String code, String uniqueID) {
 		Method method = new Method();
 		method.setMid(id);
 		method.setMname(name);
@@ -258,6 +260,6 @@ public class SettingsControllerTest extends AbstractBaseControllerIntegrationTes
 		measurementVariable.setName("TEST");
 		measurementVariable.setValue(value);
 		return measurementVariable;
-	} 
+	}
 
 }

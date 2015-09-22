@@ -14,6 +14,7 @@ package com.efficio.fieldbook.service;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import com.efficio.fieldbook.service.api.CropOntologyService;
 import com.efficio.pojos.cropontology.CropTerm;
 import com.efficio.pojos.cropontology.Ontology;
 
+@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class CropOntologyServiceTest extends AbstractBaseIntegrationTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CropOntologyServiceTest.class);

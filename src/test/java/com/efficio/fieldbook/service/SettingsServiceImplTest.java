@@ -62,30 +62,6 @@ public class SettingsServiceImplTest {
 	}
 
 	@Test
-	public void testIsGermplasmListField_ReturnsTrueForExistingVariableInTrial() throws MiddlewareQueryException {
-		List<StandardVariableReference> stdVars = new ArrayList<StandardVariableReference>();
-		StandardVariableReference stdRef = new StandardVariableReference(1, "Sample Variable");
-		stdVars.add(stdRef);
-		Mockito.when(
-				this.fieldbookService.filterStandardVariablesForTrialSetting(SettingsServiceImplTest.GERMPLASM_GROUP,
-						new ArrayList<SettingDetail>())).thenReturn(stdVars);
-
-		Assert.assertTrue("Expecting to return true when the variable exists from germplasm descriptor.",
-				this.serviceDUT.isGermplasmListField(1, false));
-	}
-
-	@Test
-	public void testIsGermplasmListField_ReturnsFalseForNonExistingVariableInTrial() throws MiddlewareQueryException {
-		List<StandardVariableReference> stdVars = new ArrayList<StandardVariableReference>();
-		Mockito.when(
-				this.fieldbookService.filterStandardVariablesForTrialSetting(SettingsServiceImplTest.GERMPLASM_GROUP,
-						new ArrayList<SettingDetail>())).thenReturn(stdVars);
-
-		Assert.assertFalse("Expecting to return false when the variable does not exists from germplasm descriptor.",
-				this.serviceDUT.isGermplasmListField(1, true));
-	}
-
-	@Test
 	public void testRetrieveTraitsAsLabels() throws Exception {
 		List<MeasurementVariable> traits = this.initializeListOfVariates();
 

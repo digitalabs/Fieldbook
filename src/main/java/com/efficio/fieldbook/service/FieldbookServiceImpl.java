@@ -265,7 +265,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<ValueReference> getAllPossibleValues(int id) {
-		Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id);
+		Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, true);
 
 		assert !Objects.equals(variable, null);
 
@@ -274,7 +274,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords) {
-		Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id);
+		Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, true);
 
 		assert !Objects.equals(variable, null);
 
@@ -371,7 +371,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<ValueReference> getAllPossibleValuesFavorite(int id, String programUUID) {
-		Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id);
+		Variable variable = this.ontologyVariableDataManager.getVariable(programUUID, id, true);
 		assert !Objects.equals(variable, null);
 
 		List<ValueReference> possibleValuesFavorite = null;
@@ -484,7 +484,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public String getValue(int id, String valueOrId, boolean isCategorical) {
-		Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id);
+		Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), id, true);
 		assert !Objects.equals(variable, null);
 
 		List<ValueReference> possibleValues = this.possibleValuesCache.getPossibleValues(id);

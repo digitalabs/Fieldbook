@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -73,9 +72,9 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
-	private static final String IS_SUCCESS = "isSuccess";
+	public static final String IS_SUCCESS = "isSuccess";
 
-	private static final String ERROR = "error";
+	public static final String ERROR = "error";
 
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportController.class);
 
@@ -100,9 +99,6 @@ public class DesignImportController extends SettingsController {
 
 	@Resource
 	private OntologyDataManager ontologyDataManager;
-
-	@Resource
-	private ContextUtil contextUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -396,7 +392,7 @@ public class DesignImportController extends SettingsController {
 		return resultsMap;
 	}
 
-	private void checkTheDeletedSettingDetails(UserSelection userSelection, DesignImportData designImportData) {
+	protected void checkTheDeletedSettingDetails(UserSelection userSelection, DesignImportData designImportData) {
 
 		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		Map<String, String> nameIdMap = this.switchKey(idNameMap);
@@ -702,7 +698,7 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 
-		this.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, workbook, designImportData, trialVariables);
+		this.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, trialVariables);
 
 		List<MeasurementRow> trialEnvironmentValues =
 				WorkbookUtil.createMeasurementRowsFromEnvironments(environmentData.getEnvironments(), new ArrayList<>(trialVariables),
@@ -757,8 +753,8 @@ public class DesignImportController extends SettingsController {
 		}
 	}
 
-	protected void resolveTheEnvironmentFactorsWithIDNamePairing(EnvironmentData environmentData, Workbook workbook,
-			DesignImportData designImportData, Set<MeasurementVariable> trialVariables) {
+	protected void resolveTheEnvironmentFactorsWithIDNamePairing(EnvironmentData environmentData, DesignImportData designImportData,
+			Set<MeasurementVariable> trialVariables) {
 
 		Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		Map<String, String> nameIdMap = this.switchKey(idNameMap);

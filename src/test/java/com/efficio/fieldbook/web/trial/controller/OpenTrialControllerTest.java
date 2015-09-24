@@ -4,19 +4,29 @@ package com.efficio.fieldbook.web.trial.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
+import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.dms.DmsProject;
+import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -31,33 +41,46 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class OpenTrialControllerTest {
 
 	private static final int NO_OF_TRIAL_INSTANCES = 3;
 	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int TRIAL_ID = 1;
+	private static final int WORKBENCH_USER_ID = 1;
+	private static final long WORKBENCH_PROJECT_ID = 1L;
+	private static final String WORKBENCH_PROJECT_NAME = "Project 1";
+	private static final int IBDB_USER_ID = 1;
+	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	public static final String TEST_TRIAL_NAME = "dummyTrial";
+
+	@Mock
+	private HttpServletRequest httpRequest;
+
+	@Mock
+	private HttpSession httpSession;
+
+	@Mock
+	private StudyDataManager studyDataManager;
+
+	@Mock
+	private WorkbenchDataManager workbenchDataManager;
+
+	@Mock
+	private WorkbenchService workbenchService;
 
 	@Mock
 	private UserSelection userSelection;
 
 	@Mock
-	private HttpSession session;
-
-	@Mock
 	private CreateTrialForm createTrialForm;
-
-	@Mock
-	private Workbook trialWorkbook;
 
 	@Mock
 	private Model model;
@@ -66,39 +89,66 @@ public class OpenTrialControllerTest {
 	private RedirectAttributes redirectAttributes;
 
 	@Mock
-	private FieldbookService fieldbookService;
+	protected FieldbookService fieldbookMiddlewareService;
+
+	@Mock
+	protected com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	@Mock
 	private ErrorHandlerService errorHandlerService;
 
+	@Mock
+	private ContextUtil contextUtil;
+
 	@InjectMocks
 	private OpenTrialController openTrialController;
 
+	@Before
+	public void setUp() {
+
+		Project project = this.createProject();
+		DmsProject dmsProject = this.createDmsProject();
+		WorkbenchRuntimeData workbenchRuntimeData = new WorkbenchRuntimeData();
+		workbenchRuntimeData.setUserId(WORKBENCH_USER_ID);
+
+		Mockito.when(this.workbenchService.getCurrentIbdbUserId(1L, WORKBENCH_USER_ID)).thenReturn(IBDB_USER_ID);
+		Mockito.when(this.workbenchDataManager.getWorkbenchRuntimeData()).thenReturn(workbenchRuntimeData);
+		Mockito.when(this.workbenchDataManager.getLastOpenedProjectAnyUser()).thenReturn(project);
+		Mockito.when(this.studyDataManager.getProject(1)).thenReturn(dmsProject);
+		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(PROGRAM_UUID);
+
+		this.initializeOntology();
+
+		WorkbookDataUtil.setTestWorkbook(null);
+
+	}
+
 	@Test
 	public void testOpenTrialNoRedirect() throws Exception {
-		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
-		Workbook workbook = Mockito.mock(Workbook.class);
-		Mockito.when(this.fieldbookService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 
-		Mockito.doNothing().when(moleOpenTrialController)
-		.setModelAttributes(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, workbook);
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		// TODO: Initialize the treatment factors inside WorkbookDataUtil
+		workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
+
+		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenReturn(workbook);
 
 		String out =
-				moleOpenTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, this.session,
+				this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, this.httpSession,
 						this.redirectAttributes);
 
-		Mockito.verify(this.fieldbookService).getTrialDataSet(OpenTrialControllerTest.TRIAL_ID);
+		Mockito.verify(this.fieldbookMiddlewareService).getTrialDataSet(OpenTrialControllerTest.TRIAL_ID);
+
 		Assert.assertEquals("should return the base angular template", AbstractBaseFieldbookController.ANGULAR_BASE_TEMPLATE_NAME, out);
 	}
 
 	@Test
 	public void testOpenTrialRedirectForIncompatibleStudy() throws Exception {
-		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
 
-		Mockito.when(this.fieldbookService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenThrow(MiddlewareQueryException.class);
+		Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(OpenTrialControllerTest.TRIAL_ID)).thenThrow(
+				MiddlewareQueryException.class);
 
 		String out =
-				moleOpenTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, this.session,
+				this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.TRIAL_ID, this.model, this.httpSession,
 						this.redirectAttributes);
 
 		Assert.assertEquals("should redirect to manage trial page", "redirect:" + ManageTrialController.URL, out);
@@ -111,46 +161,21 @@ public class OpenTrialControllerTest {
 
 	}
 
-	protected void prepareHappyPathScenario(OpenTrialController mocked) {
-		try {
-			Mockito.doReturn(new TabInfo()).when(mocked)
-			.prepareBasicDetailsTabInfo(Matchers.any(StudyDetails.class), Matchers.anyBoolean(), Matchers.anyInt());
-			Mockito.doReturn(new TabInfo()).when(mocked).prepareGermplasmTabInfo(Matchers.anyList(), Matchers.anyBoolean());
-			Mockito.doReturn(new TabInfo()).when(mocked).prepareEnvironmentsTabInfo(Matchers.any(Workbook.class), Matchers.anyBoolean());
-			Mockito.doReturn(new TabInfo()).when(mocked).prepareTrialSettingsTabInfo(Matchers.anyList(), Matchers.anyBoolean());
-			Mockito.doReturn(new TabInfo()).when(mocked).prepareMeasurementsTabInfo(Matchers.anyList(), Matchers.anyBoolean());
-			Mockito.doReturn(new TabInfo()).when(mocked)
-					.prepareExperimentalDesignTabInfo(Matchers.any(ExperimentalDesignVariable.class), Matchers.anyBoolean());
-			Mockito.when(this.fieldbookService.checkIfStudyHasMeasurementData(Matchers.anyInt(), Matchers.anyList())).thenReturn(true);
-			Mockito.when(this.trialWorkbook.getObservations()).thenReturn(new ArrayList<MeasurementRow>());
-
-			Mockito.doReturn(new TabInfo()).when(mocked).prepareTreatmentFactorsInfo(Matchers.anyList(), Matchers.anyBoolean());
-			Mockito.doReturn(new TabInfo()).when(mocked).prepareExperimentalDesignSpecialData();
-
-			StudyDetails studyDetails = new StudyDetails();
-			studyDetails.setStudyName(OpenTrialControllerTest.TEST_TRIAL_NAME);
-			Mockito.when(this.trialWorkbook.getStudyDetails()).thenReturn(studyDetails);
-
-			Mockito.doNothing().when(mocked).setUserSelectionImportedGermplasmMainInfo(Matchers.anyInt(), Matchers.any(Model.class));
-
-		} catch (MiddlewareException e) {
-			this.handleUnexpectedException(e);
-		}
-	}
-
 	@Test
 	public void testSessionClearOnOpenTrial() {
-		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
-		this.prepareHappyPathScenario(moleOpenTrialController);
+
 		MockHttpSession mockSession = new MockHttpSession();
+
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
 
 		mockSession.setAttribute(SessionUtility.USER_SELECTION_SESSION_NAME, new UserSelection());
 		mockSession.setAttribute(SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME, new ArrayList<Integer>());
 
 		try {
-			Mockito.when(this.fieldbookService.getTrialDataSet(Matchers.anyInt())).thenReturn(this.trialWorkbook);
-			moleOpenTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, new ExtendedModelMap(), mockSession,
-					Mockito.mock(RedirectAttributes.class));
+			Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(workbook);
+			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, new ExtendedModelMap(),
+					mockSession, Mockito.mock(RedirectAttributes.class));
 		} catch (MiddlewareException e) {
 			this.handleUnexpectedException(e);
 		}
@@ -163,14 +188,17 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testHappyPathOpenTrialCheckModelAttributes() {
-		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
-		this.prepareHappyPathScenario(moleOpenTrialController);
 
 		Model model = new ExtendedModelMap();
 
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+		workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
+
 		try {
-			Mockito.when(this.fieldbookService.getTrialDataSet(Matchers.anyInt())).thenReturn(this.trialWorkbook);
-			moleOpenTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, model, new MockHttpSession(),
+
+			Mockito.when(this.fieldbookMiddlewareService.getTrialDataSet(Matchers.anyInt())).thenReturn(workbook);
+
+			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.TRIAL_ID, model, new MockHttpSession(),
 					Mockito.mock(RedirectAttributes.class));
 
 			Assert.assertTrue("Controller does not properly set into the model the data for the basic details",
@@ -207,50 +235,53 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testIsPreviewEditableIfStudyDetailsIsExisting() {
-		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
+
 		Workbook originalWorkbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setId(1);
 		originalWorkbook.setStudyDetails(studyDetails);
-		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
+		String isPreviewEditable = this.openTrialController.isPreviewEditable(originalWorkbook);
 		Assert.assertEquals("Should return 0 since there is already existing study", "0", isPreviewEditable);
+
 	}
 
 	@Test
 	public void testIsPreviewEditableIfStudyDetailsIsNull() {
-		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
+
 		Workbook originalWorkbook = new Workbook();
-		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
+		String isPreviewEditable = this.openTrialController.isPreviewEditable(originalWorkbook);
 		Assert.assertEquals("Should return 1 since there is no existing study", "1", isPreviewEditable);
+
 	}
 
 	@Test
 	public void testIsPreviewEditableIfStudyDetailsIsNotNullAndIdIsNull() {
-		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
+
 		Workbook originalWorkbook = new Workbook();
 		StudyDetails studyDetails = new StudyDetails();
 		originalWorkbook.setStudyDetails(studyDetails);
-		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
+		String isPreviewEditable = this.openTrialController.isPreviewEditable(originalWorkbook);
 		Assert.assertEquals("Should return 1 since there is no existing study", "1", isPreviewEditable);
 	}
 
 	@Test
 	public void testIsPreviewEditableIfOriginalWorkbookIsNull() {
-		final OpenTrialController moleOpenTrialController = this.setupOpenTrialController();
+
 		Workbook originalWorkbook = null;
-		String isPreviewEditable = moleOpenTrialController.isPreviewEditable(originalWorkbook);
+		String isPreviewEditable = this.openTrialController.isPreviewEditable(originalWorkbook);
 		Assert.assertEquals("Should return 1 since there is no existing study", "1", isPreviewEditable);
+
 	}
 
 	@Test
 	public void testGetFilteredTrialObservations() {
-		WorkbookDataUtil.setTestWorkbook(null);
+
 		Workbook workbook =
 				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 
-		OpenTrialController controller = this.setupOpenTrialController();
-		List<MeasurementRow> filteredTrialObservations = controller.getFilteredTrialObservations(workbook.getTrialObservations(), "2");
+		List<MeasurementRow> filteredTrialObservations =
+				this.openTrialController.getFilteredTrialObservations(workbook.getTrialObservations(), "2");
 
 		Assert.assertEquals("Expecting the number of trial observations is decreased by one.", workbook.getTotalNumberOfInstances() - 1,
 				filteredTrialObservations.size());
@@ -281,8 +312,8 @@ public class OpenTrialControllerTest {
 				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 
-		OpenTrialController controller = this.setupOpenTrialController();
-		List<MeasurementRow> filteredTrialObservations = controller.getFilteredTrialObservations(workbook.getTrialObservations(), "");
+		List<MeasurementRow> filteredTrialObservations =
+				this.openTrialController.getFilteredTrialObservations(workbook.getTrialObservations(), "");
 
 		Assert.assertEquals("Expecting the number of trial observations is the same after the method call.",
 				workbook.getTotalNumberOfInstances(), filteredTrialObservations.size());
@@ -290,13 +321,12 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testGetFilteredObservations() {
-		WorkbookDataUtil.setTestWorkbook(null);
+
 		Workbook workbook =
 				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 
-		OpenTrialController controller = this.setupOpenTrialController();
-		List<MeasurementRow> filteredObservations = controller.getFilteredObservations(workbook.getObservations(), "2");
+		List<MeasurementRow> filteredObservations = this.openTrialController.getFilteredObservations(workbook.getObservations(), "2");
 
 		Assert.assertEquals("Expecting the number of observations is decreased by " + OpenTrialControllerTest.NO_OF_OBSERVATIONS, workbook
 				.getObservations().size() - OpenTrialControllerTest.NO_OF_OBSERVATIONS, filteredObservations.size());
@@ -325,8 +355,7 @@ public class OpenTrialControllerTest {
 				WorkbookDataUtil.getTestWorkbookForTrial(OpenTrialControllerTest.NO_OF_OBSERVATIONS,
 						OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES);
 
-		OpenTrialController controller = this.setupOpenTrialController();
-		List<MeasurementRow> filteredObservations = controller.getFilteredObservations(workbook.getObservations(), "");
+		List<MeasurementRow> filteredObservations = this.openTrialController.getFilteredObservations(workbook.getObservations(), "");
 
 		Assert.assertEquals("Expecting the number of observations is the same after the method call.", workbook.getObservations().size(),
 				filteredObservations.size());
@@ -336,9 +365,100 @@ public class OpenTrialControllerTest {
 		Assert.fail("Unexpected error during unit test : " + e.getMessage());
 	}
 
-	protected OpenTrialController setupOpenTrialController() {
-		final OpenTrialController moleOpenTrialController = Mockito.spy(this.openTrialController);
-		Mockito.doNothing().when(moleOpenTrialController).clearSessionData(this.session);
-		return moleOpenTrialController;
+	protected DmsProject createDmsProject() {
+		DmsProject dmsProject = new DmsProject();
+		dmsProject.setProjectId(TRIAL_ID);
+		dmsProject.setName(TEST_TRIAL_NAME);
+		dmsProject.setProgramUUID(PROGRAM_UUID);
+		return dmsProject;
+	}
+
+	private Project createProject() {
+		Project project = new Project();
+		project.setProjectId(WORKBENCH_PROJECT_ID);
+		project.setProjectName(WORKBENCH_PROJECT_NAME);
+		return project;
+	}
+
+	protected void initializeOntology() {
+
+		Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(NO_OF_OBSERVATIONS, NO_OF_TRIAL_INSTANCES);
+
+		for (MeasurementVariable mvar : workbook.getAllVariables()) {
+
+			StandardVariable stdVar = this.convertToStandardVariable(mvar);
+			Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(stdVar.getId(), PROGRAM_UUID)).thenReturn(stdVar);
+		}
+
+		// StudyName
+		StandardVariable studyName =
+				this.createStandardVariable(8005, "STUDY_NAME", "Study", "DBCV", "Assigned", 1120, "Character variable", "STUDY");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8005, PROGRAM_UUID)).thenReturn(studyName);
+
+		// StudyTitle
+		StandardVariable studyTitle =
+				this.createStandardVariable(8007, "STUDY_TITLE", "Study title", "Text", "Assigned", 1120, "Character variable", "STUDY");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8007, PROGRAM_UUID)).thenReturn(studyTitle);
+
+		// StudyObjective
+		StandardVariable studyObjective =
+				this.createStandardVariable(8030, "STUDY_OBJECTIVE", "Study objective", "Text", "Described", 1120, "Character variable",
+						"STUDY");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8030, PROGRAM_UUID)).thenReturn(studyObjective);
+
+		// StartDate
+		StandardVariable startDate =
+				this.createStandardVariable(8050, "START_DATE", "Start date", "Date (yyyymmdd)", "Assigned", 1117, "Date variable", "STUDY");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8050, PROGRAM_UUID)).thenReturn(startDate);
+
+		// EndDate
+		StandardVariable endDate =
+				this.createStandardVariable(8060, "END_DATE", "End date", "Date (yyyymmdd)", "Assigned", 1117, "Date variable", "STUDY");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8060, PROGRAM_UUID)).thenReturn(endDate);
+
+		StandardVariable plotNo =
+				this.createStandardVariable(8200, "PLOT_NO", "Field plot", "Number", "Enumerated", 1110, "Numeric variable", "TRIAL_DESIGN");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8200, PROGRAM_UUID)).thenReturn(plotNo);
+
+		StandardVariable repNo =
+				this.createStandardVariable(8210, "REP_NO", "Replication factor", "Number", "Enumerated", 1110, "Numeric variable",
+						"TRIAL_DESIGN");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8210, PROGRAM_UUID)).thenReturn(repNo);
+
+		StandardVariable blockNo =
+				this.createStandardVariable(8220, "BLOCK_NO", "Blocking factor", "Number", "Enumerated", 1110, "Numeric variable",
+						"TRIAL_DESIGN");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8220, PROGRAM_UUID)).thenReturn(blockNo);
+
+		StandardVariable row =
+				this.createStandardVariable(8581, "ROW", "Row in layout", "Number", "Enumerated", 1110, "Numeric variable", "TRIAL_DESIGN");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8581, PROGRAM_UUID)).thenReturn(row);
+
+		StandardVariable col =
+				this.createStandardVariable(8582, "COL", "Column in layout", "Number", "Enumerated", 1110, "Numeric variable",
+						"TRIAL_DESIGN");
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(8582, PROGRAM_UUID)).thenReturn(col);
+
+	}
+
+	protected StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
+		final StandardVariable stdVar =
+				this.createStandardVariable(measurementVar.getTermId(), measurementVar.getName(), measurementVar.getProperty(),
+						measurementVar.getScale(), measurementVar.getMethod(), measurementVar.getDataTypeId(),
+						measurementVar.getDataType(), measurementVar.getLabel());
+		return stdVar;
+	}
+
+	protected StandardVariable createStandardVariable(int termId, String name, String property, String scale, String method,
+			int dataTypeId, String dataType, String label) {
+		final StandardVariable stdVar = new StandardVariable();
+		stdVar.setId(termId);
+		stdVar.setName(name);
+		stdVar.setProperty(new Term(0, property, ""));
+		stdVar.setScale(new Term(0, scale, ""));
+		stdVar.setMethod(new Term(0, method, ""));
+		stdVar.setDataType(new Term(dataTypeId, dataType, ""));
+		stdVar.setPhenotypicType(PhenotypicType.getPhenotypicTypeForLabel(label));
+		return stdVar;
 	}
 }

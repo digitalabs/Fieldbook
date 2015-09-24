@@ -119,7 +119,7 @@ public class CrossingServiceImpl implements CrossingService {
 					Locale.getDefault()));
 		}
 
-		List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasms(germplasmPairs);
+		List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmPairs);
 		if (crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString()) {
 			this.savePedigreeDesignationName(importedCrossesList, savedGermplasmIds, crossSetting);
 		}

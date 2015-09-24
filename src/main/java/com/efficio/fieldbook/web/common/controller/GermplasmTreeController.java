@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -155,7 +157,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		} catch (Exception e) {
 			GermplasmTreeController.LOG.error(e.getMessage(), e);
 		}
-
+		
 		return super.showAjaxPage(model, GermplasmTreeController.COMMON_SAVE_GERMPLASM_LIST);
 	}
 
@@ -173,7 +175,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			GermplasmList germplasmListIsNew =
 					this.fieldbookMiddlewareService.getGermplasmListByName(form.getListName(), this.getCurrentProgramUUID());
 			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(form.getListName())) {
-				Map<Germplasm, GermplasmListData> listDataItems = new HashMap<>();
+				List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 				Integer germplasmListId = this.saveGermplasmList(form, listDataItems);
 
 				List<GermplasmListData> data = new ArrayList<GermplasmListData>();
@@ -206,13 +208,13 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	protected Integer saveGermplasmList(SaveListForm form, Map<Germplasm, GermplasmListData> listDataItems)
+	protected Integer saveGermplasmList(SaveListForm form, List<Pair<Germplasm, GermplasmListData>> listDataItems)
 			throws MiddlewareQueryException {
 		Integer currentUserId = this.getCurrentIbdbUserId();
 		GermplasmList germplasmList = this.createGermplasmList(form, currentUserId);
 		if (GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE.equals(form.getGermplasmListType())) {
 			AdvancingNurseryForm advancingNurseryForm = this.getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
-			Map<Germplasm, List<Name>> germplasms = new HashMap<>();
+			List<Pair<Germplasm, List<Name>>> germplasms = new ArrayList<>();
 
 			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingNurseryForm, form, germplasms, listDataItems, currentUserId);
 			return this.fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
@@ -338,7 +340,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	}
 
-	private void populateGermplasmListData(GermplasmList germplasmList, Map<Germplasm, GermplasmListData> listDataItems,
+	private void populateGermplasmListData(GermplasmList germplasmList, List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			List<ImportedCrosses> importedGermplasmList) {
 		// Common germplasm list data fields
 		Integer listDataId = null;
@@ -368,7 +370,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation,
 					groupName, listDataStatus, localRecordId);
 
-			listDataItems.put(germplasm, listData);
+			listDataItems.add(new ImmutablePair<Germplasm, GermplasmListData>(germplasm, listData));
 		}
 	}
 
@@ -382,7 +384,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 */
 
 	private void populateGermplasmListDataFromAdvanced(GermplasmList germplasmList, AdvancingNurseryForm form, SaveListForm saveListForm,
-			Map<Germplasm, List<Name>> germplasms, Map<Germplasm, GermplasmListData> listDataItems, Integer currentUserID) {
+			List<Pair<Germplasm, List<Name>>> germplasms, List<Pair<Germplasm, GermplasmListData>> listDataItems, Integer currentUserID) {
 
 		String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00";
 
@@ -440,7 +442,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			Germplasm germplasm =
 					new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
 
-			germplasms.put(germplasm, names);
+			germplasms.add(new ImmutablePair<Germplasm, List<Name>>(germplasm, names));
 
 			// Create list data items to save - Map<Germplasm,
 			// GermplasmListData>
@@ -457,7 +459,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation,
 					groupName, listDataStatus, localRecordId);
 
-			listDataItems.put(germplasm, listData);
+			listDataItems.add(new ImmutablePair<Germplasm, GermplasmListData>(germplasm, listData));
 		}
 	}
 

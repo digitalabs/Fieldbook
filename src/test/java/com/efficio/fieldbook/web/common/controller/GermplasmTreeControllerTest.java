@@ -2,14 +2,17 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.commons.constant.ListTreeState;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
 import org.generationcp.commons.settings.BreedingMethodSetting;
 import org.generationcp.commons.settings.CrossNameSetting;
@@ -22,35 +25,39 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserProgramStateDataManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.workbench.Project;
+import org.generationcp.middleware.pojos.workbench.WorkbenchRuntimeData;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 
 import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class GermplasmTreeControllerTest {
-
 	private static final String LIST_NAME_SHOULD_BE_UNIQUE = "List Name should be unique";
 	private static final String PROJECT_ID = "1";
 	private static final String LIST_PARENT_ID = GermplasmTreeControllerTest.PROJECT_ID;
@@ -66,13 +73,12 @@ public class GermplasmTreeControllerTest {
 	private static final int SAVED_LISTPROJECT_ID = 2;
 	private static final String ERROR_MESSAGE = "middeware exception message";
 
-	@InjectMocks
-	@Spy
-	private GermplasmTreeController controller;
-
 	@Mock
 	private ResourceBundleMessageSource messageSource;
-
+	
+	@Mock
+	private HttpServletRequest request;
+	
 	@Mock
 	private GermplasmDataManager germplasmDataManager;
 
@@ -84,19 +90,47 @@ public class GermplasmTreeControllerTest {
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Mock
+	private WorkbenchService workbenchService;
 
+	@Mock
+	private ContextUtil contextUtil;
+	
 	private SaveListForm form;
 
-	@Spy
+	@Mock
 	private CrossingServiceImpl crossingService;
-
+	
+	@Mock
+	WorkbenchDataManager workbenchDataManager;
+	
+	@Mock
+	Project project;
+	
+	@Mock
+	AbstractBaseFieldbookController abstractFieldbookController;
+	
+	@Mock
+	WorkbenchRuntimeData workbenchRuntimeData;
+	
+	@Mock 
+	ImportedCrosses importedCrosses;
+	
+	@Mock
+	PaginationListSelection paginationListSelection;
+	
+	@InjectMocks
+	private GermplasmTreeController controller;
+	
 	@Before
 	public void setUp() throws MiddlewareQueryException {
-
+		Mockito.doReturn(this.project).when(this.workbenchDataManager).getLastOpenedProjectAnyUser();
+		Mockito.doReturn(this.workbenchRuntimeData).when(this.workbenchDataManager).getWorkbenchRuntimeData();
 		Mockito.doReturn(this.createCrossSetting()).when(this.userSelection).getCrossSettings();
 		Mockito.doReturn(this.createImportedCrossesList()).when(this.userSelection).getImportedCrossesList();
 		Mockito.doReturn(this.createWorkBook()).when(this.userSelection).getWorkbook();
-
+		Mockito.doReturn(this.createAdvancingNurseryForm()).when(this.paginationListSelection).getAdvanceDetails(Matchers.anyString());
 		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmIdByName(Matchers.anyString());
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
 				.saveGermplasmList(Matchers.anyList(), Matchers.any(GermplasmList.class));
@@ -104,9 +138,7 @@ public class GermplasmTreeControllerTest {
 				.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class), Matchers.anyInt(),
 						Matchers.anyList(), Matchers.anyInt());
 
-		Mockito.doReturn(GermplasmTreeControllerTest.PROJECT_ID).when(this.controller).getCurrentProjectId();
-		Mockito.doReturn(1).when(this.controller).getCurrentIbdbUserId();
-
+		
 		Mockito.doReturn(1).when(this.crossingService).getIDForUserDefinedFieldCrossingName();
 
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
@@ -114,9 +146,6 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmListData()).when(this.germplasmListManager).getGermplasmListDataByListId(Matchers.anyInt(),
 				Matchers.anyInt(), Matchers.anyInt());
-
-		this.crossingService.setGermplasmDataManager(this.germplasmDataManager);
-		this.crossingService.setGermplasmListManager(this.germplasmListManager);
 
 		try {
 			Mockito.doReturn(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE).when(this.messageSource)
@@ -128,8 +157,27 @@ public class GermplasmTreeControllerTest {
 	}
 
 	@Test
+	public void testSaveAdvanceListPostSuccessful() {
+		this.form = new SaveListForm();
+		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
+		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
+		this.form.setListDescription(GermplasmTreeControllerTest.LIST_DESCRIPTION);
+		this.form.setListIdentifier(GermplasmTreeControllerTest.LIST_IDENTIFIER);
+		this.form.setListNotes(GermplasmTreeControllerTest.LIST_NOTES);
+		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
+		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
+		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE);
+		
+		Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		
+		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
+		Assert.assertEquals("advancedGermplasmListId should be 2", 2, result.get("advancedGermplasmListId"));
+		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", this.form.getListIdentifier(), result.get("uniqueId"));
+		Assert.assertEquals("List Name should be LIST 1", this.form.getListName(), result.get("listName"));
+	}
+	
+	@Test
 	public void testSaveCrossesListPostSuccessful() {
-
 		this.form = new SaveListForm();
 		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
 		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
@@ -139,19 +187,18 @@ public class GermplasmTreeControllerTest {
 		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
 		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
-
+		
 		Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
-
-		Assert.assertEquals(1, result.get("isSuccess"));
-		Assert.assertEquals(1, result.get("germplasmListId"));
-		Assert.assertEquals(2, result.get("crossesListId"));
-		Assert.assertEquals(this.form.getListIdentifier(), result.get("uniqueId"));
-		Assert.assertEquals(this.form.getListName(), result.get("listName"));
-
+		
+		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
+		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
+		Assert.assertEquals("crossesListId should be 2", 2, result.get("crossesListId"));
+		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", this.form.getListIdentifier(), result.get("uniqueId"));
+		Assert.assertEquals("List Name should be LIST 1", this.form.getListName(), result.get("listName"));
 	}
 
 	@Test
-	public void testSaveCrossesListPostWithExistingGermplasmList() throws MiddlewareQueryException {
+	public void testSaveListPostWithExistingGermplasmList() throws MiddlewareQueryException {
 
 		this.form = new SaveListForm();
 		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
@@ -174,7 +221,7 @@ public class GermplasmTreeControllerTest {
 	}
 
 	@Test
-	public void testSaveCrossesListPostWithError() throws MiddlewareQueryException {
+	public void testSaveListPostWithError() throws MiddlewareQueryException {
 
 		this.form = new SaveListForm();
 		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
@@ -188,7 +235,8 @@ public class GermplasmTreeControllerTest {
 
 		Mockito.when(this.germplasmDataManager.getMethodByName(Matchers.anyString()))
 				.thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
-
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString())).thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
+		
 		Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
 
 		Assert.assertEquals(0, result.get("isSuccess"));
@@ -200,7 +248,6 @@ public class GermplasmTreeControllerTest {
 	public void testSaveTreeState() throws MiddlewareQueryException {
 		String[] expandedNodes = {"2", "5", "6"};
 		GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
-		ContextUtil contextUtil = Mockito.spy(new ContextUtil());
 		Mockito.doReturn(new Integer(1)).when(contextUtil).getCurrentWorkbenchUserId();
 		Mockito.doReturn("1234567890").when(contextUtil).getCurrentProgramUUID();
 		UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
@@ -212,9 +259,7 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testLoadTreeState() throws MiddlewareQueryException {
-
 		GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
-		ContextUtil contextUtil = Mockito.spy(new ContextUtil());
 		Mockito.doReturn(new Integer(1)).when(contextUtil).getCurrentWorkbenchUserId();
 		Mockito.doReturn("1234567890").when(contextUtil).getCurrentProgramUUID();
 		UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
@@ -259,12 +304,14 @@ public class GermplasmTreeControllerTest {
 		cross.setFemaleGid("12345");
 		cross.setMaleDesig("MALE-54321");
 		cross.setMaleGid("54321");
+		cross.setGid("10021");
 		importedCrosses.add(cross);
 		ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
 		cross2.setFemaleGid("9999");
 		cross2.setMaleDesig("MALE-8888");
 		cross2.setMaleGid("8888");
+		cross2.setGid("10022");
 		importedCrosses.add(cross2);
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 
@@ -322,5 +369,18 @@ public class GermplasmTreeControllerTest {
 		GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setId(1);
 		return germplasmList;
+	}
+	
+	private AdvancingNurseryForm createAdvancingNurseryForm(){
+		AdvancingNurseryForm advancingNurseryForm = new AdvancingNurseryForm();
+		ImportedGermplasm importedGermplasm = Mockito.mock(ImportedGermplasm.class);
+		Name name = Mockito.mock(Name.class);
+		List<Name> names = Arrays.asList(name);
+		List<ImportedGermplasm> importedGermplasmList = Arrays.asList(importedGermplasm);
+		Mockito.doReturn(names).when(importedGermplasm).getNames();
+		advancingNurseryForm.setHarvestYear("2015");
+		advancingNurseryForm.setHarvestMonth("08");
+		advancingNurseryForm.setGermplasmList(importedGermplasmList);
+		return advancingNurseryForm;
 	}
 }

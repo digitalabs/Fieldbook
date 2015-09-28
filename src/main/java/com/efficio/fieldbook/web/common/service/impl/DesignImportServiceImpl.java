@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -24,15 +26,19 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
@@ -61,6 +67,9 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Resource
 	private OntologyDataManager ontologyDataManager;
+
+	@Resource
+	private OntologyScaleDataManager ontologyScaleDataManager;
 
 	@Resource
 	private MessageSource messageSource;
@@ -118,18 +127,139 @@ public class DesignImportServiceImpl implements DesignImportService {
 	public void validateDesignData(final DesignImportData designImportData) throws DesignValidationException {
 
 		final Map<Integer, List<String>> csvData = designImportData.getCsvData();
+		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 
 		final DesignHeaderItem trialInstanceDesignHeaderItem =
-				this.validateIfTrialFactorExists(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-		final DesignHeaderItem entryNoDesignHeaderItem =
-				this.validateIfEntryNumberExists(designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
-		this.validateIfPlotNumberExists(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
+				this.validateIfTrialFactorExists(mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT));
+		final DesignHeaderItem entryNoDesignHeaderItem = this.validateIfEntryNumberExists(mappedHeaders.get(PhenotypicType.GERMPLASM));
+		this.validateIfPlotNumberExists(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN));
 
 		final Map<String, Map<Integer, List<String>>> csvMap = this.groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, csvData);
 
 		this.validateEntryNoMustBeUniquePerInstance(entryNoDesignHeaderItem, csvMap);
-		this.validateIfPlotNumberIsUniquePerInstance(designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN), csvMap);
+		this.validateIfPlotNumberIsUniquePerInstance(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN), csvMap);
+		this.validateColumnValues(designImportData, mappedHeaders);
+	}
 
+	private void validateColumnValues(final DesignImportData designImportData,
+			final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders) throws DesignValidationException {
+		// validate values on columns with categorical variables
+		final List<DesignHeaderItem> categoricalDesignHeaderItems =
+				this.retrieveDesignHeaderItemsBasedOnDataType(mappedHeaders, TermId.CATEGORICAL_VARIABLE.getId());
+		this.validateValuesPerColumn(categoricalDesignHeaderItems, designImportData.getCsvData(), TermId.CATEGORICAL_VARIABLE.getId());
+
+		// validate values on columns with numeric variables
+		final List<DesignHeaderItem> numericDesignHeaderItems =
+				this.retrieveDesignHeaderItemsBasedOnDataType(mappedHeaders, TermId.NUMERIC_VARIABLE.getId());
+		this.validateValuesPerColumn(numericDesignHeaderItems, designImportData.getCsvData(), TermId.NUMERIC_VARIABLE.getId());
+	}
+
+	/****
+	 * Retrieve the list of mappedHeaders according to their data type
+	 * 
+	 * @param mappedHeaders
+	 * @param variableDataType (Numeric, Categorical, Character and Date)
+	 * @return
+	 */
+	private List<DesignHeaderItem> retrieveDesignHeaderItemsBasedOnDataType(
+			final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders, final int variableDataType) {
+
+		final List<DesignHeaderItem> designHeaderItems = new ArrayList<DesignHeaderItem>();
+
+		for (final List<DesignHeaderItem> mappedHeader : mappedHeaders.values()) {
+			for (final DesignHeaderItem header : mappedHeader) {
+				final StandardVariable standardVariable = header.getVariable();
+				final Term dataType = standardVariable.getDataType();
+				if (variableDataType == dataType.getId()) {
+					designHeaderItems.add(header);
+				}
+			}
+		}
+
+		return designHeaderItems;
+	}
+
+	private void validateValuesPerColumn(final List<DesignHeaderItem> designHeaderItems, final Map<Integer, List<String>> csvData,
+			final int variableDataType) throws NoSuchMessageException, DesignValidationException {
+
+		// remove the header rows
+		final Map<Integer, List<String>> csvRowData = new LinkedHashMap<Integer, List<String>>(csvData);
+		csvRowData.remove(0);
+
+		for (final DesignHeaderItem headerItem : designHeaderItems) {
+			final StandardVariable standardVariable = headerItem.getVariable();
+			final Integer columnIndex = headerItem.getColumnIndex();
+			if (variableDataType == TermId.CATEGORICAL_VARIABLE.getId()) {
+				this.validateValuesForCategoricalVariables(csvRowData, columnIndex, standardVariable);
+			} else if (variableDataType == TermId.NUMERIC_VARIABLE.getId()) {
+				this.validateValuesForNumericalVariables(csvRowData, columnIndex, standardVariable);
+			}
+		}
+	}
+
+	private void validateValuesForNumericalVariables(final Map<Integer, List<String>> csvRowData, final Integer columnIndex,
+			final StandardVariable standardVariable) throws NoSuchMessageException, DesignValidationException {
+
+		final Scale numericScale = this.ontologyScaleDataManager.getScaleById(standardVariable.getScale().getId(), false);
+
+		for (final Map.Entry<Integer, List<String>> row : csvRowData.entrySet()) {
+			final List<String> columnValues = row.getValue();
+			final String valueToValidate = columnValues.get(columnIndex);
+			if (!this.isValidNumericValueForNumericVariable(valueToValidate, standardVariable, numericScale)) {
+				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
+						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
+			}
+		}
+	}
+
+	private boolean isValidNumericValueForNumericVariable(final String valueToValidate, final StandardVariable variable,
+			final Scale numericScale) {
+
+		if (!org.generationcp.commons.util.StringUtil.isNumeric(valueToValidate)) {
+			return false;
+		}
+
+		if (!this.isNumericValueWithinTheRange(valueToValidate, variable, numericScale)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean isNumericValueWithinTheRange(final String valueToValidate, final StandardVariable variable, final Scale numericScale) {
+		if (numericScale != null && numericScale.getMinValue() != null && numericScale.getMaxValue() != null) {
+			final Double minValue = Double.valueOf(numericScale.getMinValue());
+			final Double maxValue = Double.valueOf(numericScale.getMaxValue());
+
+			final Double currentValue = Double.valueOf(valueToValidate);
+			if (!(currentValue >= minValue && currentValue <= maxValue)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private void validateValuesForCategoricalVariables(final Map<Integer, List<String>> csvRowData, final Integer columnIndex,
+			final StandardVariable standardVariable) throws NoSuchMessageException, DesignValidationException {
+		for (final Map.Entry<Integer, List<String>> row : csvRowData.entrySet()) {
+			final List<String> columnValues = row.getValue();
+			final String valueToValidate = columnValues.get(columnIndex);
+			if (!this.isPartOfValidValuesForCategoricalVariable(valueToValidate, standardVariable)) {
+				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
+						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
+			}
+		}
+	}
+
+	private boolean isPartOfValidValuesForCategoricalVariable(final String categoricalValue, final StandardVariable categoricalVariable) {
+		final List<Enumeration> possibleValues = categoricalVariable.getEnumerations();
+		for (final Enumeration possibleValue : possibleValues) {
+			if (categoricalValue.equalsIgnoreCase(possibleValue.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

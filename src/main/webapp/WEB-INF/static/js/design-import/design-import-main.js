@@ -11,11 +11,17 @@
 		// we can retrieve this from a service
 		scope.Messages = Messages;
 		scope.data = DesignMappingService.data;
+		
+		scope.cancelMapping = function() {
+			ImportDesign.cancelDesignImport();
+		};
+		
 		scope.validateAndSend = function() {
 			var onValidate = DesignMappingService.validateMapping();
 
 			onValidate.then(function(result) {
 				if (result.cancelDesignImport) {
+					ImportDesign.cancelDesignImport();
 					return;
 				}
 

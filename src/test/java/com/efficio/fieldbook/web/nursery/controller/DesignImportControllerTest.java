@@ -869,6 +869,16 @@ public class DesignImportControllerTest {
 
 	}
 
+	@Test
+	public void testCancelImportDesign() {
+
+		this.designImportController.cancelImportDesign();
+
+		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
+		Mockito.verify(this.userSelection).setDesignImportData(null);
+
+	}
+
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {
 		for (final MeasurementVariable mvar : trialVariables) {
 			if (termId == mvar.getTermId()) {

@@ -222,6 +222,16 @@ public class DesignImportController extends SettingsController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/cancelImportDesign")
+	public void cancelImportDesign() {
+
+		// If the Import Design is canceled, make sure to revert the changes made to UserSelection.
+		this.userSelection.setTemporaryWorkbook(null);
+		this.userSelection.setDesignImportData(null);
+
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/validateAndSaveNewMapping/{noOfEnvironments}", method = RequestMethod.POST)
 	public Map<String, Object> validateAndSaveNewMapping(@RequestBody Map<String, List<DesignHeaderItem>> mappedHeaders,
 			@PathVariable Integer noOfEnvironments) {

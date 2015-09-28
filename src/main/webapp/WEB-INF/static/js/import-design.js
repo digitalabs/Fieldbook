@@ -87,7 +87,7 @@ var ImportDesign = (function() {
 
 		hideDesignMapPopup: function() {
 			var deferred = $.Deferred();
-
+			
 			setTimeout(function() {
 				$('#designMapModal').one('hidden.bs.modal', function() {
 					deferred.resolve();
@@ -232,6 +232,10 @@ var ImportDesign = (function() {
 			}, 200);
 
 		},
+		
+		cancelDesignImport: function(){
+			$.get('/Fieldbook/DesignImport/cancelImportDesign');
+		},
 
 		doSubmitImport: function() {
 			if ($('#fileupload-import-design').val() === '') {
@@ -264,6 +268,8 @@ var ImportDesign = (function() {
 
 		},
 		closeReviewModal: function() {
+			
+			ImportDesign.cancelDesignImport();
 			$('#reviewDesignModal').modal('hide');
 		},
 
@@ -290,6 +296,7 @@ $(document).ready(function() {
 	'use strict';
 	$('.btn-import-design').on('click', ImportDesign.doSubmitImport);
 	$('.btn-import-generate').on('click', ImportDesign.generateDesign);
+	$('.btn-import-generate-cancel').on('click', ImportDesign.cancelDesignImport);
 	$('.import-design-section .modal').on('hide.bs.modal', function() {
 		$('#fileupload-import-design').parent().parent().removeClass('has-error');
 	});

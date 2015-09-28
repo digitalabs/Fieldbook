@@ -58,6 +58,7 @@ import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GermplasmTreeControllerTest {
+
 	private static final String LIST_NAME_SHOULD_BE_UNIQUE = "List Name should be unique";
 	private static final String PROJECT_ID = "1";
 	private static final String LIST_PARENT_ID = GermplasmTreeControllerTest.PROJECT_ID;
@@ -75,10 +76,10 @@ public class GermplasmTreeControllerTest {
 
 	@Mock
 	private ResourceBundleMessageSource messageSource;
-	
+
 	@Mock
 	private HttpServletRequest request;
-	
+
 	@Mock
 	private GermplasmDataManager germplasmDataManager;
 
@@ -90,39 +91,39 @@ public class GermplasmTreeControllerTest {
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
-	
+
 	@Mock
 	private WorkbenchService workbenchService;
 
 	@Mock
 	private ContextUtil contextUtil;
-	
+
 	private SaveListForm form;
 
 	@Mock
 	private CrossingServiceImpl crossingService;
-	
+
 	@Mock
-	WorkbenchDataManager workbenchDataManager;
-	
+	private WorkbenchDataManager workbenchDataManager;
+
 	@Mock
-	Project project;
-	
+	private Project project;
+
 	@Mock
-	AbstractBaseFieldbookController abstractFieldbookController;
-	
+	private AbstractBaseFieldbookController abstractFieldbookController;
+
 	@Mock
-	WorkbenchRuntimeData workbenchRuntimeData;
-	
-	@Mock 
-	ImportedCrosses importedCrosses;
-	
+	private WorkbenchRuntimeData workbenchRuntimeData;
+
 	@Mock
-	PaginationListSelection paginationListSelection;
-	
+	private ImportedCrosses importedCrosses;
+
+	@Mock
+	private PaginationListSelection paginationListSelection;
+
 	@InjectMocks
 	private GermplasmTreeController controller;
-	
+
 	@Before
 	public void setUp() throws MiddlewareQueryException {
 		Mockito.doReturn(this.project).when(this.workbenchDataManager).getLastOpenedProjectAnyUser();
@@ -138,7 +139,6 @@ public class GermplasmTreeControllerTest {
 				.saveOrUpdateListDataProject(Matchers.anyInt(), Matchers.any(GermplasmListType.class), Matchers.anyInt(),
 						Matchers.anyList(), Matchers.anyInt());
 
-		
 		Mockito.doReturn(1).when(this.crossingService).getIDForUserDefinedFieldCrossingName();
 
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
@@ -150,7 +150,7 @@ public class GermplasmTreeControllerTest {
 		try {
 			Mockito.doReturn(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE).when(this.messageSource)
 					.getMessage("germplasm.save.list.name.unique.error", null, LocaleContextHolder.getLocale());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 
 		}
 
@@ -167,15 +167,15 @@ public class GermplasmTreeControllerTest {
 		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
 		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE);
-		
-		Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
-		
+
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("advancedGermplasmListId should be 2", 2, result.get("advancedGermplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", this.form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", this.form.getListName(), result.get("listName"));
 	}
-	
+
 	@Test
 	public void testSaveCrossesListPostSuccessful() {
 		this.form = new SaveListForm();
@@ -187,9 +187,9 @@ public class GermplasmTreeControllerTest {
 		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
 		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
-		
-		Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
-		
+
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
 		Assert.assertEquals("crossesListId should be 2", 2, result.get("crossesListId"));
@@ -199,7 +199,6 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testSaveListPostWithExistingGermplasmList() throws MiddlewareQueryException {
-
 		this.form = new SaveListForm();
 		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
 		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
@@ -213,16 +212,14 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService).getGermplasmListByName(Matchers.anyString(),
 				Matchers.anyString());
 
-		Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
 
 		Assert.assertEquals(0, result.get("isSuccess"));
 		Assert.assertEquals(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE, result.get("message"));
-
 	}
 
 	@Test
 	public void testSaveListPostWithError() throws MiddlewareQueryException {
-
 		this.form = new SaveListForm();
 		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
 		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
@@ -235,51 +232,51 @@ public class GermplasmTreeControllerTest {
 
 		Mockito.when(this.germplasmDataManager.getMethodByName(Matchers.anyString()))
 				.thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString())).thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
-		
-		Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(Matchers.anyString(), Matchers.anyString()))
+				.thenThrow(new MiddlewareQueryException(GermplasmTreeControllerTest.ERROR_MESSAGE));
+
+		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
 
 		Assert.assertEquals(0, result.get("isSuccess"));
 		Assert.assertEquals(GermplasmTreeControllerTest.ERROR_MESSAGE, result.get("message"));
-
 	}
 
 	@Test
 	public void testSaveTreeState() throws MiddlewareQueryException {
-		String[] expandedNodes = {"2", "5", "6"};
-		GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
-		Mockito.doReturn(new Integer(1)).when(contextUtil).getCurrentWorkbenchUserId();
-		Mockito.doReturn("1234567890").when(contextUtil).getCurrentProgramUUID();
-		UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
+		final String[] expandedNodes = {"2", "5", "6"};
+		final GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
+		Mockito.doReturn(new Integer(1)).when(this.contextUtil).getCurrentWorkbenchUserId();
+		Mockito.doReturn("1234567890").when(this.contextUtil).getCurrentProgramUUID();
+		final UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
 		germplasmTreeController.setUserProgramStateDataManager(manager);
-		germplasmTreeController.setContextUtil(contextUtil);
-		String response = germplasmTreeController.saveTreeState(ListTreeState.GERMPLASM_LIST.toString(), expandedNodes);
+		germplasmTreeController.setContextUtil(this.contextUtil);
+		final String response = germplasmTreeController.saveTreeState(ListTreeState.GERMPLASM_LIST.toString(), expandedNodes);
 		Assert.assertEquals("Should return ok", "OK", response);
 	}
 
 	@Test
 	public void testLoadTreeState() throws MiddlewareQueryException {
-		GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
-		Mockito.doReturn(new Integer(1)).when(contextUtil).getCurrentWorkbenchUserId();
-		Mockito.doReturn("1234567890").when(contextUtil).getCurrentProgramUUID();
-		UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
-		List<String> response = new ArrayList<String>();
+		final GermplasmTreeController germplasmTreeController = new GermplasmTreeController();
+		Mockito.doReturn(new Integer(1)).when(this.contextUtil).getCurrentWorkbenchUserId();
+		Mockito.doReturn("1234567890").when(this.contextUtil).getCurrentProgramUUID();
+		final UserProgramStateDataManager manager = Mockito.mock(UserProgramStateDataManager.class);
+		final List<String> response = new ArrayList<String>();
 		response.add("1");
 		response.add("2");
 		Mockito.doReturn(response).when(manager).getUserProgramTreeStateByUserIdProgramUuidAndType(Matchers.anyInt(), Matchers.anyString(),
 				Matchers.anyString());
 
 		germplasmTreeController.setUserProgramStateDataManager(manager);
-		germplasmTreeController.setContextUtil(contextUtil);
-		String returnData = germplasmTreeController.retrieveTreeState(ListTreeState.GERMPLASM_LIST.toString());
+		germplasmTreeController.setContextUtil(this.contextUtil);
+		final String returnData = germplasmTreeController.retrieveTreeState(ListTreeState.GERMPLASM_LIST.toString());
 
 		Assert.assertEquals("Should return [1, 2]", "[\"1\",\"2\"]", returnData);
 	}
 
 	private CrossSetting createCrossSetting() {
-		CrossSetting crossSetting = new CrossSetting();
+		final CrossSetting crossSetting = new CrossSetting();
 
-		CrossNameSetting crossNameSetting = new CrossNameSetting();
+		final CrossNameSetting crossNameSetting = new CrossNameSetting();
 		crossNameSetting.setPrefix("PREFIX");
 		crossNameSetting.setSuffix("SUFFIX");
 		crossNameSetting.setAddSpaceBetweenPrefixAndCode(true);
@@ -296,17 +293,16 @@ public class GermplasmTreeControllerTest {
 	}
 
 	private ImportedCrossesList createImportedCrossesList() {
-
-		ImportedCrossesList importedCrossesList = new ImportedCrossesList();
-		List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		ImportedCrosses cross = new ImportedCrosses();
+		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
+		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
+		final ImportedCrosses cross = new ImportedCrosses();
 		cross.setFemaleDesig("FEMALE-12345");
 		cross.setFemaleGid("12345");
 		cross.setMaleDesig("MALE-54321");
 		cross.setMaleGid("54321");
 		cross.setGid("10021");
 		importedCrosses.add(cross);
-		ImportedCrosses cross2 = new ImportedCrosses();
+		final ImportedCrosses cross2 = new ImportedCrosses();
 		cross2.setFemaleDesig("FEMALE-9999");
 		cross2.setFemaleGid("9999");
 		cross2.setMaleDesig("MALE-8888");
@@ -319,31 +315,31 @@ public class GermplasmTreeControllerTest {
 	}
 
 	private List<UserDefinedField> createNameTypes() {
-		List<UserDefinedField> nameTypes = new ArrayList<>();
-		UserDefinedField udf = new UserDefinedField();
+		final List<UserDefinedField> nameTypes = new ArrayList<>();
+		final UserDefinedField udf = new UserDefinedField();
 		udf.setFcode(CrossingServiceImpl.USER_DEF_FIELD_CROSS_NAME[0]);
 		nameTypes.add(udf);
 		return nameTypes;
 	}
 
 	private List<Integer> createGermplasmIds() {
-		List<Integer> ids = new ArrayList<>();
+		final List<Integer> ids = new ArrayList<>();
 		ids.add(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID1));
 		ids.add(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID2));
 		return ids;
 	}
 
 	private List<GermplasmListData> createGermplasmListData() {
-		List<GermplasmListData> listData = new ArrayList<>();
+		final List<GermplasmListData> listData = new ArrayList<>();
 
-		GermplasmListData data1 = new GermplasmListData();
+		final GermplasmListData data1 = new GermplasmListData();
 		data1.setGid(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID1));
 		data1.setDesignation("DESIG 1");
 		data1.setEntryId(1);
 		data1.setGroupName("GROUP 1");
 		data1.setSeedSource("SEED 1");
 		listData.add(data1);
-		GermplasmListData data2 = new GermplasmListData();
+		final GermplasmListData data2 = new GermplasmListData();
 		data2.setGid(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID2));
 		data2.setDesignation("DESIG 2");
 		data2.setEntryId(2);
@@ -352,31 +348,29 @@ public class GermplasmTreeControllerTest {
 		listData.add(data2);
 
 		return listData;
-
 	}
 
 	private Workbook createWorkBook() {
-		Workbook wb = new Workbook();
+		final Workbook wb = new Workbook();
 
-		StudyDetails studyDetails = new StudyDetails();
+		final StudyDetails studyDetails = new StudyDetails();
 		studyDetails.setId(Integer.valueOf(GermplasmTreeControllerTest.PROJECT_ID));
 		wb.setStudyDetails(studyDetails);
 		return wb;
-
 	}
 
 	private GermplasmList createGermplasmList() {
-		GermplasmList germplasmList = new GermplasmList();
+		final GermplasmList germplasmList = new GermplasmList();
 		germplasmList.setId(1);
 		return germplasmList;
 	}
-	
-	private AdvancingNurseryForm createAdvancingNurseryForm(){
-		AdvancingNurseryForm advancingNurseryForm = new AdvancingNurseryForm();
-		ImportedGermplasm importedGermplasm = Mockito.mock(ImportedGermplasm.class);
-		Name name = Mockito.mock(Name.class);
-		List<Name> names = Arrays.asList(name);
-		List<ImportedGermplasm> importedGermplasmList = Arrays.asList(importedGermplasm);
+
+	private AdvancingNurseryForm createAdvancingNurseryForm() {
+		final AdvancingNurseryForm advancingNurseryForm = new AdvancingNurseryForm();
+		final ImportedGermplasm importedGermplasm = Mockito.mock(ImportedGermplasm.class);
+		final Name name = Mockito.mock(Name.class);
+		final List<Name> names = Arrays.asList(name);
+		final List<ImportedGermplasm> importedGermplasmList = Arrays.asList(importedGermplasm);
 		Mockito.doReturn(names).when(importedGermplasm).getNames();
 		advancingNurseryForm.setHarvestYear("2015");
 		advancingNurseryForm.setHarvestMonth("08");

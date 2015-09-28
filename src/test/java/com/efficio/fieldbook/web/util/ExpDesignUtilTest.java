@@ -115,7 +115,7 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 	}
 
 	@Test
-	public void testConvertStandardVariableToMeasurementVariable_StandardVariableHasPhenotypicType() {
+	public void testConvertStandardVariableToMeasurementVariableStandardVariableHasPhenotypicType() {
 
 		FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
 

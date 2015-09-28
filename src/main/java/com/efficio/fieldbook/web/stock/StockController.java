@@ -32,6 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,6 +77,9 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private InventoryService inventoryService;
+
+	@Resource
+	private PlatformTransactionManager transactionManager;
 
 	@Resource
 	private InventoryDataManager inventoryDataManager;
@@ -220,11 +227,11 @@ public class StockController extends AbstractBaseFieldbookController {
 
 		try {
 			Integer listDataID = this.germplasmListManager.retrieveDataListIDFromListDataProjectListID(listDataProjectListId);
-			Map<ListDataProject, GermplasmListData> germplasmMap = this.generateGermplasmMap(listDataID, listDataProjectListId);
+			final Map<ListDataProject, GermplasmListData> germplasmMap = this.generateGermplasmMap(listDataID, listDataProjectListId);
 
 			String prefix = this.stockService.calculateNextStockIDPrefix(generationSettings.getBreederIdentifier(),
 					generationSettings.getSeparator());
-			Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
+			final Map<Integer, InventoryDetails> inventoryDetailMap = new HashMap<>();
 
 			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
 				InventoryDetails details = new InventoryDetails();
@@ -245,13 +252,20 @@ public class StockController extends AbstractBaseFieldbookController {
 						generationSettings.isAddPedigreeReciprocal());
 			}
 
-			for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
-				ListDataProject project = entry.getKey();
-				GermplasmListData data = entry.getValue();
-				InventoryDetails details = inventoryDetailMap.get(project.getEntryId());
-				this.inventoryService.addLotAndTransaction(details, data, project);
+			final TransactionTemplate transactionTemplate = new TransactionTemplate(this.transactionManager);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-			}
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus arg0) {
+					for (Map.Entry<ListDataProject, GermplasmListData> entry : germplasmMap.entrySet()) {
+						ListDataProject project = entry.getKey();
+						GermplasmListData data = entry.getValue();
+						InventoryDetails details = inventoryDetailMap.get(project.getEntryId());
+						StockController.this.inventoryService.addLotAndTransaction(details, data, project);
+					}
+				}
+
+			});
 
 			resultMap.put(StockController.IS_SUCCESS, StockController.SUCCESS);
 		} catch (MiddlewareException e) {

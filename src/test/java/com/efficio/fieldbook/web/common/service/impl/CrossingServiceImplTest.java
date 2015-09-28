@@ -25,7 +25,6 @@ import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -69,7 +68,7 @@ public class CrossingServiceImplTest {
 		this.crossingService.setContextUtil(this.contextUtil);
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
-		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasms(Matchers.anyList());
+		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
@@ -150,7 +149,7 @@ public class CrossingServiceImplTest {
 		List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
-		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasms(germplasmPairs);
+		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
 		Mockito.doNothing().when(this.crossingService)
 				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
@@ -180,7 +179,7 @@ public class CrossingServiceImplTest {
 		List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
-		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasms(germplasmPairs);
+		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
 		Mockito.doNothing().when(this.crossingService)
 				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);

@@ -14,6 +14,7 @@ package com.efficio.fieldbook.utils.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -135,6 +136,8 @@ public class LabelPrintingDataUtil {
 			userLabelPrinting.setFilenameDL(LabelPrintingDataUtil.FILE_NAME_DL_CSV);
 			userLabelPrinting.setFilenameDLLocation(LabelPrintingDataUtil.FILE_NAME_DDL_CSV);
 		}
+
+		userLabelPrinting.setIncludeColumnHeadinginNonPdf(LabelPrintingServiceImpl.INCLUDE_NON_PDF_HEADERS);
 
 		userLabelPrinting.setFieldMapInfo(fieldMapInfo);
 

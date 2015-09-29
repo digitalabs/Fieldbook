@@ -81,11 +81,11 @@ public class LabelPrintingDataUtil {
 
 	private static final int FIELDBOOK_ID = 100;
 
-	public static List<FieldMapInfo> createFieldMapInfoList(boolean isTrial) {
-		List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();
-		FieldMapInfo fieldMapInfo = new FieldMapInfo();
+	public static List<FieldMapInfo> createFieldMapInfoList(final boolean isTrial) {
+		final List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();
+		final FieldMapInfo fieldMapInfo = new FieldMapInfo();
 
-		ArrayList<FieldMapDatasetInfo> datasets = LabelPrintingDataUtil.createFieldMapDatasetInfo(isTrial);
+		final ArrayList<FieldMapDatasetInfo> datasets = LabelPrintingDataUtil.createFieldMapDatasetInfo(isTrial);
 		fieldMapInfo.setDatasets(datasets);
 		fieldMapInfo.setFieldbookId(LabelPrintingDataUtil.FIELDBOOK_ID);
 		fieldMapInfo.setFieldbookName(LabelPrintingDataUtil.FIELDBOOK_NAME);
@@ -95,11 +95,11 @@ public class LabelPrintingDataUtil {
 		return fieldMapInfoList;
 	}
 
-	public static UserLabelPrinting createUserLabelPrinting(String type) {
-		UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
+	public static UserLabelPrinting createUserLabelPrinting(final String type) {
+		final UserLabelPrinting userLabelPrinting = new UserLabelPrinting();
 
-		FieldMapInfo fieldMapInfo = new FieldMapInfo();
-		ArrayList<FieldMapDatasetInfo> datasets = LabelPrintingDataUtil.createFieldMapDatasetInfo(false);
+		final FieldMapInfo fieldMapInfo = new FieldMapInfo();
+		final ArrayList<FieldMapDatasetInfo> datasets = LabelPrintingDataUtil.createFieldMapDatasetInfo(false);
 
 		fieldMapInfo.setDatasets(datasets);
 
@@ -144,12 +144,12 @@ public class LabelPrintingDataUtil {
 		return userLabelPrinting;
 	}
 
-	public static ArrayList<FieldMapDatasetInfo> createFieldMapDatasetInfo(boolean isTrial) {
-		ArrayList<FieldMapDatasetInfo> datasets = new ArrayList<FieldMapDatasetInfo>();
+	public static ArrayList<FieldMapDatasetInfo> createFieldMapDatasetInfo(final boolean isTrial) {
+		final ArrayList<FieldMapDatasetInfo> datasets = new ArrayList<FieldMapDatasetInfo>();
 
-		FieldMapDatasetInfo dataset = new FieldMapDatasetInfo();
+		final FieldMapDatasetInfo dataset = new FieldMapDatasetInfo();
 
-		ArrayList<FieldMapTrialInstanceInfo> trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
+		final ArrayList<FieldMapTrialInstanceInfo> trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
 		trialInstances.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
 		if (isTrial) {
 			trialInstances.add(LabelPrintingDataUtil.createFieldMapSecondTrialInstanceInfo());
@@ -164,7 +164,7 @@ public class LabelPrintingDataUtil {
 	}
 
 	public static FieldMapTrialInstanceInfo createFieldMapTrialInstanceInfo() {
-		FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
+		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
 
 		trialInstanceInfo.setBlockName(LabelPrintingDataUtil.BLOCK_NAME);
 		trialInstanceInfo.setEntryCount(LabelPrintingDataUtil.ENTRY_COUNT);
@@ -177,7 +177,7 @@ public class LabelPrintingDataUtil {
 	}
 
 	private static FieldMapTrialInstanceInfo createFieldMapSecondTrialInstanceInfo() {
-		FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
+		final FieldMapTrialInstanceInfo trialInstanceInfo = new FieldMapTrialInstanceInfo();
 
 		trialInstanceInfo.setBlockName(LabelPrintingDataUtil.BLOCK_NAME_2);
 		trialInstanceInfo.setEntryCount(LabelPrintingDataUtil.ENTRY_COUNT);
@@ -190,9 +190,9 @@ public class LabelPrintingDataUtil {
 	}
 
 	private static List<FieldMapLabel> createFieldMapLabels() {
-		List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
+		final List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
 
-		FieldMapLabel label = new FieldMapLabel();
+		final FieldMapLabel label = new FieldMapLabel();
 		label.setBlockNo(LabelPrintingDataUtil.BLOCK_NO);
 		label.setColumn(LabelPrintingDataUtil.COLUMN);
 		label.setDatasetId(LabelPrintingDataUtil.DATASET_ID);
@@ -208,9 +208,9 @@ public class LabelPrintingDataUtil {
 	}
 
 	public static List<StudyTrialInstanceInfo> createStudyTrialInstanceInfo() {
-		List<StudyTrialInstanceInfo> trialInstances = new ArrayList<StudyTrialInstanceInfo>();
+		final List<StudyTrialInstanceInfo> trialInstances = new ArrayList<StudyTrialInstanceInfo>();
 
-		StudyTrialInstanceInfo trialInstance =
+		final StudyTrialInstanceInfo trialInstance =
 				new StudyTrialInstanceInfo(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo(), LabelPrintingDataUtil.FIELDBOOK_NAME);
 		trialInstances.add(trialInstance);
 

@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
 import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
@@ -22,6 +23,7 @@ import org.generationcp.commons.pojo.GermplasmListExportInputValues;
 import org.generationcp.commons.service.ExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
+import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.Term;
@@ -88,7 +90,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 			List<? extends GermplasmExportSource> germplasmlistData = new ArrayList<>();
 
 			germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-
+			this.setExportListTypeFromOriginalGermplasm(germplasmList);
 			germplasmlistData = this.germplasmListManager.retrieveSnapshotListData(listId);
 
 			List<ValueReference> possibleValues = this.getPossibleValues(this.userSelection.getPlotsLevelList(), TermId.ENTRY_TYPE.getId());
@@ -372,5 +374,18 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	protected void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-
+	
+	protected void setExportListTypeFromOriginalGermplasm(GermplasmList list) throws MiddlewareQueryException {
+		if (list != null && list.getListRef() != null) {
+			GermplasmList origList = this.fieldbookMiddlewareService.getGermplasmListById(list.getListRef());
+			
+			if (origList != null) {
+				if (origList.getStatus() != null && origList.getStatus().intValue() != GermplasmListDAO.STATUS_DELETED.intValue()) {
+					list.setType(origList.getType());
+				} else {
+					list.setType(ExportGermplasmListController.GERPLASM_TYPE_LST);
+				}
+			}
+		}
+	}
 }

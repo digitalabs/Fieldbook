@@ -180,7 +180,6 @@ public class OpenTrialController extends BaseTrialController {
 	public String openTrial(@ModelAttribute("createTrialForm") CreateTrialForm form, @PathVariable Integer trialId, Model model,
 			HttpSession session, RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
 		this.clearSessionData(session);
-
 		try {
 			if (trialId != null && trialId != 0) {
 				DmsProject dmsProject = this.studyDataManagerImpl.getProject(trialId);
@@ -233,8 +232,7 @@ public class OpenTrialController extends BaseTrialController {
 				ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 				importedGermplasmList.setImportedGermplasms(list);
 				ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-				// BMS-1419 requires that the list id should still refer to the original list's id
-			    mainInfo.setListId(germplasmList.getListRef());
+				mainInfo.setListId(germplasmList.getId());
 				mainInfo.setAdvanceImportType(true);
 				mainInfo.setImportedGermplasmList(importedGermplasmList);
 				this.userSelection.setImportedGermplasmMainInfo(mainInfo);

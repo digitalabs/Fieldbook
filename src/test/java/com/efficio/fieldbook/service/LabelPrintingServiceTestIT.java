@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -15,7 +14,6 @@ import javax.annotation.Resource;
 import junit.framework.Assert;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -30,7 +28,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,16 +45,14 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.lowagie.text.pdf.PdfReader;
 
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceTestIT.class);
 
-	private static int[] fieldMapLabels = {AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
-		AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
+	private static final int[] FIELD_MAP_LABELS = {AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
+			AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
 
 	private static final String PLOT_COORDINATES = "Plot Coordinates";
-
 	@Resource
 	private LabelPrintingService labelPrintingService;
 
@@ -104,14 +99,14 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 		if (labels != null) {
 			for (LabelFields label : labels) {
-				for (int fieldMapLabel : LabelPrintingServiceTestIT.fieldMapLabels) {
+				for (int fieldMapLabel : LabelPrintingServiceTestIT.FIELD_MAP_LABELS) {
 					if (label.getId() == fieldMapLabel) {
 						fieldMapLabelCount++;
 					}
 				}
 			}
 
-			if (fieldMapLabelCount == LabelPrintingServiceTestIT.fieldMapLabels.length) {
+			if (fieldMapLabelCount == LabelPrintingServiceTestIT.FIELD_MAP_LABELS.length) {
 				return true;
 			} else {
 				return false;
@@ -120,6 +115,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		return false;
 	}
 
+	@Ignore(value = "Need to find a replacement way for retrieving the values of the generated PDF")
 	@Test
 	public void testFieldmapFieldsInGeneratedPdf() {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -183,7 +179,7 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		boolean areFieldsInLabels = true;
 		Locale locale = new Locale("en", "US");
 
-		for (int label : LabelPrintingServiceTestIT.fieldMapLabels) {
+		for (int label : LabelPrintingServiceTestIT.FIELD_MAP_LABELS) {
 			String fieldName = "";
 			if (label == AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
 				fieldName = this.messageSource.getMessage("label.printing.available.fields.block.name", null, locale);
@@ -392,38 +388,6 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		Assert.assertEquals("Should have the NO id of the Barcode fields", "", newFields);
 	}
 
-	@Test
-	public void testPrintHeaderFieldsIfIncludeHeader() {
-		LabelPrintingServiceImpl labelPrintingServiceImpl = (LabelPrintingServiceImpl) this.labelPrintingService;
-		Row row = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.doReturn(cell).when(row).createCell(Matchers.anyInt());
-		List<Integer> selectedFieldIDs = new ArrayList<>();
-		selectedFieldIDs.add(1);
-		selectedFieldIDs.add(2);
-		selectedFieldIDs.add(3);
-		labelPrintingServiceImpl.printHeaderFields(new HashMap<Integer, String>(), true, selectedFieldIDs, row, 0,
-				Mockito.mock(CellStyle.class));
-		Mockito.verify(cell, Mockito.times(3)).setCellValue(Matchers.anyString());
-
-	}
-
-	@Test
-	public void testPrintHeaderFieldsIfNotIncludeHeader() {
-		LabelPrintingServiceImpl labelPrintingServiceImpl = (LabelPrintingServiceImpl) this.labelPrintingService;
-		Row row = Mockito.mock(Row.class);
-		Cell cell = Mockito.mock(Cell.class);
-		Mockito.doReturn(cell).when(row).createCell(Matchers.anyInt());
-		List<Integer> selectedFieldIDs = new ArrayList<>();
-		selectedFieldIDs.add(1);
-		selectedFieldIDs.add(2);
-		selectedFieldIDs.add(3);
-		labelPrintingServiceImpl.printHeaderFields(new HashMap<Integer, String>(), false, selectedFieldIDs, row, 0,
-				Mockito.mock(CellStyle.class));
-		Mockito.verify(cell, Mockito.never()).setCellValue(Matchers.anyString());
-
-	}
-
 	private boolean areRowsEqual(CsvReader csvReader, String[] headers, UserLabelPrinting userLabelPrinting) {
 		try {
 			int rowNum = 0, rowNum2 = 0;
@@ -444,13 +408,8 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		}
 	}
 
-	private boolean areHeadersEqual(String[] headers, UserLabelPrinting userLabelPrinting) {
-		int headerLength =
-				userLabelPrinting.getLeftSelectedLabelFields().split(",").length
-				+ userLabelPrinting.getRightSelectedLabelFields().split(",").length;
-		return headers.length == headerLength;
-	}
-
+	@Ignore(
+			value = "Needs to resolve NPE and other data issues. Method under test is a highly likely candidate for refactoring, given complex logic path")
 	@Test
 	public void testPopulateUserSpecifiedLabelFieldsForNurseryEnvironmentDataOnly() {
 		String testDesigValue = "123";
@@ -462,9 +421,9 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, false);
 
-		Assert.assertEquals(testDesigValue,
+		junit.framework.Assert.assertEquals(testDesigValue,
 				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));
-		Assert.assertEquals("1",
+		junit.framework.Assert.assertEquals("1",
 				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.ENTRY_NO.getId()));
 	}
 
@@ -502,4 +461,13 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 		return workbook;
 	}
+
+	private boolean areHeadersEqual(String[] headers, UserLabelPrinting userLabelPrinting) {
+		String calculatedHeader =
+				userLabelPrinting.getMainSelectedLabelFields()
+						+ (userLabelPrinting.getBarcodeNeeded().equals("1") ? "," + AppConstants.AVAILABLE_LABEL_BARCODE.getInt() : "");
+		int headerLength = calculatedHeader.split(",").length;
+		return headers.length == headerLength;
+	}
+
 }

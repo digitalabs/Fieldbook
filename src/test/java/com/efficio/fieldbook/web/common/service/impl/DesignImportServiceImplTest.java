@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -25,10 +27,12 @@ import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +43,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -53,6 +58,19 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportServiceImplTest {
+
+	private static final int AFLAVER_5_ID = 51510;
+
+	private static final int NO_OF_CHARACTER_VARIABLES = 1;
+
+	private static final int NO_OF_CATEGORICAL_VARIABLES = 1;
+
+	private static final int NO_OF_NUMERIC_VARIABLES = 5;
+
+	private static final int CATEGORICAL_VARIABLE = 1130;
+	private static final int CHARACTER_VARIABLE = 1120;
+
+	private static final int NUMERIC_VARIABLE = 1110;
 
 	private static final int CHALK_PCT_TERMID = 22768;
 
@@ -70,6 +88,9 @@ public class DesignImportServiceImplTest {
 
 	@Mock
 	private OntologyService ontologyService;
+
+	@Mock
+	private OntologyScaleDataManager ontologyScaleDataManager;
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
@@ -96,11 +117,15 @@ public class DesignImportServiceImplTest {
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportServiceImplTest.PROGRAM_UUID);
 
+		this.initializeOntologyScaleDataManager();
 		this.initializeOntologyService();
 		this.initializeDesignImportData();
 		this.initializeGermplasmList();
 
 		WorkbookDataUtil.setTestWorkbook(null);
+
+		Mockito.doReturn("Error encountered.").when(this.messageSource)
+				.getMessage("design.import.error.no.valid.values", null, Locale.ENGLISH);
 
 	}
 
@@ -181,7 +206,7 @@ public class DesignImportServiceImplTest {
 
 		this.service.addVariatesToMeasurementRows(workbook, measurements);
 
-		Assert.assertEquals("The size of the data list should be 13 since 2 variates are added", 13, measurements.get(0).getDataList()
+		Assert.assertEquals("The size of the data list should be 14 since 2 variates are added", 14, measurements.get(0).getDataList()
 				.size());
 
 	}
@@ -319,7 +344,7 @@ public class DesignImportServiceImplTest {
 
 		final Set<MeasurementVariable> result = this.service.getDesignMeasurementVariables(workbook, this.designImportData, true);
 
-		Assert.assertEquals("The total number of Factors and Variates in workbook is 13", 13, result.size());
+		Assert.assertEquals("The total number of Factors and Variates in workbook is 14", 14, result.size());
 	}
 
 	@Test
@@ -331,7 +356,7 @@ public class DesignImportServiceImplTest {
 
 		// If NOT in PREVIEW mode, the method will remove the trial environment factors in the list except for trial instance. This is
 		// because the actual measurements/observations that will be generated from import should not contain trial environment factors.
-		Assert.assertEquals("The total number of Factors and Variates (less the trial environments) in workbook is 12", 12, result.size());
+		Assert.assertEquals("The total number of Factors and Variates (less the trial environments) in workbook is 13", 13, result.size());
 	}
 
 	@Test
@@ -341,7 +366,7 @@ public class DesignImportServiceImplTest {
 
 		final Set<MeasurementVariable> result = this.service.getDesignRequiredMeasurementVariable(workbook, this.designImportData);
 
-		Assert.assertEquals("The total number of Design Factors is 3", 3, result.size());
+		Assert.assertEquals("The total number of Design Factors is 4", 4, result.size());
 
 	}
 
@@ -352,7 +377,7 @@ public class DesignImportServiceImplTest {
 
 		final Set<StandardVariable> result = this.service.getDesignRequiredStandardVariables(workbook, this.designImportData);
 
-		Assert.assertEquals("The total number of Design Factors is 3", 3, result.size());
+		Assert.assertEquals("The total number of Design Factors is 4", 4, result.size());
 
 	}
 
@@ -606,8 +631,169 @@ public class DesignImportServiceImplTest {
 
 		final Set<MeasurementVariable> returnValue = this.service.getMeasurementVariablesFromDataFile(workbook, this.designImportData);
 
-		Assert.assertEquals("The test data only contains 6 Measurement Variables", 6, returnValue.size());
+		Assert.assertEquals("The test data only contains 7 Measurement Variables", 7, returnValue.size());
 
+	}
+
+	@Test(expected = DesignValidationException.class)
+	public void testIsPartOfValidValuesForCategoricalVariableWithoutPossibleValue() throws NoSuchMessageException,
+			DesignValidationException {
+		final String nonValidValue = "10";
+		final StandardVariable categoricalVariable =
+				this.createStandardVariable(PhenotypicType.VARIATE, AFLAVER_5_ID, "AflavER_1_5", "", "", "", CATEGORICAL_VARIABLE, "C", "",
+						"");
+		categoricalVariable.setEnumerations(null);
+
+		this.service.isPartOfValidValuesForCategoricalVariable(nonValidValue, categoricalVariable);
+		Assert.fail("Expecting to throw an exception when the categorical variable has no possible values.");
+
+	}
+
+	@Test
+	public void testIsPartOfValidValuesForCategoricalVariableForNonPossibleValue() throws NoSuchMessageException, DesignValidationException {
+		final String nonValidValue = "11";
+		final StandardVariable categoricalVariable =
+				this.createStandardVariable(PhenotypicType.VARIATE, AFLAVER_5_ID, "AflavER_1_5", "", "", "", CATEGORICAL_VARIABLE, "C", "",
+						"");
+		categoricalVariable.setEnumerations(this.createPossibleValues(10));
+
+		Assert.assertFalse("Expecting to return false when the input is not part of the valid values of the categorical variable.",
+				this.service.isPartOfValidValuesForCategoricalVariable(nonValidValue, categoricalVariable));
+
+	}
+
+	@Test
+	public void testIsPartOfValidValuesForCategoricalVariableForAPossibleValue() throws NoSuchMessageException, DesignValidationException {
+		final String nonValidValue = "10";
+		final StandardVariable categoricalVariable =
+				this.createStandardVariable(PhenotypicType.VARIATE, AFLAVER_5_ID, "AflavER_1_5", "", "", "", CATEGORICAL_VARIABLE, "C", "",
+						"");
+		categoricalVariable.setEnumerations(this.createPossibleValues(10));
+
+		Assert.assertTrue("Expecting to return true when the input is part of the valid values of the categorical variable.",
+				this.service.isPartOfValidValuesForCategoricalVariable(nonValidValue, categoricalVariable));
+
+	}
+
+	@Test
+	public void testIsNumericValueWithinTheRangeReturnsFalseForValuesBeyondRange() {
+
+		final StandardVariable variable =
+				this.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "", NUMERIC_VARIABLE, "N", "", "");
+		final Scale numericScale = new Scale();
+		numericScale.setMinValue("1");
+		numericScale.setMaxValue("100");
+		variable.setScale(numericScale);
+
+		String valueToValidate = "123";
+		Assert.assertFalse("Expecting a false to return for a value greater than the maximum value.",
+				this.service.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
+
+		valueToValidate = "0";
+		Assert.assertFalse("Expecting a false to return for a value lesser than the minimum value.",
+				this.service.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
+
+	}
+
+	@Test
+	public void testIsNumericValueWithinTheRangeReturnsFalseForValuesWithinTheRange() {
+
+		final StandardVariable variable =
+				this.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "", NUMERIC_VARIABLE, "N", "", "");
+		final Scale numericScale = new Scale();
+		numericScale.setMinValue("1");
+		numericScale.setMaxValue("100");
+		variable.setScale(numericScale);
+
+		String valueToValidate = "100";
+		Assert.assertTrue("Expecting a true to return for a value equal to the maximum value.",
+				this.service.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
+
+		valueToValidate = "1";
+		Assert.assertTrue("Expecting a true to return for a value equal to the minimum value.",
+				this.service.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
+
+		valueToValidate = "50";
+		Assert.assertTrue("Expecting a true to return for a value within the range.",
+				this.service.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
+
+	}
+
+	@Test
+	public void testIsNumericValueWithinTheRangeReturnsTrueWhenTheScaleOfStandardVariableHasNoSpecifiedRange() {
+
+		final StandardVariable variable =
+				this.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "", NUMERIC_VARIABLE, "N", "", "");
+		final Scale numericScale = new Scale();
+		variable.setScale(numericScale);
+
+		final String valueToValidate = "100";
+		Assert.assertTrue("Expecting to return true when the scale of the numeric variable has no specified range.",
+				this.service.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
+
+	}
+
+	@Test
+	public void testIsValidNumericValueForNumericVariable() {
+		final StandardVariable variable =
+				this.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "", NUMERIC_VARIABLE, "N", "", "");
+		final Scale numericScale = new Scale();
+		numericScale.setMinValue("1");
+		numericScale.setMaxValue("100");
+		variable.setScale(numericScale);
+
+		// checking if the input is a number
+		String valueToValidate = "no0";
+		Assert.assertFalse("Expected to return false for non-numeric input.",
+				this.service.isValidNumericValueForNumericVariable(valueToValidate, variable, numericScale));
+
+		valueToValidate = "10";
+		Assert.assertTrue("Expected to return true for numeric input that is within the range of possible values of the numeric variable.",
+				this.service.isValidNumericValueForNumericVariable(valueToValidate, variable, numericScale));
+	}
+
+	@Test
+	public void testValidateColumnValuesForImportDesignWithOutInvalidValue() {
+		final DesignImportData designImportData = this.createDesignImportData();
+		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
+		try {
+			this.service.validateColumnValues(designImportData.getCsvData(), mappedHeaders);
+		} catch (final DesignValidationException e) {
+			Assert.fail("Expecting that there is no exception thrown for the validation of test design import data with no invalid values.");
+		}
+	}
+
+	@Test
+	public void testRetrieveDesignHeaderItemsBasedOnDataType() {
+		final DesignImportData designImportData = this.createDesignImportData();
+		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
+
+		final List<DesignHeaderItem> numericDesignHeaderItems =
+				this.service.retrieveDesignHeaderItemsBasedOnDataType(mappedHeaders, TermId.NUMERIC_VARIABLE.getId());
+		Assert.assertEquals(NO_OF_NUMERIC_VARIABLES, numericDesignHeaderItems.size());
+
+		final List<DesignHeaderItem> characterDesignHeaderItems =
+				this.service.retrieveDesignHeaderItemsBasedOnDataType(mappedHeaders, TermId.CHARACTER_VARIABLE.getId());
+		Assert.assertEquals(NO_OF_CHARACTER_VARIABLES, characterDesignHeaderItems.size());
+
+		this.service.retrieveDesignHeaderItemsBasedOnDataType(mappedHeaders, TermId.CATEGORICAL_VARIABLE.getId());
+		Assert.assertEquals(NO_OF_CATEGORICAL_VARIABLES, characterDesignHeaderItems.size());
+
+	}
+
+	private List<Enumeration> createPossibleValues(final int noOfPossibleValues) {
+		final List<Enumeration> possibleValues = new ArrayList<Enumeration>();
+		for (int i = 0; i < noOfPossibleValues; i++) {
+			final Enumeration possibleValue = new Enumeration();
+			final int id = i + 1;
+			possibleValue.setId(id);
+			possibleValue.setName(String.valueOf(id));
+			possibleValue.setDescription("Possible Value: " + id);
+
+			possibleValues.add(possibleValue);
+
+		}
+		return possibleValues;
 	}
 
 	private void initializeDesignImportData() {
@@ -621,37 +807,54 @@ public class DesignImportServiceImplTest {
 
 	}
 
+	private void initializeOntologyScaleDataManager() {
+		final Scale scale = new Scale();
+		scale.setMaxValue("1");
+		scale.setMinValue("100");
+		Mockito.doReturn(scale).when(this.ontologyScaleDataManager).getScaleById(1, false);
+	}
+
 	private void initializeOntologyService() throws MiddlewareException {
 
-		Mockito.doReturn(this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GID.getId(), "GID", "", "", "", "", "", ""))
+		Mockito.doReturn(
+				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", NUMERIC_VARIABLE,
+						"N", "", "")).when(this.ontologyService)
+				.getStandardVariable(TermId.ENTRY_NO.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+		Mockito.doReturn(
+				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GID.getId(), "GID", "", "", "", NUMERIC_VARIABLE, "N", "", ""))
 				.when(this.ontologyService).getStandardVariable(TermId.GID.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.DESIG.getId(), "DESIG", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 		Mockito.doReturn(
-				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_TYPE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.CROSS.getId(), "CROSS", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_CODE.getId(), "ENTRY_CODE", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
-		Mockito.doReturn(
-				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GERMPLASM_SOURCE.getId(), "GERMPLASM_SOURCE", "", "", "", "",
+				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.DESIG.getId(), "DESIG", "", "", "", CHARACTER_VARIABLE, "C",
 						"", "")).when(this.ontologyService)
+				.getStandardVariable(TermId.DESIG.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+		Mockito.doReturn(
+				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_TYPE.getId(), "ENTRY_TYPE", "", "", "",
+						CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
+				.getStandardVariable(TermId.ENTRY_TYPE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+		Mockito.doReturn(
+				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.CROSS.getId(), "CROSS", "", "", "", CHARACTER_VARIABLE, "C",
+						"", "")).when(this.ontologyService)
+				.getStandardVariable(TermId.CROSS.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+		Mockito.doReturn(
+				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.ENTRY_CODE.getId(), "ENTRY_CODE", "", "", "",
+						CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
+				.getStandardVariable(TermId.ENTRY_CODE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+		Mockito.doReturn(
+				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.GERMPLASM_SOURCE.getId(), "GERMPLASM_SOURCE", "", "", "",
+						CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
 				.getStandardVariable(TermId.GERMPLASM_SOURCE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 		Mockito.doReturn(
-				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.SEED_SOURCE.getId(), "SEED_SOURCE", "", "", "", "", "", ""))
-				.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
+				this.createStandardVariable(PhenotypicType.GERMPLASM, TermId.SEED_SOURCE.getId(), "SEED_SOURCE", "", "", "",
+						CHARACTER_VARIABLE, "C", "", "")).when(this.ontologyService)
+				.getStandardVariable(TermId.SEED_SOURCE.getId(), DesignImportServiceImplTest.PROGRAM_UUID);
 
 		Mockito.doReturn(
-				this.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.GYLD_TERMID, "GYLD", "", "", "", "N", "",
-						"")).when(this.ontologyService)
+				this.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.GYLD_TERMID, "GYLD", "", "", "",
+						NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
 				.getStandardVariable(DesignImportServiceImplTest.GYLD_TERMID, DesignImportServiceImplTest.PROGRAM_UUID);
 		Mockito.doReturn(
-				this.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.CHALK_PCT_TERMID, "CHALK_PCT", "", "", "N",
-						"", "", "")).when(this.ontologyService)
+				this.createStandardVariable(PhenotypicType.VARIATE, DesignImportServiceImplTest.CHALK_PCT_TERMID, "CHALK_PCT", "", "", "",
+						NUMERIC_VARIABLE, "N", "", "")).when(this.ontologyService)
 				.getStandardVariable(DesignImportServiceImplTest.CHALK_PCT_TERMID, DesignImportServiceImplTest.PROGRAM_UUID);
 
 		final Property prop = new Property();
@@ -793,15 +996,20 @@ public class DesignImportServiceImplTest {
 	}
 
 	protected StandardVariable createStandardVariable(final PhenotypicType phenotypicType, final int id, final String name,
-			final String property, final String scale, final String method, final String dataType, final String storedIn, final String isA) {
+			final String property, final String scale, final String method, final int dataTypeId, final String dataType,
+			final String storedIn, final String isA) {
 
 		final StandardVariable stdVar =
-				new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(0, dataType, ""),
-						new Term(0, isA, ""), phenotypicType);
+				new StandardVariable(new Term(0, property, ""), new Term(0, scale, ""), new Term(0, method, ""), new Term(dataTypeId,
+						dataType, ""), new Term(0, isA, ""), phenotypicType);
 
 		stdVar.setId(id);
 		stdVar.setName(name);
 		stdVar.setDescription("");
+
+		if (dataTypeId == CATEGORICAL_VARIABLE) {
+			stdVar.setEnumerations(this.createPossibleValues(5));
+		}
 
 		return stdVar;
 	}
@@ -842,18 +1050,23 @@ public class DesignImportServiceImplTest {
 
 		final List<DesignHeaderItem> trialEvironmentItems = new ArrayList<>();
 		trialEvironmentItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.TRIAL_INSTANCE_FACTOR.getId(),
-				"TRIAL_INSTANCE", 0));
-		trialEvironmentItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 1));
+				"TRIAL_INSTANCE", 0, NUMERIC_VARIABLE));
+		trialEvironmentItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_ENVIRONMENT, TermId.SITE_NAME.getId(), "SITE_NAME", 1,
+				CHARACTER_VARIABLE));
 
 		final List<DesignHeaderItem> germplasmItems = new ArrayList<>();
-		germplasmItems.add(this.createDesignHeaderItem(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", 2));
+		germplasmItems.add(this.createDesignHeaderItem(PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", 2, NUMERIC_VARIABLE));
 
 		final List<DesignHeaderItem> trialDesignItems = new ArrayList<>();
-		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.PLOT_NO.getId(), "PLOT_NO", 3));
-		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.REP_NO.getId(), "REP_NO", 4));
-		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO", 5));
+		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.PLOT_NO.getId(), "PLOT_NO", 3,
+				NUMERIC_VARIABLE));
+		trialDesignItems
+				.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.REP_NO.getId(), "REP_NO", 4, NUMERIC_VARIABLE));
+		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.TRIAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO", 5,
+				NUMERIC_VARIABLE));
 
 		final List<DesignHeaderItem> variateItems = new ArrayList<>();
+		trialDesignItems.add(this.createDesignHeaderItem(PhenotypicType.VARIATE, AFLAVER_5_ID, "AflavER_1_5", 6, CATEGORICAL_VARIABLE));
 
 		mappedHeaders.put(PhenotypicType.TRIAL_ENVIRONMENT, trialEvironmentItems);
 		mappedHeaders.put(PhenotypicType.GERMPLASM, germplasmItems);
@@ -869,15 +1082,15 @@ public class DesignImportServiceImplTest {
 		final Map<Integer, List<String>> csvData = new HashMap<>();
 
 		// The first row is the header
-		csvData.put(0, this.createListOfString("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO"));
+		csvData.put(0, this.createListOfString("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
 
 		// csv data
-		csvData.put(1, this.createListOfString("1", "Laguna", "1", "1", "1", "1"));
-		csvData.put(2, this.createListOfString("1", "Laguna", "2", "2", "1", "1"));
-		csvData.put(3, this.createListOfString("2", "Bicol", "1", "6", "1", "1"));
-		csvData.put(4, this.createListOfString("2", "Bicol", "2", "7", "1", "1"));
-		csvData.put(5, this.createListOfString("3", "Bulacan", "1", "11", "1", "2"));
-		csvData.put(6, this.createListOfString("3", "Bulacan", "2", "12", "1", "2"));
+		csvData.put(1, this.createListOfString("1", "Laguna", "1", "1", "1", "1", "1"));
+		csvData.put(2, this.createListOfString("1", "Laguna", "2", "2", "1", "1", "2"));
+		csvData.put(3, this.createListOfString("2", "Bicol", "1", "6", "1", "1", "3"));
+		csvData.put(4, this.createListOfString("2", "Bicol", "2", "7", "1", "1", "2"));
+		csvData.put(5, this.createListOfString("3", "Bulacan", "1", "11", "1", "2", "3"));
+		csvData.put(6, this.createListOfString("3", "Bulacan", "2", "12", "1", "2", "1"));
 
 		return csvData;
 
@@ -892,9 +1105,9 @@ public class DesignImportServiceImplTest {
 	}
 
 	private DesignHeaderItem createDesignHeaderItem(final PhenotypicType phenotypicType, final int termId, final String headerName,
-			final int columnIndex) {
+			final int columnIndex, final int dataTypeId) {
 		final DesignHeaderItem designHeaderItem = this.createDesignHeaderItem(termId, headerName, columnIndex);
-		designHeaderItem.setVariable(this.createStandardVariable(phenotypicType, termId, headerName, "", "", "", "", "", ""));
+		designHeaderItem.setVariable(this.createStandardVariable(phenotypicType, termId, headerName, "", "", "", dataTypeId, "", "", ""));
 		return designHeaderItem;
 	}
 
@@ -915,6 +1128,7 @@ public class DesignImportServiceImplTest {
 		items.add(this.createDesignHeaderItem(TermId.PLOT_NO.getId(), "PLOT_NO", 3));
 		items.add(this.createDesignHeaderItem(TermId.REP_NO.getId(), "REP_NO", 4));
 		items.add(this.createDesignHeaderItem(TermId.BLOCK_NO.getId(), "BLOCK_NO", 5));
+		items.add(this.createDesignHeaderItem(AFLAVER_5_ID, "AflavER_1_5", 6));
 
 		return items;
 	}

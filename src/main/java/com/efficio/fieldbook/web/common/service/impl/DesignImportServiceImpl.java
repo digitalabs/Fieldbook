@@ -138,20 +138,20 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 		this.validateEntryNoMustBeUniquePerInstance(entryNoDesignHeaderItem, csvMap);
 		this.validateIfPlotNumberIsUniquePerInstance(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN), csvMap);
-		this.validateColumnValues(designImportData, mappedHeaders);
+		this.validateColumnValues(designImportData.getCsvData(), mappedHeaders);
 	}
 
-	private void validateColumnValues(final DesignImportData designImportData,
-			final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders) throws DesignValidationException {
+	void validateColumnValues(final Map<Integer, List<String>> csvData, final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders)
+			throws DesignValidationException {
 		// validate values on columns with categorical variables
 		final List<DesignHeaderItem> categoricalDesignHeaderItems =
 				this.retrieveDesignHeaderItemsBasedOnDataType(mappedHeaders, TermId.CATEGORICAL_VARIABLE.getId());
-		this.validateValuesPerColumn(categoricalDesignHeaderItems, designImportData.getCsvData(), TermId.CATEGORICAL_VARIABLE.getId());
+		this.validateValuesPerColumn(categoricalDesignHeaderItems, csvData, TermId.CATEGORICAL_VARIABLE.getId());
 
 		// validate values on columns with numeric variables
 		final List<DesignHeaderItem> numericDesignHeaderItems =
 				this.retrieveDesignHeaderItemsBasedOnDataType(mappedHeaders, TermId.NUMERIC_VARIABLE.getId());
-		this.validateValuesPerColumn(numericDesignHeaderItems, designImportData.getCsvData(), TermId.NUMERIC_VARIABLE.getId());
+		this.validateValuesPerColumn(numericDesignHeaderItems, csvData, TermId.NUMERIC_VARIABLE.getId());
 	}
 
 	/****

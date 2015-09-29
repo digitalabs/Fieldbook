@@ -41,6 +41,19 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 	private static final String PLOT_NO = "PLOT_NO";
 	private static final String REP_NO = "REP_NO";
 
+	private static final int TEST_STANDARD_VARIABLE_TERMID = 1;
+	private static final int TEST_PROPERTY_TERMID = 1234;
+	private static final int TEST_SCALE_TERMID = 4321;
+	private static final int TEST_METHOD_TERMID = 3333;
+	private static final int TEST_DATATYPE_TERMID = 4444;
+
+	private static final String TEST_DATATYPE_DESCRIPTION = "TEST DATATYPE";
+	private static final String TEST_METHOD_NAME = "TEST METHOD";
+	private static final String TEST_SCALE_NAME = "TEST SCALE";
+	private static final String TEST_PROPERTY_NAME = "TEST PROPERTY";
+	private static final String TEST_VARIABLE_DESCRIPTION = "TEST DESCRIPTION";
+	private static final String TEST_VARIABLE_NAME = "TEST VARIABLE";
+
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(ExpDesignUtil.class);
 
@@ -89,16 +102,16 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 
 		FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
 
-		Mockito.when(mockFieldbookService.getAllPossibleValues(1)).thenReturn(new ArrayList<ValueReference>());
+		Mockito.when(mockFieldbookService.getAllPossibleValues(TEST_STANDARD_VARIABLE_TERMID)).thenReturn(new ArrayList<ValueReference>());
 
 		StandardVariable standardVariable = new StandardVariable();
-		standardVariable.setId(1);
-		standardVariable.setName("TEST VARIABLE");
-		standardVariable.setDescription("TEST DESCRIPTION");
-		standardVariable.setProperty(new Term(10, "TEST PROPERTY", ""));
-		standardVariable.setScale(new Term(11, "TEST SCALE", ""));
-		standardVariable.setMethod(new Term(12, "TEST METHOD", ""));
-		standardVariable.setDataType(new Term(13, "TEST DATATYPE", ""));
+		standardVariable.setId(TEST_STANDARD_VARIABLE_TERMID);
+		standardVariable.setName(TEST_VARIABLE_NAME);
+		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
+		standardVariable.setProperty(new Term(TEST_PROPERTY_TERMID, TEST_PROPERTY_NAME, ""));
+		standardVariable.setScale(new Term(TEST_SCALE_TERMID, TEST_SCALE_NAME, ""));
+		standardVariable.setMethod(new Term(TEST_METHOD_TERMID, TEST_METHOD_NAME, ""));
+		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
 
 		MeasurementVariable measurementVariable =
 				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, mockFieldbookService);
@@ -119,16 +132,16 @@ public class ExpDesignUtilTest extends AbstractBaseIntegrationTest {
 
 		FieldbookService mockFieldbookService = Mockito.mock(FieldbookService.class);
 
-		Mockito.when(mockFieldbookService.getAllPossibleValues(1)).thenReturn(new ArrayList<ValueReference>());
+		Mockito.when(mockFieldbookService.getAllPossibleValues(TEST_STANDARD_VARIABLE_TERMID)).thenReturn(new ArrayList<ValueReference>());
 
 		StandardVariable standardVariable = new StandardVariable();
-		standardVariable.setId(1);
-		standardVariable.setName("TEST VARIABLE");
-		standardVariable.setDescription("TEST DESCRIPTION");
-		standardVariable.setProperty(new Term(10, "TEST PROPERTY", ""));
-		standardVariable.setScale(new Term(11, "TEST SCALE", ""));
-		standardVariable.setMethod(new Term(12, "TEST METHOD", ""));
-		standardVariable.setDataType(new Term(13, "TEST DATATYPE", ""));
+		standardVariable.setId(TEST_STANDARD_VARIABLE_TERMID);
+		standardVariable.setName(TEST_VARIABLE_NAME);
+		standardVariable.setDescription(TEST_VARIABLE_DESCRIPTION);
+		standardVariable.setProperty(new Term(TEST_PROPERTY_TERMID, TEST_PROPERTY_NAME, ""));
+		standardVariable.setScale(new Term(TEST_SCALE_TERMID, TEST_SCALE_NAME, ""));
+		standardVariable.setMethod(new Term(TEST_METHOD_TERMID, TEST_METHOD_NAME, ""));
+		standardVariable.setDataType(new Term(TEST_DATATYPE_TERMID, TEST_DATATYPE_DESCRIPTION, ""));
 		standardVariable.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
 
 		MeasurementVariable measurementVariable =

@@ -122,7 +122,6 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		GermplasmList list = null;
 		try {
 			if (this.userSelection.getImportedGermplasmMainInfo() != null) {
-				
 				list = this.fieldbookMiddlewareService.getGermplasmListById(this.userSelection.getImportedGermplasmMainInfo().getListId());
 			}
 		} catch (MiddlewareQueryException e) {

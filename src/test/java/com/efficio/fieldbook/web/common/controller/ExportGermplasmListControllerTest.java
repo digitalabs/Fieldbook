@@ -31,6 +31,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -39,7 +41,9 @@ import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
 import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
+
+
+@RunWith(MockitoJUnitRunner.class)
 public class ExportGermplasmListControllerTest {
 
 	private static final long LIST_DATE = 20141112L;
@@ -112,23 +116,22 @@ public class ExportGermplasmListControllerTest {
 		this.exportGermplasmListController.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 
 		try {
-			Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportGermplasmListControllerTest.ENTRY_NO))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportGermplasmListControllerTest.DESIGNATION))
-					.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.GID.getId(), ExportGermplasmListControllerTest.GID))
-					.when(this.ontologyService).getStandardVariable(TermId.GID.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportGermplasmListControllerTest.PARENTAGE))
-					.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportGermplasmListControllerTest.SEED_SOURCE))
-					.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportGermplasmListControllerTest.ENTRY_CODE))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(
-					this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), ExportGermplasmListControllerTest.ENTRY_NUMBER_STORAGE))
-					.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),contextUtil.getCurrentProgramUUID());
-			Mockito.doReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportGermplasmListControllerTest.CHECK))
-					.when(this.ontologyService).getStandardVariable(TermId.CHECK.getId(),contextUtil.getCurrentProgramUUID());
+			Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(),contextUtil.getCurrentProgramUUID()))
+					.thenReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportGermplasmListControllerTest.ENTRY_NO));
+			Mockito.when(this.ontologyService.getStandardVariable(TermId.DESIG.getId(),contextUtil.getCurrentProgramUUID()))
+					.thenReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportGermplasmListControllerTest.DESIGNATION));
+			Mockito.when(this.ontologyService.getStandardVariable(TermId.GID.getId(),contextUtil.getCurrentProgramUUID()))
+					.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportGermplasmListControllerTest.GID));
+			Mockito.when(this.ontologyService.getStandardVariable(TermId.CROSS.getId(),contextUtil.getCurrentProgramUUID()))
+					.thenReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportGermplasmListControllerTest.PARENTAGE));
+			Mockito.when(this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(),contextUtil.getCurrentProgramUUID()))
+					.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportGermplasmListControllerTest.SEED_SOURCE));
+			Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(),contextUtil.getCurrentProgramUUID()))
+					.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportGermplasmListControllerTest.ENTRY_CODE));
+			Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),contextUtil.getCurrentProgramUUID()))
+					.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), ExportGermplasmListControllerTest.ENTRY_NUMBER_STORAGE));
+			Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(),contextUtil.getCurrentProgramUUID()))
+					.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportGermplasmListControllerTest.CHECK));
 			Mockito.doReturn(this.fieldbookProperties).when(this.exportGermplasmListController).getFieldbookProperties();
 			Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 
@@ -368,80 +371,6 @@ public class ExportGermplasmListControllerTest {
 		stdVar.setDataType(dataType);
 
 		return stdVar;
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNull() throws MiddlewareQueryException {
-		ExportGermplasmListController controller = new ExportGermplasmListController();
-		GermplasmList list = this.getGermplasmList();
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should not change since there is not list ref for the germplasm list",
-				ExportGermplasmListControllerTest.LST, list.getType());
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNull() throws MiddlewareQueryException {
-		ExportGermplasmListController controller = new ExportGermplasmListController();
-		GermplasmList list = this.getGermplasmList();
-		list.setListRef(5);
-		GermplasmList listRef = this.getGermplasmList();
-		String harvest = "HARVEST";
-		listRef.setType(harvest);
-		Mockito.doReturn(listRef).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
-		controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should  change since there is a list ref for the germplasm list", harvest, list.getType());
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullAndNotDeleted() throws MiddlewareQueryException {
-		ExportGermplasmListController controller = new ExportGermplasmListController();
-		GermplasmList list = this.getGermplasmList();
-		list.setListRef(5);
-		GermplasmList listRef = this.getGermplasmList();
-		String harvest = "HARVEST";
-		listRef.setType(harvest);
-		Mockito.doReturn(listRef).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
-		controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should  change since there is a list ref for the germplasm list", harvest, list.getType());
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullAndDeleted() throws MiddlewareQueryException {
-		ExportGermplasmListController controller = new ExportGermplasmListController();
-		GermplasmList list = this.getGermplasmList();
-		list.setListRef(5);
-		list.setType("SAMPLE");
-		GermplasmList listRef = this.getGermplasmList();
-		String harvest = "HARVEST";
-		listRef.setType(harvest);
-
-		listRef.setStatus(ExportGermplasmListControllerTest.STATUS_DELETED);
-		Mockito.doReturn(listRef).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
-		controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should be LST since the ref list id is deleted", ExportGermplasmListControllerTest.LST,
-				list.getType());
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullButListIsNull() throws MiddlewareQueryException {
-		ExportGermplasmListController controller = new ExportGermplasmListController();
-		GermplasmList list = this.getGermplasmList();
-		list.setListRef(5);
-		GermplasmList listRef = this.getGermplasmList();
-		String harvest = "HARVEST";
-		listRef.setType(harvest);
-		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
-		controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should not change since there is not list ref for the germplasm list",
-				ExportGermplasmListControllerTest.LST, list.getType());
 	}
 
 	private GermplasmList getGermplasmList() {

@@ -180,7 +180,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	private void validateValuesPerColumn(final List<DesignHeaderItem> designHeaderItems, final Map<Integer, List<String>> csvData,
-			final int variableDataType) throws NoSuchMessageException, DesignValidationException {
+			final int variableDataType) throws DesignValidationException {
 
 		// remove the header rows
 		final Map<Integer, List<String>> csvRowData = new LinkedHashMap<Integer, List<String>>(csvData);
@@ -198,7 +198,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	private void validateValuesForNumericalVariables(final Map<Integer, List<String>> csvRowData, final Integer columnIndex,
-			final StandardVariable standardVariable) throws NoSuchMessageException, DesignValidationException {
+			final StandardVariable standardVariable) throws DesignValidationException {
 
 		final Scale numericScale = this.ontologyScaleDataManager.getScaleById(standardVariable.getScale().getId(), false);
 
@@ -240,11 +240,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return true;
 	}
 
-	private void validateValuesForCategoricalVariables(final Map<Integer, List<String>> csvRowData, final Integer columnIndex,
-			final StandardVariable standardVariable) throws NoSuchMessageException, DesignValidationException {
+	void validateValuesForCategoricalVariables(final Map<Integer, List<String>> csvRowData, final Integer columnIndex,
+			final StandardVariable standardVariable) throws DesignValidationException {
 		for (final Map.Entry<Integer, List<String>> row : csvRowData.entrySet()) {
 			final List<String> columnValues = row.getValue();
 			final String valueToValidate = columnValues.get(columnIndex);
+
 			if (!this.isPartOfValidValuesForCategoricalVariable(valueToValidate, standardVariable)) {
 				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
 						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
@@ -252,7 +253,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 	}
 
-	private boolean isPartOfValidValuesForCategoricalVariable(final String categoricalValue, final StandardVariable categoricalVariable) {
+	boolean isPartOfValidValuesForCategoricalVariable(final String categoricalValue, final StandardVariable categoricalVariable)
+			throws DesignValidationException {
 		final List<Enumeration> possibleValues = categoricalVariable.getEnumerations();
 		for (final Enumeration possibleValue : possibleValues) {
 			if (categoricalValue.equalsIgnoreCase(possibleValue.getName())) {

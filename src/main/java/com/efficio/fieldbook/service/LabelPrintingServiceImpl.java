@@ -46,9 +46,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -74,7 +72,6 @@ import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.LabelPaperFactory;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
@@ -128,6 +125,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	public static final Integer[] BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS = new Integer[] {
 			AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(),
 			AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
+	public static final String INCLUDE_NON_PDF_HEADERS = "1";
+	public static final String BARCODE_NEEDED = "1";
 
 	/** The delimiter. */
 	private final String delimiter = " | ";
@@ -269,7 +268,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 					String barcodeLabelForCode = "";
 					String barcodeLabel = "";
 
-					if ("0".equalsIgnoreCase(barcodeNeeded)) {
+					if (!BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
 						barcodeLabel = " ";
 						barcodeLabelForCode = " ";
 					} else {
@@ -312,7 +311,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 					innerImageTableInfo.setWidths(new float[] {1});
 					innerImageTableInfo.setWidthPercentage(82);
 					final PdfPCell cellImage = new PdfPCell();
-					if ("1".equalsIgnoreCase(barcodeNeeded)) {
+					if (BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
 						cellImage.addElement(mainImage);
 					} else {
 						cellImage.addElement(new Paragraph(" "));
@@ -690,8 +689,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final ByteArrayOutputStream baos) throws MiddlewareQueryException {
 
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
-		final boolean includeHeader = "1".equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf()) ? true : false;
-		final boolean isBarcodeNeeded = "1".equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded()) ? true : false;
+		final boolean includeHeader = INCLUDE_NON_PDF_HEADERS.equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf());
+		final boolean isBarcodeNeeded = BARCODE_NEEDED.equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded());
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 		final String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
 		final String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
@@ -830,8 +829,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			final ByteArrayOutputStream baos) throws IOException {
 		final String fileName = userLabelPrinting.getFilenameDLLocation();
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
-		final boolean includeHeader = "1".equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf()) ? true : false;
-		final boolean isBarcodeNeeded = "1".equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded()) ? true : false;
+		final boolean includeHeader = INCLUDE_NON_PDF_HEADERS.equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf());
+		final boolean isBarcodeNeeded = BARCODE_NEEDED.equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded());
 
 		mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
@@ -1278,6 +1277,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 		}
 
+		if (params.getEnvironmentData() == null) {
+			return;
+		}
+
 		final MeasurementData enviromentData = params.getEnvironmentData().getMeasurementData(newTermId);
 
 		if (enviromentData != null) {
@@ -1550,8 +1553,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	private List<LabelFields> addStockListDetailsFields(final Locale locale, final GermplasmListType listType) {
 		final List<LabelFields> labelFieldList = new ArrayList<LabelFields>();
 
-		labelFieldList.addAll(this.getGermplasmDescriptors());
-
 		labelFieldList.add(new LabelFields(ColumnLabels.STOCKID.getTermNameFromOntology(this.ontologyDataManager), TermId.STOCKID.getId(),
 				true));
 
@@ -1581,28 +1582,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		}
 
 		return labelFieldList;
-	}
-
-	private List<LabelFields> getGermplasmDescriptors() {
-		final List<LabelFields> germplasmDescriptors = new ArrayList<LabelFields>();
-
-		try {
-			final List<StandardVariableReference> stdVars =
-					this.fieldbookService.filterStandardVariablesForSetting(VariableType.GERMPLASM_DESCRIPTOR.getId(),
-							new ArrayList<SettingDetail>());
-
-			for (final StandardVariableReference stdVar : stdVars) {
-				if (stdVar.getId() == TermId.GID.getId() || stdVar.getId() == TermId.DESIG.getId()
-						|| stdVar.getId() == TermId.ENTRY_NO.getId() || stdVar.getId() == TermId.CROSS.getId()
-						|| stdVar.getId() == TermId.SEED_SOURCE.getId()) {
-					germplasmDescriptors.add(new LabelFields(stdVar.getName(), stdVar.getId(), true));
-				}
-			}
-
-		} catch (final MiddlewareQueryException e) {
-			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-		}
-		return germplasmDescriptors;
 	}
 
 	private void addAvailableFieldsForFieldMap(final boolean hasFieldMap, final Locale locale, final List<LabelFields> labelFieldsList) {
@@ -1708,8 +1687,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	@Override
 	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(final String presetName, final Integer programId,
-			final Integer presetType)
-			throws MiddlewareQueryException {
+			final Integer presetType) throws MiddlewareQueryException {
 		final List<LabelPrintingPresets> out = new ArrayList<>();
 
 		final Project project = this.workbenchService.getProjectById(programId.longValue());
@@ -1756,8 +1734,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 			// 3. add all program presets for fieldbook
 			for (final ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(
-					this.contextUtil.getCurrentProgramUUID(),
-					fieldbookToolId, ToolSection.FBK_LABEL_PRINTING.name())) {
+					this.contextUtil.getCurrentProgramUUID(), fieldbookToolId, ToolSection.FBK_LABEL_PRINTING.name())) {
 				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
 						LabelPrintingPresets.PROGRAM_PRESET));
 			}

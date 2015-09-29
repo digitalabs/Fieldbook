@@ -5,9 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,10 +28,6 @@ import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
-
-/**
- * Created by IntelliJ IDEA. User: Daniel Villafuerte
- */
 
 @RunWith(MockitoJUnitRunner.class)
 public class LabelPrintingServiceTest {
@@ -37,10 +42,13 @@ public class LabelPrintingServiceTest {
 	private Workbook workbook;
 
 	@Mock
+	private OntologyDataManager ontologyDataManager;
+
+	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	@InjectMocks
-	private LabelPrintingServiceImpl dut;
+	private LabelPrintingServiceImpl unitUnderTest;
 
 	public static final String DUMMY_TRIAL_SETTING_LABEL_NAME = "dummyTrialSettingLabel";
 	public static final String DUMMY_TRIAL_ENVIRONMENT_LABEL_NAME = "dummyTrialEnvironmentLabel";
@@ -76,7 +84,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved =
-				this.dut.getAvailableLabelFieldsForStudy(true, false, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
+				this.unitUnderTest.getAvailableLabelFieldsForStudy(true, false, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
 
 		Assert.assertNotNull(retrieved);
 		this.verifyBaseLabelFieldsPresent(retrieved);
@@ -105,7 +113,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved =
-				this.dut.getAvailableLabelFieldsForStudy(true, true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
+				this.unitUnderTest.getAvailableLabelFieldsForStudy(true, true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_TRIAL_ID);
 
 		Assert.assertNotNull(retrieved);
 		this.verifyBaseLabelFieldsPresent(retrieved);
@@ -131,7 +139,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved =
-				this.dut.getAvailableLabelFieldsForStudy(false, true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_NURSERY_ID);
+				this.unitUnderTest.getAvailableLabelFieldsForStudy(false, true, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		Assert.assertNotNull(retrieved);
 		this.verifyBaseLabelFieldsPresent(retrieved);
@@ -155,7 +163,7 @@ public class LabelPrintingServiceTest {
 		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
 
 		List<LabelFields> retrieved =
-				this.dut.getAvailableLabelFieldsForStudy(false, false, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_NURSERY_ID);
+				this.unitUnderTest.getAvailableLabelFieldsForStudy(false, false, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_NURSERY_ID);
 
 		Assert.assertNotNull(retrieved);
 		this.verifyBaseLabelFieldsPresent(retrieved);
@@ -168,9 +176,31 @@ public class LabelPrintingServiceTest {
 		this.verifyNoFieldMapLabels(retrieved);
 	}
 
+	@Test
+	public void testGetAvaiableFieldsForCrossStockList() {
+		List<LabelFields> nurserySettingLabels = this.createDummyNurseryManagementLabels();
+		List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
+
+		Mockito.when(this.settingsService.retrieveNurseryManagementDetailsAsLabels(this.workbook)).thenReturn(nurserySettingLabels);
+		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
+
+		List<LabelFields> retrieved =
+				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_NURSERY_ID);
+
+		this.verifyLabelListContainsList(retrieved, nurserySettingLabels,
+				"Retrieved available label list does not contain all nursery management related labels");
+		this.verifyLabelListContainsList(retrieved, germplasmLabels,
+				"Retrieved available label list does not contain all germplasm related labels");
+
+		this.verifyLabelByTermID(TermId.DUPLICATE.getId(), retrieved);
+		this.verifyLabelByTermID(TermId.BULK_WITH.getId(), retrieved);
+		this.verifyLabelByTermID(TermId.BULK_COMPL.getId(), retrieved);
+	}
+
 	protected void verifyFieldMapLabelsPresent(List<LabelFields> forVerification) {
+		boolean found = false;
 		for (Integer baseLabelPrintingFieldMapLabelId : LabelPrintingServiceImpl.BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS) {
-			boolean found = false;
+
 
 			for (LabelFields labelFields : forVerification) {
 				if (baseLabelPrintingFieldMapLabelId.equals(labelFields.getId())) {
@@ -182,6 +212,18 @@ public class LabelPrintingServiceTest {
 			Assert.assertTrue("Field map based label was not present in retrieved", found);
 		}
 	}
+	
+	protected void verifyLabelByTermID(int termID, List<LabelFields> forVerification) {
+		boolean found = false;
+		for (LabelFields labelFields : forVerification) {
+			if (labelFields.getId() == termID) {
+				found = true;
+				break;
+			}
+		}
+
+		Assert.assertTrue("Expected label field not found in retrieved", found);
+	} 
 
 	protected void verifyNoFieldMapLabels(List<LabelFields> forVerification) {
 		for (Integer baseLabelPrintingFieldMapLabelId : LabelPrintingServiceImpl.BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS) {

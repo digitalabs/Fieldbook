@@ -38,7 +38,6 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
@@ -161,8 +160,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @param variableDataType (Numeric, Categorical, Character and Date)
 	 * @return
 	 */
-	private List<DesignHeaderItem> retrieveDesignHeaderItemsBasedOnDataType(
-			final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders, final int variableDataType) {
+	List<DesignHeaderItem> retrieveDesignHeaderItemsBasedOnDataType(final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders,
+			final int variableDataType) {
 
 		final List<DesignHeaderItem> designHeaderItems = new ArrayList<DesignHeaderItem>();
 
@@ -212,8 +211,15 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 	}
 
-	private boolean isValidNumericValueForNumericVariable(final String valueToValidate, final StandardVariable variable,
-			final Scale numericScale) {
+	/**
+	 * Returns true if the input is an valid number and within the specified range of the numeric variable.
+	 * 
+	 * @param valueToValidate
+	 * @param variable
+	 * @param numericScale
+	 * @return
+	 */
+	boolean isValidNumericValueForNumericVariable(final String valueToValidate, final StandardVariable variable, final Scale numericScale) {
 
 		if (!org.generationcp.commons.util.StringUtil.isNumeric(valueToValidate)) {
 			return false;
@@ -226,7 +232,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return true;
 	}
 
-	private boolean isNumericValueWithinTheRange(final String valueToValidate, final StandardVariable variable, final Scale numericScale) {
+	boolean isNumericValueWithinTheRange(final String valueToValidate, final StandardVariable variable, final Scale numericScale) {
 		if (numericScale != null && numericScale.getMinValue() != null && numericScale.getMaxValue() != null) {
 			final Double minValue = Double.valueOf(numericScale.getMinValue());
 			final Double maxValue = Double.valueOf(numericScale.getMaxValue());
@@ -256,6 +262,14 @@ public class DesignImportServiceImpl implements DesignImportService {
 	boolean isPartOfValidValuesForCategoricalVariable(final String categoricalValue, final StandardVariable categoricalVariable)
 			throws DesignValidationException {
 		final List<Enumeration> possibleValues = categoricalVariable.getEnumerations();
+
+		// categorical variables are expected to have possible values, otherwise this will cause data error
+		if (possibleValues == null || possibleValues.isEmpty()) {
+			throw new DesignValidationException(
+					(this.messageSource.getMessage("design.import.error.no.valid.values", null, Locale.ENGLISH)).replace("{0}",
+							categoricalVariable.getName()));
+		}
+
 		for (final Enumeration possibleValue : possibleValues) {
 			if (categoricalValue.equalsIgnoreCase(possibleValue.getName())) {
 				return true;

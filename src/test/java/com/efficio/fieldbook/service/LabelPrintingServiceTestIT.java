@@ -421,9 +421,9 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, false);
 
-		junit.framework.Assert.assertEquals(testDesigValue,
+		Assert.assertEquals(testDesigValue,
 				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));
-		junit.framework.Assert.assertEquals("1",
+		Assert.assertEquals("1",
 				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.ENTRY_NO.getId()));
 	}
 

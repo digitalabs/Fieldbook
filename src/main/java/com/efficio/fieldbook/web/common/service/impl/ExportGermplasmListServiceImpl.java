@@ -14,6 +14,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
 import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -26,6 +27,7 @@ import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
 import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Variable;
@@ -81,35 +83,8 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	public void exportGermplasmListXLS(String fileNamePath, int listId, Map<String, Boolean> visibleColumns, Boolean isNursery)
 			throws GermplasmListExporterException {
 
-		GermplasmListExportInputValues input = new GermplasmListExportInputValues();
-		input.setFileName(fileNamePath);
-
 		try {
-
-			GermplasmList germplasmList;
-			List<? extends GermplasmExportSource> germplasmlistData = new ArrayList<>();
-
-			germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
-			this.setExportListTypeFromOriginalGermplasm(germplasmList);
-			germplasmlistData = this.germplasmListManager.retrieveSnapshotListData(listId);
-
-			List<ValueReference> possibleValues = this.getPossibleValues(this.userSelection.getPlotsLevelList(), TermId.ENTRY_TYPE.getId());
-			this.processEntryTypeCode(germplasmlistData, possibleValues);
-
-			input.setGermplasmList(germplasmList);
-
-			input.setListData(germplasmlistData);
-
-			input.setOwnerName(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
-
-			Integer currentLocalIbdbUserId = this.contextUtil.getCurrentUserLocalId();
-			input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
-
-			input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
-
-			input.setVisibleColumnMap(visibleColumns);
-
-			input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
+			GermplasmListExportInputValues input = setUpInput(fileNamePath, listId, visibleColumns, isNursery);
 
 			this.exportService.generateGermplasmListExcelFile(input);
 
@@ -117,6 +92,52 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 			throw new GermplasmListExporterException("Error with exporting germplasm list to XLS.", e);
 		}
 
+	}
+
+	GermplasmListExportInputValues setUpInput(String fileNamePath, int listId, Map<String, Boolean> visibleColumns,
+				Boolean isNursery) {
+		GermplasmListExportInputValues input = new GermplasmListExportInputValues();
+		input.setFileName(fileNamePath);
+		GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(listId);
+		
+		int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
+		GermplasmListType germplasmListType = GermplasmListType.NURSERY;
+		if(!isNursery){
+			germplasmListType = GermplasmListType.TRIAL; 
+		}
+		
+		// retrieval of germplasm list data from snapshot list
+		List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
+		List<? extends GermplasmExportSource> germplasmlistData = new ArrayList<>();
+		if (germplasmLists != null && !germplasmLists.isEmpty()) {
+			germplasmList = germplasmLists.get(0);
+
+			if (germplasmList != null && germplasmList.getListRef() != null) {
+				//set the ImportedGermplasmListMainInfo to the List reference of the list, so that it still points to the original list
+				this.userSelection.getImportedGermplasmMainInfo().setListId(germplasmList.getListRef());
+			}
+			germplasmlistData = this.germplasmListManager.retrieveSnapshotListData(germplasmList.getId());
+		}
+		
+		this.setExportListTypeFromOriginalGermplasm(germplasmList);
+		
+		List<ValueReference> possibleValues = this.getPossibleValues(this.userSelection.getPlotsLevelList(), TermId.ENTRY_TYPE.getId());
+		this.processEntryTypeCode(germplasmlistData, possibleValues);
+
+		input.setGermplasmList(germplasmList);
+
+		input.setListData(germplasmlistData);
+
+		input.setOwnerName(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
+
+		Integer currentLocalIbdbUserId = this.contextUtil.getCurrentUserLocalId();
+		input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
+		input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
+
+		input.setVisibleColumnMap(visibleColumns);
+
+		input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
+		return input;
 	}
 
 	private Map<Integer, Term> generateColumnStandardVariableMap(Map<String, Boolean> visibleColumnMap, Boolean isNursery) {
@@ -257,9 +278,8 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 		List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 		List<ImportedGermplasm> listData = this.getImportedGermplasm();
-
+		
 		for (ImportedGermplasm data : listData) {
-
 			Map<Integer, ExportColumnValue> row = new HashMap<>();
 
 			if (isNursery) {

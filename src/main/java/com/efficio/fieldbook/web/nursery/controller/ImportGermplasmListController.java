@@ -581,7 +581,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 				if (germplasmList != null && germplasmList.getListRef() != null) {
 					form.setLastDraggedPrimaryList(germplasmList.getListRef().toString());
-					mainInfo.setListId(germplasmList.getId());
+					//BMS-1419, set the id to the original list's id
+					mainInfo.setListId(germplasmList.getListRef());
 				}
 				List<ListDataProject> data = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
 				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);

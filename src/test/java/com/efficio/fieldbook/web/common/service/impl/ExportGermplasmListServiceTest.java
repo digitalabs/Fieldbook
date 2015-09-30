@@ -8,9 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Arrays;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
@@ -18,10 +21,15 @@ import org.generationcp.commons.service.ExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
+import org.generationcp.middleware.interfaces.GermplasmExportSource;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -29,7 +37,6 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
@@ -41,7 +48,6 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class ExportGermplasmListServiceTest {
 
 	private static final long LIST_DATE = 20141112L;
@@ -76,7 +82,6 @@ public class ExportGermplasmListServiceTest {
 	private static final String CHECK = "check";
 	private static final String ENTRY_NUMBER_STORAGE = "entryNoStorage";
 
-	private ExportGermplasmListServiceImpl exportGermplasmListService;
 	private String testFileName;
 
 	@Mock
@@ -93,44 +98,67 @@ public class ExportGermplasmListServiceTest {
 
 	@Mock
 	private GermplasmListManager germplasmListManager;
-
-	@InjectMocks
-	private ExportGermplasmListServiceImpl exportGermplasmListServiceOrigin;
-
+	
 	@Mock
 	private ExportService exportService;
+	
+	@Mock
+	private Workbook workbook;
+	
+	@Mock
+	private StudyDetails studyDetails;
+	
+	@Mock
+	private OntologyVariableDataManager ontologyVariableDataManager;
+	
+	@Mock
+	private ImportedGermplasmMainInfo importedGermplasmMainInfo;
+	
+	@Mock
+	private ImportedGermplasmList importedGermplasmList;
+	
+	@Mock
+	ListDataProject listDataProject;
+	
+	@Mock
+	GermplasmList germplasmList;
+	
+	@InjectMocks
+	private ExportGermplasmListServiceImpl exportGermplasmListServiceImpl;
 
 	@Before
 	public void setUp() throws MiddlewareException {
+		List<ImportedGermplasm> importedGermplasms = setUpImportedGermplasm();
+		
 
 		MockitoAnnotations.initMocks(this);
 
 		this.testFileName = "test.csv";
 
-		this.exportGermplasmListService = Mockito.spy(this.exportGermplasmListServiceOrigin);
 
-		Mockito.when(this.contextUtil.getCurrentUserLocalId()).thenReturn(ExportGermplasmListServiceTest.CURRENT_USER_ID);
+		Mockito.doReturn(ExportGermplasmListServiceTest.CURRENT_USER_ID).when(this.contextUtil).getCurrentUserLocalId();
 
-		Mockito.doReturn(this.generateImportedGermplasms()).when(this.exportGermplasmListService).getImportedGermplasm();
-
-		Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportGermplasmListServiceTest.ENTRY_NO))
-		.when(this.ontologyService).getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID());
-		Mockito.doReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportGermplasmListServiceTest.DESIGNATION))
-		.when(this.ontologyService).getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID());
-		Mockito.doReturn(this.createStandardVariable(TermId.GID.getId(), ExportGermplasmListServiceTest.GID)).when(this.ontologyService)
-		.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID());
-		Mockito.doReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportGermplasmListServiceTest.PARENTAGE))
-		.when(this.ontologyService).getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID());
-		Mockito.doReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportGermplasmListServiceTest.SEED_SOURCE))
-				.when(this.ontologyService).getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID());
-		Mockito.doReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportGermplasmListServiceTest.ENTRY_CODE))
-				.when(this.ontologyService).getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID());
-		Mockito.doReturn(
-				this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), ExportGermplasmListServiceTest.ENTRY_NUMBER_STORAGE))
-				.when(this.ontologyService)
-				.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID());
-		Mockito.doReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportGermplasmListServiceTest.CHECK))
-		.when(this.ontologyService).getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID());
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportGermplasmListServiceTest.ENTRY_NO));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportGermplasmListServiceTest.DESIGNATION));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportGermplasmListServiceTest.GID));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportGermplasmListServiceTest.PARENTAGE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportGermplasmListServiceTest.SEED_SOURCE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportGermplasmListServiceTest.ENTRY_CODE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), ExportGermplasmListServiceTest.ENTRY_NUMBER_STORAGE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportGermplasmListServiceTest.CHECK));
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(this.workbook);
+		Mockito.when(this.workbook.getStudyDetails()).thenReturn(this.studyDetails);
+		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(this.importedGermplasmMainInfo);
+		Mockito.when(this.importedGermplasmMainInfo.getImportedGermplasmList()).thenReturn(this.importedGermplasmList);
+		Mockito.when(this.importedGermplasmList.getImportedGermplasms()).thenReturn(importedGermplasms);
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 		Mockito.doReturn(this.getGermplasmList()).when(this.fieldbookMiddlewareService)
 				.getGermplasmListById(ExportGermplasmListServiceTest.LIST_ID);
@@ -138,6 +166,7 @@ public class ExportGermplasmListServiceTest {
 				.retrieveSnapshotListData(ExportGermplasmListServiceTest.LIST_ID);
 		Mockito.doReturn(ExportGermplasmListServiceTest.CURRENT_USER_NAME).when(this.fieldbookMiddlewareService)
 				.getOwnerListName(ExportGermplasmListServiceTest.CURRENT_USER_ID);
+		Mockito.doReturn("1010").when(this.fieldbookMiddlewareService).getOwnerListName(Matchers.anyInt());
 
 	}
 
@@ -145,7 +174,7 @@ public class ExportGermplasmListServiceTest {
 	public void testExportGermplasmListXLSForTrialManager() {
 
 		try {
-			this.exportGermplasmListService.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(), false);
+			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(), false);
 			Mockito.verify(this.exportService, Mockito.times(1)).generateGermplasmListExcelFile(
 					Matchers.any(GermplasmListExportInputValues.class));
 		} catch (GermplasmListExporterException e) {
@@ -158,7 +187,7 @@ public class ExportGermplasmListServiceTest {
 	public void testExportGermplasmListXLSForNurseryManager() {
 
 		try {
-			this.exportGermplasmListService.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(), true);
+			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(), true);
 			Mockito.verify(this.exportService, Mockito.times(1)).generateGermplasmListExcelFile(
 					Matchers.any(GermplasmListExportInputValues.class));
 		} catch (GermplasmListExporterException e) {
@@ -172,7 +201,7 @@ public class ExportGermplasmListServiceTest {
 
 		try {
 
-			this.exportGermplasmListService.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(), false);
+			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(), false);
 			Mockito.verify(this.exportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
 					Matchers.anyString());
 
@@ -189,7 +218,7 @@ public class ExportGermplasmListServiceTest {
 
 		try {
 
-			this.exportGermplasmListService.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(), true);
+			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(), true);
 			Mockito.verify(this.exportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
 					Matchers.anyString());
 		} catch (GermplasmListExporterException e) {
@@ -210,7 +239,7 @@ public class ExportGermplasmListServiceTest {
 	public void testGetExportColumnHeadersFromTableTrial() {
 
 		List<ExportColumnHeader> exportColumnHeaders =
-				this.exportGermplasmListService.getExportColumnHeadersFromTable(this.getVisibleColumnMap(), false);
+				this.exportGermplasmListServiceImpl.getExportColumnHeadersFromTable(this.getVisibleColumnMap(), false);
 
 		Assert.assertEquals(6, exportColumnHeaders.size());
 		Assert.assertTrue(exportColumnHeaders.get(0).isDisplay());
@@ -233,7 +262,7 @@ public class ExportGermplasmListServiceTest {
 	public void testGetExportColumnHeadersFromTableNursery() {
 
 		List<ExportColumnHeader> exportColumnHeaders =
-				this.exportGermplasmListService.getExportColumnHeadersFromTable(this.getVisibleColumnMap(), true);
+				this.exportGermplasmListServiceImpl.getExportColumnHeadersFromTable(this.getVisibleColumnMap(), true);
 
 		Assert.assertEquals(6, exportColumnHeaders.size());
 		Assert.assertTrue(exportColumnHeaders.get(0).isDisplay());
@@ -256,10 +285,12 @@ public class ExportGermplasmListServiceTest {
 	public void testGetExportColumnValuesFromTableTrial() {
 
 		List<Map<Integer, ExportColumnValue>> exportColumnValues =
-				this.exportGermplasmListService.getExportColumnValuesFromTable(this.getVisibleColumnMap(), false);
+				this.exportGermplasmListServiceImpl.getExportColumnValuesFromTable(this.getVisibleColumnMap(), false);
+		
 		Assert.assertEquals(1, exportColumnValues.size());
-
+		
 		Map<Integer, ExportColumnValue> row = exportColumnValues.get(0);
+		
 		Assert.assertEquals(ExportGermplasmListServiceTest.DESIG_VALUE, row.get(TermId.DESIG.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE, row.get(TermId.SEED_SOURCE.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE, row.get(TermId.ENTRY_CODE.getId()).getValue());
@@ -273,10 +304,12 @@ public class ExportGermplasmListServiceTest {
 	public void testGetExportColumnValuesFromTableNursery() {
 
 		List<Map<Integer, ExportColumnValue>> exportColumnValues =
-				this.exportGermplasmListService.getExportColumnValuesFromTable(this.getVisibleColumnMap(), false);
+				this.exportGermplasmListServiceImpl.getExportColumnValuesFromTable(this.getVisibleColumnMap(), false);
+		
 		Assert.assertEquals(1, exportColumnValues.size());
-
+		
 		Map<Integer, ExportColumnValue> row = exportColumnValues.get(0);
+		
 		Assert.assertEquals(ExportGermplasmListServiceTest.DESIG_VALUE, row.get(TermId.DESIG.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.SOURCE_VALUE, row.get(TermId.SEED_SOURCE.getId()).getValue());
 		Assert.assertEquals(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE, row.get(TermId.ENTRY_CODE.getId()).getValue());
@@ -299,7 +332,7 @@ public class ExportGermplasmListServiceTest {
 
 		settingDetail.setPossibleValues(possibleValues);
 
-		String categValue = this.exportGermplasmListService.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
+		String categValue = this.exportGermplasmListServiceImpl.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
 
 		Assert.assertEquals(ExportGermplasmListServiceTest.CATEG_CODE_VALUE, categValue);
 
@@ -310,19 +343,51 @@ public class ExportGermplasmListServiceTest {
 		SettingDetail settingDetail = this.generateSettingDetail(TermId.CHECK.getId());
 		settingDetail.setPossibleValues(null);
 
-		String categValue = this.exportGermplasmListService.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
+		String categValue = this.exportGermplasmListServiceImpl.getCategoricalCodeValue(this.generateImportedGermplasm(), settingDetail);
 
 		Assert.assertEquals(ExportGermplasmListServiceTest.CHECK_VALUE, categValue);
 	}
 
-	private List<ImportedGermplasm> generateImportedGermplasms() {
-
-		List<ImportedGermplasm> importedGermplasms = new ArrayList<>();
-		importedGermplasms.add(this.generateImportedGermplasm());
-
-		return importedGermplasms;
+	@Test
+	public void testSetUpForInputWhereGemplasmListTypeIsNursery(){
+		List<ListDataProject> listData = Arrays.asList(listDataProject);
+		List<GermplasmList> germplasmLists = Arrays.asList(germplasmList);
+		
+		Mockito.when(this.germplasmListManager.retrieveSnapshotListData(Matchers.anyInt()))
+				.thenReturn(listData);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(), Matchers.eq(GermplasmListType.NURSERY)))
+				.thenReturn(germplasmLists);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt()))
+				.thenReturn(germplasmList);
+		
+		//Assert
+		GermplasmListExportInputValues input = this.exportGermplasmListServiceImpl.setUpInput(this.testFileName, 80,this.getVisibleColumnMap(), true);
+		Assert.assertEquals("The visible colum maps should be" + this.getVisibleColumnMap(), this.getVisibleColumnMap(), input.getVisibleColumnMap());
+		Assert.assertEquals("The germplasm list should be " + germplasmList, germplasmList, input.getGermplasmList());
+		Assert.assertEquals("The germplasm list data should be " + listData, listData, input.getListData());
 	}
-
+	
+	
+	@Test
+	public void testSetUpForInputWhereGemplasmListTypeIsTrial(){
+		List<ListDataProject> listData = Arrays.asList(listDataProject);
+		List<GermplasmList> germplasmLists = Arrays.asList(germplasmList);
+		
+		
+		Mockito.when(this.germplasmListManager.retrieveSnapshotListData(Matchers.anyInt()))
+				.thenReturn(listData);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Matchers.anyInt(), Matchers.eq(GermplasmListType.TRIAL)))
+				.thenReturn(germplasmLists);
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt()))
+				.thenReturn(germplasmList);
+		
+		//Assert
+		GermplasmListExportInputValues input = this.exportGermplasmListServiceImpl.setUpInput(this.testFileName, 80,this.getVisibleColumnMap(), false);
+		Assert.assertEquals("The visible colum maps should be" + this.getVisibleColumnMap(), this.getVisibleColumnMap(), input.getVisibleColumnMap());
+		Assert.assertEquals("The germplasm list should be " + germplasmList, germplasmList, input.getGermplasmList());
+		Assert.assertEquals("The germplasm list data should be " + listData, listData, input.getListData());
+	}
+	
 	private ImportedGermplasm generateImportedGermplasm() {
 
 		ImportedGermplasm importedGermplasm = new ImportedGermplasm();
@@ -440,5 +505,20 @@ public class ExportGermplasmListServiceTest {
 		listData.add(data);
 		return listData;
 	}
+	
 
+	private List<ImportedGermplasm> setUpImportedGermplasm() {
+		List<ImportedGermplasm> importedGermplasms = new ArrayList<>();
+		ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+		
+		importedGermplasm.setGid(ExportGermplasmListServiceTest.GID_VALUE);
+		importedGermplasm.setEntryCode(ExportGermplasmListServiceTest.ENTRY_CODE_VALUE);
+		importedGermplasm.setEntryId((Integer) 1);
+		importedGermplasm.setSource(ExportGermplasmListServiceTest.SOURCE_VALUE);
+		importedGermplasm.setCross(ExportGermplasmListServiceTest.CROSS_VALUE);
+		importedGermplasm.setDesig(ExportGermplasmListServiceTest.DESIG_VALUE);
+		importedGermplasms.add(importedGermplasm);
+		
+		return importedGermplasms;
+	}
 }

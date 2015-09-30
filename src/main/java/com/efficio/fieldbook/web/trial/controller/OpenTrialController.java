@@ -203,7 +203,7 @@ public class OpenTrialController extends BaseTrialController {
 				form.setMeasurementDataExisting(this.fieldbookMiddlewareService.checkIfStudyHasMeasurementData(
 						trialWorkbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(trialWorkbook.getVariates())));
 				form.setStudyId(trialId);
-
+				
 				this.setModelAttributes(form, trialId, model, trialWorkbook);
 				this.setUserSelectionImportedGermplasmMainInfo(trialId, model);
 			}
@@ -232,7 +232,8 @@ public class OpenTrialController extends BaseTrialController {
 				ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 				importedGermplasmList.setImportedGermplasms(list);
 				ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-				mainInfo.setListId(germplasmList.getId());
+				//BMS-1419, set the id to the original list's id
+			    mainInfo.setListId(germplasmList.getListRef());
 				mainInfo.setAdvanceImportType(true);
 				mainInfo.setImportedGermplasmList(importedGermplasmList);
 				this.userSelection.setImportedGermplasmMainInfo(mainInfo);

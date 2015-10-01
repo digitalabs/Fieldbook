@@ -292,6 +292,17 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		return variable.getRole();
 	}
 
+	/**
+	 * This will write condition variables (i.e. trial instance, setting variables, and experimental design type)
+	 * to the condition section of a fieldbook excel description sheet
+	 * @param currentRowNum
+	 * @param xlsBook
+	 * @param xlsSheet
+	 * @param conditions
+	 * @param trialObservation
+	 * @param workbook
+	 * @return
+	 */
 	private int writeConditions(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet,
 			List<MeasurementVariable> conditions, MeasurementRow trialObservation, Workbook workbook) {
 		List<MeasurementVariable> arrangedConditions = new ArrayList<MeasurementVariable>();
@@ -330,6 +341,17 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				"export.study.description.column.condition", 51, 153, 102);
 	}
 
+	/**
+	 * This will write factor variables (i.e. germplasm descriptor variables and fieldmap) to the factor section of
+	 * a fieldbook excel description sheet
+	 * @param currentRowNum
+	 * @param xlsBook
+	 * @param xlsSheet
+	 * @param factors
+	 * @param visibleColumns
+	 * @param workbook
+	 * @return
+	 */
 	private int writeFactors(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet,
 			List<MeasurementVariable> factors, List<Integer> visibleColumns, Workbook workbook) {
 		List<MeasurementVariable> filteredFactors = new ArrayList<MeasurementVariable>();
@@ -344,6 +366,16 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				"export.study.description.column.factor", 51, 153, 102);
 	}
 
+	/**
+	 * This will write constant variables (i.e. trial condition) to the constant section of a fieldbook excel description sheet
+	 * @param currentRowNum
+	 * @param xlsBook
+	 * @param xlsSheet
+	 * @param constants
+	 * @param trialObservation
+	 * @param workbook
+	 * @return
+	 */
 	private int writeConstants(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet,
 			List<MeasurementVariable> constants, MeasurementRow trialObservation, Workbook workbook) {
 
@@ -359,6 +391,16 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				"export.study.description.column.constant", 51, 51, 153);
 	}
 
+	/**
+	 * This will write variates (i.e. trait variables) to the variates section of a fieldbook excel description sheet
+	 * @param currentRowNum
+	 * @param xlsBook
+	 * @param xlsSheet
+	 * @param variates
+	 * @param visibleColumns
+	 * @param workbook
+	 * @return
+	 */
 	private int writeVariates(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet,
 			List<MeasurementVariable> variates, List<Integer> visibleColumns, Workbook workbook) {
 

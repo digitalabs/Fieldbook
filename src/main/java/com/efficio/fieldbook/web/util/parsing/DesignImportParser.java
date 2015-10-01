@@ -23,7 +23,7 @@ public class DesignImportParser extends AbstractCsvFileParser<DesignImportData> 
 		return data;
 	}
 
-	private List<DesignHeaderItem> createDesignHeaders(List<String> headers) {
+	protected List<DesignHeaderItem> createDesignHeaders(List<String> headers) {
 		List<DesignHeaderItem> list = new ArrayList<>();
 		int columnIndex = 0;
 		for (String headerName : headers) {

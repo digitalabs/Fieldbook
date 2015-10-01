@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -21,11 +24,15 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.interfaces.GermplasmExportSource;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.manager.ontology.daoElements.VariableFilter;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -35,18 +42,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
-
 @Configurable
 public class ExportGermplasmListServiceImpl implements ExportGermplasmListService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExportGermplasmListServiceImpl.class);
-	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 
 	@Resource
 	private OntologyService ontologyService;
+
+	@Resource
+	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -102,7 +107,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 			input.setVisibleColumnMap(visibleColumns);
 
-			input.setColumnStandardVariableMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
+			input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
 
 			this.exportService.generateGermplasmListExcelFile(input);
 
@@ -112,26 +117,36 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 	}
 
-	private Map<Integer, StandardVariable> generateColumnStandardVariableMap(Map<String, Boolean> visibleColumnMap, Boolean isNursery) {
+	private Map<Integer, Term> generateColumnStandardVariableMap(Map<String, Boolean> visibleColumnMap, Boolean isNursery) {
 
-		Map<Integer, StandardVariable> standardVariableMap = new HashMap<>();
+		Map<Integer, Term> standardVariableMap = new HashMap<>();
 		if (isNursery) {
 
-			this.addStandardVariableToMap(standardVariableMap, TermId.ENTRY_NO.getId());
-			this.addStandardVariableToMap(standardVariableMap, TermId.DESIG.getId());
-			this.addStandardVariableToMap(standardVariableMap, TermId.GID.getId());
-			this.addStandardVariableToMap(standardVariableMap, TermId.CROSS.getId());
-			this.addStandardVariableToMap(standardVariableMap, TermId.SEED_SOURCE.getId());
-			this.addStandardVariableToMap(standardVariableMap, TermId.ENTRY_CODE.getId());
+			VariableFilter filter = new VariableFilter();
+			filter.addVariableId(TermId.ENTRY_NO.getId());
+			filter.addVariableId(TermId.DESIG.getId());
+			filter.addVariableId(TermId.GID.getId());
+			filter.addVariableId(TermId.CROSS.getId());
+			filter.addVariableId(TermId.SEED_SOURCE.getId());
+			filter.addVariableId(TermId.ENTRY_CODE.getId());
+			filter.setProgramUuid(this.contextUtil.getCurrentProgramUUID());
+
+			List<Variable> variableList = this.ontologyVariableDataManager.getWithFilter(filter);
+
+			for (Variable variable : variableList) {
+				standardVariableMap.put(variable.getId(), variable);
+			}
 
 		} else {
 			if (this.userSelection.getPlotsLevelList() != null) {
 				for (SettingDetail settingDetail : this.userSelection.getPlotsLevelList()) {
 					Boolean isVisible = visibleColumnMap.get(settingDetail.getVariable().getCvTermId().toString());
 					if (!settingDetail.isHidden() && isVisible != null && isVisible) {
-						this.addStandardVariableToMap(standardVariableMap, settingDetail.getVariable().getCvTermId());
+						Integer variableId = settingDetail.getVariable().getCvTermId();
+						Variable variable =
+								this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, false);
+						standardVariableMap.put(variableId, variable);
 					}
-
 				}
 			}
 		}
@@ -139,20 +154,10 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		return standardVariableMap;
 	}
 
-	private void addStandardVariableToMap(Map<Integer, StandardVariable> standardVariableMap, int standardVariableId) {
-		StandardVariable standardVariable;
-		try {
-			standardVariable = this.ontologyService.getStandardVariable(standardVariableId, PROGRAM_UUID);
-			standardVariableMap.put(standardVariable.getId(), standardVariable);
-		} catch (MiddlewareQueryException e) {
-			LOG.error(e.getMessage(), e);
-		}
-	}
-
 	protected List<ValueReference> getPossibleValues(List<SettingDetail> settingDetails, int termId) {
 
 		for (SettingDetail settingDetail : settingDetails) {
-			if (settingDetail.getVariable().getCvTermId().intValue() == termId) {
+			if (Objects.equals(settingDetail.getVariable().getCvTermId(), termId)) {
 				return settingDetail.getPossibleValues();
 			}
 		}

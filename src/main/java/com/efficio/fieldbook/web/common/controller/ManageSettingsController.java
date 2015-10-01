@@ -181,7 +181,8 @@ public class ManageSettingsController extends SettingsController {
 	public String getOntologyDetails(@PathVariable int variableTypeId, @PathVariable int variableId, Model model,
 			@ModelAttribute("variableDetails") OntologyDetailsForm variableDetails) {
 		try {
-			Variable ontologyVariable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), variableId);
+			Variable ontologyVariable =
+					this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true);
 
 			if (!Objects.equals(ontologyVariable, null)) {
 				variableDetails.setVariable(ontologyVariable);
@@ -199,7 +200,7 @@ public class ManageSettingsController extends SettingsController {
 	public String getOntologyUsageDetails(@PathVariable Integer variableId, @PathVariable Integer variableTypeId,
 			@ModelAttribute("variableDetails") OntologyDetailsForm form, Model model) {
 		try {
-			Variable variable = ontologyVariableDataManager.getVariable(contextUtil.getCurrentProgramUUID(), variableId);
+			Variable variable = this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true);
 
 			if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
 				form.setProjectCount(ontologyService.countProjectsByVariable(variableId));

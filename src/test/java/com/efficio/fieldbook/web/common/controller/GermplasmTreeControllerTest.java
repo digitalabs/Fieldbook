@@ -147,16 +147,16 @@ public class GermplasmTreeControllerTest {
 	}
 
 	private Project getProject() {
-		Project project = new Project();
+		final Project project = new Project();
 		project.setProjectId((long) 1);
 		return project;
 	}
 
 	@Test
 	public void testSaveAdvanceListPostSuccessful() {
-		PaginationListSelection paginationListSelection = new PaginationListSelection();
+		final PaginationListSelection paginationListSelection = new PaginationListSelection();
 		paginationListSelection.addAdvanceDetails(GermplasmTreeControllerTest.LIST_IDENTIFIER, this.createAdvancingNurseryForm());
-		
+
 		this.form = new SaveListForm();
 		this.form.setListName(GermplasmTreeControllerTest.LIST_NAME);
 		this.form.setListDate(GermplasmTreeControllerTest.LIST_DATE);
@@ -166,11 +166,11 @@ public class GermplasmTreeControllerTest {
 		this.form.setListType(GermplasmTreeControllerTest.LIST_TYPE);
 		this.form.setParentId(GermplasmTreeControllerTest.LIST_PARENT_ID);
 		this.form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE);
-		
+
 		this.controller.setPaginationListSelection(paginationListSelection);
-		
+
 		final Map<String, Object> result = this.controller.savePost(this.form, Mockito.mock(Model.class), Mockito.mock(HttpSession.class));
-		
+
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("advancedGermplasmListId should be 2", 2, result.get("advancedGermplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", this.form.getListIdentifier(), result.get("uniqueId"));

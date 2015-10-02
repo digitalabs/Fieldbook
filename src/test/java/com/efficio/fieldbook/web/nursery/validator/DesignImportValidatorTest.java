@@ -10,9 +10,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
 import org.junit.Before;
@@ -23,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
@@ -305,127 +302,6 @@ public class DesignImportValidatorTest {
 
 		}
 
-	}
-
-	@Test(expected = DesignValidationException.class)
-	public void testIsPartOfValidValuesForCategoricalVariableWithoutPossibleValue() throws NoSuchMessageException,
-			DesignValidationException {
-		final String nonValidValue = "10";
-		final StandardVariable categoricalVariable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, DesignImportDataInitializer.AFLAVER_5_ID,
-						"AflavER_1_5", "", "", "", DesignImportDataInitializer.CATEGORICAL_VARIABLE, "C", "", "");
-		categoricalVariable.setEnumerations(null);
-
-		this.designImportValidator.isPartOfValidValuesForCategoricalVariable(nonValidValue, categoricalVariable);
-		Assert.fail("Expecting to throw an exception when the categorical variable has no possible values.");
-
-	}
-
-	@Test
-	public void testIsPartOfValidValuesForCategoricalVariableForNonPossibleValue() throws NoSuchMessageException, DesignValidationException {
-		final String nonValidValue = "11";
-		final StandardVariable categoricalVariable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, DesignImportDataInitializer.AFLAVER_5_ID,
-						"AflavER_1_5", "", "", "", DesignImportDataInitializer.CATEGORICAL_VARIABLE, "C", "", "");
-		categoricalVariable.setEnumerations(DesignImportDataInitializer.createPossibleValues(10));
-
-		Assert.assertFalse("Expecting to return false when the input is not part of the valid values of the categorical variable.",
-				this.designImportValidator.isPartOfValidValuesForCategoricalVariable(nonValidValue, categoricalVariable));
-
-	}
-
-	@Test
-	public void testIsPartOfValidValuesForCategoricalVariableForAPossibleValue() throws NoSuchMessageException, DesignValidationException {
-		final String nonValidValue = "10";
-		final StandardVariable categoricalVariable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, DesignImportDataInitializer.AFLAVER_5_ID,
-						"AflavER_1_5", "", "", "", DesignImportDataInitializer.CATEGORICAL_VARIABLE, "C", "", "");
-		categoricalVariable.setEnumerations(DesignImportDataInitializer.createPossibleValues(10));
-
-		Assert.assertTrue("Expecting to return true when the input is part of the valid values of the categorical variable.",
-				this.designImportValidator.isPartOfValidValuesForCategoricalVariable(nonValidValue, categoricalVariable));
-
-	}
-
-	@Test
-	public void testIsNumericValueWithinTheRangeReturnsFalseForValuesBeyondRange() {
-
-		final StandardVariable variable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
-						DesignImportDataInitializer.NUMERIC_VARIABLE, "N", "", "");
-		final Scale numericScale = new Scale();
-		numericScale.setMinValue("1");
-		numericScale.setMaxValue("100");
-		variable.setScale(numericScale);
-
-		String valueToValidate = "123";
-		Assert.assertFalse("Expecting a false to return for a value greater than the maximum value.",
-				this.designImportValidator.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
-
-		valueToValidate = "0";
-		Assert.assertFalse("Expecting a false to return for a value lesser than the minimum value.",
-				this.designImportValidator.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
-
-	}
-
-	@Test
-	public void testIsNumericValueWithinTheRangeReturnsFalseForValuesWithinTheRange() {
-
-		final StandardVariable variable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
-						DesignImportDataInitializer.NUMERIC_VARIABLE, "N", "", "");
-		final Scale numericScale = new Scale();
-		numericScale.setMinValue("1");
-		numericScale.setMaxValue("100");
-		variable.setScale(numericScale);
-
-		String valueToValidate = "100";
-		Assert.assertTrue("Expecting a true to return for a value equal to the maximum value.",
-				this.designImportValidator.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
-
-		valueToValidate = "1";
-		Assert.assertTrue("Expecting a true to return for a value equal to the minimum value.",
-				this.designImportValidator.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
-
-		valueToValidate = "50";
-		Assert.assertTrue("Expecting a true to return for a value within the range.",
-				this.designImportValidator.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
-
-	}
-
-	@Test
-	public void testIsNumericValueWithinTheRangeReturnsTrueWhenTheScaleOfStandardVariableHasNoSpecifiedRange() {
-
-		final StandardVariable variable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
-						DesignImportDataInitializer.NUMERIC_VARIABLE, "N", "", "");
-		final Scale numericScale = new Scale();
-		variable.setScale(numericScale);
-
-		final String valueToValidate = "100";
-		Assert.assertTrue("Expecting to return true when the scale of the numeric variable has no specified range.",
-				this.designImportValidator.isNumericValueWithinTheRange(valueToValidate, variable, numericScale));
-
-	}
-
-	@Test
-	public void testIsValidNumericValueForNumericVariable() {
-		final StandardVariable variable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
-						DesignImportDataInitializer.NUMERIC_VARIABLE, "N", "", "");
-		final Scale numericScale = new Scale();
-		numericScale.setMinValue("1");
-		numericScale.setMaxValue("100");
-		variable.setScale(numericScale);
-
-		// checking if the input is a number
-		String valueToValidate = "no0";
-		Assert.assertFalse("Expected to return false for non-numeric input.",
-				this.designImportValidator.isValidNumericValueForNumericVariable(valueToValidate, variable, numericScale));
-
-		valueToValidate = "10";
-		Assert.assertTrue("Expected to return true for numeric input that is within the range of possible values of the numeric variable.",
-				this.designImportValidator.isValidNumericValueForNumericVariable(valueToValidate, variable, numericScale));
 	}
 
 	@Test

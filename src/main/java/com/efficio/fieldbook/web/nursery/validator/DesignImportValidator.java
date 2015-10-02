@@ -13,9 +13,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.Term;
@@ -233,46 +231,11 @@ public class DesignImportValidator {
 		for (final Map.Entry<Integer, List<String>> row : csvRowData.entrySet()) {
 			final List<String> columnValues = row.getValue();
 			final String valueToValidate = columnValues.get(columnIndex);
-			if (!this.isValidNumericValueForNumericVariable(valueToValidate, standardVariable, numericScale)) {
+			if (!NumericVariableValidator.isValidNumericValueForNumericVariable(valueToValidate, standardVariable, numericScale)) {
 				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
 						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
 			}
 		}
-	}
-
-	/**
-	 * Returns true if the input is an valid number and within the specified range of the numeric variable.
-	 * 
-	 * @param valueToValidate
-	 * @param variable
-	 * @param numericScale
-	 * @return
-	 */
-	boolean isValidNumericValueForNumericVariable(final String valueToValidate, final StandardVariable variable, final Scale numericScale) {
-
-		if (!NumberUtils.isNumber(valueToValidate)) {
-			return false;
-		}
-
-		if (!this.isNumericValueWithinTheRange(valueToValidate, variable, numericScale)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	boolean isNumericValueWithinTheRange(final String valueToValidate, final StandardVariable variable, final Scale numericScale) {
-		if (numericScale != null && numericScale.getMinValue() != null && numericScale.getMaxValue() != null) {
-			final Double minValue = Double.valueOf(numericScale.getMinValue());
-			final Double maxValue = Double.valueOf(numericScale.getMaxValue());
-
-			final Double currentValue = Double.valueOf(valueToValidate);
-			if (!(currentValue >= minValue && currentValue <= maxValue)) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	void validateValuesForCategoricalVariables(final Map<Integer, List<String>> csvRowData, final Integer columnIndex,
@@ -281,30 +244,17 @@ public class DesignImportValidator {
 			final List<String> columnValues = row.getValue();
 			final String valueToValidate = columnValues.get(columnIndex);
 
-			if (!this.isPartOfValidValuesForCategoricalVariable(valueToValidate, standardVariable)) {
+			// categorical variables are expected to have possible values, otherwise this will cause data error
+			if (!CategoricalVariableValidator.hasPossibleValues(standardVariable)) {
+				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.no.valid.values", null,
+						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
+			}
+
+			if (!CategoricalVariableValidator.isPartOfValidValuesForCategoricalVariable(valueToValidate, standardVariable)) {
 				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
 						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
 			}
 		}
-	}
-
-	boolean isPartOfValidValuesForCategoricalVariable(final String categoricalValue, final StandardVariable categoricalVariable)
-			throws DesignValidationException {
-		final List<Enumeration> possibleValues = categoricalVariable.getEnumerations();
-
-		// categorical variables are expected to have possible values, otherwise this will cause data error
-		if (possibleValues == null || possibleValues.isEmpty()) {
-			throw new DesignValidationException(
-					(this.messageSource.getMessage("design.import.error.no.valid.values", null, Locale.ENGLISH)).replace("{0}",
-							categoricalVariable.getName()));
-		}
-
-		for (final Enumeration possibleValue : possibleValues) {
-			if (categoricalValue.equalsIgnoreCase(possibleValue.getName())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

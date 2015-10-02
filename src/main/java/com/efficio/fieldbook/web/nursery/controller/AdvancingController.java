@@ -255,8 +255,9 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		Map<String, String> result = new HashMap<>();
 
 		try {
-			List<Long> locationsIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationsIds);
+			List<Integer> locationsIds =
+					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
+			List<Location> faveLocations = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
 			List<Location> allBreedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();
 			List<Location> allSeedStorageLocations = this.fieldbookMiddlewareService.getAllSeedLocations();
 			result.put(AdvancingController.SUCCESS, "1");

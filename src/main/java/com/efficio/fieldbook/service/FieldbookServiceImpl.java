@@ -390,9 +390,9 @@ public class FieldbookServiceImpl implements FieldbookService {
 			possibleValuesFavorite.addAll(this.getFavoriteBreedingMethods(methodIds, false));
 
 		} else if (DataType.LOCATION.equals(dataType)) {
-			List<Long> locationIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID);
+			List<Integer> locationIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(programUUID);
 			possibleValuesFavorite =
-					this.convertLocationsToValueReferences(this.fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationIds));
+					this.convertLocationsToValueReferences(this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationIds));
 		}
 		return possibleValuesFavorite;
 	}

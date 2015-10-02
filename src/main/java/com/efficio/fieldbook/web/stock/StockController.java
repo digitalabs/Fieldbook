@@ -124,8 +124,9 @@ public class StockController extends AbstractBaseFieldbookController {
 	public List<Location> getFavoriteLocationList() {
 		try {
 
-			List<Long> locationsIds = this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-			return this.fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationsIds);
+			List<Integer> locationsIds =
+					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
+			return this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
 		} catch (MiddlewareQueryException e) {
 			StockController.LOG.error(e.getMessage(), e);
 		}

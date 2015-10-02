@@ -56,21 +56,19 @@ public class ImportStudyControllerTest {
 	private Workbook workbook;
 
 	@InjectMocks
-	private final ImportStudyController _importStudyController = new ImportStudyController();
-
-	private ImportStudyController importStudyController;
+	private final ImportStudyController unitUnderTest = new ImportStudyController();
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		this.importStudyController = Mockito.spy(this._importStudyController);
+
 	}
 
 	@Test
 	public void testValidateImportFile_ForFieldroid_FileIsCSV() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
 		Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
 	}
@@ -79,7 +77,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForFieldroid_FileIsNotCSV() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
 		Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
 	}
@@ -88,7 +86,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForDataKapture_FileIsCSV() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
 		Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
 	}
@@ -97,7 +95,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForDataKapture_FileIsNotCSV() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
 		Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
 	}
@@ -106,7 +104,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForExcel_FileIsXLSX() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLSX);
 		Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
 	}
@@ -115,7 +113,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForExcel_FileIsXLS() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
 		Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
 	}
@@ -124,7 +122,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForExcel_FileIsNotXLS() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
 		Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
 	}
@@ -133,7 +131,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForKsuExcel_FileIsXLS() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
 		Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
 	}
@@ -142,7 +140,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForKsuExcel_FileIsXLSX() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLSX);
 		Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
 	}
@@ -151,7 +149,7 @@ public class ImportStudyControllerTest {
 	public void testValidateImportFile_ForKsuExcel_FileIsNotXLS() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
 		Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
-		this.importStudyController.validateImportFile(this.file, this.result, importType);
+		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
 	}
@@ -162,12 +160,11 @@ public class ImportStudyControllerTest {
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV).when(this.fileService).saveTemporaryFile(this.inputStream);
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV).when(this.fileService)
 				.getFilePath(ImportStudyControllerTest.SAMPLE_FILE_CSV);
+		Mockito.doReturn(".csv").when(this.file).getOriginalFilename();
 		Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
 
-		Mockito.doNothing().when(this.importStudyController).validateImportFile(this.file, this.result, importType);
-
 		this.workbook = WorkbookDataUtil.getTestWorkbook(ImportStudyControllerTest.NO_OF_OBSERVATION, StudyType.N);
-		this.importStudyController.importWorkbookByType(this.file, this.result, this.workbook, importType);
+		this.unitUnderTest.importWorkbookByType(this.file, this.result, this.workbook, importType);
 
 		Mockito.verify(this.fieldroidImportStudyService, Mockito.times(1)).importWorkbook(this.workbook,
 				ImportStudyControllerTest.SAMPLE_FILE_CSV, this.ontologyService, this.fieldbookMiddlewareService);
@@ -179,12 +176,11 @@ public class ImportStudyControllerTest {
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS).when(this.fileService).saveTemporaryFile(this.inputStream);
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS).when(this.fileService)
 				.getFilePath(ImportStudyControllerTest.SAMPLE_FILE_XLS);
+		Mockito.doReturn(".xls").when(this.file).getOriginalFilename();
 		Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
 
-		Mockito.doNothing().when(this.importStudyController).validateImportFile(this.file, this.result, importType);
-
 		this.workbook = WorkbookDataUtil.getTestWorkbook(ImportStudyControllerTest.NO_OF_OBSERVATION, StudyType.N);
-		this.importStudyController.importWorkbookByType(this.file, this.result, this.workbook, importType);
+		this.unitUnderTest.importWorkbookByType(this.file, this.result, this.workbook, importType);
 
 		Mockito.verify(this.excelImportStudyService, Mockito.times(1)).importWorkbook(this.workbook,
 				ImportStudyControllerTest.SAMPLE_FILE_XLS, this.ontologyService, this.fieldbookMiddlewareService);
@@ -196,12 +192,11 @@ public class ImportStudyControllerTest {
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV).when(this.fileService).saveTemporaryFile(this.inputStream);
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV).when(this.fileService)
 				.getFilePath(ImportStudyControllerTest.SAMPLE_FILE_CSV);
+		Mockito.doReturn(".csv").when(this.file).getOriginalFilename();
 		Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
 
-		Mockito.doNothing().when(this.importStudyController).validateImportFile(this.file, this.result, importType);
-
 		this.workbook = WorkbookDataUtil.getTestWorkbook(ImportStudyControllerTest.NO_OF_OBSERVATION, StudyType.N);
-		this.importStudyController.importWorkbookByType(this.file, this.result, this.workbook, importType);
+		this.unitUnderTest.importWorkbookByType(this.file, this.result, this.workbook, importType);
 
 		Mockito.verify(this.dataKaptureImportStudyService, Mockito.times(1)).importWorkbook(this.workbook,
 				ImportStudyControllerTest.SAMPLE_FILE_CSV, this.ontologyService, this.fieldbookMiddlewareService);
@@ -213,12 +208,12 @@ public class ImportStudyControllerTest {
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS).when(this.fileService).saveTemporaryFile(this.inputStream);
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS).when(this.fileService)
 				.getFilePath(ImportStudyControllerTest.SAMPLE_FILE_XLS);
+
+		Mockito.doReturn(".xls").when(this.file).getOriginalFilename();
 		Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
 
-		Mockito.doNothing().when(this.importStudyController).validateImportFile(this.file, this.result, importType);
-
 		this.workbook = WorkbookDataUtil.getTestWorkbook(ImportStudyControllerTest.NO_OF_OBSERVATION, StudyType.N);
-		this.importStudyController.importWorkbookByType(this.file, this.result, this.workbook, importType);
+		this.unitUnderTest.importWorkbookByType(this.file, this.result, this.workbook, importType);
 
 		Mockito.verify(this.ksuExcelImportStudyService, Mockito.times(1)).importWorkbook(this.workbook,
 				ImportStudyControllerTest.SAMPLE_FILE_XLS, this.ontologyService, this.fieldbookMiddlewareService);

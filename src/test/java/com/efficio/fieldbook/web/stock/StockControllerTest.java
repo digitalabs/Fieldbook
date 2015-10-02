@@ -16,7 +16,6 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.ListDataProject;
-import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -85,14 +84,14 @@ public class StockControllerTest {
 
 	@Test
 	public void testGetFavoriteLocationList() throws MiddlewareQueryException {
-		List<Long> locationsIds = new ArrayList<Long>();
-		locationsIds.add(new Long(1));
+		List<Integer> locationsIds = new ArrayList<>();
+		locationsIds.add(1);
 		Mockito.when(this.fiedbookService.getFavoriteProjectLocationIds(Matchers.anyString())).thenReturn(locationsIds);
 
 		this.dut.getFavoriteLocationList();
 
 		Mockito.verify(this.fiedbookService, Mockito.times(1)).getFavoriteProjectLocationIds(Matchers.anyString());
-		Mockito.verify(this.fiedbookService, Mockito.times(1)).getFavoriteLocationByProjectId(locationsIds);
+		Mockito.verify(this.fiedbookService, Mockito.times(1)).getFavoriteLocationByLocationIDs(locationsIds);
 	}
 
 	@Test

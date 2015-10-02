@@ -2,12 +2,9 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.parsing.pojo.ImportedCrosses;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
@@ -28,7 +25,6 @@ import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -37,7 +33,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.mockito.exceptions.verification.TooLittleActualInvocations;
 
-@Ignore(value ="BMS-1571. Ignoring temporarily. Please fix the failures and remove @Ignore.")
 public class CrossingServiceImplTest {
 
 	private static final int BREEDING_METHOD_ID = 1;
@@ -73,7 +68,7 @@ public class CrossingServiceImplTest {
 		this.crossingService.setContextUtil(this.contextUtil);
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
-		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyMap());
+		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(Matchers.anyList());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByName(Matchers.anyString());
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
@@ -145,16 +140,16 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToTrue() {
-		Map<Germplasm, Name> germplasmToBeSaved = new HashMap<Germplasm, Name>();
-		Mockito.doReturn(germplasmToBeSaved)
+		List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		Mockito.doReturn(germplasmPairs)
 				.when(this.crossingService)
-				.generateGermplasmNameMap(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
+				.generateGermplasmNamePairs(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
 						CrossingServiceImplTest.USER_ID, this.importedCrossesList.hasPlotDuplicate());
 
 		List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
-		Mockito.doReturn(savedGermplasmIds).when(this.crossingService).saveGermplasm(germplasmToBeSaved);
+		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
 		Mockito.doNothing().when(this.crossingService)
 				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
@@ -175,16 +170,16 @@ public class CrossingServiceImplTest {
 
 	@Test
 	public void testApplyCrossSetting_WhenSavingOfParentageDesignationNameIsSetToFalse() {
-		Map<Germplasm, Name> germplasmToBeSaved = new HashMap<Germplasm, Name>();
-		Mockito.doReturn(germplasmToBeSaved)
+		List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		Mockito.doReturn(germplasmPairs)
 				.when(this.crossingService)
-				.generateGermplasmNameMap(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
+				.generateGermplasmNamePairs(this.crossSetting, this.importedCrossesList.getImportedCrosses(),
 						CrossingServiceImplTest.USER_ID, this.importedCrossesList.hasPlotDuplicate());
 
 		List<Integer> savedGermplasmIds = new ArrayList<Integer>();
 		savedGermplasmIds.add(1);
 		savedGermplasmIds.add(2);
-		Mockito.doReturn(savedGermplasmIds).when(this.crossingService).saveGermplasm(germplasmToBeSaved);
+		Mockito.doReturn(savedGermplasmIds).when(this.germplasmDataManager).addGermplasm(germplasmPairs);
 
 		Mockito.doNothing().when(this.crossingService)
 				.savePedigreeDesignationName(this.importedCrossesList, savedGermplasmIds, this.crossSetting);
@@ -323,7 +318,7 @@ public class CrossingServiceImplTest {
 	}
 
 	@Test
-	public void testGenerateGermplasmNameMap() throws MiddlewareQueryException {
+	public void testGenerateGermplasmNamePairs() throws MiddlewareQueryException {
 
 		CrossSetting crossSetting = new CrossSetting();
 		CrossNameSetting crossNameSetting = this.createCrossNameSetting();
@@ -333,17 +328,16 @@ public class CrossingServiceImplTest {
 		crossSetting.setBreedingMethodSetting(breedingMethodSetting);
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
-		Map<Germplasm, Name> germplasmNameMap =
-				this.crossingService.generateGermplasmNameMap(crossSetting, this.importedCrossesList.getImportedCrosses(),
+		List<Pair<Germplasm, Name>> germplasmPairs =
+				this.crossingService.generateGermplasmNamePairs(crossSetting, this.importedCrossesList.getImportedCrosses(),
 						CrossingServiceImplTest.USER_ID, false);
 
-		Iterator<Entry<Germplasm, Name>> iterator = germplasmNameMap.entrySet().iterator();
-		Entry<Germplasm, Name> entry1 = iterator.next();
-		Germplasm germplasm1 = entry1.getKey();
-		Name name1 = entry1.getValue();
+		Pair<Germplasm, Name> germplasmNamePair = germplasmPairs.get(0);
+		Germplasm germplasm1 = germplasmNamePair.getLeft();
+		Name name1 = germplasmNamePair.getRight();
 		ImportedCrosses cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
-		Assert.assertEquals(null, germplasm1.getGid());
+		Assert.assertNull(germplasm1.getGid());
 		Assert.assertEquals(20150101, germplasm1.getGdate().intValue());
 		Assert.assertEquals(2, germplasm1.getGnpgs().intValue());
 		Assert.assertEquals(cross1.getFemaleGid(), germplasm1.getGpid1().toString());
@@ -353,10 +347,9 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(0, germplasm1.getGrplce().intValue());
 		Assert.assertEquals(0, germplasm1.getLgid().intValue());
 		Assert.assertEquals(99, germplasm1.getLocationId().intValue());
-		Assert.assertEquals(null, germplasm1.getMethodId());
 		Assert.assertEquals(0, germplasm1.getMgid().intValue());
-		Assert.assertEquals(null, germplasm1.getPreferredAbbreviation());
-		Assert.assertEquals(null, germplasm1.getPreferredName());
+		Assert.assertNull(germplasm1.getPreferredAbbreviation());
+		Assert.assertNull(germplasm1.getPreferredName());
 		Assert.assertEquals(0, germplasm1.getReferenceId().intValue());
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, germplasm1.getUserId());
 
@@ -370,12 +363,12 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(null, name1.getTypeId());
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, name1.getUserId());
 
-		Entry<Germplasm, Name> entry2 = iterator.next();
-		Germplasm germplasm2 = entry2.getKey();
-		Name name2 = entry2.getValue();
+		germplasmNamePair = germplasmPairs.get(1);
+		Germplasm germplasm2 = germplasmNamePair.getLeft();
+		Name name2 = germplasmNamePair.getRight();
 		ImportedCrosses cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
-		Assert.assertEquals(null, germplasm2.getGid());
+		Assert.assertNull(null, germplasm2.getGid());
 		Assert.assertEquals(20150101, germplasm2.getGdate().intValue());
 		Assert.assertEquals(2, germplasm2.getGnpgs().intValue());
 		Assert.assertEquals(cross2.getFemaleGid(), germplasm2.getGpid1().toString());
@@ -385,10 +378,9 @@ public class CrossingServiceImplTest {
 		Assert.assertEquals(0, germplasm2.getGrplce().intValue());
 		Assert.assertEquals(0, germplasm2.getLgid().intValue());
 		Assert.assertEquals(99, germplasm2.getLocationId().intValue());
-		Assert.assertEquals(null, germplasm2.getMethodId());
 		Assert.assertEquals(0, germplasm2.getMgid().intValue());
-		Assert.assertEquals(null, germplasm2.getPreferredAbbreviation());
-		Assert.assertEquals(null, germplasm2.getPreferredName());
+		Assert.assertNull(null, germplasm2.getPreferredAbbreviation());
+		Assert.assertNull(null, germplasm2.getPreferredName());
 		Assert.assertEquals(0, germplasm2.getReferenceId().intValue());
 		Assert.assertEquals(CrossingServiceImplTest.USER_ID, germplasm2.getUserId());
 

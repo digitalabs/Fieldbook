@@ -290,8 +290,6 @@ var ImportDesign = (function() {
 
 		},
 		closeReviewModal: function() {
-
-			ImportDesign.cancelDesignImport();
 			$('#reviewDesignModal').modal('hide');
 		},
 

@@ -57,6 +57,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.common.service.impl.DesignImportServiceImpl;
+import com.efficio.fieldbook.web.nursery.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
@@ -113,6 +114,9 @@ public class DesignImportControllerTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	private DesignImportValidator designImportValidator;
+
 	@InjectMocks
 	private DesignImportController designImportController;
 
@@ -146,7 +150,7 @@ public class DesignImportControllerTest {
 
 		final Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(this.createTestMappedHeaders(), 3);
 
-		Mockito.verify(this.designImportService).validateDesignData(this.userSelection.getDesignImportData());
+		Mockito.verify(this.designImportValidator).validateDesignData(this.userSelection.getDesignImportData());
 
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = this.userSelection.getDesignImportData().getMappedHeaders();
 
@@ -188,7 +192,7 @@ public class DesignImportControllerTest {
 
 		final Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(this.createTestMappedHeaders(), 3);
 
-		Mockito.verify(this.designImportService).validateDesignData(this.userSelection.getDesignImportData());
+		Mockito.verify(this.designImportValidator).validateDesignData(this.userSelection.getDesignImportData());
 
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = this.userSelection.getDesignImportData().getMappedHeaders();
 
@@ -216,7 +220,7 @@ public class DesignImportControllerTest {
 
 		final Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(this.createTestMappedHeaders(), 3);
 
-		Mockito.verify(this.designImportService).validateDesignData(this.userSelection.getDesignImportData());
+		Mockito.verify(this.designImportValidator).validateDesignData(this.userSelection.getDesignImportData());
 
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = this.userSelection.getDesignImportData().getMappedHeaders();
 
@@ -240,7 +244,7 @@ public class DesignImportControllerTest {
 		Mockito.when(this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(3, this.userSelection.getDesignImportData()))
 				.thenReturn(false);
 
-		Mockito.doThrow(new DesignValidationException("DesignValidationException thrown")).when(this.designImportService)
+		Mockito.doThrow(new DesignValidationException("DesignValidationException thrown")).when(this.designImportValidator)
 				.validateDesignData(Matchers.any(DesignImportData.class));
 
 		final Map<String, Object> results = this.designImportController.validateAndSaveNewMapping(this.createTestMappedHeaders(), 3);

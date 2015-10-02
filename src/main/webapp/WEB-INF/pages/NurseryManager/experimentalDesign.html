@@ -3,7 +3,11 @@
 	<label class="control-label"><strong class="sub-content-heading">Experimental Design</strong></label>
 	</div>
 	<div class="col-md-12">
-	Design based on an imported design file.
+		<div class="col-md-6">
+			Design based on an imported design file.
+			<a href="javascript: ImportDesign.showChangeDesignPopup(ImportDesign.hasGermplasmListSelected());" id="change-import-design-url-link"
+			 class="btn btn-info pull-right chs-add-variable" th:text="#{design.import.change}">Change</a>
+		</div>
 	</div>
 	
 </div>

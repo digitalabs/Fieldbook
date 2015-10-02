@@ -72,6 +72,8 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
+	private static final String SUCCESS = "success";
+
 	public static final String IS_SUCCESS = "isSuccess";
 
 	public static final String ERROR = "error";
@@ -135,6 +137,38 @@ public class DesignImportController extends SettingsController {
 			resultsMap.put(IS_SUCCESS, 1);
 
 		} catch (MiddlewareException | FileParsingException e) {
+
+			DesignImportController.LOG.error(e.getMessage(), e);
+
+			resultsMap.put(IS_SUCCESS, 0);
+			// error messages is still in .prop format,
+			resultsMap.put(ERROR, new String[] {e.getMessage()});
+		}
+
+		// we return string instead of json to fix IE issue rel. DataTable
+		return this.convertObjectToJson(resultsMap);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/import/change/{studyId}/{studyType}", method = RequestMethod.POST,
+			produces = "application/json; charset=utf-8")
+	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final String studyType) {
+
+		final Map<String, Object> resultsMap = new HashMap<>();
+
+		try {
+
+			// reset
+			this.cancelImportDesign();
+
+			this.userSelection.setExperimentalDesignVariables(null);
+			this.userSelection.setExpDesignParams(null);
+			this.userSelection.setExpDesignVariables(null);
+
+			resultsMap.put(IS_SUCCESS, 1);
+			resultsMap.put(SUCCESS, this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
+
+		} catch (final MiddlewareException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 

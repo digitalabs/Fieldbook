@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -249,7 +250,7 @@ public class DesignImportValidator {
 	 */
 	boolean isValidNumericValueForNumericVariable(final String valueToValidate, final StandardVariable variable, final Scale numericScale) {
 
-		if (!org.generationcp.commons.util.StringUtil.isNumeric(valueToValidate)) {
+		if (!NumberUtils.isNumber(valueToValidate)) {
 			return false;
 		}
 

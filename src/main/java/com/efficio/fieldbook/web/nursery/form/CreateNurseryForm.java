@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- *
+ * 
  * Generation Challenge Programme (GCP)
- *
- *
+ * 
+ * 
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- *
+ * 
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.form;
@@ -204,7 +204,7 @@ public class CreateNurseryForm {
 
 	/**
 	 * Gets the project id.
-	 *
+	 * 
 	 * @return the projectId
 	 */
 	public String getProjectId() {
@@ -213,16 +213,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the project id.
-	 *
+	 * 
 	 * @param projectId the projectId to set
 	 */
-	public void setProjectId(String projectId) {
+	public void setProjectId(final String projectId) {
 		this.projectId = projectId;
 	}
 
 	/**
 	 * Gets the selected setting id.
-	 *
+	 * 
 	 * @return the selectedSettingId
 	 */
 	public int getSelectedSettingId() {
@@ -231,16 +231,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the selected setting id.
-	 *
+	 * 
 	 * @param selectedSettingId the selectedSettingId to set
 	 */
-	public void setSelectedSettingId(int selectedSettingId) {
+	public void setSelectedSettingId(final int selectedSettingId) {
 		this.selectedSettingId = selectedSettingId;
 	}
 
 	/**
 	 * Gets the study level variables.
-	 *
+	 * 
 	 * @return the study level variables
 	 */
 	public List<SettingDetail> getStudyLevelVariables() {
@@ -249,16 +249,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the study level variables.
-	 *
+	 * 
 	 * @param studyLevelVariables the new study level variables
 	 */
-	public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
+	public void setStudyLevelVariables(final List<SettingDetail> studyLevelVariables) {
 		this.studyLevelVariables = studyLevelVariables;
 	}
 
 	/**
 	 * Gets the plot level variables.
-	 *
+	 * 
 	 * @return the plotLevelVariables
 	 */
 	public List<SettingDetail> getPlotLevelVariables() {
@@ -267,16 +267,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the plot level variables.
-	 *
+	 * 
 	 * @param plotLevelVariables the plotLevelVariables to set
 	 */
-	public void setPlotLevelVariables(List<SettingDetail> plotLevelVariables) {
+	public void setPlotLevelVariables(final List<SettingDetail> plotLevelVariables) {
 		this.plotLevelVariables = plotLevelVariables;
 	}
 
 	/**
 	 * Gets the baseline trait variables.
-	 *
+	 * 
 	 * @return the baselineTraitVariables
 	 */
 	public List<SettingDetail> getBaselineTraitVariables() {
@@ -285,16 +285,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the baseline trait variables.
-	 *
+	 * 
 	 * @param baselineTraitVariables the baselineTraitVariables to set
 	 */
-	public void setBaselineTraitVariables(List<SettingDetail> baselineTraitVariables) {
+	public void setBaselineTraitVariables(final List<SettingDetail> baselineTraitVariables) {
 		this.baselineTraitVariables = baselineTraitVariables;
 	}
 
 	/**
 	 * Gets the folder id.
-	 *
+	 * 
 	 * @return the folderId
 	 */
 	public Integer getFolderId() {
@@ -303,16 +303,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the folder id.
-	 *
+	 * 
 	 * @param folderId the folderId to set
 	 */
-	public void setFolderId(Integer folderId) {
+	public void setFolderId(final Integer folderId) {
 		this.folderId = folderId;
 	}
 
 	/**
 	 * Gets the folder name.
-	 *
+	 * 
 	 * @return the folderName
 	 */
 	public String getFolderName() {
@@ -321,16 +321,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the folder name.
-	 *
+	 * 
 	 * @param folderName the folderName to set
 	 */
-	public void setFolderName(String folderName) {
+	public void setFolderName(final String folderName) {
 		this.folderName = folderName;
 	}
 
 	/**
 	 * Checks if is field layout random.
-	 *
+	 * 
 	 * @return the fieldLayoutRandom
 	 */
 	public boolean isFieldLayoutRandom() {
@@ -339,16 +339,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the field layout random.
-	 *
+	 * 
 	 * @param fieldLayoutRandom the fieldLayoutRandom to set
 	 */
-	public void setFieldLayoutRandom(boolean fieldLayoutRandom) {
+	public void setFieldLayoutRandom(final boolean fieldLayoutRandom) {
 		this.fieldLayoutRandom = fieldLayoutRandom;
 	}
 
 	/**
 	 * Gets the required fields.
-	 *
+	 * 
 	 * @return the required fields
 	 */
 	public String getRequiredFields() {
@@ -357,16 +357,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the required fields.
-	 *
+	 * 
 	 * @param requiredFields the new required fields
 	 */
-	public void setRequiredFields(String requiredFields) {
+	public void setRequiredFields(final String requiredFields) {
 		this.requiredFields = requiredFields;
 	}
 
 	/**
 	 * Gets the location id.
-	 *
+	 * 
 	 * @return the location id
 	 */
 	public String getLocationId() {
@@ -375,16 +375,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the location id.
-	 *
+	 * 
 	 * @param locationId the new location id
 	 */
-	public void setLocationId(String locationId) {
+	public void setLocationId(final String locationId) {
 		this.locationId = locationId;
 	}
 
 	/**
 	 * Gets the breeding method id.
-	 *
+	 * 
 	 * @return the breeding method id
 	 */
 	public String getBreedingMethodId() {
@@ -393,16 +393,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the breeding method id.
-	 *
+	 * 
 	 * @param breedingMethodId the new breeding method id
 	 */
-	public void setBreedingMethodId(String breedingMethodId) {
+	public void setBreedingMethodId(final String breedingMethodId) {
 		this.breedingMethodId = breedingMethodId;
 	}
 
 	/**
 	 * Gets the location url.
-	 *
+	 * 
 	 * @return the location url
 	 */
 	public String getLocationUrl() {
@@ -411,16 +411,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the location url.
-	 *
+	 * 
 	 * @param locationUrl the new location url
 	 */
-	public void setLocationUrl(String locationUrl) {
+	public void setLocationUrl(final String locationUrl) {
 		this.locationUrl = locationUrl;
 	}
 
 	/**
 	 * Gets the breeding method url.
-	 *
+	 * 
 	 * @return the breeding method url
 	 */
 	public String getBreedingMethodUrl() {
@@ -429,16 +429,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the breeding method url.
-	 *
+	 * 
 	 * @param breedingMethodUrl the new breeding method url
 	 */
-	public void setBreedingMethodUrl(String breedingMethodUrl) {
+	public void setBreedingMethodUrl(final String breedingMethodUrl) {
 		this.breedingMethodUrl = breedingMethodUrl;
 	}
 
 	/**
 	 * Gets the import location url.
-	 *
+	 * 
 	 * @return the import location url
 	 */
 	public String getImportLocationUrl() {
@@ -447,16 +447,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the import location url.
-	 *
+	 * 
 	 * @param importLocationUrl the new import location url
 	 */
-	public void setImportLocationUrl(String importLocationUrl) {
+	public void setImportLocationUrl(final String importLocationUrl) {
 		this.importLocationUrl = importLocationUrl;
 	}
 
 	/**
 	 * Gets the load settings.
-	 *
+	 * 
 	 * @return the load settings
 	 */
 	public String getLoadSettings() {
@@ -465,16 +465,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the load settings.
-	 *
+	 * 
 	 * @param loadSettings the new load settings
 	 */
-	public void setLoadSettings(String loadSettings) {
+	public void setLoadSettings(final String loadSettings) {
 		this.loadSettings = loadSettings;
 	}
 
 	/**
 	 * Gets the study name term id.
-	 *
+	 * 
 	 * @return the studyNameTermId
 	 */
 	public String getStudyNameTermId() {
@@ -483,16 +483,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the study name term id.
-	 *
+	 * 
 	 * @param studyNameTermId the studyNameTermId to set
 	 */
-	public void setStudyNameTermId(String studyNameTermId) {
+	public void setStudyNameTermId(final String studyNameTermId) {
 		this.studyNameTermId = studyNameTermId;
 	}
 
 	/**
 	 * Gets the start date id.
-	 *
+	 * 
 	 * @return the start date id
 	 */
 	public String getStartDateId() {
@@ -501,16 +501,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the start date id.
-	 *
+	 * 
 	 * @param startDateId the new start date id
 	 */
-	public void setStartDateId(String startDateId) {
+	public void setStartDateId(final String startDateId) {
 		this.startDateId = startDateId;
 	}
 
 	/**
 	 * Gets the end date id.
-	 *
+	 * 
 	 * @return the end date id
 	 */
 	public String getEndDateId() {
@@ -519,16 +519,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the end date id.
-	 *
+	 * 
 	 * @param endDateId the new end date id
 	 */
-	public void setEndDateId(String endDateId) {
+	public void setEndDateId(final String endDateId) {
 		this.endDateId = endDateId;
 	}
 
 	/**
 	 * Gets the open germplasm url.
-	 *
+	 * 
 	 * @return the open germplasm url
 	 */
 	public String getOpenGermplasmUrl() {
@@ -537,16 +537,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the open germplasm url.
-	 *
+	 * 
 	 * @param openGermplasmUrl the new open germplasm url
 	 */
-	public void setOpenGermplasmUrl(String openGermplasmUrl) {
+	public void setOpenGermplasmUrl(final String openGermplasmUrl) {
 		this.openGermplasmUrl = openGermplasmUrl;
 	}
 
 	/**
 	 * Gets the tree data.
-	 *
+	 * 
 	 * @return the tree data
 	 */
 	public String getTreeData() {
@@ -555,16 +555,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the tree data.
-	 *
+	 * 
 	 * @param treeData the new tree data
 	 */
-	public void setTreeData(String treeData) {
+	public void setTreeData(final String treeData) {
 		this.treeData = treeData;
 	}
 
 	/**
 	 * Gets the search tree data.
-	 *
+	 * 
 	 * @return the search tree data
 	 */
 	public String getSearchTreeData() {
@@ -573,16 +573,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the search tree data.
-	 *
+	 * 
 	 * @param searchTreeData the new search tree data
 	 */
-	public void setSearchTreeData(String searchTreeData) {
+	public void setSearchTreeData(final String searchTreeData) {
 		this.searchTreeData = searchTreeData;
 	}
 
 	/**
 	 * Gets the selected variables.
-	 *
+	 * 
 	 * @return the selected variables
 	 */
 	public List<SettingVariable> getSelectedVariables() {
@@ -591,16 +591,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the selected variables.
-	 *
+	 * 
 	 * @param selectedVariables the new selected variables
 	 */
-	public void setSelectedVariables(List<SettingVariable> selectedVariables) {
+	public void setSelectedVariables(final List<SettingVariable> selectedVariables) {
 		this.selectedVariables = selectedVariables;
 	}
 
 	/**
 	 * Gets the basic details.
-	 *
+	 * 
 	 * @return the basicDetails
 	 */
 	public List<SettingDetail> getBasicDetails() {
@@ -609,16 +609,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the basic details.
-	 *
+	 * 
 	 * @param basicDetails the basicDetails to set
 	 */
-	public void setBasicDetails(List<SettingDetail> basicDetails) {
+	public void setBasicDetails(final List<SettingDetail> basicDetails) {
 		this.basicDetails = basicDetails;
 	}
 
 	/**
 	 * Gets the selection variates variables.
-	 *
+	 * 
 	 * @return the selectionVariatesVariables
 	 */
 	public List<SettingDetail> getSelectionVariatesVariables() {
@@ -627,16 +627,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the selection variates variables.
-	 *
+	 * 
 	 * @param selectionVariatesVariables the selectionVariatesVariables to set
 	 */
-	public void setSelectionVariatesVariables(List<SettingDetail> selectionVariatesVariables) {
+	public void setSelectionVariatesVariables(final List<SettingDetail> selectionVariatesVariables) {
 		this.selectionVariatesVariables = selectionVariatesVariables;
 	}
 
 	/**
 	 * Gets the id name variables.
-	 *
+	 * 
 	 * @return the idNameVariables
 	 */
 	public String getIdNameVariables() {
@@ -645,16 +645,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the id name variables.
-	 *
+	 * 
 	 * @param idNameVariables the idNameVariables to set
 	 */
-	public void setIdNameVariables(String idNameVariables) {
+	public void setIdNameVariables(final String idNameVariables) {
 		this.idNameVariables = idNameVariables;
 	}
 
 	/**
 	 * Gets the nursery conditions.
-	 *
+	 * 
 	 * @return the nurseryConditions
 	 */
 	public List<SettingDetail> getNurseryConditions() {
@@ -663,16 +663,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the nursery conditions.
-	 *
+	 * 
 	 * @param nurseryConditions the nurseryConditions to set
 	 */
-	public void setNurseryConditions(List<SettingDetail> nurseryConditions) {
+	public void setNurseryConditions(final List<SettingDetail> nurseryConditions) {
 		this.nurseryConditions = nurseryConditions;
 	}
 
 	/**
 	 * Gets the measurement row list.
-	 *
+	 * 
 	 * @return the measurementRowList
 	 */
 	public List<MeasurementRow> getMeasurementRowList() {
@@ -681,16 +681,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the measurement row list.
-	 *
+	 * 
 	 * @param measurementRowList the measurementRowList to set
 	 */
-	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
+	public void setMeasurementRowList(final List<MeasurementRow> measurementRowList) {
 		this.measurementRowList = measurementRowList;
 	}
 
 	/**
 	 * Gets the measurement variables.
-	 *
+	 * 
 	 * @return the measurementVariables
 	 */
 	public List<MeasurementVariable> getMeasurementVariables() {
@@ -699,16 +699,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the measurement variables.
-	 *
+	 * 
 	 * @param measurementVariables the measurementVariables to set
 	 */
-	public void setMeasurementVariables(List<MeasurementVariable> measurementVariables) {
+	public void setMeasurementVariables(final List<MeasurementVariable> measurementVariables) {
 		this.measurementVariables = measurementVariables;
 	}
 
 	/**
 	 * Gets the study name.
-	 *
+	 * 
 	 * @return the studyName
 	 */
 	public String getStudyName() {
@@ -717,22 +717,22 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the study name.
-	 *
+	 * 
 	 * @param studyName the studyName to set
 	 */
-	public void setStudyName(String studyName) {
+	public void setStudyName(final String studyName) {
 		this.studyName = studyName;
 	}
 
 	/**
 	 * Change page.
-	 *
+	 * 
 	 * @param currentPage the current page
 	 */
-	public void changePage(int currentPage) {
+	public void changePage(final int currentPage) {
 		if (this.measurementRowList != null && !this.measurementRowList.isEmpty()) {
-			int totalItemsPerPage = this.getResultPerPage();
-			int start = (currentPage - 1) * totalItemsPerPage;
+			final int totalItemsPerPage = this.getResultPerPage();
+			final int start = (currentPage - 1) * totalItemsPerPage;
 			int end = start + totalItemsPerPage;
 			if (this.measurementRowList.size() < end) {
 				end = this.measurementRowList.size();
@@ -746,7 +746,7 @@ public class CreateNurseryForm {
 
 	/**
 	 * Gets the paginated measurement row list.
-	 *
+	 * 
 	 * @return the paginatedMeasurementRowList
 	 */
 	public List<MeasurementRow> getPaginatedMeasurementRowList() {
@@ -755,16 +755,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the paginated measurement row list.
-	 *
+	 * 
 	 * @param paginatedMeasurementRowList the paginatedMeasurementRowList to set
 	 */
-	public void setPaginatedMeasurementRowList(List<MeasurementRow> paginatedMeasurementRowList) {
+	public void setPaginatedMeasurementRowList(final List<MeasurementRow> paginatedMeasurementRowList) {
 		this.paginatedMeasurementRowList = paginatedMeasurementRowList;
 	}
 
 	/**
 	 * Gets the current page.
-	 *
+	 * 
 	 * @return the currentPage
 	 */
 	public int getCurrentPage() {
@@ -773,16 +773,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the current page.
-	 *
+	 * 
 	 * @param currentPage the currentPage to set
 	 */
-	public void setCurrentPage(int currentPage) {
+	public void setCurrentPage(final int currentPage) {
 		this.currentPage = currentPage;
 	}
 
 	/**
 	 * Gets the total pages.
-	 *
+	 * 
 	 * @return the totalPages
 	 */
 	public int getTotalPages() {
@@ -796,16 +796,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the total pages.
-	 *
+	 * 
 	 * @param totalPages the totalPages to set
 	 */
-	public void setTotalPages(int totalPages) {
+	public void setTotalPages(final int totalPages) {
 		this.totalPages = totalPages;
 	}
 
 	/**
 	 * Gets the result per page.
-	 *
+	 * 
 	 * @return the resultPerPage
 	 */
 	public int getResultPerPage() {
@@ -814,16 +814,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the result per page.
-	 *
+	 * 
 	 * @param resultPerPage the resultPerPage to set
 	 */
-	public void setResultPerPage(int resultPerPage) {
+	public void setResultPerPage(final int resultPerPage) {
 		this.resultPerPage = resultPerPage;
 	}
 
 	/**
 	 * Gets the file.
-	 *
+	 * 
 	 * @return the file
 	 */
 	public MultipartFile getFile() {
@@ -832,16 +832,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the file.
-	 *
+	 * 
 	 * @param file the file to set
 	 */
-	public void setFile(MultipartFile file) {
+	public void setFile(final MultipartFile file) {
 		this.file = file;
 	}
 
 	/**
 	 * Gets the checks for error.
-	 *
+	 * 
 	 * @return the hasError
 	 */
 	public String getHasError() {
@@ -850,16 +850,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the checks for error.
-	 *
+	 * 
 	 * @param hasError the hasError to set
 	 */
-	public void setHasError(String hasError) {
+	public void setHasError(final String hasError) {
 		this.hasError = hasError;
 	}
 
 	/**
 	 * Gets the import val.
-	 *
+	 * 
 	 * @return the importVal
 	 */
 	public int getImportVal() {
@@ -868,16 +868,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the import val.
-	 *
+	 * 
 	 * @param importVal the importVal to set
 	 */
-	public void setImportVal(int importVal) {
+	public void setImportVal(final int importVal) {
 		this.importVal = importVal;
 	}
 
 	/**
 	 * Gets the number of instances.
-	 *
+	 * 
 	 * @return the numberOfInstances
 	 */
 	public int getNumberOfInstances() {
@@ -886,16 +886,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the number of instances.
-	 *
+	 * 
 	 * @param numberOfInstances the numberOfInstances to set
 	 */
-	public void setNumberOfInstances(int numberOfInstances) {
+	public void setNumberOfInstances(final int numberOfInstances) {
 		this.numberOfInstances = numberOfInstances;
 	}
 
 	/**
 	 * Gets the export instance type.
-	 *
+	 * 
 	 * @return the exportInstanceType
 	 */
 	public String getExportInstanceType() {
@@ -904,16 +904,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the export instance type.
-	 *
+	 * 
 	 * @param exportInstanceType the exportInstanceType to set
 	 */
-	public void setExportInstanceType(String exportInstanceType) {
+	public void setExportInstanceType(final String exportInstanceType) {
 		this.exportInstanceType = exportInstanceType;
 	}
 
 	/**
 	 * Gets the export trial instance number.
-	 *
+	 * 
 	 * @return the exportTrialInstanceNumber
 	 */
 	public String getExportTrialInstanceNumber() {
@@ -922,16 +922,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the export trial instance number.
-	 *
+	 * 
 	 * @param exportTrialInstanceNumber the exportTrialInstanceNumber to set
 	 */
-	public void setExportTrialInstanceNumber(String exportTrialInstanceNumber) {
+	public void setExportTrialInstanceNumber(final String exportTrialInstanceNumber) {
 		this.exportTrialInstanceNumber = exportTrialInstanceNumber;
 	}
 
 	/**
 	 * Gets the export trial instance start.
-	 *
+	 * 
 	 * @return the exportTrialInstanceStart
 	 */
 	public String getExportTrialInstanceStart() {
@@ -940,16 +940,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the export trial instance start.
-	 *
+	 * 
 	 * @param exportTrialInstanceStart the exportTrialInstanceStart to set
 	 */
-	public void setExportTrialInstanceStart(String exportTrialInstanceStart) {
+	public void setExportTrialInstanceStart(final String exportTrialInstanceStart) {
 		this.exportTrialInstanceStart = exportTrialInstanceStart;
 	}
 
 	/**
 	 * Gets the export trial instance end.
-	 *
+	 * 
 	 * @return the exportTrialInstanceEnd
 	 */
 	public String getExportTrialInstanceEnd() {
@@ -958,16 +958,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the export trial instance end.
-	 *
+	 * 
 	 * @param exportTrialInstanceEnd the exportTrialInstanceEnd to set
 	 */
-	public void setExportTrialInstanceEnd(String exportTrialInstanceEnd) {
+	public void setExportTrialInstanceEnd(final String exportTrialInstanceEnd) {
 		this.exportTrialInstanceEnd = exportTrialInstanceEnd;
 	}
 
 	/**
 	 * Gets the study id.
-	 *
+	 * 
 	 * @return the study id
 	 */
 	public Integer getStudyId() {
@@ -976,16 +976,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the study id.
-	 *
+	 * 
 	 * @param studyId the new study id
 	 */
-	public void setStudyId(Integer studyId) {
+	public void setStudyId(final Integer studyId) {
 		this.studyId = studyId;
 	}
 
 	/**
 	 * Gets the trial environment values.
-	 *
+	 * 
 	 * @return the trial environment values
 	 */
 	public List<List<ValueReference>> getTrialEnvironmentValues() {
@@ -994,16 +994,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the trial environment values.
-	 *
+	 * 
 	 * @param trialEnvironmentValues the new trial environment values
 	 */
-	public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
+	public void setTrialEnvironmentValues(final List<List<ValueReference>> trialEnvironmentValues) {
 		this.trialEnvironmentValues = trialEnvironmentValues;
 	}
 
 	/**
 	 * Gets the trial level variables.
-	 *
+	 * 
 	 * @return the trial level variables
 	 */
 	public List<SettingDetail> getTrialLevelVariables() {
@@ -1012,16 +1012,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the trial level variables.
-	 *
+	 * 
 	 * @param trialLevelVariables the new trial level variables
 	 */
-	public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
+	public void setTrialLevelVariables(final List<SettingDetail> trialLevelVariables) {
 		this.trialLevelVariables = trialLevelVariables;
 	}
 
 	/**
 	 * Gets the baseline traits segment.
-	 *
+	 * 
 	 * @return the baselineTraitsSegment
 	 */
 	public String getBaselineTraitsSegment() {
@@ -1030,16 +1030,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the baseline traits segment.
-	 *
+	 * 
 	 * @param baselineTraitsSegment the baselineTraitsSegment to set
 	 */
-	public void setBaselineTraitsSegment(String baselineTraitsSegment) {
+	public void setBaselineTraitsSegment(final String baselineTraitsSegment) {
 		this.baselineTraitsSegment = baselineTraitsSegment;
 	}
 
 	/**
 	 * Gets the selection variates segment.
-	 *
+	 * 
 	 * @return the selectionVariatesSegment
 	 */
 	public String getSelectionVariatesSegment() {
@@ -1048,16 +1048,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the selection variates segment.
-	 *
+	 * 
 	 * @param selectionVariatesSegment the selectionVariatesSegment to set
 	 */
-	public void setSelectionVariatesSegment(String selectionVariatesSegment) {
+	public void setSelectionVariatesSegment(final String selectionVariatesSegment) {
 		this.selectionVariatesSegment = selectionVariatesSegment;
 	}
 
 	/**
 	 * Gets the arrange measurement variables.
-	 *
+	 * 
 	 * @return the arrange measurement variables
 	 */
 	public List<MeasurementVariable> getArrangeMeasurementVariables() {
@@ -1066,7 +1066,7 @@ public class CreateNurseryForm {
 
 	/**
 	 * Checks if is measurement data existing.
-	 *
+	 * 
 	 * @return true, if is measurement data existing
 	 */
 	public boolean isMeasurementDataExisting() {
@@ -1075,16 +1075,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the measurement data existing.
-	 *
+	 * 
 	 * @param isMeasurementDataExisting the new measurement data existing
 	 */
-	public void setMeasurementDataExisting(boolean isMeasurementDataExisting) {
+	public void setMeasurementDataExisting(final boolean isMeasurementDataExisting) {
 		this.isMeasurementDataExisting = isMeasurementDataExisting;
 	}
 
 	/**
 	 * Gets the char limit.
-	 *
+	 * 
 	 * @return the char limit
 	 */
 	public int getCharLimit() {
@@ -1093,16 +1093,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the char limit.
-	 *
+	 * 
 	 * @param charLimit the new char limit
 	 */
-	public void setCharLimit(int charLimit) {
+	public void setCharLimit(final int charLimit) {
 		this.charLimit = charLimit;
 	}
 
 	/**
 	 * Gets the folder name label.
-	 *
+	 * 
 	 * @return the folder name label
 	 */
 	public String getFolderNameLabel() {
@@ -1111,16 +1111,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the folder name label.
-	 *
+	 * 
 	 * @param folderNameLabel the new folder name label
 	 */
-	public void setFolderNameLabel(String folderNameLabel) {
+	public void setFolderNameLabel(final String folderNameLabel) {
 		this.folderNameLabel = folderNameLabel;
 	}
 
 	/**
 	 * Gets the name type.
-	 *
+	 * 
 	 * @return the name type
 	 */
 	public int getNameType() {
@@ -1129,16 +1129,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the name type.
-	 *
+	 * 
 	 * @param nameType the new name type
 	 */
-	public void setNameType(int nameType) {
+	public void setNameType(final int nameType) {
 		this.nameType = nameType;
 	}
 
 	/**
 	 * Gets the import method id.
-	 *
+	 * 
 	 * @return the import method id
 	 */
 	public int getImportMethodId() {
@@ -1147,16 +1147,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the import method id.
-	 *
+	 * 
 	 * @param importMethodId the new import method id
 	 */
-	public void setImportMethodId(int importMethodId) {
+	public void setImportMethodId(final int importMethodId) {
 		this.importMethodId = importMethodId;
 	}
 
 	/**
 	 * Gets the import location id.
-	 *
+	 * 
 	 * @return the import location id
 	 */
 	public int getImportLocationId() {
@@ -1165,16 +1165,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the import location id.
-	 *
+	 * 
 	 * @param importLocationId the new import location id
 	 */
-	public void setImportLocationId(int importLocationId) {
+	public void setImportLocationId(final int importLocationId) {
 		this.importLocationId = importLocationId;
 	}
 
 	/**
 	 * Gets the import date.
-	 *
+	 * 
 	 * @return the import date
 	 */
 	public String getImportDate() {
@@ -1183,16 +1183,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the import date.
-	 *
+	 * 
 	 * @param importDate the new import date
 	 */
-	public void setImportDate(String importDate) {
+	public void setImportDate(final String importDate) {
 		this.importDate = importDate;
 	}
 
 	/**
 	 * Gets the created by.
-	 *
+	 * 
 	 * @return the created by
 	 */
 	public String getCreatedBy() {
@@ -1201,16 +1201,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the created by.
-	 *
+	 * 
 	 * @param createdBy the new created by
 	 */
-	public void setCreatedBy(String createdBy) {
+	public void setCreatedBy(final String createdBy) {
 		this.createdBy = createdBy;
 	}
 
 	/**
 	 * Gets the breeding method code.
-	 *
+	 * 
 	 * @return the breeding method code
 	 */
 	public String getBreedingMethodCode() {
@@ -1219,16 +1219,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the breeding method code.
-	 *
+	 * 
 	 * @param breedingMethodCode the new breeding method code
 	 */
-	public void setBreedingMethodCode(String breedingMethodCode) {
+	public void setBreedingMethodCode(final String breedingMethodCode) {
 		this.breedingMethodCode = breedingMethodCode;
 	}
 
 	/**
 	 * Checks if is checks for fieldmap.
-	 *
+	 * 
 	 * @return true, if is checks for fieldmap
 	 */
 	public boolean isHasFieldmap() {
@@ -1237,16 +1237,16 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the checks for fieldmap.
-	 *
+	 * 
 	 * @param hasFieldmap the new checks for fieldmap
 	 */
-	public void setHasFieldmap(boolean hasFieldmap) {
+	public void setHasFieldmap(final boolean hasFieldmap) {
 		this.hasFieldmap = hasFieldmap;
 	}
 
 	/**
 	 * Gets the error message.
-	 *
+	 * 
 	 * @return the error message
 	 */
 	public String getErrorMessage() {
@@ -1255,10 +1255,10 @@ public class CreateNurseryForm {
 
 	/**
 	 * Sets the error message.
-	 *
+	 * 
 	 * @param errorMessage the new error message
 	 */
-	public void setErrorMessage(String errorMessage) {
+	public void setErrorMessage(final String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
 
@@ -1266,7 +1266,7 @@ public class CreateNurseryForm {
 		return this.columnOrders;
 	}
 
-	public void setColumnOrders(String columnOrders) {
+	public void setColumnOrders(final String columnOrders) {
 		this.columnOrders = columnOrders;
 	}
 
@@ -1274,7 +1274,7 @@ public class CreateNurseryForm {
 		return this.experimentTypeId;
 	}
 
-	public void setExperimentTypeId(String experimentTypeId) {
+	public void setExperimentTypeId(final String experimentTypeId) {
 		this.experimentTypeId = experimentTypeId;
 	}
 

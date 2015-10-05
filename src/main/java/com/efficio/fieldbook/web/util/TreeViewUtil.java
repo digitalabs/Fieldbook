@@ -20,9 +20,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.domain.dms.StudyReference;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -62,16 +63,6 @@ public class TreeViewUtil {
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
 
-	public static List<FolderReference> convertReferenceToFolderReference(List<Reference> refList) {
-		List<FolderReference> folRefs = new ArrayList<FolderReference>();
-		for (Reference ref : refList) {
-			FolderReference folderReference = new FolderReference(ref.getId(), ref.getName());
-			folderReference.setProgramUUID(ref.getProgramUUID());
-			folRefs.add(folderReference);
-		}
-		return folRefs;
-	}
-
 	/**
 	 * Convert folder references to json.
 	 *
@@ -79,10 +70,10 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertStudyFolderReferencesToJson(List<FolderReference> references, boolean isNursery, boolean isAll,
-			boolean isLazy, FieldbookService fieldbookService, boolean isFolderOnly) throws IOException {
+	public static String convertStudyFolderReferencesToJson(List<Reference> references, boolean isNursery, boolean isAll,
+			boolean isLazy, boolean isFolderOnly) throws IOException {
 		List<TreeNode> treeNodes =
-				TreeViewUtil.convertStudyFolderReferencesToTreeView(references, isNursery, isAll, isLazy, fieldbookService, isFolderOnly);
+				TreeViewUtil.convertStudyFolderReferencesToTreeView(references, isNursery, isAll, isLazy, isFolderOnly);
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
 
@@ -162,21 +153,31 @@ public class TreeViewUtil {
 		return treeNodes;
 	}
 
-	public static List<TreeNode> convertStudyFolderReferencesToTreeView(List<FolderReference> references, boolean isNursery, boolean isAll,
-			boolean isLazy, FieldbookService fieldbookService, boolean isFolderOnly) {
+	public static List<TreeNode> convertStudyFolderReferencesToTreeView(List<Reference> references, boolean isNursery, boolean isAll,
+			boolean isLazy, boolean isFolderOnly) {
 		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-		TreeNode treeNode;
 		if (references != null && !references.isEmpty()) {
-			for (FolderReference reference : references) {
-				treeNode = TreeViewUtil.convertStudyReferenceToTreeNode(reference, isNursery, isAll, fieldbookService, isFolderOnly);
-				if (treeNode == null) {
+			for (Reference reference : references) {
+				// Filter nurseries/trials depending on the isNursery flag which is provided all the way from UI.
+				// When isNursery is true we are on nursery page, when false we are on trial page.
+				if (reference.isStudy()) {
+					StudyReference studyRef = (StudyReference) reference;
+					if (isNursery && studyRef.getStudyType() != StudyType.N) {
+						continue;
+					}
+					if (!isNursery && studyRef.getStudyType() != StudyType.T) {
+						continue;
+					}
+				}
+				
+				// isFolderOnly also comes all the way from UI. Keeping the existing logic. Not entirely sure what it is for.
+				if (reference.isStudy() && isFolderOnly) {
 					continue;
 				}
+				
+				TreeNode treeNode = TreeViewUtil.convertStudyFolderReferenceToTreeNode(reference);
 				treeNode.setIsLazy(isLazy);
 				treeNodes.add(treeNode);
-				if (reference.getSubFolders() != null && !reference.getSubFolders().isEmpty()) {
-					treeNode.setChildren(TreeViewUtil.convertFolderReferencesToTreeView(reference.getSubFolders(), isLazy));
-				}
 			}
 		}
 		return treeNodes;
@@ -280,54 +281,26 @@ public class TreeViewUtil {
 	}
 
 	/**
-	  * Convert reference to tree node.
-	  *
-	  * @param reference the reference
-	  * @return the tree node
-	  */
-	 private static TreeNode convertStudyReferenceToTreeNode(Reference reference, boolean isNursery, boolean isAll,
-			FieldbookService fieldbookService, boolean isFolderOnly) {
-		 TreeNode treeNode = new TreeNode();
-
+	 * Convert reference to tree node.
+	 *
+	 * @param reference the reference
+	 * @return the tree node
+	 */
+	private static TreeNode convertStudyFolderReferenceToTreeNode(Reference reference) {
+		TreeNode treeNode = new TreeNode();
 		treeNode.setKey(reference.getId().toString());
-		 treeNode.setTitle(reference.getName());
-		 boolean isFolder = TreeViewUtil.isFolder(reference.getId(), fieldbookService);
-		 treeNode.setIsFolder(isFolder);
-		 treeNode.setIsLazy(true);
-		 treeNode.setProgramUUID(reference.getProgramUUID());
-		 if (isFolder) {
-			 treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
-		 } else {
-			 if (isFolderOnly) {
-				 return null;
-			 }
-			 treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
-			if (!TreeViewUtil.isNurseryStudy(reference.getId(), isNursery, fieldbookService)) {
-				return null;
-			}
-		 }
-
+		treeNode.setTitle(reference.getName());
+		boolean isFolder = reference.isFolder();
+		treeNode.setIsFolder(isFolder);
+		treeNode.setIsLazy(true);
+		treeNode.setProgramUUID(reference.getProgramUUID());
+		if (isFolder) {
+			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
+		} else {
+			treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
+		}
 		return treeNode;
-	 }
-
-	private static boolean isNurseryStudy(Integer studyId, boolean isNursery, FieldbookService fieldbookService) {
-		 try {
-			 TermId termId = fieldbookService.getStudyType(studyId);
-
-			if (isNursery) {
-				 if (TermId.NURSERY == termId) {
-					 return true;
-				 }
-			 } else {
-				 if (TermId.TRIAL == termId) {
-					 return true;
-				 }
-			 }
-		 } catch (MiddlewareQueryException e) {
-			 TreeViewUtil.LOG.error(e.getMessage(), e);
-		 }
-		 return false;
-	 }
+	}
 
 	/**
 	  * Convert germplasm list to tree node.

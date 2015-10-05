@@ -20,6 +20,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -59,6 +60,7 @@ import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.common.service.impl.DesignImportServiceImpl;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
@@ -877,6 +879,79 @@ public class DesignImportControllerTest {
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
 		Mockito.verify(this.userSelection).setDesignImportData(null);
 
+	}
+
+	@Test
+	public void testResetObservationToDefaultDesign() {
+		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		final List<MeasurementRow> observations = nursery.getObservations();
+
+		updatePlotNoValue(observations);
+
+		this.designImportController.resetObservationToDefaultDesign(observations);
+
+		for (final MeasurementRow row : observations) {
+			final List<MeasurementData> dataList = row.getDataList();
+			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(), plotNoData.getValue());
+		}
+
+	}
+
+	@Test
+	public void testChangeDesignForNewNurseryWithImportedDesign() {
+
+		this.designImportController.changeDesign(0, StudyType.N.toString());
+
+		// the following fields are expected to be set to null
+		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
+		Mockito.verify(this.userSelection).setDesignImportData(null);
+		Mockito.verify(this.userSelection).setExperimentalDesignVariables(null);
+		Mockito.verify(this.userSelection).setExpDesignParams(null);
+		Mockito.verify(this.userSelection).setExpDesignVariables(null);
+	}
+
+	@Test
+	public void testChangeDesignForExistingNurseryWithImportedDesign() {
+		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		nursery.setStudyId(1);
+		final List<MeasurementRow> observations = nursery.getObservations();
+
+		Mockito.doReturn(nursery).when(this.userSelection).getWorkbook();
+
+		updatePlotNoValue(observations);
+
+		this.designImportController.changeDesign(nursery.getStudyId(), StudyType.N.toString());
+
+		// the following fields are expected to be set to null
+		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
+		Mockito.verify(this.userSelection).setDesignImportData(null);
+		Mockito.verify(this.userSelection).setExperimentalDesignVariables(null);
+		Mockito.verify(this.userSelection).setExpDesignParams(null);
+		Mockito.verify(this.userSelection).setExpDesignVariables(null);
+
+		for (final MeasurementRow row : observations) {
+			final List<MeasurementData> dataList = row.getDataList();
+			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(), plotNoData.getValue());
+		}
+	}
+
+	private void updatePlotNoValue(final List<MeasurementRow> observations) {
+		// alter the data first to make sure the PLOT_NO and ENTRY_NO value is not the same
+		int plotNoId = observations.size();
+		int entryNoId = 1;
+		for (final MeasurementRow row : observations) {
+			final List<MeasurementData> dataList = row.getDataList();
+			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+			entryNoData.setValue(String.valueOf(entryNoId));
+			plotNoData.setValue(String.valueOf(plotNoId));
+			plotNoId--;
+			entryNoId++;
+		}
 	}
 
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {

@@ -198,7 +198,7 @@ public class DesignImportController extends SettingsController {
 	 * 
 	 * @param observations
 	 */
-	private void resetObservationToDefaultDesign(final List<MeasurementRow> observations) {
+	void resetObservationToDefaultDesign(final List<MeasurementRow> observations) {
 		for (final MeasurementRow row : observations) {
 			final List<MeasurementData> dataList = row.getDataList();
 			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);

@@ -214,6 +214,19 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
+	public void testCategorizeHeadersByPhenotypeIfCaseInsensitive() {
+
+		final Map<PhenotypicType, List<DesignHeaderItem>> result =
+				this.service.categorizeHeadersByPhenotype(this.createUnmappedHeadersWithWrongCase());
+
+		Assert.assertEquals("Total No of TRIAL in file is 2", 2, result.get(PhenotypicType.TRIAL_ENVIRONMENT).size());
+		Assert.assertEquals("Total No of GERMPLASM FACTOR in file is 1", 1, result.get(PhenotypicType.GERMPLASM).size());
+		Assert.assertEquals("Total No of DESIGN FACTOR in file is 3", 3, result.get(PhenotypicType.TRIAL_DESIGN).size());
+		Assert.assertEquals("Total No of VARIATE in file is 0", 0, result.get(PhenotypicType.VARIATE).size());
+
+	}
+
+	@Test
 	public void testConvertToStandardVariables() {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
@@ -571,6 +584,19 @@ public class DesignImportServiceImplTest {
 		items.add(DesignImportDataInitializer.createDesignHeaderItem(TermId.REP_NO.getId(), "REP_NO", 4));
 		items.add(DesignImportDataInitializer.createDesignHeaderItem(TermId.BLOCK_NO.getId(), "BLOCK_NO", 5));
 		items.add(DesignImportDataInitializer.createDesignHeaderItem(DesignImportDataInitializer.AFLAVER_5_ID, "AflavER_1_5", 6));
+
+		return items;
+	}
+
+	private List<DesignHeaderItem> createUnmappedHeadersWithWrongCase() {
+		final List<DesignHeaderItem> items = new ArrayList<>();
+
+		items.add(this.createDesignHeaderItem(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TriAL_iNSTANCE", 0));
+		items.add(this.createDesignHeaderItem(TermId.SITE_NAME.getId(), "SiTe_NaME", 1));
+		items.add(this.createDesignHeaderItem(TermId.ENTRY_NO.getId(), "ENtRY_nO", 2));
+		items.add(this.createDesignHeaderItem(TermId.PLOT_NO.getId(), "PLoT_NO", 3));
+		items.add(this.createDesignHeaderItem(TermId.REP_NO.getId(), "ReP_nO", 4));
+		items.add(this.createDesignHeaderItem(TermId.BLOCK_NO.getId(), "BLoCK_nO", 5));
 
 		return items;
 	}

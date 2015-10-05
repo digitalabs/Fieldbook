@@ -273,7 +273,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 
 		for (final DesignHeaderItem item : designHeaders) {
-			final List<StandardVariable> match = variables.get(item.getName());
+			List<StandardVariable> match = variables.get(item.getName().toUpperCase());
 
 			if (null != match && !match.isEmpty() && null != mappedDesignHeaders.get(match.get(0).getPhenotypicType())) {
 				final StandardVariable standardVariable = match.get(0);

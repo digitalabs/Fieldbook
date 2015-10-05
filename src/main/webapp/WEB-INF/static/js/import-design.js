@@ -314,6 +314,8 @@ var ImportDesign = (function() {
 			//change button must only appear in nursery manager
 			if(!isNursery() || $('#measurementDataExisting').val() == 'true'){
 				$('#change-import-design-url-link').hide();
+			} else {
+				$('#change-import-design-url-link').show();
 			}
 		},
 		

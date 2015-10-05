@@ -171,7 +171,7 @@ public class CreateNurseryForm {
 	private String baselineTraitsSegment;
 
 	/** The is measurement data existing. */
-	private boolean isMeasurementDataExisting;
+	private boolean measurementDataExisting;
 
 	/** The char limit. */
 	private int charLimit;
@@ -1070,7 +1070,7 @@ public class CreateNurseryForm {
 	 * @return true, if is measurement data existing
 	 */
 	public boolean isMeasurementDataExisting() {
-		return this.isMeasurementDataExisting;
+		return this.measurementDataExisting;
 	}
 
 	/**
@@ -1079,7 +1079,7 @@ public class CreateNurseryForm {
 	 * @param isMeasurementDataExisting the new measurement data existing
 	 */
 	public void setMeasurementDataExisting(final boolean isMeasurementDataExisting) {
-		this.isMeasurementDataExisting = isMeasurementDataExisting;
+		this.measurementDataExisting = isMeasurementDataExisting;
 	}
 
 	/**

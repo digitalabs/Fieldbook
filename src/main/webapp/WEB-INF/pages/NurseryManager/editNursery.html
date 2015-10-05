@@ -15,6 +15,7 @@
 		<form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 			<input type="hidden" th:field="*{studyId}" />
 			<input type="hidden" th:field="*{experimentTypeId}" />
+			<input type="hidden" th:field="*{measurementDataExisting}" />
 			<div class="row add-top-bottom-padding">
 				<div class="col-md-12">
 					<div class="pull-left">
@@ -474,6 +475,10 @@ function submitEditWorkbook() {
 				submitGermplasmAndCheck();
 			} else if (data.status === '1') {
 				recreateSessionVariables();
+				
+				//update the import-desigm change button
+				$('#measurementDataExisting').val(data.hasMeasurementData);
+				ImportDesign.hideChangeButton();
 			}
 			$('.import-study-data').data('data-import', '0');
 			$('.fbk-discard-imported-data').addClass('fbk-hide');

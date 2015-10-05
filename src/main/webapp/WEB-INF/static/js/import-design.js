@@ -310,7 +310,15 @@ var ImportDesign = (function() {
 			return deferred.promise();
 		},
 		
+		hideChangeButton : function(){
+			//change button must only appear in nursery manager
+			if(!isNursery() || $('#measurementDataExisting').val() == 'true'){
+				$('#change-import-design-url-link').hide();
+			}
+		},
+		
 		doResetDesign : function(){
+			'use strict';
 			var studyId = 0;
 			if($('#studyId').val() != undefined){
 				studyId = $('#studyId').val();
@@ -335,9 +343,6 @@ var ImportDesign = (function() {
 						$('#changeDesignModal').modal('hide');
 					}
 				});
-				
-				
-				
 			} 
 		}
 	};
@@ -352,4 +357,7 @@ $(document).ready(function() {
 		$('#fileupload-import-design').parent().parent().removeClass('has-error');
 	});
 	$('.btn-change-imported-design').on('click', ImportDesign.doResetDesign);
+	
+	// hide the change button if the study has measurement data, otherwise, leave as is.
+	ImportDesign.hideChangeButton();
 });

@@ -591,12 +591,12 @@ public class DesignImportServiceImplTest {
 	private List<DesignHeaderItem> createUnmappedHeadersWithWrongCase() {
 		final List<DesignHeaderItem> items = new ArrayList<>();
 
-		items.add(this.createDesignHeaderItem(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TriAL_iNSTANCE", 0));
-		items.add(this.createDesignHeaderItem(TermId.SITE_NAME.getId(), "SiTe_NaME", 1));
-		items.add(this.createDesignHeaderItem(TermId.ENTRY_NO.getId(), "ENtRY_nO", 2));
-		items.add(this.createDesignHeaderItem(TermId.PLOT_NO.getId(), "PLoT_NO", 3));
-		items.add(this.createDesignHeaderItem(TermId.REP_NO.getId(), "ReP_nO", 4));
-		items.add(this.createDesignHeaderItem(TermId.BLOCK_NO.getId(), "BLoCK_nO", 5));
+		items.add(DesignImportDataInitializer.createDesignHeaderItem(TermId.TRIAL_INSTANCE_FACTOR.getId(), "TriAL_iNSTANCE", 0));
+		items.add(DesignImportDataInitializer.createDesignHeaderItem(TermId.SITE_NAME.getId(), "SiTe_NaME", 1));
+		items.add(DesignImportDataInitializer.createDesignHeaderItem(TermId.ENTRY_NO.getId(), "ENtRY_nO", 2));
+		items.add(DesignImportDataInitializer.createDesignHeaderItem(TermId.PLOT_NO.getId(), "PLoT_NO", 3));
+		items.add(DesignImportDataInitializer.createDesignHeaderItem(TermId.REP_NO.getId(), "ReP_nO", 4));
+		items.add(DesignImportDataInitializer.createDesignHeaderItem(TermId.BLOCK_NO.getId(), "BLoCK_nO", 5));
 
 		return items;
 	}

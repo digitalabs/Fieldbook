@@ -12,6 +12,8 @@ import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.common.service.KsuCsvImportStudyService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -77,6 +79,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	public static final String URL = "/ImportManager";
 	private static final String ADD_OR_REMOVE_TRAITS_HTML = "/NurseryManager/addOrRemoveTraits";
 
+	public static final int STATUS_ADD_NAME_TO_GID = 1;
+	public static final int STATUS_ADD_GERMPLASM_AND_NAME = 2;
+	public static final int STATUS_SELECT_GID = 3;
+
 	@Resource
 	private UserSelection studySelection;
 
@@ -112,9 +118,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
+
+	@Resource
+	private ObjectMapper objectMapper;
 
 	@Override
 	public String getContentName() {
@@ -220,7 +229,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 							this.ksuExcelImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
 									this.ontologyService, this.fieldbookMiddlewareService);
 				} else if (AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
-					importResult = this.ksuCsvImportStudyService.importWorkbook(workbook,this.fileService.getFilePath(filename),file.getOriginalFilename());
+					importResult =
+							this.ksuCsvImportStudyService.importWorkbook(workbook, this.fileService.getFilePath(filename),
+									file.getOriginalFilename());
 				}
 
 			} catch (WorkbookParserException e) {
@@ -239,8 +250,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 			result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
 		} else {
 			if (AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType
-					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType
-					|| AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
+					|| AppConstants.IMPORT_DATAKAPTURE.getInt() == importType || AppConstants.IMPORT_KSU_CSV.getInt() == importType) {
 				boolean isCSVFile = file.getOriginalFilename().contains(".csv");
 				if (!isCSVFile) {
 					result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
@@ -322,49 +332,90 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		UserSelection userSelection = this.getUserSelection(false);
 		GermplasmChangeDetail[] responseDetails = this.getResponseDetails(userResponses);
 		List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
-		Map<String, Map<String, String>> changeMap = new HashMap<String, Map<String, String>>();
+		Map<String, Map<String, String>> changeMap = new HashMap<>();
+
+		List<Name> namesForAdding = new ArrayList<>();
+		List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
+		Map<Integer, MeasurementRow> entryNumberIndexMap = new HashMap<>();
+		int germplasmPairIndex = 0;
 		for (GermplasmChangeDetail responseDetail : responseDetails) {
-			if (responseDetail.getIndex() < observations.size()) {
-				MeasurementRow row = observations.get(responseDetail.getIndex());
-				int userId = this.getUserId();
-				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
-				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
-				MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
-				if (responseDetail.getStatus() == 1) {
-					// add germplasm name to gid
-					String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
-					Integer dateInteger = Integer.valueOf(gDate);
-					this.addGermplasmName(responseDetail.getNewDesig(), Integer.valueOf(responseDetail.getOriginalGid()), userId,
-							responseDetail.getNameType(), responseDetail.getImportLocationId(), dateInteger);
-					desigData.setValue(responseDetail.getNewDesig());
-					gidData.setValue(responseDetail.getOriginalGid());
-				} else if (responseDetail.getStatus() == 2) {
-					// create new germlasm
-					String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
-					Integer dateInteger = Integer.valueOf(gDate);
-					Name name =
-							new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(),
-									responseDetail.getImportLocationId(), dateInteger, 0);
-					Germplasm germplasm =
-							new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 0,
-									responseDetail.getImportLocationId(), dateInteger, name);
-					int newGid = this.addGermplasm(germplasm, name);
-					desigData.setValue(responseDetail.getNewDesig());
-					gidData.setValue(String.valueOf(newGid));
-				} else if (responseDetail.getStatus() == 3) {
-					// choose gids
-					desigData.setValue(responseDetail.getNewDesig());
-					gidData.setValue(String.valueOf(responseDetail.getSelectedGid()));
+			if (responseDetail.getIndex() >= observations.size()) {
+				continue;
+			}
 
-				}
+			MeasurementRow row = observations.get(responseDetail.getIndex());
+			int userId = this.getUserId();
+			MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
+			MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+			MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
 
-				if (responseDetail.getStatus() > 0 && entryNumData != null && entryNumData.getValue() != null) {
-					Map<String, String> tempMap = new HashMap<String, String>();
-					tempMap.put(Integer.toString(TermId.GID.getId()), gidData.getValue());
-					tempMap.put(Integer.toString(TermId.DESIG.getId()), desigData.getValue());
-					changeMap.put(entryNumData.getValue(), tempMap);
+			if (responseDetail.getStatus() == ImportStudyController.STATUS_ADD_NAME_TO_GID) {
+				// add germplasm name to gid
+				String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
+				Integer dateInteger = Integer.valueOf(gDate);
+				namesForAdding.add(new Name(null, Integer.valueOf(responseDetail.getOriginalGid()), responseDetail.getNameType(), 0,
+						userId, responseDetail.getNewDesig(), responseDetail.getImportLocationId(), dateInteger, 0));
+				desigData.setValue(responseDetail.getNewDesig());
+				gidData.setValue(responseDetail.getOriginalGid());
+			} else if (responseDetail.getStatus() == ImportStudyController.STATUS_ADD_GERMPLASM_AND_NAME) {
+				// create new germlasm
+				String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
+				Integer dateInteger = Integer.valueOf(gDate);
+				Name name =
+						new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(),
+								responseDetail.getImportLocationId(), dateInteger, 0);
+				Germplasm germplasm =
+						new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 0, responseDetail.getImportLocationId(),
+								dateInteger, name);
+				germplasmPairs.add(new ImmutablePair<Germplasm, Name>(germplasm, name));
+
+				// store the measurement row and the associated index of the entry
+				entryNumberIndexMap.put(germplasmPairIndex++, row);
+
+				// update the value of the DESIG measurementdata with the new value
+				desigData.setValue(responseDetail.getNewDesig());
+			} else if (responseDetail.getStatus() == ImportStudyController.STATUS_SELECT_GID) {
+				// choose gids
+				desigData.setValue(responseDetail.getNewDesig());
+				gidData.setValue(String.valueOf(responseDetail.getSelectedGid()));
+
+			}
+
+			if (responseDetail.getStatus() > 0 && entryNumData != null && entryNumData.getValue() != null) {
+				Map<String, String> tempMap = new HashMap<>();
+				tempMap.put(Integer.toString(TermId.GID.getId()), gidData.getValue());
+				tempMap.put(Integer.toString(TermId.DESIG.getId()), desigData.getValue());
+				changeMap.put(entryNumData.getValue(), tempMap);
+			}
+
+		}
+
+		try {
+			if (namesForAdding.size() > 0) {
+				this.fieldbookMiddlewareService.addGermplasmNames(namesForAdding);
+			}
+
+			if (germplasmPairs.size() > 0) {
+				List<Integer> newGids = this.fieldbookMiddlewareService.addGermplasm(germplasmPairs);
+
+				// update both the maintained change map as well as the GID measurement data with the new GID created from saving to the
+				// database
+
+				for (int i = 0; i < newGids.size(); i++) {
+					Integer newGid = newGids.get(i);
+					MeasurementRow row = entryNumberIndexMap.get(i);
+
+					MeasurementData entryNumData = row.getMeasurementData(TermId.ENTRY_NO.getId());
+					MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+
+					gidData.setValue(newGid.toString());
+					changeMap.get(entryNumData.getValue()).put(Integer.toString(TermId.GID.getId()), String.valueOf(newGid));
+
 				}
 			}
+		} catch (MiddlewareQueryException e) {
+			ImportStudyController.LOG.error(e.getMessage(), e);
+			throw new FieldbookException(e.getMessage());
 		}
 
 		// we need to set the gid and desig for the trial with the same entry number
@@ -384,28 +435,6 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		return "success";
 	}
 
-	// germplasm trial entry plot - 345
-
-	private int addGermplasm(Germplasm germplasm, Name name) throws FieldbookException {
-		try {
-			return this.fieldbookMiddlewareService.addGermplasm(germplasm, name);
-		} catch (MiddlewareQueryException e) {
-			ImportStudyController.LOG.error(e.getMessage(), e);
-			throw new FieldbookException(e.getMessage());
-		}
-	}
-
-	private void addGermplasmName(String nameValue, Integer gid, int userId, int nameTypeId, int locationId, Integer date)
-			throws FieldbookException {
-		try {
-			this.fieldbookMiddlewareService.addGermplasmName(nameValue, gid, userId, nameTypeId, locationId, date);
-		} catch (MiddlewareQueryException e) {
-			ImportStudyController.LOG.error(e.getMessage(), e);
-			throw new FieldbookException(e.getMessage());
-		}
-
-	}
-
 	private int getUserId() throws FieldbookException {
 		try {
 			return this.getCurrentIbdbUserId();
@@ -416,7 +445,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	private GermplasmChangeDetail[] getResponseDetails(String userResponses) throws FieldbookException {
-		ObjectMapper objectMapper = new ObjectMapper();
+
 		try {
 			return objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
 		} catch (JsonParseException e) {
@@ -445,8 +474,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	}
 
 	@RequestMapping(value = "/import/save", method = RequestMethod.POST)
-	public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model)
-			throws MiddlewareException {
+	public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareException {
 		UserSelection userSelection = this.getUserSelection(false);
 		List<MeasurementVariable> traits =
 				WorkbookUtil.getAddedTraitVariables(userSelection.getWorkbook().getVariates(), userSelection.getWorkbook()
@@ -460,7 +488,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		// will do the cleanup for BM_CODE_VTE here
 		SettingsUtil.resetBreedingMethodValueToCode(this.fieldbookMiddlewareService, workbook.getObservations(), false,
 				this.ontologyService);
-		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(),contextUtil.getCurrentProgramUUID());
+		this.fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook(), contextUtil.getCurrentProgramUUID());
 		SettingsUtil.resetBreedingMethodValueToId(this.fieldbookMiddlewareService, workbook.getObservations(), false, this.ontologyService);
 		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
 
@@ -517,8 +545,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/retrieve/new/import/variables", method = RequestMethod.GET)
 	public Map<String, String> getNewlyImportedTraits() throws IOException {
 		UserSelection userSelection = this.getUserSelection(false);
-		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		List<SettingDetail> newTraits = userSelection.getNewTraits();
 		List<SettingDetail> selectedVariates = userSelection.getNewSelectionVariates();
 		map.put("newTraits", objectMapper.writeValueAsString(newTraits));

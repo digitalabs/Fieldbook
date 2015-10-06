@@ -16,7 +16,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.service.FileService;
-import org.generationcp.commons.service.impl.ExportServiceImpl;
+import org.generationcp.commons.service.impl.GermplasmExportServiceImpl;
 import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -34,7 +34,7 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 /**
  * Created by cyrus on 2/10/15.
  */
-public class CrossingTemplateExcelExporter extends ExportServiceImpl {
+public class CrossingTemplateExcelExporter extends GermplasmExportServiceImpl {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s.xls";
 	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
@@ -89,16 +89,16 @@ public class CrossingTemplateExcelExporter extends ExportServiceImpl {
 	public int writeListDetailsSection(Map<String, CellStyle> styles, Sheet descriptionSheet, int startingRow, GermplasmList germplasmList) {
 		int actualRow = startingRow - 1;
 
-		this.writeListDetailsRow(descriptionSheet, styles, actualRow, ExportServiceImpl.LIST_NAME, "",
+		this.writeListDetailsRow(descriptionSheet, styles, actualRow, GermplasmExportServiceImpl.LIST_NAME, "",
 				"Enter a list name here, or add it when saving in the BMS");
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DESCRIPTION, "",
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, GermplasmExportServiceImpl.LIST_DESCRIPTION, "",
 				"Enter a list description here, or add it when saving in the BMS");
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_TYPE, germplasmList.getType(),
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, GermplasmExportServiceImpl.LIST_TYPE, germplasmList.getType(),
 				"See valid list types on Codes sheet for more options");
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, ExportServiceImpl.LIST_DATE,
+		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, GermplasmExportServiceImpl.LIST_DATE,
 				String.valueOf(germplasmList.getDate()), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 
 		return ++actualRow;

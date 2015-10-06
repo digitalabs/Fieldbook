@@ -243,6 +243,15 @@ public class DesignImportValidator {
 		}
 	}
 
+	/**
+	 * This method will throw an error when the user tries to use a categorical variable with no possible values, or if at least one column
+	 * value is not part of the possible values of the given categorical variable
+	 * 
+	 * @param csvRowData
+	 * @param columnIndex
+	 * @param standardVariable
+	 * @throws DesignValidationException
+	 */
 	void validateValuesForCategoricalVariables(final Map<Integer, List<String>> csvRowData, final Integer columnIndex,
 			final StandardVariable standardVariable) throws DesignValidationException {
 		for (final Map.Entry<Integer, List<String>> row : csvRowData.entrySet()) {
@@ -255,6 +264,7 @@ public class DesignImportValidator {
 						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
 			}
 
+			// make sure that the column value is part of the possible values of the given categorical variable
 			if (!CategoricalVariableValidator.isPartOfValidValuesForCategoricalVariable(valueToValidate, standardVariable)) {
 				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.invalid.value", null,
 						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));

@@ -85,7 +85,7 @@ public class StudyTreeController {
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
 				if (StudyTreeController.LOCAL.equals(parentKey)) {
-					List<Reference> rootFolders = this.fieldbookMiddlewareService.getRootFolders(this.getCurrentProgramUUID());
+					List<Reference> rootFolders = this.studyDataManager.getRootFolders(this.getCurrentProgramUUID());
 					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, isNursery, false, true, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
 					childNodes = this.getChildrenTreeNodes(parentKey, isNursery, isFolderOnly);
@@ -102,7 +102,7 @@ public class StudyTreeController {
 	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		int parentId = Integer.valueOf(parentKey);
-		List<Reference> folders = this.fieldbookMiddlewareService.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
+		List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
 
 		childNodes =
 				TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, isNursery, false, true, isFolderOnly);
@@ -133,7 +133,7 @@ public class StudyTreeController {
 			} else if (NumberUtils.isNumber(parentKey)) {
 
 				int parentId = Integer.valueOf(parentKey);
-				List<Reference> folders = this.fieldbookMiddlewareService.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
+				List<Reference> folders = this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
 				return TreeViewUtil.convertStudyFolderReferencesToJson(folders, true, false, true, isFolderOnlyBool);
 
 			} else {
@@ -149,7 +149,7 @@ public class StudyTreeController {
 
 	private String getRootFolders(boolean isFolderOnly) {
 		try {
-			List<Reference> rootFolders = this.fieldbookMiddlewareService.getRootFolders(this.getCurrentProgramUUID());
+			List<Reference> rootFolders = this.studyDataManager.getRootFolders(this.getCurrentProgramUUID());
 			return TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true, isFolderOnly);
 		} catch (Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);

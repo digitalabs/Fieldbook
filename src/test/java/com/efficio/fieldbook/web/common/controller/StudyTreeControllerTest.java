@@ -84,7 +84,7 @@ public class StudyTreeControllerTest {
 		testTree.add(new FolderReference(2, 3, "My Sub Folder", "My Sub Folder Description"));
 		testTree.add(new StudyReference(11, "My Nursery", "My Nursery Description"));
 
-		Mockito.doReturn(testTree).when(this.fieldbookMiddlewareService).getRootFolders(this.selectedProject.getUniqueID());
+		Mockito.doReturn(testTree).when(this.studyDataManager).getRootFolders(this.selectedProject.getUniqueID());
 		
 		String result = this.controller.expandTree(StudyTreeController.LOCAL, "1", "N");
 		Assert.assertNotNull(result);
@@ -99,7 +99,7 @@ public class StudyTreeControllerTest {
 		testTree.add(new FolderReference(2, 3, "My Sub Folder", "My Sub Folder Description"));
 		testTree.add(new StudyReference(11, "My Nursery", "My Nursery Description"));
 
-		Mockito.doReturn(testTree).when(this.fieldbookMiddlewareService).getChildrenOfFolder(1, this.selectedProject.getUniqueID());
+		Mockito.doReturn(testTree).when(this.studyDataManager).getChildrenOfFolder(1, this.selectedProject.getUniqueID());
 		
 		String result = this.controller.expandTree("1", "1", "N");
 		Assert.assertNotNull(result);

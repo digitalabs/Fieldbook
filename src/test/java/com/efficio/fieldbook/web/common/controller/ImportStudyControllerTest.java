@@ -99,7 +99,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForFieldroid_FileIsCSV() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
-		Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
+		final Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
@@ -108,7 +108,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForFieldroid_FileIsNotCSV() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
-		Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
+		final Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
@@ -117,7 +117,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForDataKapture_FileIsCSV() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
-		Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
+		final Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
@@ -125,13 +125,13 @@ public class ImportStudyControllerTest {
 
 	@Test
 	public void testApplyChangeDetailsAddGidName() throws IOException, FieldbookException {
-		String dummyUserResponse = "";
-		GermplasmChangeDetail[] changeDetails = createTestChangeDetail();
-		for (GermplasmChangeDetail changeDetail : changeDetails) {
+		final String dummyUserResponse = "";
+		final GermplasmChangeDetail[] changeDetails = createTestChangeDetail();
+		for (final GermplasmChangeDetail changeDetail : changeDetails) {
 			changeDetail.setStatus(ImportStudyController.STATUS_ADD_NAME_TO_GID);
 		}
 
-		Workbook testWorkbook = WorkbookDataUtil.getTestWorkbook(APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyType.N);
+		final Workbook testWorkbook = WorkbookDataUtil.getTestWorkbook(APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyType.N);
 		setTestMeasurementValues(testWorkbook);
 
 		Mockito.when(userSelection.getWorkbook()).thenReturn(testWorkbook);
@@ -140,11 +140,11 @@ public class ImportStudyControllerTest {
 		Mockito.when(workbenchService.getCurrentIbdbUserId(Mockito.anyLong(), Mockito.anyInt())).thenReturn(TEST_USER_ID);
 
 		unitUnderTest.applyChangeDetails(dummyUserResponse);
-		ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+		final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
 		Mockito.verify(fieldbookMiddlewareService).addGermplasmNames(captor.capture());
 
-		List<Name> names = captor.getValue();
+		final List<Name> names = captor.getValue();
 		Assert.assertEquals(APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, names.size());
 
 		// verify that the expected name values are the ones passed to the fieldbook service for saving
@@ -154,11 +154,11 @@ public class ImportStudyControllerTest {
 
 		// verify that the values in observation data are equal to expected values coming from the GermplasmChangeDetail object
 		int i = 0;
-		for (MeasurementRow row : testWorkbook.getObservations()) {
-			MeasurementData desig = row.getMeasurementData(TermId.DESIG.getId());
+		for (final MeasurementRow row : testWorkbook.getObservations()) {
+			final MeasurementData desig = row.getMeasurementData(TermId.DESIG.getId());
 			Assert.assertEquals(changeDetails[i].getNewDesig(), desig.getValue());
 
-			MeasurementData gid = row.getMeasurementData(TermId.GID.getId());
+			final MeasurementData gid = row.getMeasurementData(TermId.GID.getId());
 			Assert.assertEquals(changeDetails[i].getOriginalGid(), gid.getValue());
 			i++;
 		}
@@ -166,17 +166,17 @@ public class ImportStudyControllerTest {
 
 	@Test
 	public void testApplyChangeDetailsAddGermplasmAndName() throws IOException, FieldbookException {
-		String dummyUserResponse = "";
-		Integer newGidOffset = 5;
-		GermplasmChangeDetail[] changeDetails = createTestChangeDetail();
-		for (GermplasmChangeDetail changeDetail : changeDetails) {
+		final String dummyUserResponse = "";
+		final Integer newGidOffset = 5;
+		final GermplasmChangeDetail[] changeDetails = createTestChangeDetail();
+		for (final GermplasmChangeDetail changeDetail : changeDetails) {
 			changeDetail.setStatus(ImportStudyController.STATUS_ADD_GERMPLASM_AND_NAME);
 		}
 
-		Workbook testWorkbook = WorkbookDataUtil.getTestWorkbook(APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyType.N);
+		final Workbook testWorkbook = WorkbookDataUtil.getTestWorkbook(APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, StudyType.N);
 		setTestMeasurementValues(testWorkbook);
 
-		List<Integer> newGids = new ArrayList<>();
+		final List<Integer> newGids = new ArrayList<>();
 		for (int i = 0; i < APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS; i++) {
 			newGids.add(newGidOffset + i);
 		}
@@ -188,35 +188,35 @@ public class ImportStudyControllerTest {
 		Mockito.when(fieldbookMiddlewareService.addGermplasm(Mockito.anyList())).thenReturn(newGids);
 
 		unitUnderTest.applyChangeDetails(dummyUserResponse);
-		ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+		final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
 		Mockito.verify(fieldbookMiddlewareService).addGermplasm(captor.capture());
 
-		List<Pair<Germplasm, Name>> germplasmPairs = captor.getValue();
+		final List<Pair<Germplasm, Name>> germplasmPairs = captor.getValue();
 		Assert.assertEquals(APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS, germplasmPairs.size());
 
 		// verify that the expected name values are the ones passed to the fieldbook service for saving
 		for (int i = 0; i < APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS; i++) {
-			Pair<Germplasm, Name> pair = germplasmPairs.get(i);
-			Name name = pair.getRight();
+			final Pair<Germplasm, Name> pair = germplasmPairs.get(i);
+			final Name name = pair.getRight();
 			Assert.assertEquals(changeDetails[i].getNewDesig(), name.getNval());
 		}
 
 		// verify that the values in observation data are equal to expected values coming from the GermplasmChangeDetail object and the new
 		// GID saved from database
 		int i = 0;
-		for (MeasurementRow row : testWorkbook.getObservations()) {
-			MeasurementData desig = row.getMeasurementData(TermId.DESIG.getId());
+		for (final MeasurementRow row : testWorkbook.getObservations()) {
+			final MeasurementData desig = row.getMeasurementData(TermId.DESIG.getId());
 			Assert.assertEquals(changeDetails[i].getNewDesig(), desig.getValue());
 
-			MeasurementData gid = row.getMeasurementData(TermId.GID.getId());
+			final MeasurementData gid = row.getMeasurementData(TermId.GID.getId());
 			Assert.assertEquals(newGids.get(i).toString(), gid.getValue());
 			i++;
 		}
 	}
 
 	protected GermplasmChangeDetail[] createTestChangeDetail() {
-		GermplasmChangeDetail[] changeDetails = new GermplasmChangeDetail[APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS];
+		final GermplasmChangeDetail[] changeDetails = new GermplasmChangeDetail[APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS];
 
 		for (int i = 0; i < changeDetails.length; i++) {
 			changeDetails[i] =
@@ -228,18 +228,18 @@ public class ImportStudyControllerTest {
 		return changeDetails;
 	}
 
-	protected void setTestMeasurementValues(Workbook workbook) {
+	protected void setTestMeasurementValues(final Workbook workbook) {
 
-		List<MeasurementRow> testValues = workbook.getObservations();
+		final List<MeasurementRow> testValues = workbook.getObservations();
 
 		for (int i = 0; i < APPLY_CHANGE_DETAIL_TEST_OBSERVATIONS; i++) {
-			MeasurementData desig = testValues.get(i).getMeasurementData(TermId.DESIG.getId());
+			final MeasurementData desig = testValues.get(i).getMeasurementData(TermId.DESIG.getId());
 			desig.setValue(ORIGINAL_DESIG_PREFIX + i);
 
-			MeasurementData gid = testValues.get(i).getMeasurementData(TermId.GID.getId());
+			final MeasurementData gid = testValues.get(i).getMeasurementData(TermId.GID.getId());
 			gid.setValue(Integer.toString(i));
 
-			MeasurementData entryNum = testValues.get(i).getMeasurementData(TermId.ENTRY_NO.getId());
+			final MeasurementData entryNum = testValues.get(i).getMeasurementData(TermId.ENTRY_NO.getId());
 			entryNum.setValue(Integer.toString(i));
 		}
 	}
@@ -247,7 +247,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForDataKapture_FileIsNotCSV() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
-		Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
+		final Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
@@ -256,7 +256,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForExcel_FileIsXLSX() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLSX);
-		Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
+		final Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
@@ -265,7 +265,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForExcel_FileIsXLS() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
-		Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
+		final Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
@@ -274,7 +274,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForExcel_FileIsNotXLS() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
-		Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
+		final Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
@@ -283,7 +283,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForKsuExcel_FileIsXLS() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS);
-		Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
+		final Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
@@ -292,7 +292,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForKsuExcel_FileIsXLSX() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_XLSX);
-		Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
+		final Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(0)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
@@ -301,7 +301,7 @@ public class ImportStudyControllerTest {
 	@Test
 	public void testValidateImportFile_ForKsuExcel_FileIsNotXLS() {
 		Mockito.when(this.file.getOriginalFilename()).thenReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV);
-		Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
+		final Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
 		this.unitUnderTest.validateImportFile(this.file, this.result, importType);
 
 		Mockito.verify(this.result, Mockito.times(1)).rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
@@ -314,7 +314,7 @@ public class ImportStudyControllerTest {
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV).when(this.fileService)
 				.getFilePath(ImportStudyControllerTest.SAMPLE_FILE_CSV);
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV).when(this.file).getOriginalFilename();
-		Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
+		final Integer importType = AppConstants.IMPORT_NURSERY_FIELDLOG_FIELDROID.getInt();
 
 		this.workbook = WorkbookDataUtil.getTestWorkbook(ImportStudyControllerTest.NO_OF_OBSERVATION, StudyType.N);
 		this.unitUnderTest.importWorkbookByType(this.file, this.result, this.workbook, importType);
@@ -330,7 +330,7 @@ public class ImportStudyControllerTest {
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS).when(this.fileService)
 				.getFilePath(ImportStudyControllerTest.SAMPLE_FILE_XLS);
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS).when(this.file).getOriginalFilename();
-		Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
+		final Integer importType = AppConstants.IMPORT_NURSERY_EXCEL.getInt();
 
 		this.workbook = WorkbookDataUtil.getTestWorkbook(ImportStudyControllerTest.NO_OF_OBSERVATION, StudyType.N);
 		this.unitUnderTest.importWorkbookByType(this.file, this.result, this.workbook, importType);
@@ -346,7 +346,7 @@ public class ImportStudyControllerTest {
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV).when(this.fileService)
 				.getFilePath(ImportStudyControllerTest.SAMPLE_FILE_CSV);
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_CSV).when(this.file).getOriginalFilename();
-		Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
+		final Integer importType = AppConstants.IMPORT_DATAKAPTURE.getInt();
 
 		this.workbook = WorkbookDataUtil.getTestWorkbook(ImportStudyControllerTest.NO_OF_OBSERVATION, StudyType.N);
 		this.unitUnderTest.importWorkbookByType(this.file, this.result, this.workbook, importType);
@@ -363,7 +363,7 @@ public class ImportStudyControllerTest {
 				.getFilePath(ImportStudyControllerTest.SAMPLE_FILE_XLS);
 
 		Mockito.doReturn(ImportStudyControllerTest.SAMPLE_FILE_XLS).when(this.file).getOriginalFilename();
-		Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
+		final Integer importType = AppConstants.IMPORT_KSU_EXCEL.getInt();
 
 		this.workbook = WorkbookDataUtil.getTestWorkbook(ImportStudyControllerTest.NO_OF_OBSERVATION, StudyType.N);
 		this.unitUnderTest.importWorkbookByType(this.file, this.result, this.workbook, importType);

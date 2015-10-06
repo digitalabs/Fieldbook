@@ -46,49 +46,39 @@ public class DesignImportValidator {
 	public void validateDesignData(final DesignImportData designImportData) throws DesignValidationException {
 
 		final Map<Integer, List<String>> csvData = designImportData.getCsvData();
-		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
+
+		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithDesignHeaderItemsMappedToStdVarId =
+				designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 
 		final DesignHeaderItem trialInstanceDesignHeaderItem =
-				this.validateIfTrialFactorExists(mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT));
-		final DesignHeaderItem entryNoDesignHeaderItem = this.validateIfEntryNumberExists(mappedHeaders.get(PhenotypicType.GERMPLASM));
-		this.validateIfPlotNumberExists(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN));
+				this.validateIfStandardVariableExists(
+						mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.TRIAL_ENVIRONMENT),
+						"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+		final DesignHeaderItem entryNoDesignHeaderItem =
+				this.validateIfStandardVariableExists(mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.GERMPLASM),
+						"design.import.error.entry.no.is.required", TermId.ENTRY_NO);
+		this.validateIfStandardVariableExists(mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.TRIAL_DESIGN),
+				"design.import.error.plot.no.is.required", TermId.PLOT_NO);
 
 		final Map<String, Map<Integer, List<String>>> csvMap =
 				this.designImportService.groupCsvRowsIntoTrialInstance(trialInstanceDesignHeaderItem, csvData);
 
 		this.validateEntryNoMustBeUniquePerInstance(entryNoDesignHeaderItem, csvMap);
+
+		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 		this.validateIfPlotNumberIsUniquePerInstance(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN), csvMap);
 		this.validateColumnValues(designImportData.getCsvData(), mappedHeaders);
 	}
 
-	protected DesignHeaderItem validateIfTrialFactorExists(final List<DesignHeaderItem> headerDesignItems) throws DesignValidationException {
-		final DesignHeaderItem headerItem =
-				this.designImportService.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, headerDesignItems);
+	protected DesignHeaderItem validateIfStandardVariableExists(final Map<Integer, DesignHeaderItem> map, final String messageCodeId,
+			final TermId termId) throws DesignValidationException {
+
+		final DesignHeaderItem headerItem = map.get(termId.getId());
 		if (headerItem == null) {
-			throw new DesignValidationException(
-					this.messageSource.getMessage("design.import.error.trial.is.required", null, Locale.ENGLISH));
+			throw new DesignValidationException(this.messageSource.getMessage(messageCodeId, null, Locale.ENGLISH));
 		} else {
 			return headerItem;
 		}
-	}
-
-	protected DesignHeaderItem validateIfEntryNumberExists(final List<DesignHeaderItem> headerDesignItems) throws DesignValidationException {
-		final DesignHeaderItem headerItem = this.designImportService.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, headerDesignItems);
-		if (headerItem == null) {
-			throw new DesignValidationException(this.messageSource.getMessage("design.import.error.entry.no.is.required", null,
-					Locale.ENGLISH));
-		} else {
-			return headerItem;
-		}
-	}
-
-	protected void validateIfPlotNumberExists(final List<DesignHeaderItem> headerDesignItems) throws DesignValidationException {
-		for (final DesignHeaderItem headerDesignItem : headerDesignItems) {
-			if (headerDesignItem.getVariable().getId() == TermId.PLOT_NO.getId()) {
-				return;
-			}
-		}
-		throw new DesignValidationException(this.messageSource.getMessage("design.import.error.plot.no.is.required", null, Locale.ENGLISH));
 	}
 
 	protected void validateEntryNoMustBeUniquePerInstance(final DesignHeaderItem entryNoHeaderItem,

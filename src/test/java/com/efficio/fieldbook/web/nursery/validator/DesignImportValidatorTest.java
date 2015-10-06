@@ -165,8 +165,9 @@ public class DesignImportValidatorTest {
 
 		try {
 
-			this.designImportValidator.validateIfEntryNumberExists(this.designImportData.getMappedHeaders().get(
-					PhenotypicType.TRIAL_ENVIRONMENT));
+			this.designImportValidator.validateIfStandardVariableExists(this.designImportData
+					.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+					"design.import.error.entry.no.is.required", TermId.ENTRY_NO);
 
 			Assert.fail("The logic did not detect that the entry number doesn't exist");
 
@@ -181,7 +182,9 @@ public class DesignImportValidatorTest {
 
 		try {
 
-			this.designImportValidator.validateIfEntryNumberExists(this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
+			this.designImportValidator.validateIfStandardVariableExists(this.designImportData
+					.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
+					"design.import.error.entry.no.is.required", TermId.ENTRY_NO);
 
 		} catch (final DesignValidationException e) {
 
@@ -196,8 +199,9 @@ public class DesignImportValidatorTest {
 
 		try {
 
-			this.designImportValidator.validateIfPlotNumberExists(this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
-
+			this.designImportValidator.validateIfStandardVariableExists(this.designImportData
+					.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
+					"design.import.error.plot.no.is.required", TermId.PLOT_NO);
 			Assert.fail("The logic did not detect that the plot number do not exist");
 
 		} catch (final DesignValidationException e) {
@@ -211,8 +215,9 @@ public class DesignImportValidatorTest {
 
 		try {
 
-			this.designImportValidator
-					.validateIfPlotNumberExists(this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
+			this.designImportValidator.validateIfStandardVariableExists(this.designImportData
+					.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_DESIGN),
+					"design.import.error.plot.no.is.required", TermId.PLOT_NO);
 
 		} catch (final DesignValidationException e) {
 
@@ -275,11 +280,12 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testValidateIfTrialFactorExists() throws MiddlewareException {
+	public void testValidateIfStandardVariableExists() throws MiddlewareException {
 		try {
 
-			this.designImportValidator.validateIfTrialFactorExists(this.designImportData.getMappedHeaders().get(
-					PhenotypicType.TRIAL_ENVIRONMENT));
+			this.designImportValidator.validateIfStandardVariableExists(this.designImportData
+					.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+					"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		} catch (final DesignValidationException e) {
 
@@ -290,11 +296,13 @@ public class DesignImportValidatorTest {
 	}
 
 	@Test
-	public void testValidateIfTrialFactorExistsTrialInstanceDoNotExist() throws MiddlewareException {
+	public void testValidateIfStandardVariableExistsTrialInstanceDoNotExist() throws MiddlewareException {
 
 		try {
 
-			this.designImportValidator.validateIfTrialFactorExists(this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
+			this.designImportValidator.validateIfStandardVariableExists(this.designImportData
+					.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.GERMPLASM),
+					"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 			Assert.fail("The logic should detect that the trial number exist");
 

@@ -21,6 +21,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.domain.dms.StudyReference;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -84,7 +85,7 @@ public class StudyTreeControllerTest {
 		testTree.add(new FolderReference(2, 3, "My Sub Folder", "My Sub Folder Description"));
 		testTree.add(new StudyReference(11, "My Nursery", "My Nursery Description"));
 
-		Mockito.doReturn(testTree).when(this.studyDataManager).getRootFolders(this.selectedProject.getUniqueID());
+		Mockito.doReturn(testTree).when(this.studyDataManager).getRootFolders(this.selectedProject.getUniqueID(), StudyType.nurseries());
 		
 		String result = this.controller.expandTree(StudyTreeController.LOCAL, "1", "N");
 		Assert.assertNotNull(result);
@@ -99,7 +100,7 @@ public class StudyTreeControllerTest {
 		testTree.add(new FolderReference(2, 3, "My Sub Folder", "My Sub Folder Description"));
 		testTree.add(new StudyReference(11, "My Nursery", "My Nursery Description"));
 
-		Mockito.doReturn(testTree).when(this.studyDataManager).getChildrenOfFolder(1, this.selectedProject.getUniqueID());
+		Mockito.doReturn(testTree).when(this.studyDataManager).getChildrenOfFolder(1, this.selectedProject.getUniqueID(), StudyType.nurseries());
 		
 		String result = this.controller.expandTree("1", "1", "N");
 		Assert.assertNotNull(result);

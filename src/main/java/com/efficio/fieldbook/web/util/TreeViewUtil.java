@@ -268,18 +268,6 @@ public class TreeViewUtil {
 		 return treeNode;
 	 }
 
-	public static boolean isFolder(Integer value, FieldbookService fieldbookService) {
-		try {
-			boolean isStudy = fieldbookService.isStudy(value);
-
-			return !isStudy;
-		} catch (MiddlewareQueryException e) {
-			TreeViewUtil.LOG.error(e.getMessage(), e);
-		}
-
-		return false;
-	}
-
 	/**
 	 * Convert reference to tree node.
 	 *

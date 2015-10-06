@@ -529,38 +529,46 @@ public class EditNurseryController extends SettingsController {
 
 	private void setSettingDetailRoleForVariables(CreateNurseryForm form, List<SettingDetail> studyLevelVariables,
 				List<SettingDetail> baselineTraits) {
-		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables,
-				this.userSelection, this.fieldbookMiddlewareService,
-				this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(),
-				form.getPlotLevelVariables(), this.userSelection, this.fieldbookMiddlewareService,
-				this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions(),
-				this.userSelection, this.fieldbookMiddlewareService,
-				this.contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits,
-				this.userSelection, this.fieldbookMiddlewareService,
+		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables, this.userSelection,
+				this.fieldbookMiddlewareService, this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables(), this.userSelection,
+				this.fieldbookMiddlewareService, this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions(), this.userSelection,
+				this.fieldbookMiddlewareService, this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits, this.userSelection, this.fieldbookMiddlewareService,
 				this.contextUtil.getCurrentProgramUUID());
 	}
 
 	private void includeDeletedList(CreateNurseryForm form, List<SettingDetail> studyLevelVariables, List<SettingDetail> baselineTraits) {
-		SettingsUtil.addDeletedSettingsList(studyLevelVariables,
-				this.userSelection.getDeletedStudyLevelConditions(),
+		SettingsUtil.addDeletedSettingsList(studyLevelVariables, this.userSelection.getDeletedStudyLevelConditions(),
 				this.userSelection.getStudyLevelConditions());
-		SettingsUtil.addDeletedSettingsList(form.getPlotLevelVariables(),
-				this.userSelection.getDeletedPlotLevelList(),
+		SettingsUtil.addDeletedSettingsList(form.getPlotLevelVariables(), this.userSelection.getDeletedPlotLevelList(),
 				this.userSelection.getPlotsLevelList());
-		SettingsUtil.addDeletedSettingsList(baselineTraits,
-				this.userSelection.getDeletedBaselineTraitsList(),
+		SettingsUtil.addDeletedSettingsList(baselineTraits, this.userSelection.getDeletedBaselineTraitsList(),
 				this.userSelection.getBaselineTraitsList());
-		SettingsUtil.addDeletedSettingsList(form.getNurseryConditions(),
-				this.userSelection.getDeletedNurseryConditions(),
+		SettingsUtil.addDeletedSettingsList(form.getNurseryConditions(), this.userSelection.getDeletedNurseryConditions(),
 				this.userSelection.getNurseryConditions());
 	}
 
 	private List<SettingDetail> combineVariates(CreateNurseryForm form) {
+
+		if(form.getBaselineTraitVariables() != null){
+			//NOTE: Setting variable type as TRAIT for Trait Variable List
+			for(SettingDetail selectionDetail : form.getBaselineTraitVariables()){
+				selectionDetail.setVariableType(VariableType.TRAIT);
+			}
+		}
+
+		if(form.getSelectionVariatesVariables() != null){
+			//NOTE: Setting variable type as SELECTION_METHOD for Trait Variable List
+			for(SettingDetail selectionDetail : form.getSelectionVariatesVariables()){
+				selectionDetail.setVariableType(VariableType.SELECTION_METHOD);
+			}
+		}
+
 		List<SettingDetail> baselineTraits = form.getBaselineTraitVariables();
 		List<SettingDetail> baselineTraitsSession = this.userSelection.getSelectionVariates();
+
 		if (baselineTraits == null) {
 			baselineTraits = form.getSelectionVariatesVariables();
 			this.userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
@@ -573,7 +581,7 @@ public class EditNurseryController extends SettingsController {
 			form.setPlotLevelVariables(new ArrayList<SettingDetail>());
 		}
 		if (baselineTraits == null) {
-			baselineTraits = new ArrayList<SettingDetail>();
+			baselineTraits = new ArrayList<>();
 		}
 		if (form.getNurseryConditions() == null) {
 			form.setNurseryConditions(new ArrayList<SettingDetail>());
@@ -582,7 +590,7 @@ public class EditNurseryController extends SettingsController {
 	}
 
 	private List<SettingDetail> combineStudyConditions(CreateNurseryForm form) {
-		List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
 		}
@@ -890,6 +898,7 @@ public class EditNurseryController extends SettingsController {
 				if (settingDetail.getVariable().getCvTermId().intValue() == settingDetailFromUserSelection
 						.getVariable().getCvTermId().intValue()) {
 					settingDetail.setRole(settingDetailFromUserSelection.getRole());
+					settingDetail.setVariableType(settingDetailFromUserSelection.getVariableType());
 					settingDetailExists = true;
 					break;
 				}

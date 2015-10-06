@@ -336,11 +336,13 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		final List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
 		final Map<String, Map<String, String>> changeMap = new HashMap<>();
 
+		// create data structures that will be used to store values that will eventually be stored into the database
 		final List<Name> namesForAdding = new ArrayList<>();
 		final List<Pair<Germplasm, Name>> germplasmPairs = new ArrayList<>();
 		final Map<Integer, MeasurementRow> entryNumberIndexMap = new HashMap<>();
 		int germplasmPairIndex = 0;
 		for (final GermplasmChangeDetail responseDetail : responseDetails) {
+			// reduce the nesting of the loop by continuing the loop in case expected condition is not satisfied
 			if (responseDetail.getIndex() >= observations.size()) {
 				continue;
 			}
@@ -355,6 +357,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				// add germplasm name to gid
 				final String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
 				final Integer dateInteger = Integer.valueOf(gDate);
+				// instead of directly saving the new name value, store the name into the prepared list
 				namesForAdding.add(new Name(null, Integer.valueOf(responseDetail.getOriginalGid()), responseDetail.getNameType(), 0,
 						userId, responseDetail.getNewDesig(), responseDetail.getImportLocationId(), dateInteger, 0));
 				desigData.setValue(responseDetail.getNewDesig());
@@ -369,9 +372,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				final Germplasm germplasm =
 						new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 0, responseDetail.getImportLocationId(),
 								dateInteger, name);
+
+				// instead of directly saving into the database, store the germplasm - name pair into a list
 				germplasmPairs.add(new ImmutablePair<Germplasm, Name>(germplasm, name));
 
-				// store the measurement row and the associated index of the entry
+				// store the measurement row and the associated index of the entry so that the GID resulting in the database save later on
+				// can still be used to properly update the required data structures
 				entryNumberIndexMap.put(germplasmPairIndex++, row);
 
 				// update the value of the DESIG measurementdata with the new value
@@ -392,6 +398,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
 		}
 
+		// perform the database / transaction managed operations outside of the loop for better performance
 		try {
 			if (namesForAdding.size() > 0) {
 				this.fieldbookMiddlewareService.addGermplasmNames(namesForAdding);

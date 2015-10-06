@@ -12,12 +12,10 @@
 package com.efficio.fieldbook.web;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.util.ContextUtil;
+import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
@@ -43,7 +41,7 @@ public abstract class AbstractBaseFieldbookController {
 	private WorkbenchService workbenchService;
 
 	@Resource
-	private WorkbenchDataManager workbenchDataManager;
+	private ContextUtil contextUtil;
 
 	@Resource
 	protected FieldbookProperties fieldbookProperties;
@@ -54,9 +52,6 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Resource
 	private PaginationListSelection paginationListSelection;
-
-	@Resource
-	private HttpServletRequest httpRequest;
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
@@ -71,7 +66,7 @@ public abstract class AbstractBaseFieldbookController {
 	// TODO change the return type to Long.
 	public String getCurrentProjectId() {
 		try {
-			Project projectInContext = ContextUtil.getProjectInContext(this.workbenchDataManager, this.httpRequest);
+			Project projectInContext = contextUtil.getProjectInContext();
 			if (projectInContext != null) {
 				return projectInContext.getProjectId().toString();
 			}
@@ -83,12 +78,12 @@ public abstract class AbstractBaseFieldbookController {
 	}
 
 	public Project getCurrentProject() throws MiddlewareQueryException {
-		return ContextUtil.getProjectInContext(this.workbenchDataManager, this.httpRequest);
+		return contextUtil.getProjectInContext();
 	}
 
 	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
 		return this.workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()),
-				ContextUtil.getCurrentWorkbenchUserId(this.workbenchDataManager, this.httpRequest));
+ contextUtil.getCurrentWorkbenchUserId());
 	}
 
 	public String getOldFieldbookPath() {
@@ -200,11 +195,4 @@ public abstract class AbstractBaseFieldbookController {
 		this.paginationListSelection = paginationListSelection;
 	}
 
-	public void setWorkbenchDataManager(WorkbenchDataManager workbenchDataManager) {
-		this.workbenchDataManager = workbenchDataManager;
-	}
-
-	public void setHttpRequest(HttpServletRequest httpRequest) {
-		this.httpRequest = httpRequest;
-	}
 }

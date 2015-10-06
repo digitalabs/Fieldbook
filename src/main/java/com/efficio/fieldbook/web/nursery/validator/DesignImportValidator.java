@@ -124,6 +124,14 @@ public class DesignImportValidator {
 		}
 	}
 
+	/**
+	 * In Trial Manager, a study could have at least 1 trial instance. And each trial instance has specific defined set of observation rows.
+	 * This method make sure for each set of observations rows per trial instance, there is a unique set of PLOT_NO.
+	 * 
+	 * @param headerDesignItems
+	 * @param csvMap
+	 * @throws DesignValidationException
+	 */
 	protected void validateIfPlotNumberIsUniquePerInstance(final List<DesignHeaderItem> headerDesignItems,
 			final Map<String, Map<Integer, List<String>>> csvMap) throws DesignValidationException {
 
@@ -136,6 +144,13 @@ public class DesignImportValidator {
 		}
 	}
 
+	/**
+	 * Returns an exception when there is a non-unique PLOT_NO value from the given group of imported design rows
+	 * 
+	 * @param plotNoHeaderItem
+	 * @param csvMap
+	 * @throws DesignValidationException
+	 */
 	protected void validatePlotNumberMustBeUnique(final DesignHeaderItem plotNoHeaderItem, final Map<Integer, List<String>> csvMap)
 			throws DesignValidationException {
 

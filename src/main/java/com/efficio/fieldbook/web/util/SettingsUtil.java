@@ -11,9 +11,23 @@
 
 package com.efficio.fieldbook.web.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.common.bean.*;
+import com.efficio.fieldbook.web.common.bean.PairedVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
+import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
 import com.hazelcast.util.StringUtil;
@@ -25,7 +39,11 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.*;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -33,13 +51,17 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.workbench.settings.*;
+import org.generationcp.middleware.pojos.workbench.settings.Condition;
+import org.generationcp.middleware.pojos.workbench.settings.Constant;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.Factor;
+import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
+import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
+import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
-
-import java.util.*;
 
 /**
  * The Class SettingsUtil.
@@ -157,9 +179,8 @@ public class SettingsUtil {
 
 			Condition condition = new Condition(variable.getName(), variable.getDescription(),
 					variable.getProperty(), variable.getScale(), variable.getMethod(),
-					variable.getRole(), variable.getDataType(), DateUtil.convertToDBDateFormat(
-							variable.getDataTypeId(),
-							HtmlUtils.htmlEscape(settingDetail.getValue())),
+					variable.getRole(), variable.getDataType(), DateUtil.convertToDBDateFormat(variable.getDataTypeId(),
+					HtmlUtils.htmlEscape(settingDetail.getValue())),
 					variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
 			condition.setOperation(variable.getOperation());
 			condition.setId(variable.getCvTermId());
@@ -190,6 +211,11 @@ public class SettingsUtil {
 					variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
 					settingDetail.getPossibleValues(), variable.getMinRange(),
 					variable.getMaxRange());
+
+			if(settingDetail.getVariableType() != null){
+				variate.setVariableType(settingDetail.getVariableType().getName());
+			}
+
 			variate.setOperation(variable.getOperation());
 			variate.setId(variable.getCvTermId());
 			variateList.add(variate);
@@ -860,7 +886,7 @@ public class SettingsUtil {
 							.getFieldPossibleValuesFavorite(fieldbookService, stdVar, programUUID);
 					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 
-					if (SettingsUtil.inPropertyList(standardVariable.getProperty().getId())) {
+					if(Objects.equals(VariableType.getByName(variate.getVariableType()), VariableType.SELECTION_METHOD)){
 						selectionVariates.add(settingDetail);
 					} else {
 						baselineTraitsList.add(settingDetail);
@@ -1418,6 +1444,7 @@ public class SettingsUtil {
 						PhenotypicType.VARIATE.toString(), mvar.getDataType(),
 						mvar.getDataTypeId(), mvar.getPossibleValues(), mvar.getMinRange(),
 						mvar.getMaxRange());
+				variate.setVariableType(mvar.getVariableType().getName());
 				variate.setId(mvar.getTermId());
 				variates.add(variate);
 			}
@@ -1603,6 +1630,10 @@ public class SettingsUtil {
 				variate.getProperty(), variate.getDatatype(), null, PhenotypicType.TRIAL_DESIGN
 						.getLabelList().get(0), variate.getMinRange(), variate.getMaxRange(),
 				PhenotypicType.getPhenotypicTypeByName(variate.getRole()));
+		if(variate.getVariableType() != null){
+			mvar.setVariableType(VariableType.getByName(variate.getVariableType()));
+		}
+
 		mvar.setOperation(variate.getOperation());
 		mvar.setTermId(variate.getId());
 		mvar.setFactor(false);

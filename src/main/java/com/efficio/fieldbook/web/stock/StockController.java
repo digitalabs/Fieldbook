@@ -280,7 +280,7 @@ public class StockController extends AbstractBaseFieldbookController {
 
 	protected Map<ListDataProject, GermplasmListData> generateGermplasmMap(Integer listDataID, Integer listDataProjectListId) {
 		List<GermplasmListData> germplasmListDataList =
-				this.germplasmListManager.getGermplasmListDataByListId(listDataID, 0, Integer.MAX_VALUE);
+				this.germplasmListManager.getGermplasmListDataByListId(listDataID);
 		List<ListDataProject> listDataProjectList = this.germplasmListManager.retrieveSnapshotListData(listDataProjectListId);
 
 		Map<ListDataProject, GermplasmListData> germplasmMap = new HashMap<>();

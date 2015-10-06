@@ -481,10 +481,9 @@ public class ImportGermplasmListController extends SettingsController {
 			ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			mainInfo.setAdvanceImportType(true);
 			form.setImportedGermplasmMainInfo(mainInfo);
-			int count = (int) this.germplasmListManager.countGermplasmListDataByListId(listId);
 			mainInfo.setListId(listId);
 			List<GermplasmListData> data = new ArrayList<>();
-			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
+			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
 			List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, null);
 			String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckList());
@@ -860,7 +859,7 @@ public class ImportGermplasmListController extends SettingsController {
 			String checkId = this.getCheckId(ImportGermplasmListController.DEFAULT_CHECK_VALUE, checksList);
 
 			List<GermplasmListData> data = new ArrayList<>();
-			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
+			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
 			List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, checkId);
 
 			this.generateCheckListModel(model, list, checksList);

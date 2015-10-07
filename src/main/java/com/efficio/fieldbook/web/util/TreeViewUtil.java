@@ -22,7 +22,6 @@ import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -31,7 +30,6 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.UserDefinedField;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,16 +60,6 @@ public class TreeViewUtil {
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
 
-	public static List<FolderReference> convertReferenceToFolderReference(List<Reference> refList) {
-		List<FolderReference> folRefs = new ArrayList<FolderReference>();
-		for (Reference ref : refList) {
-			FolderReference folderReference = new FolderReference(ref.getId(), ref.getName());
-			folderReference.setProgramUUID(ref.getProgramUUID());
-			folRefs.add(folderReference);
-		}
-		return folRefs;
-	}
-
 	/**
 	 * Convert folder references to json.
 	 *
@@ -79,10 +67,9 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertStudyFolderReferencesToJson(List<FolderReference> references, boolean isNursery, boolean isAll,
-			boolean isLazy, FieldbookService fieldbookService, boolean isFolderOnly) throws IOException {
-		List<TreeNode> treeNodes =
-				TreeViewUtil.convertStudyFolderReferencesToTreeView(references, isNursery, isAll, isLazy, fieldbookService, isFolderOnly);
+	public static String convertStudyFolderReferencesToJson(List<Reference> references, boolean isAll, boolean isLazy, boolean isFolderOnly)
+			throws IOException {
+		List<TreeNode> treeNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(references, isAll, isLazy, isFolderOnly);
 		return TreeViewUtil.convertTreeViewToJson(treeNodes);
 	}
 
@@ -162,21 +149,19 @@ public class TreeViewUtil {
 		return treeNodes;
 	}
 
-	public static List<TreeNode> convertStudyFolderReferencesToTreeView(List<FolderReference> references, boolean isNursery, boolean isAll,
-			boolean isLazy, FieldbookService fieldbookService, boolean isFolderOnly) {
+	public static List<TreeNode> convertStudyFolderReferencesToTreeView(List<Reference> references, boolean isAll, boolean isLazy,
+			boolean isFolderOnly) {
 		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-		TreeNode treeNode;
 		if (references != null && !references.isEmpty()) {
-			for (FolderReference reference : references) {
-				treeNode = TreeViewUtil.convertStudyReferenceToTreeNode(reference, isNursery, isAll, fieldbookService, isFolderOnly);
-				if (treeNode == null) {
+			for (Reference reference : references) {
+				// isFolderOnly also comes all the way from UI. Keeping the existing logic. Not entirely sure what it is for.
+				if (reference.isStudy() && isFolderOnly) {
 					continue;
 				}
+
+				TreeNode treeNode = TreeViewUtil.convertStudyFolderReferenceToTreeNode(reference);
 				treeNode.setIsLazy(isLazy);
 				treeNodes.add(treeNode);
-				if (reference.getSubFolders() != null && !reference.getSubFolders().isEmpty()) {
-					treeNode.setChildren(TreeViewUtil.convertFolderReferencesToTreeView(reference.getSubFolders(), isLazy));
-				}
 			}
 		}
 		return treeNodes;
@@ -249,93 +234,53 @@ public class TreeViewUtil {
 		return description;
 	}
 
-	 /**
-	  * Convert reference to tree node.
-	  *
-	  * @param reference the reference
-	  * @return the tree node
-	  */
-	 private static TreeNode convertReferenceToTreeNode(Reference reference) {
-		 TreeNode treeNode = new TreeNode();
+	/**
+	 * Convert reference to tree node.
+	 *
+	 * @param reference the reference
+	 * @return the tree node
+	 */
+	private static TreeNode convertReferenceToTreeNode(Reference reference) {
+		TreeNode treeNode = new TreeNode();
 
 		treeNode.setKey(reference.getId().toString());
-		 treeNode.setTitle(reference.getName());
-		 treeNode.setIsFolder(reference instanceof DatasetReference ? false : true);
-		 treeNode.setIsLazy(true);
-		 treeNode.setProgramUUID(reference.getProgramUUID());
+		treeNode.setTitle(reference.getName());
+		treeNode.setIsFolder(reference instanceof DatasetReference ? false : true);
+		treeNode.setIsLazy(true);
+		treeNode.setProgramUUID(reference.getProgramUUID());
 
-		 return treeNode;
-	 }
-
-	public static boolean isFolder(Integer value, FieldbookService fieldbookService) {
-		try {
-			boolean isStudy = fieldbookService.isStudy(value);
-
-			return !isStudy;
-		} catch (MiddlewareQueryException e) {
-			TreeViewUtil.LOG.error(e.getMessage(), e);
-		}
-
-		return false;
+		return treeNode;
 	}
 
 	/**
-	  * Convert reference to tree node.
-	  *
-	  * @param reference the reference
-	  * @return the tree node
-	  */
-	 private static TreeNode convertStudyReferenceToTreeNode(Reference reference, boolean isNursery, boolean isAll,
-			FieldbookService fieldbookService, boolean isFolderOnly) {
-		 TreeNode treeNode = new TreeNode();
-
+	 * Convert reference to tree node.
+	 *
+	 * @param reference the reference
+	 * @return the tree node
+	 */
+	private static TreeNode convertStudyFolderReferenceToTreeNode(Reference reference) {
+		TreeNode treeNode = new TreeNode();
 		treeNode.setKey(reference.getId().toString());
-		 treeNode.setTitle(reference.getName());
-		 boolean isFolder = TreeViewUtil.isFolder(reference.getId(), fieldbookService);
-		 treeNode.setIsFolder(isFolder);
-		 treeNode.setIsLazy(true);
-		 treeNode.setProgramUUID(reference.getProgramUUID());
-		 if (isFolder) {
-			 treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
-		 } else {
-			 if (isFolderOnly) {
-				 return null;
-			 }
-			 treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
-			if (!TreeViewUtil.isNurseryStudy(reference.getId(), isNursery, fieldbookService)) {
-				return null;
-			}
-		 }
-
+		treeNode.setTitle(reference.getName());
+		boolean isFolder = reference.isFolder();
+		treeNode.setIsFolder(isFolder);
+		treeNode.setIsLazy(true);
+		treeNode.setProgramUUID(reference.getProgramUUID());
+		if (isFolder) {
+			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
+		} else {
+			treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
+		}
 		return treeNode;
-	 }
-
-	private static boolean isNurseryStudy(Integer studyId, boolean isNursery, FieldbookService fieldbookService) {
-		 try {
-			 TermId termId = fieldbookService.getStudyType(studyId);
-
-			if (isNursery) {
-				 if (TermId.NURSERY == termId) {
-					 return true;
-				 }
-			 } else {
-				 if (TermId.TRIAL == termId) {
-					 return true;
-				 }
-			 }
-		 } catch (MiddlewareQueryException e) {
-			 TreeViewUtil.LOG.error(e.getMessage(), e);
-		 }
-		 return false;
-	 }
+	}
 
 	/**
-	  * Convert germplasm list to tree node.
-	  *
-	  * @param germplasmList the germplasm list
-	  * @return the tree node
-	  */
-	 private static TreeNode convertGermplasmListToTreeNode(GermplasmList germplasmList, boolean isFolderOnly) {
+	 * Convert germplasm list to tree node.
+	 *
+	 * @param germplasmList the germplasm list
+	 * @return the tree node
+	 */
+	private static TreeNode convertGermplasmListToTreeNode(GermplasmList germplasmList, boolean isFolderOnly) {
 		TreeNode treeNode = new TreeNode();
 
 		treeNode.setKey(germplasmList.getId().toString());
@@ -352,16 +297,16 @@ public class TreeViewUtil {
 		}
 
 		return treeNode;
-	 }
+	}
 
 	/**
-	  * Convert germplasm list to tree node.
-	  *
-	  * @param germplasmList the germplasm list
-	  * @return the tree node
-	  */
-	 private static TreeTableNode convertGermplasmListToTreeTableNode(GermplasmList germplasmList, UserDataManager userDataManager,
-			 GermplasmListManager germplasmListManager) {
+	 * Convert germplasm list to tree node.
+	 *
+	 * @param germplasmList the germplasm list
+	 * @return the tree node
+	 */
+	private static TreeTableNode convertGermplasmListToTreeTableNode(GermplasmList germplasmList, UserDataManager userDataManager,
+			GermplasmListManager germplasmListManager) {
 		TreeTableNode treeTableNode = new TreeTableNode();
 
 		treeTableNode.setId(germplasmList.getId().toString());
@@ -375,22 +320,22 @@ public class TreeViewUtil {
 		treeTableNode.setNoOfEntries(noOfEntries == 0 ? "" : String.valueOf(noOfEntries));
 		treeTableNode.setParentId(TreeViewUtil.getParentId(germplasmList));
 		return treeTableNode;
-	 }
+	}
 
 	private static String getParentId(GermplasmList germplasmList) {
-		 Integer parentId = germplasmList.getParentId();
-		 if (parentId == null) {
-			 return "LISTS";
-		 }
-		 return String.valueOf(parentId);
-	 }
+		Integer parentId = germplasmList.getParentId();
+		if (parentId == null) {
+			return "LISTS";
+		}
+		return String.valueOf(parentId);
+	}
 
-	 private static String getTypeString(String typeCode, GermplasmListManager germplasmListManager) {
+	private static String getTypeString(String typeCode, GermplasmListManager germplasmListManager) {
 		String type = "Germplasm List";
 		if (typeCode == null) {
 			return type;
 		}
-		 try {
+		try {
 			List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
 			for (UserDefinedField listType : listTypes) {
 				if (typeCode.equals(listType.getFcode())) {
@@ -401,7 +346,7 @@ public class TreeViewUtil {
 			TreeViewUtil.LOG.error("Error in getting list types.", ex);
 			return "";
 		}
-		 return type;
+		return type;
 	}
 
 	private static String getOwnerListName(Integer userId, UserDataManager userDataManager) {
@@ -426,13 +371,13 @@ public class TreeViewUtil {
 	}
 
 	/**
-	  * Convert tree view to json.
-	  *
-	  * @param treeNodes the tree nodes
-	  * @return the string
-	  * @throws Exception the exception
-	  */
-	 public static String convertTreeViewToJson(List<TreeNode> treeNodes) throws IOException {
+	 * Convert tree view to json.
+	 *
+	 * @param treeNodes the tree nodes
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public static String convertTreeViewToJson(List<TreeNode> treeNodes) throws IOException {
 		if (treeNodes != null && !treeNodes.isEmpty()) {
 			ObjectMapper mapper = new ObjectMapper();
 			return mapper.writeValueAsString(treeNodes);
@@ -441,13 +386,13 @@ public class TreeViewUtil {
 	}
 
 	/**
-	  * Convert search tree view to json.
-	  *
-	  * @param treeNodes the tree nodes
-	  * @return the string
-	  * @throws Exception the exception
-	  */
-	 public static String convertSearchTreeViewToJson(List<TypeAheadSearchTreeNode> treeNodes) throws IOException {
+	 * Convert search tree view to json.
+	 *
+	 * @param treeNodes the tree nodes
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public static String convertSearchTreeViewToJson(List<TypeAheadSearchTreeNode> treeNodes) throws IOException {
 		if (treeNodes != null && !treeNodes.isEmpty()) {
 			ObjectMapper mapper = new ObjectMapper();
 			return mapper.writeValueAsString(treeNodes);
@@ -456,16 +401,16 @@ public class TreeViewUtil {
 	}
 
 	// for the ontology Browser
-	 /**
-	  * Convert ontology traits to search single level json.
-	  *
-	  * @param traitClassReferences the trait references
-	  * @return the string
-	  * @throws Exception the exception
-	  */
-	 public static String convertOntologyTraitsToSearchSingleLevelJson(List<TraitClassReference> traitClassReferences,
+	/**
+	 * Convert ontology traits to search single level json.
+	 *
+	 * @param traitClassReferences the trait references
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public static String convertOntologyTraitsToSearchSingleLevelJson(List<TraitClassReference> traitClassReferences,
 			Map<String, StandardVariableReference> mapVariableRef) throws IOException {
-		 return TreeViewUtil.convertSearchTreeViewToJson(TreeViewUtil.getTypeAheadTreeNodes("", traitClassReferences, mapVariableRef));
+		return TreeViewUtil.convertSearchTreeViewToJson(TreeViewUtil.getTypeAheadTreeNodes("", traitClassReferences, mapVariableRef));
 	}
 
 	private static List<TypeAheadSearchTreeNode> getTypeAheadTreeNodes(String parentId, List<TraitClassReference> traitClassReferences,
@@ -528,16 +473,16 @@ public class TreeViewUtil {
 		}
 
 		return treeNodes;
-	 }
+	}
 
 	/**
-	  * Convert ontology traits to json.
-	  *
-	  * @param traitClassReferences the trait references
-	  * @return the string
-	  * @throws Exception the exception
-	  */
-	 public static String convertOntologyTraitsToJson(List<TraitClassReference> traitClassReferences,
+	 * Convert ontology traits to json.
+	 *
+	 * @param traitClassReferences the trait references
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public static String convertOntologyTraitsToJson(List<TraitClassReference> traitClassReferences,
 			Map<String, StandardVariableReference> mapVariableRef) throws IOException {
 
 		List<TreeNode> treeNodes = TreeViewUtil.convertTraitClassReferencesToTreeView(traitClassReferences, mapVariableRef);
@@ -546,12 +491,12 @@ public class TreeViewUtil {
 	}
 
 	/**
-	  * Convert trait references to tree view.
-	  *
-	  * @param traitClassReferences the trait references
-	  * @return the list
-	  */
-	 private static List<TreeNode> convertTraitClassReferencesToTreeView(List<TraitClassReference> traitClassReferences,
+	 * Convert trait references to tree view.
+	 *
+	 * @param traitClassReferences the trait references
+	 * @return the list
+	 */
+	private static List<TreeNode> convertTraitClassReferencesToTreeView(List<TraitClassReference> traitClassReferences,
 			Map<String, StandardVariableReference> mapVariableRef) {
 		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
 		if (traitClassReferences != null && !traitClassReferences.isEmpty()) {
@@ -563,12 +508,12 @@ public class TreeViewUtil {
 	}
 
 	/**
-	  * Convert trait reference to tree node.
-	  *
-	  * @param reference the reference
-	  * @return the tree node
-	  */
-	 private static TreeNode convertTraitClassReferenceToTreeNode(String parentParentId, TraitClassReference reference,
+	 * Convert trait reference to tree node.
+	 *
+	 * @param reference the reference
+	 * @return the tree node
+	 */
+	private static TreeNode convertTraitClassReferenceToTreeNode(String parentParentId, TraitClassReference reference,
 			Map<String, StandardVariableReference> mapVariableRef) {
 		TreeNode treeNode = new TreeNode();
 		String parentId = reference.getId().toString();
@@ -605,14 +550,14 @@ public class TreeViewUtil {
 	}
 
 	/**
-	  * Convert property reference to tree node.
-	  *
-	  * @param parentId the parent id
-	  * @param reference the reference
-	  * @param parentTitle the parent title
-	  * @return the tree node
-	  */
-	 private static TreeNode convertPropertyReferenceToTreeNode(String parentId, PropertyReference reference, String parentTitle,
+	 * Convert property reference to tree node.
+	 *
+	 * @param parentId the parent id
+	 * @param reference the reference
+	 * @param parentTitle the parent title
+	 * @return the tree node
+	 */
+	private static TreeNode convertPropertyReferenceToTreeNode(String parentId, PropertyReference reference, String parentTitle,
 			Map<String, StandardVariableReference> mapVariableRef) {
 		TreeNode treeNode = new TreeNode();
 		String id = parentId + "_" + reference.getId().toString();
@@ -642,20 +587,20 @@ public class TreeViewUtil {
 		return treeNode;
 	}
 
-	 /**
-	  * Convert standard variable reference to tree node.
-	  *
-	  * @param parentId the parent id
-	  * @param reference the reference
-	  * @param parentTitle the parent title
-	  * @return the tree node
-	  */
-	 private static TreeNode convertStandardVariableReferenceToTreeNode(String parentId, StandardVariableReference reference,
+	/**
+	 * Convert standard variable reference to tree node.
+	 *
+	 * @param parentId the parent id
+	 * @param reference the reference
+	 * @param parentTitle the parent title
+	 * @return the tree node
+	 */
+	private static TreeNode convertStandardVariableReferenceToTreeNode(String parentId, StandardVariableReference reference,
 			String parentTitle, Map<String, StandardVariableReference> mapVariableRef) {
 
 		if (mapVariableRef != null && !mapVariableRef.isEmpty() && !mapVariableRef.containsKey(reference.getId().toString())) {
-			 return null;
-		 }
+			return null;
+		}
 
 		TreeNode treeNode = new TreeNode();
 		String id = parentId + "_" + reference.getId().toString();

@@ -260,13 +260,18 @@ public class CrossingServiceImpl implements CrossingService {
 
 	public void populateGDate(Germplasm germplasm, String crossingDate, String harvestDate) {
 		Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
-		if (!StringUtil.isEmpty(crossingDate)) {
-			germplasm.setGdate(Integer.valueOf(crossingDate));
-		} else if (formattedHarvestDate != 0) {
+
+		if(formattedHarvestDate != 0){
 			germplasm.setGdate(formattedHarvestDate);
-		} else {
-			germplasm.setGdate(DateUtil.getCurrentDateAsIntegerValue());
+			return;
 		}
+
+		if(!StringUtil.isEmpty(crossingDate)){
+			germplasm.setGdate(Integer.valueOf(crossingDate));
+			return;
+		}
+
+		germplasm.setGdate(DateUtil.getCurrentDateAsIntegerValue());
 	}
 
 	protected List<Pair<Germplasm, Name>> generateGermplasmNamePairs(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses,
@@ -308,7 +313,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			name.setNval(cross.getDesig());
-			name.setNdate(this.getFormattedHarvestDate(additionalDetailsSetting.getHarvestDate()));
+			name.setNdate(germplasm.getGdate());
 			name.setLocationId(harvestLocationId);
 
 			List<Name> names = new ArrayList<>();

@@ -180,7 +180,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 				final Integer germplasmListId = this.saveGermplasmList(form, listDataItems);
 
 				List<GermplasmListData> data = new ArrayList<GermplasmListData>();
-				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId);
+				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
 				List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProjectFromGermplasmListData(data);
 
 				final Integer listDataProjectListId = this.saveListDataProjectList(form, germplasmListId, listDataProject);

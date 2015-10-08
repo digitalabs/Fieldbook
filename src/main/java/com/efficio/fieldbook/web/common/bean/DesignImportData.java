@@ -40,6 +40,10 @@ public class DesignImportData {
 
 	public void setMappedHeaders(final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders) {
 		this.mappedHeaders = mappedHeaders;
+	}
+
+	public void setMappedHeadersWithStandardVariable(final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders) {
+		this.setMappedHeaders(mappedHeaders);
 
 		this.mappedHeadersWithDesignHeaderItemsMappedToStdVarId = new HashMap<PhenotypicType, Map<Integer, DesignHeaderItem>>();
 

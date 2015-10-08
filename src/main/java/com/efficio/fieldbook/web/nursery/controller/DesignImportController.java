@@ -328,7 +328,7 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 
-		this.userSelection.getDesignImportData().setMappedHeaders(newMappingResults);
+		this.userSelection.getDesignImportData().setMappedHeadersWithStandardVariable(newMappingResults);
 	}
 
 	@ResponseBody

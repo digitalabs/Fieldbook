@@ -34,7 +34,7 @@ import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
-import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -136,7 +136,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	private MessageSource messageSource;
 
 	@Resource
-	private ExportService exportService;
+	private GermplasmExportService germplasmExportService;
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -841,7 +841,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
 				this.generateColumnValues(trialInstances, selectedFieldIDs, userLabelPrinting);
 
-		this.exportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
+		this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
 
 		return fileName;
 	}

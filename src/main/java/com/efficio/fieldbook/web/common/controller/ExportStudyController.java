@@ -24,8 +24,8 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
-import org.generationcp.commons.service.ExportService;
-import org.generationcp.commons.service.impl.ExportServiceImpl;
+import org.generationcp.commons.service.GermplasmExportService;
+import org.generationcp.commons.service.impl.GermplasmExportServiceImpl;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CustomReportTypeUtil;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -617,7 +617,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(exportType)
 				|| AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString().equalsIgnoreCase(exportType)) {
 			return this.exportAdvanceListService.exportAdvanceGermplasmList(advancedListIds, studyDetails.getStudyName(),
-					this.getExportServiceImpl(), exportType);
+					this.getGermplasmExportServiceImpl(), exportType);
 		}
 		return null;
 	}
@@ -638,7 +638,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 		String outputFilename = null;
 
-		File file = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), this.getExportServiceImpl());
+		File file = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), this.getGermplasmExportServiceImpl());
 
 		outputFilename = file.getAbsolutePath();
 		String contentType = ExportStudyController.APPLICATION_VND_MS_EXCEL;
@@ -655,8 +655,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		this.exportAdvanceListService = exportAdvanceListService;
 	}
 
-	protected ExportService getExportServiceImpl() {
-		return new ExportServiceImpl();
+	protected GermplasmExportService getGermplasmExportServiceImpl() {
+		return new GermplasmExportServiceImpl();
 	}
 
 	protected void setUserSelection(UserSelection userSelection) {

@@ -106,36 +106,32 @@ public class ExportGermplasmListControllerTest {
 
 		MockitoAnnotations.initMocks(this);
 
-		this.exportGermplasmListController = Mockito.spy(new ExportGermplasmListController());
-		this.exportGermplasmListController.setUserSelection(this.userSelection);
-		this.exportGermplasmListController.setExportGermplasmListService(this.exportGermplasmListService);
-		this.exportGermplasmListController.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(),contextUtil.getCurrentProgramUUID()))
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportGermplasmListControllerTest.ENTRY_NO));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.DESIG.getId(),contextUtil.getCurrentProgramUUID()))
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportGermplasmListControllerTest.DESIGNATION));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.GID.getId(),contextUtil.getCurrentProgramUUID()))
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportGermplasmListControllerTest.GID));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.CROSS.getId(),contextUtil.getCurrentProgramUUID()))
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportGermplasmListControllerTest.PARENTAGE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(),contextUtil.getCurrentProgramUUID()))
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportGermplasmListControllerTest.SEED_SOURCE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(),contextUtil.getCurrentProgramUUID()))
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportGermplasmListControllerTest.ENTRY_CODE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), ExportGermplasmListControllerTest.ENTRY_NUMBER_STORAGE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(),contextUtil.getCurrentProgramUUID()))
+		Mockito.when(
+				this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
+						ExportGermplasmListControllerTest.ENTRY_NUMBER_STORAGE));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportGermplasmListControllerTest.CHECK));
-		Mockito.doReturn(this.fieldbookProperties).when(this.exportGermplasmListController).getFieldbookProperties();
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 
-		Mockito.doReturn(this.getGermplasmList()).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenReturn(this.getGermplasmList());
 
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(Mockito.mock(ImportedGermplasmMainInfo.class));
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo().getListId()).thenReturn(1);
-		Mockito.when(this.userSelection.getImportedGermplasmMainInfo().getListName()).thenReturn(
-				ExportGermplasmListControllerTest.LIST_NAME);
+		Mockito.when(this.userSelection.getImportedGermplasmMainInfo().getListName())
+				.thenReturn(ExportGermplasmListControllerTest.LIST_NAME);
 	}
 
 	@Test

@@ -152,7 +152,7 @@ public class StockControllerTest {
 		List<GermplasmListData> germplasmListDatas = testData.getRight();
 
 		Mockito.doReturn(germplasmListDatas).when(this.germplasmListManager)
-				.getGermplasmListDataByListId(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID, 0, Integer.MAX_VALUE);
+				.getGermplasmListDataByListId(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID);
 		Mockito.doReturn(dataProjectList).when(this.germplasmListManager)
 				.retrieveSnapshotListData(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 
@@ -180,7 +180,7 @@ public class StockControllerTest {
 		List<GermplasmListData> germplasmListDatas = testData.getRight();
 
 		Mockito.doReturn(germplasmListDatas).when(this.germplasmListManager)
-				.getGermplasmListDataByListId(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID, 0, Integer.MAX_VALUE);
+				.getGermplasmListDataByListId(StockControllerTest.TEST_GERMPLASM_LIST_DATA_LIST_ID);
 		Mockito.doReturn(dataProjectList).when(this.germplasmListManager)
 				.retrieveSnapshotListData(StockControllerTest.TEST_LISTDATA_PROJECT_LIST_ID);
 

@@ -80,7 +80,7 @@ public class CreateNurseryController extends SettingsController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
 	 */
 	@Override
@@ -110,8 +110,8 @@ public class CreateNurseryController extends SettingsController {
 				Workbook workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
 				this.userSelection.setConstantsWithLabels(workbook.getConstants());
 				this.fieldbookService
-						.createIdNameVariablePairs(workbook, new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(),
-								false);
+				.createIdNameVariablePairs(workbook, new ArrayList<SettingDetail>(), AppConstants.ID_NAME_COMBINATION.getString(),
+						false);
 
 				Dataset dataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 				SettingsUtil.convertXmlDatasetToPojo(this.fieldbookMiddlewareService, this.fieldbookService, dataset, this.userSelection,
@@ -218,7 +218,7 @@ public class CreateNurseryController extends SettingsController {
 		String contextParams = ContextUtil.getContextParameterString(contextInfo);
 		SessionUtility.clearSessionData(session,
 				new String[] {SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME,
-						SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+				SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 		form.setProjectId(this.getCurrentProjectId());
 		this.setFormStaticData(form, contextParams);
 		this.assignDefaultValues(form);
@@ -299,7 +299,7 @@ public class CreateNurseryController extends SettingsController {
 
 		studyLevelVariables.addAll(form.getBasicDetails());
 
-		addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, userSelection);
+		this.addStudyLevelVariablesFromUserSelectionIfNecessary(studyLevelVariables, this.userSelection);
 
 		this.addNurseryTypeFromDesignImport(studyLevelVariables);
 		this.addExperimentalDesignTypeFromDesignImport(studyLevelVariables);
@@ -317,16 +317,16 @@ public class CreateNurseryController extends SettingsController {
 			this.userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
 		}
 		//added code to set the role for the variables add
-		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables, userSelection, fieldbookMiddlewareService,contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables(), userSelection, fieldbookMiddlewareService,contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions(), userSelection, fieldbookMiddlewareService,contextUtil.getCurrentProgramUUID());
-		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits, userSelection, fieldbookMiddlewareService,contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.STUDY_DETAIL.getId(), studyLevelVariables, this.userSelection, this.fieldbookMiddlewareService,this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.GERMPLASM_DESCRIPTOR.getId(), form.getPlotLevelVariables(), this.userSelection, this.fieldbookMiddlewareService,this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), form.getNurseryConditions(), this.userSelection, this.fieldbookMiddlewareService,this.contextUtil.getCurrentProgramUUID());
+		SettingsUtil.setSettingDetailRole(VariableType.TRAIT.getId(), baselineTraits, this.userSelection, this.fieldbookMiddlewareService,this.contextUtil.getCurrentProgramUUID());
 
 		Dataset dataset = (Dataset) SettingsUtil
 				.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, studyLevelVariables, form.getPlotLevelVariables(),
-						baselineTraits, this.userSelection, form.getNurseryConditions(), contextUtil.getCurrentProgramUUID());
+						baselineTraits, this.userSelection, form.getNurseryConditions(), this.contextUtil.getCurrentProgramUUID());
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
-		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, contextUtil.getCurrentProgramUUID());
+		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, true, this.contextUtil.getCurrentProgramUUID());
 		this.userSelection.setWorkbook(workbook);
 
 		this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null);
@@ -633,7 +633,6 @@ public class CreateNurseryController extends SettingsController {
 		}
 
 		model.addAttribute("createNurseryForm", form);
-		model.addAttribute("nurseryList", this.getNurseryList());
 
 		return super.showAjaxPage(model, CreateNurseryController.URL_SETTINGS);
 	}
@@ -828,7 +827,7 @@ public class CreateNurseryController extends SettingsController {
 	protected void setSettingDetailsValueFromVariable(MeasurementVariable var, SettingDetail detail) throws MiddlewareQueryException {
 		if (var.getTermId() == TermId.BREEDING_METHOD_CODE.getId() && var.getValue() != null && !var.getValue().isEmpty()) {
 			// set the value of code to ID for it to be selected in the popup
-			Method method = this.fieldbookMiddlewareService.getMethodByCode(var.getValue(), contextUtil.getCurrentProgramUUID());
+			Method method = this.fieldbookMiddlewareService.getMethodByCode(var.getValue(), this.contextUtil.getCurrentProgramUUID());
 			if (method != null) {
 				detail.setValue(String.valueOf(method.getMid()));
 			} else {
@@ -859,13 +858,13 @@ public class CreateNurseryController extends SettingsController {
 	protected void setLocationVariableValue(SettingDetail detail, MeasurementVariable var) throws MiddlewareQueryException {
 		int locationId = var.getValue() != null && !var.getValue().isEmpty() && NumberUtils.isNumber(var.getValue()) ?
 				Integer.valueOf(var.getValue()) :
-				0;
-		Location location = this.fieldbookMiddlewareService.getLocationById(locationId);
-		if (location != null) {
-			detail.setValue(String.valueOf(location.getLocid()));
-		} else {
-			detail.setValue("");
-		}
+					0;
+				Location location = this.fieldbookMiddlewareService.getLocationById(locationId);
+				if (location != null) {
+					detail.setValue(String.valueOf(location.getLocid()));
+				} else {
+					detail.setValue("");
+				}
 	}
 
 	protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {

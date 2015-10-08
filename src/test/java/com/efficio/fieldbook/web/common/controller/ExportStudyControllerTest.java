@@ -30,7 +30,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.CustomReportType;
-import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -118,11 +118,11 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoAdvanceExportCsvMoreThan1() throws MiddlewareQueryException, JsonProcessingException, IOException {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
 		Mockito.when(
-				exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", exportService,
+				exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.zip"));
 
 		UserSelection userSelection = new UserSelection();
@@ -150,11 +150,11 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoAdvanceExportCsvOnly1() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
 		Mockito.when(
-				exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", exportService,
+				exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.csv"));
 
 		UserSelection userSelection = new UserSelection();
@@ -181,11 +181,11 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoAdvanceExportXlsMoreThan1() throws MiddlewareQueryException, JsonProcessingException, IOException {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
 		Mockito.when(
-				exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", exportService,
+				exportAdvanceListService.exportAdvanceGermplasmList("1|2|3", "TempName", germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new File("temp.zip"));
 
 		UserSelection userSelection = new UserSelection();
@@ -213,11 +213,11 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoAdvanceExportXlsOnly1() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
 		Mockito.when(
-				exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", exportService,
+				exportAdvanceListService.exportAdvanceGermplasmList("1", "TempName", germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new File("temp.xls"));
 
 		UserSelection userSelection = new UserSelection();
@@ -245,15 +245,15 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testExportAdvanceListItemsInXlsExportType() {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
 		exportStudyControllerMock.setExportAdvanceListService(exportAdvanceListService);
 		StudyDetails details = new StudyDetails();
 		details.setStudyName("TestStudy");
 
 		Mockito.when(
-				exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), exportService,
+				exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString())).thenReturn(new File("temp.xls"));
 
 		File file = exportStudyControllerMock.exportAdvanceListItems("1", "1", details);
@@ -263,15 +263,15 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testExportAdvanceListItemsInCsvExportType() {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
 		exportStudyControllerMock.setExportAdvanceListService(exportAdvanceListService);
 		StudyDetails details = new StudyDetails();
 		details.setStudyName("TestStudy");
 
 		Mockito.when(
-				exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), exportService,
+				exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.csv"));
 
 		File file = exportStudyControllerMock.exportAdvanceListItems("2", "1", details);
@@ -281,15 +281,15 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testExportAdvanceListItemsInNullExportType() {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
 		exportStudyControllerMock.setExportAdvanceListService(exportAdvanceListService);
 		StudyDetails details = new StudyDetails();
 		details.setStudyName("TestStudy");
 
 		Mockito.when(
-				exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), exportService,
+				exportAdvanceListService.exportAdvanceGermplasmList("1", details.getStudyName(), germplasmExportService,
 						AppConstants.EXPORT_ADVANCE_NURSERY_CSV.getString())).thenReturn(new File("temp.csv"));
 
 		File file = exportStudyControllerMock.exportAdvanceListItems("3", "1", details);
@@ -299,7 +299,7 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testGetExportServiceImpl() {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		Assert.assertTrue("Should return export service class", exportStudyControllerMock.getExportServiceImpl() instanceof ExportService);
+		Assert.assertTrue("Should return export service class", exportStudyControllerMock.getGermplasmExportServiceImpl() instanceof GermplasmExportService);
 	}
 
 	@Test
@@ -423,8 +423,8 @@ public class ExportStudyControllerTest {
 
 	private ExportStudyController initializeExportStudyControllerForStudyCSVExport() {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		exportStudyControllerMock.setOntologyService(this.ontologyService);
 		exportStudyControllerMock.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 		exportStudyControllerMock.setCsvExportStudyService(this.csvExportStudyService);
@@ -532,10 +532,10 @@ public class ExportStudyControllerTest {
 	@Test
 	public void testDoStockExport() throws MiddlewareQueryException, JsonParseException, JsonMappingException, IOException {
 		ExportStudyController exportStudyControllerMock = Mockito.spy(new ExportStudyController());
-		ExportService exportService = Mockito.mock(ExportService.class);
-		Mockito.doReturn(exportService).when(exportStudyControllerMock).getExportServiceImpl();
+		GermplasmExportService germplasmExportService = Mockito.mock(GermplasmExportService.class);
+		Mockito.doReturn(germplasmExportService).when(exportStudyControllerMock).getGermplasmExportServiceImpl();
 		ExportAdvanceListService exportAdvanceListService = Mockito.mock(ExportAdvanceListService.class);
-		Mockito.when(exportAdvanceListService.exportStockList(1, exportService)).thenReturn(new File("temp.xls"));
+		Mockito.when(exportAdvanceListService.exportStockList(1, germplasmExportService)).thenReturn(new File("temp.xls"));
 
 		UserSelection userSelection = new UserSelection();
 		Workbook workbook = new Workbook();

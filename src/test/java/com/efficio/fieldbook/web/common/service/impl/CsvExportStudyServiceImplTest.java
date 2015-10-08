@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
-import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -57,7 +57,7 @@ public class CsvExportStudyServiceImplTest {
 	private static Term DUMMY_TERM;
 
 	@Mock
-	private ExportService exportService;
+	private GermplasmExportService germplasmExportService;
 
 	private static String PROPERTY_NAME = "Property Name";
 	private static String FILENAME = "TestFileName.csv";
@@ -69,13 +69,13 @@ public class CsvExportStudyServiceImplTest {
 
 		CsvExportStudyServiceImplTest.csvExportStudyService = Mockito.spy(new CsvExportStudyServiceImpl());
 		CsvExportStudyServiceImplTest.csvExportStudyService.setFieldbookProperties(this.fieldbookProperties);
-		CsvExportStudyServiceImplTest.csvExportStudyService.setExportService(this.exportService);
+		CsvExportStudyServiceImplTest.csvExportStudyService.setGermplasmExportService(this.germplasmExportService);
 		CsvExportStudyServiceImplTest.csvExportStudyService.setOntologyService(this.ontologyService);
 
 		Property prop = Mockito.mock(Property.class);
 		Mockito.doReturn(prop).when(this.ontologyService).getProperty(TermId.BREEDING_METHOD_PROP.getId());
 		Mockito.doReturn(new Term(1, CsvExportStudyServiceImplTest.PROPERTY_NAME, "Dummy defintion")).when(prop).getTerm();
-		Mockito.doReturn(Mockito.mock(File.class)).when(this.exportService)
+		Mockito.doReturn(Mockito.mock(File.class)).when(this.germplasmExportService)
 				.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class), Matchers.anyString());
 		Mockito.doReturn(CsvExportStudyServiceImplTest.UPLOAD_DIRECTORY).when(this.fieldbookProperties).getUploadDirectory();
 	}

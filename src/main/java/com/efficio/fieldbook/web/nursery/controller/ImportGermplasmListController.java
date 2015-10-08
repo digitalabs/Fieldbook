@@ -482,12 +482,11 @@ public class ImportGermplasmListController extends SettingsController {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
 			mainInfo.setAdvanceImportType(true);
 			form.setImportedGermplasmMainInfo(mainInfo);
-			final int count = (int) this.germplasmListManager.countGermplasmListDataByListId(listId);
 			mainInfo.setListId(listId);
-			final List<GermplasmListData> data = new ArrayList<>();
-			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
-			final List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, null);
-			final String defaultTestCheckId =
+			List<GermplasmListData> data = new ArrayList<>();
+			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
+			List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, null);
+			String defaultTestCheckId =
 					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckList());
 			form.setImportedGermplasm(list);
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
@@ -861,11 +860,9 @@ public class ImportGermplasmListController extends SettingsController {
 
 			final List<Enumeration> checksList = this.fieldbookService.getCheckList();
 			final String checkId = this.getCheckId(ImportGermplasmListController.DEFAULT_CHECK_VALUE, checksList);
-
-			final List<GermplasmListData> data = new ArrayList<>();
-			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
-			final List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, checkId);
-
+			List<GermplasmListData> data = new ArrayList<>();
+			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
+			List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, checkId);
 			this.generateCheckListModel(model, list, checksList);
 
 			form.setImportedCheckGermplasm(list);

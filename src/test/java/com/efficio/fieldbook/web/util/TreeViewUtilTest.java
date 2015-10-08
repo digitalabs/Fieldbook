@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.generationcp.middleware.domain.dms.FolderReference;
-import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.UserDataManager;
@@ -17,10 +15,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.pojos.treeview.TreeTableNode;
 
-public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
+public class TreeViewUtilTest {
 
 	private static final Integer LIST_USER_ID = 1;
 
@@ -40,15 +37,6 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 			TreeViewUtilTest.LIST_3);
 
 	private static final List<GermplasmList> EMPTY_GERMPLASM_LIST_TEST_DATA = new ArrayList<GermplasmList>();
-
-	private static final Integer ROOT_STUDY = 1;
-	private static final String DUMMY_PROGRAM_UUID = "1234567890";
-
-	private static final FolderReference FOLDER_1 = new FolderReference(TreeViewUtilTest.ROOT_STUDY, 2, "Folder_1", "Folder 1",
-			TreeViewUtilTest.DUMMY_PROGRAM_UUID);
-
-	private static final FolderReference TRIAL_OF_FOLDER_1 = new FolderReference(TreeViewUtilTest.FOLDER_1.getId(), 3, "Trial_of_Folder_1",
-			"Trial of Folder 1", TreeViewUtilTest.DUMMY_PROGRAM_UUID);
 
 	private static final List<GermplasmList> NULL_GERMPLASM_LIST_TEST_DATA = null;
 	private static GermplasmListManager germplasmListManager;
@@ -179,23 +167,4 @@ public class TreeViewUtilTest extends AbstractBaseIntegrationTest {
 						TreeViewUtilTest.userDataManager, TreeViewUtilTest.germplasmListManager);
 		Assert.assertTrue("The list should be empty", treeTableNodes.isEmpty());
 	}
-
-	@Test
-	public void convertReferenceToFolderReference() {
-		List<Reference> folders = this.createReferenceListTestData();
-		List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
-		Assert.assertNotNull(folRefs);
-		Assert.assertEquals(1, folRefs.size());
-		FolderReference folderReference = folRefs.get(0);
-		Assert.assertEquals(TreeViewUtilTest.TRIAL_OF_FOLDER_1.getProgramUUID(), folderReference.getProgramUUID());
-		Assert.assertEquals(TreeViewUtilTest.TRIAL_OF_FOLDER_1.getId(), folderReference.getId());
-		Assert.assertEquals(TreeViewUtilTest.TRIAL_OF_FOLDER_1.getName(), folderReference.getName());
-	}
-
-	private List<Reference> createReferenceListTestData() {
-		List<Reference> references = new ArrayList<Reference>();
-		references.add(TreeViewUtilTest.TRIAL_OF_FOLDER_1);
-		return references;
-	}
-
 }

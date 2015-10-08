@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
@@ -53,14 +53,15 @@ public class StudyTreeController {
 
 	@Resource
 	private StudyDataManager studyDataManager;
-	@Autowired
-	public MessageSource messageSource;
 
 	@Autowired
-	public ContextUtil contextUtil;
+	private MessageSource messageSource;
 
 	@Autowired
-	HttpServletRequest request;
+	private ContextUtil contextUtil;
+
+	@Autowired
+	private HttpServletRequest request;
 
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
@@ -85,10 +86,10 @@ public class StudyTreeController {
 		if (parentKey != null && !"".equals(parentKey)) {
 			try {
 				if (StudyTreeController.LOCAL.equals(parentKey)) {
-					List<FolderReference> rootFolders = this.fieldbookMiddlewareService.getRootFolders(this.getCurrentProgramUUID());
-					childNodes =
-							TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, isNursery, false, true,
-									this.fieldbookMiddlewareService, isFolderOnly);
+					List<Reference> rootFolders =
+							this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(), isNursery ? StudyType.nurseries()
+									: StudyType.trials());
+					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, false, true, isFolderOnly);
 				} else if (NumberUtils.isNumber(parentKey)) {
 					childNodes = this.getChildrenTreeNodes(parentKey, isNursery, isFolderOnly);
 				} else {
@@ -98,26 +99,17 @@ public class StudyTreeController {
 				StudyTreeController.LOG.error(e.getMessage(), e);
 			}
 		}
-
-		for (TreeNode newNode : childNodes) {
-			List<TreeNode> childOfChildNode = this.getChildrenTreeNodes(newNode.getKey(), isNursery, isFolderOnly);
-			if (childOfChildNode.isEmpty()) {
-				newNode.setIsLazy(false);
-			}
-		}
 		return childNodes;
 	}
 
 	private List<TreeNode> getChildrenTreeNodes(String parentKey, boolean isNursery, boolean isFolderOnly) throws MiddlewareQueryException {
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		int parentId = Integer.valueOf(parentKey);
-		List<Reference> folders = this.fieldbookMiddlewareService.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
+		List<Reference> folders =
+				this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(), isNursery ? StudyType.nurseries()
+						: StudyType.trials());
 
-		// convert reference to folder reference
-		List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
-		childNodes =
-				TreeViewUtil.convertStudyFolderReferencesToTreeView(folRefs, isNursery, false, true, this.fieldbookMiddlewareService,
-						isFolderOnly);
+		childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folders, false, true, isFolderOnly);
 		return childNodes;
 	}
 
@@ -145,11 +137,9 @@ public class StudyTreeController {
 			} else if (NumberUtils.isNumber(parentKey)) {
 
 				int parentId = Integer.valueOf(parentKey);
-				List<Reference> folders = this.fieldbookMiddlewareService.getChildrenOfFolder(parentId, this.getCurrentProgramUUID());
-				// convert reference to folder refence
-				List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
-				return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, false, true, this.fieldbookMiddlewareService,
-						isFolderOnlyBool);
+				List<Reference> folders =
+						this.studyDataManager.getChildrenOfFolder(parentId, this.getCurrentProgramUUID(), StudyType.nurseriesAndTrials());
+				return TreeViewUtil.convertStudyFolderReferencesToJson(folders, false, true, isFolderOnlyBool);
 
 			} else {
 				StudyTreeController.LOG.error("parentKey = " + parentKey + " is not a number");
@@ -164,9 +154,9 @@ public class StudyTreeController {
 
 	private String getRootFolders(boolean isFolderOnly) {
 		try {
-			List<FolderReference> rootFolders = this.fieldbookMiddlewareService.getRootFolders(this.getCurrentProgramUUID());
-			return TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true, this.fieldbookMiddlewareService,
-					isFolderOnly);
+			List<Reference> rootFolders =
+					this.studyDataManager.getRootFolders(this.getCurrentProgramUUID(), StudyType.nurseriesAndTrials());
+			return TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, false, true, isFolderOnly);
 		} catch (Exception e) {
 			StudyTreeController.LOG.error(e.getMessage(), e);
 		}
@@ -241,7 +231,7 @@ public class StudyTreeController {
 				throw new MiddlewareQueryException(this.messageSource.getMessage("folder.name.not.unique", null, locale));
 			}
 			Integer parentFolderId = Integer.parseInt(parentKey);
-			if (!TreeViewUtil.isFolder(parentFolderId, this.fieldbookMiddlewareService)) {
+			if (this.studyDataManager.isStudy(parentFolderId)) {
 				DmsProject project = this.studyDataManager.getParentFolder(parentFolderId);
 				if (project == null) {
 					throw new MiddlewareQueryException("Parent folder cannot be null");
@@ -320,5 +310,25 @@ public class StudyTreeController {
 
 	protected String getCurrentProgramUUID() throws MiddlewareQueryException {
 		return this.contextUtil.getCurrentProgramUUID();
+	}
+
+	void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
+
+	void setStudyDataManager(StudyDataManager studyDataManager) {
+		this.studyDataManager = studyDataManager;
+	}
+
+	void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
+	void setContextUtil(ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
+
+	void setRequest(HttpServletRequest request) {
+		this.request = request;
 	}
 }

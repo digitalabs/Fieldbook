@@ -144,7 +144,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 					if (!settingDetail.isHidden() && isVisible != null && isVisible) {
 						Integer variableId = settingDetail.getVariable().getCvTermId();
 						Variable variable =
-								this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, false);
+								this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, false, false);
 						standardVariableMap.put(variableId, variable);
 					}
 				}

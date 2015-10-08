@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
-import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -49,7 +49,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
 	@Resource
-	private ExportService exportService;
+	private GermplasmExportService germplasmExportService;
 
 	@Override
 	public String export(Workbook workbook, String filename, List<Integer> instances) {
@@ -80,7 +80,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 				List<Map<Integer, ExportColumnValue>> exportColumnValues =
 						this.getExportColumnValues(exportColumnHeaders, workbook.getMeasurementDatasetVariables(), observations);
 
-				this.exportService.generateCSVFile(exportColumnValues, exportColumnHeaders, filenamePath);
+				this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, filenamePath);
 
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
@@ -242,7 +242,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		this.fieldbookProperties = fieldbookProperties;
 	}
 
-	public void setExportService(ExportService exportService) {
-		this.exportService = exportService;
+	public void setGermplasmExportService(GermplasmExportService germplasmExportService) {
+		this.germplasmExportService = germplasmExportService;
 	}
 }

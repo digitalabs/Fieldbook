@@ -4,7 +4,7 @@ var ImportDesign = (function() {
 
 		hasCheckListSelected: function() {
 			if (isNursery()) {
-				return $('.check-germplasm-list-items tbody tr').length != 0;
+				return $('.check-germplasm-list-items tbody tr').length !== 0;
 			} else {
 				return false;
 			}
@@ -44,7 +44,7 @@ var ImportDesign = (function() {
 		reloadMeasurements: function() {
 			if (isNursery()) {
 
-			// reload nursery measurments here
+				// reload nursery measurments here
 			} else {
 				var angularElem = angular.element('#mainApp');
 
@@ -58,7 +58,10 @@ var ImportDesign = (function() {
 
 		showPopup: function(hasGermplasmListSelected) {
 			if (hasGermplasmListSelected && !ImportDesign.hasCheckListSelected()) {
-				$('#importDesignModal').modal({ backdrop: 'static', keyboard: true });
+				$('#importDesignModal').modal({
+					backdrop: 'static',
+					keyboard: true
+				});
 			} else {
 				if (ImportDesign.hasCheckListSelected()) {
 					showErrorMessage(designImportErrorHeader, 'You cannot import a design if you have Selected Checks specified.');
@@ -127,7 +130,10 @@ var ImportDesign = (function() {
 			return ImportDesign.showReviewDesignData().then(function(html) {
 				$('#reviewDesignModal').one('shown.bs.modal', function() {
 					$('#divDesignMeasurements').html(html);
-				}).modal({ backdrop: 'static', keyboard: true });
+				}).modal({
+					backdrop: 'static',
+					keyboard: true
+				});
 			});
 		},
 
@@ -189,8 +195,8 @@ var ImportDesign = (function() {
 
 			} else {
 				var environmentData = resp.environmentData,
-				environmentSettings = resp.environmentSettings,
-				trialService = ImportDesign.getTrialManagerDataService();
+					environmentSettings = resp.environmentSettings,
+					trialService = ImportDesign.getTrialManagerDataService();
 
 				$.each(environmentSettings, function(key, value) {
 					trialService.settings.environments.managementDetails.push(value.variable.cvTermId, trialService.transformViewSettingsVariable(value));
@@ -231,6 +237,10 @@ var ImportDesign = (function() {
 
 			}, 200);
 
+		},
+
+		cancelDesignImport: function() {
+			$.get('/Fieldbook/DesignImport/cancelImportDesign');
 		},
 
 		doSubmitImport: function() {
@@ -290,6 +300,7 @@ $(document).ready(function() {
 	'use strict';
 	$('.btn-import-design').on('click', ImportDesign.doSubmitImport);
 	$('.btn-import-generate').on('click', ImportDesign.generateDesign);
+	$('.btn-import-generate-cancel').on('click', ImportDesign.cancelDesignImport);
 	$('.import-design-section .modal').on('hide.bs.modal', function() {
 		$('#fileupload-import-design').parent().parent().removeClass('has-error');
 	});

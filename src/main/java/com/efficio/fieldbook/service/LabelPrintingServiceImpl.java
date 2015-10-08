@@ -34,7 +34,7 @@ import org.generationcp.commons.constant.ColumnLabels;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
-import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -46,9 +46,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -74,7 +72,6 @@ import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.util.LabelPaperFactory;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
@@ -128,6 +125,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	public static final Integer[] BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS = new Integer[] {
 			AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(),
 			AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
+	public static final String INCLUDE_NON_PDF_HEADERS = "1";
+	public static final String BARCODE_NEEDED = "1";
 
 	/** The delimiter. */
 	private final String delimiter = " | ";
@@ -137,7 +136,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	private MessageSource messageSource;
 
 	@Resource
-	private ExportService exportService;
+	private GermplasmExportService germplasmExportService;
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -183,13 +182,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		super();
 	}
 
-	protected BitMatrix encodeBarcode(String barcodeLabelForCode, int width, int height) {
+	protected BitMatrix encodeBarcode(final String barcodeLabelForCode, final int width, final int height) {
 		BitMatrix bitMatrix = null;
 		try {
 			bitMatrix = new Code128Writer().encode(barcodeLabelForCode, BarcodeFormat.CODE_128, width, height, null);
-		} catch (WriterException e) {
+		} catch (final WriterException e) {
 			LabelPrintingServiceImpl.LOG.debug(e.getMessage(), e);
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			LabelPrintingServiceImpl.LOG.debug(e.getMessage(), e);
 		}
 		return bitMatrix;
@@ -201,27 +200,27 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
 	 */
 	@Override
-	public String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting,
-			ByteArrayOutputStream baos) throws LabelPrintingException {
+	public String generatePDFLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
+			final ByteArrayOutputStream baos) throws LabelPrintingException {
 
-		int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
-		int numberOfLabelPerRow = Integer.parseInt(userLabelPrinting.getNumberOfLabelPerRow());
-		int numberofRowsPerPageOfLabel = Integer.parseInt(userLabelPrinting.getNumberOfRowsPerPageOfLabel());
-		int totalPerPage = numberOfLabelPerRow * numberofRowsPerPageOfLabel;
-		String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
-		String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
-		String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
+		final int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
+		final int numberOfLabelPerRow = Integer.parseInt(userLabelPrinting.getNumberOfLabelPerRow());
+		final int numberofRowsPerPageOfLabel = Integer.parseInt(userLabelPrinting.getNumberOfRowsPerPageOfLabel());
+		final int totalPerPage = numberOfLabelPerRow * numberofRowsPerPageOfLabel;
+		final String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
+		final String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
+		final String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
 
-		String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
-		String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
-		String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
+		final String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
+		final String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
+		final String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
 
-		String fileName = userLabelPrinting.getFilenameDLLocation();
+		final String fileName = userLabelPrinting.getFilenameDLLocation();
 
 		try {
-			FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+			final FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
-			LabelPaper paper = LabelPaperFactory.generateLabelPaper(numberOfLabelPerRow, numberofRowsPerPageOfLabel, pageSizeId);
+			final LabelPaper paper = LabelPaperFactory.generateLabelPaper(numberOfLabelPerRow, numberofRowsPerPageOfLabel, pageSizeId);
 
 			Rectangle pageSize = PageSize.LETTER;
 
@@ -229,7 +228,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				pageSize = PageSize.A4;
 			}
 
-			Document document = new Document(pageSize);
+			final Document document = new Document(pageSize);
 
 			// float marginLeft, float marginRight, float marginTop, float marginBottom
 			document.setMargins(paper.getMarginLeft(), paper.getMarginRight(), paper.getMarginTop(), paper.getMarginBottom());
@@ -240,11 +239,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			document.open();
 
 			int i = 0;
-			int fixTableRowSize = numberOfLabelPerRow;
+			final int fixTableRowSize = numberOfLabelPerRow;
 			PdfPTable table = new PdfPTable(fixTableRowSize);
 
-			float columnWidthSize = 265f;
-			float[] widthColumns = new float[fixTableRowSize];
+			final float columnWidthSize = 265f;
+			final float[] widthColumns = new float[fixTableRowSize];
 
 			for (int counter = 0; counter < widthColumns.length; counter++) {
 				widthColumns[counter] = columnWidthSize;
@@ -252,24 +251,24 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 			table.setWidths(widthColumns);
 			table.setWidthPercentage(100);
-			int width = 600;
-			int height = 75;
+			final int width = 600;
+			final int height = 75;
 
-			List<File> filesToBeDeleted = new ArrayList<File>();
-			float cellHeight = paper.getCellHeight();
+			final List<File> filesToBeDeleted = new ArrayList<File>();
+			final float cellHeight = paper.getCellHeight();
 
-			for (StudyTrialInstanceInfo trialInstance : trialInstances) {
-				FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
+			for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
+				final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
 
-				Map<String, String> moreFieldInfo = this.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
+				final Map<String, String> moreFieldInfo = this.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
 
-				for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
+				for (final FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
 
 					i++;
 					String barcodeLabelForCode = "";
 					String barcodeLabel = "";
 
-					if ("0".equalsIgnoreCase(barcodeNeeded)) {
+					if (!BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
 						barcodeLabel = " ";
 						barcodeLabelForCode = " ";
 					} else {
@@ -291,10 +290,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 									LabelPrintingServiceImpl.UNSUPPORTED_CHARSET_IMG));
 					FileOutputStream fout = null;
 
-					BitMatrix bitMatrix = this.encodeBarcode(barcodeLabelForCode, width, height);
+					final BitMatrix bitMatrix = this.encodeBarcode(barcodeLabelForCode, width, height);
 					if (bitMatrix != null) {
-						String imageLocation = System.getProperty("user.home") + "/" + Math.random() + ".png";
-						File imageFile = new File(imageLocation);
+						final String imageLocation = System.getProperty("user.home") + "/" + Math.random() + ".png";
+						final File imageFile = new File(imageLocation);
 						fout = new FileOutputStream(imageFile);
 						MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
 						filesToBeDeleted.add(imageFile);
@@ -302,17 +301,17 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 						mainImage = Image.getInstance(imageLocation);
 					}
 
-					PdfPCell cell = new PdfPCell();
+					final PdfPCell cell = new PdfPCell();
 					cell.setFixedHeight(cellHeight);
 					cell.setNoWrap(false);
 					cell.setPadding(5f);
 					cell.setPaddingBottom(1f);
 
-					PdfPTable innerImageTableInfo = new PdfPTable(1);
+					final PdfPTable innerImageTableInfo = new PdfPTable(1);
 					innerImageTableInfo.setWidths(new float[] {1});
 					innerImageTableInfo.setWidthPercentage(82);
-					PdfPCell cellImage = new PdfPCell();
-					if ("1".equalsIgnoreCase(barcodeNeeded)) {
+					final PdfPCell cellImage = new PdfPCell();
+					if (BARCODE_NEEDED.equalsIgnoreCase(barcodeNeeded)) {
 						cellImage.addElement(mainImage);
 					} else {
 						cellImage.addElement(new Paragraph(" "));
@@ -323,24 +322,25 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 					innerImageTableInfo.addCell(cellImage);
 
-					float fontSize = paper.getFontSize();
+					final float fontSize = paper.getFontSize();
 
-					BaseFont unicode = BaseFont.createFont(LabelPrintingServiceImpl.ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-					Font fontNormal = new Font(unicode, fontSize);
+					final BaseFont unicode =
+							BaseFont.createFont(LabelPrintingServiceImpl.ARIAL_UNI, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+					final Font fontNormal = new Font(unicode, fontSize);
 					fontNormal.setStyle(Font.NORMAL);
 
 					cell.addElement(innerImageTableInfo);
 					cell.addElement(new Paragraph());
 					for (int row = 0; row < 5; row++) {
 						if (row == 0) {
-							PdfPTable innerDataTableInfo = new PdfPTable(1);
+							final PdfPTable innerDataTableInfo = new PdfPTable(1);
 							innerDataTableInfo.setWidths(new float[] {1});
 							innerDataTableInfo.setWidthPercentage(85);
 
-							Font fontNormalData = new Font(unicode, 5.0f);
+							final Font fontNormalData = new Font(unicode, 5.0f);
 							fontNormal.setStyle(Font.NORMAL);
 
-							PdfPCell cellInnerData = new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
+							final PdfPCell cellInnerData = new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
 
 							cellInnerData.setBorder(Rectangle.NO_BORDER);
 							cellInnerData.setBackgroundColor(Color.white);
@@ -352,14 +352,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 							innerDataTableInfo.setHorizontalAlignment(Element.ALIGN_MIDDLE);
 							cell.addElement(innerDataTableInfo);
 						}
-						PdfPTable innerTableInfo = new PdfPTable(2);
+						final PdfPTable innerTableInfo = new PdfPTable(2);
 						innerTableInfo.setWidths(new float[] {1, 1});
 						innerTableInfo.setWidthPercentage(85);
-						List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(leftSelectedFields);
-						String leftText =
+						final List<Integer> leftSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(leftSelectedFields);
+						final String leftText =
 								this.generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFieldIDs,
 										fieldMapTrialInstanceInfo.getLabelHeaders(), row);
-						PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
+						final PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
 
 						cellInnerLeft.setBorder(Rectangle.NO_BORDER);
 						cellInnerLeft.setBackgroundColor(Color.white);
@@ -368,11 +368,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 						innerTableInfo.addCell(cellInnerLeft);
 
-						List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(rightSelectedFields);
-						String rightText =
+						final List<Integer> rightSelectedFieldIDs = SettingsUtil.parseFieldListAndConvert(rightSelectedFields);
+						final String rightText =
 								this.generateBarcodeLabel(moreFieldInfo, fieldMapLabel, rightSelectedFieldIDs,
 										fieldMapTrialInstanceInfo.getLabelHeaders(), row);
-						PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
+						final PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
 
 						cellInnerRight.setBorder(Rectangle.NO_BORDER);
 						cellInnerRight.setBackgroundColor(Color.white);
@@ -391,10 +391,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 					if (i % numberOfLabelPerRow == 0) {
 						// we go the next line
-						int needed = fixTableRowSize - numberOfLabelPerRow;
+						final int needed = fixTableRowSize - numberOfLabelPerRow;
 
 						for (int neededCount = 0; neededCount < needed; neededCount++) {
-							PdfPCell cellNeeded = new PdfPCell();
+							final PdfPCell cellNeeded = new PdfPCell();
 
 							cellNeeded.setBorder(Rectangle.NO_BORDER);
 							cellNeeded.setBackgroundColor(Color.white);
@@ -429,9 +429,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			if (i % numberOfLabelPerRow != 0) {
 				// we go the next line
 
-				int remaining = numberOfLabelPerRow - i % numberOfLabelPerRow;
+				final int remaining = numberOfLabelPerRow - i % numberOfLabelPerRow;
 				for (int neededCount = 0; neededCount < remaining; neededCount++) {
-					PdfPCell cellNeeded = new PdfPCell();
+					final PdfPCell cellNeeded = new PdfPCell();
 
 					cellNeeded.setBorder(Rectangle.NO_BORDER);
 					cellNeeded.setBackgroundColor(Color.white);
@@ -454,12 +454,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 
 			document.close();
-			for (File file : filesToBeDeleted) {
+			for (final File file : filesToBeDeleted) {
 				file.delete();
 			}
 			fileOutputStream.close();
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
@@ -476,14 +476,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * @param thirdField the third field
 	 * @return the string
 	 */
-	private String generateBarcodeField(Map<String, String> moreFieldInfo, FieldMapLabel fieldMapLabel, String firstField,
-			String secondField, String thirdField, Map<Integer, String> labelHeaders, boolean includeLabel) {
-		StringBuilder buffer = new StringBuilder();
-		String fieldList = firstField + "," + secondField + "," + thirdField;
+	private String generateBarcodeField(final Map<String, String> moreFieldInfo, final FieldMapLabel fieldMapLabel,
+			final String firstField, final String secondField, final String thirdField, final Map<Integer, String> labelHeaders,
+			final boolean includeLabel) {
+		final StringBuilder buffer = new StringBuilder();
+		final String fieldList = firstField + "," + secondField + "," + thirdField;
 
-		List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
+		final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(fieldList);
 
-		for (Integer selectedFieldID : selectedFieldIDs) {
+		for (final Integer selectedFieldID : selectedFieldIDs) {
 			if (!"".equalsIgnoreCase(buffer.toString())) {
 				buffer.append(this.delimiter);
 			}
@@ -503,13 +504,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * @param rowNumber the row number
 	 * @return the string
 	 */
-	private String generateBarcodeLabel(Map<String, String> moreFieldInfo, FieldMapLabel fieldMapLabel, List<Integer> selectedFieldIDs,
-			Map<Integer, String> labelHeaders, int rowNumber) {
-		StringBuilder buffer = new StringBuilder();
+	private String generateBarcodeLabel(final Map<String, String> moreFieldInfo, final FieldMapLabel fieldMapLabel,
+			final List<Integer> selectedFieldIDs, final Map<Integer, String> labelHeaders, final int rowNumber) {
+		final StringBuilder buffer = new StringBuilder();
 
 		int i = 0;
 
-		for (Integer selectedFieldID : selectedFieldIDs) {
+		for (final Integer selectedFieldID : selectedFieldIDs) {
 			if (i == rowNumber) {
 				buffer.append(this.getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, true));
 				break;
@@ -526,10 +527,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * @param headerID the header id
 	 * @return the header
 	 */
-	private String getHeader(Integer headerID, Map<Integer, String> labelHeaders) {
-		Locale locale = LocaleContextHolder.getLocale();
+	private String getHeader(final Integer headerID, final Map<Integer, String> labelHeaders) {
+		final Locale locale = LocaleContextHolder.getLocale();
 
-		StringBuilder buffer = new StringBuilder();
+		final StringBuilder buffer = new StringBuilder();
 
 		try {
 			if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
@@ -591,7 +592,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 
 			return buffer.toString();
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 			return "";
 		}
@@ -605,18 +606,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * @param headerID the barcode label
 	 * @return the specific info
 	 */
-	private String getSpecificInfo(Map<String, String> moreFieldInfo, FieldMapLabel fieldMapLabel, Integer headerID,
-			Map<Integer, String> labelHeaders, boolean includeHeaderLabel) {
-		StringBuilder buffer = new StringBuilder();
+	private String getSpecificInfo(final Map<String, String> moreFieldInfo, final FieldMapLabel fieldMapLabel, final Integer headerID,
+			final Map<Integer, String> labelHeaders, final boolean includeHeaderLabel) {
+		final StringBuilder buffer = new StringBuilder();
 
 		try {
 
-			String headerName = this.getHeader(headerID, labelHeaders);
+			final String headerName = this.getHeader(headerID, labelHeaders);
 
 			if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
 				buffer.append(fieldMapLabel.getEntryNumber());
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
-				String gidTemp = fieldMapLabel.getGid() == null ? "" : fieldMapLabel.getGid().toString();
+				final String gidTemp = fieldMapLabel.getGid() == null ? "" : fieldMapLabel.getGid().toString();
 				buffer.append(gidTemp);
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()) {
 				buffer.append(fieldMapLabel.getGermplasmName());
@@ -653,7 +654,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			} else if (headerID == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
 				buffer.append(fieldMapLabel.getLotId());
 			} else {
-				String value = fieldMapLabel.getUserFields().get(headerID);
+				final String value = fieldMapLabel.getUserFields().get(headerID);
 				if (value != null) {
 					buffer.append(value);
 				}
@@ -670,7 +671,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 
 			return stemp;
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 			return "";
 		}
@@ -684,53 +685,53 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * , com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting, java.io.ByteArrayOutputStream)
 	 */
 	@Override
-	public String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting,
-			ByteArrayOutputStream baos) throws MiddlewareQueryException {
+	public String generateXlSLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
+			final ByteArrayOutputStream baos) throws MiddlewareQueryException {
 
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
-		boolean includeHeader = "1".equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf()) ? true : false;
-		boolean isBarcodeNeeded = "1".equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded()) ? true : false;
-		String fileName = userLabelPrinting.getFilenameDLLocation();
-		String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
-		String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
-		String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
+		final boolean includeHeader = INCLUDE_NON_PDF_HEADERS.equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf());
+		final boolean isBarcodeNeeded = BARCODE_NEEDED.equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded());
+		final String fileName = userLabelPrinting.getFilenameDLLocation();
+		final String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
+		final String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
+		final String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
 
 		try {
 
-			HSSFWorkbook workbook = new HSSFWorkbook();
+			final HSSFWorkbook workbook = new HSSFWorkbook();
 			String sheetName = WorkbookUtil.createSafeSheetName(userLabelPrinting.getName());
 			if (sheetName == null) {
 				sheetName = "Labels";
 			}
-			Sheet labelPrintingSheet = workbook.createSheet(sheetName);
+			final Sheet labelPrintingSheet = workbook.createSheet(sheetName);
 
-			CellStyle labelStyle = workbook.createCellStyle();
-			HSSFFont font = workbook.createFont();
+			final CellStyle labelStyle = workbook.createCellStyle();
+			final HSSFFont font = workbook.createFont();
 			font.setBoldweight(org.apache.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD);
 			labelStyle.setFont(font);
 
-			CellStyle wrapStyle = workbook.createCellStyle();
+			final CellStyle wrapStyle = workbook.createCellStyle();
 			wrapStyle.setWrapText(true);
 			wrapStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
-			CellStyle mainHeaderStyle = workbook.createCellStyle();
+			final CellStyle mainHeaderStyle = workbook.createCellStyle();
 
-			HSSFPalette palette = workbook.getCustomPalette();
+			final HSSFPalette palette = workbook.getCustomPalette();
 			// get the color which most closely matches the color you want to use
-			HSSFColor myColor = palette.findSimilarColor(179, 165, 165);
+			final HSSFColor myColor = palette.findSimilarColor(179, 165, 165);
 			// get the palette index of that color
-			short palIndex = myColor.getIndex();
+			final short palIndex = myColor.getIndex();
 			// code to get the style for the cell goes here
 			mainHeaderStyle.setFillForegroundColor(palIndex);
 			mainHeaderStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
-			CellStyle mainSubHeaderStyle = workbook.createCellStyle();
+			final CellStyle mainSubHeaderStyle = workbook.createCellStyle();
 
-			HSSFPalette paletteSubHeader = workbook.getCustomPalette();
+			final HSSFPalette paletteSubHeader = workbook.getCustomPalette();
 			// get the color which most closely matches the color you want to use
-			HSSFColor myColorSubHeader = paletteSubHeader.findSimilarColor(190, 190, 186);
+			final HSSFColor myColorSubHeader = paletteSubHeader.findSimilarColor(190, 190, 186);
 			// get the palette index of that color
-			short palIndexSubHeader = myColorSubHeader.getIndex();
+			final short palIndexSubHeader = myColorSubHeader.getIndex();
 			// code to get the style for the cell goes here
 			mainSubHeaderStyle.setFillForegroundColor(palIndexSubHeader);
 			mainSubHeaderStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -745,7 +746,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			Row row = null;
 			mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
-			List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+			final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
 
 			if (includeHeader) {
 				row = labelPrintingSheet.createRow(rowIndex++);
@@ -755,26 +756,26 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 
 			// we populate the info now
-			for (StudyTrialInstanceInfo trialInstance : trialInstances) {
-				FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
+			for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
+				final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
 
-				Map<String, String> moreFieldInfo = this.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
+				final Map<String, String> moreFieldInfo = this.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
 
-				for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
+				for (final FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
 
 					row = labelPrintingSheet.createRow(rowIndex++);
 					columnIndex = 0;
 
-					String barcodeLabelForCode =
+					final String barcodeLabelForCode =
 							this.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField,
 									thirdBarcodeField, fieldMapTrialInstanceInfo.getLabelHeaders(), false);
 					moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 
-					for (Integer selectedFieldID : selectedFieldIDs) {
-						String leftText =
+					for (final Integer selectedFieldID : selectedFieldIDs) {
+						final String leftText =
 								this.getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID,
 										fieldMapTrialInstanceInfo.getLabelHeaders(), false);
-						Cell summaryCell = row.createCell(columnIndex++);
+						final Cell summaryCell = row.createCell(columnIndex++);
 						summaryCell.setCellValue(leftText);
 					}
 				}
@@ -785,17 +786,17 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 
 			// Write the excel file
-			FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+			final FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 			workbook.write(fileOutputStream);
 			fileOutputStream.close();
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
 		return fileName;
 	}
 
-	protected String appendBarcode(boolean isBarcodeNeeded, String mainSelectedFields) {
+	protected String appendBarcode(final boolean isBarcodeNeeded, final String mainSelectedFields) {
 		String processed = mainSelectedFields;
 		if (isBarcodeNeeded) {
 			processed += "," + AppConstants.AVAILABLE_LABEL_BARCODE.getInt();
@@ -803,13 +804,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return processed;
 	}
 
-	protected void printHeaderFields(Map<Integer, String> labelHeaders, boolean includeHeader, List<Integer> selectedFieldIDs, Row row,
-			int columnIndex, CellStyle labelStyle) {
+	protected void printHeaderFields(final Map<Integer, String> labelHeaders, final boolean includeHeader,
+			final List<Integer> selectedFieldIDs, final Row row, final int columnIndex, final CellStyle labelStyle) {
 		if (includeHeader) {
 			int currentIndex = columnIndex;
-			for (Integer selectedFieldID : selectedFieldIDs) {
-				String headerName = this.getHeader(selectedFieldID, labelHeaders);
-				Cell summaryCell = row.createCell(currentIndex++);
+			for (final Integer selectedFieldID : selectedFieldIDs) {
+				final String headerName = this.getHeader(selectedFieldID, labelHeaders);
+				final Cell summaryCell = row.createCell(currentIndex++);
 				summaryCell.setCellValue(headerName);
 				summaryCell.setCellStyle(labelStyle);
 			}
@@ -824,47 +825,47 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * , com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting, java.io.ByteArrayOutputStream)
 	 */
 	@Override
-	public String generateCSVLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting,
-			ByteArrayOutputStream baos) throws IOException {
-		String fileName = userLabelPrinting.getFilenameDLLocation();
+	public String generateCSVLabels(final List<StudyTrialInstanceInfo> trialInstances, final UserLabelPrinting userLabelPrinting,
+			final ByteArrayOutputStream baos) throws IOException {
+		final String fileName = userLabelPrinting.getFilenameDLLocation();
 		String mainSelectedFields = userLabelPrinting.getMainSelectedLabelFields();
-		boolean includeHeader = "1".equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf()) ? true : false;
-		boolean isBarcodeNeeded = "1".equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded()) ? true : false;
+		final boolean includeHeader = INCLUDE_NON_PDF_HEADERS.equalsIgnoreCase(userLabelPrinting.getIncludeColumnHeadinginNonPdf());
+		final boolean isBarcodeNeeded = BARCODE_NEEDED.equalsIgnoreCase(userLabelPrinting.getBarcodeNeeded());
 
 		mainSelectedFields = this.appendBarcode(isBarcodeNeeded, mainSelectedFields);
 
-		List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
-		List<ExportColumnHeader> exportColumnHeaders =
+		final List<Integer> selectedFieldIDs = SettingsUtil.parseFieldListAndConvert(mainSelectedFields);
+		final List<ExportColumnHeader> exportColumnHeaders =
 				this.generateColumnHeaders(selectedFieldIDs, trialInstances.get(0).getTrialInstance().getLabelHeaders());
 
-		List<Map<Integer, ExportColumnValue>> exportColumnValues =
+		final List<Map<Integer, ExportColumnValue>> exportColumnValues =
 				this.generateColumnValues(trialInstances, selectedFieldIDs, userLabelPrinting);
 
-		this.exportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
+		this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileName, includeHeader);
 
 		return fileName;
 	}
 
-	private List<Map<Integer, ExportColumnValue>> generateColumnValues(List<StudyTrialInstanceInfo> trialInstances,
-			List<Integer> selectedFieldIDs, UserLabelPrinting userLabelPrinting) {
-		List<Map<Integer, ExportColumnValue>> columnValues = new ArrayList<>();
+	private List<Map<Integer, ExportColumnValue>> generateColumnValues(final List<StudyTrialInstanceInfo> trialInstances,
+			final List<Integer> selectedFieldIDs, final UserLabelPrinting userLabelPrinting) {
+		final List<Map<Integer, ExportColumnValue>> columnValues = new ArrayList<>();
 
-		String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
-		String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
-		String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
+		final String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
+		final String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
+		final String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
 
 		// we populate the info now
-		for (StudyTrialInstanceInfo trialInstance : trialInstances) {
-			FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
+		for (final StudyTrialInstanceInfo trialInstance : trialInstances) {
+			final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
 
-			Map<String, String> moreFieldInfo = this.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
-			for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
-				String barcodeLabelForCode =
+			final Map<String, String> moreFieldInfo = this.generateAddedInformationField(fieldMapTrialInstanceInfo, trialInstance, "");
+			for (final FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
+				final String barcodeLabelForCode =
 						this.generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField,
 								fieldMapTrialInstanceInfo.getLabelHeaders(), false);
 				moreFieldInfo.put(LabelPrintingServiceImpl.BARCODE, barcodeLabelForCode);
 
-				Map<Integer, ExportColumnValue> rowMap =
+				final Map<Integer, ExportColumnValue> rowMap =
 						this.generateRowMap(fieldMapTrialInstanceInfo.getLabelHeaders(), selectedFieldIDs, moreFieldInfo, fieldMapLabel);
 				columnValues.add(rowMap);
 			}
@@ -875,15 +876,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields,
-			boolean isTrial, boolean isStockList) {
+	public void populateUserSpecifiedLabelFields(final List<FieldMapTrialInstanceInfo> trialFieldMap, final Workbook workbook,
+			final String selectedFields, final boolean isTrial, final boolean isStockList) {
 
-		LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
+		final LabelPrintingProcessingParams params = new LabelPrintingProcessingParams();
 		params.setVariableMap(this.convertToMap(workbook.getConditions(), workbook.getFactors()));
 		params.setSelectedFieldIDs(SettingsUtil.parseFieldListAndConvert(selectedFields));
 
 		if (isStockList) {
-			GermplasmList stockList = trialFieldMap.get(0).getStockList();
+			final GermplasmList stockList = trialFieldMap.get(0).getStockList();
 			params.setAllFieldIDs(this.convertToListInteger(this.getAvailableLabelFieldsForStockList(
 					this.getStockListType(stockList.getType()), Locale.ENGLISH, workbook.getStudyId())));
 		} else {
@@ -899,7 +900,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			environmentData = this.extractEnvironmentMeasurementDataPerTrialInstance(workbook);
 		}
 
-		for (FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
+		for (final FieldMapTrialInstanceInfo instanceInfo : trialFieldMap) {
 			params.setInstanceInfo(instanceInfo);
 
 			if (isStockList) {
@@ -920,23 +921,23 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		}
 	}
 
-	private List<Integer> convertToListInteger(List<LabelFields> availableLabelFields) {
-		List<Integer> list = new ArrayList<Integer>();
-		for (LabelFields field : availableLabelFields) {
+	private List<Integer> convertToListInteger(final List<LabelFields> availableLabelFields) {
+		final List<Integer> list = new ArrayList<Integer>();
+		for (final LabelFields field : availableLabelFields) {
 			list.add(field.getId());
 		}
 		return list;
 	}
 
-	private void processInventorySpecificLabelsForInstance(LabelPrintingProcessingParams params, Workbook workbook) {
-		Integer studyId = workbook.getStudyDetails().getId();
-		Map<Integer, InventoryDetails> inventoryDetailsMap = this.retrieveInventoryDetailsMap(studyId, workbook);
+	private void processInventorySpecificLabelsForInstance(final LabelPrintingProcessingParams params, final Workbook workbook) {
+		final Integer studyId = workbook.getStudyDetails().getId();
+		final Map<Integer, InventoryDetails> inventoryDetailsMap = this.retrieveInventoryDetailsMap(studyId, workbook);
 
 		if (!inventoryDetailsMap.isEmpty()) {
-			for (MeasurementRow measurement : params.getInstanceMeasurements()) {
-				FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(measurement.getExperimentId());
+			for (final MeasurementRow measurement : params.getInstanceMeasurements()) {
+				final FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(measurement.getExperimentId());
 
-				InventoryDetails inventoryDetails = inventoryDetailsMap.get(label.getGid());
+				final InventoryDetails inventoryDetails = inventoryDetailsMap.get(label.getGid());
 				if (inventoryDetails != null) {
 					label.setInventoryAmount(inventoryDetails.getAmount());
 					label.setScaleName(inventoryDetails.getScaleName());
@@ -946,30 +947,30 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		}
 	}
 
-	private Map<Integer, InventoryDetails> retrieveInventoryDetailsMap(Integer studyId, Workbook workbook) {
-		Map<Integer, InventoryDetails> inventoryDetailsMap = new HashMap<Integer, InventoryDetails>();
+	private Map<Integer, InventoryDetails> retrieveInventoryDetailsMap(final Integer studyId, final Workbook workbook) {
+		final Map<Integer, InventoryDetails> inventoryDetailsMap = new HashMap<Integer, InventoryDetails>();
 
 		try {
 			GermplasmList germplasmList = null;
-			GermplasmListType listType = workbook.isNursery() ? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
-			List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, listType);
+			final GermplasmListType listType = workbook.isNursery() ? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
+			final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, listType);
 			if (!germplasmLists.isEmpty()) {
 				germplasmList = germplasmLists.get(0);
 			}
 
 			if (germplasmList != null) {
-				Integer listId = germplasmList.getId();
-				String germplasmListType = germplasmList.getType();
-				List<InventoryDetails> inventoryDetailList =
+				final Integer listId = germplasmList.getId();
+				final String germplasmListType = germplasmList.getType();
+				final List<InventoryDetails> inventoryDetailList =
 						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId, germplasmListType);
 
-				for (InventoryDetails inventoryDetails : inventoryDetailList) {
+				for (final InventoryDetails inventoryDetails : inventoryDetailList) {
 					if (inventoryDetails.getLotId() != null) {
 						inventoryDetailsMap.put(inventoryDetails.getGid(), inventoryDetails);
 					}
 				}
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
@@ -977,36 +978,36 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public void deleteProgramPreset(Integer programPresetId) throws MiddlewareQueryException {
+	public void deleteProgramPreset(final Integer programPresetId) throws MiddlewareQueryException {
 
 		this.presetDataManager.deleteProgramPreset(programPresetId);
 
 	}
 
-	protected Map<String, MeasurementRow> extractEnvironmentMeasurementDataPerTrialInstance(Workbook workbook) {
-		Map<String, MeasurementRow> data = new HashMap<>();
+	protected Map<String, MeasurementRow> extractEnvironmentMeasurementDataPerTrialInstance(final Workbook workbook) {
+		final Map<String, MeasurementRow> data = new HashMap<>();
 
-		for (MeasurementRow row : workbook.getTrialObservations()) {
-			String trialInstance = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
+		for (final MeasurementRow row : workbook.getTrialObservations()) {
+			final String trialInstance = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
 			data.put(trialInstance, row);
 		}
 
 		return data;
 	}
 
-	protected void processUserSpecificLabelsForInstance(LabelPrintingProcessingParams params, Workbook workbook) {
+	protected void processUserSpecificLabelsForInstance(final LabelPrintingProcessingParams params, final Workbook workbook) {
 
 		params.setLabelHeaders(new HashMap<Integer, String>());
 		boolean firstEntry = true;
 
 		if (params.isStockList()) {
-			List<FieldMapLabel> fieldMapLabels = new ArrayList<FieldMapLabel>();
-			for (Map.Entry<String, InventoryDetails> entry : params.getInventoryDetailsMap().entrySet()) {
-				InventoryDetails inventoryDetail = entry.getValue();
+			final List<FieldMapLabel> fieldMapLabels = new ArrayList<FieldMapLabel>();
+			for (final Map.Entry<String, InventoryDetails> entry : params.getInventoryDetailsMap().entrySet()) {
+				final InventoryDetails inventoryDetail = entry.getValue();
 
-				FieldMapLabel label = new FieldMapLabel();
+				final FieldMapLabel label = new FieldMapLabel();
 
-				Map<Integer, String> userSpecifiedLabels =
+				final Map<Integer, String> userSpecifiedLabels =
 						this.extractDataForUserSpecifiedLabels(params, null, inventoryDetail, firstEntry, workbook);
 
 				params.setUserSpecifiedLabels(userSpecifiedLabels);
@@ -1027,10 +1028,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			params.getInstanceInfo().setFieldMapLabels(fieldMapLabels);
 
 		} else {
-			for (MeasurementRow measurement : params.getInstanceMeasurements()) {
-				FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(measurement.getExperimentId());
+			for (final MeasurementRow measurement : params.getInstanceMeasurements()) {
+				final FieldMapLabel label = params.getInstanceInfo().getFieldMapLabel(measurement.getExperimentId());
 
-				Map<Integer, String> userSpecifiedLabels =
+				final Map<Integer, String> userSpecifiedLabels =
 						this.extractDataForUserSpecifiedLabels(params, measurement, null, firstEntry, workbook);
 
 				params.setUserSpecifiedLabels(userSpecifiedLabels);
@@ -1047,39 +1048,39 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public Map<String, InventoryDetails> getInventoryDetailsMap(GermplasmList stockList) {
-		Map<String, InventoryDetails> inventoryDetailsMap = new HashMap<String, InventoryDetails>();
-		List<InventoryDetails> listDataProjects;
+	public Map<String, InventoryDetails> getInventoryDetailsMap(final GermplasmList stockList) {
+		final Map<String, InventoryDetails> inventoryDetailsMap = new HashMap<String, InventoryDetails>();
+		final List<InventoryDetails> listDataProjects;
 		try {
 			listDataProjects =
 					this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockList.getId(),
 							this.getStockListType(stockList.getType()));
 
-			for (InventoryDetails entry : listDataProjects) {
+			for (final InventoryDetails entry : listDataProjects) {
 				this.setCross(entry);
 				inventoryDetailsMap.put(entry.getEntryId().toString(), entry);
 			}
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
 		return inventoryDetailsMap;
 	}
 
-	private void setCross(InventoryDetails entry) {
-		Integer gid = entry.getGid();
+	private void setCross(final InventoryDetails entry) {
+		final Integer gid = entry.getGid();
 		try {
-			String cross = this.pedigreeService.getCrossExpansion(gid, this.crossExpansionProperties);
+			final String cross = this.pedigreeService.getCrossExpansion(gid, this.crossExpansionProperties);
 			entry.setCross(cross);
-		} catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
 	}
 
-	protected Map<Integer, MeasurementVariable> convertToMap(List<MeasurementVariable>... variables) {
-		Map<Integer, MeasurementVariable> map = new HashMap<>();
+	protected Map<Integer, MeasurementVariable> convertToMap(final List<MeasurementVariable>... variables) {
+		final Map<Integer, MeasurementVariable> map = new HashMap<>();
 
-		for (List<MeasurementVariable> variableList : variables) {
-			for (MeasurementVariable variable : variableList) {
+		for (final List<MeasurementVariable> variableList : variables) {
+			for (final MeasurementVariable variable : variableList) {
 				map.put(variable.getTermId(), variable);
 			}
 		}
@@ -1087,12 +1088,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return map;
 	}
 
-	protected Map<Integer, String> extractDataForUserSpecifiedLabels(LabelPrintingProcessingParams params, MeasurementRow measurementRow,
-			InventoryDetails inventoryDetail, boolean populateHeaders, Workbook workbook) {
+	protected Map<Integer, String> extractDataForUserSpecifiedLabels(final LabelPrintingProcessingParams params,
+			final MeasurementRow measurementRow, final InventoryDetails inventoryDetail, final boolean populateHeaders,
+			final Workbook workbook) {
 
-		Map<Integer, String> values = new HashMap<>();
+		final Map<Integer, String> values = new HashMap<>();
 
-		for (Integer termID : params.getAllFieldIDs()) {
+		for (final Integer termID : params.getAllFieldIDs()) {
 
 			if (params.isStockList()) {
 
@@ -1119,14 +1121,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	}
 
-	private void populateValuesForNurseryManagement(LabelPrintingProcessingParams params, Workbook workbook, Integer termID,
-			Map<Integer, String> values, boolean populateHeaders) {
-		List<MeasurementVariable> variables = new ArrayList<>();
+	private void populateValuesForNurseryManagement(final LabelPrintingProcessingParams params, final Workbook workbook,
+			final Integer termID, final Map<Integer, String> values, final boolean populateHeaders) {
+		final List<MeasurementVariable> variables = new ArrayList<>();
 		variables.addAll(workbook.getConditions());
 
-		Integer newTermId = this.getCounterpartTermId(termID);
+		final Integer newTermId = this.getCounterpartTermId(termID);
 
-		MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
+		final MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
 
 		if (factorVariable != null) {
 			values.put(newTermId, factorVariable.getValue());
@@ -1138,8 +1140,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		}
 	}
 
-	private void populateValuesForStockList(LabelPrintingProcessingParams params, InventoryDetails inventoryDetails, Integer termID,
-			Map<Integer, String> values, boolean populateHeaders) {
+	private void populateValuesForStockList(final LabelPrintingProcessingParams params, final InventoryDetails inventoryDetails,
+			final Integer termID, final Map<Integer, String> values, final boolean populateHeaders) {
 
 		String value = null;
 
@@ -1160,7 +1162,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			if (populateHeaders) {
 				try {
 					params.getLabelHeaders().put(termID, this.ontologyDataManager.getTermById(termID).getName());
-				} catch (MiddlewareQueryException e) {
+				} catch (final MiddlewareQueryException e) {
 					LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 				}
 			}
@@ -1168,7 +1170,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	}
 
-	private String populateStockListFromGermplasmDescriptorVariables(Integer termID, InventoryDetails row) {
+	private String populateStockListFromGermplasmDescriptorVariables(final Integer termID, final InventoryDetails row) {
 		String value = null;
 		if (termID.equals(TermId.GID.getId())) {
 			value = this.getValueForStockList(row.getGid());
@@ -1184,7 +1186,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return value;
 	}
 
-	private String populateStockListFromInventoryVariables(Integer termID, InventoryDetails row) {
+	private String populateStockListFromInventoryVariables(final Integer termID, final InventoryDetails row) {
 		String value = null;
 		if (termID.equals(TermId.STOCKID.getId())) {
 			value = this.getValueForStockList(row.getInventoryID());
@@ -1200,7 +1202,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return value;
 	}
 
-	private String populateStockListFromCrossingVariables(Integer termID, InventoryDetails row) {
+	private String populateStockListFromCrossingVariables(final Integer termID, final InventoryDetails row) {
 		String value = null;
 		if (termID.equals(TermId.DUPLICATE.getId())) {
 			value = this.getValueForStockList(row.getDuplicate());
@@ -1212,7 +1214,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return value;
 	}
 
-	private String getValueForStockList(Object value) {
+	private String getValueForStockList(final Object value) {
 		if (value != null) {
 			return value.toString();
 		}
@@ -1220,20 +1222,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public GermplasmListType getStockListType(String type) {
+	public GermplasmListType getStockListType(final String type) {
 		return type.equalsIgnoreCase(LabelPrintingServiceImpl.ADVANCED) ? GermplasmListType.ADVANCED : GermplasmListType.CROSSES;
 	}
 
-	protected Boolean populateValuesFromMeasurement(LabelPrintingProcessingParams params, MeasurementRow measurementRow, Integer termID,
-			Map<Integer, String> values, boolean populateHeaders) {
+	protected Boolean populateValuesFromMeasurement(final LabelPrintingProcessingParams params, final MeasurementRow measurementRow,
+			final Integer termID, final Map<Integer, String> values, final boolean populateHeaders) {
 
 		try {
 
-			MeasurementData data = measurementRow.getMeasurementData(termID);
+			final MeasurementData data = measurementRow.getMeasurementData(termID);
 
 			if (data != null) {
 
-				String value = data.getDisplayValue();
+				final String value = data.getDisplayValue();
 				values.put(termID, value);
 
 				if (populateHeaders) {
@@ -1242,16 +1244,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				return true;
 			}
 
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
 		return false;
 	}
 
-	protected Integer getCounterpartTermId(Integer termId) {
+	protected Integer getCounterpartTermId(final Integer termId) {
 
-		String nameTermId = SettingsUtil.getNameCounterpart(termId, AppConstants.ID_NAME_COMBINATION.getString());
+		final String nameTermId = SettingsUtil.getNameCounterpart(termId, AppConstants.ID_NAME_COMBINATION.getString());
 
 		if (!StringUtils.isEmpty(nameTermId)) {
 			return Integer.valueOf(nameTermId);
@@ -1260,12 +1262,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		}
 	}
 
-	protected void populateValuesForTrial(LabelPrintingProcessingParams params, Workbook workbook, Integer termID,
-			Map<Integer, String> values, boolean populateHeaders) {
+	protected void populateValuesForTrial(final LabelPrintingProcessingParams params, final Workbook workbook, final Integer termID,
+			final Map<Integer, String> values, final boolean populateHeaders) {
 
-		Integer newTermId = this.getCounterpartTermId(termID);
+		final Integer newTermId = this.getCounterpartTermId(termID);
 
-		MeasurementVariable conditionData = params.getVariableMap().get(newTermId);
+		final MeasurementVariable conditionData = params.getVariableMap().get(newTermId);
 
 		if (conditionData != null) {
 			values.put(newTermId, conditionData.getValue());
@@ -1275,7 +1277,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 		}
 
-		MeasurementData enviromentData = params.getEnvironmentData().getMeasurementData(newTermId);
+		if (params.getEnvironmentData() == null) {
+			return;
+		}
+
+		final MeasurementData enviromentData = params.getEnvironmentData().getMeasurementData(newTermId);
 
 		if (enviromentData != null) {
 			values.put(newTermId, enviromentData.getValue());
@@ -1287,17 +1293,17 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	}
 
-	protected void populateValuesForNursery(LabelPrintingProcessingParams params, Workbook workbook, Integer termID,
-			Map<Integer, String> values, boolean populateHeaders) {
+	protected void populateValuesForNursery(final LabelPrintingProcessingParams params, final Workbook workbook, final Integer termID,
+			final Map<Integer, String> values, final boolean populateHeaders) {
 
-		List<MeasurementVariable> variables = new ArrayList<>();
+		final List<MeasurementVariable> variables = new ArrayList<>();
 		variables.addAll(workbook.getFactors());
 		variables.addAll(workbook.getConditions());
 		variables.addAll(workbook.getConstants());
 
-		Integer newTermId = this.getCounterpartTermId(termID);
+		final Integer newTermId = this.getCounterpartTermId(termID);
 
-		MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
+		final MeasurementVariable factorVariable = this.getMeasurementVariableByTermId(newTermId, variables);
 
 		if (factorVariable != null) {
 			values.put(newTermId, factorVariable.getValue());
@@ -1310,8 +1316,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	}
 
-	private MeasurementVariable getMeasurementVariableByTermId(Integer termId, List<MeasurementVariable> measumentVariables) {
-		for (MeasurementVariable measurementVariable : measumentVariables) {
+	private MeasurementVariable getMeasurementVariableByTermId(final Integer termId, final List<MeasurementVariable> measumentVariables) {
+		for (final MeasurementVariable measurementVariable : measumentVariables) {
 			if (measurementVariable.getTermId() == termId) {
 				return measurementVariable;
 			}
@@ -1319,14 +1325,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return null;
 	}
 
-	protected Map<String, List<MeasurementRow>> extractMeasurementRowsPerTrialInstance(List<MeasurementRow> dataRows) {
+	protected Map<String, List<MeasurementRow>> extractMeasurementRowsPerTrialInstance(final List<MeasurementRow> dataRows) {
 		// sort the observations by instance number, and then by experiment ID to simplify later process
 		Collections.sort(dataRows, new Comparator<MeasurementRow>() {
 
 			@Override
-			public int compare(MeasurementRow o1, MeasurementRow o2) {
-				String instanceID1 = o1.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
-				String instanceID2 = o2.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
+			public int compare(final MeasurementRow o1, final MeasurementRow o2) {
+				final String instanceID1 = o1.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
+				final String instanceID2 = o2.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
 
 				if (instanceID1.equals(instanceID2)) {
 					return new Integer(o1.getExperimentId()).compareTo(new Integer(o2.getExperimentId()));
@@ -1336,10 +1342,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			}
 		});
 
-		Map<String, List<MeasurementRow>> measurements = new HashMap<>();
+		final Map<String, List<MeasurementRow>> measurements = new HashMap<>();
 
-		for (MeasurementRow row : dataRows) {
-			String trialInstance = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
+		for (final MeasurementRow row : dataRows) {
+			final String trialInstance = row.getMeasurementData(TermId.TRIAL_INSTANCE_FACTOR.getId()).getValue();
 			List<MeasurementRow> list = measurements.get(trialInstance);
 
 			if (list == null) {
@@ -1353,9 +1359,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return measurements;
 	}
 
-	protected Map<String, String> generateAddedInformationField(FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo,
-			StudyTrialInstanceInfo trialInstance, String barCode) {
-		Map<String, String> moreFieldInfo = new HashMap<String, String>();
+	protected Map<String, String> generateAddedInformationField(final FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo,
+			final StudyTrialInstanceInfo trialInstance, final String barCode) {
+		final Map<String, String> moreFieldInfo = new HashMap<String, String>();
 		moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
 		moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
 		moreFieldInfo.put("fieldName", fieldMapTrialInstanceInfo.getFieldName());
@@ -1366,18 +1372,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return moreFieldInfo;
 	}
 
-	private Map<Integer, ExportColumnValue> generateRowMap(Map<Integer, String> labelHeaders, List<Integer> selectedFieldIDs,
-			Map<String, String> moreFieldInfo, FieldMapLabel fieldMapLabel) {
-		Map<Integer, ExportColumnValue> rowMap = new HashMap<Integer, ExportColumnValue>();
+	private Map<Integer, ExportColumnValue> generateRowMap(final Map<Integer, String> labelHeaders, final List<Integer> selectedFieldIDs,
+			final Map<String, String> moreFieldInfo, final FieldMapLabel fieldMapLabel) {
+		final Map<Integer, ExportColumnValue> rowMap = new HashMap<Integer, ExportColumnValue>();
 
-		for (Integer selectedFieldID : selectedFieldIDs) {
+		for (final Integer selectedFieldID : selectedFieldIDs) {
 
 			try {
 
-				String value = this.getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, false);
-				ExportColumnValue columnValue = new ExportColumnValue(selectedFieldID, value);
+				final String value = this.getSpecificInfo(moreFieldInfo, fieldMapLabel, selectedFieldID, labelHeaders, false);
+				final ExportColumnValue columnValue = new ExportColumnValue(selectedFieldID, value);
 				rowMap.put(selectedFieldID, columnValue);
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -1385,12 +1391,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return rowMap;
 	}
 
-	private List<ExportColumnHeader> generateColumnHeaders(List<Integer> selectedFieldIDs, Map<Integer, String> labelHeaders) {
-		List<ExportColumnHeader> columnHeaders = new ArrayList<ExportColumnHeader>();
+	private List<ExportColumnHeader> generateColumnHeaders(final List<Integer> selectedFieldIDs, final Map<Integer, String> labelHeaders) {
+		final List<ExportColumnHeader> columnHeaders = new ArrayList<ExportColumnHeader>();
 
-		for (Integer selectedFieldID : selectedFieldIDs) {
-			String headerName = this.getHeader(selectedFieldID, labelHeaders);
-			ExportColumnHeader columnHeader = new ExportColumnHeader(selectedFieldID, headerName, true);
+		for (final Integer selectedFieldID : selectedFieldIDs) {
+			final String headerName = this.getHeader(selectedFieldID, labelHeaders);
+			final ExportColumnHeader columnHeader = new ExportColumnHeader(selectedFieldID, headerName, true);
 			columnHeaders.add(columnHeader);
 		}
 
@@ -1406,8 +1412,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * @return
 	 */
 	@Override
-	public List<LabelFields> getAvailableLabelFieldsForFieldMap(boolean isTrial, boolean hasFieldMap, Locale locale) {
-		List<LabelFields> labelFieldsList = new ArrayList<LabelFields>();
+	public List<LabelFields> getAvailableLabelFieldsForFieldMap(final boolean isTrial, final boolean hasFieldMap, final Locale locale) {
+		final List<LabelFields> labelFieldsList = new ArrayList<LabelFields>();
 
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.entry.num", null, locale),
 				AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt(), true));
@@ -1451,8 +1457,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public List<LabelFields> getAvailableLabelFieldsForStudy(boolean isTrial, boolean hasFieldMap, Locale locale, int studyID) {
-		List<LabelFields> labelFieldsList = new ArrayList<>();
+	public List<LabelFields> getAvailableLabelFieldsForStudy(final boolean isTrial, final boolean hasFieldMap, final Locale locale,
+			final int studyID) {
+		final List<LabelFields> labelFieldsList = new ArrayList<>();
 
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
 				LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_PARENTAGE_KEY, null, locale),
@@ -1483,7 +1490,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				labelFieldsList.addAll(this.settingsService.retrieveTrialEnvironmentAndExperimentalDesignSettingsAsLabels(workbook));
 				labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
-			} catch (MiddlewareException e) {
+			} catch (final MiddlewareException e) {
 				LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 			}
 
@@ -1498,7 +1505,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				labelFieldsList.addAll(this.settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
 				labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
-			} catch (MiddlewareException e) {
+			} catch (final MiddlewareException e) {
 				LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -1518,8 +1525,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public List<LabelFields> getAvailableLabelFieldsForStockList(GermplasmListType listType, Locale locale, int studyID) {
-		List<LabelFields> labelFieldsList = new ArrayList<>();
+	public List<LabelFields> getAvailableLabelFieldsForStockList(final GermplasmListType listType, final Locale locale, final int studyID) {
+		final List<LabelFields> labelFieldsList = new ArrayList<>();
 
 		// Nursery Management Fields
 		labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
@@ -1531,8 +1538,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(studyID);
 
 			labelFieldsList.addAll(this.settingsService.retrieveNurseryManagementDetailsAsLabels(workbook));
+			labelFieldsList.addAll(this.settingsService.retrieveGermplasmDescriptorsAsLabels(workbook));
 
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
@@ -1542,10 +1550,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return labelFieldsList;
 	}
 
-	private List<LabelFields> addStockListDetailsFields(Locale locale, GermplasmListType listType) {
-		List<LabelFields> labelFieldList = new ArrayList<LabelFields>();
-
-		labelFieldList.addAll(this.getGermplasmDescriptors());
+	private List<LabelFields> addStockListDetailsFields(final Locale locale, final GermplasmListType listType) {
+		final List<LabelFields> labelFieldList = new ArrayList<LabelFields>();
 
 		labelFieldList.add(new LabelFields(ColumnLabels.STOCKID.getTermNameFromOntology(this.ontologyDataManager), TermId.STOCKID.getId(),
 				true));
@@ -1578,29 +1584,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return labelFieldList;
 	}
 
-	private List<LabelFields> getGermplasmDescriptors() {
-		List<LabelFields> germplasmDescriptors = new ArrayList<LabelFields>();
-
-		try {
-			List<StandardVariableReference> stdVars =
-					this.fieldbookService.filterStandardVariablesForSetting(VariableType.GERMPLASM_DESCRIPTOR.getId(),
-							new ArrayList<SettingDetail>());
-
-			for (StandardVariableReference stdVar : stdVars) {
-				if (stdVar.getId() == TermId.GID.getId() || stdVar.getId() == TermId.DESIG.getId()
-						|| stdVar.getId() == TermId.ENTRY_NO.getId() || stdVar.getId() == TermId.CROSS.getId()
-						|| stdVar.getId() == TermId.SEED_SOURCE.getId()) {
-					germplasmDescriptors.add(new LabelFields(stdVar.getName(), stdVar.getId(), true));
-				}
-			}
-
-		} catch (MiddlewareQueryException e) {
-			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-		}
-		return germplasmDescriptors;
-	}
-
-	private void addAvailableFieldsForFieldMap(boolean hasFieldMap, Locale locale, List<LabelFields> labelFieldsList) {
+	private void addAvailableFieldsForFieldMap(final boolean hasFieldMap, final Locale locale, final List<LabelFields> labelFieldsList) {
 		if (hasFieldMap) {
 			labelFieldsList.add(new LabelFields(this.messageSource.getMessage(
 					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_BLOCK_NAME_KEY, null, locale),
@@ -1621,36 +1605,36 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	 * @param isNursery
 	 * @return
 	 */
-	protected boolean hasInventoryValues(int studyID, boolean isNursery) {
+	protected boolean hasInventoryValues(final int studyID, final boolean isNursery) {
 		try {
 			GermplasmList germplasmList = null;
-			GermplasmListType listType = isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
-			 List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyID, listType);
-			 if (!germplasmLists.isEmpty()) {
-				 germplasmList = germplasmLists.get(0);
-			 }
+			final GermplasmListType listType = isNursery ? GermplasmListType.NURSERY : GermplasmListType.TRIAL;
+			final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyID, listType);
+			if (!germplasmLists.isEmpty()) {
+				germplasmList = germplasmLists.get(0);
+			}
 
 			if (germplasmList != null) {
-				 Integer listId = germplasmList.getId();
-				String germplasmListType = germplasmList.getType();
-				List<InventoryDetails> inventoryDetailList =
+				final Integer listId = germplasmList.getId();
+				final String germplasmListType = germplasmList.getType();
+				final List<InventoryDetails> inventoryDetailList =
 						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId, germplasmListType);
 
-				for (InventoryDetails inventoryDetails : inventoryDetailList) {
+				for (final InventoryDetails inventoryDetails : inventoryDetailList) {
 					if (inventoryDetails.getLotId() != null) {
 						return true;
 					}
 				}
 			}
-		 } catch (MiddlewareQueryException e) {
-			 LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-		 }
+		} catch (final MiddlewareQueryException e) {
+			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
+		}
 
 		return false;
 	}
 
-	protected List<LabelFields> addInventoryRelatedLabelFields(int studyID, Locale locale) {
-		List<LabelFields> labelFieldList = new ArrayList<LabelFields>();
+	protected List<LabelFields> addInventoryRelatedLabelFields(final int studyID, final Locale locale) {
+		final List<LabelFields> labelFieldList = new ArrayList<LabelFields>();
 
 		labelFieldList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.amount", null, locale),
 				AppConstants.AVAILABLE_LABEL_SEED_INVENTORY_AMOUNT.getInt(), false));
@@ -1662,13 +1646,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), false));
 
 		return labelFieldList;
-	 }
+	}
 
 	@Override
-	 public boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail) {
+	public boolean checkAndSetFieldmapProperties(final UserLabelPrinting userLabelPrinting, final FieldMapInfo fieldMapInfoDetail) {
 		// if there are datasets with fieldmap, check if all trial instances of the study have fieldmaps
 		if (!fieldMapInfoDetail.getDatasetsWithFieldMap().isEmpty()) {
-			for (FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
+			for (final FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
 				if (dataset.getTrialInstances().size() == dataset.getTrialInstancesWithFieldMap().size()) {
 					userLabelPrinting.setFieldMapsExisting(true);
 				} else {
@@ -1683,47 +1667,47 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	@Override
-	public LabelPrintingPresets getLabelPrintingPreset(Integer presetId, Integer presetType) throws MiddlewareQueryException {
+	public LabelPrintingPresets getLabelPrintingPreset(final Integer presetId, final Integer presetType) throws MiddlewareQueryException {
 		if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
-			StandardPreset standardPreset = this.workbenchService.getStandardPresetById(presetId);
+			final StandardPreset standardPreset = this.workbenchService.getStandardPresetById(presetId);
 
 			return new LabelPrintingPresets(presetId, standardPreset.getName(), LabelPrintingPresets.STANDARD_PRESET);
 
 		} else {
-			ProgramPreset programPreset = this.presetDataManager.getProgramPresetById(presetId);
+			final ProgramPreset programPreset = this.presetDataManager.getProgramPresetById(presetId);
 
 			return new LabelPrintingPresets(presetId, programPreset.getName(), LabelPrintingPresets.PROGRAM_PRESET);
 		}
 	}
 
 	@Override
-	public ProgramPreset getLabelPrintingProgramPreset(Integer programPresetId) throws MiddlewareQueryException {
+	public ProgramPreset getLabelPrintingProgramPreset(final Integer programPresetId) throws MiddlewareQueryException {
 		return this.presetDataManager.getProgramPresetById(programPresetId);
 	}
 
 	@Override
-	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId, Integer presetType)
-			throws MiddlewareQueryException {
+	public List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(final String presetName, final Integer programId,
+			final Integer presetType) throws MiddlewareQueryException {
 		final List<LabelPrintingPresets> out = new ArrayList<>();
 
 		final Project project = this.workbenchService.getProjectById(programId.longValue());
 
 		if (LabelPrintingPresets.PROGRAM_PRESET == presetType) {
-			List<ProgramPreset> presets =
+			final List<ProgramPreset> presets =
 					this.presetDataManager.getProgramPresetFromProgramAndToolByName(presetName, this.contextUtil.getCurrentProgramUUID(),
 							this.workbenchService.getFieldbookWebTool().getToolId().intValue(), ToolSection.FBK_LABEL_PRINTING.name());
 
-			for (ProgramPreset preset : presets) {
+			for (final ProgramPreset preset : presets) {
 				out.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(), LabelPrintingPresets.PROGRAM_PRESET));
 			}
 		} else {
 			final String cropName = project.getCropType().getCropName();
 
-			List<StandardPreset> standardPresets =
+			final List<StandardPreset> standardPresets =
 					this.workbenchService.getStandardPresetByCropAndPresetName(presetName, this.workbenchService.getFieldbookWebTool()
 							.getToolId().intValue(), cropName, ToolSection.FBK_LABEL_PRINTING.name());
 
-			for (StandardPreset preset : standardPresets) {
+			for (final StandardPreset preset : standardPresets) {
 				out.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(), LabelPrintingPresets.STANDARD_PRESET));
 			}
 		}
@@ -1731,73 +1715,73 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return out;
 	}
 
-	 @Override
-	 public List<LabelPrintingPresets> getAllLabelPrintingPresets(Integer programId) throws LabelPrintingException {
-		 try {
-			 List<LabelPrintingPresets> allLabelPrintingPresets = new ArrayList<LabelPrintingPresets>();
+	@Override
+	public List<LabelPrintingPresets> getAllLabelPrintingPresets(final Integer programId) throws LabelPrintingException {
+		try {
+			final List<LabelPrintingPresets> allLabelPrintingPresets = new ArrayList<LabelPrintingPresets>();
 
-			 // 1. get the crop name of the particular programId,
-			 final Project project = this.workbenchService.getProjectById(programId.longValue());
-			 final String cropName = project.getCropType().getCropName();
+			// 1. get the crop name of the particular programId,
+			final Project project = this.workbenchService.getProjectById(programId.longValue());
+			final String cropName = project.getCropType().getCropName();
 			final Integer fieldbookToolId = this.workbenchService.getFieldbookWebTool().getToolId().intValue();
 
 			// 2. retrieve the standard presets
-			 for (StandardPreset preset : this.workbenchService.getStandardPresetByCrop(fieldbookToolId, cropName,
+			for (final StandardPreset preset : this.workbenchService.getStandardPresetByCrop(fieldbookToolId, cropName,
 					ToolSection.FBK_LABEL_PRINTING.name())) {
-				 allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
-						 LabelPrintingPresets.STANDARD_PRESET));
-			 }
+				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getStandardPresetId(), preset.getName(),
+						LabelPrintingPresets.STANDARD_PRESET));
+			}
 
 			// 3. add all program presets for fieldbook
-			 for (ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(this.contextUtil.getCurrentProgramUUID(),
-					fieldbookToolId, ToolSection.FBK_LABEL_PRINTING.name())) {
-				 allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
-						 LabelPrintingPresets.PROGRAM_PRESET));
-			 }
+			for (final ProgramPreset preset : this.presetDataManager.getProgramPresetFromProgramAndTool(
+					this.contextUtil.getCurrentProgramUUID(), fieldbookToolId, ToolSection.FBK_LABEL_PRINTING.name())) {
+				allLabelPrintingPresets.add(new LabelPrintingPresets(preset.getProgramPresetId(), preset.getName(),
+						LabelPrintingPresets.PROGRAM_PRESET));
+			}
 
-			 return allLabelPrintingPresets;
+			return allLabelPrintingPresets;
 
-		 } catch (MiddlewareQueryException e) {
+		} catch (final MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-			 throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
+			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
 
-		 }
-	 }
-
-	 @Override
-	 public String getLabelPrintingPresetConfig(int presetId, int presetType) throws LabelPrintingException {
-		 try {
-			 if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
-				 return this.workbenchService.getStandardPresetById(presetId).getConfiguration();
-			 } else {
-				 return this.presetDataManager.getProgramPresetById(presetId).getConfiguration();
-			 }
-		 } catch (MiddlewareQueryException e) {
-			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-			 throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
-		 } catch (NullPointerException e) {
-			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-			 throw new LabelPrintingException("label.printing.preset.does.not.exists", "label.printing.preset.does.not.exists",
-					e.getMessage());
-		 }
-	 }
+		}
+	}
 
 	@Override
-	public void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId)
+	public String getLabelPrintingPresetConfig(final int presetId, final int presetType) throws LabelPrintingException {
+		try {
+			if (LabelPrintingPresets.STANDARD_PRESET == presetType) {
+				return this.workbenchService.getStandardPresetById(presetId).getConfiguration();
+			} else {
+				return this.presetDataManager.getProgramPresetById(presetId).getConfiguration();
+			}
+		} catch (final MiddlewareQueryException e) {
+			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
+			throw new LabelPrintingException("label.printing.cannot.retrieve.presets", "database.connectivity.error", e.getMessage());
+		} catch (final NullPointerException e) {
+			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
+			throw new LabelPrintingException("label.printing.preset.does.not.exists", "label.printing.preset.does.not.exists",
+					e.getMessage());
+		}
+	}
+
+	@Override
+	public void saveOrUpdateLabelPrintingPresetConfig(final String settingsName, final String xmlConfig, final Integer programId)
 			throws MiddlewareQueryException {
 		// check if exists, override if true else add new
-		List<LabelPrintingPresets> searchPresetList =
+		final List<LabelPrintingPresets> searchPresetList =
 				this.getAllLabelPrintingPresetsByName(settingsName, programId, LabelPrintingPresets.PROGRAM_PRESET);
 
 		if (!searchPresetList.isEmpty()) {
 			// update
-			ProgramPreset currentLabelPrintingPreset = this.getLabelPrintingProgramPreset(searchPresetList.get(0).getId());
+			final ProgramPreset currentLabelPrintingPreset = this.getLabelPrintingProgramPreset(searchPresetList.get(0).getId());
 			currentLabelPrintingPreset.setConfiguration(xmlConfig);
 
 			this.presetDataManager.saveOrUpdateProgramPreset(currentLabelPrintingPreset);
 		} else {
 			// add new
-			ProgramPreset preset = new ProgramPreset();
+			final ProgramPreset preset = new ProgramPreset();
 			preset.setName(settingsName);
 			preset.setProgramUuid(this.contextUtil.getCurrentProgramUUID());
 			preset.setToolId(this.workbenchService.getFieldbookWebTool().getToolId().intValue());
@@ -1808,19 +1792,19 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		}
 	}
 
-	 public void setMessageSource(ResourceBundleMessageSource messageSource) {
-		 this.messageSource = messageSource;
-	 }
+	public void setMessageSource(final ResourceBundleMessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
 
-	 public void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
-		 this.fieldbookMiddlewareService = fieldbookMiddlewareService;
-	 }
+	public void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
+	}
 
-	 public void setInventoryMiddlewareService(InventoryService inventoryMiddlewareService) {
-		 this.inventoryMiddlewareService = inventoryMiddlewareService;
-	 }
+	public void setInventoryMiddlewareService(final InventoryService inventoryMiddlewareService) {
+		this.inventoryMiddlewareService = inventoryMiddlewareService;
+	}
 
-	 public void setContextUtil(ContextUtil contextUtil) {
-		 this.contextUtil = contextUtil;
-	 }
+	public void setContextUtil(final ContextUtil contextUtil) {
+		this.contextUtil = contextUtil;
+	}
 }

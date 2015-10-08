@@ -17,7 +17,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
-import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -99,7 +99,7 @@ public class ExportGermplasmListServiceTest {
 	private GermplasmListManager germplasmListManager;
 
 	@Mock
-	private ExportService exportService;
+	private GermplasmExportService germplasmExportService;
 
 	@Mock
 	private Workbook workbook;
@@ -174,7 +174,7 @@ public class ExportGermplasmListServiceTest {
 
 		try {
 			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(), false);
-			Mockito.verify(this.exportService, Mockito.times(1))
+			Mockito.verify(this.germplasmExportService, Mockito.times(1))
 					.generateGermplasmListExcelFile(Matchers.any(GermplasmListExportInputValues.class));
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
@@ -187,7 +187,7 @@ public class ExportGermplasmListServiceTest {
 
 		try {
 			this.exportGermplasmListServiceImpl.exportGermplasmListXLS(this.testFileName, 1, this.getVisibleColumnMap(), true);
-			Mockito.verify(this.exportService, Mockito.times(1))
+			Mockito.verify(this.germplasmExportService, Mockito.times(1))
 					.generateGermplasmListExcelFile(Matchers.any(GermplasmListExportInputValues.class));
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
@@ -199,9 +199,8 @@ public class ExportGermplasmListServiceTest {
 	public void testExportGermplasmListCSVForTrialManager() {
 
 		try {
-
 			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(), false);
-			Mockito.verify(this.exportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
+			Mockito.verify(this.germplasmExportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
 					Matchers.anyString());
 
 		} catch (final GermplasmListExporterException e) {
@@ -216,9 +215,8 @@ public class ExportGermplasmListServiceTest {
 	public void testExportGermplasmListCSVForNurseryManager() {
 
 		try {
-
 			this.exportGermplasmListServiceImpl.exportGermplasmListCSV(this.testFileName, this.getVisibleColumnMap(), true);
-			Mockito.verify(this.exportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
+			Mockito.verify(this.germplasmExportService, Mockito.times(1)).generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
 					Matchers.anyString());
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();

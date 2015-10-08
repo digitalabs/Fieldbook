@@ -16,7 +16,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
 import org.generationcp.commons.pojo.GermplasmListExportInputValues;
-import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.vaadin.spring.SimpleResourceBundleMessageSource;
 import org.generationcp.middleware.dao.GermplasmListDAO;
@@ -73,7 +73,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	private ResourceBundleMessageSource messageSource;
 
 	@Resource
-	private ExportService exportService;
+	private GermplasmExportService germplasmExportService;
 
 	public ExportGermplasmListServiceImpl() {
 
@@ -86,7 +86,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		try {
 			final GermplasmListExportInputValues input = this.setUpInput(fileNamePath, listId, visibleColumns, isNursery);
 
-			this.exportService.generateGermplasmListExcelFile(input);
+			this.germplasmExportService.generateGermplasmListExcelFile(input);
 
 		} catch (final MiddlewareQueryException e) {
 			throw new GermplasmListExporterException("Error with exporting germplasm list to XLS.", e);
@@ -134,7 +134,6 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		final Integer currentLocalIbdbUserId = this.contextUtil.getCurrentUserLocalId();
 		input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
 		input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
-
 		input.setVisibleColumnMap(visibleColumns);
 
 		input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns, isNursery));
@@ -168,7 +167,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 					if (!settingDetail.isHidden() && isVisible != null && isVisible) {
 						final Integer variableId = settingDetail.getVariable().getCvTermId();
 						final Variable variable =
-								this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, false);
+								this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, false, false);
 						standardVariableMap.put(variableId, variable);
 					}
 				}
@@ -214,7 +213,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 		try {
 
-			this.exportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileNamePath);
+			this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, fileNamePath);
 
 		} catch (final IOException e) {
 			throw new GermplasmListExporterException("Error with exporting list to CSV File.", e);

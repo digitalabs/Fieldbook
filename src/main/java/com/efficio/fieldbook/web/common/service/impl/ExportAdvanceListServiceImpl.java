@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportColumnValue;
-import org.generationcp.commons.service.ExportService;
+import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -54,7 +54,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	private static final String STOCK_LIST_EXPORT_SHEET_NAME = "Inventory List";
 
 	@Override
-	public File exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds, String studyName, ExportService exportServiceImpl,
+	public File exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds, String studyName, GermplasmExportService germplasmExportServiceImpl,
 			String type) {
 		List<Integer> advanceGermplasmListIds = this.parseDelimitedAdvanceGermplasmListIds(delimitedAdvanceGermplasmListIds);
 		List<String> filenameList = new ArrayList<String>();
@@ -71,7 +71,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 				String filenamePath = this.getFileNamePath(advanceListName) + suffix;
 				String sheetName = WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.ADVANCE_LIST_SHEET_NAME);
 
-				this.exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl, type, false);
+				this.exportList(inventoryDetailList, filenamePath, sheetName, germplasmExportServiceImpl, type, false);
 
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
@@ -92,7 +92,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	}
 
 	@Override
-	public File exportStockList(Integer stockListId, ExportService exportServiceImpl) {
+	public File exportStockList(Integer stockListId, GermplasmExportService germplasmExportServiceImpl) {
 
 		List<String> filenameList = new ArrayList<String>();
 		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
@@ -109,7 +109,7 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 			String sheetName =
 					org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.STOCK_LIST_EXPORT_SHEET_NAME);
 
-			this.exportList(inventoryDetailList, filenamePath, sheetName, exportServiceImpl,
+			this.exportList(inventoryDetailList, filenamePath, sheetName, germplasmExportServiceImpl,
 					AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString(), germplasmListType == GermplasmListType.CROSSES);
 
 			outputFilename = filenamePath;
@@ -129,14 +129,14 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 	}
 
 	protected void exportList(List<InventoryDetails> inventoryDetailList, String filenamePath, String sheetName,
-			ExportService exportServiceImpl, String type, boolean displayCrossRelatedColumns) throws IOException {
+			GermplasmExportService germplasmExportServiceImpl, String type, boolean displayCrossRelatedColumns) throws IOException {
 		List<ExportColumnHeader> exportColumnHeaders = this.generateAdvanceListColumnHeaders(displayCrossRelatedColumns);
 		if (AppConstants.EXPORT_ADVANCE_NURSERY_EXCEL.getString().equalsIgnoreCase(type)) {
-			exportServiceImpl.generateExcelFileForSingleSheet(
+			germplasmExportServiceImpl.generateExcelFileForSingleSheet(
 					this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders), exportColumnHeaders, filenamePath,
 					sheetName);
 		} else {
-			exportServiceImpl.generateCSVFile(this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders),
+			germplasmExportServiceImpl.generateCSVFile(this.generateAdvanceListColumnValues(inventoryDetailList, exportColumnHeaders),
 					exportColumnHeaders, filenamePath);
 		}
 	}

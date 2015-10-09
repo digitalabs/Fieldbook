@@ -258,8 +258,19 @@ public class CrossingServiceImpl implements CrossingService {
 		return dateIntValue;
 	}
 
-	public void populateGDate(Germplasm germplasm, String crossingDate, String harvestDate) {
-		Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
+    /**
+     * This method will set germplasm gdate from given date as per rules.
+     * 1. If harvested date is provided then it will be used as gdate.
+     * 2. If harvested date and crossing date is provided then harvested date will be used as gdate.
+     * 3. If only crossing date is provided then it will be used as gdate.
+     * 4. If both dates are not provided then current date will be used as gdate.
+     *
+     * @param germplasm    germplasm instance into which gdate need to be set.
+     * @param crossingDate date from import cross sheet.
+     * @param harvestDate  date given using user form.
+     */
+    public void populateGDate(Germplasm germplasm, String crossingDate, String harvestDate) {
+        Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
 
 		if(formattedHarvestDate != 0){
 			germplasm.setGdate(formattedHarvestDate);

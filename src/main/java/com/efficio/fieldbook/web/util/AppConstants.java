@@ -122,7 +122,20 @@ public enum AppConstants {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);
 
+	private static Properties configFile = new Properties();
+
+
 	private static final String PROPERTY_FILE = "appconstants.properties";
+
+	static {
+		try {
+			configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(AppConstants.PROPERTY_FILE));
+		} catch (IOException e) {
+			AppConstants.LOG.error("Error accessing property file: " + AppConstants.PROPERTY_FILE, e);
+		}
+
+	}
+
 	public int getInt() {
 		int appConstant = -1;
 		String value = this.getString().trim();
@@ -145,15 +158,11 @@ public enum AppConstants {
 	}
 
 	public String getString() {
-		Properties configFile = new Properties();
 		String value = null;
 		try {
-			configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(AppConstants.PROPERTY_FILE));
 			value = configFile.getProperty(this.toString());
 		} catch (NumberFormatException e) {
 			AppConstants.LOG.error("Value not numeric.", e);
-		} catch (IOException e) {
-			AppConstants.LOG.error("Error accessing property file: " + AppConstants.PROPERTY_FILE, e);
 		}
 		return value;
 	}
@@ -162,12 +171,9 @@ public enum AppConstants {
 		Properties configFile = new Properties();
 		String value = null;
 		try {
-			configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(AppConstants.PROPERTY_FILE));
 			value = configFile.getProperty(labelKey);
 		} catch (NumberFormatException e) {
 			AppConstants.LOG.error("Value not numeric.", e);
-		} catch (IOException e) {
-			AppConstants.LOG.error("Error accessing property file: " + AppConstants.PROPERTY_FILE, e);
 		}
 		return value;
 	}

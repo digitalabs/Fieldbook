@@ -269,7 +269,7 @@ public class CrossingServiceImpl implements CrossingService {
      * @param crossingDate date from import cross sheet.
      * @param harvestDate  date given using user form.
      */
-    public void populateGDate(Germplasm germplasm, String crossingDate, String harvestDate) {
+    public void populateGermplasmDate(Germplasm germplasm, String crossingDate, String harvestDate) {
         Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
 
 		if(formattedHarvestDate != 0){
@@ -311,7 +311,7 @@ public class CrossingServiceImpl implements CrossingService {
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
 
-			this.populateGDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
+            this.populateGermplasmDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
 
 			germplasm.setLocationId(harvestLocationId);
 

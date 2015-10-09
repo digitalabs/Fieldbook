@@ -752,10 +752,10 @@ public class DesignImportController extends SettingsController {
 		final Map<PhenotypicType, List<DesignHeaderItem>> result =
 				this.designImportService.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders());
 
-		designImportData.setUnmappedHeaders(result.get(null));
+		designImportData.setUnmappedHeaders(result.get(PhenotypicType.UNASSIGNED));
 
 		// removed unmapped headers before assigning to the mappedHeaders field of designImportData
-		result.remove(null);
+		result.remove(PhenotypicType.UNASSIGNED);
 
 		designImportData.setMappedHeaders(result);
 

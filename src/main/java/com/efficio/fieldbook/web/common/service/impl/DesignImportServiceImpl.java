@@ -249,8 +249,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 		// create groups for the Design Headers
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedDesignHeaders = new HashMap<>();
 
-		// note: the null key here is for unmapped headers
-		mappedDesignHeaders.put(null, new ArrayList<DesignHeaderItem>());
+		// note: the UNASSIGNED key here is for unmapped headers
+		mappedDesignHeaders.put(PhenotypicType.UNASSIGNED, new ArrayList<DesignHeaderItem>());
 		mappedDesignHeaders.put(PhenotypicType.TRIAL_ENVIRONMENT, new ArrayList<DesignHeaderItem>());
 		mappedDesignHeaders.put(PhenotypicType.TRIAL_DESIGN, new ArrayList<DesignHeaderItem>());
 		mappedDesignHeaders.put(PhenotypicType.GERMPLASM, new ArrayList<DesignHeaderItem>());
@@ -290,7 +290,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 				mappedDesignHeaders.get(standardVariable.getPhenotypicType()).add(item);
 			} else {
-				mappedDesignHeaders.get(null).add(item);
+				mappedDesignHeaders.get(PhenotypicType.UNASSIGNED).add(item);
 			}
 
 		}

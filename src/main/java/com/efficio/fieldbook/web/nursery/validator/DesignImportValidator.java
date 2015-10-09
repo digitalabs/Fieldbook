@@ -51,13 +51,15 @@ public class DesignImportValidator {
 				designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 
 		final DesignHeaderItem trialInstanceDesignHeaderItem =
-				this.validateIfStandardVariableExists(
+				this.designImportService.validateIfStandardVariableExists(
 						mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.TRIAL_ENVIRONMENT),
 						"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 		final DesignHeaderItem entryNoDesignHeaderItem =
-				this.validateIfStandardVariableExists(mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.GERMPLASM),
+				this.designImportService.validateIfStandardVariableExists(
+						mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.GERMPLASM),
 						"design.import.error.entry.no.is.required", TermId.ENTRY_NO);
-		this.validateIfStandardVariableExists(mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.TRIAL_DESIGN),
+		this.designImportService.validateIfStandardVariableExists(
+				mappedHeadersWithDesignHeaderItemsMappedToStdVarId.get(PhenotypicType.TRIAL_DESIGN),
 				"design.import.error.plot.no.is.required", TermId.PLOT_NO);
 
 		final Map<String, Map<Integer, List<String>>> csvMap =
@@ -68,17 +70,6 @@ public class DesignImportValidator {
 		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
 		this.validateIfPlotNumberIsUniquePerInstance(mappedHeaders.get(PhenotypicType.TRIAL_DESIGN), csvMap);
 		this.validateColumnValues(designImportData.getCsvData(), mappedHeaders);
-	}
-
-	protected DesignHeaderItem validateIfStandardVariableExists(final Map<Integer, DesignHeaderItem> map, final String messageCodeId,
-			final TermId termId) throws DesignValidationException {
-
-		final DesignHeaderItem headerItem = map.get(termId.getId());
-		if (headerItem == null) {
-			throw new DesignValidationException(this.messageSource.getMessage(messageCodeId, null, Locale.ENGLISH));
-		} else {
-			return headerItem;
-		}
 	}
 
 	protected void validateEntryNoMustBeUniquePerInstance(final DesignHeaderItem entryNoHeaderItem,

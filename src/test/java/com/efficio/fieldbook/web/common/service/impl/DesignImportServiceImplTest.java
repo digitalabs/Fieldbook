@@ -193,7 +193,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testAreTrialInstancesMatchTheSelectedEnvironments() throws MiddlewareException {
+	public void testAreTrialInstancesMatchTheSelectedEnvironments() throws MiddlewareException, DesignValidationException {
 
 		Assert.assertFalse("Should be false because the no of environments in trials don't match the no of trials in the design file",
 				this.service.areTrialInstancesMatchTheSelectedEnvironments(1, this.designImportData));
@@ -270,16 +270,6 @@ public class DesignImportServiceImplTest {
 		final Set<String> result = this.service.extractTrialInstancesFromEnvironmentData(environmentData);
 
 		Assert.assertEquals(5, result.size());
-
-	}
-
-	@Test
-	public void testFilterDesignHeaderItemsByTermId() throws MiddlewareException {
-
-		final List<DesignHeaderItem> headerDesignItems = this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT);
-		final DesignHeaderItem result = this.service.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, headerDesignItems);
-
-		Assert.assertNotNull(result);
 
 	}
 
@@ -380,11 +370,11 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testGroupCsvRowsIntoTrialInstance() throws MiddlewareException {
+	public void testGroupCsvRowsIntoTrialInstance() throws MiddlewareException, DesignValidationException {
 
 		final DesignHeaderItem trialInstanceHeaderItem =
-				this.service.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR,
-						this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+				this.service.validateIfStandardVariableExists(this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId()
+						.get(PhenotypicType.TRIAL_ENVIRONMENT), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		final Map<String, Map<Integer, List<String>>> result =
 				this.service.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, this.designImportData.getCsvData());
@@ -407,6 +397,37 @@ public class DesignImportServiceImplTest {
 		final Set<MeasurementVariable> returnValue = this.service.getMeasurementVariablesFromDataFile(workbook, this.designImportData);
 
 		Assert.assertEquals("The test data only contains 7 Measurement Variables", 7, returnValue.size());
+
+	}
+
+	@Test
+	public void testValidateIfStandardVariableExists() throws MiddlewareException {
+		try {
+
+			this.service.validateIfStandardVariableExists(this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId()
+					.get(PhenotypicType.TRIAL_ENVIRONMENT), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+
+		} catch (final DesignValidationException e) {
+
+			Assert.fail("The logic did not detect that the trial number exist");
+
+		}
+
+	}
+
+	@Test
+	public void testValidateIfStandardVariableExistsTrialInstanceDoNotExist() throws MiddlewareException {
+
+		try {
+
+			this.service.validateIfStandardVariableExists(this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId()
+					.get(PhenotypicType.GERMPLASM), "design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
+
+			Assert.fail("The logic should detect that the trial number exist");
+
+		} catch (final DesignValidationException e) {
+
+		}
 
 	}
 

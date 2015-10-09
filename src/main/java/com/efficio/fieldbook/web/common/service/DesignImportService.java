@@ -11,7 +11,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
@@ -29,18 +28,19 @@ public interface DesignImportService {
 
 	Set<MeasurementVariable> getMeasurementVariablesFromDataFile(Workbook workbook, DesignImportData designImportData);
 
-	boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData);
+	boolean areTrialInstancesMatchTheSelectedEnvironments(Integer noOfEnvironments, DesignImportData designImportData)
+			throws DesignValidationException;
 
-	Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders)
-			throws MiddlewareException;
+	Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(List<DesignHeaderItem> designHeaders);
 
 	Set<MeasurementVariable> getDesignRequiredMeasurementVariable(Workbook workbook, DesignImportData designImportData);
 
 	Set<MeasurementVariable> extractMeasurementVariable(PhenotypicType phenotypicType,
 			Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders);
 
-	DesignHeaderItem filterDesignHeaderItemsByTermId(TermId termId, List<DesignHeaderItem> headerDesignItems);
-
 	Map<String, Map<Integer, List<String>>> groupCsvRowsIntoTrialInstance(DesignHeaderItem trialInstanceHeaderItem,
 			Map<Integer, List<String>> csvMap);
+
+	DesignHeaderItem validateIfStandardVariableExists(Map<Integer, DesignHeaderItem> map, String messageCodeId, TermId termId)
+			throws DesignValidationException;
 }

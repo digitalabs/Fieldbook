@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -217,11 +218,13 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	@Override
-	public boolean areTrialInstancesMatchTheSelectedEnvironments(final Integer noOfEnvironments, final DesignImportData designImportData) {
+	public boolean areTrialInstancesMatchTheSelectedEnvironments(final Integer noOfEnvironments, final DesignImportData designImportData)
+			throws DesignValidationException {
 
 		final DesignHeaderItem trialInstanceDesignHeaderItem =
-				this.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR,
-						designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+				this.validateIfStandardVariableExists(
+						designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+						"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 
 		if (trialInstanceDesignHeaderItem != null) {
 			final Map<String, Map<Integer, List<String>>> csvMap =
@@ -273,7 +276,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 
 		for (final DesignHeaderItem item : designHeaders) {
-			List<StandardVariable> match = variables.get(item.getName().toUpperCase());
+			final List<StandardVariable> match = variables.get(item.getName().toUpperCase());
 
 			if (null != match && !match.isEmpty() && null != mappedDesignHeaders.get(match.get(0).getPhenotypicType())) {
 				final StandardVariable standardVariable = match.get(0);
@@ -317,13 +320,15 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	@Override
-	public DesignHeaderItem filterDesignHeaderItemsByTermId(final TermId termId, final List<DesignHeaderItem> headerDesignItems) {
-		for (final DesignHeaderItem headerDesignItem : headerDesignItems) {
-			if (headerDesignItem.getVariable().getId() == termId.getId()) {
-				return headerDesignItem;
-			}
+	public DesignHeaderItem validateIfStandardVariableExists(final Map<Integer, DesignHeaderItem> map, final String messageCodeId,
+			final TermId termId) throws DesignValidationException {
+
+		final DesignHeaderItem headerItem = map.get(termId.getId());
+		if (headerItem == null) {
+			throw new DesignValidationException(this.messageSource.getMessage(messageCodeId, null, Locale.ENGLISH));
+		} else {
+			return headerItem;
 		}
-		return null;
 	}
 
 	@Override
@@ -517,12 +522,14 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	protected void populateEnvironmentDataWithValuesFromCsvFile(final EnvironmentData environmentData, final Workbook workbook,
-			final DesignImportData designImportData) {
+			final DesignImportData designImportData) throws DesignValidationException {
 
 		final List<DesignHeaderItem> trialEnvironmentsDesignHeaderItems =
 				designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT);
 		final DesignHeaderItem trialInstanceHeaderItem =
-				this.filterDesignHeaderItemsByTermId(TermId.TRIAL_INSTANCE_FACTOR, trialEnvironmentsDesignHeaderItems);
+				this.validateIfStandardVariableExists(
+						designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId().get(PhenotypicType.TRIAL_ENVIRONMENT),
+						"design.import.error.trial.is.required", TermId.TRIAL_INSTANCE_FACTOR);
 		final Map<String, Map<Integer, List<String>>> groupedCsvRows =
 				this.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getCsvData());
 

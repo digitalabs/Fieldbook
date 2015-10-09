@@ -70,7 +70,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		return this.getContentName(this.userSelection.isTrial());
 	}
 
-	private String getContentName(boolean isTrial) {
+	private String getContentName(final boolean isTrial) {
 		if (isTrial) {
 			return "TrialManager/reviewTrialDetails";
 		} else {
@@ -79,11 +79,11 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	}
 
 	@RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
-	public String show(@PathVariable String studyType, @PathVariable int id,
-			@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) throws MiddlewareQueryException {
+	public String show(@PathVariable final String studyType, @PathVariable final int id,
+			@ModelAttribute("addOrRemoveTraitsForm") final AddOrRemoveTraitsForm form, final Model model) throws MiddlewareQueryException {
 
-		boolean isNursery = studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType) ? true : false;
-		Workbook workbook;
+		final boolean isNursery = studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType);
+		final Workbook workbook;
 		StudyDetails details;
 		try {
 			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
@@ -99,7 +99,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 				details.setHasMeasurements(false);
 			}
 
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			ReviewStudyDetailsController.LOG.error(e.getMessage(), e);
 			details = new StudyDetails();
 			this.addErrorMessageToResult(details, e, isNursery, id);
@@ -114,8 +114,8 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		return this.showAjaxPage(model, this.getContentName(!isNursery));
 	}
 
-	protected void addErrorMessageToResult(StudyDetails details, MiddlewareException e, boolean isNursery, int id) {
-		String param;
+	protected void addErrorMessageToResult(final StudyDetails details, final MiddlewareException e, final boolean isNursery, final int id) {
+		final String param;
 		if (isNursery) {
 			param = AppConstants.NURSERY.getString();
 		} else {
@@ -133,29 +133,29 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@ResponseBody
 	@RequestMapping(value = "/datasets/{nurseryId}")
-	public List<DatasetReference> loadDatasets(@PathVariable int nurseryId) throws MiddlewareQueryException {
+	public List<DatasetReference> loadDatasets(@PathVariable final int nurseryId) throws MiddlewareQueryException {
 		return this.fieldbookMiddlewareService.getDatasetReferences(nurseryId);
 	}
 
-	private void rearrangeDetails(StudyDetails details) {
+	private void rearrangeDetails(final StudyDetails details) {
 		details.setBasicStudyDetails(this.rearrangeSettingDetails(details.getBasicStudyDetails()));
 		details.setManagementDetails(this.rearrangeSettingDetails(details.getManagementDetails()));
 	}
 
-	private List<SettingDetail> rearrangeSettingDetails(List<SettingDetail> list) {
-		List<SettingDetail> newList = new ArrayList<SettingDetail>();
+	private List<SettingDetail> rearrangeSettingDetails(final List<SettingDetail> list) {
+		final List<SettingDetail> newList = new ArrayList<SettingDetail>();
 		final int COLS = 3;
 
 		if (list != null && !list.isEmpty()) {
-			int rows = Double.valueOf(Math.ceil(list.size() / (double) COLS)).intValue();
-			int extra = list.size() % COLS;
+			final int rows = Double.valueOf(Math.ceil(list.size() / (double) COLS)).intValue();
+			final int extra = list.size() % COLS;
 			for (int i = 0; i < list.size(); i++) {
 				int delta = 0;
-				int currentColumn = i % COLS;
+				final int currentColumn = i % COLS;
 				if (currentColumn > extra && extra > 0) {
 					delta = currentColumn - extra;
 				}
-				int computedIndex = currentColumn * rows + i / COLS - delta;
+				final int computedIndex = currentColumn * rows + i / COLS - delta;
 				if (computedIndex < list.size()) {
 					newList.add(list.get(computedIndex));
 				} else {
@@ -166,7 +166,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		return newList;
 	}
 
-	protected void setFieldbookMiddlewareService(FieldbookService fieldbookMiddlewareService) {
+	protected void setFieldbookMiddlewareService(final FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 

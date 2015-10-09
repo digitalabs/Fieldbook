@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
-import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -112,20 +111,6 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		return map;
 	}
 
-	protected void setExportListTypeFromOriginalGermplasm(GermplasmList list) throws MiddlewareQueryException {
-		if (list != null && list.getListRef() != null) {
-			GermplasmList origList = this.fieldbookMiddlewareService.getGermplasmListById(list.getListRef());
-
-			if (origList != null) {
-				if (origList.getStatus() != null && origList.getStatus().intValue() != GermplasmListDAO.STATUS_DELETED.intValue()) {
-					list.setType(origList.getType());
-				} else {
-					list.setType(ExportGermplasmListController.GERPLASM_TYPE_LST);
-				}
-			}
-		}
-	}
-
 	protected String doExport(int exportType, HttpServletResponse response, HttpServletRequest req, Map<String, Boolean> visibleColumnsMap,
 			Boolean isNursery) throws GermplasmListExporterException {
 
@@ -137,8 +122,6 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		try {
 			if (this.userSelection.getImportedGermplasmMainInfo() != null) {
 				list = this.fieldbookMiddlewareService.getGermplasmListById(this.userSelection.getImportedGermplasmMainInfo().getListId());
-				
-				this.setExportListTypeFromOriginalGermplasm(list);
 			}
 		} catch (MiddlewareQueryException e) {
 			ExportGermplasmListController.LOG.error(e.getMessage(), e);

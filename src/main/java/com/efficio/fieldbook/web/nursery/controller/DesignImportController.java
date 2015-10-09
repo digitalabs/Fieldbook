@@ -328,7 +328,7 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 
-		this.userSelection.getDesignImportData().setMappedHeadersWithStandardVariable(newMappingResults);
+		this.userSelection.getDesignImportData().setMappedHeaders(newMappingResults);
 	}
 
 	@ResponseBody
@@ -752,8 +752,12 @@ public class DesignImportController extends SettingsController {
 		final Map<PhenotypicType, List<DesignHeaderItem>> result =
 				this.designImportService.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders());
 
-		designImportData.setMappedHeaders(result);
 		designImportData.setUnmappedHeaders(result.get(null));
+
+		// removed unmapped headers before assigning to the mappedHeaders field of designImportData
+		result.remove(null);
+
+		designImportData.setMappedHeaders(result);
 
 	}
 

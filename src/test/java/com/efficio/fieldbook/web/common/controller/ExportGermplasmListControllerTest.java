@@ -21,6 +21,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -28,6 +29,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -36,8 +39,7 @@ import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
 import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
-import junit.framework.Assert;
-
+@RunWith(MockitoJUnitRunner.class)
 public class ExportGermplasmListControllerTest {
 
 	private static final long LIST_DATE = 20141112L;
@@ -356,80 +358,6 @@ public class ExportGermplasmListControllerTest {
 		stdVar.setDataType(dataType);
 
 		return stdVar;
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNull() throws MiddlewareQueryException {
-		final ExportGermplasmListController controller = new ExportGermplasmListController();
-		final GermplasmList list = this.getGermplasmList();
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should not change since there is not list ref for the germplasm list",
-				ExportGermplasmListControllerTest.LST, list.getType());
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNull() throws MiddlewareQueryException {
-		final ExportGermplasmListController controller = new ExportGermplasmListController();
-		final GermplasmList list = this.getGermplasmList();
-		list.setListRef(5);
-		final GermplasmList listRef = this.getGermplasmList();
-		final String harvest = "HARVEST";
-		listRef.setType(harvest);
-		Mockito.doReturn(listRef).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
-		controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should  change since there is a list ref for the germplasm list", harvest, list.getType());
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullAndNotDeleted() throws MiddlewareQueryException {
-		final ExportGermplasmListController controller = new ExportGermplasmListController();
-		final GermplasmList list = this.getGermplasmList();
-		list.setListRef(5);
-		final GermplasmList listRef = this.getGermplasmList();
-		final String harvest = "HARVEST";
-		listRef.setType(harvest);
-		Mockito.doReturn(listRef).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
-		controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should  change since there is a list ref for the germplasm list", harvest, list.getType());
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullAndDeleted() throws MiddlewareQueryException {
-		final ExportGermplasmListController controller = new ExportGermplasmListController();
-		final GermplasmList list = this.getGermplasmList();
-		list.setListRef(5);
-		list.setType("SAMPLE");
-		final GermplasmList listRef = this.getGermplasmList();
-		final String harvest = "HARVEST";
-		listRef.setType(harvest);
-
-		listRef.setStatus(ExportGermplasmListControllerTest.STATUS_DELETED);
-		Mockito.doReturn(listRef).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
-		controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should be LST since the ref list id is deleted", ExportGermplasmListControllerTest.LST,
-				list.getType());
-	}
-
-	@Test
-	public void testSetExportListTypeFromOriginalGermplasmIfListRefIsNotNullButListIsNull() throws MiddlewareQueryException {
-		final ExportGermplasmListController controller = new ExportGermplasmListController();
-		final GermplasmList list = this.getGermplasmList();
-		list.setListRef(5);
-		final GermplasmList listRef = this.getGermplasmList();
-		final String harvest = "HARVEST";
-		listRef.setType(harvest);
-		Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
-		controller.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
-
-		controller.setExportListTypeFromOriginalGermplasm(list);
-		Assert.assertEquals("List type should not change since there is not list ref for the germplasm list",
-				ExportGermplasmListControllerTest.LST, list.getType());
 	}
 
 	private GermplasmList getGermplasmList() {

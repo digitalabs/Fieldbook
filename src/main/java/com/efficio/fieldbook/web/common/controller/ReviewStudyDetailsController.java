@@ -61,7 +61,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
-	
+
 	@Resource
 	private ContextUtil contextUtil;
 
@@ -87,10 +87,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		StudyDetails details;
 		try {
 			workbook = this.fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
-			workbook.setStudyId(id);
+			workbook.getStudyDetails().setId(id);
 			details =
 					SettingsUtil.convertWorkbookToStudyDetails(workbook, this.fieldbookMiddlewareService, this.fieldbookService,
-							this.userSelection,contextUtil.getCurrentProgramUUID());
+							this.userSelection, contextUtil.getCurrentProgramUUID());
 			this.rearrangeDetails(details);
 			this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
 			if (workbook.getMeasurementDatesetId() != null) {
@@ -123,10 +123,10 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 		details.setId(id);
 		String errorMessage = e.getMessage();
-		if(e instanceof MiddlewareQueryException) {
-			errorMessage = this.errorHandlerService.getErrorMessagesAsString(
-					((MiddlewareQueryException)e).getCode(), new Object[] {param,
-						param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
+		if (e instanceof MiddlewareQueryException) {
+			errorMessage =
+					this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(), new Object[] {param,
+							param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n");
 		}
 		details.setErrorMessage(errorMessage);
 	}

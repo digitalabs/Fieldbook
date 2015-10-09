@@ -148,10 +148,9 @@ public class CreateTrialController extends BaseTrialController {
 		String param = AppConstants.TRIAL.getString();
 		CreateTrialForm form = new CreateTrialForm();
 		form.setHasError(true);
-		if(e instanceof MiddlewareQueryException) {
-			form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(
-					((MiddlewareQueryException)e).getCode(), new Object[] {param,
-				param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
+		if (e instanceof MiddlewareQueryException) {
+			form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(), new Object[] {
+					param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
 		} else {
 			form.setErrorMessage(e.getMessage());
 		}
@@ -234,20 +233,20 @@ public class CreateTrialController extends BaseTrialController {
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection
 						.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection
 						.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
-						data.getTreatmentFactors().getCurrentData(), null, 
-						this.userSelection.getNurseryConditions(), false, contextUtil.getCurrentProgramUUID());
+						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false, contextUtil
+								.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
 		Workbook workbook =
 				SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
 						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
 						this.userSelection.getExperimentalDesignVariables(), contextUtil.getCurrentProgramUUID());
-		
-		
-		if (userSelection.getTemporaryWorkbook() != null){
-			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments() , workbook, userSelection.getTemporaryWorkbook().getTrialObservations());
+
+		if (userSelection.getTemporaryWorkbook() != null) {
+			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook, userSelection.getTemporaryWorkbook()
+					.getTrialObservations());
 		}
-		
+
 		List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
 		variablesForEnvironment.addAll(workbook.getTrialVariables());
 
@@ -262,7 +261,7 @@ public class CreateTrialController extends BaseTrialController {
 
 		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getEnvironments().getEnvironments()));
 
-		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyId(), name, data.getColumnOrders(), workbook);
+		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), name, data.getColumnOrders(), workbook);
 
 		return "success";
 	}

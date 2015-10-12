@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.validator;
+package com.efficio.fieldbook.web.importdesign.validator;
 
 import junit.framework.Assert;
 
@@ -9,6 +9,7 @@ import org.generationcp.middleware.domain.ontology.Scale;
 import org.junit.Test;
 
 import com.efficio.fieldbook.web.data.initializer.DesignImportDataInitializer;
+import com.efficio.fieldbook.web.importdesign.validator.NumericVariableValidator;
 
 public class NumericVariableValidatorTest {
 

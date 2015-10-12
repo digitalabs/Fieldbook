@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.validator;
+package com.efficio.fieldbook.web.importdesign.validator;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.StandardVariable;

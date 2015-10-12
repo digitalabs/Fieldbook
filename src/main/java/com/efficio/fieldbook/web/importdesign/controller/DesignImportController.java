@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.importdesign.controller;
 
 /**
  * Created by cyrus on 5/8/15.
@@ -55,8 +55,9 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.common.service.DesignImportService;
-import com.efficio.fieldbook.web.nursery.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;

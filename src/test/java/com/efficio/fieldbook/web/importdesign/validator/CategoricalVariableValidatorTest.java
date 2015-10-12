@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.validator;
+package com.efficio.fieldbook.web.importdesign.validator;
 
 import junit.framework.Assert;
 
@@ -10,6 +10,7 @@ import org.springframework.context.NoSuchMessageException;
 
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportDataInitializer;
+import com.efficio.fieldbook.web.importdesign.validator.CategoricalVariableValidator;
 
 public class CategoricalVariableValidatorTest {
 

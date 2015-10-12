@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -97,10 +98,11 @@ public class DesignImportServiceImpl implements DesignImportService {
 		// row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
 
+		final Map<String, Integer> availableCheckTypes = this.retrieveAvailableCheckTypes();
 		while (rowCounter <= csvData.size() - 1) {
 			final MeasurementRow measurementRow =
 					this.createMeasurementRow(workbook, mappedHeaders, csvData.get(rowCounter), importedGermplasm,
-							germplasmStandardVariables, generatedTrialInstancesFromUI, isPreview);
+							germplasmStandardVariables, generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
 			if (measurementRow != null) {
 				measurements.add(measurementRow);
 			}
@@ -115,6 +117,22 @@ public class DesignImportServiceImpl implements DesignImportService {
 		this.addVariatesToMeasurementRows(workbook, measurements);
 
 		return measurements;
+	}
+
+	/**
+	 * Returns all available check types at the moment in the form of a map <Name, CVTermId> i.e <C,10170>
+	 * 
+	 * @return map <Name, CVTermId>
+	 */
+	private Map<String, Integer> retrieveAvailableCheckTypes() {
+		final Map<String, Integer> checkTypeMap = new HashMap<String, Integer>();
+		final List<Enumeration> checkTypes = this.fieldbookService.getCheckTypeList();
+
+		for (final Enumeration checkType : checkTypes) {
+			checkTypeMap.put(checkType.getName(), checkType.getId());
+		}
+
+		return checkTypeMap;
 	}
 
 	@Override
@@ -347,7 +365,8 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	protected MeasurementRow createMeasurementRow(final Workbook workbook, final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders,
 			final List<String> rowValues, final List<ImportedGermplasm> importedGermplasm,
-			final Map<Integer, StandardVariable> germplasmStandardVariables, final Set<String> trialInstancesFromUI, final boolean isPreview) {
+			final Map<Integer, StandardVariable> germplasmStandardVariables, final Set<String> trialInstancesFromUI,
+			final boolean isPreview, final Map<String, Integer> availableCheckTypes) {
 
 		final MeasurementRow measurement = new MeasurementRow();
 
@@ -373,6 +392,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 					final Integer entryNo = Integer.parseInt(rowValues.get(headerItem.getColumnIndex()));
 					this.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, dataList, entryNo);
+				}
+
+				if (headerItem.getVariable().getId() == TermId.ENTRY_TYPE.getId()) {
+					final String checkType = String.valueOf(rowValues.get(headerItem.getColumnIndex()));
+					final String checkTypeId = String.valueOf(availableCheckTypes.get(checkType));
+					dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), checkTypeId));
 				}
 
 				if (headerItem.getVariable().getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT && isPreview) {
@@ -455,9 +480,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 		if (germplasmStandardVariables.get(TermId.DESIG.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.DESIG.getId()), germplasmEntry.getDesig()));
-		}
-		if (germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), germplasmEntry.getCheck()));
 		}
 		if (germplasmStandardVariables.get(TermId.CROSS.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.CROSS.getId()), germplasmEntry.getCross()));

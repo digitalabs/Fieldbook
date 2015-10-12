@@ -339,7 +339,7 @@ public class ImportGermplasmListController extends SettingsController {
 					final int interval = this.getIntervalValue(form);
 
 					final String defaultTestCheckId =
-							this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckList());
+							this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 					final List<ImportedGermplasm> newImportedGermplasm =
 							this.mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), form.getImportedCheckGermplasm(),
 									Integer.parseInt(
@@ -487,10 +487,10 @@ public class ImportGermplasmListController extends SettingsController {
 			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
 			List<ImportedGermplasm> list = this.transformGermplasmListDataToImportedGermplasm(data, null);
 			String defaultTestCheckId =
-					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckList());
+					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-			final List<Enumeration> checkList = this.fieldbookService.getCheckList();
+			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 			boolean isNursery = false;
 			if (type != null && type.equalsIgnoreCase(StudyType.N.getName())) {
 				isNursery = true;
@@ -540,7 +540,7 @@ public class ImportGermplasmListController extends SettingsController {
 			this.getUserSelection().setImportedGermplasmMainInfo(mainInfo);
 			this.getUserSelection().setImportValid(true);
 
-			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
+			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
 			model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 			model.addAttribute(ImportGermplasmListController.TYPE2, type);
 			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
@@ -590,10 +590,10 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			final String defaultTestCheckId =
-					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckList());
+					this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 			form.setImportedGermplasm(list);
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-			final List<Enumeration> checkList = this.fieldbookService.getCheckList();
+			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 
 			for (final ImportedGermplasm germplasm : list) {
 				final Map<String, Object> dataMap = new HashMap<>();
@@ -642,7 +642,7 @@ public class ImportGermplasmListController extends SettingsController {
 			this.getUserSelection().setImportedGermplasmMainInfo(mainInfo);
 			this.getUserSelection().setImportValid(true);
 
-			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
+			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
 			model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 			model.addAttribute(ImportGermplasmListController.TYPE2, type);
 			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
@@ -662,7 +662,7 @@ public class ImportGermplasmListController extends SettingsController {
 			mainInfo.setAdvanceImportType(true);
 			form.setImportedCheckGermplasmMainInfo(mainInfo);
 
-			final List<Enumeration> checksList = this.fieldbookService.getCheckList();
+			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
 
 			final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 			List<ImportedGermplasm> list = new ArrayList<>();
@@ -779,7 +779,7 @@ public class ImportGermplasmListController extends SettingsController {
 		try {
 			final String type = "T";
 			final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
-			final List<Enumeration> checkList = this.fieldbookService.getCheckList();
+			final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 			final List<ImportedGermplasm> list =
 					this.getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
 
@@ -807,7 +807,7 @@ public class ImportGermplasmListController extends SettingsController {
 				dataTableDataList.add(dataMap);
 			}
 
-			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
+			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
 			model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 			model.addAttribute(ImportGermplasmListController.TYPE2, type);
 			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
@@ -858,7 +858,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final int count = (int) this.germplasmListManager.countGermplasmListDataByListId(listId);
 			mainInfo.setListId(listId);
 
-			final List<Enumeration> checksList = this.fieldbookService.getCheckList();
+			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
 			final String checkId = this.getCheckId(ImportGermplasmListController.DEFAULT_CHECK_VALUE, checksList);
 			List<GermplasmListData> data = new ArrayList<>();
 			data.addAll(this.germplasmListManager.getGermplasmListDataByListId(listId));
@@ -904,7 +904,7 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 		try {
 
-			final List<Enumeration> checksList = this.fieldbookService.getCheckList();
+			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
 			List<ImportedGermplasm> list = new ArrayList<>();
 			if (isNursery && this.userSelection.getImportedCheckGermplasmMainInfo() != null
 					&& this.userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null
@@ -997,7 +997,7 @@ public class ImportGermplasmListController extends SettingsController {
 			mainInfo.setAdvanceImportType(true);
 			form.setImportedCheckGermplasmMainInfo(mainInfo);
 
-			final List<Enumeration> checksList = this.fieldbookService.getCheckList();
+			final List<Enumeration> checksList = this.fieldbookService.getCheckTypeList();
 			final String checkId = this.getCheckId(ImportGermplasmListController.DEFAULT_CHECK_VALUE, checksList);
 
 			final List<ImportedGermplasm> primaryList =
@@ -1091,7 +1091,7 @@ public class ImportGermplasmListController extends SettingsController {
 						.getImportedGermplasms().get(dataTableIndex);
 			}
 			importedCheckGermplasm.setCheck(currentVal);
-			final List<Enumeration> allEnumerations = this.fieldbookService.getCheckList();
+			final List<Enumeration> allEnumerations = this.fieldbookService.getCheckTypeList();
 
 			model.addAttribute("allCheckTypes", allEnumerations);
 			form.setCheckVal(currentVal);
@@ -1173,7 +1173,7 @@ public class ImportGermplasmListController extends SettingsController {
 		form.changePage(pageNum);
 		this.userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
 		try {
-			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
+			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
 		} catch (final MiddlewareQueryException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
@@ -1207,7 +1207,7 @@ public class ImportGermplasmListController extends SettingsController {
 		form.changeCheckPage(pageNum);
 		this.userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
 		try {
-			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckList());
+			model.addAttribute(ImportGermplasmListController.CHECK_LISTS, this.fieldbookService.getCheckTypeList());
 		} catch (final MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
@@ -1255,7 +1255,7 @@ public class ImportGermplasmListController extends SettingsController {
 		final Map<String, String> result = new HashMap<>();
 
 		try {
-			final List<Enumeration> allEnumerations = this.fieldbookService.getCheckList();
+			final List<Enumeration> allEnumerations = this.fieldbookService.getCheckTypeList();
 			result.put(ImportGermplasmListController.SUCCESS, "1");
 			result.put("allCheckTypes", this.convertObjectToJson(allEnumerations));
 
@@ -1371,7 +1371,7 @@ public class ImportGermplasmListController extends SettingsController {
 	@ModelAttribute("checkTypes")
 	public List<Enumeration> getCheckTypes() {
 		try {
-			return this.fieldbookService.getCheckList();
+			return this.fieldbookService.getCheckTypeList();
 		} catch (final MiddlewareException e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}

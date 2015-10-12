@@ -323,11 +323,6 @@ var ImportCrosses = {
 				showErrorMessage('', 'Harvest location is required');
 			}
 
-			if (!importSettings.additionalDetailsSetting.harvestDate || importSettings.additionalDetailsSetting.harvestDate.length < 7) {
-				valid = false;
-				showErrorMessage('', 'Harvest date is required');
-			}
-
 			return valid;
 		},
 

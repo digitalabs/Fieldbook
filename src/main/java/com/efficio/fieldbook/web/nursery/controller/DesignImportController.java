@@ -56,6 +56,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.common.service.DesignImportService;
+import com.efficio.fieldbook.web.nursery.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
@@ -101,6 +102,9 @@ public class DesignImportController extends SettingsController {
 
 	@Resource
 	private OntologyDataManager ontologyDataManager;
+
+	@Resource
+	private DesignImportValidator designImportValidator;
 
 	/*
 	 * (non-Javadoc)
@@ -302,7 +306,7 @@ public class DesignImportController extends SettingsController {
 		try {
 			this.updateDesignMapping(mappedHeaders);
 
-			this.designImportService.validateDesignData(this.userSelection.getDesignImportData());
+			this.designImportValidator.validateDesignData(this.userSelection.getDesignImportData());
 
 			if (!this.designImportService.areTrialInstancesMatchTheSelectedEnvironments(noOfEnvironments,
 					this.userSelection.getDesignImportData())) {
@@ -810,8 +814,12 @@ public class DesignImportController extends SettingsController {
 		final Map<PhenotypicType, List<DesignHeaderItem>> result =
 				this.designImportService.categorizeHeadersByPhenotype(designImportData.getUnmappedHeaders());
 
+		designImportData.setUnmappedHeaders(result.get(PhenotypicType.UNASSIGNED));
+
+		// removed unmapped headers before assigning to the mappedHeaders field of designImportData
+		result.remove(PhenotypicType.UNASSIGNED);
+
 		designImportData.setMappedHeaders(result);
-		designImportData.setUnmappedHeaders(result.get(null));
 
 	}
 

@@ -48,9 +48,11 @@ public class CrossingTemplateExcelExporter extends GermplasmExportServiceImpl {
 	@Resource
 	private FileService fileService;
 
+	private String templateFile;
+
 	public File export(Integer studyId, String studyName) throws CrossingTemplateExportException {
 		try {
-			final Workbook excelWorkbook = this.retrieveTemplate();
+			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
 			final Map<String, CellStyle> workbookStyle = this.createStyles(excelWorkbook);
 
 			// 1. parse the workbook to the template file
@@ -102,6 +104,11 @@ public class CrossingTemplateExcelExporter extends GermplasmExportServiceImpl {
 				String.valueOf(germplasmList.getDate()), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
 
 		return ++actualRow;
+	}
+
+	@Override
+	public void setTemplateFile(final String templateFile) {
+		this.templateFile = templateFile;
 	}
 
 	protected File createExcelOutputFile(String studyName, Workbook excelWorkbook) throws IOException {

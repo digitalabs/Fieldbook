@@ -167,31 +167,20 @@ public class DesignImportController extends SettingsController {
 
 		final Map<String, Object> resultsMap = new HashMap<>();
 
-		try {
+		// reset
+		this.cancelImportDesign();
 
-			// reset
-			this.cancelImportDesign();
+		this.userSelection.setExperimentalDesignVariables(null);
+		this.userSelection.setExpDesignParams(null);
+		this.userSelection.setExpDesignVariables(null);
 
-			this.userSelection.setExperimentalDesignVariables(null);
-			this.userSelection.setExpDesignParams(null);
-			this.userSelection.setExpDesignVariables(null);
-
-			// handling for existing study
-			if (studyId != null && studyId != 0) {
-				this.resetObservationToDefaultDesign(this.userSelection.getWorkbook().getObservations());
-			}
-
-			resultsMap.put(IS_SUCCESS, 1);
-			resultsMap.put(SUCCESS, this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
-
-		} catch (final MiddlewareException e) {
-
-			DesignImportController.LOG.error(e.getMessage(), e);
-
-			resultsMap.put(IS_SUCCESS, 0);
-			// error messages is still in .prop format,
-			resultsMap.put(ERROR, new String[] {e.getMessage()});
+		// handling for existing study
+		if (studyId != null && studyId != 0) {
+			this.resetObservationToDefaultDesign(this.userSelection.getWorkbook().getObservations());
 		}
+
+		resultsMap.put(IS_SUCCESS, 1);
+		resultsMap.put(SUCCESS, this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
 
 		// we return string instead of json to fix IE issue rel. DataTable
 		return this.convertObjectToJson(resultsMap);

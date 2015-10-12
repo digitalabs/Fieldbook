@@ -590,4 +590,20 @@ public class WorkbookUtil {
 		}
 		return expectedMeasurementData;
 	}
+
+	/**
+	 * NOTE: Default Design is when the PLOT NO and ENTRY NO has equal value.
+	 * 
+	 * @param observations
+	 */
+	public static void resetObservationToDefaultDesign(final List<MeasurementRow> observations) {
+		for (final MeasurementRow row : observations) {
+			final List<MeasurementData> dataList = row.getDataList();
+			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+
+			// make the PLOT_NO equal to ENTRY_NO
+			plotNoData.setValue(entryNoData.getValue());
+		}
+	}
 }

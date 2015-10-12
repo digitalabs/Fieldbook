@@ -889,24 +889,6 @@ public class DesignImportControllerTest {
 	}
 
 	@Test
-	public void testResetObservationToDefaultDesign() {
-		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
-		final List<MeasurementRow> observations = nursery.getObservations();
-
-		updatePlotNoValue(observations);
-
-		this.designImportController.resetObservationToDefaultDesign(observations);
-
-		for (final MeasurementRow row : observations) {
-			final List<MeasurementData> dataList = row.getDataList();
-			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
-			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
-			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(), plotNoData.getValue());
-		}
-
-	}
-
-	@Test
 	public void testChangeDesignForNewNurseryWithImportedDesign() {
 
 		this.designImportController.changeDesign(0, StudyType.N.toString());
@@ -927,7 +909,7 @@ public class DesignImportControllerTest {
 
 		Mockito.doReturn(nursery).when(this.userSelection).getWorkbook();
 
-		updatePlotNoValue(observations);
+		DesignImportDataInitializer.updatePlotNoValue(observations);
 
 		this.designImportController.changeDesign(nursery.getStudyId(), StudyType.N.toString());
 
@@ -943,21 +925,6 @@ public class DesignImportControllerTest {
 			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
 			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
 			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(), plotNoData.getValue());
-		}
-	}
-
-	private void updatePlotNoValue(final List<MeasurementRow> observations) {
-		// alter the data first to make sure the PLOT_NO and ENTRY_NO value is not the same
-		int plotNoId = observations.size();
-		int entryNoId = 1;
-		for (final MeasurementRow row : observations) {
-			final List<MeasurementData> dataList = row.getDataList();
-			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
-			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
-			entryNoData.setValue(String.valueOf(entryNoId));
-			plotNoData.setValue(String.valueOf(plotNoId));
-			plotNoId--;
-			entryNoId++;
 		}
 	}
 

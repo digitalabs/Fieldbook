@@ -176,7 +176,7 @@ public class DesignImportController extends SettingsController {
 
 		// handling for existing study
 		if (studyId != null && studyId != 0) {
-			this.resetObservationToDefaultDesign(this.userSelection.getWorkbook().getObservations());
+			WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getWorkbook().getObservations());
 		}
 
 		resultsMap.put(IS_SUCCESS, 1);
@@ -184,22 +184,6 @@ public class DesignImportController extends SettingsController {
 
 		// we return string instead of json to fix IE issue rel. DataTable
 		return this.convertObjectToJson(resultsMap);
-	}
-
-	/**
-	 * NOTE: Default Design is when the PLOT NO and ENTRY NO has equal value.
-	 * 
-	 * @param observations
-	 */
-	void resetObservationToDefaultDesign(final List<MeasurementRow> observations) {
-		for (final MeasurementRow row : observations) {
-			final List<MeasurementData> dataList = row.getDataList();
-			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
-			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
-
-			// make the PLOT_NO equal to ENTRY_NO
-			plotNoData.setValue(entryNoData.getValue());
-		}
 	}
 
 	@ResponseBody

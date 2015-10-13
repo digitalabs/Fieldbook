@@ -21,6 +21,14 @@ public class TestExpression {
 		}
 		System.out.println();
 	}
+	
+	public String buildResult(List<StringBuilder> values) {
+		String result = "";
+		for (StringBuilder value : values) {
+			result = result + value;
+		}
+		return result;
+	}
 
 	public AdvancingSource createAdvancingSourceTestData(String name, String separator, String prefix, String count, String suffix,
 			boolean isBulking) {

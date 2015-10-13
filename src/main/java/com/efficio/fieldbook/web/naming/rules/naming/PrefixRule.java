@@ -10,6 +10,15 @@ import org.springframework.stereotype.Component;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
+/** 
+ * The Prefix provided in this Rule refers to the prefix of the 'generated and appended generational tail' of a Germplasm name
+ * 
+ * Therefore the Prefix follows the existing germplasm name, and can appear to look like a suffix.
+ * 
+ * Rule Chain = RootName-separator-prefix-count-suffix
+ * 
+ *
+ */
 @Component
 public class PrefixRule extends OrderedRule<NamingRuleExecutionContext> {
 

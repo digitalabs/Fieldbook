@@ -10,13 +10,11 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.generationcp.commons.parsing.FileParsingException;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -27,7 +25,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -50,8 +47,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
-import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl;
-import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
@@ -91,6 +87,9 @@ public class DesignImportServiceImplTest {
 	@Mock
 	private ContextUtil contextUtil;
 
+	@Mock
+	private DesignImportMeasurementRowGenerator measurementRowGenerator;
+
 	private DesignImportData designImportData;
 
 	@InjectMocks
@@ -107,89 +106,6 @@ public class DesignImportServiceImplTest {
 		this.initializeGermplasmList();
 
 		WorkbookDataUtil.setTestWorkbook(null);
-
-	}
-
-	@Test
-	public void testAddGermplasmDetailsToDataList() throws FileParsingException {
-
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
-
-		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
-		final Map<Integer, StandardVariable> germplasmStandardVariables =
-				this.getStandardVariables(PhenotypicType.GERMPLASM, workbook.getFactors());
-		final List<MeasurementData> dataList = new ArrayList<>();
-
-		this.service.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, dataList, 1);
-
-		Assert.assertEquals("The added MeasurementData should Match the germplasm Standard Variables", germplasmStandardVariables.size(),
-				dataList.size());
-
-		final ImportedGermplasm germplasmEntry = importedGermplasm.get(0);
-
-		for (final MeasurementData measurementData : dataList) {
-
-			if (TermId.ENTRY_NO.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.ENTRY_NO.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getEntryId().toString());
-			}
-			if (TermId.GID.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.GID.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getGid().toString());
-			}
-			if (TermId.DESIG.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.DESIG.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getDesig().toString());
-			}
-			if (TermId.ENTRY_TYPE.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.ENTRY_TYPE.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getCheck().toString());
-			}
-			if (TermId.CROSS.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.CROSS.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getCross().toString());
-			}
-			if (TermId.ENTRY_CODE.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.ENTRY_CODE.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getEntryCode().toString());
-			}
-			if (TermId.GERMPLASM_SOURCE.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals(
-						"The value of MeasurementData should match the germplasm value : " + TermId.GERMPLASM_SOURCE.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getSource().toString());
-			}
-			if (TermId.SEED_SOURCE.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should match the germplasm value : " + TermId.SEED_SOURCE.toString(),
-						measurementData.getValue().toString(), germplasmEntry.getSource().toString());
-			}
-
-		}
-	}
-
-	@Test
-	public void testAddVariatesToMeasurementRows() throws DesignValidationException, MiddlewareException {
-
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
-
-		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
-				.getImportedGermplasmMainInfo();
-
-		final EnvironmentData environmentData = this.createEnvironmentData(1);
-
-		this.processEnvironmentData(environmentData);
-
-		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
-
-		// trigger the addition of variates by setting the Operation to 'ADD' or
-		// 'UPDATE'
-		for (final MeasurementVariable measurementVariable : workbook.getVariates()) {
-			measurementVariable.setOperation(Operation.ADD);
-		}
-
-		this.service.addVariatesToMeasurementRows(workbook, measurements);
-
-		Assert.assertEquals("The size of the data list should be 14 since 2 variates are added", 14, measurements.get(0).getDataList()
-				.size());
 
 	}
 
@@ -250,23 +166,10 @@ public class DesignImportServiceImplTest {
 	}
 
 	@Test
-	public void testCreateMeasurementData() {
-
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
-
-		final MeasurementVariable measurementVariable = workbook.getFactors().get(0);
-		final MeasurementData data = this.service.createMeasurementData(measurementVariable, "1");
-
-		Assert.assertEquals("1", data.getValue());
-		Assert.assertEquals(measurementVariable, data.getMeasurementVariable());
-
-	}
-
-	@Test
 	public void testExtractTrialInstancesFromEnvironmentData() {
 
-		final EnvironmentData environmentData = this.createEnvironmentData(5);
-		this.processEnvironmentData(environmentData);
+		final EnvironmentData environmentData = DesignImportDataInitializer.createEnvironmentData(5);
+		DesignImportDataInitializer.processEnvironmentData(environmentData);
 
 		final Set<String> result = this.service.extractTrialInstancesFromEnvironmentData(environmentData);
 
@@ -282,9 +185,9 @@ public class DesignImportServiceImplTest {
 		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
 				.getImportedGermplasmMainInfo();
 
-		final EnvironmentData environmentData = this.createEnvironmentData(1);
+		final EnvironmentData environmentData = DesignImportDataInitializer.createEnvironmentData(1);
 
-		this.processEnvironmentData(environmentData);
+		DesignImportDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
 
@@ -301,9 +204,9 @@ public class DesignImportServiceImplTest {
 		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
 				.getImportedGermplasmMainInfo();
 
-		final EnvironmentData environmentData = this.createEnvironmentData(3);
+		final EnvironmentData environmentData = DesignImportDataInitializer.createEnvironmentData(3);
 
-		this.processEnvironmentData(environmentData);
+		DesignImportDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
 
@@ -316,8 +219,8 @@ public class DesignImportServiceImplTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 
-		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		this.processEnvironmentData(environmentData);
+		final EnvironmentData environmentData = DesignImportDataInitializer.createEnvironmentData(1);
+		DesignImportDataInitializer.processEnvironmentData(environmentData);
 
 		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, this.designImportData, environmentData, true);
 
@@ -540,60 +443,6 @@ public class DesignImportServiceImplTest {
 		}
 		return stdVarList;
 
-	}
-
-	private Map<Integer, StandardVariable> getStandardVariables(final PhenotypicType phenotypicType,
-			final List<MeasurementVariable> germplasmFactors) {
-		final Map<Integer, StandardVariable> standardVariables = new HashMap<>();
-
-		for (final MeasurementVariable measurementVar : germplasmFactors) {
-
-			if (phenotypicType.getLabelList().contains(measurementVar.getLabel())) {
-				final StandardVariable stdVar = this.convertToStandardVariable(measurementVar);
-				standardVariables.put(stdVar.getId(), stdVar);
-			}
-
-		}
-
-		return standardVariables;
-	}
-
-	protected EnvironmentData createEnvironmentData(final int numberOfIntances) {
-		final EnvironmentData environmentData = new EnvironmentData();
-		final List<Environment> environments = new ArrayList<>();
-
-		for (int x = 0; x < numberOfIntances; x++) {
-			final Environment env = new Environment();
-			env.setLocationId(x);
-			environments.add(env);
-		}
-
-		environmentData.setEnvironments(environments);
-		environmentData.setNoOfEnvironments(numberOfIntances);
-		return environmentData;
-	}
-
-	protected void processEnvironmentData(final EnvironmentData data) {
-		for (int i = 0; i < data.getEnvironments().size(); i++) {
-			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
-			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
-			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
-					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
-				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
-			}
-		}
-	}
-
-	protected StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
-		final StandardVariable stdVar = new StandardVariable();
-		stdVar.setId(measurementVar.getTermId());
-		stdVar.setProperty(new Term(0, measurementVar.getProperty(), ""));
-		stdVar.setScale(new Term(0, measurementVar.getScale(), ""));
-		stdVar.setMethod(new Term(0, measurementVar.getMethod(), ""));
-		stdVar.setDataType(new Term(measurementVar.getDataTypeId(), measurementVar.getDataType(), ""));
-		stdVar.setPhenotypicType(PhenotypicType.getPhenotypicTypeForLabel(measurementVar.getLabel()));
-		return stdVar;
 	}
 
 	private List<DesignHeaderItem> createUnmappedHeaders() {

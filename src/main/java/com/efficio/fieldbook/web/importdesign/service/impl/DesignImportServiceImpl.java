@@ -20,7 +20,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -41,11 +40,11 @@ import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
+import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 public class DesignImportServiceImpl implements DesignImportService {
 
@@ -99,22 +98,25 @@ public class DesignImportServiceImpl implements DesignImportService {
 		int rowCounter = 1;
 
 		final Map<String, Integer> availableCheckTypes = this.retrieveAvailableCheckTypes();
+		final DesignImportMeasurementRowGenerator measurementRowGenerator =
+				new DesignImportMeasurementRowGenerator(workbook, mappedHeaders, importedGermplasm, germplasmStandardVariables,
+						generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
+
 		while (rowCounter <= csvData.size() - 1) {
 			final MeasurementRow measurementRow =
-					this.createMeasurementRow(workbook, mappedHeaders, csvData.get(rowCounter), importedGermplasm,
-							germplasmStandardVariables, generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
+					measurementRowGenerator.createMeasurementRow(csvData.get(rowCounter), this.fieldbookService);
 			if (measurementRow != null) {
 				measurements.add(measurementRow);
 			}
 			rowCounter++;
-
 		}
 
 		// add factor data to the list of measurement row
-		this.addFactorsToMeasurementRows(workbook, measurements);
+		measurementRowGenerator.addFactorsToMeasurementRows(measurements);
 
 		// add trait data to the list of measurement row
-		this.addVariatesToMeasurementRows(workbook, measurements);
+		measurementRowGenerator.addVariatesToMeasurementRows(measurements, this.userSelection, this.fieldbookService, this.ontologyService,
+				this.contextUtil);
 
 		return measurements;
 	}
@@ -363,84 +365,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return measurementVariables;
 	}
 
-	protected MeasurementRow createMeasurementRow(final Workbook workbook, final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders,
-			final List<String> rowValues, final List<ImportedGermplasm> importedGermplasm,
-			final Map<Integer, StandardVariable> germplasmStandardVariables, final Set<String> trialInstancesFromUI,
-			final boolean isPreview, final Map<String, Integer> availableCheckTypes) {
-
-		final MeasurementRow measurement = new MeasurementRow();
-
-		final List<MeasurementData> dataList = new ArrayList<>();
-
-		for (final Entry<PhenotypicType, List<DesignHeaderItem>> entry : mappedHeaders.entrySet()) {
-			for (final DesignHeaderItem headerItem : entry.getValue()) {
-
-				// do not add the trial instance record from file if it is not selected in environment tab
-				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-						&& !trialInstancesFromUI.contains(rowValues.get(headerItem.getColumnIndex()))) {
-					return null;
-				}
-
-				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-						&& workbook.getStudyDetails().getStudyType() == StudyType.N) {
-
-					// do not add the trial instance to measurement data list if the workbook is Nursery
-					continue;
-				}
-
-				if (headerItem.getVariable().getId() == TermId.ENTRY_NO.getId()) {
-
-					final Integer entryNo = Integer.parseInt(rowValues.get(headerItem.getColumnIndex()));
-					this.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, dataList, entryNo);
-				}
-
-				if (headerItem.getVariable().getId() == TermId.ENTRY_TYPE.getId()) {
-					final String checkType = String.valueOf(rowValues.get(headerItem.getColumnIndex()));
-					final String checkTypeId = String.valueOf(availableCheckTypes.get(checkType));
-					dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), checkTypeId));
-				}
-
-				if (headerItem.getVariable().getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT && isPreview) {
-
-					// only add the trial environment factors in measurement row ONLY in PREVIEW mode
-					final String value = rowValues.get(headerItem.getColumnIndex());
-					dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
-				}
-
-				if (headerItem.getVariable().getPhenotypicType() == PhenotypicType.TRIAL_DESIGN
-						|| headerItem.getVariable().getPhenotypicType() == PhenotypicType.VARIATE
-						|| headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-
-					final String value = rowValues.get(headerItem.getColumnIndex());
-					dataList.add(this.createMeasurementData(headerItem.getVariable(), value));
-
-				}
-
-			}
-		}
-
-		measurement.setDataList(dataList);
-		return measurement;
-	}
-
-	protected MeasurementData createMeasurementData(final StandardVariable standardVariable, final String value) {
-		final MeasurementData data = new MeasurementData();
-		data.setMeasurementVariable(this.createMeasurementVariable(standardVariable));
-		data.setValue(value);
-		data.setLabel(data.getMeasurementVariable().getName());
-		data.setDataType(data.getMeasurementVariable().getDataType());
-		return data;
-	}
-
-	protected MeasurementData createMeasurementData(final MeasurementVariable measurementVariable, final String value) {
-		final MeasurementData data = new MeasurementData();
-		data.setMeasurementVariable(measurementVariable);
-		data.setValue(value);
-		data.setLabel(data.getMeasurementVariable().getName());
-		data.setDataType(data.getMeasurementVariable().getDataType());
-		return data;
-	}
-
 	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
 		final MeasurementVariable variable =
 				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
@@ -464,75 +388,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 		}
 
 		return map;
-	}
-
-	protected void addGermplasmDetailsToDataList(final List<ImportedGermplasm> importedGermplasm,
-			final Map<Integer, StandardVariable> germplasmStandardVariables, final List<MeasurementData> dataList, final Integer entryNo) {
-
-		final ImportedGermplasm germplasmEntry = importedGermplasm.get(entryNo - 1);
-
-		if (germplasmStandardVariables.get(TermId.ENTRY_NO.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_NO.getId()), germplasmEntry.getEntryId()
-					.toString()));
-		}
-		if (germplasmStandardVariables.get(TermId.GID.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GID.getId()), germplasmEntry.getGid()));
-		}
-		if (germplasmStandardVariables.get(TermId.DESIG.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.DESIG.getId()), germplasmEntry.getDesig()));
-		}
-		if (germplasmStandardVariables.get(TermId.CROSS.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.CROSS.getId()), germplasmEntry.getCross()));
-		}
-		if (germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.ENTRY_CODE.getId()),
-					germplasmEntry.getEntryCode()));
-		}
-		if (germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GERMPLASM_SOURCE.getId()),
-					germplasmEntry.getSource()));
-		}
-		if (germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.SEED_SOURCE.getId()), germplasmEntry.getSource()));
-		}
-	}
-
-	private void addFactorsToMeasurementRows(final Workbook workbook, final List<MeasurementRow> measurements) {
-
-		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
-			for (final MeasurementVariable factor : workbook.getFactors()) {
-				for (final MeasurementRow row : measurements) {
-					this.addFactorToDataListIfNecessary(factor, row.getDataList());
-				}
-
-			}
-		}
-	}
-
-	protected void addVariatesToMeasurementRows(final Workbook workbook, final List<MeasurementRow> measurements) {
-		try {
-			final Set<MeasurementVariable> temporaryList = new HashSet<>();
-			for (final MeasurementVariable mvar : workbook.getVariates()) {
-				if (mvar.getOperation() == Operation.ADD || mvar.getOperation() == Operation.UPDATE) {
-					final MeasurementVariable copy = mvar.copy();
-					temporaryList.add(copy);
-				}
-			}
-
-			WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
-					this.userSelection, this.ontologyService, this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
-		} catch (final MiddlewareException e) {
-			DesignImportServiceImpl.LOG.error(e.getMessage(), e);
-		}
-	}
-
-	protected void addFactorToDataListIfNecessary(final MeasurementVariable factor, final List<MeasurementData> dataList) {
-		for (final MeasurementData data : dataList) {
-			if (data.getMeasurementVariable().equals(factor)) {
-				return;
-			}
-		}
-		dataList.add(this.createMeasurementData(factor, ""));
 	}
 
 	protected Set<String> extractTrialInstancesFromEnvironmentData(final EnvironmentData environmentData) {

@@ -7,18 +7,21 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
 public class DesignImportDataInitializer {
 
@@ -196,6 +199,60 @@ public class DesignImportDataInitializer {
 		}
 		return csvMapGrouped;
 
+	}
+
+	public static Map<Integer, StandardVariable> getStandardVariables(final PhenotypicType phenotypicType,
+			final List<MeasurementVariable> germplasmFactors) {
+		final Map<Integer, StandardVariable> standardVariables = new HashMap<>();
+
+		for (final MeasurementVariable measurementVar : germplasmFactors) {
+
+			if (phenotypicType.getLabelList().contains(measurementVar.getLabel())) {
+				final StandardVariable stdVar = convertToStandardVariable(measurementVar);
+				standardVariables.put(stdVar.getId(), stdVar);
+			}
+
+		}
+
+		return standardVariables;
+	}
+
+	public static StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
+		final StandardVariable stdVar = new StandardVariable();
+		stdVar.setId(measurementVar.getTermId());
+		stdVar.setProperty(new Term(0, measurementVar.getProperty(), ""));
+		stdVar.setScale(new Term(0, measurementVar.getScale(), ""));
+		stdVar.setMethod(new Term(0, measurementVar.getMethod(), ""));
+		stdVar.setDataType(new Term(measurementVar.getDataTypeId(), measurementVar.getDataType(), ""));
+		stdVar.setPhenotypicType(PhenotypicType.getPhenotypicTypeForLabel(measurementVar.getLabel()));
+		return stdVar;
+	}
+
+	public static EnvironmentData createEnvironmentData(final int numberOfIntances) {
+		final EnvironmentData environmentData = new EnvironmentData();
+		final List<Environment> environments = new ArrayList<>();
+
+		for (int x = 0; x < numberOfIntances; x++) {
+			final Environment env = new Environment();
+			env.setLocationId(x);
+			environments.add(env);
+		}
+
+		environmentData.setEnvironments(environments);
+		environmentData.setNoOfEnvironments(numberOfIntances);
+		return environmentData;
+	}
+
+	public static void processEnvironmentData(final EnvironmentData data) {
+		for (int i = 0; i < data.getEnvironments().size(); i++) {
+			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
+				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+			}
+		}
 	}
 
 }

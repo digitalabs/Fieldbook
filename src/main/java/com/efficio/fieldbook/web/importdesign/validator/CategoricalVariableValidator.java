@@ -8,6 +8,10 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 
 public class CategoricalVariableValidator {
 
+	private CategoricalVariableValidator() {
+		// do nothing
+	}
+
 	/**
 	 * Returns true if the given value is part of the possible values of the categorical variable
 	 * 

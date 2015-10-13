@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -74,6 +73,16 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
+	private static final String UNMAPPED_HEADERS = "unmappedHeaders";
+
+	private static final String MAPPED_ENVIRONMENTAL_FACTORS = "mappedEnvironmentalFactors";
+
+	private static final String MAPPED_DESIGN_FACTORS = "mappedDesignFactors";
+
+	private static final String MAPPED_GERMPLASM_FACTORS = "mappedGermplasmFactors";
+
+	private static final String MAPPED_TRAITS = "mappedTraits";
+
 	public static final String IS_SUCCESS = "isSuccess";
 
 	public static final String ERROR = "error";
@@ -89,9 +98,6 @@ public class DesignImportController extends SettingsController {
 
 	@Resource
 	private DesignImportService designImportService;
-
-	@Resource
-	private SettingsService settingsService;
 
 	@Resource
 	private MessageSource messageSource;
@@ -157,14 +163,14 @@ public class DesignImportController extends SettingsController {
 	public Map<String, List<DesignHeaderItem>> getMappingData() {
 		final Map<String, List<DesignHeaderItem>> mappingData = new HashMap<>();
 
-		mappingData.put("unmappedHeaders", this.userSelection.getDesignImportData().getUnmappedHeaders());
-		mappingData.put("mappedEnvironmentalFactors",
+		mappingData.put(UNMAPPED_HEADERS, this.userSelection.getDesignImportData().getUnmappedHeaders());
+		mappingData.put(MAPPED_ENVIRONMENTAL_FACTORS,
 				this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 		mappingData
-				.put("mappedDesignFactors", this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
+				.put(MAPPED_DESIGN_FACTORS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
 		mappingData
-				.put("mappedGermplasmFactors", this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.GERMPLASM));
-		mappingData.put("mappedTraits", this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.VARIATE));
+				.put(MAPPED_GERMPLASM_FACTORS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.GERMPLASM));
+		mappingData.put(MAPPED_TRAITS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.VARIATE));
 
 		return mappingData;
 	}
@@ -305,26 +311,26 @@ public class DesignImportController extends SettingsController {
 				final StandardVariable stdVar =
 						this.ontologyDataManager.getStandardVariable(mappedHeader.getId(), this.contextUtil.getCurrentProgramUUID());
 
-				if ("mappedEnvironmentalFactors".equals(item.getKey())) {
+				if (MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-				} else if ("mappedDesignFactors".equals(item.getKey())) {
+				} else if (MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
-				} else if ("mappedGermplasmFactors".equals(item.getKey())) {
+				} else if (MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.GERMPLASM);
-				} else if ("mappedTraits".equals(item.getKey())) {
+				} else if (MAPPED_TRAITS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.VARIATE);
 				}
 
 				mappedHeader.setVariable(stdVar);
 			}
 
-			if ("mappedEnvironmentalFactors".equals(item.getKey())) {
+			if (MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
-			} else if ("mappedDesignFactors".equals(item.getKey())) {
+			} else if (MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
-			} else if ("mappedGermplasmFactors".equals(item.getKey())) {
+			} else if (MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
-			} else if ("mappedTraits".equals(item.getKey())) {
+			} else if (MAPPED_TRAITS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
 			}
 		}
@@ -623,10 +629,6 @@ public class DesignImportController extends SettingsController {
 		final List<SettingDetail> newDetails = new ArrayList<>();
 
 		for (final MeasurementVariable mvar : trialLevelFactors) {
-			// SettingDetail newDetail =
-			// settingsService.createSettingDetail(mvar.getTermId(),
-			// mvar.getName(), userSelection, this.getCurrentIbdbUserId() ,
-			// this.getCurrentProject().getUniqueID());
 			final SettingDetail newDetail =
 					this.createSettingDetail(mvar.getTermId(), mvar.getName(), PhenotypicType.TRIAL_ENVIRONMENT.name());
 			newDetail.setRole(mvar.getRole());
@@ -647,11 +649,6 @@ public class DesignImportController extends SettingsController {
 			final List<SettingDetail> newDetails = new ArrayList<>();
 
 			for (final MeasurementVariable mvar : workbook.getConditions()) {
-
-				// SettingDetail newDetail =
-				// settingsService.createSettingDetail(mvar.getTermId(),
-				// mvar.getName(), userSelection, this.getCurrentIbdbUserId() ,
-				// this.getCurrentProject().getUniqueID());
 				final SettingDetail newDetail = this.createSettingDetail(mvar.getTermId(), mvar.getName(), PhenotypicType.STUDY.name());
 				newDetail.setRole(mvar.getRole());
 
@@ -664,7 +661,6 @@ public class DesignImportController extends SettingsController {
 
 				newDetail.getVariable().setOperation(mvar.getOperation());
 				newDetails.add(newDetail);
-
 			}
 
 			this.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, newDetails);

@@ -29,7 +29,6 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
-import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,9 +60,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Resource
 	private OntologyDataManager ontologyDataManager;
-
-	@Resource
-	private OntologyScaleDataManager ontologyScaleDataManager;
 
 	@Resource
 	private MessageSource messageSource;
@@ -258,8 +254,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	@Override
-	public Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(final List<DesignHeaderItem> designHeaders)
-			throws MiddlewareException {
+	public Map<PhenotypicType, List<DesignHeaderItem>> categorizeHeadersByPhenotype(final List<DesignHeaderItem> designHeaders) {
 		final List<String> headers = new ArrayList<>();
 		// get headers as string list
 		for (final DesignHeaderItem item : designHeaders) {
@@ -366,9 +361,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	}
 
 	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
-		final MeasurementVariable variable =
-				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
-		return variable;
+		return ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
 	}
 
 	protected Map<Integer, StandardVariable> convertToStandardVariables(final List<MeasurementVariable> list,

@@ -175,9 +175,7 @@ public class DesignImportMeasurementRowGenerator {
 	}
 
 	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable, final FieldbookService fieldbookService) {
-		final MeasurementVariable variable =
-				ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, fieldbookService);
-		return variable;
+		return ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, fieldbookService);
 	}
 
 	public void addFactorsToMeasurementRows(final List<MeasurementRow> measurements) {

@@ -87,15 +87,15 @@ public class DesignImportServiceImpl implements DesignImportService {
 				this.convertToStandardVariables(workbook.getGermplasmFactors(), PhenotypicType.GERMPLASM);
 
 		final List<MeasurementRow> measurements = new ArrayList<>();
-
-		final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders = designImportData.getMappedHeaders();
+		final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId =
+				designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 
 		// row counter starts at index = 1 because zero index is the header
 		int rowCounter = 1;
 
 		final Map<String, Integer> availableCheckTypes = this.retrieveAvailableCheckTypes();
 		final DesignImportMeasurementRowGenerator measurementRowGenerator =
-				new DesignImportMeasurementRowGenerator(workbook, mappedHeaders, importedGermplasm, germplasmStandardVariables,
+				new DesignImportMeasurementRowGenerator(workbook, mappedHeadersWithStdVarId, importedGermplasm, germplasmStandardVariables,
 						generatedTrialInstancesFromUI, isPreview, availableCheckTypes);
 
 		while (rowCounter <= csvData.size() - 1) {

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -35,7 +34,7 @@ public class DesignImportMeasurementRowGenerator {
 	private static final Logger LOG = LoggerFactory.getLogger(DesignImportMeasurementRowGenerator.class);
 
 	private Workbook workbook;
-	private Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders;
+	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeaders;
 	private List<String> rowValues;
 	private List<ImportedGermplasm> importedGermplasm;
 	private Map<Integer, StandardVariable> germplasmStandardVariables;
@@ -47,12 +46,13 @@ public class DesignImportMeasurementRowGenerator {
 		super();
 	}
 
-	public DesignImportMeasurementRowGenerator(final Workbook workbook, final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders,
+	public DesignImportMeasurementRowGenerator(final Workbook workbook,
+			final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId,
 			final List<ImportedGermplasm> importedGermplasm, final Map<Integer, StandardVariable> germplasmStandardVariables,
 			final Set<String> trialInstancesFromUI, final boolean isPreview, final Map<String, Integer> availableCheckTypes) {
 		super();
 		this.workbook = workbook;
-		this.mappedHeaders = mappedHeaders;
+		this.mappedHeaders = mappedHeadersWithStdVarId;
 		this.importedGermplasm = importedGermplasm;
 		this.germplasmStandardVariables = germplasmStandardVariables;
 		this.trialInstancesFromUI = trialInstancesFromUI;
@@ -63,56 +63,52 @@ public class DesignImportMeasurementRowGenerator {
 	public MeasurementRow createMeasurementRow(final List<String> rowValues, final FieldbookService fieldbookService) {
 
 		final MeasurementRow measurement = new MeasurementRow();
-
 		final List<MeasurementData> dataList = new ArrayList<>();
 
-		for (final Entry<PhenotypicType, List<DesignHeaderItem>> entry : this.mappedHeaders.entrySet()) {
-			for (final DesignHeaderItem headerItem : entry.getValue()) {
-
-				// do not add the trial instance record from file if it is not selected in environment tab
-				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-						&& !this.trialInstancesFromUI.contains(rowValues.get(headerItem.getColumnIndex()))) {
-					return null;
-				}
-
-				if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
-						&& this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
-
-					// do not add the trial instance to measurement data list if the workbook is Nursery
-					continue;
-				}
-
-				if (headerItem.getVariable().getId() == TermId.ENTRY_NO.getId()) {
-
-					final Integer entryNo = Integer.parseInt(rowValues.get(headerItem.getColumnIndex()));
-					this.addGermplasmDetailsToDataList(this.importedGermplasm, this.germplasmStandardVariables, dataList, entryNo,
-							fieldbookService);
-				}
-
-				if (headerItem.getVariable().getId() == TermId.ENTRY_TYPE.getId()) {
-					final String checkType = String.valueOf(rowValues.get(headerItem.getColumnIndex()));
-					final String checkTypeId = String.valueOf(this.availableCheckTypes.get(checkType));
-					dataList.add(this.createMeasurementData(this.germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), checkTypeId,
-							fieldbookService));
-				}
-
-				if (headerItem.getVariable().getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT && this.isPreview) {
-
-					// only add the trial environment factors in measurement row ONLY in PREVIEW mode
-					final String value = rowValues.get(headerItem.getColumnIndex());
-					dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));
-				}
-
-				if (headerItem.getVariable().getPhenotypicType() == PhenotypicType.TRIAL_DESIGN
-						|| headerItem.getVariable().getPhenotypicType() == PhenotypicType.VARIATE
-						|| headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-
-					final String value = rowValues.get(headerItem.getColumnIndex());
-					dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));
-
-				}
-
+		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
+		// do not add the trial instance record from file if it is not selected in environment tab
+		if (!this.trialInstancesFromUI.contains(rowValues.get(trialEnvironmentHeaders.get(TermId.TRIAL_INSTANCE_FACTOR.getId())
+				.getColumnIndex()))) {
+			return null;
+		}
+		for (final Map.Entry<Integer, DesignHeaderItem> trialEnvironmentHeader : trialEnvironmentHeaders.entrySet()) {
+			final DesignHeaderItem headerItem = trialEnvironmentHeader.getValue();
+			if (headerItem.getVariable().getId() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+					&& this.workbook.getStudyDetails().getStudyType() == StudyType.N) {
+				// do not add the trial instance to measurement data list if the workbook is Nursery
+				continue;
 			}
+			if (this.isPreview) {
+				// only add the trial environment factors in measurement row ONLY in PREVIEW mode
+				final String value = rowValues.get(headerItem.getColumnIndex());
+				dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));
+			}
+		}
+
+		final Map<Integer, DesignHeaderItem> germplasmHeaders = this.mappedHeaders.get(PhenotypicType.GERMPLASM);
+		final DesignHeaderItem entryNoHeaderItem = germplasmHeaders.get(TermId.ENTRY_NO.getId());
+		if (entryNoHeaderItem != null) {
+			final Integer entryNo = Integer.parseInt(rowValues.get(entryNoHeaderItem.getColumnIndex()));
+			this.addGermplasmDetailsToDataList(this.importedGermplasm, this.germplasmStandardVariables, dataList, entryNo, fieldbookService);
+		}
+		final DesignHeaderItem entryTypeHeaderItem = germplasmHeaders.get(TermId.ENTRY_TYPE.getId());
+		if (entryTypeHeaderItem != null) {
+			final String checkType = String.valueOf(rowValues.get(entryTypeHeaderItem.getColumnIndex()));
+			final String checkTypeId = String.valueOf(this.availableCheckTypes.get(checkType));
+			dataList.add(this.createMeasurementData(this.germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), checkTypeId,
+					fieldbookService));
+		}
+
+		final Map<Integer, DesignHeaderItem> trialDesignHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_DESIGN);
+		final Map<Integer, DesignHeaderItem> variateHeaders = this.mappedHeaders.get(PhenotypicType.VARIATE);
+		final List<DesignHeaderItem> remainingColumnHeaders = new ArrayList<DesignHeaderItem>();
+		remainingColumnHeaders.addAll(trialDesignHeaders.values());
+		remainingColumnHeaders.addAll(variateHeaders.values());
+		remainingColumnHeaders.add(trialDesignHeaders.get(TermId.TRIAL_INSTANCE_FACTOR.getId()));
+
+		for (final DesignHeaderItem headerItem : remainingColumnHeaders) {
+			final String value = rowValues.get(headerItem.getColumnIndex());
+			dataList.add(this.createMeasurementData(headerItem.getVariable(), value, fieldbookService));
 		}
 
 		measurement.setDataList(dataList);
@@ -225,11 +221,11 @@ public class DesignImportMeasurementRowGenerator {
 		this.workbook = workbook;
 	}
 
-	public Map<PhenotypicType, List<DesignHeaderItem>> getMappedHeaders() {
+	public Map<PhenotypicType, Map<Integer, DesignHeaderItem>> getMappedHeaders() {
 		return this.mappedHeaders;
 	}
 
-	public void setMappedHeaders(final Map<PhenotypicType, List<DesignHeaderItem>> mappedHeaders) {
+	public void setMappedHeaders(final Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeaders) {
 		this.mappedHeaders = mappedHeaders;
 	}
 

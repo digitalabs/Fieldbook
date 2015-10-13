@@ -88,7 +88,8 @@ public class DesignImportMeasurementRowGeneratorTest {
 		final List<MeasurementData> dataList = new ArrayList<>();
 
 		this.generator.setWorkbook(workbook);
-		this.generator.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, dataList, 1, this.fieldbookService);
+		this.generator.addGermplasmDetailsToDataList(importedGermplasm, germplasmStandardVariables, dataList, 1, this.fieldbookService,
+				false);
 
 		Assert.assertEquals("The added MeasurementData should Match the germplasm Standard Variables", germplasmStandardVariables.size(),
 				dataList.size());

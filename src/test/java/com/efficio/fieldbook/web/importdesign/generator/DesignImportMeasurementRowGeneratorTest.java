@@ -2,8 +2,11 @@
 package com.efficio.fieldbook.web.importdesign.generator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -31,6 +34,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
+import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportDataInitializer;
@@ -59,6 +64,16 @@ public class DesignImportMeasurementRowGeneratorTest {
 	@InjectMocks
 	private DesignImportMeasurementRowGenerator generator;
 
+	private DesignImportData designImportData;
+	private Workbook workbook;
+	private Map<PhenotypicType, Map<Integer, DesignHeaderItem>> mappedHeadersWithStdVarId;
+	private List<String> rowValues;
+	private List<ImportedGermplasm> importedGermplasm;
+	private Map<Integer, StandardVariable> germplasmStandardVariables;
+	private Set<String> trialInstancesFromUI;
+	private final boolean isPreview = true;
+	private Map<String, Integer> availableCheckTypes;
+
 	@Before
 	public void setUp() {
 		WorkbookDataUtil.setTestWorkbook(null);
@@ -66,6 +81,22 @@ public class DesignImportMeasurementRowGeneratorTest {
 		Mockito.doReturn(this.createProperty(TermId.BREEDING_METHOD_PROP.getId())).when(this.ontologyService)
 				.getProperty(Mockito.anyString());
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportMeasurementRowGeneratorTest.PROGRAM_UUID);
+
+		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
+
+		this.designImportData = DesignImportDataInitializer.createDesignImportData();
+		this.mappedHeadersWithStdVarId = this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
+		this.germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
+
+		this.rowValues = new ArrayList<String>();
+		this.importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
+
+		this.trialInstancesFromUI = new HashSet<String>();
+		this.trialInstancesFromUI.add("1");
+
+		this.generator =
+				new DesignImportMeasurementRowGenerator(this.workbook, this.mappedHeadersWithStdVarId, this.importedGermplasm,
+						this.germplasmStandardVariables, this.trialInstancesFromUI, this.isPreview, this.availableCheckTypes);
 
 	}
 
@@ -186,6 +217,40 @@ public class DesignImportMeasurementRowGeneratorTest {
 		Assert.assertEquals("1", data.getValue());
 		Assert.assertEquals(measurementVariable, data.getMeasurementVariable());
 
+	}
+
+	@Test
+	public void testCreateMeasurementRow() {
+
+		final List<String> rowValues = this.designImportData.getCsvData().get(2);
+		final MeasurementRow measurementRow = this.generator.createMeasurementRow(rowValues, this.fieldbookService);
+		final List<MeasurementData> dataList = measurementRow.getDataList();
+
+		Assert.assertEquals(
+				"Expecting that all column values from imported design will be included to data list of the generated measurement row.",
+				dataList.size(), rowValues.size());
+
+		final Map<String, String> actualVariableValueMap = new HashMap<String, String>();
+		for (final MeasurementData data : dataList) {
+			actualVariableValueMap.put(data.getMeasurementVariable().getName(), data.getValue());
+		}
+
+		final List<String> headerValues = this.designImportData.getCsvData().get(0);
+		final Map<String, String> expectedVariableValueMap = new HashMap<String, String>();
+		for (int i = 0; i < rowValues.size(); i++) {
+			expectedVariableValueMap.put(headerValues.get(i), rowValues.get(i));
+		}
+
+		for (final Map.Entry<String, String> actualEntry : actualVariableValueMap.entrySet()) {
+			final String variableName = actualEntry.getKey();
+			final String value = actualEntry.getValue();
+
+			Assert.assertTrue("Expecting that the column header: " + variableName
+					+ " from Import Design is included with the generated measurement row but didn't.",
+					expectedVariableValueMap.containsKey(variableName));
+			Assert.assertEquals("Expecting that the column header: " + variableName + " has a value: " + value
+					+ " when added in the measurement row.", expectedVariableValueMap.get(variableName).toString(), value);
+		}
 	}
 
 }

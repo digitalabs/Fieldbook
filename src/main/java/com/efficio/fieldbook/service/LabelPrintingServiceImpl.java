@@ -886,10 +886,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		if (isStockList) {
 			final GermplasmList stockList = trialFieldMap.get(0).getStockList();
 			params.setAllFieldIDs(this.convertToListInteger(this.getAvailableLabelFieldsForStockList(
-					this.getStockListType(stockList.getType()), Locale.ENGLISH, workbook.getStudyId())));
+					this.getStockListType(stockList.getType()), Locale.ENGLISH, workbook.getStudyDetails().getId())));
 		} else {
-			params.setAllFieldIDs(this.convertToListInteger(this.getAvailableLabelFieldsForStudy(isTrial, true, Locale.ENGLISH,
-					workbook.getStudyId())));
+			params.setAllFieldIDs(this.convertToListInteger(this.getAvailableLabelFieldsForStudy(isTrial, true, Locale.ENGLISH, workbook
+					.getStudyDetails().getId())));
 		}
 
 		Map<String, List<MeasurementRow>> measurementData = null;

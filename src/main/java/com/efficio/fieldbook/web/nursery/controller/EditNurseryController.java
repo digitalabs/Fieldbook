@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2013, All Rights Reserved.
- * 
+ *
  * Generation Challenge Programme (GCP)
- * 
- * 
+ *
+ *
  * This software is licensed for use under the terms of the GNU General Public License (http://bit.ly/8Ztv8M) and the provisions of Part F
  * of the Generation Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
- * 
+ *
  *******************************************************************************/
 
 package com.efficio.fieldbook.web.nursery.controller;
@@ -135,7 +135,8 @@ public class EditNurseryController extends SettingsController {
 	public String useExistingNursery(@ModelAttribute("createNurseryForm") final CreateNurseryForm form,
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form2, @PathVariable final int nurseryId,
 			@RequestParam(required = false) final String isAjax, final Model model, final HttpServletRequest request,
-			final RedirectAttributes redirectAttributes) throws MiddlewareQueryException {
+			final RedirectAttributes redirectAttributes)
+			throws MiddlewareQueryException {
 
 		final String contextParams = this.retrieveContextInfo(request);
 
@@ -149,7 +150,7 @@ public class EditNurseryController extends SettingsController {
 				}
 
 				// settings part
-				workbook = this.setUpForWorkbook(form, nurseryId);
+				workbook = setUpForWorkbook(form, nurseryId);
 				// nursery-level
 				this.setUpNurserylevelConditions(workbook, form, form2, nurseryId);
 
@@ -191,7 +192,7 @@ public class EditNurseryController extends SettingsController {
 	}
 
 	private Workbook setUpForWorkbook(final CreateNurseryForm form, final int nurseryId) {
-		Workbook workbook;
+		final Workbook workbook;
 		workbook = this.fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
 		this.userSelection.setConstantsWithLabels(workbook.getConstants());
 
@@ -666,7 +667,9 @@ public class EditNurseryController extends SettingsController {
 		Integer datasetId = workbook.getMeasurementDatesetId();
 		try {
 			if (datasetId == null) {
-				datasetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyId(), workbook.getStudyName());
+				datasetId =
+						this.fieldbookMiddlewareService
+								.getMeasurementDatasetId(workbook.getStudyDetails().getId(), workbook.getStudyName());
 			}
 			form.setHasFieldmap(this.fieldbookMiddlewareService.hasFieldMap(datasetId));
 		} catch (final MiddlewareException e) {

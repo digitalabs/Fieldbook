@@ -904,14 +904,14 @@ public class DesignImportControllerTest {
 	@Test
 	public void testChangeDesignForExistingNurseryWithImportedDesign() {
 		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
-		nursery.setStudyId(1);
+		nursery.getStudyDetails().setId(1);
 		final List<MeasurementRow> observations = nursery.getObservations();
 
 		Mockito.doReturn(nursery).when(this.userSelection).getWorkbook();
 
 		DesignImportDataInitializer.updatePlotNoValue(observations);
 
-		this.designImportController.changeDesign(nursery.getStudyId(), StudyType.N.toString());
+		this.designImportController.changeDesign(nursery.getStudyDetails().getId(), StudyType.N.toString());
 
 		// the following fields are expected to be set to null
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);

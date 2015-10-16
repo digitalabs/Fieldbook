@@ -20,6 +20,9 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.FileParsingException;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -398,6 +401,9 @@ public class DesignImportController extends SettingsController {
 
 			this.createTrialObservations(environmentData, workbook, designImportData);
 
+			// Only for Nursery
+			this.resetCheckList(workbook, this.userSelection);
+
 			resultsMap.put(IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
 			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());
@@ -412,6 +418,32 @@ public class DesignImportController extends SettingsController {
 		}
 
 		return resultsMap;
+	}
+
+	protected void resetCheckList(Workbook workbook, final UserSelection userSelection) {
+
+		// This is only applicable in Nursery since there's no Check List in Trial.
+		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
+
+			// Create an ImportedCheckGermplasmMainInfo with an EMPTY data so that it will be deleted on save.
+			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+			mainInfo.setAdvanceImportType(true);
+
+			final List<ImportedGermplasm> list = new ArrayList<>();
+
+			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+			importedGermplasmList.setImportedGermplasms(list);
+			mainInfo.setImportedGermplasmList(importedGermplasmList);
+
+			userSelection.setCurrentPageCheckGermplasmList(1);
+			userSelection.setImportedCheckGermplasmMainInfo(mainInfo);
+			userSelection.setImportValid(true);
+
+			// Also delete the CHECK VARIABLES
+			this.addCheckVariablesToDeleted(userSelection.getStudyLevelConditions());
+
+		}
+
 	}
 
 	protected void checkTheDeletedSettingDetails(final UserSelection userSelection, final DesignImportData designImportData) {
@@ -1117,6 +1149,29 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 		return "";
+	}
+
+	protected void addCheckVariablesToDeleted(List<SettingDetail> studyLevelConditions) {
+
+		studyLevelConditions.add(this.createCheckVariableToBeDeleted(TermId.CHECK_START.getId(), "CHECK_START"));
+		studyLevelConditions.add(this.createCheckVariableToBeDeleted(TermId.CHECK_PLAN.getId(), "CHECK_PLAN"));
+		studyLevelConditions.add(this.createCheckVariableToBeDeleted(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL"));
+
+	}
+
+	protected SettingDetail createCheckVariableToBeDeleted(final int checkTermId, final String name) {
+
+		final String programUUID = this.contextUtil.getCurrentProgramUUID();
+		final int currentIbDbUserId = this.contextUtil.getCurrentUserLocalId();
+
+		final SettingDetail checkSettingDetail =
+				this.settingsService.createSettingDetail(checkTermId, name, this.userSelection, currentIbDbUserId, programUUID);
+
+		checkSettingDetail.getVariable().setOperation(Operation.DELETE);
+		checkSettingDetail.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+
+		return checkSettingDetail;
+
 	}
 
 	protected boolean hasCheckVariables(List<MeasurementVariable> conditions) {

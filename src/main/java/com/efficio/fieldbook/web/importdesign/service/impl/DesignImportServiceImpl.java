@@ -26,7 +26,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -370,14 +369,10 @@ public class DesignImportServiceImpl implements DesignImportService {
 		final Map<Integer, StandardVariable> map = new HashMap<>();
 
 		for (final MeasurementVariable measurementVariable : list) {
-			try {
-				final StandardVariable stdVar =
-						this.ontologyService.getStandardVariable(measurementVariable.getTermId(), this.contextUtil.getCurrentProgramUUID());
-				stdVar.setPhenotypicType(phenotypicType);
-				map.put(measurementVariable.getTermId(), stdVar);
-			} catch (final MiddlewareException e) {
-				DesignImportServiceImpl.LOG.error(e.getMessage(), e);
-			}
+			final StandardVariable stdVar =
+					this.ontologyService.getStandardVariable(measurementVariable.getTermId(), this.contextUtil.getCurrentProgramUUID());
+			stdVar.setPhenotypicType(phenotypicType);
+			map.put(measurementVariable.getTermId(), stdVar);
 		}
 
 		return map;

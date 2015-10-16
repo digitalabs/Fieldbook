@@ -258,15 +258,31 @@ public class CrossingServiceImpl implements CrossingService {
 		return dateIntValue;
 	}
 
-	public void populateGDate(Germplasm germplasm, String crossingDate, String harvestDate) {
-		Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
-		if (!StringUtil.isEmpty(crossingDate)) {
-			germplasm.setGdate(Integer.valueOf(crossingDate));
-		} else if (formattedHarvestDate != 0) {
+    /**
+     * This method will set germplasm gdate from given date as per rules.
+     * 1. If harvested date is provided then it will be used as gdate.
+     * 2. If harvested date and crossing date is provided then harvested date will be used as gdate.
+     * 3. If only crossing date is provided then it will be used as gdate.
+     * 4. If both dates are not provided then current date will be used as gdate.
+     *
+     * @param germplasm    germplasm instance into which gdate need to be set.
+     * @param crossingDate date from import cross sheet.
+     * @param harvestDate  date given using user form.
+     */
+    public void populateGermplasmDate(Germplasm germplasm, String crossingDate, String harvestDate) {
+        Integer formattedHarvestDate = this.getFormattedHarvestDate(harvestDate);
+
+		if(formattedHarvestDate != 0){
 			germplasm.setGdate(formattedHarvestDate);
-		} else {
-			germplasm.setGdate(DateUtil.getCurrentDateAsIntegerValue());
+			return;
 		}
+
+		if(!StringUtil.isEmpty(crossingDate)){
+			germplasm.setGdate(Integer.valueOf(crossingDate));
+			return;
+		}
+
+		germplasm.setGdate(DateUtil.getCurrentDateAsIntegerValue());
 	}
 
 	protected List<Pair<Germplasm, Name>> generateGermplasmNamePairs(CrossSetting crossSetting, List<ImportedCrosses> importedCrosses,
@@ -295,7 +311,7 @@ public class CrossingServiceImpl implements CrossingService {
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(Integer.valueOf(cross.getMaleGid()));
 
-			this.populateGDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
+            this.populateGermplasmDate(germplasm, cross.getCrossingDate(), additionalDetailsSetting.getHarvestDate());
 
 			germplasm.setLocationId(harvestLocationId);
 
@@ -308,7 +324,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			name.setNval(cross.getDesig());
-			name.setNdate(this.getFormattedHarvestDate(additionalDetailsSetting.getHarvestDate()));
+			name.setNdate(germplasm.getGdate());
 			name.setLocationId(harvestLocationId);
 
 			List<Name> names = new ArrayList<>();

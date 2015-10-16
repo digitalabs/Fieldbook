@@ -26,9 +26,9 @@ import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 
 public class WorkbookUtil {
 
-	public static Integer getMeasurementVariableId(List<MeasurementVariable> variables, String name) {
+	public static Integer getMeasurementVariableId(final List<MeasurementVariable> variables, final String name) {
 		if (variables != null && !variables.isEmpty()) {
-			for (MeasurementVariable variable : variables) {
+			for (final MeasurementVariable variable : variables) {
 				if (variable.getName().equalsIgnoreCase(name)) {
 					return variable.getTermId();
 				}
@@ -37,9 +37,9 @@ public class WorkbookUtil {
 		return null;
 	}
 
-	public static String getMeasurementVariableName(List<MeasurementVariable> variables, int id) {
+	public static String getMeasurementVariableName(final List<MeasurementVariable> variables, final int id) {
 		if (variables != null && !variables.isEmpty()) {
-			for (MeasurementVariable variable : variables) {
+			for (final MeasurementVariable variable : variables) {
 				if (variable != null && variable.getTermId() == id) {
 					return variable.getName();
 				}
@@ -48,28 +48,28 @@ public class WorkbookUtil {
 		return null;
 	}
 
-	public static String getValueByIdInRow(List<MeasurementVariable> variables, int termId, MeasurementRow row) {
-		String label = WorkbookUtil.getMeasurementVariableName(variables, termId);
+	public static String getValueByIdInRow(final List<MeasurementVariable> variables, final int termId, final MeasurementRow row) {
+		final String label = WorkbookUtil.getMeasurementVariableName(variables, termId);
 		if (label != null) {
 			return row.getMeasurementDataValue(label);
 		}
 		return null;
 	}
 
-	public static String getCodeValueByIdInRow(List<MeasurementVariable> variables, int termId, MeasurementRow row) {
-		String label = WorkbookUtil.getMeasurementVariableName(variables, termId);
+	public static String getCodeValueByIdInRow(final List<MeasurementVariable> variables, final int termId, final MeasurementRow row) {
+		final String label = WorkbookUtil.getMeasurementVariableName(variables, termId);
 		if (label != null) {
 			return row.getMeasurementData(label).getValue();
 		}
 		return null;
 	}
 
-	public static List<MeasurementRow> filterObservationsByTrialInstance(List<MeasurementRow> observations, String trialInstance) {
-		List<MeasurementRow> list = new ArrayList<MeasurementRow>();
+	public static List<MeasurementRow> filterObservationsByTrialInstance(final List<MeasurementRow> observations, final String trialInstance) {
+		final List<MeasurementRow> list = new ArrayList<MeasurementRow>();
 		if (observations != null && !observations.isEmpty()) {
-			List<MeasurementVariable> variables = observations.get(0).getMeasurementVariables();
-			for (MeasurementRow row : observations) {
-				String value = WorkbookUtil.getValueByIdInRow(variables, TermId.TRIAL_INSTANCE_FACTOR.getId(), row);
+			final List<MeasurementVariable> variables = observations.get(0).getMeasurementVariables();
+			for (final MeasurementRow row : observations) {
+				final String value = WorkbookUtil.getValueByIdInRow(variables, TermId.TRIAL_INSTANCE_FACTOR.getId(), row);
 				if (value == null || value != null && value.equals(trialInstance)) {
 					list.add(row);
 				}
@@ -78,9 +78,9 @@ public class WorkbookUtil {
 		return list;
 	}
 
-	public static MeasurementVariable getMeasurementVariable(List<MeasurementVariable> variables, int id) {
+	public static MeasurementVariable getMeasurementVariable(final List<MeasurementVariable> variables, final int id) {
 		if (variables != null && !variables.isEmpty()) {
-			for (MeasurementVariable variable : variables) {
+			for (final MeasurementVariable variable : variables) {
 				if (variable != null && variable.getTermId() == id) {
 					return variable;
 				}
@@ -89,17 +89,18 @@ public class WorkbookUtil {
 		return null;
 	}
 
-	public static List<MeasurementRow> createMeasurementRows(List<List<ValueReference>> list, List<MeasurementVariable> variables) {
-		List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+	public static List<MeasurementRow> createMeasurementRows(final List<List<ValueReference>> list,
+			final List<MeasurementVariable> variables) {
+		final List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 
 		if (list != null && !list.isEmpty()) {
-			for (List<ValueReference> row : list) {
-				List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-				for (ValueReference ref : row) {
-					MeasurementVariable var = WorkbookUtil.getMeasurementVariable(variables, ref.getId());
+			for (final List<ValueReference> row : list) {
+				final List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+				for (final ValueReference ref : row) {
+					final MeasurementVariable var = WorkbookUtil.getMeasurementVariable(variables, ref.getId());
 					if (var != null) {
-						boolean isEditable = !ref.getId().equals(TermId.TRIAL_INSTANCE_FACTOR.getId());
-						MeasurementData data = new MeasurementData(var.getName(), ref.getName(), isEditable, var.getDataType(), var);
+						final boolean isEditable = !ref.getId().equals(TermId.TRIAL_INSTANCE_FACTOR.getId());
+						final MeasurementData data = new MeasurementData(var.getName(), ref.getName(), isEditable, var.getDataType(), var);
 						dataList.add(data);
 					}
 				}
@@ -110,20 +111,20 @@ public class WorkbookUtil {
 		return observations;
 	}
 
-	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(List<Environment> environments,
-			List<MeasurementVariable> variables) {
+	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(final List<Environment> environments,
+			final List<MeasurementVariable> variables) {
 		return WorkbookUtil.createMeasurementRowsFromEnvironments(environments, variables, null);
 	}
 
-	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(List<Environment> environments,
-			List<MeasurementVariable> variables, ExpDesignParameterUi params) {
+	public static List<MeasurementRow> createMeasurementRowsFromEnvironments(final List<Environment> environments,
+			final List<MeasurementVariable> variables, final ExpDesignParameterUi params) {
 
-		List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
 
 		if (environments != null) {
-			for (Environment environment : environments) {
-				List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-				for (MeasurementVariable var : variables) {
+			for (final Environment environment : environments) {
+				final List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+				for (final MeasurementVariable var : variables) {
 					String value = environment.getManagementDetailValues().get(Integer.toString(var.getTermId()));
 					Integer phenotypeId = null;
 					if (value == null) {
@@ -131,18 +132,18 @@ public class WorkbookUtil {
 						phenotypeId = environment.getPhenotypeIDMap().get(Integer.toString(var.getTermId()));
 					}
 					if (params != null && value == null) {
-						TermId termId = TermId.getById(var.getTermId());
+						final TermId termId = TermId.getById(var.getTermId());
 						if (termId != null) {
 							value = SettingsUtil.getExperimentalDesignValue(params, termId);
 						}
 					}
 
-					boolean isEditable = !(var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());
-					MeasurementData data = new MeasurementData(var.getName(), value, isEditable, var.getDataType(), var);
+					final boolean isEditable = !(var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());
+					final MeasurementData data = new MeasurementData(var.getName(), value, isEditable, var.getDataType(), var);
 					data.setPhenotypeId(phenotypeId);
 					dataList.add(data);
 				}
-				MeasurementRow row = new MeasurementRow(environment.getStockId(), environment.getLocationId(), dataList);
+				final MeasurementRow row = new MeasurementRow(environment.getStockId(), environment.getLocationId(), dataList);
 				row.setExperimentId((int) environment.getExperimentId());
 				observations.add(row);
 			}
@@ -151,10 +152,10 @@ public class WorkbookUtil {
 		return observations;
 	}
 
-	public static void addVariateToObservations(MeasurementVariable mvar, List<MeasurementRow> observations) {
+	public static void addVariateToObservations(final MeasurementVariable mvar, final List<MeasurementRow> observations) {
 		if (observations != null) {
-			for (MeasurementRow row : observations) {
-				MeasurementData mData = new MeasurementData();
+			for (final MeasurementRow row : observations) {
+				final MeasurementData mData = new MeasurementData();
 				mData.setMeasurementVariable(mvar);
 				mData.setLabel(mvar.getName());
 				mData.setDataType(mvar.getDataType());
@@ -164,15 +165,15 @@ public class WorkbookUtil {
 		}
 	}
 
-	public static List<String> getAddedTraits(List<MeasurementVariable> variables, List<MeasurementRow> observations) {
-		List<String> newTraits = new ArrayList<String>();
+	public static List<String> getAddedTraits(final List<MeasurementVariable> variables, final List<MeasurementRow> observations) {
+		final List<String> newTraits = new ArrayList<String>();
 		if (observations != null && !observations.isEmpty()) {
-			List<MeasurementVariable> workbookVariables = observations.get(0).getMeasurementVariables();
+			final List<MeasurementVariable> workbookVariables = observations.get(0).getMeasurementVariables();
 			if (workbookVariables != null && !workbookVariables.isEmpty()) {
-				for (MeasurementVariable wvar : workbookVariables) {
+				for (final MeasurementVariable wvar : workbookVariables) {
 					if (!wvar.isFactor()) {
 						boolean found = false;
-						for (MeasurementVariable var : variables) {
+						for (final MeasurementVariable var : variables) {
 							if (wvar.getTermId() == var.getTermId()) {
 								found = true;
 								break;
@@ -188,15 +189,16 @@ public class WorkbookUtil {
 		return newTraits;
 	}
 
-	public static List<MeasurementVariable> getAddedTraitVariables(List<MeasurementVariable> variables, List<MeasurementRow> observations) {
-		List<MeasurementVariable> newTraits = new ArrayList<MeasurementVariable>();
+	public static List<MeasurementVariable> getAddedTraitVariables(final List<MeasurementVariable> variables,
+			final List<MeasurementRow> observations) {
+		final List<MeasurementVariable> newTraits = new ArrayList<MeasurementVariable>();
 		if (observations != null && !observations.isEmpty()) {
-			List<MeasurementVariable> workbookVariables = observations.get(0).getMeasurementVariables();
+			final List<MeasurementVariable> workbookVariables = observations.get(0).getMeasurementVariables();
 			if (workbookVariables != null && !workbookVariables.isEmpty()) {
-				for (MeasurementVariable wvar : workbookVariables) {
+				for (final MeasurementVariable wvar : workbookVariables) {
 					if (!wvar.isFactor()) {
 						boolean found = false;
-						for (MeasurementVariable var : variables) {
+						for (final MeasurementVariable var : variables) {
 							if (wvar.getTermId() == var.getTermId()) {
 								found = true;
 								break;
@@ -213,12 +215,12 @@ public class WorkbookUtil {
 		return newTraits;
 	}
 
-	public static void clearNewlyAddedImportTraits(List<MeasurementVariable> variables, List<MeasurementRow> observations) {
-		List<MeasurementVariable> newTraits = WorkbookUtil.getAddedTraitVariables(variables, observations);
-		List<Integer> indexForRemoval = new ArrayList<Integer>();
+	public static void clearNewlyAddedImportTraits(final List<MeasurementVariable> variables, final List<MeasurementRow> observations) {
+		final List<MeasurementVariable> newTraits = WorkbookUtil.getAddedTraitVariables(variables, observations);
+		final List<Integer> indexForRemoval = new ArrayList<Integer>();
 		if (observations != null && !observations.isEmpty()) {
-			List<MeasurementData> initialDataList = observations.get(0).getDataList();
-			for (MeasurementData initialData : initialDataList) {
+			final List<MeasurementData> initialDataList = observations.get(0).getDataList();
+			for (final MeasurementData initialData : initialDataList) {
 				for (int index = 0; index < newTraits.size(); index++) {
 					if (initialData.getMeasurementVariable().getTermId() == newTraits.get(index).getTermId()) {
 						// means this is a newly added trait, we should remove it
@@ -227,8 +229,8 @@ public class WorkbookUtil {
 				}
 			}
 			if (indexForRemoval != null && !indexForRemoval.isEmpty()) {
-				for (MeasurementRow dataRow : observations) {
-					for (Integer removedMeasurementDataIndex : indexForRemoval) {
+				for (final MeasurementRow dataRow : observations) {
+					for (final Integer removedMeasurementDataIndex : indexForRemoval) {
 						dataRow.getDataList().remove(removedMeasurementDataIndex);
 					}
 				}
@@ -237,17 +239,17 @@ public class WorkbookUtil {
 		}
 	}
 
-	public static void resetWorkbookObservations(Workbook workbook) {
+	public static void resetWorkbookObservations(final Workbook workbook) {
 		if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
 			if (workbook.getOriginalObservations() == null || workbook.getOriginalObservations().isEmpty()) {
-				List<MeasurementRow> origObservations = new ArrayList<MeasurementRow>();
-				for (MeasurementRow row : workbook.getObservations()) {
+				final List<MeasurementRow> origObservations = new ArrayList<MeasurementRow>();
+				for (final MeasurementRow row : workbook.getObservations()) {
 					origObservations.add(row.copy());
 				}
 				workbook.setOriginalObservations(origObservations);
 			} else {
-				List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
-				for (MeasurementRow row : workbook.getOriginalObservations()) {
+				final List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+				for (final MeasurementRow row : workbook.getOriginalObservations()) {
 					observations.add(row.copy());
 				}
 				workbook.setObservations(observations);
@@ -255,7 +257,7 @@ public class WorkbookUtil {
 		}
 	}
 
-	public static void revertImportedConditionAndConstantsData(Workbook workbook) {
+	public static void revertImportedConditionAndConstantsData(final Workbook workbook) {
 		// we need to revert all data
 		if (workbook != null) {
 			if (workbook.getImportConditionsCopy() != null) {
@@ -271,8 +273,8 @@ public class WorkbookUtil {
 		}
 	}
 
-	private static boolean inMeasurementDataList(List<MeasurementData> dataList, int termId) {
-		for (MeasurementData data : dataList) {
+	private static boolean inMeasurementDataList(final List<MeasurementData> dataList, final int termId) {
+		for (final MeasurementData data : dataList) {
 			if (data.getMeasurementVariable().getTermId() == termId) {
 				return true;
 			}
@@ -280,25 +282,22 @@ public class WorkbookUtil {
 		return false;
 	}
 
-	public static void addMeasurementDataToRowsExp(List<MeasurementVariable> variableList, 
-			List<MeasurementRow> observations, boolean isVariate, 
-			UserSelection userSelection, OntologyService ontologyService, 
-			FieldbookService fieldbookService, String programUUID)
-			throws MiddlewareException {
+	public static void addMeasurementDataToRowsExp(final List<MeasurementVariable> variableList, final List<MeasurementRow> observations,
+			final boolean isVariate, final UserSelection userSelection, final OntologyService ontologyService,
+			final FieldbookService fieldbookService, final String programUUID) throws MiddlewareException {
 		// add new variables in measurement rows
 		if (observations != null && !observations.isEmpty()) {
-			for (MeasurementVariable variable : variableList) {
+			for (final MeasurementVariable variable : variableList) {
 				if (variable.getOperation().equals(Operation.ADD)
 						&& !WorkbookUtil.inMeasurementDataList(observations.get(0).getDataList(), variable.getTermId())) {
-					StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(),
-							programUUID);
-					for (MeasurementRow row : observations) {
-						MeasurementData measurementData =
+					final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
+					for (final MeasurementRow row : observations) {
+						final MeasurementData measurementData =
 								new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()),
 										variable);
 
 						measurementData.setPhenotypeId(null);
-						int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
+						final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
 						row.getDataList().add(insertIndex, measurementData);
 					}
 
@@ -313,18 +312,19 @@ public class WorkbookUtil {
 		}
 	}
 
-	public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, boolean isVariate, UserSelection userSelection,
-			OntologyService ontologyService, FieldbookService fieldbookService, String programUUID) throws MiddlewareException {
+	public static void addMeasurementDataToRows(final List<MeasurementVariable> variableList, final boolean isVariate,
+			final UserSelection userSelection, final OntologyService ontologyService, final FieldbookService fieldbookService,
+			final String programUUID) throws MiddlewareException {
 		// add new variables in measurement rows
-		for (MeasurementVariable variable : variableList) {
+		for (final MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
-				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(),programUUID);
-				for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-					MeasurementData measurementData =
+				final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
+				for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
+					final MeasurementData measurementData =
 							new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 
 					measurementData.setPhenotypeId(null);
-					int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
+					final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
 					row.getDataList().add(insertIndex, measurementData);
 				}
 
@@ -338,22 +338,20 @@ public class WorkbookUtil {
 		}
 	}
 
-	public static void addMeasurementDataToRows(List<MeasurementVariable> variableList, 
-			List<MeasurementRow> measurementRowList,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, 
-			FieldbookService fieldbookService, String programUUID)
+	public static void addMeasurementDataToRows(final List<MeasurementVariable> variableList,
+			final List<MeasurementRow> measurementRowList, final boolean isVariate, final UserSelection userSelection,
+			final OntologyService ontologyService, final FieldbookService fieldbookService, final String programUUID)
 			throws MiddlewareException {
 		// add new variables in measurement rows
-		for (MeasurementVariable variable : variableList) {
+		for (final MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
-				StandardVariable stdVariable = ontologyService.getStandardVariable(
-						variable.getTermId(),programUUID);
-				for (MeasurementRow row : measurementRowList) {
-					MeasurementData measurementData =
+				final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
+				for (final MeasurementRow row : measurementRowList) {
+					final MeasurementData measurementData =
 							new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 
 					measurementData.setPhenotypeId(null);
-					int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
+					final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
 					row.getDataList().add(insertIndex, measurementData);
 				}
 
@@ -366,48 +364,48 @@ public class WorkbookUtil {
 			}
 		}
 	}
-	
-	public static void addMeasurementDataToRowsIfNecessary(List<MeasurementVariable> variableList, List<MeasurementRow> measurementRowList,
-			boolean isVariate, UserSelection userSelection, OntologyService ontologyService, FieldbookService fieldbookService, String programUUID)
+
+	public static void addMeasurementDataToRowsIfNecessary(final List<MeasurementVariable> variableList,
+			final List<MeasurementRow> measurementRowList, final boolean isVariate, final UserSelection userSelection,
+			final OntologyService ontologyService, final FieldbookService fieldbookService, final String programUUID)
 			throws MiddlewareException {
-		
+
 		// add new variables in measurement rows
-		for (MeasurementVariable variable : variableList) {
-				
-				StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
-				
-				for (MeasurementRow row : measurementRowList) {
-					
-					//only add if the measurement data doesn't exist in row
-					if (!WorkbookUtil.inMeasurementDataList(row.getDataList(), variable.getTermId())){
-						
-						MeasurementData measurementData =
-								new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
+		for (final MeasurementVariable variable : variableList) {
 
-						measurementData.setPhenotypeId(null);
-						int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
-						row.getDataList().add(insertIndex, measurementData);
-						
-					}
-				}
+			final StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId(), programUUID);
 
-				if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()
-						&& isVariate) {
-					variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
-				} else {
-					variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
+			for (final MeasurementRow row : measurementRowList) {
+
+				// only add if the measurement data doesn't exist in row
+				if (!WorkbookUtil.inMeasurementDataList(row.getDataList(), variable.getTermId())) {
+
+					final MeasurementData measurementData =
+							new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
+
+					measurementData.setPhenotypeId(null);
+					final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
+					row.getDataList().add(insertIndex, measurementData);
+
 				}
 			}
-		
+
+			if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
+				variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true, programUUID));
+			} else {
+				variable.setPossibleValues(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()));
+			}
+		}
+
 	}
 
 	/**
 	 * Gets the data type.
-	 *
+	 * 
 	 * @param dataTypeId the data type id
 	 * @return the data type
 	 */
-	private static String getDataType(int dataTypeId) {
+	private static String getDataType(final int dataTypeId) {
 		// datatype ids: 1120, 1125, 1128, 1130
 		if (dataTypeId == TermId.CHARACTER_VARIABLE.getId() || dataTypeId == TermId.TIMESTAMP_VARIABLE.getId()
 				|| dataTypeId == TermId.CHARACTER_DBID_VARIABLE.getId() || dataTypeId == TermId.CATEGORICAL_VARIABLE.getId()) {
@@ -417,11 +415,11 @@ public class WorkbookUtil {
 		}
 	}
 
-	private static int getInsertIndex(List<MeasurementData> dataList, boolean isVariate) {
+	private static int getInsertIndex(final List<MeasurementData> dataList, final boolean isVariate) {
 		int index = -1;
 		if (dataList != null) {
 			if (!isVariate) {
-				for (MeasurementData data : dataList) {
+				for (final MeasurementData data : dataList) {
 					if (!data.getMeasurementVariable().isFactor()) {
 						return index;
 					}
@@ -436,15 +434,15 @@ public class WorkbookUtil {
 
 	/**
 	 * Transform possible values.
-	 *
+	 * 
 	 * @param enumerations the enumerations
 	 * @return the list
 	 */
-	private static List<ValueReference> transformPossibleValues(List<Enumeration> enumerations) {
-		List<ValueReference> list = new ArrayList<ValueReference>();
+	private static List<ValueReference> transformPossibleValues(final List<Enumeration> enumerations) {
+		final List<ValueReference> list = new ArrayList<ValueReference>();
 
 		if (enumerations != null) {
-			for (Enumeration enumeration : enumerations) {
+			for (final Enumeration enumeration : enumerations) {
 				list.add(new ValueReference(enumeration.getId(), enumeration.getName(), enumeration.getDescription()));
 			}
 		}
@@ -452,32 +450,32 @@ public class WorkbookUtil {
 		return list;
 	}
 
-	public static void manageExpDesignVariablesAndObs(Workbook workbook, Workbook tempWorkbook) {
+	public static void manageExpDesignVariablesAndObs(final Workbook workbook, final Workbook tempWorkbook) {
 		// edit original factors to add/delete new/deleted variables based on tempWorkbook.getFactors
 		// create map of factors in tempWorkbook and factors in workbook
-		Map<Integer, MeasurementVariable> tempFactorsMap = new HashMap<Integer, MeasurementVariable>();
-		Map<Integer, MeasurementVariable> factorsMap = new HashMap<Integer, MeasurementVariable>();
-		Map<Integer, StandardVariable> expDesignVariablesMap = new HashMap<Integer, StandardVariable>();
+		final Map<Integer, MeasurementVariable> tempFactorsMap = new HashMap<Integer, MeasurementVariable>();
+		final Map<Integer, MeasurementVariable> factorsMap = new HashMap<Integer, MeasurementVariable>();
+		final Map<Integer, StandardVariable> expDesignVariablesMap = new HashMap<Integer, StandardVariable>();
 
 		if (tempWorkbook.getFactors() != null) {
-			for (MeasurementVariable var : tempWorkbook.getFactors()) {
+			for (final MeasurementVariable var : tempWorkbook.getFactors()) {
 				tempFactorsMap.put(Integer.valueOf(var.getTermId()), var);
 			}
 		}
 
 		if (workbook.getFactors() != null) {
-			for (MeasurementVariable var : workbook.getFactors()) {
+			for (final MeasurementVariable var : workbook.getFactors()) {
 				factorsMap.put(Integer.valueOf(var.getTermId()), var);
 			}
 		}
 
 		if (tempWorkbook.getExpDesignVariables() != null) {
-			for (StandardVariable var : tempWorkbook.getExpDesignVariables()) {
+			for (final StandardVariable var : tempWorkbook.getExpDesignVariables()) {
 				expDesignVariablesMap.put(Integer.valueOf(var.getId()), var);
 			}
 		}
 
-		for (MeasurementVariable var : tempWorkbook.getFactors()) {
+		for (final MeasurementVariable var : tempWorkbook.getFactors()) {
 			if (factorsMap.get(Integer.valueOf(var.getTermId())) == null
 					&& expDesignVariablesMap.get(Integer.valueOf(var.getTermId())) != null) {
 				var.setOperation(Operation.ADD);
@@ -485,7 +483,7 @@ public class WorkbookUtil {
 			}
 		}
 
-		for (MeasurementVariable var : workbook.getFactors()) {
+		for (final MeasurementVariable var : workbook.getFactors()) {
 			if (tempFactorsMap.get(Integer.valueOf(var.getTermId())) == null && var.getOperation().equals(Operation.UPDATE)) {
 				var.setOperation(Operation.DELETE);
 			}
@@ -495,27 +493,28 @@ public class WorkbookUtil {
 		workbook.setObservations(tempWorkbook.getObservations());
 	}
 
-	public static Map<Integer, MeasurementVariable> createVariableList(List<MeasurementVariable> factors, List<MeasurementVariable> variates) {
-		Map<Integer, MeasurementVariable> observationVariables = new HashMap<Integer, MeasurementVariable>();
+	public static Map<Integer, MeasurementVariable> createVariableList(final List<MeasurementVariable> factors,
+			final List<MeasurementVariable> variates) {
+		final Map<Integer, MeasurementVariable> observationVariables = new HashMap<Integer, MeasurementVariable>();
 		if (factors != null) {
-			for (MeasurementVariable var : factors) {
+			for (final MeasurementVariable var : factors) {
 				observationVariables.put(Integer.valueOf(var.getTermId()), var);
 			}
 		}
 		if (variates != null) {
-			for (MeasurementVariable var : variates) {
+			for (final MeasurementVariable var : variates) {
 				observationVariables.put(Integer.valueOf(var.getTermId()), var);
 			}
 		}
 		return observationVariables;
 	}
 
-	public static void deleteDeletedVariablesInObservations(Map<Integer, MeasurementVariable> measurementDatasetVariables,
-			List<MeasurementRow> observations) {
+	public static void deleteDeletedVariablesInObservations(final Map<Integer, MeasurementVariable> measurementDatasetVariables,
+			final List<MeasurementRow> observations) {
 
-		List<Integer> deletedList = new ArrayList<Integer>();
+		final List<Integer> deletedList = new ArrayList<Integer>();
 		if (observations != null && !observations.isEmpty()) {
-			for (MeasurementData data : observations.get(0).getDataList()) {
+			for (final MeasurementData data : observations.get(0).getDataList()) {
 				if (measurementDatasetVariables.get(Integer.valueOf(data.getMeasurementVariable().getTermId())) == null
 						&& data.getMeasurementVariable().getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 					deletedList.add(Integer.valueOf(data.getMeasurementVariable().getTermId()));
@@ -523,15 +522,15 @@ public class WorkbookUtil {
 			}
 		}
 		if (deletedList != null) {
-			for (Integer termId : deletedList) {
+			for (final Integer termId : deletedList) {
 				// remove from measurement rows
 				int index = 0;
 				int varIndex = 0;
 				boolean found = false;
 				if (observations != null) {
-					for (MeasurementRow row : observations) {
+					for (final MeasurementRow row : observations) {
 						if (index == 0) {
-							for (MeasurementData var : row.getDataList()) {
+							for (final MeasurementData var : row.getDataList()) {
 								if (var.getMeasurementVariable().getTermId() == termId.intValue()) {
 									found = true;
 									break;
@@ -552,7 +551,7 @@ public class WorkbookUtil {
 	}
 
 	// we would validate all conditions except for name and the study type
-	public static boolean isConditionValidate(Integer cvTermId) {
+	public static boolean isConditionValidate(final Integer cvTermId) {
 		if (cvTermId != null && cvTermId.intValue() != TermId.STUDY_TYPE.getId() && cvTermId.intValue() != TermId.STUDY_NAME.getId()
 				&& !AppConstants.HIDE_TRIAL_VARIABLE_SETTINGS_FIELDS.getString().contains(cvTermId.toString())) {
 			return true;
@@ -560,11 +559,11 @@ public class WorkbookUtil {
 		return false;
 	}
 
-	public static List<MeasurementVariable> getExperimentalDesignVariables(List<MeasurementVariable> conditions) {
-		List<MeasurementVariable> expDesignVariables = new ArrayList<MeasurementVariable>();
+	public static List<MeasurementVariable> getExperimentalDesignVariables(final List<MeasurementVariable> conditions) {
+		final List<MeasurementVariable> expDesignVariables = new ArrayList<MeasurementVariable>();
 		if (conditions != null && !conditions.isEmpty()) {
-			List<Integer> expDesignConstants = AppConstants.EXP_DESIGN_VARIABLES.getIntegerList();
-			for (MeasurementVariable condition : conditions) {
+			final List<Integer> expDesignConstants = AppConstants.EXP_DESIGN_VARIABLES.getIntegerList();
+			for (final MeasurementVariable condition : conditions) {
 				if (expDesignConstants.contains(condition.getTermId())) {
 					condition.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
 					expDesignVariables.add(condition);
@@ -574,9 +573,37 @@ public class WorkbookUtil {
 		return expDesignVariables;
 	}
 
-	public static void updateTrialObservations(Workbook workbook, Workbook temporaryWorkbook) {
+	public static void updateTrialObservations(final Workbook workbook, final Workbook temporaryWorkbook) {
 		if (temporaryWorkbook.getTrialObservations() != null) {
 			workbook.setTrialObservations(temporaryWorkbook.getTrialObservations());
+		}
+	}
+
+	public static MeasurementData retrieveMeasurementDataFromMeasurementRow(final Integer termId, final List<MeasurementData> dataList) {
+		MeasurementData expectedMeasurementData = null;
+		for (final MeasurementData measurementData : dataList) {
+			final MeasurementVariable variable = measurementData.getMeasurementVariable();
+			if (variable.getTermId() == termId) {
+				expectedMeasurementData = measurementData;
+				break;
+			}
+		}
+		return expectedMeasurementData;
+	}
+
+	/**
+	 * NOTE: Default Design is when the PLOT NO and ENTRY NO has equal value.
+	 * 
+	 * @param observations
+	 */
+	public static void resetObservationToDefaultDesign(final List<MeasurementRow> observations) {
+		for (final MeasurementRow row : observations) {
+			final List<MeasurementData> dataList = row.getDataList();
+			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+
+			// make the PLOT_NO equal to ENTRY_NO
+			plotNoData.setValue(entryNoData.getValue());
 		}
 	}
 }

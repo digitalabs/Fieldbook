@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -32,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
@@ -41,6 +43,7 @@ public class CrossingTemplateExcelExporterTest {
 
 	public static final String STUDYNAME = "studyname";
 	private static final int STUDY_ID = 1;
+	public static final String TEST_FILENAME = "testFilename.xls";
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
@@ -63,8 +66,12 @@ public class CrossingTemplateExcelExporterTest {
 
 	@Before
 	public void setup() throws IOException, InvalidFormatException {
+		MockitoAnnotations.initMocks(this);
+
+		exporter.setTemplateFile(TEST_FILENAME);
+
 		this.DUT = Mockito.spy(this.exporter);
-		InputStream inp = this.getClass().getClassLoader().getResourceAsStream("testFilename.xls");
+		InputStream inp = this.getClass().getClassLoader().getResourceAsStream(TEST_FILENAME);
 
 		this.workbook = WorkbookFactory.create(inp);
 	}
@@ -85,7 +92,7 @@ public class CrossingTemplateExcelExporterTest {
 		Map<String, CellStyle> style = Mockito.mock(Map.class);
 		Mockito.doReturn(style).when(this.DUT).createStyles(wb);
 
-		Mockito.doReturn(wb).when(this.DUT).retrieveTemplate();
+		Mockito.doReturn(wb).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.doReturn(4)
 				.when(this.DUT)
 				.writeListDetailsSection(Matchers.any(Map.class), Matchers.any(Sheet.class), Matchers.anyInt(),
@@ -110,7 +117,7 @@ public class CrossingTemplateExcelExporterTest {
 
 	@Test(expected = CrossingTemplateExportException.class)
 	public void testExportException() throws Exception {
-		Mockito.doThrow(new InvalidFormatException("forced exception")).when(this.DUT).retrieveTemplate();
+		Mockito.doThrow(new InvalidFormatException("forced exception")).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 
 		this.DUT.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDYNAME);
 

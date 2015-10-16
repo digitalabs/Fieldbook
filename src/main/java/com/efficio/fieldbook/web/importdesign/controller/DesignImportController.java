@@ -31,7 +31,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
@@ -74,7 +73,7 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 public class DesignImportController extends SettingsController {
 
 	private static final String UNMAPPED_HEADERS = "unmappedHeaders";
-	
+
 	private static final String SUCCESS = "success";
 
 	private static final String MAPPED_ENVIRONMENTAL_FACTORS = "mappedEnvironmentalFactors";
@@ -147,7 +146,7 @@ public class DesignImportController extends SettingsController {
 
 			resultsMap.put(IS_SUCCESS, 1);
 
-		} catch (MiddlewareException | FileParsingException e) {
+		} catch (final FileParsingException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
@@ -305,7 +304,7 @@ public class DesignImportController extends SettingsController {
 
 			resultsMap.put(SUCCESS, Boolean.TRUE);
 			resultsMap.put("hasConflict", hasConflict);
-		} catch (MiddlewareException | DesignValidationException e) {
+		} catch (final DesignValidationException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 

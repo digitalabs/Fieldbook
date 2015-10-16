@@ -17,7 +17,6 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -237,20 +236,18 @@ public class DesignImportMeasurementRowGenerator {
 
 	public void addVariatesToMeasurementRows(final List<MeasurementRow> measurements, final UserSelection userSelection,
 			final FieldbookService fieldbookService, final OntologyService ontologyService, final ContextUtil contextUtil) {
-		try {
-			final Set<MeasurementVariable> temporaryList = new HashSet<>();
-			for (final MeasurementVariable mvar : this.workbook.getVariates()) {
-				if (mvar.getOperation() == Operation.ADD || mvar.getOperation() == Operation.UPDATE) {
-					final MeasurementVariable copy = mvar.copy();
-					temporaryList.add(copy);
-				}
-			}
 
-			WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
-					userSelection, ontologyService, fieldbookService, contextUtil.getCurrentProgramUUID());
-		} catch (final MiddlewareException e) {
-			DesignImportMeasurementRowGenerator.LOG.error(e.getMessage(), e);
+		final Set<MeasurementVariable> temporaryList = new HashSet<>();
+		for (final MeasurementVariable mvar : this.workbook.getVariates()) {
+			if (mvar.getOperation() == Operation.ADD || mvar.getOperation() == Operation.UPDATE) {
+				final MeasurementVariable copy = mvar.copy();
+				temporaryList.add(copy);
+			}
 		}
+
+		WorkbookUtil.addMeasurementDataToRowsIfNecessary(new ArrayList<MeasurementVariable>(temporaryList), measurements, true,
+				userSelection, ontologyService, fieldbookService, contextUtil.getCurrentProgramUUID());
+
 	}
 
 	public Workbook getWorkbook() {

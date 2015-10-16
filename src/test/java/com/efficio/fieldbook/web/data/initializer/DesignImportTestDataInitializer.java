@@ -168,11 +168,7 @@ public class DesignImportTestDataInitializer {
 	}
 
 	public static List<String> createListOfString(final String... listData) {
-		final List<String> list = new ArrayList<>();
-		for (final String data : listData) {
-			list.add(data);
-		}
-		return list;
+		return com.google.common.collect.Lists.newArrayList(listData);
 	}
 
 	public static DesignHeaderItem filterDesignHeaderItemsByTermId(final TermId termId, final List<DesignHeaderItem> headerDesignItems) {

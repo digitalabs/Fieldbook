@@ -579,7 +579,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
 				} else {
 
-					if (wData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
+					if (wData.getMeasurementVariable() != null
+							&& wData.getMeasurementVariable().getDataTypeId() == TermId.NUMERIC_VARIABLE.getId()) {
 						wData.setAccepted(false);
 					}
 					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {

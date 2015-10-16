@@ -49,7 +49,6 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 	private static final String PROGRAM_UUID = "789c6438-5a94-11e5-885d-feff819cdc9f";
 
-	@Mock
 	private UserSelection userSelection;
 
 	@Mock
@@ -76,6 +75,10 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 	@Before
 	public void setUp() {
+
+		this.userSelection = new UserSelection();
+		this.userSelection.setImportedGermplasmMainInfo(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo());
+
 		WorkbookDataUtil.setTestWorkbook(null);
 
 		Mockito.doReturn(this.createProperty(TermId.BREEDING_METHOD_PROP.getId())).when(this.ontologyService)
@@ -168,9 +171,6 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 	@Test
 	public void testAddVariatesToMeasurementRows() throws DesignValidationException {
-
-		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
-				.getImportedGermplasmMainInfo();
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);

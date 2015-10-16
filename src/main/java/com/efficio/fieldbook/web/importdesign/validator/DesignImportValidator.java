@@ -250,7 +250,7 @@ public class DesignImportValidator {
 			final String valueToValidate = columnValues.get(columnIndex);
 
 			// categorical variables are expected to have possible values, otherwise this will cause data error
-			if (!CategoricalVariableValidator.hasPossibleValues(standardVariable)) {
+			if (!standardVariable.hasEnumerations()) {
 				throw new DesignValidationException((this.messageSource.getMessage("design.import.error.no.valid.values", null,
 						Locale.ENGLISH)).replace("{0}", standardVariable.getName()));
 			}

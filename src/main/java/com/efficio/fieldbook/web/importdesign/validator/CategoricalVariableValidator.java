@@ -30,20 +30,4 @@ public class CategoricalVariableValidator {
 		}
 		return false;
 	}
-
-	/**
-	 * Returns true if the categorical variable has possible values
-	 * 
-	 * @param categoricalVariable
-	 * @return
-	 */
-	public static boolean hasPossibleValues(final StandardVariable categoricalVariable) {
-		final List<Enumeration> possibleValues = categoricalVariable.getEnumerations();
-
-		if (possibleValues != null) {
-			return true;
-		}
-
-		return false;
-	}
 }

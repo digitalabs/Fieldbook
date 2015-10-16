@@ -20,6 +20,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -62,6 +63,7 @@ import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceIm
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
@@ -885,6 +887,46 @@ public class DesignImportControllerTest {
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
 		Mockito.verify(this.userSelection).setDesignImportData(null);
 
+	}
+
+	@Test
+	public void testChangeDesignForNewNurseryWithImportedDesign() {
+
+		this.designImportController.changeDesign(0, StudyType.N.toString());
+
+		// the following fields are expected to be set to null
+		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
+		Mockito.verify(this.userSelection).setDesignImportData(null);
+		Mockito.verify(this.userSelection).setExperimentalDesignVariables(null);
+		Mockito.verify(this.userSelection).setExpDesignParams(null);
+		Mockito.verify(this.userSelection).setExpDesignVariables(null);
+	}
+
+	@Test
+	public void testChangeDesignForExistingNurseryWithImportedDesign() {
+		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		nursery.getStudyDetails().setId(1);
+		final List<MeasurementRow> observations = nursery.getObservations();
+
+		Mockito.doReturn(nursery).when(this.userSelection).getWorkbook();
+
+		DesignImportDataInitializer.updatePlotNoValue(observations);
+
+		this.designImportController.changeDesign(nursery.getStudyDetails().getId(), StudyType.N.toString());
+
+		// the following fields are expected to be set to null
+		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
+		Mockito.verify(this.userSelection).setDesignImportData(null);
+		Mockito.verify(this.userSelection).setExperimentalDesignVariables(null);
+		Mockito.verify(this.userSelection).setExpDesignParams(null);
+		Mockito.verify(this.userSelection).setExpDesignVariables(null);
+
+		for (final MeasurementRow row : observations) {
+			final List<MeasurementData> dataList = row.getDataList();
+			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(), plotNoData.getValue());
+		}
 	}
 
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {

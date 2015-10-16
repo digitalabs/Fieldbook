@@ -98,7 +98,7 @@ public class CreateTrialController extends BaseTrialController {
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String show(@ModelAttribute("createTrialForm") CreateTrialForm form, Model model, HttpSession session)
+	public String show(@ModelAttribute("createTrialForm") final CreateTrialForm form, final Model model, final HttpSession session)
 			throws MiddlewareException {
 
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.USER_SELECTION_SESSION_NAME,
@@ -118,12 +118,13 @@ public class CreateTrialController extends BaseTrialController {
 
 	@ResponseBody
 	@RequestMapping(value = "/useExistingTrial", method = RequestMethod.GET)
-	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") Integer trialID) throws MiddlewareQueryException {
-		Map<String, Object> tabDetails = new HashMap<String, Object>();
+	public Map<String, Object> getExistingTrialDetails(@RequestParam(value = "trialID") final Integer trialID)
+			throws MiddlewareQueryException {
+		final Map<String, Object> tabDetails = new HashMap<String, Object>();
 		CreateTrialForm form = new CreateTrialForm();
 		try {
 			if (trialID != null && trialID != 0) {
-				Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialID);
+				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getTrialDataSet(trialID);
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
 
 				tabDetails.put("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), true));
@@ -135,7 +136,7 @@ public class CreateTrialController extends BaseTrialController {
 						trialWorkbook.getMeasurementDatesetId());
 				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
 			}
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			CreateTrialController.LOG.error(e.getMessage(), e);
 			form = this.addErrorMessageToResult(e);
 		}
@@ -144,14 +145,13 @@ public class CreateTrialController extends BaseTrialController {
 		return tabDetails;
 	}
 
-	private CreateTrialForm addErrorMessageToResult(MiddlewareException e) {
-		String param = AppConstants.TRIAL.getString();
-		CreateTrialForm form = new CreateTrialForm();
+	private CreateTrialForm addErrorMessageToResult(final MiddlewareException e) {
+		final String param = AppConstants.TRIAL.getString();
+		final CreateTrialForm form = new CreateTrialForm();
 		form.setHasError(true);
-		if(e instanceof MiddlewareQueryException) {
-			form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(
-					((MiddlewareQueryException)e).getCode(), new Object[] {param,
-				param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
+		if (e instanceof MiddlewareQueryException) {
+			form.setErrorMessage(this.errorHandlerService.getErrorMessagesAsString(((MiddlewareQueryException) e).getCode(), new Object[] {
+					param, param.substring(0, 1).toUpperCase().concat(param.substring(1, param.length())), param}, "\n"));
 		} else {
 			form.setErrorMessage(e.getMessage());
 		}
@@ -174,53 +174,53 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	@RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
-	public String showCreateTrial(Model model) {
+	public String showCreateTrial(final Model model) {
 		return this.showAjaxPage(model, BaseTrialController.URL_SETTINGS);
 	}
 
 	@RequestMapping(value = "/environment", method = RequestMethod.GET)
-	public String showEnvironments(Model model) {
+	public String showEnvironments(final Model model) {
 		return this.showAjaxPage(model, BaseTrialController.URL_ENVIRONMENTS);
 	}
 
 	@RequestMapping(value = "/germplasm", method = RequestMethod.GET)
-	public String showGermplasm(Model model, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
+	public String showGermplasm(final Model model, @ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
 		return this.showAjaxPage(model, BaseTrialController.URL_GERMPLASM);
 	}
 
 	@RequestMapping(value = "/treatment", method = RequestMethod.GET)
-	public String showTreatmentFactors(Model model) {
+	public String showTreatmentFactors(final Model model) {
 		return this.showAjaxPage(model, BaseTrialController.URL_TREATMENT);
 	}
 
 	@RequestMapping(value = "/experimentalDesign", method = RequestMethod.GET)
-	public String showExperimentalDesign(Model model) {
+	public String showExperimentalDesign(final Model model) {
 		return this.showAjaxPage(model, BaseTrialController.URL_EXPERIMENTAL_DESIGN);
 	}
 
 	@RequestMapping(value = "/measurements", method = RequestMethod.GET)
-	public String showMeasurements(Model model) {
+	public String showMeasurements(final Model model) {
 		return this.showAjaxPage(model, BaseTrialController.URL_MEASUREMENT);
 	}
 
 	@Override
 	@ResponseBody
 	@RequestMapping(value = "/retrieveVariablePairs/{id}", method = RequestMethod.GET)
-	public List<SettingDetail> retrieveVariablePairs(@PathVariable int id) {
+	public List<SettingDetail> retrieveVariablePairs(@PathVariable final int id) {
 		return super.retrieveVariablePairs(id);
 	}
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public String submit(@RequestBody TrialData data) throws MiddlewareException {
+	public String submit(@RequestBody final TrialData data) throws MiddlewareException {
 		this.processEnvironmentData(data.getEnvironments());
-		List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
+		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		basicDetails = this.addUserIdIfNecessary(basicDetails);
 		// transfer over data from user input into the list of setting details stored in the session
 		this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
-		List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
+		final List<SettingDetail> combinedList = new ArrayList<SettingDetail>();
 		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
@@ -228,30 +228,30 @@ public class CreateTrialController extends BaseTrialController {
 			combinedList.addAll(studyLevelConditions);
 		}
 
-		String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
+		final String name = data.getBasicDetails().getBasicDetails().get(Integer.toString(TermId.STUDY_NAME.getId()));
 
-		Dataset dataset =
+		final Dataset dataset =
 				(Dataset) SettingsUtil.convertPojoToXmlDataset(this.fieldbookMiddlewareService, name, combinedList, this.userSelection
 						.getPlotsLevelList(), this.userSelection.getBaselineTraitsList(), this.userSelection, this.userSelection
 						.getTrialLevelVariableList(), this.userSelection.getTreatmentFactors(),
-						data.getTreatmentFactors().getCurrentData(), null, 
-						this.userSelection.getNurseryConditions(), false, contextUtil.getCurrentProgramUUID());
+						data.getTreatmentFactors().getCurrentData(), null, this.userSelection.getNurseryConditions(), false, contextUtil
+								.getCurrentProgramUUID());
 
 		SettingsUtil.setConstantLabels(dataset, this.userSelection.getConstantsWithLabels());
-		Workbook workbook =
+		final Workbook workbook =
 				SettingsUtil.convertXmlDatasetToWorkbook(dataset, false, this.userSelection.getExpDesignParams(),
 						this.userSelection.getExpDesignVariables(), this.fieldbookMiddlewareService,
 						this.userSelection.getExperimentalDesignVariables(), contextUtil.getCurrentProgramUUID());
-		
-		
-		if (userSelection.getTemporaryWorkbook() != null){
-			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments() , workbook, userSelection.getTemporaryWorkbook().getTrialObservations());
+
+		if (userSelection.getTemporaryWorkbook() != null) {
+			addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments(), workbook, userSelection.getTemporaryWorkbook()
+					.getTrialObservations());
 		}
-		
-		List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
+
+		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<MeasurementVariable>();
 		variablesForEnvironment.addAll(workbook.getTrialVariables());
 
-		List<MeasurementRow> trialEnvironmentValues =
+		final List<MeasurementRow> trialEnvironmentValues =
 				WorkbookUtil.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
 						this.userSelection.getExpDesignParams());
 		workbook.setTrialObservations(trialEnvironmentValues);
@@ -262,26 +262,27 @@ public class CreateTrialController extends BaseTrialController {
 
 		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getEnvironments().getEnvironments()));
 
-		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyId(), name, data.getColumnOrders(), workbook);
+		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), name, data.getColumnOrders(), workbook);
 
 		return "success";
 	}
 
-	protected TabInfo prepareGermplasmTabInfo(boolean isClearSettings) {
-		List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
-		List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
+	protected TabInfo prepareGermplasmTabInfo(final boolean isClearSettings) {
+		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
-		for (Integer initialSettingID : initialSettingIDs) {
+		for (final Integer initialSettingID : initialSettingIDs) {
 			try {
-				SettingDetail detail = this.createSettingDetail(initialSettingID, null, VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
+				final SettingDetail detail =
+						this.createSettingDetail(initialSettingID, null, VariableType.GERMPLASM_DESCRIPTOR.getRole().name());
 				initialDetailList.add(detail);
-			} catch (MiddlewareException e) {
+			} catch (final MiddlewareException e) {
 				CreateTrialController.LOG.error(e.getMessage(), e);
 			}
 
 		}
 
-		TabInfo info = new TabInfo();
+		final TabInfo info = new TabInfo();
 		info.setSettings(initialDetailList);
 
 		if (isClearSettings || this.userSelection.getPlotsLevelList() == null) {
@@ -291,10 +292,10 @@ public class CreateTrialController extends BaseTrialController {
 		return info;
 	}
 
-	protected TabInfo prepareEnvironmentsTabInfo(boolean isClearSettings) throws MiddlewareException {
-		TabInfo info = new TabInfo();
-		EnvironmentData data = new EnvironmentData();
-		int noOfEnvironments = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
+	protected TabInfo prepareEnvironmentsTabInfo(final boolean isClearSettings) throws MiddlewareException {
+		final TabInfo info = new TabInfo();
+		final EnvironmentData data = new EnvironmentData();
+		final int noOfEnvironments = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
 		data.setNoOfEnvironments(noOfEnvironments);
 		info.setData(data);
 
@@ -302,13 +303,13 @@ public class CreateTrialController extends BaseTrialController {
 			data.getEnvironments().add(new Environment());
 		}
 
-		Map<String, Object> settingMap = new HashMap<String, Object>();
-		List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
-		List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
+		final Map<String, Object> settingMap = new HashMap<String, Object>();
+		final List<SettingDetail> managementDetailList = new ArrayList<SettingDetail>();
+		final List<Integer> hiddenFields = this.buildVariableIDList(AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString());
 
-		for (Integer id : this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
-			SettingDetail detail = this.createSettingDetail(id, null, VariableType.ENVIRONMENT_DETAIL.getRole().name());
-			for (Integer hiddenField : hiddenFields) {
+		for (final Integer id : this.buildVariableIDList(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString())) {
+			final SettingDetail detail = this.createSettingDetail(id, null, VariableType.ENVIRONMENT_DETAIL.getRole().name());
+			for (final Integer hiddenField : hiddenFields) {
 				if (id.equals(hiddenField)) {
 					detail.setHidden(true);
 				}
@@ -329,27 +330,27 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	protected TabInfo prepareBasicDetailsTabInfo() throws MiddlewareException {
-		Map<String, String> basicDetails = new HashMap<String, String>();
-		List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
-		List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+		final Map<String, String> basicDetails = new HashMap<String, String>();
+		final List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+		final List<Integer> initialSettingIDs = this.buildVariableIDList(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
 
-		for (Integer initialSettingID : initialSettingIDs) {
+		for (final Integer initialSettingID : initialSettingIDs) {
 			try {
 				basicDetails.put(initialSettingID.toString(), "");
-				SettingDetail detail = this.createSettingDetail(initialSettingID, null, VariableType.STUDY_DETAIL.getRole().name());
+				final SettingDetail detail = this.createSettingDetail(initialSettingID, null, VariableType.STUDY_DETAIL.getRole().name());
 				initialDetailList.add(detail);
-			} catch (MiddlewareQueryException e) {
+			} catch (final MiddlewareQueryException e) {
 				CreateTrialController.LOG.error(e.getMessage(), e);
 			}
 		}
 
-		BasicDetails basic = new BasicDetails();
+		final BasicDetails basic = new BasicDetails();
 		basic.setBasicDetails(basicDetails);
 
 		basic.setUserID(this.getCurrentIbdbUserId());
 		basic.setUserName(this.fieldbookService.getPersonByUserId(basic.getUserID()));
 
-		TabInfo tab = new TabInfo();
+		final TabInfo tab = new TabInfo();
 		tab.setData(basic);
 
 		if (this.userSelection.getBasicDetails() == null || this.userSelection.getBasicDetails().isEmpty()) {
@@ -360,19 +361,19 @@ public class CreateTrialController extends BaseTrialController {
 	}
 
 	protected TabInfo prepareTrialSettingsTabInfo() {
-		TabInfo info = new TabInfo();
+		final TabInfo info = new TabInfo();
 		info.setSettings(new ArrayList<SettingDetail>());
 		info.setData(new TrialSettingsBean());
 		return info;
 	}
 
-	private List<SettingDetail> addUserIdIfNecessary(List<SettingDetail> basicDetails) throws MiddlewareException {
+	private List<SettingDetail> addUserIdIfNecessary(final List<SettingDetail> basicDetails) throws MiddlewareException {
 		boolean found = false;
 		List<SettingDetail> detailList = basicDetails;
 		if (basicDetails == null) {
 			detailList = new ArrayList<SettingDetail>();
 		}
-		for (SettingDetail detail : detailList) {
+		for (final SettingDetail detail : detailList) {
 			if (detail.getVariable().getCvTermId() == TermId.STUDY_UID.getId()) {
 				found = true;
 				break;
@@ -405,7 +406,7 @@ public class CreateTrialController extends BaseTrialController {
 			if (this.userSelection.getImportedGermplasmMainInfo() != null) {
 				this.userSelection.setImportedGermplasmMainInfo(null);
 			}
-		} catch (MiddlewareException e) {
+		} catch (final MiddlewareException e) {
 			CreateTrialController.LOG.error(e.getMessage(), e);
 		}
 		return "success";
@@ -414,9 +415,9 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(value = "/refresh/settings/tab", method = RequestMethod.GET)
 	public Map<String, TabInfo> refreshSettingsTab() throws MiddlewareException {
-		Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
+		final Map<String, TabInfo> tabDetails = new HashMap<String, TabInfo>();
 
-		Workbook trialWorkbook = this.userSelection.getWorkbook();
+		final Workbook trialWorkbook = this.userSelection.getWorkbook();
 		this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
 
 		tabDetails.put(CreateTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
@@ -426,7 +427,7 @@ public class CreateTrialController extends BaseTrialController {
 		return tabDetails;
 	}
 
-	protected void setFieldbookMiddlewareService(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+	protected void setFieldbookMiddlewareService(final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 	}
 }

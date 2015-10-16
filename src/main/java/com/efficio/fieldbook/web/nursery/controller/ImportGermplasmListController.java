@@ -1378,12 +1378,12 @@ public class ImportGermplasmListController extends SettingsController {
 	 */
 	@ModelAttribute("checkTypes")
 	public List<Enumeration> getCheckTypes() {
-		try {
-			return this.fieldbookService.getCheckTypeList();
-		} catch (final MiddlewareException e) {
-			ImportGermplasmListController.LOG.error(e.getMessage(), e);
+		List<Enumeration> checkTypes = null;
+		checkTypes = this.fieldbookService.getCheckTypeList();
+		if (checkTypes == null) {
+			checkTypes = new ArrayList<Enumeration>();
 		}
-		return new ArrayList<>();
+		return checkTypes;
 	}
 
 	private boolean validateEnumerationDescription(final List<Enumeration> enumerations, final Enumeration newEnumeration) {

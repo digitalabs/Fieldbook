@@ -106,6 +106,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
 		}
 
+		int currIndOfTrialInstance = 0;
 		for (final Integer index : instances) {
 			final List<Integer> indexes = new ArrayList<Integer>();
 			indexes.add(index);
@@ -123,13 +124,14 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				this.writeObservationSheet(xlsBook, workbook, observations, visibleColumns);
 
 				final String filenamePath =
-						this.getFileNamePath(index, workbook.getTrialObservations().get(index - 1), instances, filename,
+						this.getFileNamePath(index, workbook.getTrialObservations().get(currIndOfTrialInstance), instances, filename,
 								workbook.isNursery());
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
 
+				currIndOfTrialInstance++;
 			} catch (final Exception e) {
 				ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
 			} finally {

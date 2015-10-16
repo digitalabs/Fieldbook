@@ -92,13 +92,12 @@ public class DesignImportMeasurementRowGenerator {
 
 	private void addTrialDesignAndVariatesToDataList(final List<String> rowValues, final FieldbookService fieldbookService,
 			final List<MeasurementData> dataList) {
-		final Map<Integer, DesignHeaderItem> trialEnvironmentHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
+		this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
 		final Map<Integer, DesignHeaderItem> trialDesignHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_DESIGN);
 		final Map<Integer, DesignHeaderItem> variateHeaders = this.mappedHeaders.get(PhenotypicType.VARIATE);
 		final List<DesignHeaderItem> remainingColumnHeaders = new ArrayList<DesignHeaderItem>();
 		remainingColumnHeaders.addAll(trialDesignHeaders.values());
 		remainingColumnHeaders.addAll(variateHeaders.values());
-		remainingColumnHeaders.add(trialEnvironmentHeaders.get(TermId.TRIAL_INSTANCE_FACTOR.getId()));
 
 		for (final DesignHeaderItem headerItem : remainingColumnHeaders) {
 			final String value = rowValues.get(headerItem.getColumnIndex());
@@ -132,7 +131,7 @@ public class DesignImportMeasurementRowGenerator {
 		// ENTRY_TYPE or CHECK
 		boolean hasEntryTypeColumnFromTheImport = false;
 		final DesignHeaderItem entryTypeHeaderItem = germplasmHeaders.get(TermId.ENTRY_TYPE.getId());
-		if (entryTypeHeaderItem != null) {
+		if (entryTypeHeaderItem != null && this.germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()) != null) {
 			final String checkType = String.valueOf(rowValues.get(entryTypeHeaderItem.getColumnIndex()));
 			final String checkTypeId = String.valueOf(this.availableCheckTypes.get(checkType));
 			dataList.add(this.createMeasurementData(this.germplasmStandardVariables.get(TermId.ENTRY_TYPE.getId()), checkTypeId,

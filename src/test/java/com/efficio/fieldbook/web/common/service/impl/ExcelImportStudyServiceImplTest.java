@@ -9,6 +9,8 @@ import junit.framework.Assert;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -17,19 +19,30 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
 
+@RunWith(value = MockitoJUnitRunner.class)
 public class ExcelImportStudyServiceImplTest {
+
+	private static final String TRIAL_INSTANCE_NO = "1";
+	private static final String CATEGORICAL_ID = TRIAL_INSTANCE_NO;
+	private static final String POSSIBLE_VALUE_NAME = "Possible Value Name";
+	private static final String TEMPLATE_SECTION_CONDITION = "CONDITION";
+	private static final String TEMPLATE_SECTION_FACTOR = "FACTOR";
 
 	private static final String LABEL = "Label";
 	private static final String METHOD = "Method";
 	private static final String SCALE = "Scale";
 	private static final String PROPERTY = "Property";
-	private ExcelImportStudyServiceImpl importStudy;
 	private final String testValue = "testValue";
 	private final String currentValue = "currentValue";
 
@@ -44,10 +57,17 @@ public class ExcelImportStudyServiceImplTest {
 	private Cell scaleCell;
 	private Cell methodCell;
 	private Cell labelCell;
+	private Cell trialInstanceCell;
+	private org.apache.poi.ss.usermodel.Workbook xlsBook;
+
+	@Mock
+	private FieldbookService fieldbookMiddlewareService;
+
+	@InjectMocks
+	private ExcelImportStudyServiceImpl importStudy;
 
 	@Before
 	public void setUp() {
-		this.importStudy = Mockito.spy(new ExcelImportStudyServiceImpl());
 
 		this.initTestVariables();
 	}
@@ -65,6 +85,14 @@ public class ExcelImportStudyServiceImplTest {
 		this.scaleCell = Mockito.mock(Cell.class);
 		this.methodCell = Mockito.mock(Cell.class);
 		this.labelCell = Mockito.mock(Cell.class);
+		this.trialInstanceCell = Mockito.mock(Cell.class);
+
+		Mockito.doReturn(PROPERTY).when(this.propertyCell).getStringCellValue();
+		Mockito.doReturn(SCALE).when(this.scaleCell).getStringCellValue();
+		Mockito.doReturn(METHOD).when(this.methodCell).getStringCellValue();
+		Mockito.doReturn(LABEL).when(this.labelCell).getStringCellValue();
+
+		this.xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
 	}
 
 	@Test
@@ -214,10 +242,6 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testIsPropertyScaleMethodLabelCellHasStringValue_ReturnsTrueIfAllFieldsHasStringValue() {
-		Mockito.doReturn(PROPERTY).when(this.propertyCell).getStringCellValue();
-		Mockito.doReturn(SCALE).when(this.scaleCell).getStringCellValue();
-		Mockito.doReturn(METHOD).when(this.methodCell).getStringCellValue();
-		Mockito.doReturn(LABEL).when(this.labelCell).getStringCellValue();
 
 		Assert.assertTrue("Expecting to return true if Property,Scale,Method,Label have string value but didn't.", this.importStudy
 				.isPropertyScaleMethodLabelCellHasStringValue(this.propertyCell, this.scaleCell, this.methodCell, this.labelCell));
@@ -225,9 +249,7 @@ public class ExcelImportStudyServiceImplTest {
 
 	@Test
 	public void testIsPropertyScaleMethodLabelCellHasStringValue_ReturnsFalseIfAtLeastOneFromFieldsHasNoStringValue() {
-		Mockito.doReturn(PROPERTY).when(this.propertyCell).getStringCellValue();
-		Mockito.doReturn(SCALE).when(this.scaleCell).getStringCellValue();
-		Mockito.doReturn(METHOD).when(this.methodCell).getStringCellValue();
+
 		Mockito.doReturn(null).when(this.labelCell).getStringCellValue();
 
 		Assert.assertFalse("Expecting to return false if at least one from Property,Scale,Method,Label has no string value but didn't.",
@@ -241,7 +263,7 @@ public class ExcelImportStudyServiceImplTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
 
 		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.", "1",
+		Assert.assertEquals("Expecting to return 1 for the value of trialInstance in Nursery but didn't.", TRIAL_INSTANCE_NO,
 				this.importStudy.getTrialInstanceNumber(workbook, xlsBook));
 	}
 
@@ -250,13 +272,43 @@ public class ExcelImportStudyServiceImplTest {
 		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
-		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		this.setUpXLSWorkbookTestData();
+		Mockito.doReturn(TermId.TRIAL_INSTANCE_FACTOR.getId()).when(this.fieldbookMiddlewareService)
+				.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
 
 		final String toBeReturned = "2";
-		Mockito.doReturn(toBeReturned).when(this.importStudy).getTrialInstanceNumber(xlsBook);
+		Mockito.doReturn(toBeReturned).when(this.trialInstanceCell).getStringCellValue();
 
 		Assert.assertEquals("Expecting to return the value returned from the getTrialInstaceNumber method but didn't.", toBeReturned,
-				this.importStudy.getTrialInstanceNumber(workbook, xlsBook));
+				this.importStudy.getTrialInstanceNumber(workbook, this.xlsBook));
+	}
+
+	private void setUpXLSWorkbookTestData() {
+		final Sheet descriptionSheet = Mockito.mock(Sheet.class);
+		Mockito.doReturn(descriptionSheet).when(this.xlsBook).getSheetAt(0);
+		final int noOfRows = 3;
+		Mockito.doReturn(noOfRows).when(descriptionSheet).getLastRowNum();
+
+		final Row conditionRow = Mockito.mock(Row.class);
+		Mockito.doReturn(conditionRow).when(descriptionSheet).getRow(1);
+		final Cell conditionCell = Mockito.mock(Cell.class);
+		Mockito.doReturn(conditionCell).when(conditionRow).getCell(0);
+		Mockito.doReturn(TEMPLATE_SECTION_CONDITION).when(conditionCell).getStringCellValue();
+
+		final Row factorRow = Mockito.mock(Row.class);
+		Mockito.doReturn(factorRow).when(descriptionSheet).getRow(noOfRows);
+		final Cell factorCell = Mockito.mock(Cell.class);
+		Mockito.doReturn(factorCell).when(factorRow).getCell(0);
+		Mockito.doReturn(TEMPLATE_SECTION_FACTOR).when(factorCell).getStringCellValue();
+
+		Mockito.doReturn(conditionRow).when(descriptionSheet).getRow(2);
+		Mockito.doReturn(this.propertyCell).when(conditionRow).getCell(2);
+		Mockito.doReturn(this.scaleCell).when(conditionRow).getCell(3);
+		Mockito.doReturn(this.methodCell).when(conditionRow).getCell(4);
+		Mockito.doReturn(this.labelCell).when(conditionRow).getCell(7);
+
+		Mockito.doReturn(Cell.CELL_TYPE_STRING).when(this.trialInstanceCell).getCellType();
+		Mockito.doReturn(this.trialInstanceCell).when(conditionRow).getCell(6);
 	}
 
 	@Test
@@ -264,12 +316,12 @@ public class ExcelImportStudyServiceImplTest {
 		WorkbookDataUtil.setTestWorkbook(null);
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, StudyType.T);
 
-		final org.apache.poi.ss.usermodel.Workbook xlsBook = Mockito.mock(org.apache.poi.ss.usermodel.Workbook.class);
-
-		Mockito.doReturn(null).when(this.importStudy).getTrialInstanceNumber(xlsBook);
+		this.setUpXLSWorkbookTestData();
+		Mockito.doReturn(null).when(this.fieldbookMiddlewareService)
+				.getStandardVariableIdByPropertyScaleMethodRole(PROPERTY, SCALE, METHOD, PhenotypicType.getPhenotypicTypeForLabel(LABEL));
 
 		try {
-			this.importStudy.getTrialInstanceNumber(workbook, xlsBook);
+			this.importStudy.getTrialInstanceNumber(workbook, this.xlsBook);
 			Assert.fail("Expecting to return an exception when the trial instance from the xls file is null but didn't.");
 		} catch (final WorkbookParserException e) {
 			// do nothing
@@ -322,20 +374,16 @@ public class ExcelImportStudyServiceImplTest {
 	@Test
 	public void testGetXlsValue_ReturnsXlsValueFromCategoricalVariablePossibleValues() {
 		final MeasurementRow temp = new MeasurementRow();
+
 		final MeasurementVariable var = new MeasurementVariable();
-		final MeasurementVariable origVar = new MeasurementVariable();
+		var.setValue(POSSIBLE_VALUE_NAME);
+
 		final MeasurementData data = new MeasurementData();
 
-		var.setValue("tempValue");
-		final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
-		possibleValues.add(new ValueReference());
-		origVar.setPossibleValues(possibleValues);
-		origVar.setDataTypeId(TermId.CATEGORICAL_VARIABLE.getId());
+		final MeasurementVariable origVar = this.createMeasurementVariable(TermId.CATEGORICAL_VARIABLE.getId());
+		origVar.setValue(POSSIBLE_VALUE_NAME);
 
-		final String expectedValue = "ExpectedXlsValue";
-		Mockito.doReturn(expectedValue).when(this.importStudy).getCategoricalIdCellValue(var, origVar);
-
-		Assert.assertEquals("Expecting to return the value from getCategoricalIdCellValue() but didn't.", expectedValue,
+		Assert.assertEquals("Expecting to return the value from getCategoricalIdCellValue() but didn't.", CATEGORICAL_ID,
 				this.importStudy.getXlsValue(var, temp, data, origVar));
 	}
 
@@ -373,7 +421,7 @@ public class ExcelImportStudyServiceImplTest {
 
 		if (TermId.CATEGORICAL_VARIABLE.getId() == dataTypeId) {
 			final List<ValueReference> possibleValues = new ArrayList<ValueReference>();
-			possibleValues.add(new ValueReference(1, "1"));
+			possibleValues.add(new ValueReference(1, POSSIBLE_VALUE_NAME));
 			var.setPossibleValues(possibleValues);
 		}
 

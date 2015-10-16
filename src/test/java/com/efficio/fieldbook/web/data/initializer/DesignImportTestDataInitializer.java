@@ -26,7 +26,7 @@ import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
-public class DesignImportDataInitializer {
+public class DesignImportTestDataInitializer {
 
 	public static final int NO_OF_CHARACTER_VARIABLES = 1;
 	public static final int NO_OF_CATEGORICAL_VARIABLES = 1;

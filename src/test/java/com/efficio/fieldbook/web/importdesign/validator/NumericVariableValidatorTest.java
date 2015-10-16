@@ -8,7 +8,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.junit.Test;
 
-import com.efficio.fieldbook.web.data.initializer.DesignImportDataInitializer;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.importdesign.validator.NumericVariableValidator;
 
 public class NumericVariableValidatorTest {
@@ -17,8 +17,8 @@ public class NumericVariableValidatorTest {
 	public void testIsNumericValueWithinTheRangeReturnsFalseForValuesBeyondRange() {
 
 		final StandardVariable variable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
-						DesignImportDataInitializer.NUMERIC_VARIABLE, "N", "", "");
+				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
+						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "");
 		final Scale numericScale = new Scale();
 		numericScale.setMinValue("1");
 		numericScale.setMaxValue("100");
@@ -38,8 +38,8 @@ public class NumericVariableValidatorTest {
 	public void testIsNumericValueWithinTheRangeReturnsFalseForValuesWithinTheRange() {
 
 		final StandardVariable variable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
-						DesignImportDataInitializer.NUMERIC_VARIABLE, "N", "", "");
+				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
+						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "");
 		final Scale numericScale = new Scale();
 		numericScale.setMinValue("1");
 		numericScale.setMaxValue("100");
@@ -63,8 +63,8 @@ public class NumericVariableValidatorTest {
 	public void testIsNumericValueWithinTheRangeReturnsTrueWhenTheScaleOfStandardVariableHasNoSpecifiedRange() {
 
 		final StandardVariable variable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
-						DesignImportDataInitializer.NUMERIC_VARIABLE, "N", "", "");
+				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
+						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "");
 		final Scale numericScale = new Scale();
 		variable.setScale(numericScale);
 
@@ -77,8 +77,8 @@ public class NumericVariableValidatorTest {
 	@Test
 	public void testIsValidNumericValueForNumericVariable() {
 		final StandardVariable variable =
-				DesignImportDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
-						DesignImportDataInitializer.NUMERIC_VARIABLE, "N", "", "");
+				DesignImportTestDataInitializer.createStandardVariable(PhenotypicType.VARIATE, 20421, "SPAD_CCI", "", "", "",
+						DesignImportTestDataInitializer.NUMERIC_VARIABLE, "N", "", "");
 		final Scale numericScale = new Scale();
 		numericScale.setMinValue("1");
 		numericScale.setMaxValue("100");

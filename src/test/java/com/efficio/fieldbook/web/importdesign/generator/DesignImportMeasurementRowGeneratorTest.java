@@ -38,7 +38,7 @@ import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.data.initializer.DesignImportDataInitializer;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 
@@ -84,7 +84,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
 
-		this.designImportData = DesignImportDataInitializer.createDesignImportData();
+		this.designImportData = DesignImportTestDataInitializer.createDesignImportData();
 		this.mappedHeadersWithStdVarId = this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 		this.germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
 
@@ -115,7 +115,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 		final List<ImportedGermplasm> importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
 		final Map<Integer, StandardVariable> germplasmStandardVariables =
-				DesignImportDataInitializer.getStandardVariables(PhenotypicType.GERMPLASM, workbook.getFactors());
+				DesignImportTestDataInitializer.getStandardVariables(PhenotypicType.GERMPLASM, workbook.getFactors());
 		final List<MeasurementData> dataList = new ArrayList<>();
 
 		this.generator.setWorkbook(workbook);
@@ -173,8 +173,8 @@ public class DesignImportMeasurementRowGeneratorTest {
 				.getImportedGermplasmMainInfo();
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 3);
-		final EnvironmentData environmentData = DesignImportDataInitializer.createEnvironmentData(1);
-		DesignImportDataInitializer.processEnvironmentData(environmentData);
+		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
+		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
 		final List<MeasurementRow> measurements = workbook.getObservations();
 
 		final MeasurementVariable variate = new MeasurementVariable();

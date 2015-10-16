@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -261,8 +262,15 @@ public class DesignImportController extends SettingsController {
 								this.userSelection.getWorkbook().getMeasurementDatasetVariables()));
 			}
 
+			boolean hasChecksSelected = false;
+
+			if (this.userSelection.getWorkbook() != null) {
+				hasChecksSelected = this.hasCheckVariables(this.userSelection.getWorkbook().getConditions());
+			}
+
 			resultsMap.put("success", Boolean.TRUE);
 			resultsMap.put("hasConflict", hasConflict);
+			resultsMap.put("hasChecksSelected", hasChecksSelected);
 		} catch (MiddlewareException | DesignValidationException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
@@ -1109,6 +1117,29 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 		return "";
+	}
+
+	protected boolean hasCheckVariables(List<MeasurementVariable> conditions) {
+		if (conditions != null && !conditions.isEmpty()) {
+			for (MeasurementVariable var : conditions) {
+				if (this.isCheckVariable(var.getTermId())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean isCheckVariable(int termId) {
+		StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");
+		if (tokenizer.hasMoreTokens()) {
+			while (tokenizer.hasMoreTokens()) {
+				if (Integer.valueOf(tokenizer.nextToken()).intValue() == termId) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

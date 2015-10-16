@@ -57,17 +57,15 @@ var ImportDesign = (function() {
 		},
 
 		showPopup: function(hasGermplasmListSelected) {
-			if (hasGermplasmListSelected && !ImportDesign.hasCheckListSelected()) {
+			if (hasGermplasmListSelected) {
 				$('#importDesignModal').modal({
 					backdrop: 'static',
 					keyboard: true
 				});
 			} else {
-				if (ImportDesign.hasCheckListSelected()) {
-					showErrorMessage(designImportErrorHeader, 'You cannot import a design if you have Selected Checks specified.');
-				} else {
-					showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
-				}
+				
+				showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
+				
 			}
 
 		},

@@ -85,15 +85,16 @@ public class DesignImportTestDataInitializer {
 		final Map<Integer, List<String>> csvData = new HashMap<>();
 
 		// The first row is the header
-		csvData.put(0, createListOfString("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
+		csvData.put(0, com.google.common.collect.Lists.newArrayList("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO",
+				"BLOCK_NO", "AflavER_1_5"));
 
 		// csv data
-		csvData.put(1, createListOfString("1", "Laguna", "1", "1", "1", "1", "1"));
-		csvData.put(2, createListOfString("1", "Laguna", "2", "2", "1", "1", "2"));
-		csvData.put(3, createListOfString("2", "Bicol", "1", "6", "1", "1", "3"));
-		csvData.put(4, createListOfString("2", "Bicol", "2", "7", "1", "1", "2"));
-		csvData.put(5, createListOfString("3", "Bulacan", "1", "11", "1", "2", "3"));
-		csvData.put(6, createListOfString("3", "Bulacan", "2", "12", "1", "2", "1"));
+		csvData.put(1, com.google.common.collect.Lists.newArrayList("1", "Laguna", "1", "1", "1", "1", "1"));
+		csvData.put(2, com.google.common.collect.Lists.newArrayList("1", "Laguna", "2", "2", "1", "1", "2"));
+		csvData.put(3, com.google.common.collect.Lists.newArrayList("2", "Bicol", "1", "6", "1", "1", "3"));
+		csvData.put(4, com.google.common.collect.Lists.newArrayList("2", "Bicol", "2", "7", "1", "1", "2"));
+		csvData.put(5, com.google.common.collect.Lists.newArrayList("3", "Bulacan", "1", "11", "1", "2", "3"));
+		csvData.put(6, com.google.common.collect.Lists.newArrayList("3", "Bulacan", "2", "12", "1", "2", "1"));
 
 		return csvData;
 
@@ -165,10 +166,6 @@ public class DesignImportTestDataInitializer {
 
 		}
 		return possibleValues;
-	}
-
-	public static List<String> createListOfString(final String... listData) {
-		return com.google.common.collect.Lists.newArrayList(listData);
 	}
 
 	public static DesignHeaderItem filterDesignHeaderItemsByTermId(final TermId termId, final List<DesignHeaderItem> headerDesignItems) {

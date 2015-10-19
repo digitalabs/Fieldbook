@@ -153,8 +153,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				return filenamePath.substring(0, fileExtensionIndex) + "-" + trialInstanceNo + SettingsUtil.cleanSheetAndFileName(siteName)
 						+ filenamePath.substring(fileExtensionIndex);
 			} else {
-				return filename.substring(0, filename.lastIndexOf(".")) + "-" + trialInstanceNo + SettingsUtil.cleanSheetAndFileName(siteName)
-						+ filenamePath.substring(fileExtensionIndex);
+				return filename.substring(0, filename.lastIndexOf(".")) + "-" + trialInstanceNo
+						+ SettingsUtil.cleanSheetAndFileName(siteName) + filenamePath.substring(fileExtensionIndex);
 			}
 		}
 		return filenamePath;

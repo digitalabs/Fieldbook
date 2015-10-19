@@ -103,17 +103,15 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		this.breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
 
-		int currIndOfTrialInstance = 0;
 		for (final Integer trialInstanceNo : instances) {
 			final List<Integer> indexes = new ArrayList<Integer>();
 			indexes.add(trialInstanceNo);
 
 			final List<MeasurementRow> observations =
 					ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
-			final List<MeasurementRow> trialObservations =
-					ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), indexes);
+
 			try {
-				final MeasurementRow trialObservation = trialObservations.get(0);
+				final MeasurementRow trialObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
 
 				final HSSFWorkbook xlsBook = new HSSFWorkbook();
 
@@ -121,14 +119,11 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				this.writeObservationSheet(xlsBook, workbook, observations, visibleColumns);
 
 				final String filenamePath =
-						this.getFileNamePath(trialInstanceNo, workbook.getTrialObservations().get(currIndOfTrialInstance), instances, filename,
-								workbook.isNursery());
+						this.getFileNamePath(trialInstanceNo, trialObservation, instances, filename, workbook.isNursery());
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
-
-				currIndOfTrialInstance++;
 			} finally {
 				if (fos != null) {
 					fos.close();

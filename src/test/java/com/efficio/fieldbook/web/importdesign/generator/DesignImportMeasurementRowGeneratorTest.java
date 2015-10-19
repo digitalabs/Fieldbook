@@ -90,6 +90,8 @@ public class DesignImportMeasurementRowGeneratorTest {
 		this.designImportData = DesignImportTestDataInitializer.createDesignImportData();
 		this.mappedHeadersWithStdVarId = this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 		this.germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
+		this.germplasmStandardVariables.put(TermId.ENTRY_NO.getId(), DesignImportTestDataInitializer.createStandardVariable(
+				PhenotypicType.GERMPLASM, TermId.ENTRY_NO.getId(), "ENTRY_NO", "", "", "", TermId.NUMERIC_VARIABLE.getId(), "", "", ""));
 
 		this.rowValues = new ArrayList<String>();
 		this.importedGermplasm = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();

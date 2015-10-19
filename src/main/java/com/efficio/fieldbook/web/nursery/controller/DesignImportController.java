@@ -73,6 +73,8 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
 
+	private static final String SUCCESS = "success";
+
 	public static final String IS_SUCCESS = "isSuccess";
 
 	public static final String ERROR = "error";
@@ -146,6 +148,39 @@ public class DesignImportController extends SettingsController {
 			// error messages is still in .prop format,
 			resultsMap.put(ERROR, new String[] {e.getMessage()});
 		}
+
+		// we return string instead of json to fix IE issue rel. DataTable
+		return this.convertObjectToJson(resultsMap);
+	}
+
+	/**
+	 * For now this method is only applicable in Nursery. Added the studyType as a parameter for future implementation.
+	 * 
+	 * @param studyId
+	 * @param studyType
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/import/change/{studyId}/{studyType}", method = RequestMethod.POST,
+			produces = "application/json; charset=utf-8")
+	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final String studyType) {
+
+		final Map<String, Object> resultsMap = new HashMap<>();
+
+		// reset
+		this.cancelImportDesign();
+
+		this.userSelection.setExperimentalDesignVariables(null);
+		this.userSelection.setExpDesignParams(null);
+		this.userSelection.setExpDesignVariables(null);
+
+		// handling for existing study
+		if (studyId != null && studyId != 0) {
+			WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getWorkbook().getObservations());
+		}
+
+		resultsMap.put(IS_SUCCESS, 1);
+		resultsMap.put(SUCCESS, this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
 
 		// we return string instead of json to fix IE issue rel. DataTable
 		return this.convertObjectToJson(resultsMap);
@@ -261,13 +296,13 @@ public class DesignImportController extends SettingsController {
 								this.userSelection.getWorkbook().getMeasurementDatasetVariables()));
 			}
 
-			resultsMap.put("success", Boolean.TRUE);
+			resultsMap.put(SUCCESS, Boolean.TRUE);
 			resultsMap.put("hasConflict", hasConflict);
 		} catch (MiddlewareException | DesignValidationException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
-			resultsMap.put("success", Boolean.FALSE);
+			resultsMap.put(SUCCESS, Boolean.FALSE);
 			resultsMap.put(ERROR, e.getMessage());
 			resultsMap.put("message", e.getMessage());
 		}
@@ -808,7 +843,7 @@ public class DesignImportController extends SettingsController {
 
 				// For TRIAL_LOCATION (Location Name)
 				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()) {
-					final String termId = nameIdMap.get(managementDetail.getKey());
+					final String termId = nameIdMap.get(managementDetail.getKey().toUpperCase());
 					if (termId != null) {
 
 						if (this.isTermIdExisting(Integer.valueOf(managementDetail.getKey()),

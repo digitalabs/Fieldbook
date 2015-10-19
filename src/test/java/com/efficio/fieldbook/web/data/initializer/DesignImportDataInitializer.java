@@ -7,18 +7,21 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 public class DesignImportDataInitializer {
 
@@ -198,4 +201,18 @@ public class DesignImportDataInitializer {
 
 	}
 
+	public static void updatePlotNoValue(final List<MeasurementRow> observations) {
+		// alter the data first to make sure the PLOT_NO and ENTRY_NO value is not the same
+		int plotNoId = observations.size();
+		int entryNoId = 1;
+		for (final MeasurementRow row : observations) {
+			final List<MeasurementData> dataList = row.getDataList();
+			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+			entryNoData.setValue(String.valueOf(entryNoId));
+			plotNoData.setValue(String.valueOf(plotNoId));
+			plotNoId--;
+			entryNoId++;
+		}
+	}
 }

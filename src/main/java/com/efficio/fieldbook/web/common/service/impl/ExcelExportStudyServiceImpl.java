@@ -107,9 +107,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 
 		int currIndOfTrialInstance = 0;
-		for (final Integer index : instances) {
+		for (final Integer trialInstanceNo : instances) {
 			final List<Integer> indexes = new ArrayList<Integer>();
-			indexes.add(index);
+			indexes.add(trialInstanceNo);
 
 			final List<MeasurementRow> observations =
 					ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
@@ -124,7 +124,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				this.writeObservationSheet(xlsBook, workbook, observations, visibleColumns);
 
 				final String filenamePath =
-						this.getFileNamePath(index, workbook.getTrialObservations().get(currIndOfTrialInstance), instances, filename,
+						this.getFileNamePath(trialInstanceNo, workbook.getTrialObservations().get(currIndOfTrialInstance), instances, filename,
 								workbook.isNursery());
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
@@ -156,7 +156,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		return outputFilename;
 	}
 
-	protected String getFileNamePath(final int index, final MeasurementRow trialObservation, final List<Integer> instances,
+	protected String getFileNamePath(final int trialInstanceNo, final MeasurementRow trialObservation, final List<Integer> instances,
 			final String filename, final boolean isNursery) {
 		final String filenamePath =
 				this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(filename);
@@ -164,10 +164,10 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			final int fileExtensionIndex = filenamePath.lastIndexOf(".");
 			final String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, this.fieldbookMiddlewareService);
 			if (instances.size() > 1) {
-				return filenamePath.substring(0, fileExtensionIndex) + "-" + index + SettingsUtil.cleanSheetAndFileName(siteName)
+				return filenamePath.substring(0, fileExtensionIndex) + "-" + trialInstanceNo + SettingsUtil.cleanSheetAndFileName(siteName)
 						+ filenamePath.substring(fileExtensionIndex);
 			} else {
-				return filename.substring(0, filename.lastIndexOf(".")) + "-" + index + SettingsUtil.cleanSheetAndFileName(siteName)
+				return filename.substring(0, filename.lastIndexOf(".")) + "-" + trialInstanceNo + SettingsUtil.cleanSheetAndFileName(siteName)
 						+ filenamePath.substring(fileExtensionIndex);
 			}
 		}

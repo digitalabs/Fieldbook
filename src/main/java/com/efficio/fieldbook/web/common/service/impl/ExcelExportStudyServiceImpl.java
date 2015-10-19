@@ -148,8 +148,13 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	protected String getFileNamePath(final int trialInstanceNo, final MeasurementRow trialObservation, final List<Integer> instances,
 			final String filename, final boolean isNursery) {
 
-		final String filenamePath =
-				this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(filename);
+		String filenamePath = "";
+		StringBuilder filenameBuilder = new StringBuilder();
+		filenameBuilder.append(this.fieldbookProperties.getUploadDirectory());
+		filenameBuilder.append(File.separator);
+		filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(filename));
+
+		filenamePath = filenameBuilder.toString();
 
 		if (isNursery) {
 			return filenamePath;
@@ -161,14 +166,21 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			final int fileExtensionIndex = filenamePath.lastIndexOf(".");
 			final String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, this.fieldbookMiddlewareService);
 
+			filenameBuilder = new StringBuilder();
 			if (instances.size() > 1) {
-				return filenamePath.substring(0, fileExtensionIndex) + "-" + trialInstanceNo + SettingsUtil.cleanSheetAndFileName(siteName)
-						+ filenamePath.substring(fileExtensionIndex);
+				filenameBuilder.append(filenamePath.substring(0, fileExtensionIndex));
 			} else {
-				return filename.substring(0, filename.lastIndexOf(".")) + "-" + trialInstanceNo
-						+ SettingsUtil.cleanSheetAndFileName(siteName) + filenamePath.substring(fileExtensionIndex);
+				filenameBuilder.append(filename.substring(0, filename.lastIndexOf(".")));
 			}
+
+			filenameBuilder.append("-");
+			filenameBuilder.append(trialInstanceNo);
+			filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(siteName));
+			filenameBuilder.append(filenamePath.substring(fileExtensionIndex));
+
+			filenamePath = filenameBuilder.toString();
 		}
+
 		return filenamePath;
 	}
 

@@ -65,16 +65,16 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		final List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
 
-		for (final Integer index : instances) {
+		for (final Integer trialInstanceNo : instances) {
 			final List<Integer> indexes = new ArrayList<Integer>();
-			indexes.add(index);
+			indexes.add(trialInstanceNo);
 
 			final List<MeasurementRow> observations = this.getApplicableObservations(workbook, indexes);
 
 			try {
 
 				final String filenamePath =
-						this.getFileNamePath(index, workbook.getTrialObservationByTrialInstanceNo(index), instances, filename,
+						this.getFileNamePath(trialInstanceNo, workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo), instances, filename,
 								workbook.isNursery());
 
 				final List<ExportColumnHeader> exportColumnHeaders =

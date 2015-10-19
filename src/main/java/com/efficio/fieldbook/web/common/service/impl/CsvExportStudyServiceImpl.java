@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,12 +53,13 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 	private GermplasmExportService germplasmExportService;
 
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 		return this.export(workbook, filename, instances, null);
 	}
 
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances, final List<Integer> visibleColumns) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances, final List<Integer> visibleColumns)
+			throws IOException {
 
 		final FileOutputStream fos = null;
 		final List<String> filenameList = new ArrayList<String>();
@@ -87,15 +89,9 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 				filenameList.add(filenamePath);
 
 				currIndOfTrialInstance++;
-			} catch (final Exception e) {
-				CsvExportStudyServiceImpl.LOG.error(e.getMessage(), e);
 			} finally {
 				if (fos != null) {
-					try {
-						fos.close();
-					} catch (final Exception e) {
-						CsvExportStudyServiceImpl.LOG.error(e.getMessage(), e);
-					}
+					fos.close();
 				}
 			}
 		}

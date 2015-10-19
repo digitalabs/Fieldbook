@@ -46,12 +46,13 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	private OntologyService ontologyService;
 
 	@Override
-	public String export(final Workbook workbook, final String outputFile, final List<Integer> instances) {
+	public String export(final Workbook workbook, final String outputFile, final List<Integer> instances) throws IOException {
 		return this.exportToR(workbook, outputFile, null, instances);
 	}
 
 	@Override
-	public String exportToR(final Workbook workbook, final String outputFile, final Integer selectedTrait, final List<Integer> instances) {
+	public String exportToR(final Workbook workbook, final String outputFile, final Integer selectedTrait, final List<Integer> instances)
+			throws IOException {
 		final String outFile = this.fieldbookProperties.getUploadDirectory() + File.separator + outputFile;
 		final List<MeasurementRow> observations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
@@ -71,9 +72,6 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 			csv.writeTraitsR(csvOutput);
 			csvOutput.endRecord();
 			csv.writeDATAR(csvOutput, this.ontologyService);
-
-		} catch (final IOException e) {
-			RExportStudyServiceImpl.LOG.error("CSV export was not successful", e);
 
 		} finally {
 			if (csvOutput != null) {

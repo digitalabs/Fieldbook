@@ -42,7 +42,7 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 	private OntologyService ontologyService;
 
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 
 		final List<String> filenameList = new ArrayList<String>();
 
@@ -71,9 +71,6 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 					csvWriter.endRecord();
 				}
 				filenameList.add(filenamePath);
-
-			} catch (final IOException e) {
-				KsuCsvExportStudyServiceImpl.LOG.error("ERROR in KSU CSV Export Study", e);
 
 			} finally {
 				if (csvWriter != null) {

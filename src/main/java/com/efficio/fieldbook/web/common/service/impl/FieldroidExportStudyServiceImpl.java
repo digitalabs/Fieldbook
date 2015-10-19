@@ -51,7 +51,7 @@ public class FieldroidExportStudyServiceImpl implements FieldroidExportStudyServ
 	 * java.lang.String)
 	 */
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 		final String outputFile = this.fieldbookProperties.getUploadDirectory() + File.separator + filename;
 		CsvWriter csvOutput = null;
 		final List<MeasurementRow> observations =
@@ -78,9 +78,6 @@ public class FieldroidExportStudyServiceImpl implements FieldroidExportStudyServ
 			csvOutput.endRecord();
 			csv.writeRows(csvOutput, 23);
 			csv.writeDATA(csvOutput, this.ontologyService);
-
-		} catch (final IOException e) {
-			FieldroidExportStudyServiceImpl.LOG.error("ERROR AL CREAR CVS fieldlog", e);
 
 		} finally {
 			if (csvOutput != null) {

@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyServic
 	private OntologyService ontologyService;
 
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 
 		String outputFilename = null;
 		FileOutputStream fos = null;
@@ -98,15 +99,9 @@ public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyServic
 							+ AppConstants.ZIP_FILE_SUFFIX.getString();
 			ZipUtil.zipIt(outputFilename, filenameList);
 
-		} catch (final Exception e) {
-			KsuExcelExportStudyServiceImpl.LOG.error("Export was not successful", e);
 		} finally {
 			if (fos != null) {
-				try {
-					fos.close();
-				} catch (final Exception e) {
-					KsuExcelExportStudyServiceImpl.LOG.error("Export was not successful", e);
-				}
+				fos.close();
 			}
 		}
 

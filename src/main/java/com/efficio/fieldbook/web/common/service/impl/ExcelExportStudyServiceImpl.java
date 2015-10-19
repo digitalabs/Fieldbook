@@ -114,16 +114,18 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				final MeasurementRow trialObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
 
 				final HSSFWorkbook xlsBook = new HSSFWorkbook();
-
 				this.writeDescriptionSheet(xlsBook, workbook, trialObservation, visibleColumns);
 				this.writeObservationSheet(xlsBook, workbook, observations, visibleColumns);
 
 				final String filenamePath =
 						this.getFileNamePath(trialInstanceNo, trialObservation, instances, filename, workbook.isNursery());
+
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
+
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
+
 			} finally {
 				if (fos != null) {
 					fos.close();
@@ -131,6 +133,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			}
 		}
 
+		// multiple instances
 		if (instances != null && instances.size() > 1) {
 			outputFilename =
 					this.fieldbookProperties.getUploadDirectory() + File.separator
@@ -144,11 +147,20 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 	protected String getFileNamePath(final int trialInstanceNo, final MeasurementRow trialObservation, final List<Integer> instances,
 			final String filename, final boolean isNursery) {
+
 		final String filenamePath =
 				this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(filename);
-		if (instances != null && (instances.size() > 1 || !isNursery)) {
+
+		if (isNursery) {
+			return filenamePath;
+		}
+
+		// For Trial
+		if (instances != null && !instances.isEmpty()) {
+
 			final int fileExtensionIndex = filenamePath.lastIndexOf(".");
 			final String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, this.fieldbookMiddlewareService);
+
 			if (instances.size() > 1) {
 				return filenamePath.substring(0, fileExtensionIndex) + "-" + trialInstanceNo + SettingsUtil.cleanSheetAndFileName(siteName)
 						+ filenamePath.substring(fileExtensionIndex);

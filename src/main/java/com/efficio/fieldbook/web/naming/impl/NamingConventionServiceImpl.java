@@ -19,6 +19,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -174,7 +175,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		Name name = new Name();
 		name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
-		name.setTypeId(source.getRootNameType());
+		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
 
 		name.setNval(germplasm.getDesig());
 		name.setNstat(1);

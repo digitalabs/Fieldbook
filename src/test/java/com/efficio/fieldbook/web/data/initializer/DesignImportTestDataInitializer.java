@@ -15,15 +15,19 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
+import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.google.common.collect.Lists;
 
-public class DesignImportDataInitializer {
+public class DesignImportTestDataInitializer {
 
 	public static final int NO_OF_CHARACTER_VARIABLES = 1;
 	public static final int NO_OF_CATEGORICAL_VARIABLES = 1;
@@ -82,15 +86,15 @@ public class DesignImportDataInitializer {
 		final Map<Integer, List<String>> csvData = new HashMap<>();
 
 		// The first row is the header
-		csvData.put(0, createListOfString("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
+		csvData.put(0, Lists.newArrayList("TRIAL_INSTANCE", "SITE_NAME", "ENTRY_NO", "PLOT_NO", "REP_NO", "BLOCK_NO", "AflavER_1_5"));
 
 		// csv data
-		csvData.put(1, createListOfString("1", "Laguna", "1", "1", "1", "1", "1"));
-		csvData.put(2, createListOfString("1", "Laguna", "2", "2", "1", "1", "2"));
-		csvData.put(3, createListOfString("2", "Bicol", "1", "6", "1", "1", "3"));
-		csvData.put(4, createListOfString("2", "Bicol", "2", "7", "1", "1", "2"));
-		csvData.put(5, createListOfString("3", "Bulacan", "1", "11", "1", "2", "3"));
-		csvData.put(6, createListOfString("3", "Bulacan", "2", "12", "1", "2", "1"));
+		csvData.put(1, Lists.newArrayList("1", "Laguna", "1", "1", "1", "1", "1"));
+		csvData.put(2, Lists.newArrayList("1", "Laguna", "2", "2", "1", "1", "2"));
+		csvData.put(3, Lists.newArrayList("2", "Bicol", "1", "6", "1", "1", "3"));
+		csvData.put(4, Lists.newArrayList("2", "Bicol", "2", "7", "1", "1", "2"));
+		csvData.put(5, Lists.newArrayList("3", "Bulacan", "1", "11", "1", "2", "3"));
+		csvData.put(6, Lists.newArrayList("3", "Bulacan", "2", "12", "1", "2", "1"));
 
 		return csvData;
 
@@ -164,14 +168,6 @@ public class DesignImportDataInitializer {
 		return possibleValues;
 	}
 
-	public static List<String> createListOfString(final String... listData) {
-		final List<String> list = new ArrayList<>();
-		for (final String data : listData) {
-			list.add(data);
-		}
-		return list;
-	}
-
 	public static DesignHeaderItem filterDesignHeaderItemsByTermId(final TermId termId, final List<DesignHeaderItem> headerDesignItems) {
 		for (final DesignHeaderItem headerDesignItem : headerDesignItems) {
 			if (headerDesignItem.getVariable().getId() == termId.getId()) {
@@ -199,6 +195,60 @@ public class DesignImportDataInitializer {
 		}
 		return csvMapGrouped;
 
+	}
+
+	public static Map<Integer, StandardVariable> getStandardVariables(final PhenotypicType phenotypicType,
+			final List<MeasurementVariable> germplasmFactors) {
+		final Map<Integer, StandardVariable> standardVariables = new HashMap<>();
+
+		for (final MeasurementVariable measurementVar : germplasmFactors) {
+
+			if (phenotypicType.getLabelList().contains(measurementVar.getLabel())) {
+				final StandardVariable stdVar = convertToStandardVariable(measurementVar);
+				standardVariables.put(stdVar.getId(), stdVar);
+			}
+
+		}
+
+		return standardVariables;
+	}
+
+	public static StandardVariable convertToStandardVariable(final MeasurementVariable measurementVar) {
+		final StandardVariable stdVar = new StandardVariable();
+		stdVar.setId(measurementVar.getTermId());
+		stdVar.setProperty(new Term(0, measurementVar.getProperty(), ""));
+		stdVar.setScale(new Term(0, measurementVar.getScale(), ""));
+		stdVar.setMethod(new Term(0, measurementVar.getMethod(), ""));
+		stdVar.setDataType(new Term(measurementVar.getDataTypeId(), measurementVar.getDataType(), ""));
+		stdVar.setPhenotypicType(PhenotypicType.getPhenotypicTypeForLabel(measurementVar.getLabel()));
+		return stdVar;
+	}
+
+	public static EnvironmentData createEnvironmentData(final int numberOfIntances) {
+		final EnvironmentData environmentData = new EnvironmentData();
+		final List<Environment> environments = new ArrayList<>();
+
+		for (int x = 0; x < numberOfIntances; x++) {
+			final Environment env = new Environment();
+			env.setLocationId(x);
+			environments.add(env);
+		}
+
+		environmentData.setEnvironments(environments);
+		environmentData.setNoOfEnvironments(numberOfIntances);
+		return environmentData;
+	}
+
+	public static void processEnvironmentData(final EnvironmentData data) {
+		for (int i = 0; i < data.getEnvironments().size(); i++) {
+			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
+				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
+					|| values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())).isEmpty()) {
+				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
+			}
+		}
 	}
 
 	public static void updatePlotNoValue(final List<MeasurementRow> observations) {

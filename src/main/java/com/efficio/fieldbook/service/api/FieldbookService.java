@@ -147,7 +147,7 @@ public interface FieldbookService {
 	 *
 	 * @return the check list
 	 */
-	List<Enumeration> getCheckList();
+	List<Enumeration> getCheckTypeList();
 
 	/**
 	 * Creates the id name variable pairs.

@@ -41,7 +41,6 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,11 +99,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		final List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
 
-		try {
-			this.breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
-		} catch (final MiddlewareQueryException e) {
-			ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
-		}
+		this.breedingMethodPropertyName = this.ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
 
 		int currIndOfTrialInstance = 0;
 		for (final Integer trialInstanceNo : instances) {

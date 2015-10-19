@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,12 +90,13 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private String breedingMethodPropertyName = "";
 
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 		return this.export(workbook, filename, instances, null);
 	}
 
 	@Override
-	public String export(final Workbook workbook, final String filename, final List<Integer> instances, final List<Integer> visibleColumns) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances, final List<Integer> visibleColumns)
+			throws IOException {
 		FileOutputStream fos = null;
 		final List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
@@ -127,15 +129,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				filenameList.add(filenamePath);
 
 				currIndOfTrialInstance++;
-			} catch (final Exception e) {
-				ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
 			} finally {
 				if (fos != null) {
-					try {
-						fos.close();
-					} catch (final Exception e) {
-						ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
-					}
+					fos.close();
 				}
 			}
 		}

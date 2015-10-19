@@ -45,34 +45,32 @@ public class ExcelExportStudyServiceImplTest {
 	@InjectMocks
 	private ExcelExportStudyServiceImpl excelExportStudyServiceImpl;
 
+	private String fileName;
+	private List<Location> locations;
+	private Workbook workbook;
+	private List<Integer> instances;
+
 	@Before
 	public void setUp() {
-
+		this.locations = WorkbookDataUtil.createLocationData();
+		this.fileName = "trial_" + new Random().nextInt(1000) + ".xls";
+		WorkbookDataUtil.setTestWorkbook(null);
 	}
 
 	@Test
 	public void testGetFileNamePathWithSiteAndMoreThanOneInstance() {
-		final List<Location> locations = WorkbookDataUtil.createLocationData();
 
-		final String fileName = "trial_" + new Random().nextInt(1000) + ".xls";
+		Mockito.when(fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
+		Mockito.when(fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_2)).thenReturn(this.locations.get(1));
 
-		fieldbookMiddlewareService = Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
-		try {
-			Mockito.when(fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(locations.get(0));
-			Mockito.when(fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_2)).thenReturn(locations.get(1));
-		} catch (final MiddlewareQueryException e) {
-			ExcelExportStudyServiceImplTest.LOG.error(e.getMessage(), e);
-			Assert.fail("Expected value from mocked class but encountered error in middleware");
-		}
-
-		WorkbookDataUtil.setTestWorkbook(null);
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 2);
-		final List<Integer> instances = WorkbookDataUtil.getTrialInstances();
+		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 2);
+		this.instances = WorkbookDataUtil.getTrialInstances();
 
 		try {
 			int index = 1;
-			for (final MeasurementRow row : workbook.getTrialObservations()) {
-				final String outputFileName = this.excelExportStudyServiceImpl.getFileNamePath(index, row, instances, fileName, false);
+			for (final MeasurementRow row : this.workbook.getTrialObservations()) {
+				final String outputFileName =
+						this.excelExportStudyServiceImpl.getFileNamePath(index, row, this.instances, this.fileName, false);
 				Assert.assertTrue("Expected location in filename but did not found one.",
 						outputFileName.contains(WorkbookDataUtil.LNAME + "_" + index));
 				index++;
@@ -85,25 +83,16 @@ public class ExcelExportStudyServiceImplTest {
 
 	@Test
 	public void testGetFileNamePathWithSiteAndOneInstance() {
-		final List<Location> locations = WorkbookDataUtil.createLocationData();
 
-		final String fileName = "trial_" + new Random().nextInt(1000) + ".xls";
+		Mockito.when(fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 
-		fieldbookMiddlewareService = Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
-		try {
-			Mockito.when(fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(locations.get(0));
-		} catch (final MiddlewareQueryException e) {
-			ExcelExportStudyServiceImplTest.LOG.error(e.getMessage(), e);
-			Assert.fail("Expected value from mocked class but encountered error in middleware");
-		}
-
-		WorkbookDataUtil.setTestWorkbook(null);
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 1);
-		final List<Integer> instances = WorkbookDataUtil.getTrialInstances();
+		this.workbook = WorkbookDataUtil.getTestWorkbookForTrial(10, 1);
+		this.instances = WorkbookDataUtil.getTrialInstances();
 
 		try {
 			final String outputFileName =
-					this.excelExportStudyServiceImpl.getFileNamePath(1, workbook.getTrialObservations().get(0), instances, fileName, false);
+					this.excelExportStudyServiceImpl.getFileNamePath(1, this.workbook.getTrialObservations().get(0), this.instances,
+							this.fileName, false);
 			Assert.assertTrue("Expected location in filename but did not found one.",
 					outputFileName.contains(WorkbookDataUtil.LNAME + "_1"));
 		} catch (final MiddlewareQueryException e) {
@@ -114,27 +103,19 @@ public class ExcelExportStudyServiceImplTest {
 
 	@Test
 	public void testGetFileNamePathWithoutSite() {
-		final List<Location> locations = WorkbookDataUtil.createLocationData();
 
-		final String fileName = "trial_" + new Random().nextInt(1000) + ".xls";
-
-		fieldbookMiddlewareService = Mockito.mock(org.generationcp.middleware.service.api.FieldbookService.class);
-		try {
-			Mockito.when(fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(locations.get(0));
-		} catch (final MiddlewareQueryException e) {
-			ExcelExportStudyServiceImplTest.LOG.error(e.getMessage(), e);
-			Assert.fail("Expected value from mocked class but encountered error in middleware");
-		}
+		Mockito.when(fieldbookMiddlewareService.getLocationById(WorkbookDataUtil.LOCATION_ID_1)).thenReturn(this.locations.get(0));
 
 		final MeasurementRow trialObservation = WorkbookDataUtil.createTrialObservationWithoutSite();
-		final List<Integer> instances = new ArrayList<Integer>();
-		instances.add(1);
+		this.instances = new ArrayList<Integer>();
+		this.instances.add(1);
 
 		try {
-			final String outputFileName = this.excelExportStudyServiceImpl.getFileNamePath(1, trialObservation, instances, fileName, false);
+			final String outputFileName =
+					this.excelExportStudyServiceImpl.getFileNamePath(1, trialObservation, this.instances, this.fileName, false);
 			Assert.assertTrue("Expected filename in output filename but found none.",
-					outputFileName.contains(fileName.substring(0, fileName.lastIndexOf("."))));
-			final String processedFileName = outputFileName.substring(0, fileName.lastIndexOf("."));
+					outputFileName.contains(this.fileName.substring(0, this.fileName.lastIndexOf("."))));
+			final String processedFileName = outputFileName.substring(0, this.fileName.lastIndexOf("."));
 			Assert.assertFalse("Expected no underscore before the file extension but found one.",
 					processedFileName.charAt(processedFileName.length() - 1) == '_');
 		} catch (final MiddlewareQueryException e) {

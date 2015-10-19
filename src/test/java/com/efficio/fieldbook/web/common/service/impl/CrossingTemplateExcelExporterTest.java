@@ -3,32 +3,32 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.service.FileService;
+import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.Experiment;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.dms.VariableList;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -41,7 +41,7 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 @RunWith(MockitoJUnitRunner.class)
 public class CrossingTemplateExcelExporterTest {
 
-	public static final String STUDYNAME = "studyname";
+	public static final String STUDY_NAME = "studyname";
 	private static final int STUDY_ID = 1;
 	public static final String TEST_FILENAME = "testFilename.xls";
 	@Mock
@@ -59,78 +59,53 @@ public class CrossingTemplateExcelExporterTest {
 	@InjectMocks
 	private CrossingTemplateExcelExporter exporter;
 
-	@InjectMocks
-	private CrossingTemplateExcelExporter DUT;
-
 	private org.apache.poi.ss.usermodel.Workbook workbook;
 
 	@Before
 	public void setup() throws IOException, InvalidFormatException {
 		MockitoAnnotations.initMocks(this);
 
-		exporter.setTemplateFile(TEST_FILENAME);
+		this.exporter.setTemplateFile(TEST_FILENAME);
+		this.workbook = WorkbookFactory.create(this.getClass().getClassLoader().getResourceAsStream(TEST_FILENAME));
+	}
 
-		this.DUT = Mockito.spy(this.exporter);
-		InputStream inp = this.getClass().getClassLoader().getResourceAsStream(TEST_FILENAME);
-
-		this.workbook = WorkbookFactory.create(inp);
+	@After
+	public void tearDown() {
+		final File file = new File("CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME + ".xls");
+		file.deleteOnExit();
 	}
 
 	@Test
 	public void testExport() throws Exception {
-		Mockito.when(
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-						GermplasmListType.NURSERY)).thenReturn(this.initializeCrossesList());
+		Mockito.when(this.fieldbookMiddlewareService
+				.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID, GermplasmListType.NURSERY)).thenReturn(
+				this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt(), Matchers.anyString());
 		Mockito.doReturn(this.intializeExperiments()).when(this.studyDataManager)
 				.getExperiments(Matchers.anyInt(), Matchers.anyInt(), Matchers.anyInt(), Matchers.any(VariableTypeList.class));
-
-		Workbook wb = Mockito.mock(Workbook.class);
-		Mockito.when(wb.getSheetAt(1)).thenReturn(Mockito.mock(Sheet.class));
-
-		Map<String, CellStyle> style = Mockito.mock(Map.class);
-		Mockito.doReturn(style).when(this.DUT).createStyles(wb);
-
-		Mockito.doReturn(wb).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
-		Mockito.doReturn(4)
-				.when(this.DUT)
-				.writeListDetailsSection(Matchers.any(Map.class), Matchers.any(Sheet.class), Matchers.anyInt(),
-						Matchers.any(GermplasmList.class));
-
+		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(Matchers.anyInt())).thenReturn(new ArrayList<ListDataProject>());
 
-		ArgumentCaptor<String> studyNameCapture = ArgumentCaptor.forClass(String.class);
-
-		File expectedExportFile = Mockito.mock(File.class);
-
-		Mockito.doReturn(expectedExportFile).when(this.DUT).createExcelOutputFile(Matchers.anyString(), Matchers.eq(wb));
-
-		File exportFile = this.DUT.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDYNAME);
-
-		Mockito.verify(this.DUT, Mockito.times(1)).createExcelOutputFile(studyNameCapture.capture(), Matchers.eq(wb));
-
-		Assert.assertEquals("Returns the expected export file", expectedExportFile, exportFile);
-
-		Assert.assertEquals("uses same study name", CrossingTemplateExcelExporterTest.STUDYNAME, studyNameCapture.getValue());
+		//to test
+		final File exportFile = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
+		Assert.assertEquals("uses same study name", "CrossingTemplate-" + CrossingTemplateExcelExporterTest.STUDY_NAME + ".xls",
+				exportFile.getName());
 	}
 
 	@Test(expected = CrossingTemplateExportException.class)
 	public void testExportException() throws Exception {
 		Mockito.doThrow(new InvalidFormatException("forced exception")).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
-
-		this.DUT.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDYNAME);
-
+		this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, CrossingTemplateExcelExporterTest.STUDY_NAME);
 	}
 
 	@Test
 	public void testWriteListDetailsSection() throws IOException {
-		Map<String, CellStyle> styles = this.exporter.createStyles(this.workbook);
-		Sheet sheet = this.workbook.getSheetAt(0);
-		GermplasmList list = new GermplasmList();
+		final Sheet sheet = this.workbook.getSheetAt(0);
+		final GermplasmList list = new GermplasmList();
 		list.setDate(20150506l);
 		list.setType("LST");
-		this.exporter.writeListDetailsSection(styles, sheet, 1, list);
+		this.exporter.writeListDetailsSection(sheet, 1, list, new ExcelCellStyleBuilder((HSSFWorkbook) this.workbook));
 
 		Assert.assertEquals(sheet.getRow(0).getCell(0).getStringCellValue(), "LIST NAME");
 		Assert.assertEquals(sheet.getRow(0).getCell(1).getStringCellValue(), "");
@@ -156,14 +131,14 @@ public class CrossingTemplateExcelExporterTest {
 				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
 						GermplasmListType.NURSERY)).thenReturn(Collections.EMPTY_LIST);
 
-		this.DUT.retrieveAndValidateIfHasGermplasmList(CrossingTemplateExcelExporterTest.STUDY_ID);
+		this.exporter.retrieveAndValidateIfHasGermplasmList(CrossingTemplateExcelExporterTest.STUDY_ID);
 	}
 
 	private List<GermplasmList> initializeCrossesList() {
-		List<GermplasmList> list = new ArrayList<>();
+		final List<GermplasmList> list = new ArrayList<>();
 
 		for (int i = 0; i < 5; i++) {
-			GermplasmList gplist = new GermplasmList();
+			final GermplasmList gplist = new GermplasmList();
 			gplist.setId(i);
 			list.add(gplist);
 		}
@@ -171,15 +146,21 @@ public class CrossingTemplateExcelExporterTest {
 	}
 
 	private List<Experiment> intializeExperiments() {
-		List<Experiment> list = new ArrayList<>();
-		Experiment experiment = new Experiment();
+		final List<Experiment> list = new ArrayList<>();
+		final Experiment experiment = new Experiment();
 
-		VariableList factors = new VariableList();
-		Variable plotVariable = new Variable();
+		final VariableList factors = new VariableList();
+		final Variable plotVariable = new Variable();
 		plotVariable.setValue("1");
+		final StandardVariable standardVariable = new StandardVariable();
+		standardVariable.setId(TermId.PLOT_NO.getId());
+		final DMSVariableType variableType = new DMSVariableType("test", "test", standardVariable, 0);
+		plotVariable.setVariableType(variableType);
+		plotVariable.setValue("2");
 		factors.add(plotVariable);
 
 		experiment.setFactors(factors);
+		list.add(experiment);
 
 		return list;
 	}

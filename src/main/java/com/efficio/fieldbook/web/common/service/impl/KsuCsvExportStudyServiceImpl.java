@@ -42,37 +42,37 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 	private OntologyService ontologyService;
 
 	@Override
-	public String export(Workbook workbook, String filename, List<Integer> instances) {
+	public String export(final Workbook workbook, final String filename, final List<Integer> instances) {
 
-		List<String> filenameList = new ArrayList<String>();
+		final List<String> filenameList = new ArrayList<String>();
 
-		int fileExtensionIndex = filename.lastIndexOf(".");
-		String studyName = filename.substring(0, fileExtensionIndex);
+		final int fileExtensionIndex = filename.lastIndexOf(".");
+		final String studyName = filename.substring(0, fileExtensionIndex);
 
 		CsvWriter csvWriter = null;
-		int fileCount = instances.size();
-		for (Integer index : instances) {
+		final int fileCount = instances.size();
+		for (final Integer index : instances) {
 			try {
-				String filenamePath =
+				final String filenamePath =
 						this.fieldbookProperties.getUploadDirectory() + File.separator + studyName
 								+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
-				List<Integer> indexes = new ArrayList<Integer>();
+				final List<Integer> indexes = new ArrayList<Integer>();
 				indexes.add(index);
-				List<MeasurementRow> observations =
+				final List<MeasurementRow> observations =
 						ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
-				List<List<String>> dataTable =
+				final List<List<String>> dataTable =
 						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
 
 				csvWriter = new CsvWriter(new FileWriter(filenamePath, false), ',');
-				for (List<String> row : dataTable) {
-					for (String cell : row) {
+				for (final List<String> row : dataTable) {
+					for (final String cell : row) {
 						csvWriter.write(cell);
 					}
 					csvWriter.endRecord();
 				}
 				filenameList.add(filenamePath);
 
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				KsuCsvExportStudyServiceImpl.LOG.error("ERROR in KSU CSV Export Study", e);
 
 			} finally {
@@ -83,13 +83,13 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 
 		}
 
-		String traitFilenamePath =
+		final String traitFilenamePath =
 				this.fieldbookProperties.getUploadDirectory() + File.separator + studyName + "-Traits"
 						+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
 		KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath, this.fieldbookMiddlewareService, this.ontologyService);
 		filenameList.add(traitFilenamePath);
 
-		String outputFilename =
+		final String outputFilename =
 				this.fieldbookProperties.getUploadDirectory() + File.separator
 						+ filename.replaceAll(AppConstants.EXPORT_CSV_SUFFIX.getString(), "") + AppConstants.ZIP_FILE_SUFFIX.getString();
 		ZipUtil.zipIt(outputFilename, filenameList);

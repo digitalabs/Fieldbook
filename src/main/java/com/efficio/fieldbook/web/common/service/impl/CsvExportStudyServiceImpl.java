@@ -65,7 +65,6 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		final List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
 
-		int currIndOfTrialInstance = 0;
 		for (final Integer index : instances) {
 			final List<Integer> indexes = new ArrayList<Integer>();
 			indexes.add(index);
@@ -75,7 +74,7 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 			try {
 
 				final String filenamePath =
-						this.getFileNamePath(index, workbook.getTrialObservations().get(currIndOfTrialInstance), instances, filename,
+						this.getFileNamePath(index, workbook.getTrialObservationByTrialInstanceNo(index), instances, filename,
 								workbook.isNursery());
 
 				final List<ExportColumnHeader> exportColumnHeaders =
@@ -88,7 +87,6 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 				outputFilename = filenamePath;
 				filenameList.add(filenamePath);
 
-				currIndOfTrialInstance++;
 			} finally {
 				if (fos != null) {
 					fos.close();

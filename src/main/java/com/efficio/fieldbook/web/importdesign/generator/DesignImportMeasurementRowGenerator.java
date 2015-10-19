@@ -92,7 +92,7 @@ public class DesignImportMeasurementRowGenerator {
 
 	private void addTrialDesignAndVariatesToDataList(final List<String> rowValues, final FieldbookService fieldbookService,
 			final List<MeasurementData> dataList) {
-		this.mappedHeaders.get(PhenotypicType.TRIAL_ENVIRONMENT);
+
 		final Map<Integer, DesignHeaderItem> trialDesignHeaders = this.mappedHeaders.get(PhenotypicType.TRIAL_DESIGN);
 		final Map<Integer, DesignHeaderItem> variateHeaders = this.mappedHeaders.get(PhenotypicType.VARIATE);
 		final List<DesignHeaderItem> remainingColumnHeaders = new ArrayList<DesignHeaderItem>();

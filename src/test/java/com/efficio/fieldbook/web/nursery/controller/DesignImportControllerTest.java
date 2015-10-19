@@ -141,6 +141,7 @@ public class DesignImportControllerTest {
 
 		this.initializeOntologyData();
 		this.initializeDesignImportService();
+		this.initializeSettingServiceForChecks();
 
 	}
 
@@ -884,6 +885,59 @@ public class DesignImportControllerTest {
 		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
 		Mockito.verify(this.userSelection).setDesignImportData(null);
 
+	}
+
+	@Test
+	public void testResetCheckList() {
+
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
+		UserSelection testUserSelection = new UserSelection();
+
+		List<SettingDetail> studyLevelConditions = new ArrayList<>();
+
+		testUserSelection.setStudyLevelConditions(studyLevelConditions);
+
+		this.designImportController.resetCheckList(workbook, testUserSelection);
+
+		Assert.assertEquals(1, testUserSelection.getCurrentPageCheckGermplasmList());
+		Assert.assertNotNull(testUserSelection.getImportedCheckGermplasmMainInfo());
+		Assert.assertTrue(testUserSelection.isImportValid());
+		Assert.assertEquals("Check Start, Interval and Plan variables should be added to the StudyLevelCondition ", 3,
+				studyLevelConditions.size());
+
+	}
+
+	@Test
+	public void testAddCheckVariablesToDeleted() {
+
+		List<SettingDetail> studyLevelConditions = new ArrayList<>();
+
+		this.designImportController.addCheckVariablesToDeleted(studyLevelConditions);
+
+		Assert.assertEquals(3, studyLevelConditions.size());
+
+		for (SettingDetail checkSettingDetail : studyLevelConditions) {
+			Assert.assertEquals(Operation.DELETE, checkSettingDetail.getVariable().getOperation());
+			Assert.assertEquals(PhenotypicType.TRIAL_ENVIRONMENT, checkSettingDetail.getRole());
+		}
+
+	}
+
+	protected void initializeSettingServiceForChecks() {
+
+		SettingDetail checkStart = this.createSettingDetail(TermId.CHECK_START.getId(), "CHECK_START", "");
+		SettingDetail checkInterval = this.createSettingDetail(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", "");
+		SettingDetail checkPlan = this.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", "");
+
+		Mockito.when(
+				this.settingsService.createSettingDetail(TermId.CHECK_START.getId(), "CHECK_START", this.userSelection, 0,
+						this.project.getUniqueID())).thenReturn(checkStart);
+		Mockito.when(
+				this.settingsService.createSettingDetail(TermId.CHECK_INTERVAL.getId(), "CHECK_INTERVAL", this.userSelection, 0,
+						this.project.getUniqueID())).thenReturn(checkInterval);
+		Mockito.when(
+				this.settingsService.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", this.userSelection, 0,
+						this.project.getUniqueID())).thenReturn(checkPlan);
 	}
 
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {

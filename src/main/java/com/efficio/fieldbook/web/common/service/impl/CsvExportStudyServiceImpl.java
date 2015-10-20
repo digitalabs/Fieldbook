@@ -19,7 +19,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,6 @@ import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
@@ -74,8 +72,9 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 			try {
 
 				final String filenamePath =
-						this.getFileNamePath(trialInstanceNo, workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo), instances, filename,
-								workbook.isNursery());
+						ExportImportStudyUtil.getFileNamePath(trialInstanceNo,
+								workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo), instances, filename, workbook.isNursery(),
+								this.fieldbookProperties, this.fieldbookMiddlewareService);
 
 				final List<ExportColumnHeader> exportColumnHeaders =
 						this.getExportColumnHeaders(visibleColumns, workbook.getMeasurementDatasetVariables());
@@ -108,24 +107,6 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 
 	protected List<MeasurementRow> getApplicableObservations(final Workbook workbook, final List<Integer> indexes) {
 		return ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
-	}
-
-	protected String getFileNamePath(final int index, final MeasurementRow trialObservation, final List<Integer> instances,
-			final String filename, final boolean isNursery) throws MiddlewareQueryException {
-		final String filenamePath =
-				this.fieldbookProperties.getUploadDirectory() + File.separator + SettingsUtil.cleanSheetAndFileName(filename);
-		if (instances != null && (instances.size() > 1 || !isNursery)) {
-			final int fileExtensionIndex = filenamePath.lastIndexOf(".");
-			final String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, this.fieldbookMiddlewareService);
-			if (instances.size() > 1) {
-				return filenamePath.substring(0, fileExtensionIndex) + "-" + index + SettingsUtil.cleanSheetAndFileName(siteName)
-						+ filenamePath.substring(fileExtensionIndex);
-			} else {
-				return filename.substring(0, filename.lastIndexOf(".")) + "-" + index + SettingsUtil.cleanSheetAndFileName(siteName)
-						+ filenamePath.substring(fileExtensionIndex);
-			}
-		}
-		return filenamePath;
 	}
 
 	protected List<ExportColumnHeader> getExportColumnHeaders(final List<Integer> visibleColumns, final List<MeasurementVariable> variables) {

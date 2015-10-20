@@ -55,7 +55,6 @@ import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
@@ -118,7 +117,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				this.writeObservationSheet(xlsBook, workbook, observations, visibleColumns);
 
 				final String filenamePath =
-						this.getFileNamePath(trialInstanceNo, trialObservation, instances, filename, workbook.isNursery());
+						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, trialObservation, instances, filename, workbook.isNursery(),
+								this.fieldbookProperties, this.fieldbookMiddlewareService);
 
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
@@ -143,45 +143,6 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 
 		return outputFilename;
-	}
-
-	protected String getFileNamePath(final int trialInstanceNo, final MeasurementRow trialObservation, final List<Integer> instances,
-			final String filename, final boolean isNursery) {
-
-		String filenamePath = "";
-		StringBuilder filenameBuilder = new StringBuilder();
-		filenameBuilder.append(this.fieldbookProperties.getUploadDirectory());
-		filenameBuilder.append(File.separator);
-		filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(filename));
-
-		filenamePath = filenameBuilder.toString();
-
-		if (isNursery) {
-			return filenamePath;
-		}
-
-		// For Trial
-		if (instances != null && !instances.isEmpty()) {
-
-			final int fileExtensionIndex = filenamePath.lastIndexOf(".");
-			final String siteName = ExportImportStudyUtil.getSiteNameOfTrialInstance(trialObservation, this.fieldbookMiddlewareService);
-
-			filenameBuilder = new StringBuilder();
-			if (instances.size() > 1) {
-				filenameBuilder.append(filenamePath.substring(0, fileExtensionIndex));
-			} else {
-				filenameBuilder.append(filename.substring(0, filename.lastIndexOf(".")));
-			}
-
-			filenameBuilder.append("-");
-			filenameBuilder.append(trialInstanceNo);
-			filenameBuilder.append(SettingsUtil.cleanSheetAndFileName(siteName));
-			filenameBuilder.append(filenamePath.substring(fileExtensionIndex));
-
-			filenamePath = filenameBuilder.toString();
-		}
-
-		return filenamePath;
 	}
 
 	protected void writeDescriptionSheet(final HSSFWorkbook xlsBook, final Workbook workbook, final MeasurementRow trialObservation,

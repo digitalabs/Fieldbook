@@ -507,19 +507,8 @@ public class EditNurseryController extends SettingsController {
 
 	private List<SettingDetail> combineVariates(final CreateNurseryForm form) {
 
-		if(form.getBaselineTraitVariables() != null){
-			//NOTE: Setting variable type as TRAIT for Trait Variable List
-			for(SettingDetail selectionDetail : form.getBaselineTraitVariables()){
-				selectionDetail.setVariableType(VariableType.TRAIT);
-			}
-		}
-
-		if(form.getSelectionVariatesVariables() != null){
-			//NOTE: Setting variable type as SELECTION_METHOD for Trait Variable List
-			for(SettingDetail selectionDetail : form.getSelectionVariatesVariables()){
-				selectionDetail.setVariableType(VariableType.SELECTION_METHOD);
-			}
-		}
+        this.setVariableTypeForTrait(form);
+        this.setVariableTypeForSelectionMethod(form);
 
 		List<SettingDetail> baselineTraits = form.getBaselineTraitVariables();
 		final List<SettingDetail> baselineTraitsSession = this.userSelection.getSelectionVariates();
@@ -543,8 +532,26 @@ public class EditNurseryController extends SettingsController {
 		return baselineTraits;
 	}
 
+    private void setVariableTypeForTrait(final CreateNurseryForm form) {
+        if(form.getBaselineTraitVariables() != null) {
+            //NOTE: Setting variable type as TRAIT for Trait Variable List
+            for(SettingDetail selectionDetail : form.getBaselineTraitVariables()){
+                selectionDetail.setVariableType(VariableType.TRAIT);
+            }
+        }
+    }
+
+    private void setVariableTypeForSelectionMethod (final CreateNurseryForm form) {
+        if(form.getSelectionVariatesVariables() != null){
+            //NOTE: Setting variable type as SELECTION_METHOD for Trait Variable List
+            for(SettingDetail selectionDetail : form.getSelectionVariatesVariables()){
+                selectionDetail.setVariableType(VariableType.SELECTION_METHOD);
+            }
+        }
+    }
+
 	private List<SettingDetail> combineStudyConditions(final CreateNurseryForm form) {
-		final List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+		final List<SettingDetail> studyLevelVariables = new ArrayList<>();
 		if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
 			studyLevelVariables.addAll(form.getStudyLevelVariables());
 		}

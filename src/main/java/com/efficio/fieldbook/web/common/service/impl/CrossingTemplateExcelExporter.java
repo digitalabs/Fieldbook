@@ -6,21 +6,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
+import org.generationcp.commons.parsing.ExcelWorkbookRow;
+import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
 import org.generationcp.commons.service.FileService;
-import org.generationcp.commons.service.impl.GermplasmExportServiceImpl;
-import org.generationcp.middleware.domain.dms.DMSVariableType;
+import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.dms.Experiment;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.VariableTypeList;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -32,9 +33,9 @@ import org.generationcp.middleware.util.PoiUtil;
 import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportException;
 
 /**
- * Created by cyrus on 2/10/15.
+ * The class providing export crossing template as an excel file function
  */
-public class CrossingTemplateExcelExporter extends GermplasmExportServiceImpl {
+public class CrossingTemplateExcelExporter {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s.xls";
 	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
@@ -53,18 +54,15 @@ public class CrossingTemplateExcelExporter extends GermplasmExportServiceImpl {
 	public File export(Integer studyId, String studyName) throws CrossingTemplateExportException {
 		try {
 			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
-			final Map<String, CellStyle> workbookStyle = this.createStyles(excelWorkbook);
 
 			// 1. parse the workbook to the template file
-			List<GermplasmList> crossesList;
-
-			crossesList = this.retrieveAndValidateIfHasGermplasmList(studyId);
+			final List<GermplasmList> crossesList = this.retrieveAndValidateIfHasGermplasmList(studyId);
 
 			// 2. update description sheet
-			GermplasmList gpList = crossesList.get(0);
+			final GermplasmList gpList = crossesList.get(0);
 			gpList.setType(GermplasmListType.LST.name());
 
-			this.writeListDetailsSection(workbookStyle, excelWorkbook.getSheetAt(0), 1, gpList);
+			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, gpList, new ExcelCellStyleBuilder((HSSFWorkbook)excelWorkbook));
 
 			// 3. update observation sheet
 			int rowIndex = 1;
@@ -87,32 +85,38 @@ public class CrossingTemplateExcelExporter extends GermplasmExportServiceImpl {
 		}
 	}
 
-	@Override
-	public int writeListDetailsSection(Map<String, CellStyle> styles, Sheet descriptionSheet, int startingRow, GermplasmList germplasmList) {
+	int writeListDetailsSection(final Sheet descriptionSheet, final int startingRow, final GermplasmList germplasmList, final ExcelCellStyleBuilder sheetStyles) {
+		final CellStyle labelStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.LABEL_STYLE);
+		final CellStyle textStyle = sheetStyles.getCellStyle(ExcelCellStyleBuilder.ExcelCellStyle.TEXT_STYLE);
+
 		int actualRow = startingRow - 1;
 
-		this.writeListDetailsRow(descriptionSheet, styles, actualRow, GermplasmExportServiceImpl.LIST_NAME, "",
-				"Enter a list name here, or add it when saving in the BMS");
+		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(actualRow))
+				.writeListDetailsRow(descriptionSheet, GermplasmExportedWorkbook.LIST_NAME, "",
+						"Enter a list name here, or add it when saving in the BMS", labelStyle, textStyle);
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, GermplasmExportServiceImpl.LIST_DESCRIPTION, "",
-				"Enter a list description here, or add it when saving in the BMS");
+		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
+				GermplasmExportedWorkbook.LIST_DESCRIPTION, "", "Enter a list description here, or add it when saving in the BMS",
+				labelStyle, textStyle);
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, GermplasmExportServiceImpl.LIST_TYPE, germplasmList.getType(),
-				"See valid list types on Codes sheet for more options");
+		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
+				GermplasmExportedWorkbook.LIST_TYPE, germplasmList.getType(), "See valid list types on Codes sheet for more options",
+				labelStyle, textStyle);
 
-		this.writeListDetailsRow(descriptionSheet, styles, ++actualRow, GermplasmExportServiceImpl.LIST_DATE,
-				String.valueOf(germplasmList.getDate()), "Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank");
+		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
+				GermplasmExportedWorkbook.LIST_DATE, String.valueOf(germplasmList.getDate()),
+				"Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank", labelStyle, textStyle);
 
 		return ++actualRow;
 	}
 
-	@Override
 	public void setTemplateFile(final String templateFile) {
 		this.templateFile = templateFile;
 	}
 
-	protected File createExcelOutputFile(String studyName, Workbook excelWorkbook) throws IOException {
-		String outputFileName = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT, this.cleanNameValueCommas(studyName));
+	private File createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
+		final String outputFileName = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT,
+				StringUtil.cleanNameValueCommas(studyName));
 		try (OutputStream out = new FileOutputStream(outputFileName)) {
 			excelWorkbook.write(out);
 		}
@@ -128,16 +132,6 @@ public class CrossingTemplateExcelExporter extends GermplasmExportServiceImpl {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");
 		}
 		return crossesList;
-	}
-
-	protected VariableTypeList createPlotVariableTypeList() throws MiddlewareQueryException {
-		StandardVariable plotStandardVariable = this.fieldbookMiddlewareService.getStandardVariable(TermId.PLOT_NO.getId(), PROGRAM_UUID);
-		DMSVariableType plotVariableType = new DMSVariableType("PLOT_NO", "Plot", plotStandardVariable, 1);
-		VariableTypeList plotVariableTypeList = new VariableTypeList();
-		plotVariableTypeList.add(plotVariableType);
-
-		return plotVariableTypeList;
-
 	}
 
 }

@@ -1303,6 +1303,10 @@ public class ImportGermplasmListController extends SettingsController {
 		return true;
 	}
 
+	/**
+	 * 
+	 * @param userSelection
+	 */
 	protected void updateObservationsFromTemporaryWorkbookToWorkbook(UserSelection userSelection) {
 
 		final Map<Integer, MeasurementVariable> observationVariables =
@@ -1316,10 +1320,13 @@ public class ImportGermplasmListController extends SettingsController {
 
 	}
 
+	/**
+	 * This will copy the factors, variates and experimental design variable generated from importing a Custom Design to the Workbook that
+	 * will be saved.
+	 * 
+	 * @param userSelection
+	 */
 	protected void addVariablesFromTemporaryWorkbookToWorkbook(UserSelection userSelection) {
-
-		// This will copy the factors, variates and experimental design variable generated from importing a Custom Design to the Workbook
-		// that will be saved.
 
 		if (userSelection.getExperimentalDesignVariables() != null) {
 
@@ -1338,6 +1345,12 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 	}
 
+	/**
+	 * Updates the Check value and Check ID of Imported Germplasm based on the Selected Checks from ImportGermplasmListForm
+	 * 
+	 * @param userSelection
+	 * @param form
+	 */
 	protected void processChecks(UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		final String[] selectedCheck = form.getSelectedCheck();
@@ -1388,7 +1401,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			this.mergePrimaryAndCheckGermplasmList(userSelection, form);
 
-			// this would validate and add CHECK factor if necessary
+			// his would validate and add CHECK factor if necessary
 			this.importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection
 					.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
 
@@ -1397,12 +1410,18 @@ public class ImportGermplasmListController extends SettingsController {
 			// add or remove check variables if needed
 			this.fieldbookService.manageCheckVariables(userSelection, form);
 
-			// remove the experimental design variable if there are changes in selected germplasm or check list
+			// remove the experimental design variable if the user changed or updated the germplasm/check list
 			this.addExperimentFactorToBeDeleted(userSelection.getWorkbook().getConditions());
 		}
 
 	}
 
+	/**
+	 * Copies the Germplasm List and Check list from userSelection to ImportGermplasmListForm
+	 * 
+	 * @param userSelection
+	 * @param form
+	 */
 	protected void copyImportedGermplasmFromUserSelectionToForm(UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		if (userSelection.getImportedGermplasmMainInfo() != null) {
@@ -1427,6 +1446,13 @@ public class ImportGermplasmListController extends SettingsController {
 
 	}
 
+	/**
+	 * This will merge the selected Germplasm List and Check list into one Imported Germplasm list. This is necessary for generation of
+	 * Observation with checks.
+	 * 
+	 * @param userSelection
+	 * @param form
+	 */
 	protected void mergePrimaryAndCheckGermplasmList(final UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		// merge primary and check germplasm list
@@ -1456,6 +1482,11 @@ public class ImportGermplasmListController extends SettingsController {
 
 	}
 
+	/**
+	 * This will remove the Experimental Design Factor in workbook.
+	 * 
+	 * @param conditions
+	 */
 	protected void addExperimentFactorToBeDeleted(List<MeasurementVariable> conditions) {
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.EXPERIMENT_DESIGN_FACTOR.getId()), "", Operation.DELETE,
 				PhenotypicType.TRIAL_ENVIRONMENT));

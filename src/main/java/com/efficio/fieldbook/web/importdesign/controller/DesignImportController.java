@@ -466,6 +466,13 @@ public class DesignImportController extends SettingsController {
 		return resultsMap;
 	}
 
+	/**
+	 * Resets the Check list and deletes all Check Variables previously saved in Nursery. The system will automatically reset and override
+	 * the Check List after importing a Custom Design.
+	 * 
+	 * @param workbook
+	 * @param userSelection
+	 */
 	protected void resetCheckList(Workbook workbook, final UserSelection userSelection) {
 
 		// This is only applicable in Nursery since there's no Check List in Trial.
@@ -1167,12 +1174,7 @@ public class DesignImportController extends SettingsController {
 	protected String getLocalNameFromSettingDetails(final int termId, final List<SettingDetail> settingDetails) {
 		for (final SettingDetail detail : settingDetails) {
 			if (detail.getVariable().getCvTermId().intValue() == termId) {
-				if (detail.getDisplayValue() == null) {
-					return detail.getVariable().getName();
-				} else {
-					return detail.getDisplayValue();
-				}
-
+				return detail.getVariable().getName();
 			}
 		}
 		return "";
@@ -1187,6 +1189,11 @@ public class DesignImportController extends SettingsController {
 		return "";
 	}
 
+	/**
+	 * Create check variables to be deleted.
+	 * 
+	 * @param studyLevelConditions
+	 */
 	protected void addCheckVariablesToDeleted(List<SettingDetail> studyLevelConditions) {
 
 		studyLevelConditions.add(this.createCheckVariableToBeDeleted(TermId.CHECK_START.getId(), "CHECK_START"));

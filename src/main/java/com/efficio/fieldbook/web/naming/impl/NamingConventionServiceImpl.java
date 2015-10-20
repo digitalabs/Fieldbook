@@ -17,7 +17,6 @@ import org.generationcp.commons.ruleengine.RuleFactory;
 import org.generationcp.commons.ruleengine.service.RulesService;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -72,50 +71,50 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	private ResourceBundleMessageSource messageSource;
 
 	@Override
-	public AdvanceResult advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareException, RuleException {
+	public AdvanceResult advanceNursery(final AdvancingNursery info, final Workbook workbook) throws RuleException {
 
-		Map<Integer, Method> breedingMethodMap = new HashMap<>();
-		Map<String, Method> breedingMethodCodeMap = new HashMap<>();
-		List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
+		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
+		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
+		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
 
-		for (Method method : methodList) {
+		for (final Method method : methodList) {
 			breedingMethodMap.put(method.getMid(), method);
 			breedingMethodCodeMap.put(method.getMcode(), method);
 		}
 
-		AdvancingSourceList list = this.createAdvancingSourceList(info, workbook, breedingMethodMap, breedingMethodCodeMap);
+		final AdvancingSourceList list = this.createAdvancingSourceList(info, workbook, breedingMethodMap, breedingMethodCodeMap);
 		this.updatePlantsSelectedIfNecessary(list, info);
-		List<ImportedGermplasm> importedGermplasmList = this.generateGermplasmList(list, info.isCheckAdvanceLinesUnique());
+		final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasmList(list, info.isCheckAdvanceLinesUnique());
 
-		List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
-		for (AdvancingSource source : list.getRows()) {
+		final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
+		for (final AdvancingSource source : list.getRows()) {
 			if (source.getChangeDetail() != null) {
 				changeDetails.add(source.getChangeDetail());
 			}
 		}
 
-		AdvanceResult result = new AdvanceResult();
+		final AdvanceResult result = new AdvanceResult();
 		result.setAdvanceList(importedGermplasmList);
 		result.setChangeDetails(changeDetails);
 
 		return result;
 	}
 
-	private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook,
-			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) throws MiddlewareException {
+	private AdvancingSourceList createAdvancingSourceList(final AdvancingNursery advanceInfo, Workbook workbook,
+			final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) {
 
-		int nurseryId = advanceInfo.getStudy().getId();
+		final int nurseryId = advanceInfo.getStudy().getId();
 		if (workbook == null) {
 			workbook = this.fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
 		}
-		Study nursery = advanceInfo.getStudy();
+		final Study nursery = advanceInfo.getStudy();
 
 		return this.factory.create(workbook, advanceInfo, nursery, breedingMethodMap, breedingMethodCodeMap);
 	}
 
-	private void updatePlantsSelectedIfNecessary(AdvancingSourceList list, AdvancingNursery info) {
+	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingNursery info) {
 		boolean lineChoiceSame = info.getLineChoice() != null && "1".equals(info.getLineChoice());
-		boolean allPlotsChoice = info.getAllPlotsChoice() != null && "1".equals(info.getAllPlotsChoice());
+		final boolean allPlotsChoice = info.getAllPlotsChoice() != null && "1".equals(info.getAllPlotsChoice());
 		int plantsSelected = 0;
 		if (info.getLineSelected() != null && NumberUtils.isNumber(info.getLineSelected())) {
 			plantsSelected = Integer.valueOf(info.getLineSelected());
@@ -123,7 +122,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			lineChoiceSame = false;
 		}
 		if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0 || allPlotsChoice)) {
-			for (AdvancingSource row : list.getRows()) {
+			for (final AdvancingSource row : list.getRows()) {
 				if (!row.isBulk() && lineChoiceSame) {
 					row.setPlantsSelected(plantsSelected);
 				} else if (row.isBulk() && allPlotsChoice) {
@@ -134,8 +133,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 	}
 
-	private void assignGermplasmAttributes(ImportedGermplasm germplasm, int sourceGid, int sourceGnpgs, int sourceGpid1, int sourceGpid2,
-			Method sourceMethod, Method breedingMethod) {
+	private void assignGermplasmAttributes(final ImportedGermplasm germplasm, final int sourceGid, final int sourceGnpgs,
+			final int sourceGpid1, final int sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
 
 		if (sourceMethod != null && sourceMethod.getMtype() != null
 				&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype()) || sourceGnpgs < 0 && sourceGpid1 == 0
@@ -153,10 +152,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		}
 	}
 
-	protected void addImportedGermplasmToList(List<ImportedGermplasm> list, AdvancingSource source, String newGermplasmName,
-			Method breedingMethod, int index, String nurseryName) throws MiddlewareQueryException {
+	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
+			final String newGermplasmName, final Method breedingMethod, final int index, final String nurseryName) {
 		// GCP-7652 use the entry number of the originial : index
-		ImportedGermplasm germplasm =
+		final ImportedGermplasm germplasm =
 				new ImportedGermplasm(index, newGermplasmName, null /* gid */
 				, source.getGermplasm().getCross(), nurseryName + ":" + source.getGermplasm().getEntryId(),
 						FieldbookUtil.generateEntryCode(index), null /* check */
@@ -170,10 +169,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		list.add(germplasm);
 	}
 
-	protected void assignNames(ImportedGermplasm germplasm, AdvancingSource source) {
-		List<Name> names = new ArrayList<Name>();
+	protected void assignNames(final ImportedGermplasm germplasm, final AdvancingSource source) {
+		final List<Name> names = new ArrayList<Name>();
 
-		Name name = new Name();
+		final Name name = new Name();
 		name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
 		name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
 
@@ -185,19 +184,19 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	}
 
 	@Override
-	public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, boolean isCheckForDuplicateName)
-			throws MiddlewareQueryException, RuleException {
-		List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+	public List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final boolean isCheckForDuplicateName)
+			throws RuleException {
+		final List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
 		int index = 1;
-		TimerWatch timer = new TimerWatch("advance");
+		final TimerWatch timer = new TimerWatch("advance");
 
-		for (AdvancingSource row : rows.getRows()) {
+		for (final AdvancingSource row : rows.getRows()) {
 			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
 					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 
-				List<String> names;
+				final List<String> names;
 				try {
-					RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
+					final RuleExecutionContext namingExecutionContext = this.setupNamingRuleExecutionContext(row, isCheckForDuplicateName);
 					names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
 					// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
@@ -207,11 +206,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 						row.getChangeDetail().setIndex(index - 1);
 					}
 
-					for (String name : names) {
+					for (final String name : names) {
 						this.addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
 					}
 
-				} catch (RuleException e) {
+				} catch (final RuleException e) {
 					NamingConventionServiceImpl.LOG.error(e.getMessage(), e);
 				}
 			}
@@ -221,7 +220,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		return list;
 	}
 
-	protected RuleExecutionContext setupNamingRuleExecutionContext(AdvancingSource row, boolean checkForDuplicateName) {
+	protected RuleExecutionContext setupNamingRuleExecutionContext(final AdvancingSource row, final boolean checkForDuplicateName) {
 		List<String> sequenceList = Arrays.asList(this.ruleFactory.getRuleSequenceForNamespace("naming"));
 
 		if (checkForDuplicateName) {
@@ -230,7 +229,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			sequenceList.add(EnforceUniqueNameRule.KEY);
 		}
 
-		NamingRuleExecutionContext context =
+		final NamingRuleExecutionContext context =
 				new NamingRuleExecutionContext(sequenceList, this.processCodeService, row, this.germplasmDataManger,
 						new ArrayList<String>());
 		context.setMessageSource(this.messageSource);
@@ -240,13 +239,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	// 1. RootNameGeneratorRule
 	// FIXME : breedingMethodNameType NOT USED : hard coded 1 in the 'Expression'
-	protected String getGermplasmRootName(Integer breedingMethodSnameType, AdvancingSource row) throws MiddlewareQueryException {
+	protected String getGermplasmRootName(final Integer breedingMethodSnameType, final AdvancingSource row) {
 
-		RootNameExpression expression = new RootNameExpression();
-		List<StringBuilder> builders = new ArrayList<StringBuilder>();
+		final RootNameExpression expression = new RootNameExpression();
+		final List<StringBuilder> builders = new ArrayList<StringBuilder>();
 		builders.add(new StringBuilder());
 		expression.apply(builders, row);
-		String name = builders.get(0).toString();
+		final String name = builders.get(0).toString();
 		if (name.length() == 0) {
 			throw new MiddlewareQueryException(this.messageSource.getMessage("error.advancing.nursery.no.root.name.found",
 					new Object[] {row.getGermplasm().getEntryId()}, LocaleContextHolder.getLocale()));
@@ -255,7 +254,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 	}
 
-	public void setMessageSource(ResourceBundleMessageSource messageSource) {
+	public void setMessageSource(final ResourceBundleMessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 

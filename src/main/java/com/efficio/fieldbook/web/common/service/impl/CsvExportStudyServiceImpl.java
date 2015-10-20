@@ -64,22 +64,23 @@ public class CsvExportStudyServiceImpl implements CsvExportStudyService {
 		String outputFilename = null;
 
 		for (final Integer trialInstanceNo : instances) {
-			final List<Integer> indexes = new ArrayList<Integer>();
-			indexes.add(trialInstanceNo);
+			final List<Integer> listOfTrialInstanceNo = new ArrayList<Integer>();
+			listOfTrialInstanceNo.add(trialInstanceNo);
 
-			final List<MeasurementRow> observations = this.getApplicableObservations(workbook, indexes);
+			final List<MeasurementRow> plotLevelObservations = this.getApplicableObservations(workbook, listOfTrialInstanceNo);
 
 			try {
 
+				final MeasurementRow instanceLevelObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
+
 				final String filenamePath =
-						ExportImportStudyUtil.getFileNamePath(trialInstanceNo,
-								workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo), instances, filename, workbook.isNursery(),
+						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename, workbook.isNursery(),
 								this.fieldbookProperties, this.fieldbookMiddlewareService);
 
 				final List<ExportColumnHeader> exportColumnHeaders =
 						this.getExportColumnHeaders(visibleColumns, workbook.getMeasurementDatasetVariables());
 				final List<Map<Integer, ExportColumnValue>> exportColumnValues =
-						this.getExportColumnValues(exportColumnHeaders, workbook.getMeasurementDatasetVariables(), observations);
+						this.getExportColumnValues(exportColumnHeaders, workbook.getMeasurementDatasetVariables(), plotLevelObservations);
 
 				this.germplasmExportService.generateCSVFile(exportColumnValues, exportColumnHeaders, filenamePath);
 

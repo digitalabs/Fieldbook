@@ -59,10 +59,10 @@ public class KsuExcelExportStudyServiceImpl implements KsuExcelExportStudyServic
 			for (final Integer index : instances) {
 				final List<Integer> indexes = new ArrayList<Integer>();
 				indexes.add(index);
-				final List<MeasurementRow> observations =
+				final List<MeasurementRow> plotLevelObservations =
 						ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 				final List<List<String>> dataTable =
-						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
+						KsuFieldbookUtil.convertWorkbookData(plotLevelObservations, workbook.getMeasurementDatasetVariables());
 
 				final HSSFWorkbook xlsBook = new HSSFWorkbook();
 

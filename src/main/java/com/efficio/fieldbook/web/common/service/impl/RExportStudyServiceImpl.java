@@ -54,11 +54,11 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	public String exportToR(final Workbook workbook, final String outputFile, final Integer selectedTrait, final List<Integer> instances)
 			throws IOException {
 		final String outFile = this.fieldbookProperties.getUploadDirectory() + File.separator + outputFile;
-		final List<MeasurementRow> observations =
+		final List<MeasurementRow> plotLevelObservations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
-		final List<MeasurementRow> trialObservations =
+		final List<MeasurementRow> instanceLevelObservations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), instances);
-		final CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
+		final CSVOziel csv = new CSVOziel(workbook, plotLevelObservations, instanceLevelObservations);
 		CsvWriter csvOutput = null;
 		try {
 			csvOutput = new CsvWriter(new FileWriter(outFile, false), ',');

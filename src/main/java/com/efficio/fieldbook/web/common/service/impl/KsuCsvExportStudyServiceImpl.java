@@ -58,10 +58,10 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 								+ (fileCount > 1 ? "-" + String.valueOf(index) : "") + filename.substring(fileExtensionIndex);
 				final List<Integer> indexes = new ArrayList<Integer>();
 				indexes.add(index);
-				final List<MeasurementRow> observations =
+				final List<MeasurementRow> plotLevelObservations =
 						ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 				final List<List<String>> dataTable =
-						KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
+						KsuFieldbookUtil.convertWorkbookData(plotLevelObservations, workbook.getMeasurementDatasetVariables());
 
 				csvWriter = new CsvWriter(new FileWriter(filenamePath, false), ',');
 				for (final List<String> row : dataTable) {

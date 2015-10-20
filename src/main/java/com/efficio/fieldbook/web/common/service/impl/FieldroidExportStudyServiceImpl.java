@@ -54,12 +54,12 @@ public class FieldroidExportStudyServiceImpl implements FieldroidExportStudyServ
 	public String export(final Workbook workbook, final String filename, final List<Integer> instances) throws IOException {
 		final String outputFile = this.fieldbookProperties.getUploadDirectory() + File.separator + filename;
 		CsvWriter csvOutput = null;
-		final List<MeasurementRow> observations =
+		final List<MeasurementRow> plotLevelObservations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), instances);
-		final List<MeasurementRow> trialObservations =
+		final List<MeasurementRow> instanceLevelObservations =
 				ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), instances);
 		try {
-			final CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
+			final CSVOziel csv = new CSVOziel(workbook, plotLevelObservations, instanceLevelObservations);
 			csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
 			csvOutput.write("Trial");
 			csvOutput.write("Rep");

@@ -106,18 +106,18 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			final List<Integer> indexes = new ArrayList<Integer>();
 			indexes.add(trialInstanceNo);
 
-			final List<MeasurementRow> observations =
+			final List<MeasurementRow> plotLevelObservations =
 					ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), indexes);
 
 			try {
-				final MeasurementRow trialObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
+				final MeasurementRow instanceLevelObservation = workbook.getTrialObservationByTrialInstanceNo(trialInstanceNo);
 
 				final HSSFWorkbook xlsBook = new HSSFWorkbook();
-				this.writeDescriptionSheet(xlsBook, workbook, trialObservation, visibleColumns);
-				this.writeObservationSheet(xlsBook, workbook, observations, visibleColumns);
+				this.writeDescriptionSheet(xlsBook, workbook, instanceLevelObservation, visibleColumns);
+				this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns);
 
 				final String filenamePath =
-						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, trialObservation, instances, filename, workbook.isNursery(),
+						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename, workbook.isNursery(),
 								this.fieldbookProperties, this.fieldbookMiddlewareService);
 
 				fos = new FileOutputStream(new File(filenamePath));

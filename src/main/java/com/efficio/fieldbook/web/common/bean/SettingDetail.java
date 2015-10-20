@@ -202,22 +202,36 @@ public class SettingDetail implements Serializable {
 
 	@Override
 	public String toString() {
-		return "SettingDetail{" +
-				"variable=" + variable +
-				", possibleValues=" + possibleValues +
-				", possibleValuesFavorite=" + possibleValuesFavorite +
-				", possibleValuesJson='" + possibleValuesJson + '\'' +
-				", possibleValuesFavoriteJson='" + possibleValuesFavoriteJson + '\'' +
-				", value='" + value + '\'' +
-				", isDeletable=" + isDeletable +
-				", isFavorite=" + isFavorite +
-				", isHidden=" + isHidden +
-				", order=" + order +
-				", group=" + group +
-				", pairedVariable=" + pairedVariable +
-				", role=" + role +
-				", variableType=" + variableType +
-				'}';
+        StringBuilder builder = new StringBuilder();
+        builder.append("SettingDetail [variable=");
+        builder.append(this.variable);
+        builder.append(", possibleValues=");
+        builder.append(this.possibleValues);
+        builder.append(", possibleValuesFavorite=");
+        builder.append(this.possibleValuesFavorite);
+        builder.append(", possibleValuesJson=");
+        builder.append(this.possibleValuesJson);
+        builder.append(", possibleValuesFavoriteJson=");
+        builder.append(this.possibleValuesFavoriteJson);
+        builder.append(", value=");
+        builder.append(this.value);
+        builder.append(", isDeletable=");
+        builder.append(this.isDeletable);
+        builder.append(", isFavorite=");
+        builder.append(this.isFavorite);
+        builder.append(", isHidden=");
+        builder.append(this.isHidden);
+        builder.append(", order=");
+        builder.append(this.order);
+        builder.append(", group=");
+        builder.append(this.group);
+        builder.append(", pairedVariable=");
+        builder.append(this.pairedVariable);
+        builder.append(", role=");
+        builder.append(this.role);
+        builder.append(", variableType=");
+        builder.append(this.variableType);
+        return builder.toString();
 	}
 
 	public void print(int indent) {

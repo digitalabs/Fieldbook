@@ -44,7 +44,7 @@ var ImportDesign = (function() {
 		reloadMeasurements: function() {
 			if (isNursery()) {
 
-				// reload nursery measurments here
+				// reload nursery measurements here
 			} else {
 				var angularElem = angular.element('#mainApp');
 
@@ -149,6 +149,22 @@ var ImportDesign = (function() {
 				trialDetailValues: {},
 				phenotypeIDMap: {}
 			}]
+		},
+		
+		showChangeDesignPopup: function(hasGermplasmListSelected) {
+			if (hasGermplasmListSelected && !ImportDesign.hasCheckListSelected()) {
+				$('#changeDesignModal').modal({
+					backdrop: 'static',
+					keyboard: true
+				});
+			} else {
+				if (ImportDesign.hasCheckListSelected()) {
+					showErrorMessage(designImportErrorHeader, 'You cannot import a design if you have Selected Checks specified.');
+				} else {
+					showErrorMessage(designImportErrorHeader, 'Please choose a germplasm list before you can import a design.');
+				}
+			}
+
 		},
 
 		generateDesign: function() {
@@ -290,6 +306,44 @@ var ImportDesign = (function() {
 			}).submit();
 
 			return deferred.promise();
+		},
+		
+		hideChangeButton : function(){
+			//change button must only appear in nursery manager
+			if(!isNursery() || $('#measurementDataExisting').val() == 'true'){
+				$('#change-import-design-url-link').hide();
+			} else {
+				$('#change-import-design-url-link').show();
+			}
+		},
+		
+		doResetDesign : function(){
+			'use strict';
+			var studyId = 0;
+			if($('#studyId').val() != undefined){
+				studyId = $('#studyId').val();
+			}
+			
+			if (isNursery()) {				
+				$.ajax({
+					url: '/Fieldbook/DesignImport/import/change/' + studyId + '/N',
+					type: 'POST',
+					data: '',
+					cache: false,
+					success: function(response) {
+						showSuccessfulMessage('', response.success);
+						
+						//hide experimental design
+						$('#nursery-experimental-design-li').hide();
+						$('#nursery-experimental-design').hide();
+						
+						//show measurement row
+						$('li#nursery-measurements-li a').tab('show');
+						
+						$('#changeDesignModal').modal('hide');
+					}
+				});
+			} 
 		}
 	};
 })();
@@ -302,4 +356,8 @@ $(document).ready(function() {
 	$('.import-design-section .modal').on('hide.bs.modal', function() {
 		$('#fileupload-import-design').parent().parent().removeClass('has-error');
 	});
+	$('.btn-change-imported-design').on('click', ImportDesign.doResetDesign);
+	
+	// hide the change button if the study has measurement data, otherwise, leave as is.
+	ImportDesign.hideChangeButton();
 });

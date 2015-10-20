@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.importdesign.controller;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -56,11 +57,12 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.common.service.impl.DesignImportServiceImpl;
-import com.efficio.fieldbook.web.data.initializer.DesignImportDataInitializer;
-import com.efficio.fieldbook.web.nursery.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
+import com.efficio.fieldbook.web.importdesign.service.impl.DesignImportServiceImpl;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 
 /**
@@ -131,10 +133,10 @@ public class DesignImportControllerTest {
 		Mockito.when(this.httpRequest.getSession(Matchers.anyBoolean())).thenReturn(this.httpSession);
 		Mockito.when(this.workbenchDataManager.getProjectById(1L)).thenReturn(this.project);
 		Mockito.when(this.workbenchService.getCurrentIbdbUserId(Matchers.anyLong(), Matchers.anyInt())).thenReturn(1);
-		Mockito.when(this.designImportParser.parseFile(this.multiPartFile))
-				.thenReturn(DesignImportDataInitializer.createDesignImportData());
+		Mockito.when(this.designImportParser.parseFile(this.multiPartFile)).thenReturn(
+				DesignImportTestDataInitializer.createDesignImportData());
 
-		final DesignImportData data = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		Mockito.doReturn(data).when(this.userSelection).getDesignImportData();
 
 		WorkbookDataUtil.setTestWorkbook(null);
@@ -422,7 +424,7 @@ public class DesignImportControllerTest {
 
 		final Set<MeasurementVariable> trialVariables = new HashSet<>();
 
-		final DesignImportData designImportData = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 
 		Mockito.doReturn(this.createSettingDetails()).when(this.userSelection).getTrialLevelVariableList();
@@ -463,7 +465,7 @@ public class DesignImportControllerTest {
 		final List<SettingDetail> newDetails = new ArrayList<>();
 
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final DesignImportData designImportData = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 
 		this.designImportController.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, newDetails);
 
@@ -503,7 +505,7 @@ public class DesignImportControllerTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForTrial(5, 1);
 
-		final DesignImportData data = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 
 		this.designImportController.addFactorsIfNecessary(workbook, data);
 
@@ -527,7 +529,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
-		final DesignImportData data = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 
 		this.designImportController.addFactorsIfNecessary(workbook, data);
 
@@ -547,7 +549,7 @@ public class DesignImportControllerTest {
 		Mockito.doReturn(measurementVariables).when(this.designImportService)
 				.extractMeasurementVariable(Matchers.any(PhenotypicType.class), Matchers.anyMap());
 
-		final DesignImportData data = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		this.designImportController.addConditionsIfNecessary(workbook, data);
 
 		Assert.assertEquals("LOCATION_NAME should not added to the Conditions, so the size of Conditions must remain 7", 7, workbook
@@ -566,7 +568,7 @@ public class DesignImportControllerTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 
-		final DesignImportData data = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData data = DesignImportTestDataInitializer.createDesignImportData();
 		this.designImportController.addConditionsIfNecessary(workbook, data);
 
 		Assert.assertEquals(8, workbook.getConditions().size());
@@ -611,7 +613,7 @@ public class DesignImportControllerTest {
 		final Project project = this.createProject();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyType.N);
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
-		final DesignImportData designImportData = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 
 		final MeasurementVariable siteName = this.createMeasurementVariable(TermId.SITE_NAME.getId(), "SITE_NAME", "TRIAL");
 		final SettingDetail siteNameSettingDetail = this.createSettingDetail(TermId.SITE_NAME.getId(), "SITE_NAME", "TRIAL");
@@ -653,7 +655,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testCheckTheDeletedSettingDetails() {
 
-		final DesignImportData designImportData = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 		final Set<MeasurementVariable> measurementVariables = this.createMeasurementVariables();
 		final List<SettingDetail> deletedTrialLevelVariables = this.createDeletedTrialLevelVariables();
 		final UserSelection selection = new UserSelection();
@@ -827,7 +829,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testCreateTrialObservationsForTrial() {
 
-		final DesignImportData designImportData = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final Workbook workbook = Mockito.spy(WorkbookDataUtil.getTestWorkbook(5, StudyType.T));
 
@@ -841,7 +843,7 @@ public class DesignImportControllerTest {
 	@Test
 	public void testCreateTrialObservationsForNursery() {
 
-		final DesignImportData designImportData = DesignImportDataInitializer.createDesignImportData();
+		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData();
 		final EnvironmentData environmentData = this.createEnvironmentData(1);
 		final Workbook workbook = Mockito.spy(WorkbookDataUtil.getTestWorkbook(5, StudyType.N));
 
@@ -938,6 +940,46 @@ public class DesignImportControllerTest {
 		Mockito.when(
 				this.settingsService.createSettingDetail(TermId.CHECK_PLAN.getId(), "CHECK_PLAN", this.userSelection, 0,
 						this.project.getUniqueID())).thenReturn(checkPlan);
+	}
+
+	public void testChangeDesignForNewNurseryWithImportedDesign() {
+
+		this.designImportController.changeDesign(0, StudyType.N.toString());
+
+		// the following fields are expected to be set to null
+		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
+		Mockito.verify(this.userSelection).setDesignImportData(null);
+		Mockito.verify(this.userSelection).setExperimentalDesignVariables(null);
+		Mockito.verify(this.userSelection).setExpDesignParams(null);
+		Mockito.verify(this.userSelection).setExpDesignVariables(null);
+	}
+
+	@Test
+	public void testChangeDesignForExistingNurseryWithImportedDesign() {
+		final Workbook nursery = WorkbookDataUtil.getTestWorkbook(10, StudyType.N);
+		nursery.getStudyDetails().setId(1);
+		final List<MeasurementRow> observations = nursery.getObservations();
+
+		Mockito.doReturn(nursery).when(this.userSelection).getWorkbook();
+
+		DesignImportTestDataInitializer.updatePlotNoValue(observations);
+
+		this.designImportController.changeDesign(nursery.getStudyDetails().getId(), StudyType.N.toString());
+
+		// the following fields are expected to be set to null
+		Mockito.verify(this.userSelection).setTemporaryWorkbook(null);
+		Mockito.verify(this.userSelection).setDesignImportData(null);
+		Mockito.verify(this.userSelection).setExperimentalDesignVariables(null);
+		Mockito.verify(this.userSelection).setExpDesignParams(null);
+		Mockito.verify(this.userSelection).setExpDesignVariables(null);
+
+		for (final MeasurementRow row : observations) {
+			final List<MeasurementData> dataList = row.getDataList();
+			final MeasurementData entryNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.ENTRY_NO.getId(), dataList);
+			final MeasurementData plotNoData = WorkbookUtil.retrieveMeasurementDataFromMeasurementRow(TermId.PLOT_NO.getId(), dataList);
+			Assert.assertEquals("Expecting that the PLOT_NO value is equal to ENTRY_NO.", entryNoData.getValue(), plotNoData.getValue());
+		}
+
 	}
 
 	private MeasurementVariable getMeasurementVariable(final int termId, final Set<MeasurementVariable> trialVariables) {

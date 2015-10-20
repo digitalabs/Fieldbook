@@ -1,5 +1,5 @@
 
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.importdesign.controller;
 
 /**
  * Created by cyrus on 5/8/15.
@@ -35,7 +35,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Location;
@@ -59,8 +58,9 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
-import com.efficio.fieldbook.web.common.service.DesignImportService;
-import com.efficio.fieldbook.web.nursery.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.bean.Environment;
 import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
@@ -76,6 +76,18 @@ import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
 @Controller
 @RequestMapping(DesignImportController.URL)
 public class DesignImportController extends SettingsController {
+
+	private static final String UNMAPPED_HEADERS = "unmappedHeaders";
+
+	private static final String SUCCESS = "success";
+
+	private static final String MAPPED_ENVIRONMENTAL_FACTORS = "mappedEnvironmentalFactors";
+
+	private static final String MAPPED_DESIGN_FACTORS = "mappedDesignFactors";
+
+	private static final String MAPPED_GERMPLASM_FACTORS = "mappedGermplasmFactors";
+
+	private static final String MAPPED_TRAITS = "mappedTraits";
 
 	public static final String IS_SUCCESS = "isSuccess";
 
@@ -94,9 +106,6 @@ public class DesignImportController extends SettingsController {
 	private DesignImportService designImportService;
 
 	@Resource
-	private SettingsService settingsService;
-
-	@Resource
 	private MessageSource messageSource;
 
 	@Resource
@@ -107,6 +116,9 @@ public class DesignImportController extends SettingsController {
 
 	@Resource
 	private DesignImportValidator designImportValidator;
+
+	@Resource
+	private SettingsService settingsService;
 
 	/*
 	 * (non-Javadoc)
@@ -142,7 +154,7 @@ public class DesignImportController extends SettingsController {
 
 			resultsMap.put(IS_SUCCESS, 1);
 
-		} catch (MiddlewareException | FileParsingException e) {
+		} catch (final FileParsingException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
@@ -155,19 +167,52 @@ public class DesignImportController extends SettingsController {
 		return this.convertObjectToJson(resultsMap);
 	}
 
+	/**
+	 * For now this method is only applicable in Nursery. Added the studyType as a parameter for future implementation.
+	 * 
+	 * @param studyId
+	 * @param studyType
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/import/change/{studyId}/{studyType}", method = RequestMethod.POST,
+			produces = "application/json; charset=utf-8")
+	public String changeDesign(@PathVariable final Integer studyId, @PathVariable final String studyType) {
+
+		final Map<String, Object> resultsMap = new HashMap<>();
+
+		// reset
+		this.cancelImportDesign();
+
+		this.userSelection.setExperimentalDesignVariables(null);
+		this.userSelection.setExpDesignParams(null);
+		this.userSelection.setExpDesignVariables(null);
+
+		// handling for existing study
+		if (studyId != null && studyId != 0) {
+			WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getWorkbook().getObservations());
+		}
+
+		resultsMap.put(IS_SUCCESS, 1);
+		resultsMap.put(SUCCESS, this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
+
+		// we return string instead of json to fix IE issue rel. DataTable
+		return this.convertObjectToJson(resultsMap);
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/getMappingData", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public Map<String, List<DesignHeaderItem>> getMappingData() {
 		final Map<String, List<DesignHeaderItem>> mappingData = new HashMap<>();
 
-		mappingData.put("unmappedHeaders", this.userSelection.getDesignImportData().getUnmappedHeaders());
-		mappingData.put("mappedEnvironmentalFactors",
+		mappingData.put(UNMAPPED_HEADERS, this.userSelection.getDesignImportData().getUnmappedHeaders());
+		mappingData.put(MAPPED_ENVIRONMENTAL_FACTORS,
 				this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
 		mappingData
-				.put("mappedDesignFactors", this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
+				.put(MAPPED_DESIGN_FACTORS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
 		mappingData
-				.put("mappedGermplasmFactors", this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.GERMPLASM));
-		mappingData.put("mappedTraits", this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.VARIATE));
+				.put(MAPPED_GERMPLASM_FACTORS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.GERMPLASM));
+		mappingData.put(MAPPED_TRAITS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.VARIATE));
 
 		return mappingData;
 	}
@@ -271,14 +316,15 @@ public class DesignImportController extends SettingsController {
 				hasChecksSelected = this.hasCheckVariables(this.userSelection.getWorkbook().getConditions());
 			}
 
-			resultsMap.put("success", Boolean.TRUE);
+			resultsMap.put(SUCCESS, Boolean.TRUE);
 			resultsMap.put("hasConflict", hasConflict);
 			resultsMap.put("hasChecksSelected", hasChecksSelected);
-		} catch (MiddlewareException | DesignValidationException e) {
+
+		} catch (final DesignValidationException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
-			resultsMap.put("success", Boolean.FALSE);
+			resultsMap.put(SUCCESS, Boolean.FALSE);
 			resultsMap.put(ERROR, e.getMessage());
 			resultsMap.put("message", e.getMessage());
 		}
@@ -315,26 +361,26 @@ public class DesignImportController extends SettingsController {
 				final StandardVariable stdVar =
 						this.ontologyDataManager.getStandardVariable(mappedHeader.getId(), this.contextUtil.getCurrentProgramUUID());
 
-				if ("mappedEnvironmentalFactors".equals(item.getKey())) {
+				if (MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-				} else if ("mappedDesignFactors".equals(item.getKey())) {
+				} else if (MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
-				} else if ("mappedGermplasmFactors".equals(item.getKey())) {
+				} else if (MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.GERMPLASM);
-				} else if ("mappedTraits".equals(item.getKey())) {
+				} else if (MAPPED_TRAITS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.VARIATE);
 				}
 
 				mappedHeader.setVariable(stdVar);
 			}
 
-			if ("mappedEnvironmentalFactors".equals(item.getKey())) {
+			if (MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
-			} else if ("mappedDesignFactors".equals(item.getKey())) {
+			} else if (MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
-			} else if ("mappedGermplasmFactors".equals(item.getKey())) {
+			} else if (MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
-			} else if ("mappedTraits".equals(item.getKey())) {
+			} else if (MAPPED_TRAITS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
 			}
 		}
@@ -662,10 +708,6 @@ public class DesignImportController extends SettingsController {
 		final List<SettingDetail> newDetails = new ArrayList<>();
 
 		for (final MeasurementVariable mvar : trialLevelFactors) {
-			// SettingDetail newDetail =
-			// settingsService.createSettingDetail(mvar.getTermId(),
-			// mvar.getName(), userSelection, this.getCurrentIbdbUserId() ,
-			// this.getCurrentProject().getUniqueID());
 			final SettingDetail newDetail =
 					this.createSettingDetail(mvar.getTermId(), mvar.getName(), PhenotypicType.TRIAL_ENVIRONMENT.name());
 			newDetail.setRole(mvar.getRole());
@@ -686,11 +728,6 @@ public class DesignImportController extends SettingsController {
 			final List<SettingDetail> newDetails = new ArrayList<>();
 
 			for (final MeasurementVariable mvar : workbook.getConditions()) {
-
-				// SettingDetail newDetail =
-				// settingsService.createSettingDetail(mvar.getTermId(),
-				// mvar.getName(), userSelection, this.getCurrentIbdbUserId() ,
-				// this.getCurrentProject().getUniqueID());
 				final SettingDetail newDetail = this.createSettingDetail(mvar.getTermId(), mvar.getName(), PhenotypicType.STUDY.name());
 				newDetail.setRole(mvar.getRole());
 
@@ -703,7 +740,6 @@ public class DesignImportController extends SettingsController {
 
 				newDetail.getVariable().setOperation(mvar.getOperation());
 				newDetails.add(newDetail);
-
 			}
 
 			this.resolveTheEnvironmentFactorsWithIDNamePairing(environmentData, designImportData, newDetails);
@@ -848,7 +884,7 @@ public class DesignImportController extends SettingsController {
 
 				// For TRIAL_LOCATION (Location Name)
 				if (Integer.valueOf(managementDetail.getKey()) == TermId.TRIAL_LOCATION.getId()) {
-					final String termId = nameIdMap.get(managementDetail.getKey());
+					final String termId = nameIdMap.get(managementDetail.getKey().toUpperCase());
 					if (termId != null) {
 
 						if (this.isTermIdExisting(Integer.valueOf(managementDetail.getKey()),

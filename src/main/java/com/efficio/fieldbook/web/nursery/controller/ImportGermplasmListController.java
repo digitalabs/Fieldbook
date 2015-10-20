@@ -234,7 +234,7 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = {"/next", "/submitAll"}, method = RequestMethod.POST)
 	@Transactional
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form, final BindingResult result,
-			final Model model, final HttpServletRequest req) throws MiddlewareException {
+			final Model model, final HttpServletRequest req) {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 
@@ -309,7 +309,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param studyId
 	 * @throws MiddlewareQueryException
 	 */
-	private void saveListDataProject(final boolean isNursery, final int studyId) throws MiddlewareQueryException {
+	private void saveListDataProject(final boolean isNursery, final int studyId) {
 
 		if (this.getUserSelection().getImportedGermplasmMainInfo() != null
 				&& this.getUserSelection().getImportedGermplasmMainInfo().getListId() != null) {
@@ -736,7 +736,8 @@ public class ImportGermplasmListController extends SettingsController {
 		return this.userSelection.getMeasurementRowList() != null && !this.userSelection.getMeasurementRowList().isEmpty();
 	}
 
-	protected String getCheckId(final String checkCode, final List<Enumeration> checksList) throws MiddlewareQueryException {
+	protected String getCheckId(final String checkCode, final List<Enumeration> checksList) {
+
 		String checkId = "";
 
 		for (final Enumeration enumVar : checksList) {
@@ -1307,7 +1308,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * 
 	 * @param userSelection
 	 */
-	protected void updateObservationsFromTemporaryWorkbookToWorkbook(UserSelection userSelection) {
+	protected void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
 
 		final Map<Integer, MeasurementVariable> observationVariables =
 				WorkbookUtil.createVariableList(userSelection.getWorkbook().getFactors(), userSelection.getWorkbook().getVariates());
@@ -1326,7 +1327,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * 
 	 * @param userSelection
 	 */
-	protected void addVariablesFromTemporaryWorkbookToWorkbook(UserSelection userSelection) {
+	protected void addVariablesFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
 
 		if (userSelection.getExperimentalDesignVariables() != null) {
 
@@ -1351,7 +1352,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param userSelection
 	 * @param form
 	 */
-	protected void processChecks(UserSelection userSelection, final ImportGermplasmListForm form) {
+	protected void processChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		final String[] selectedCheck = form.getSelectedCheck();
 
@@ -1391,7 +1392,7 @@ public class ImportGermplasmListController extends SettingsController {
 		// end: section for taking note of the check germplasm
 	}
 
-	protected void processImportedGermplasmAndChecks(UserSelection userSelection, final ImportGermplasmListForm form) {
+	protected void processImportedGermplasmAndChecks(final UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		this.processChecks(userSelection, form);
 
@@ -1422,7 +1423,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 * @param userSelection
 	 * @param form
 	 */
-	protected void copyImportedGermplasmFromUserSelectionToForm(UserSelection userSelection, final ImportGermplasmListForm form) {
+	protected void copyImportedGermplasmFromUserSelectionToForm(final UserSelection userSelection, final ImportGermplasmListForm form) {
 
 		if (userSelection.getImportedGermplasmMainInfo() != null) {
 
@@ -1487,16 +1488,17 @@ public class ImportGermplasmListController extends SettingsController {
 	 * 
 	 * @param conditions
 	 */
-	protected void addExperimentFactorToBeDeleted(List<MeasurementVariable> conditions) {
+	protected void addExperimentFactorToBeDeleted(final List<MeasurementVariable> conditions) {
 		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.EXPERIMENT_DESIGN_FACTOR.getId()), "", Operation.DELETE,
 				PhenotypicType.TRIAL_ENVIRONMENT));
 	}
 
-	protected MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation, PhenotypicType role) {
-		StandardVariable stdvar =
+	protected MeasurementVariable createMeasurementVariable(final String idToCreate, final String value, final Operation operation,
+			final PhenotypicType role) {
+		final StandardVariable stdvar =
 				this.fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate), this.contextUtil.getCurrentProgramUUID());
 		stdvar.setPhenotypicType(role);
-		MeasurementVariable var =
+		final MeasurementVariable var =
 				new MeasurementVariable(Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(),
 						stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getProperty().getName(), stdvar.getDataType()
 								.getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
@@ -1508,8 +1510,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 	}
 
-	protected boolean hasExperimentalDesign(Workbook workbook) {
-		ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
+	protected boolean hasExperimentalDesign(final Workbook workbook) {
+		final ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
 		return expDesignVar != null && expDesignVar.getExperimentalDesign() != null
 				&& !StringUtil.isNullOrEmpty(expDesignVar.getExperimentalDesign().getValue());
 

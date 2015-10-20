@@ -152,15 +152,15 @@ public class DesignImportController extends SettingsController {
 
 			this.userSelection.setDesignImportData(designImportData);
 
-			resultsMap.put(IS_SUCCESS, 1);
+			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 
 		} catch (final FileParsingException e) {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
-			resultsMap.put(IS_SUCCESS, 0);
+			resultsMap.put(DesignImportController.IS_SUCCESS, 0);
 			// error messages is still in .prop format,
-			resultsMap.put(ERROR, new String[] {e.getMessage()});
+			resultsMap.put(DesignImportController.ERROR, new String[] {e.getMessage()});
 		}
 
 		// we return string instead of json to fix IE issue rel. DataTable
@@ -193,8 +193,9 @@ public class DesignImportController extends SettingsController {
 			WorkbookUtil.resetObservationToDefaultDesign(this.userSelection.getWorkbook().getObservations());
 		}
 
-		resultsMap.put(IS_SUCCESS, 1);
-		resultsMap.put(SUCCESS, this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
+		resultsMap.put(DesignImportController.IS_SUCCESS, 1);
+		resultsMap.put(DesignImportController.SUCCESS,
+				this.messageSource.getMessage("design.import.change.design.success.message", null, Locale.ENGLISH));
 
 		// we return string instead of json to fix IE issue rel. DataTable
 		return this.convertObjectToJson(resultsMap);
@@ -205,14 +206,15 @@ public class DesignImportController extends SettingsController {
 	public Map<String, List<DesignHeaderItem>> getMappingData() {
 		final Map<String, List<DesignHeaderItem>> mappingData = new HashMap<>();
 
-		mappingData.put(UNMAPPED_HEADERS, this.userSelection.getDesignImportData().getUnmappedHeaders());
-		mappingData.put(MAPPED_ENVIRONMENTAL_FACTORS,
-				this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
-		mappingData
-				.put(MAPPED_DESIGN_FACTORS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
-		mappingData
-				.put(MAPPED_GERMPLASM_FACTORS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.GERMPLASM));
-		mappingData.put(MAPPED_TRAITS, this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.VARIATE));
+		mappingData.put(DesignImportController.UNMAPPED_HEADERS, this.userSelection.getDesignImportData().getUnmappedHeaders());
+		mappingData.put(DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS, this.userSelection.getDesignImportData().getMappedHeaders()
+				.get(PhenotypicType.TRIAL_ENVIRONMENT));
+		mappingData.put(DesignImportController.MAPPED_DESIGN_FACTORS,
+				this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.TRIAL_DESIGN));
+		mappingData.put(DesignImportController.MAPPED_GERMPLASM_FACTORS,
+				this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.GERMPLASM));
+		mappingData.put(DesignImportController.MAPPED_TRAITS,
+				this.userSelection.getDesignImportData().getMappedHeaders().get(PhenotypicType.VARIATE));
 
 		return mappingData;
 	}
@@ -316,7 +318,7 @@ public class DesignImportController extends SettingsController {
 				hasChecksSelected = this.hasCheckVariables(this.userSelection.getWorkbook().getConditions());
 			}
 
-			resultsMap.put(SUCCESS, Boolean.TRUE);
+			resultsMap.put(DesignImportController.SUCCESS, Boolean.TRUE);
 			resultsMap.put("hasConflict", hasConflict);
 			resultsMap.put("hasChecksSelected", hasChecksSelected);
 
@@ -324,8 +326,8 @@ public class DesignImportController extends SettingsController {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
-			resultsMap.put(SUCCESS, Boolean.FALSE);
-			resultsMap.put(ERROR, e.getMessage());
+			resultsMap.put(DesignImportController.SUCCESS, Boolean.FALSE);
+			resultsMap.put(DesignImportController.ERROR, e.getMessage());
 			resultsMap.put("message", e.getMessage());
 		}
 
@@ -361,26 +363,26 @@ public class DesignImportController extends SettingsController {
 				final StandardVariable stdVar =
 						this.ontologyDataManager.getStandardVariable(mappedHeader.getId(), this.contextUtil.getCurrentProgramUUID());
 
-				if (MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
+				if (DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.TRIAL_ENVIRONMENT);
-				} else if (MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
+				} else if (DesignImportController.MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
-				} else if (MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
+				} else if (DesignImportController.MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.GERMPLASM);
-				} else if (MAPPED_TRAITS.equals(item.getKey())) {
+				} else if (DesignImportController.MAPPED_TRAITS.equals(item.getKey())) {
 					stdVar.setPhenotypicType(PhenotypicType.VARIATE);
 				}
 
 				mappedHeader.setVariable(stdVar);
 			}
 
-			if (MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
+			if (DesignImportController.MAPPED_ENVIRONMENTAL_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.TRIAL_ENVIRONMENT, item.getValue());
-			} else if (MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
+			} else if (DesignImportController.MAPPED_DESIGN_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.TRIAL_DESIGN, item.getValue());
-			} else if (MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
+			} else if (DesignImportController.MAPPED_GERMPLASM_FACTORS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.GERMPLASM, item.getValue());
-			} else if (MAPPED_TRAITS.equals(item.getKey())) {
+			} else if (DesignImportController.MAPPED_TRAITS.equals(item.getKey())) {
 				newMappingResults.put(PhenotypicType.VARIATE, item.getValue());
 			}
 		}
@@ -450,7 +452,7 @@ public class DesignImportController extends SettingsController {
 			// Only for Nursery
 			this.resetCheckList(workbook, this.userSelection);
 
-			resultsMap.put(IS_SUCCESS, 1);
+			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
 			resultsMap.put("environmentData", environmentData);
 			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());
 
@@ -458,9 +460,9 @@ public class DesignImportController extends SettingsController {
 
 			DesignImportController.LOG.error(e.getMessage(), e);
 
-			resultsMap.put(IS_SUCCESS, 0);
+			resultsMap.put(DesignImportController.IS_SUCCESS, 0);
 			// error messages is still in .prop format,
-			resultsMap.put(ERROR, new String[] {e.getMessage()});
+			resultsMap.put(DesignImportController.ERROR, new String[] {e.getMessage()});
 		}
 
 		return resultsMap;
@@ -473,7 +475,7 @@ public class DesignImportController extends SettingsController {
 	 * @param workbook
 	 * @param userSelection
 	 */
-	protected void resetCheckList(Workbook workbook, final UserSelection userSelection) {
+	protected void resetCheckList(final Workbook workbook, final UserSelection userSelection) {
 
 		// This is only applicable in Nursery since there's no Check List in Trial.
 		if (workbook.getStudyDetails().getStudyType() == StudyType.N) {
@@ -1194,7 +1196,7 @@ public class DesignImportController extends SettingsController {
 	 * 
 	 * @param studyLevelConditions
 	 */
-	protected void addCheckVariablesToDeleted(List<SettingDetail> studyLevelConditions) {
+	protected void addCheckVariablesToDeleted(final List<SettingDetail> studyLevelConditions) {
 
 		studyLevelConditions.add(this.createCheckVariableToBeDeleted(TermId.CHECK_START.getId(), "CHECK_START"));
 		studyLevelConditions.add(this.createCheckVariableToBeDeleted(TermId.CHECK_PLAN.getId(), "CHECK_PLAN"));
@@ -1217,9 +1219,9 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected boolean hasCheckVariables(List<MeasurementVariable> conditions) {
+	protected boolean hasCheckVariables(final List<MeasurementVariable> conditions) {
 		if (conditions != null && !conditions.isEmpty()) {
-			for (MeasurementVariable var : conditions) {
+			for (final MeasurementVariable var : conditions) {
 				if (this.isCheckVariable(var.getTermId())) {
 					return true;
 				}
@@ -1228,8 +1230,8 @@ public class DesignImportController extends SettingsController {
 		return false;
 	}
 
-	private boolean isCheckVariable(int termId) {
-		StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");
+	private boolean isCheckVariable(final int termId) {
+		final StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");
 		if (tokenizer.hasMoreTokens()) {
 			while (tokenizer.hasMoreTokens()) {
 				if (Integer.valueOf(tokenizer.nextToken()).intValue() == termId) {

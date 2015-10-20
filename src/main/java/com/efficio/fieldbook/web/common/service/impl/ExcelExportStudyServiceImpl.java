@@ -41,7 +41,6 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,8 +116,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				this.writeObservationSheet(xlsBook, workbook, plotLevelObservations, visibleColumns);
 
 				final String filenamePath =
-						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename, workbook.isNursery(),
-								this.fieldbookProperties, this.fieldbookMiddlewareService);
+						ExportImportStudyUtil.getFileNamePath(trialInstanceNo, instanceLevelObservation, instances, filename,
+								workbook.isNursery(), this.fieldbookProperties, this.fieldbookMiddlewareService);
 
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
@@ -268,11 +267,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 					if (PhenotypicType.TRIAL_ENVIRONMENT == this.getRoleOfVariableInTrialObservations(variable, trialObservation)) {
 						variable.setValue(trialObservation.getMeasurementDataValue(variable.getTermId()));
 						if (variable.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-							try {
-								variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
-							} catch (final MiddlewareException e) {
-								ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
-							}
+							variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
 						}
 					}
 				}
@@ -488,11 +483,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		cell = row.createCell(6, Cell.CELL_TYPE_STRING);
 		this.cleanupValue(variable);
 
-		try {
-			variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
-		} catch (final MiddlewareException e) {
-			ExcelExportStudyServiceImpl.LOG.error(e.getMessage(), e);
-		}
+		variable.setPossibleValues(this.fieldbookService.getAllPossibleValues(variable.getTermId()));
 
 		if (variable != null && variable.getPossibleValues() != null && !variable.getPossibleValues().isEmpty()
 				&& variable.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()

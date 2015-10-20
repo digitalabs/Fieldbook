@@ -34,8 +34,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.reports.BuildReportException;
@@ -197,7 +195,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/export/custom/report", method = RequestMethod.POST)
 	public String exportCustomReport(@RequestBody final Map<String, String> data, final HttpServletRequest req,
-			final HttpServletResponse response) throws MiddlewareQueryException {
+			final HttpServletResponse response) {
 		final String studyId = this.getStudyId(data);
 		final String reportCode = data.get("customReportCode");
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -213,7 +211,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 			final File reportFile = new File(outputFilename);
 			baos.writeTo(new FileOutputStream(reportFile));
 
-		} catch (NumberFormatException | MiddlewareException | JRException | IOException | BuildReportException e) {
+		} catch (NumberFormatException | JRException | IOException | BuildReportException e) {
 			ExportStudyController.LOG.error(e.getMessage(), e);
 		}
 		final Map<String, Object> results = new HashMap<String, Object>();
@@ -270,20 +268,18 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		String studyId = req.getParameter("studyId");
 		final UserSelection userSelection = this.getUserSelection();
 		boolean hasFieldMap = false;
-		try {
-			Workbook workbook = null;
-			if ("0".equalsIgnoreCase(studyId)) {
 
-				workbook = userSelection.getWorkbook();
-				studyId = workbook.getStudyDetails().getId().toString();
-			} else {
-				// meaning for the session
-				workbook = this.getPaginationListSelection().getReviewWorkbook(studyId);
-			}
-			hasFieldMap = this.fieldbookMiddlewareService.checkIfStudyHasFieldmap(Integer.valueOf(studyId));
-		} catch (final MiddlewareQueryException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
+		Workbook workbook = null;
+		if ("0".equalsIgnoreCase(studyId)) {
+
+			workbook = userSelection.getWorkbook();
+			studyId = workbook.getStudyDetails().getId().toString();
+		} else {
+			// meaning for the session
+			workbook = this.getPaginationListSelection().getReviewWorkbook(studyId);
 		}
+		hasFieldMap = this.fieldbookMiddlewareService.checkIfStudyHasFieldmap(Integer.valueOf(studyId));
+
 		return hasFieldMap ? "1" : "0";
 	}
 
@@ -368,8 +364,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 				userSelection.setWorkbook(workbookSession);
 			}
 		} catch (final NumberFormatException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
-		} catch (final MiddlewareQueryException e) {
 			ExportStudyController.LOG.error(e.getMessage(), e);
 		}
 
@@ -509,11 +503,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		trialIds.add(studyId);
 		List<FieldMapInfo> fieldMapInfoList = new ArrayList<FieldMapInfo>();
 
-		try {
-			fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
-		} catch (final MiddlewareQueryException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
-		}
+		fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
+
 		if (fieldMapInfoList != null && fieldMapInfoList.get(0).getDatasets() != null
 				&& fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances() != null) {
 			for (int i = 0; i < fieldMapInfoList.get(0).getDatasets().get(0).getTrialInstances().size(); i++) {
@@ -532,13 +523,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	public String getAdvanceListsOfStudy(@PathVariable final int studyId, final Model model, final HttpSession session) {
 
 		List<GermplasmList> germplasmList = new ArrayList<GermplasmList>();
-		;
-		try {
-			germplasmList =
-					this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(studyId), GermplasmListType.ADVANCED);
-		} catch (final MiddlewareQueryException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
-		}
+		germplasmList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(Integer.valueOf(studyId), GermplasmListType.ADVANCED);
 		model.addAttribute("advancedList", germplasmList);
 		return super.showAjaxPage(model, ExportStudyController.DISPLAY_ADVANCE_GERMPLASM_LIST);
 	}
@@ -553,7 +538,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export/advanced/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doAdvanceExport(final HttpServletResponse response, final HttpServletRequest req) throws MiddlewareQueryException {
+	public String doAdvanceExport(final HttpServletResponse response, final HttpServletRequest req) {
 
 		final String advancedListIds = req.getParameter("exportAdvanceListGermplasmIds");
 		final String exportType = req.getParameter("exportAdvanceListGermplasmType");
@@ -599,17 +584,14 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 
 	protected List<CustomReportType> getCustomReportTypes(final String toolSection) {
 		final List<CustomReportType> customReportTypes = new ArrayList<CustomReportType>();
-		try {
-			final List<StandardPreset> standardPresetList =
-					this.workbenchService.getStandardPresetByCrop(this.workbenchService.getFieldbookWebTool().getToolId().intValue(),
-							this.contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(), toolSection);
-			// we need to convert the standard preset for custom report type to custom report type pojo
-			for (int index = 0; index < standardPresetList.size(); index++) {
-				customReportTypes.addAll(CustomReportTypeUtil.readReportConfiguration(standardPresetList.get(index),
-						this.crossExpansionProperties.getProfile()));
-			}
-		} catch (final MiddlewareQueryException e) {
-			ExportStudyController.LOG.error(e.getMessage(), e);
+
+		final List<StandardPreset> standardPresetList =
+				this.workbenchService.getStandardPresetByCrop(this.workbenchService.getFieldbookWebTool().getToolId().intValue(),
+						this.contextUtil.getProjectInContext().getCropType().getCropName().toLowerCase(), toolSection);
+		// we need to convert the standard preset for custom report type to custom report type pojo
+		for (int index = 0; index < standardPresetList.size(); index++) {
+			customReportTypes.addAll(CustomReportTypeUtil.readReportConfiguration(standardPresetList.get(index),
+					this.crossExpansionProperties.getProfile()));
 		}
 
 		return customReportTypes;
@@ -634,7 +616,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/export/stock/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doExportStockList(final HttpServletResponse response, final HttpServletRequest req) throws MiddlewareQueryException {
+	public String doExportStockList(final HttpServletResponse response, final HttpServletRequest req) {
 
 		final String stockIds = req.getParameter("exportStockListId");
 

@@ -31,7 +31,9 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -73,6 +75,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
+import com.hazelcast.util.StringUtil;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
@@ -93,6 +96,8 @@ public class ImportGermplasmListController extends SettingsController {
 	protected static final String TYPE2 = "type";
 
 	protected static final String LIST_DATA_TABLE = "listDataTable";
+
+	protected static final String HAS_EXPERIMENTAL_DESIGN = "hasExperimentalDesign";
 
 	protected static final String CHECK_LISTS = "checkLists";
 
@@ -599,6 +604,8 @@ public class ImportGermplasmListController extends SettingsController {
 			this.getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
 			this.getUserSelection().setImportValid(true);
 
+			model.addAttribute(ImportGermplasmListController.HAS_EXPERIMENTAL_DESIGN,
+					this.hasExperimentalDesign(this.userSelection.getWorkbook()));
 			model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmCheckTableHeader());
 
 		} catch (final Exception e) {
@@ -1472,6 +1479,13 @@ public class ImportGermplasmListController extends SettingsController {
 		var.setFactor(false);
 		var.setOperation(operation);
 		return var;
+
+	}
+
+	protected boolean hasExperimentalDesign(Workbook workbook) {
+		ExperimentalDesignVariable expDesignVar = workbook.getExperimentalDesignVariables();
+		return expDesignVar != null && expDesignVar.getExperimentalDesign() != null
+				&& !StringUtil.isNullOrEmpty(expDesignVar.getExperimentalDesign().getValue());
 
 	}
 }
